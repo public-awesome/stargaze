@@ -14,7 +14,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/mint"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/pkg/errors"
-	"github.com/rocket-protocol/mothership/app"
+	"github.com/rocket-protocol/rocketzone/app"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/tendermint/tendermint/libs/cli"

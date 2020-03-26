@@ -1,4 +1,4 @@
-module github.com/rocket-protocol/mothership
+module github.com/rocket-protocol/rocketzone
 
 go 1.14
 

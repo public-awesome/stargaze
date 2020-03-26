@@ -25,7 +25,7 @@ import (
 	"github.com/tendermint/tendermint/libs/cli"
 
 	codecstd "github.com/cosmos/cosmos-sdk/codec/std"
-	"github.com/rocket-protocol/mothership/app"
+	"github.com/rocket-protocol/rocketzone/app"
 )
 
 var (
