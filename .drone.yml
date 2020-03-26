@@ -1,0 +1,20 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+steps:
+  - name: test
+    image: golang:1.14
+    commands:
+      - make install
+  - name: slack
+    image: plugins/slack
+    settings:
+      webhook:
+        from_secret: slack_webhook
+    when:
+      status: [success, failure]
+---
+kind: signature
+hmac: 3b4da36c0f6459c39b5b85e6a315bb2dfd0ac4856561aec82cb1e84d647433e2
