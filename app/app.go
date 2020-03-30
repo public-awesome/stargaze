@@ -44,7 +44,7 @@ const (
 	DefaultStakeDenom = "ufuel"
 
 	// Bech32MainPrefix defines the Bech32 prefix of an account's address
-	Bech32MainPrefix = "rkt:"
+	Bech32MainPrefix = "cosmos"
 
 	// PrefixAccount is the prefix for account keys
 	PrefixAccount = "acc"
