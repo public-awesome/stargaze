@@ -1,0 +1,10 @@
+FROM alpine:3.11
+RUN apk add -U --no-cache ca-certificates
+
+WORKDIR /root
+COPY ./bin/rocketd /usr/bin/rocketd
+COPY ./bin/rocketcli /usr/bin/rocketcli
+COPY ./docker/test-entry-point.sh ./entry-point.sh
+EXPOSE 26657
+
+ENTRYPOINT [ "./entry-point.sh" ]
