@@ -5,7 +5,7 @@ name: default
 
 steps:
   - name: build
-    image: golang:1.14-alpine
+    image: golang:1.14.1-alpine
     commands:
       - make build
   - name: publish-test
@@ -32,4 +32,4 @@ steps:
       status: [success, failure]
 ---
 kind: signature
-hmac: 263c1c6e431cad1d0d133070dcac43f6efa74ebd630e6f332bb9d952c5cb3b79
+hmac: 789fb1f4ead387ee2ff98ba76039da068494cbb01b2f98fa4b96bd3261b415e1
