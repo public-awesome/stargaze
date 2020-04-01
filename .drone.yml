@@ -7,7 +7,7 @@ steps:
   - name: build
     image: golang:1.14.1-alpine
     commands:
-      - make build
+      - ./contrib/build.sh
   - name: publish-test
     image: plugins/docker:18
     settings:
@@ -32,4 +32,6 @@ steps:
       status: [success, failure]
 ---
 kind: signature
-hmac: 789fb1f4ead387ee2ff98ba76039da068494cbb01b2f98fa4b96bd3261b415e1
+hmac: 44ab1718b196e0766acafc242ec25a808a5d23cb0ff770e25a962655d49adf82
+
+...
