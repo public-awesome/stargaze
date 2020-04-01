@@ -11,14 +11,14 @@ steps:
   - name: publish-test
     image: plugins/docker:18
     settings:
-      auto_tag: true
-      auto_tag_suffix: linux-amd64
       dockerfile: docker/Dockerfile.test
       repo: rocketprotocol/rocketzone-relayer-test
       username:
         from_secret: docker_username
       password:
         from_secret: docker_password
+      tags:
+        - latest
     when:
       event:
         - push
@@ -32,4 +32,4 @@ steps:
       status: [success, failure]
 ---
 kind: signature
-hmac: 5e54799710b3fee33767dffabca1c9b1e384922317a90f59017f00301ed30253
+hmac: 0ef8fe267302accb4ba3e77f8d3d33586f1930f243becd92fcbdecb02f8329a0
