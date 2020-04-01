@@ -4,17 +4,10 @@ type: docker
 name: default
 
 steps:
-  - name: test
+  - name: build
     image: golang:1.14
     commands:
-      - make install
-  - name: slack
-    image: plugins/slack
-    settings:
-      webhook:
-        from_secret: slack_webhook
-    when:
-      status: [success, failure]
+      - make build
   - name: publish-test
     image: plugins/docker:18
     settings:
@@ -30,6 +23,13 @@ steps:
       event:
         - push
       branch: master
+  - name: slack
+    image: plugins/slack
+    settings:
+      webhook:
+        from_secret: slack_webhook
+    when:
+      status: [success, failure]
 ---
 kind: signature
-hmac: bd101a365bae67421e61e89593249db067ffe71f7b48894348f73c9a00535c09
+hmac: 5e54799710b3fee33767dffabca1c9b1e384922317a90f59017f00301ed30253
