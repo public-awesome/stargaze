@@ -62,7 +62,7 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 					return err
 				}
 
-				info, err := kb.KeyByAddress(addr)
+				info, err := kb.Key(args[0])
 				if err != nil {
 					return fmt.Errorf("failed to get address from Keybase: %w", err)
 				}
