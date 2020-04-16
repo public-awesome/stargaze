@@ -18,12 +18,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	ante "github.com/cosmos/cosmos-sdk/x/auth/ante"
 	"github.com/cosmos/cosmos-sdk/x/bank"
+	"github.com/cosmos/cosmos-sdk/x/capability"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	distr "github.com/cosmos/cosmos-sdk/x/distribution"
 	"github.com/cosmos/cosmos-sdk/x/evidence"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/cosmos/cosmos-sdk/x/ibc"
+	port "github.com/cosmos/cosmos-sdk/x/ibc/05-port"
 	"github.com/cosmos/cosmos-sdk/x/mint"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	paramsclient "github.com/cosmos/cosmos-sdk/x/params/client"
@@ -131,20 +133,24 @@ type NewApp struct {
 	subspaces map[string]params.Subspace
 
 	// keepers
-	accountKeeper  auth.AccountKeeper
-	bankKeeper     bank.Keeper
-	supplyKeeper   supply.Keeper
-	stakingKeeper  staking.Keeper
-	slashingKeeper slashing.Keeper
-	mintKeeper     mint.Keeper
-	distrKeeper    distr.Keeper
-	govKeeper      gov.Keeper
-	crisisKeeper   crisis.Keeper
-	paramsKeeper   params.Keeper
-	upgradeKeeper  upgrade.Keeper
-	evidenceKeeper evidence.Keeper
-	ibcKeeper      ibc.Keeper
-	transferKeeper transfer.Keeper
+	accountKeeper    auth.AccountKeeper
+	bankKeeper       bank.Keeper
+	capabilityKeeper *capability.Keeper
+	supplyKeeper     supply.Keeper
+	stakingKeeper    staking.Keeper
+	slashingKeeper   slashing.Keeper
+	mintKeeper       mint.Keeper
+	distrKeeper      distr.Keeper
+	govKeeper        gov.Keeper
+	crisisKeeper     crisis.Keeper
+	paramsKeeper     params.Keeper
+	upgradeKeeper    upgrade.Keeper
+	evidenceKeeper   evidence.Keeper
+	ibcKeeper        *ibc.Keeper
+	transferKeeper   transfer.Keeper
+
+	scopedIBCKeeper      capability.ScopedKeeper
+	scopedTransferKeeper capability.ScopedKeeper
 
 	// Module Manager
 	mm *module.Manager
@@ -172,15 +178,14 @@ func NewRocketApp(
 	bApp.SetCommitMultiStoreTracer(traceStore)
 	bApp.SetAppVersion(version.Version)
 
-	// TODO: Add the keys that module requires
 	keys := sdk.NewKVStoreKeys(
-		bam.MainStoreKey, auth.StoreKey, bank.StoreKey, staking.StoreKey,
+		bam.MainStoreKey, capability.StoreKey, auth.StoreKey, bank.StoreKey, staking.StoreKey,
 		supply.StoreKey, mint.StoreKey, distr.StoreKey, slashing.StoreKey,
 		gov.StoreKey, params.StoreKey, ibc.StoreKey, transfer.StoreKey,
 		evidence.StoreKey, upgrade.StoreKey,
 	)
 
-	tKeys := sdk.NewTransientStoreKeys(staking.TStoreKey, params.TStoreKey)
+	tKeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 
 	// Here you initialize your application with the store keys it requires
 	var app = &NewApp{
@@ -205,6 +210,11 @@ func NewRocketApp(
 	app.subspaces[gov.ModuleName] = app.paramsKeeper.Subspace(gov.DefaultParamspace).WithKeyTable(gov.ParamKeyTable())
 	app.subspaces[crisis.ModuleName] = app.paramsKeeper.Subspace(crisis.DefaultParamspace)
 	app.subspaces[evidence.ModuleName] = app.paramsKeeper.Subspace(evidence.DefaultParamspace)
+
+	// add capability keeper and ScopeToModule for ibc module
+	app.capabilityKeeper = capability.NewKeeper(appCodec, keys[capability.StoreKey])
+	scopedIBCKeeper := app.capabilityKeeper.ScopeToModule(ibc.ModuleName)
+	scopedTransferKeeper := app.capabilityKeeper.ScopeToModule(transfer.ModuleName)
 
 	// The AccountKeeper handles address -> account lookups
 	app.accountKeeper = auth.NewAccountKeeper(
@@ -265,13 +275,22 @@ func NewRocketApp(
 			app.slashingKeeper.Hooks()),
 	)
 
-	app.ibcKeeper = ibc.NewKeeper(app.cdc, keys[ibc.StoreKey], stakingKeeper)
+	// create IBC keeper
+	app.ibcKeeper = ibc.NewKeeper(app.cdc, keys[ibc.StoreKey], stakingKeeper, scopedIBCKeeper)
 
-	transferCapKey := app.ibcKeeper.PortKeeper.BindPort(bank.ModuleName)
 	app.transferKeeper = transfer.NewKeeper(
-		app.cdc, keys[transfer.StoreKey], transferCapKey,
-		app.ibcKeeper.ChannelKeeper, app.bankKeeper, app.supplyKeeper,
+		app.cdc, keys[transfer.StoreKey],
+		app.ibcKeeper.ChannelKeeper, &app.ibcKeeper.PortKeeper,
+		app.bankKeeper, app.supplyKeeper, scopedTransferKeeper,
 	)
+
+	// instantiate the module to use it in the router
+	transferModule := transfer.NewAppModule(app.transferKeeper)
+
+	// create the IBC router and add the transfer route to it
+	ibcRouter := port.NewRouter()
+	ibcRouter.AddRoute(transfer.ModuleName, transferModule)
+	app.ibcKeeper.SetRouter(ibcRouter)
 
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
@@ -305,6 +324,7 @@ func NewRocketApp(
 		distr.ModuleName, staking.ModuleName, auth.ModuleName, bank.ModuleName,
 		slashing.ModuleName, gov.ModuleName, mint.ModuleName, supply.ModuleName,
 		crisis.ModuleName, genutil.ModuleName, evidence.ModuleName,
+		transfer.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.crisisKeeper)
@@ -333,7 +353,7 @@ func NewRocketApp(
 	app.SetEndBlocker(app.EndBlocker)
 
 	// The AnteHandler handles signature verification and transaction pre-processing
-	app.SetAnteHandler(ante.NewAnteHandler(app.accountKeeper, app.supplyKeeper, app.ibcKeeper, ante.DefaultSigVerificationGasConsumer))
+	app.SetAnteHandler(ante.NewAnteHandler(app.accountKeeper, app.supplyKeeper, *app.ibcKeeper, ante.DefaultSigVerificationGasConsumer))
 
 	// initialize stores
 	app.MountKVStores(keys)
@@ -345,6 +365,9 @@ func NewRocketApp(
 			tmos.Exit(err.Error())
 		}
 	}
+
+	app.scopedIBCKeeper = scopedIBCKeeper
+	app.scopedTransferKeeper = scopedTransferKeeper
 
 	return app
 }

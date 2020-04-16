@@ -51,6 +51,6 @@ build-linux:
 	GOARCH=amd64 GOOS=linux go build -o bin/rocketd github.com/rocket-protocol/rocketzone/cmd/rocketd
 	GOARCH=amd64 GOOS=linux  go build -o bin/rocketcli github.com/rocket-protocol/rocketzone/cmd/rocketcli
 
-docker-test:
+docker-test: build-linux
 	docker build -f docker/Dockerfile.test -t rocketprotocol/rocketzone-relayer-test:latest .
 
