@@ -100,18 +100,18 @@ func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer) abci.Application
 
 func exportAppStateAndTMValidators(
 	logger log.Logger, db dbm.DB, traceStore io.Writer, height int64, forZeroHeight bool, jailWhiteList []string,
-) (json.RawMessage, []tmtypes.GenesisValidator, error) {
+) (json.RawMessage, []tmtypes.GenesisValidator, *abci.ConsensusParams, error) {
 
 	if height != -1 {
 		rocketApp := app.NewRocketApp(logger, db, traceStore, false, uint(1), map[int64]bool{}, "")
 		err := rocketApp.LoadHeight(height)
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, nil, err
 		}
+
 		return rocketApp.ExportAppStateAndValidators(forZeroHeight, jailWhiteList)
 	}
 
 	rocketApp := app.NewRocketApp(logger, db, traceStore, true, uint(1), map[int64]bool{}, "")
-
 	return rocketApp.ExportAppStateAndValidators(forZeroHeight, jailWhiteList)
 }
