@@ -152,18 +152,7 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 
 			appState[auth.ModuleName] = authGenStateBz
 			appState[bank.ModuleName] = bankGenStateBz
-
-			bankGenState = bank.GetGenesisStateFromAppState(depCdc, appState)
-			bankGenState.Balances = append(bankGenState.Balances, balances)
-			bankGenState.Balances = bank.SanitizeGenesisBalances(bankGenState.Balances)
-
-			bankGenStateBz, err = cdc.MarshalJSON(bankGenState)
-			if err != nil {
-				return fmt.Errorf("failed to marshal bank genesis state: %w", err)
-			}
-
-			appState[bank.ModuleName] = bankGenStateBz
-
+			
 			appStateJSON, err := cdc.MarshalJSON(appState)
 			if err != nil {
 				return fmt.Errorf("failed to marshal application genesis state: %w", err)
