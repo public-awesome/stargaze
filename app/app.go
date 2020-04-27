@@ -310,7 +310,7 @@ func NewRocketApp(
 		distr.NewAppModule(appCodec, app.distrKeeper, app.accountKeeper, app.bankKeeper, app.stakingKeeper),
 		staking.NewAppModule(appCodec, app.stakingKeeper, app.accountKeeper, app.bankKeeper),
 		upgrade.NewAppModule(app.upgradeKeeper),
-		evidence.NewAppModule(app.evidenceKeeper),
+		evidence.NewAppModule(appCodec, app.evidenceKeeper),
 		ibc.NewAppModule(app.ibcKeeper),
 		params.NewAppModule(app.paramsKeeper),
 		transferModule,
@@ -410,14 +410,7 @@ func (app *RocketApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) ab
 	var genesisState simapp.GenesisState
 	app.cdc.MustUnmarshalJSON(req.AppStateBytes, &genesisState)
 
-	res := app.mm.InitGenesis(ctx, app.cdc, genesisState)
-
-	// Set Historical infos in InitChain to ignore genesis params
-	stakingParams := app.stakingKeeper.GetParams(ctx)
-	stakingParams.HistoricalEntries = 1000
-	app.stakingKeeper.SetParams(ctx, stakingParams)
-
-	return res
+	return app.mm.InitGenesis(ctx, app.cdc, genesisState)
 }
 
 // LoadHeight loads a particular height
