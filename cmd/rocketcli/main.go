@@ -5,11 +5,17 @@ import (
 	"os"
 	"path"
 
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"github.com/tendermint/go-amino"
+	"github.com/tendermint/tendermint/libs/cli"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/client/lcd"
 	"github.com/cosmos/cosmos-sdk/client/rpc"
+	codecstd "github.com/cosmos/cosmos-sdk/codec/std"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
@@ -18,13 +24,7 @@ import (
 	authrest "github.com/cosmos/cosmos-sdk/x/auth/client/rest"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	bankcmd "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
-	"github.com/tendermint/go-amino"
-	"github.com/tendermint/tendermint/libs/cli"
-
-	codecstd "github.com/cosmos/cosmos-sdk/codec/std"
 	"github.com/rocket-protocol/rocketzone/app"
 )
 
@@ -78,8 +78,11 @@ func main() {
 		flags.NewCompletionCmd(rootCmd, true),
 	)
 
-	// Add flags and prefix all env exposed with AA
-	executor := cli.PrepareMainCmd(rootCmd, "AA", app.DefaultCLIHome)
+	rootCmd.PersistentFlags().String(flags.FlagKeyringBackend, flags.DefaultKeyringBackend, "Select keyring's backend (os|file|test)")
+	viper.BindPFlag(flags.FlagKeyringBackend, rootCmd.Flags().Lookup(flags.FlagKeyringBackend))
+
+	// Add flags and prefix all env exposed with RZ
+	executor := cli.PrepareMainCmd(rootCmd, "RZ", app.DefaultCLIHome)
 
 	err := executor.Execute()
 	if err != nil {
