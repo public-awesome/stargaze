@@ -7,18 +7,18 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/version"
 
-	"github.com/rocket-protocol/stakebird/x/x/stake/types"
+	"github.com/rocket-protocol/stakebird/x/stake/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module
 func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
-	// Group x/stake queries under a subcommand
-	x/stakeQueryCmd := &cobra.Command{
+	// Group stake queries under a subcommand
+	stakeQueryCmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      fmt.Sprintf("Querying commands for the %s module", types.ModuleName),
 		DisableFlagParsing:         true,
@@ -26,13 +26,41 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	x/stakeQueryCmd.AddCommand(
+	stakeQueryCmd.AddCommand(
 		flags.GetCommands(
-	// TODO: Add query Cmds
+			GetCmdQueryParams(queryRoute, cdc),
 		)...,
 	)
 
-	return x/stakeQueryCmd
+	return stakeQueryCmd
 }
 
-// TODO: Add Query Commands
+// GetCmdQueryParams implements the params query command.
+func GetCmdQueryParams(storeName string, cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "params",
+		Args:  cobra.NoArgs,
+		Short: "Query the current stake parameters information",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Query values set as stake parameters.
+Example:
+$ %s query stake params
+`,
+				version.ClientName,
+			),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+
+			route := fmt.Sprintf("custom/%s/%s", storeName, types.QueryParams)
+			bz, _, err := cliCtx.QueryWithData(route, nil)
+			if err != nil {
+				return err
+			}
+
+			var params types.Params
+			cdc.MustUnmarshalJSON(bz, &params)
+			return cliCtx.PrintOutput(params)
+		},
+	}
+}

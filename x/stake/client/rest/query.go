@@ -8,13 +8,12 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/rocket-protocol/stakebird/x/x/stake/types"
+	"github.com/rocket-protocol/stakebird/x/stake/types"
 )
 
 func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
-	// TODO: Define your GET REST endpoints
 	r.HandleFunc(
-		"/x/stake/parameters",
+		"/stake/parameters",
 		queryParamsHandlerFn(cliCtx),
 	).Methods("GET")
 }

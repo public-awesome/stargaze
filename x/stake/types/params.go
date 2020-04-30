@@ -2,20 +2,21 @@ package types
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/x/params"
+	"gopkg.in/yaml.v2"
 )
 
 // Default parameter namespace
 const (
-	DefaultParamspace = ModuleName
-	// TODO: Define your default parameters
+	DefaultParamspace                 = ModuleName
+	DefaultVotingPeriod time.Duration = time.Hour * 24 * 3
 )
 
 // Parameter store keys
 var (
-	// TODO: Define your keys for the parameter store
-	// KeyParamName          = []byte("ParamName")
+	KeyVotingPeriod = []byte("VotingPeriod")
 )
 
 // ParamKeyTable for x/stake module
@@ -25,33 +26,51 @@ func ParamKeyTable() params.KeyTable {
 
 // Params - used for initializing default parameter for x/stake at genesis
 type Params struct {
-	// TODO: Add your Paramaters to the Paramter struct
-	// KeyParamName string `json:"key_param_name"`
+	VotingPeriod time.Duration `json:"voting_period" yaml:"voting_period"`
 }
 
 // NewParams creates a new Params object
-func NewParams(/* TODO: Pass in the paramters*/) Params {
+func NewParams(votingPeriod time.Duration) Params {
 	return Params{
-		// TODO: Create your Params Type
+		VotingPeriod: votingPeriod,
 	}
 }
 
 // String implements the stringer interface for Params
 func (p Params) String() string {
-	return fmt.Sprintf(`
-	// TODO: Return all the params as a string
-	`, )
+	out, _ := yaml.Marshal(p)
+	return string(out)
 }
 
 // ParamSetPairs - Implements params.ParamSet
 func (p *Params) ParamSetPairs() params.ParamSetPairs {
 	return params.ParamSetPairs{
-		// TODO: Pair your key with the param
-		// params.NewParamSetPair(KeyParamName, &p.ParamName),
+		params.NewParamSetPair(KeyVotingPeriod, &p.VotingPeriod, validateVotingPeriod),
 	}
 }
 
 // DefaultParams defines the parameters for this module
 func DefaultParams() Params {
-	return NewParams( /* TODO: Pass in your default Params */ )
+	return NewParams(DefaultVotingPeriod)
+}
+
+func (p Params) Validate() error {
+	if err := validateVotingPeriod(p.VotingPeriod); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func validateVotingPeriod(i interface{}) error {
+	v, ok := i.(time.Duration)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
+	if v <= 0 {
+		return fmt.Errorf("voting period must be positive: %d", v)
+	}
+
+	return nil
 }

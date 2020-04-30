@@ -1,8 +1,10 @@
-package x/stake
+package stake
 
 import (
-	"github.com/rocket-protocol/stakebird/x/x/stake/keeper"
-	"github.com/rocket-protocol/stakebird/x/x/stake/types"
+	"github.com/rocket-protocol/stakebird/x/stake/keeper"
+	"github.com/rocket-protocol/stakebird/x/stake/types"
+
+	stakingTypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
 const (
@@ -24,17 +26,18 @@ var (
 	NewGenesisState     = types.NewGenesisState
 	DefaultGenesisState = types.DefaultGenesisState
 	ValidateGenesis     = types.ValidateGenesis
-	// TODO: Fill out function aliases
+	NewDelegation       = stakingTypes.NewDelegation
+	// StakeIndexFromKey   = types.StakeIndexFromKey
 
 	// variable aliases
-	ModuleCdc     = types.ModuleCdc
-	// TODO: Fill out variable aliases
+	ModuleCdc = types.ModuleCdc
+	// VotingQueueKey = types.VotingDelegationQueueKey
 )
 
 type (
 	Keeper       = keeper.Keeper
 	GenesisState = types.GenesisState
 	Params       = types.Params
-
-	// TODO: Fill out module types
+	Post         = types.Post
+	Delegation   = stakingTypes.Delegation
 )

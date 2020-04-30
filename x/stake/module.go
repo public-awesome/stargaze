@@ -1,4 +1,4 @@
-package x/stake
+package stake
 
 import (
 	"encoding/json"
@@ -12,14 +12,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/rocket-protocol/stakebird/x/x/stake/client/cli"
-	"github.com/rocket-protocol/stakebird/x/x/stake/client/rest"
+	"github.com/rocket-protocol/stakebird/x/stake/client/cli"
+	"github.com/rocket-protocol/stakebird/x/stake/client/rest"
 )
 
 // Type check to ensure the interface is properly implemented
 var (
-	_ module.AppModule           = AppModule{}
-	_ module.AppModuleBasic      = AppModuleBasic{}
+	_ module.AppModule      = AppModule{}
+	_ module.AppModuleBasic = AppModuleBasic{}
 )
 
 // AppModuleBasic defines the basic application module used by the x/stake module.
@@ -72,15 +72,15 @@ func (AppModuleBasic) GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 type AppModule struct {
 	AppModuleBasic
 
-	keeper        Keeper
+	keeper Keeper
 	// TODO: Add keepers that your application depends on
 }
 
 // NewAppModule creates a new AppModule object
-func NewAppModule(k Keeper, /*TODO: Add Keepers that your application depends on*/) AppModule {
+func NewAppModule(k Keeper /*TODO: Add Keepers that your application depends on*/) AppModule {
 	return AppModule{
-		AppModuleBasic:      AppModuleBasic{},
-		keeper:              k,
+		AppModuleBasic: AppModuleBasic{},
+		keeper:         k,
 		// TODO: Add keepers that your application depends on
 	}
 }

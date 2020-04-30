@@ -1,4 +1,4 @@
-package x/stake
+package stake
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -6,9 +6,9 @@ import (
 )
 
 // InitGenesis initialize default parameters
-// and the keeper's address to pubkey map
-func InitGenesis(ctx sdk.Context, k Keeper, /* TODO: Define what keepers the module needs */, data GenesisState) {
-	// TODO: Define logic for when you would like to initalize a new genesis
+func InitGenesis(ctx sdk.Context, k Keeper, data GenesisState) (res []abci.ValidatorUpdate) {
+	k.SetParams(ctx, data.Params)
+
 	return []abci.ValidatorUpdate{}
 }
 
@@ -16,6 +16,5 @@ func InitGenesis(ctx sdk.Context, k Keeper, /* TODO: Define what keepers the mod
 // to a genesis file, which can be imported again
 // with InitGenesis
 func ExportGenesis(ctx sdk.Context, k Keeper) (data GenesisState) {
-	// TODO: Define logic for exporting state
-	return NewGenesisState()
+	return NewGenesisState(k.GetParams(ctx))
 }

@@ -1,24 +1,26 @@
 package cli
 
 import (
-	"fmt"
 	"bufio"
+	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	"github.com/rocket-protocol/stakebird/x/x/stake/types"
+	"github.com/rocket-protocol/stakebird/x/stake/types"
 )
 
 // GetTxCmd returns the transaction commands for this module
 func GetTxCmd(cdc *codec.Codec) *cobra.Command {
-	x/stakeTxCmd := &cobra.Command{
+	stakeTxCmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      fmt.Sprintf("%s transactions subcommands", types.ModuleName),
 		DisableFlagParsing:         true,
@@ -26,34 +28,46 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	x/stakeTxCmd.AddCommand(flags.PostCommands(
-		// TODO: Add tx based commands
-		// GetCmd<Action>(cdc)
+	stakeTxCmd.AddCommand(flags.PostCommands(
+		GetCmdDelegate(cdc),
 	)...)
 
-	return x/stakeTxCmd
+	return stakeTxCmd
 }
 
-// Example:
-//
-// GetCmd<Action> is the CLI command for doing <Action>
-// func GetCmd<Action>(cdc *codec.Codec) *cobra.Command {
-// 	return &cobra.Command{
-// 		Use:   "/* Describe your action cmd */",
-// 		Short: "/* Provide a short description on the cmd */",
-// 		Args:  cobra.ExactArgs(2), // Does your request require arguments
-// 		RunE: func(cmd *cobra.Command, args []string) error {
-// 			cliCtx := context.NewCLIContext().WithCodec(cdc)
-// 			inBuf := bufio.NewReader(cmd.InOrStdin())
-// 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+// GetCmdDelegate implements the delegate command.
+func GetCmdDelegate(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "delegate [validator-addr] [amount]",
+		Args:  cobra.ExactArgs(2),
+		Short: "Delegate liquid tokens to a validator",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Delegate an amount of liquid coins to a validator from your wallet.
+Example:
+$ %s tx stake delegate cosmosvaloper1l2rsakp388kuv9k8qzq6lrm9taddae7fpx59wm 1000stake --from mykey
+`,
+				version.ClientName,
+			),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(auth.DefaultTxEncoder(cdc))
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-// 			msg := types.NewMsg<Action>(/* Action params */)
-// 			err = msg.ValidateBasic()
-// 			if err != nil {
-// 				return err
-// 			}
+			// amount, err := sdk.ParseCoin(args[1])
+			// if err != nil {
+			// 	return err
+			// }
 
-// 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
-// 		},
-// 	}
-// }
+			// delAddr := cliCtx.GetFromAddress()
+			// valAddr, err := sdk.ValAddressFromBech32(args[0])
+			// if err != nil {
+			// 	return err
+			// }
+
+			// msg := types.NewMsgDelegate(delAddr, valAddr, amount)
+			// return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{})
+		},
+	}
+}

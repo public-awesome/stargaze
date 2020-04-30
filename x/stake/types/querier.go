@@ -1,13 +1,11 @@
 package types
 
-
 // Query endpoints supported by the x/stake querier
 const (
-	// TODO: Describe query parameters, update <action> with your query
-	// Query<Action>    = "<action>"
+	QueryParams = "parameters"
 )
 
-/* 
+/*
 Below you will be able how to set your own queries:
 
 
