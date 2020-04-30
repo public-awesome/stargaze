@@ -13,7 +13,7 @@ The stake module performs time-constrained validator delegations.
 
 ### DelegationQueue (FIFO)
 
-* DelegationQueue: 0x01 | format(expire_time) | post_id | stake_id -> Delegation
+* DelegationQueue: 0x01 | format(expire_time) | vendor_id | post_id -> Delegation
 
 ```go
 type Delegation struct {
