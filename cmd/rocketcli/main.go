@@ -25,7 +25,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	bankcmd "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 
-	"github.com/rocket-protocol/rocketzone/app"
+	"github.com/rocket-protocol/stakebird/app"
 )
 
 var (
@@ -77,9 +77,6 @@ func main() {
 		version.Cmd,
 		flags.NewCompletionCmd(rootCmd, true),
 	)
-
-	rootCmd.PersistentFlags().String(flags.FlagKeyringBackend, flags.DefaultKeyringBackend, "Select keyring's backend (os|file|test)")
-	viper.BindPFlag(flags.FlagKeyringBackend, rootCmd.Flags().Lookup(flags.FlagKeyringBackend))
 
 	// Add flags and prefix all env exposed with RZ
 	executor := cli.PrepareMainCmd(rootCmd, "RZ", app.DefaultCLIHome)
