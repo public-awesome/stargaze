@@ -22,7 +22,7 @@ steps:
     when:
       event:
         - push
-      branch: master
+      branch: ibc
   - name: slack
     image: plugins/slack
     settings:
@@ -32,6 +32,4 @@ steps:
       status: [success, failure]
 ---
 kind: signature
-hmac: 44ab1718b196e0766acafc242ec25a808a5d23cb0ff770e25a962655d49adf82
-
-...
+hmac: 650f43ab3d611d4e1305345af94df4df4426771900c9e454e246ac927f54c034
