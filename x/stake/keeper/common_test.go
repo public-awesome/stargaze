@@ -12,6 +12,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking/keeper"
 )
 
+// TODO
+// extend SimApp to add stakeKeeper
+
 // createTestInput Returns a simapp with custom StakingKeeper
 // to avoid messing with the hooks.
 func createTestInput() (*codec.Codec, *simapp.SimApp, sdk.Context) {
