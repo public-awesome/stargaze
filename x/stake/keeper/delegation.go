@@ -10,8 +10,8 @@ import (
 )
 
 // Perform a delegation
-func (k Keeper) Delegate(ctx sdk.Context, vendorID uint32, postID uint64, delAddr sdk.AccAddress, valAddress sdk.ValAddress,
-	votingPeriod time.Duration, amount sdk.Coin) (err error) {
+func (k Keeper) Delegate(ctx sdk.Context, vendorID uint32, postID uint64, delAddr sdk.AccAddress,
+	valAddress sdk.ValAddress, votingPeriod time.Duration, amount sdk.Coin) (err error) {
 
 	// check if post exist, if not, create it
 	_, found := k.GetPost(ctx, vendorID, postID)
@@ -21,7 +21,7 @@ func (k Keeper) Delegate(ctx sdk.Context, vendorID uint32, postID uint64, delAdd
 
 	// find validator
 	validator, found := k.stakingKeeper.GetValidator(ctx, valAddress)
-	if found == false {
+	if !found {
 		return errors.New("validator not found")
 	}
 
@@ -40,7 +40,8 @@ func (k Keeper) Delegate(ctx sdk.Context, vendorID uint32, postID uint64, delAdd
 	return nil
 }
 
-func (k Keeper) InsertVotingDelegationQueue(ctx sdk.Context, vendorID uint32, postID uint64, delegation stakingtypes.Delegation, completionTime time.Time) {
+func (k Keeper) InsertVotingDelegationQueue(ctx sdk.Context, vendorID uint32, postID uint64,
+	delegation stakingtypes.Delegation, completionTime time.Time) {
 	// get current stake index
 	store := ctx.KVStore(k.storeKey)
 	value := store.Get(types.KeyIndexStakeID)

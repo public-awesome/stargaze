@@ -1,8 +1,6 @@
 package keeper
 
 import (
-	"fmt"
-
 	"github.com/rocket-protocol/stakebird/x/stake/types"
 	"github.com/tendermint/tendermint/libs/log"
 
@@ -19,7 +17,9 @@ type Keeper struct {
 }
 
 // NewKeeper creates a x/stake keeper
-func NewKeeper(cdc *codec.Codec, key sdk.StoreKey, stakingKeeper types.StakingKeeper, paramspace types.ParamSubspace) Keeper {
+func NewKeeper(cdc *codec.Codec, key sdk.StoreKey, stakingKeeper types.StakingKeeper,
+	paramspace types.ParamSubspace) Keeper {
+
 	keeper := Keeper{
 		storeKey:      key,
 		cdc:           cdc,
@@ -31,7 +31,7 @@ func NewKeeper(cdc *codec.Codec, key sdk.StoreKey, stakingKeeper types.StakingKe
 
 // Logger returns a module-specific logger.
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
-	return ctx.Logger().With("module", fmt.Sprintf("%s", types.ModuleName))
+	return ctx.Logger().With("module", types.ModuleName)
 }
 
 // func (k Keeper) set(ctx sdk.Context, key string, value /* TODO: fill out this type */ ) {
@@ -40,7 +40,7 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 // 	store.Set([]byte(key), bz)
 // }
 
-func (k Keeper) delete(ctx sdk.Context, key string) {
-	store := ctx.KVStore(k.storeKey)
-	store.Delete([]byte(key))
-}
+// func (k Keeper) delete(ctx sdk.Context, key string) {
+// 	store := ctx.KVStore(k.storeKey)
+// 	store.Delete([]byte(key))
+// }
