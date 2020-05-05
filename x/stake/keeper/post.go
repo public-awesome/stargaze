@@ -20,7 +20,7 @@ func (k Keeper) GetPost(ctx sdk.Context, vendorID uint32, postID uint64) (post t
 	return post, true
 }
 
-func (k Keeper) Post(ctx sdk.Context, postID uint64, vendorID uint32, body string, votingPeriod time.Duration) {
+func (k Keeper) CreatePost(ctx sdk.Context, postID uint64, vendorID uint32, body string, votingPeriod time.Duration) {
 	post := types.NewPost(postID, vendorID, body, votingPeriod, ctx.BlockTime())
 	store := ctx.KVStore(k.storeKey)
 	key := types.PostKey(vendorID, postID)

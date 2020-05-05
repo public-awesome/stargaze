@@ -16,7 +16,7 @@ func (k Keeper) Delegate(ctx sdk.Context, vendorID uint32, postID uint64, delAdd
 	// check if post exist, if not, create it
 	_, found := k.GetPost(ctx, vendorID, postID)
 	if !found {
-		k.Post(ctx, postID, vendorID, "", votingPeriod)
+		k.CreatePost(ctx, postID, vendorID, "", votingPeriod)
 	}
 
 	// find validator
