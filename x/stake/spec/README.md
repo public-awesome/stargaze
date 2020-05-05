@@ -19,6 +19,16 @@ This module wraps the Cosmos `x/staking` module to perform time-bound delegation
 
 ### DelegationQueue (FIFO)
 
+```go
+type Post struct {
+	ID              uint64 
+	VendorID        uint32 
+	Body            string 
+	VotingPeriod    time.Duration 
+	VotingStartTime time.Time     
+}
+```
+
 * DelegationQueue: 0x01 | format(expire_time) | vendor_id | post_id | stake_id -> Delegation
 
 `stake_id` is an auto-incrementing `uint32`.
