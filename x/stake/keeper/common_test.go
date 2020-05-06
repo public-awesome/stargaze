@@ -1,16 +1,15 @@
 package keeper_test
 
 import (
-	"github.com/cosmos/cosmos-sdk/std"
-
-	abci "github.com/tendermint/tendermint/abci/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp"
+	"github.com/cosmos/cosmos-sdk/std"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/rocket-protocol/stakebird/x/stake/keeper"
+	"github.com/rocket-protocol/stakebird/x/stake/types"
+	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 // TODO
@@ -36,6 +35,8 @@ func createTestInput() (*codec.Codec, *StakeApp, sdk.Context) {
 		app.BankKeeper,
 		app.GetSubspace(stakingtypes.ModuleName),
 	)
+
+	app.stakeKeeper = keeper.NewKeeper(appCodec, types.StoreKey, app.StakingKeeper, nil)
 
 	return codec.New(), app, ctx
 }

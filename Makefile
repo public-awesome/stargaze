@@ -54,3 +54,18 @@ build-linux:
 docker-test: build-linux
 	docker build -f docker/Dockerfile.test -t rocketprotocol/rocketzone-relayer-test:latest .
 
+###############################################################################
+###                                Protobuf                                 ###
+###############################################################################
+proto-all: proto-gen proto-lint proto-check-breaking
+
+proto-gen:
+	@./scripts/protocgen.sh
+
+proto-lint:
+	@buf check lint --error-format=json
+
+proto-check-breaking:
+	@buf check breaking --against-input '.git#branch=master'
+
+.PHONY: proto-all proto-gen proto-lint proto-check-breaking

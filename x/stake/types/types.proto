@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package rocket_protocol.stakebird.x.stake.v1;
+
+option go_package = "github.com/rocket-protocol/stakebird/x/stake/types";
+
+import "proto/gogoproto/gogo.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+// import "third_party/proto/cosmos-proto/cosmos.proto";
+
+
+// message Msg {
+//     oneof sum {
+//         MsgCreateGroup create_group = 1; // returns uint64 GroupID
+//         MsgUpdateGroupMembers update_group_members = 2;
+//     }
+// }
+
+//
+// Groups
+//
+
+// message MsgCreateGroup {
+//     bytes admin = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+//     repeated Member members = 2 [(gogoproto.nullable) = false];
+//     string comment = 3;
+// }
+
+// message MsgUpdateGroupMembers {
+//     bytes admin = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+//     uint64 group = 2 [(gogoproto.casttype) = "GroupID"];
+//     repeated Member member_updates = 3 [(gogoproto.nullable) = false]; // set power to 0 to remove
+// }
+
+//
+// State
+//
+
+// message GroupMetadata {
+//     uint64 group = 1 [(gogoproto.casttype) = "GroupID"];
+//     bytes admin = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+//     string comment = 3;
+//     uint64 version = 4;
+//     string totalWeight = 5 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
+// }
+
+// message Vote {
+//     uint64 proposal = 1 [(gogoproto.casttype) = "ProposalID"];
+//     bytes voter = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+//     Choice choice = 3;
+//     string comment = 4;
+//     google.protobuf.Timestamp submitted_at = 5 [(gogoproto.nullable) = false];
+// }
+
+// message GenesisState {
+//     option (gogoproto.equal) = true;
+//     option (gogoproto.goproto_stringer) = false;
+//     Params Params = 1 [(gogoproto.nullable)=false];
+// }
+
+// type Post struct {
+// 	ID              uint64        `json:"id" yaml:"id"`
+// 	VendorID        uint32        `json:"vendor_id" yaml:"vendor_id"`
+// 	Body            string        `json:"body" yaml:"body"`
+// 	VotingPeriod    time.Duration `json:"voting_period" yaml:"voting_period"`
+// 	VotingStartTime time.Time     `json:"voting_start_time" yaml:"voting_start_time"`
+// }
+
+message Post {
+    uint64 id = 1 [
+        (gogoproto.customname) = "ID",
+        (gogoproto.moretags) = "yaml:\"id\""
+    ];
+    uint32 vendor_id = 2 [
+        (gogoproto.customname) = "VendorID",
+        (gogoproto.moretags) = "yaml:\"vendor_id\""
+    ];
+    string body = 3 [(gogoproto.moretags) = "yaml:\"body\""];
+    google.protobuf.Duration voting_period = 4 [
+        (gogoproto.nullable)    = false,
+        (gogoproto.stdduration) = true,
+        (gogoproto.moretags)    = "yaml:\"voting_period\""
+    ];
+    google.protobuf.Timestamp voting_start_time = 5 [
+        (gogoproto.stdtime) = true, 
+        (gogoproto.nullable) = false, 
+        (gogoproto.moretags) = "yaml:\"voting_start_time\""
+    ];
+}

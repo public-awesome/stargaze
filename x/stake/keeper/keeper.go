@@ -11,13 +11,13 @@ import (
 // Keeper of the x/stake store
 type Keeper struct {
 	storeKey      sdk.StoreKey
-	cdc           *codec.Codec
+	cdc           codec.Marshaler
 	stakingKeeper types.StakingKeeper
 	paramspace    types.ParamSubspace
 }
 
 // NewKeeper creates a x/stake keeper
-func NewKeeper(cdc *codec.Codec, key sdk.StoreKey, stakingKeeper types.StakingKeeper,
+func NewKeeper(cdc codec.Marshaler, key sdk.StoreKey, stakingKeeper types.StakingKeeper,
 	paramspace types.ParamSubspace) Keeper {
 
 	keeper := Keeper{
