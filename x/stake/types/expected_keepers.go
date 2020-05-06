@@ -25,6 +25,7 @@ type BankKeeper interface {
 */
 
 type StakingKeeper interface {
-	Delegate(ctx sdk.Context, delegatorAddr sdk.AccAddress, bondAmt sdk.Int, tokenSrc sdk.BondStatus, validator stakingexported.ValidatorI, subtractAccount bool) (newShares sdk.Dec, err error)
+	Delegate(ctx sdk.Context, delegatorAddr sdk.AccAddress, bondAmt sdk.Int, tokenSrc sdk.BondStatus,
+		validator stakingexported.ValidatorI, subtractAccount bool) (newShares sdk.Dec, err error)
 	GetValidator(ctx sdk.Context, valAddress sdk.ValAddress) (validator stakingexported.ValidatorI, found bool)
 }
