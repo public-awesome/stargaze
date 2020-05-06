@@ -13,7 +13,7 @@ import (
 func (k Keeper) Delegate(ctx sdk.Context, vendorID uint32, postID uint64, delAddr sdk.AccAddress,
 	valAddress sdk.ValAddress, votingPeriod time.Duration, amount sdk.Coin) (err error) {
 
-	// check if post exist, if not, create it
+	// check if post exist, if not, create it and begin the voting period
 	_, found := k.GetPost(ctx, vendorID, postID)
 	if !found {
 		k.CreatePost(ctx, postID, vendorID, "", votingPeriod)

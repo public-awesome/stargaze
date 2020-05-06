@@ -13,6 +13,8 @@ func NewHandler(k Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
 		switch msg := msg.(type) {
+		case types.MsgPost:
+			return handleMsgPost(ctx, k, msg)
 		case types.MsgDelegate:
 			return handleMsgDelegate(ctx, k, msg)
 		default:
@@ -38,4 +40,19 @@ func handleMsgDelegate(ctx sdk.Context, k Keeper, msg types.MsgDelegate) (*sdk.R
 	)
 
 	return &sdk.Result{Events: ctx.EventManager().Events()}, nil
+}
+
+func handleMsgPost(ctx sdk.Context, k Keeper, msg types.MsgPost) (*sdk.Result, error) {
+	err := k.CreatePost(ctx, msg.ID, msg.VendorID, msg.Body, msg.VotingPeriod)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.ValidatorAddr.String()),
+		),
+	)
 }
