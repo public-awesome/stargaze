@@ -1,4 +1,4 @@
-# x/stake module specification
+# Stake module specification
 
 ## Abstract
 
@@ -17,7 +17,9 @@ This module wraps the Cosmos `x/staking` module to perform time-bound delegation
 
 ## State
 
-### DelegationQueue (FIFO)
+### Post
+
+* Posts: 0x01 | vendor_id | post_id -> Post
 
 ```go
 type Post struct {
@@ -25,11 +27,15 @@ type Post struct {
 	VendorID        uint32 
 	Body            string 
 	VotingPeriod    time.Duration 
-	VotingStartTime time.Time     
+    VotingStartTime time.Time
 }
 ```
 
-* DelegationQueue: 0x01 | format(expire_time) | vendor_id | post_id | stake_id -> Delegation
+A post can optionally include a delegation.
+
+### DelegationQueue (FIFO)
+
+* DelegationQueue: 0x02 | format(expire_time) | vendor_id | post_id | stake_id -> Delegation
 
 `stake_id` is an auto-incrementing `uint32`.
 
@@ -43,10 +49,37 @@ type Delegation struct {
 
 ## Messages
 
+### MsgPost
+
+* Persist the post
+* Add `Delegation` if the post message includes one
+
+```go
+type MsgPost struct {
+	ID              uint64 
+	VendorID        uint32 
+	Body            string 
+	VotingPeriod    time.Duration 
+    VotingStartTime time.Time
+    Delegation      *staking.Delegation
+}
+```
+
 ### MsgDelegate
 
+* If post doesn't exist, create the `Post` and start the voting period.
 * Call `Delegate()` in the staking module
 * Add a new `Delegation` to the end of `DelegationQueue`
+
+```go
+type MsgDelegate struct {
+	VendorID      uint32
+	PostID        uint64
+	DelegatorAddr sdk.AccAddress
+	ValidatorAddr sdk.ValAddress
+	Amount        sdk.Coin
+}
+```
 
 ## End-Block
 
@@ -59,11 +92,10 @@ type Delegation struct {
 
 ### EndBlocker
 
-| Type              | Attribute Key         | Attribute Value           |
-| ----------------- | --------------------- | ------------------------- |
-| complete_stake    | amount                | {Amount}                  |
-| complete_stake    | delegator             | {delegatorAddress}        |
+| Type                      | Attribute Key         | Attribute Value           |
+| ------------------------- | --------------------- | ------------------------- |
+| voting_period_start       | post                  | {Post}                    |
+| voting_period_end         | post                  | {Post}                    |
 
 ## Parameters
 
-* `VotingPeriod` = 3 days
