@@ -8,26 +8,33 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/staking"
-	"github.com/cosmos/cosmos-sdk/x/staking/keeper"
+	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	"github.com/rocket-protocol/stakebird/x/stake/keeper"
 )
 
 // TODO
-// extend SimApp to add stakeKeeper
+type StakeApp struct {
+	*simapp.SimApp
+	stakeKeeper keeper.Keeper
+}
 
 // createTestInput Returns a simapp with custom StakingKeeper
-func createTestInput() (*codec.Codec, *simapp.SimApp, sdk.Context) {
-	app := simapp.Setup(false)
+func createTestInput() (*codec.Codec, *StakeApp, sdk.Context) {
+	app := &StakeApp{
+		SimApp:      simapp.Setup(false),
+		stakeKeeper: keeper.Keeper{},
+	}
 	ctx := app.BaseApp.NewContext(false, abci.Header{})
 
 	appCodec := std.NewAppCodec(codec.New())
 
-	app.StakingKeeper = keeper.NewKeeper(
+	app.StakingKeeper = stakingkeeper.NewKeeper(
 		appCodec,
-		app.GetKey(staking.StoreKey),
+		app.GetKey(stakingtypes.StoreKey),
 		app.AccountKeeper,
 		app.BankKeeper,
-		app.GetSubspace(staking.ModuleName),
+		app.GetSubspace(stakingtypes.ModuleName),
 	)
 
 	return codec.New(), app, ctx
