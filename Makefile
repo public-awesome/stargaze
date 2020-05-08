@@ -15,14 +15,14 @@ BUILD_FLAGS := -ldflags '$(ldflags)'
 all: install
 
 create-wallet:
-	bin/rocketcli keys add validator
+	bin/rocketcli keys add validator --keyring-backend test
 
 init:
 	rm -rf ~/.rocketd
 	bin/rocketd init rocket
-	bin/rocketd add-genesis-account $(shell bin/rocketcli keys show validator -a ) 10000000000ufuel
-	bin/rocketd gentx --name=validator --amount 10000000000ufuel
-	bin/rocketd collect-gentxs
+	bin/rocketd add-genesis-account $(shell bin/rocketcli keys show validator -a --keyring-backend test) 10000000000ufuel --keyring-backend test
+	bin/rocketd gentx --name=validator --amount 10000000000ufuel --keyring-backend test
+	bin/rocketd collect-gentxs 
 
 install: go.sum
 		go install -mod=readonly $(BUILD_FLAGS) ./cmd/rocketd
