@@ -1,23 +1,24 @@
 package keeper
 
 import (
-	"github.com/rocket-protocol/stakebird/x/stake/types"
-	"github.com/tendermint/tendermint/libs/log"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+	"github.com/rocket-protocol/stakebird/x/stake/types"
+	"github.com/tendermint/tendermint/libs/log"
 )
 
 // Keeper of the x/stake store
 type Keeper struct {
-	storeKey      sdk.StoreKey
-	cdc           codec.Marshaler
-	stakingKeeper types.StakingKeeper
+	storeKey sdk.StoreKey
+	cdc      codec.Marshaler
+	// stakingKeeper types.StakingKeeper
+	stakingKeeper stakingkeeper.Keeper
 	paramspace    types.ParamSubspace
 }
 
 // NewKeeper creates a x/stake keeper
-func NewKeeper(cdc codec.Marshaler, key sdk.StoreKey, stakingKeeper types.StakingKeeper,
+func NewKeeper(cdc codec.Marshaler, key sdk.StoreKey, stakingKeeper stakingkeeper.Keeper,
 	paramspace types.ParamSubspace) Keeper {
 
 	keeper := Keeper{

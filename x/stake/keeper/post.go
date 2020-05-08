@@ -24,6 +24,6 @@ func (k Keeper) CreatePost(ctx sdk.Context, postID uint64, vendorID uint32, body
 	post := types.NewPost(postID, vendorID, body, votingPeriod, ctx.BlockTime())
 	store := ctx.KVStore(k.storeKey)
 	key := types.PostKey(vendorID, postID)
-	value := k.cdc.MustMarshalBinaryLengthPrefixed(post)
+	value := k.cdc.MustMarshalBinaryBare(&post)
 	store.Set(key, value)
 }

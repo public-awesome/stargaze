@@ -39,20 +39,19 @@ func handleMsgDelegate(ctx sdk.Context, k Keeper, msg types.MsgDelegate) (*sdk.R
 		),
 	)
 
-	return &sdk.Result{Events: ctx.EventManager().Events()}, nil
+	return &sdk.Result{Events: ctx.EventManager().ABCIEvents()}, nil
 }
 
 func handleMsgPost(ctx sdk.Context, k Keeper, msg types.MsgPost) (*sdk.Result, error) {
-	err := k.CreatePost(ctx, msg.ID, msg.VendorID, msg.Body, msg.VotingPeriod)
-	if err != nil {
-		return nil, err
-	}
+	k.CreatePost(ctx, msg.ID, msg.VendorID, msg.Body, msg.VotingPeriod)
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.ValidatorAddr.String()),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Delegation.ValidatorAddress.String()),
 		),
 	)
+
+	return &sdk.Result{Events: ctx.EventManager().ABCIEvents()}, nil
 }

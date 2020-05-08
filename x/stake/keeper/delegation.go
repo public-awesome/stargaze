@@ -61,7 +61,7 @@ func (k Keeper) InsertVotingDelegationQueue(ctx sdk.Context, vendorID uint32, po
 
 func (k Keeper) setVotingDelegationQueue(ctx sdk.Context, key []byte, delegation stakingtypes.Delegation) {
 	store := ctx.KVStore(k.storeKey)
-	value := k.cdc.MustMarshalBinaryBare(delegation)
+	value := k.cdc.MustMarshalBinaryBare(&delegation)
 	store.Set(key, value)
 }
 

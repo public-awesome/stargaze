@@ -15,14 +15,14 @@ import (
 // TODO
 type StakeApp struct {
 	*simapp.SimApp
-	stakeKeeper keeper.Keeper
+	StakeKeeper keeper.Keeper
 }
 
 // createTestInput Returns a simapp with custom StakingKeeper
 func createTestInput() (*codec.Codec, *StakeApp, sdk.Context) {
 	app := &StakeApp{
 		SimApp:      simapp.Setup(false),
-		stakeKeeper: keeper.Keeper{},
+		StakeKeeper: keeper.Keeper{},
 	}
 	ctx := app.BaseApp.NewContext(false, abci.Header{})
 
@@ -36,7 +36,14 @@ func createTestInput() (*codec.Codec, *StakeApp, sdk.Context) {
 		app.GetSubspace(stakingtypes.ModuleName),
 	)
 
-	app.stakeKeeper = keeper.NewKeeper(appCodec, types.StoreKey, app.StakingKeeper, nil)
+	// TODO: need to add store key to sim app?
+	// SimApp doesn't have stake keeper module, so store is not loaded, no store key, etc.
+
+	app.StakeKeeper = keeper.NewKeeper(
+		appCodec,
+		app.GetKey(types.StoreKey),
+		app.StakingKeeper,
+		nil)
 
 	return codec.New(), app, ctx
 }

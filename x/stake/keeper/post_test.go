@@ -1,11 +1,20 @@
 package keeper_test
 
-import "testing"
+import (
+	"testing"
+	"time"
+
+	"github.com/stretchr/testify/require"
+)
 
 func TestPost(t *testing.T) {
 	_, app, ctx := createTestInput()
 
-	// addrDels := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(10000))
-	// valAddrs := simapp.ConvertAddrsToValAddrs(addrDels)
+	postID := uint64(500)
+	vendorID := uint32(10000)
+	votingPeriod := time.Hour * 24 * 7
+	app.StakeKeeper.CreatePost(ctx, postID, vendorID, "body string", votingPeriod)
 
+	_, found := app.StakeKeeper.GetPost(ctx, vendorID, postID)
+	require.True(t, found, "Post should be found")
 }
