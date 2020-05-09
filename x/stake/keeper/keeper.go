@@ -25,7 +25,8 @@ func NewKeeper(cdc codec.Marshaler, key sdk.StoreKey, stakingKeeper stakingkeepe
 		storeKey:      key,
 		cdc:           cdc,
 		stakingKeeper: stakingKeeper,
-		paramspace:    paramspace.WithKeyTable(types.ParamKeyTable()),
+		// paramspace:    paramspace.WithKeyTable(types.ParamKeyTable()),
+		paramspace: nil,
 	}
 	return keeper
 }
