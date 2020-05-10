@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/rocket-protocol/stakebird/x/stake"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
@@ -107,6 +108,7 @@ var (
 		upgrade.AppModuleBasic{},
 		evidence.AppModuleBasic{},
 		transfer.AppModuleBasic{},
+		stake.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -157,6 +159,7 @@ type SimApp struct {
 	IBCKeeper        *ibc.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
 	EvidenceKeeper   evidence.Keeper
 	TransferKeeper   transfer.Keeper
+	StakeKeeper      stake.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper      capability.ScopedKeeper
@@ -188,6 +191,7 @@ func NewSimApp(
 		mint.StoreKey, distr.StoreKey, slashing.StoreKey,
 		gov.StoreKey, params.StoreKey, ibc.StoreKey, upgrade.StoreKey,
 		evidence.StoreKey, transfer.StoreKey, capability.StoreKey,
+		stake.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capability.MemStoreKey)
@@ -216,6 +220,7 @@ func NewSimApp(
 	app.subspaces[slashing.ModuleName] = app.ParamsKeeper.Subspace(slashing.DefaultParamspace)
 	app.subspaces[gov.ModuleName] = app.ParamsKeeper.Subspace(gov.DefaultParamspace).WithKeyTable(gov.ParamKeyTable())
 	app.subspaces[crisis.ModuleName] = app.ParamsKeeper.Subspace(crisis.DefaultParamspace)
+	app.subspaces[stake.ModuleName] = app.ParamsKeeper.Subspace(stake.DefaultParamspace)
 
 	bApp.SetParamStore(app.ParamsKeeper.Subspace(baseapp.Paramspace).WithKeyTable(std.ConsensusParamsKeyTable()))
 
@@ -266,6 +271,8 @@ func NewSimApp(
 		staking.NewMultiStakingHooks(app.DistrKeeper.Hooks(), app.SlashingKeeper.Hooks()),
 	)
 
+	app.StakeKeeper = stake.NewKeeper(appCodec, keys[stake.StoreKey], app.StakingKeeper, app.subspaces[stake.ModuleName])
+
 	// Create IBC Keeper
 	app.IBCKeeper = ibc.NewKeeper(
 		app.cdc, keys[ibc.StoreKey], app.StakingKeeper, ScopedIBCKeeper,
@@ -313,6 +320,8 @@ func NewSimApp(
 		ibc.NewAppModule(app.IBCKeeper),
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
+		// TODO: need to pass appCodec?
+		stake.NewAppModule(app.StakeKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
