@@ -3,16 +3,16 @@ package keeper_test
 import (
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/simapp"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func TestDelegation(t *testing.T) {
 	_, app, ctx := createTestInput()
 
-	addrDels := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(10000))
-	// valAddrs := simapp.ConvertAddrsToValAddrs(addrDels)
+	delAddrs := AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(10000))
+	valAddrs := ConvertAddrsToValAddrs(delAddrs)
 
 	vendorID := uint64(100)
 	postID := uint64(200)
-	app.StakeKeeper.Delegate(ctx, vendorID, postID, delAddr, valAddr, votingPeriod, amount)
+	app.StakeKeeper.Delegate(ctx, vendorID, postID, delAddrs[0], valAddrs[0], votingPeriod, amount)
 }
