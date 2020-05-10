@@ -3,7 +3,7 @@ module github.com/rocket-protocol/rocketzone
 go 1.14
 
 require (
-	github.com/cosmos/cosmos-sdk v0.34.4-0.20200502230752-7557f0eda346
+	github.com/cosmos/cosmos-sdk v0.34.4-0.20200507135526-b3cada10017d
 	github.com/onsi/ginkgo v1.8.0 // indirect
 	github.com/onsi/gomega v1.5.0 // indirect
 	github.com/pkg/errors v0.9.1
