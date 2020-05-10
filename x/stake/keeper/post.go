@@ -15,7 +15,7 @@ func (k Keeper) GetPost(ctx sdk.Context, vendorID, postID uint64) (post types.Po
 	if value == nil {
 		return post, false
 	}
-	types.ModuleCdc.MustUnmarshalBinaryLengthPrefixed(value, post)
+	k.cdc.MustUnmarshalBinaryBare(value, &post)
 
 	return post, true
 }
