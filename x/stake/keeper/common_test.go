@@ -2,9 +2,11 @@ package keeper_test
 
 import (
 	"os"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/rocket-protocol/stakebird/x/stake/testdata"
@@ -13,50 +15,32 @@ import (
 	dbm "github.com/tendermint/tm-db"
 )
 
-// TODO
-// type StakeApp struct {
-// 	*simapp.SimApp
-// 	StakeKeeper keeper.Keeper
-// }
-
-// createTestInput Returns a simapp with custom StakingKeeper
-// func createTestInput() (*codec.Codec, *StakeApp, sdk.Context) {
-// 	app := &StakeApp{
-// 		SimApp:      simapp.Setup(false),
-// 		StakeKeeper: keeper.Keeper{},
-// 	}
-// 	ctx := app.BaseApp.NewContext(false, abci.Header{})
-
-// 	appCodec := std.NewAppCodec(codec.New())
-
-// 	app.StakingKeeper = stakingkeeper.NewKeeper(
-// 		appCodec,
-// 		app.GetKey(stakingtypes.StoreKey),
-// 		app.AccountKeeper,
-// 		app.BankKeeper,
-// 		app.GetSubspace(stakingtypes.ModuleName),
-// 	)
-
-// 	// TODO: need to add store key to sim app?
-// 	// SimApp doesn't have stake keeper module, so store is not loaded, no store key, etc.
-
-// 	app.StakeKeeper = keeper.NewKeeper(
-// 		appCodec,
-// 		app.GetKey(types.StoreKey),
-// 		app.StakingKeeper,
-// 		nil)
-
-// 	return codec.New(), app, ctx
-// }
-
 func createTestInput() (*codec.Codec, *testdata.SimApp, sdk.Context) {
 	db := dbm.NewMemDB()
 	logger := log.NewTMJSONLogger(log.NewSyncWriter(os.Stdout))
 
 	opts := []func(*baseapp.BaseApp){baseapp.SetPruning(store.PruneNothing)}
-	app := testdata.NewSimApp(logger, db, nil, true, 0, map[int64]bool{}, "home", opts...)
-	ctx := app.NewContext(false, abci.Header{})
-	// appCodec := app.Codec()
+	app := testdata.NewSimApp(logger, db, nil, true, 0, map[int64]bool{}, simapp.DefaultNodeHome, opts...)
+
+	genesisState := testdata.ModuleBasics.DefaultGenesis(app.Codec())
+	stateBytes, err := codec.MarshalJSONIndent(app.Codec(), genesisState)
+	if err != nil {
+		panic(err)
+	}
+
+	// Initialize the chain
+	app.InitChain(
+		abci.RequestInitChain{
+			Validators:    []abci.ValidatorUpdate{},
+			AppStateBytes: stateBytes,
+		},
+	)
+	app.Commit()
+
+	header := abci.Header{Height: app.LastBlockHeight() + 1, Time: time.Now()}
+	app.BeginBlock(abci.RequestBeginBlock{Header: header})
+
+	ctx := app.NewContext(false, header)
 
 	return codec.New(), app, ctx
 }
