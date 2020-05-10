@@ -49,6 +49,8 @@ func createTestInput() (*codec.Codec, *testdata.SimApp, sdk.Context) {
 	return codec.New(), app, ctx
 }
 
+type GenerateAccountStrategy func(int) []sdk.AccAddress
+
 // AddTestAddrs constructs and returns accNum amount of accounts with an
 // initial balance of accAmt in random order
 func AddTestAddrsIncremental(app *testdata.SimApp, ctx sdk.Context, accNum int, accAmt sdk.Int) []sdk.AccAddress {
@@ -110,7 +112,7 @@ func createIncrementalAccounts(accNum int) []sdk.AccAddress {
 		buffer.WriteString(numString) //adding on final two digits to make addresses unique
 		res, _ := sdk.AccAddressFromHex(buffer.String())
 		bech := res.String()
-		addr, _ := TestAddr(buffer.String(), bech)
+		addr, _ := FakeAddr(buffer.String(), bech)
 
 		addresses = append(addresses, addr)
 		buffer.Reset()
@@ -119,7 +121,7 @@ func createIncrementalAccounts(accNum int) []sdk.AccAddress {
 	return addresses
 }
 
-func TestAddr(addr string, bech string) (sdk.AccAddress, error) {
+func FakeAddr(addr string, bech string) (sdk.AccAddress, error) {
 	res, err := sdk.AccAddressFromHex(addr)
 	if err != nil {
 		return nil, err

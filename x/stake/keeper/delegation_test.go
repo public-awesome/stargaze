@@ -2,8 +2,10 @@ package keeper_test
 
 import (
 	"testing"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
 )
 
 func TestDelegation(t *testing.T) {
@@ -14,5 +16,9 @@ func TestDelegation(t *testing.T) {
 
 	vendorID := uint64(100)
 	postID := uint64(200)
-	app.StakeKeeper.Delegate(ctx, vendorID, postID, delAddrs[0], valAddrs[0], votingPeriod, amount)
+	votingPeriod := time.Hour * 24 * 7
+	amount := sdk.NewInt64Coin("ufuel", 10000)
+	err := app.StakeKeeper.Delegate(ctx, vendorID, postID, delAddrs[0], valAddrs[0], votingPeriod, amount)
+
+	require.NoError(t, err)
 }
