@@ -12,11 +12,26 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/rocket-protocol/stakebird/x/stake/testdata"
+	"github.com/rocket-protocol/stakebird/x/stake/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
+)
+
+var (
+	PKs = simapp.CreateTestPubKeys(5)
+
+	valConsPk1 = PKs[0]
+	valConsPk2 = PKs[1]
+	valConsPk3 = PKs[2]
+
+	valConsAddr1 = sdk.ConsAddress(valConsPk1.Address())
+	valConsAddr2 = sdk.ConsAddress(valConsPk2.Address())
+
+	distrAcc = auth.NewEmptyModuleAccount(types.ModuleName)
 )
 
 func createTestInput() (*codec.Codec, *testdata.SimApp, sdk.Context) {
