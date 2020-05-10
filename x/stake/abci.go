@@ -2,6 +2,8 @@ package stake
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	"github.com/davecgh/go-spew/spew"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
@@ -21,4 +23,10 @@ func EndBlocker(ctx sdk.Context, k Keeper) {
 	// ..collate by post_id
 	// ..iterate all stakes to calculate final rewards
 	// ..distribute rewards
+
+	endTime := ctx.BlockTime()
+	k.IterateVotingDelegationQueue(ctx, endTime, func(vendorID, postID uint64, delegation stakingtypes.Delegation) bool {
+		spew.Dump(vendorID, postID, delegation)
+		return true
+	})
 }
