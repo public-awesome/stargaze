@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-func NewPost(id uint64, vendorID uint32, body string, votingPeriod time.Duration, votingStartTime time.Time) Post {
+func NewPost(id, vendorID uint64, body string, votingPeriod time.Duration, votingStartTime time.Time) Post {
 	return Post{
 		ID:              id,
 		VendorID:        vendorID,

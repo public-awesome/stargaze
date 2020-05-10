@@ -10,7 +10,7 @@ import (
 )
 
 // Perform a delegation
-func (k Keeper) Delegate(ctx sdk.Context, vendorID uint32, postID uint64, delAddr sdk.AccAddress,
+func (k Keeper) Delegate(ctx sdk.Context, vendorID, postID uint64, delAddr sdk.AccAddress,
 	valAddress sdk.ValAddress, votingPeriod time.Duration, amount sdk.Coin) (err error) {
 
 	// check if post exist, if not, create it and begin the voting period
@@ -40,7 +40,7 @@ func (k Keeper) Delegate(ctx sdk.Context, vendorID uint32, postID uint64, delAdd
 	return nil
 }
 
-func (k Keeper) InsertVotingDelegationQueue(ctx sdk.Context, vendorID uint32, postID uint64,
+func (k Keeper) InsertVotingDelegationQueue(ctx sdk.Context, vendorID, postID uint64,
 	delegation stakingtypes.Delegation, completionTime time.Time) {
 	// get current stake index
 	store := ctx.KVStore(k.storeKey)

@@ -15,14 +15,14 @@ var _ sdk.Msg = &MsgPost{}
 
 type MsgPost struct {
 	ID              uint64                  `json:"id" yaml:"id"`
-	VendorID        uint32                  `json:"vendor_id" yaml:"vendor_id"`
+	VendorID        uint64                  `json:"vendor_id" yaml:"vendor_id"`
 	Body            string                  `json:"body" yaml:"body"`
 	VotingPeriod    time.Duration           `json:"voting_period" yaml:"voting_period"`
 	VotingStartTime time.Time               `json:"voting_start_time" yaml:"voting_start_time"`
 	Delegation      stakingtypes.Delegation `json:"delegation" yaml:"delegation"`
 }
 
-func NewPostMsg(id uint64, vendorID uint32, body string, votingPeriod time.Duration, votingStartTime time.Time,
+func NewPostMsg(id, vendorID uint64, body string, votingPeriod time.Duration, votingStartTime time.Time,
 	delegation stakingtypes.Delegation) MsgPost {
 
 	return MsgPost{
@@ -71,7 +71,7 @@ func (msg MsgPost) ValidateBasic() error {
 
 // MsgDelegate - struct for delegating to a validator
 type MsgDelegate struct {
-	VendorID      uint32         `json:"vendor_id" yaml:"vendor_id"`
+	VendorID      uint64         `json:"vendor_id" yaml:"vendor_id"`
 	PostID        uint64         `json:"post_id" yaml:"post_id"`
 	DelegatorAddr sdk.AccAddress `json:"delegator_address" yaml:"delegator_address"`
 	ValidatorAddr sdk.ValAddress `json:"validator_address" yaml:"validator_address"`
@@ -80,7 +80,7 @@ type MsgDelegate struct {
 }
 
 // NewMsgDelegate creates a new MsgDelegate instance
-func NewMsgDelegate(vendorID uint32, postID uint64, delegatorAddr sdk.AccAddress, validatorAddr sdk.ValAddress,
+func NewMsgDelegate(vendorID, postID uint64, delegatorAddr sdk.AccAddress, validatorAddr sdk.ValAddress,
 	votingPeriod time.Duration, amount sdk.Coin) MsgDelegate {
 
 	return MsgDelegate{

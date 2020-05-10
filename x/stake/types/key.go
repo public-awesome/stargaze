@@ -32,36 +32,29 @@ var (
 	KeyIndexStakeID = []byte{0x13}
 )
 
-func PostKey(vendorID uint32, postID uint64) []byte {
-	vendorIDBz := uint32ToBigEndian(vendorID)
+func PostKey(vendorID, postID uint64) []byte {
+	vendorIDBz := sdk.Uint64ToBigEndian(vendorID)
 	postIDBz := sdk.Uint64ToBigEndian(postID)
 	return append(KeyPrefixPost, append(vendorIDBz, postIDBz...)...)
 }
 
-func VotingDelegationQueueKey(completionTime time.Time, vendorID uint32, postID, stakeID uint64) []byte {
+func VotingDelegationQueueKey(completionTime time.Time, vendorID, postID, stakeID uint64) []byte {
 	bz := sdk.Uint64ToBigEndian(stakeID)
 	return append(votingDelegationQueuePostIDPrefix(completionTime, vendorID, postID), bz...)
 }
 
-func votingDelegationQueuePostIDPrefix(completionTime time.Time, vendorID uint32, postID uint64) []byte {
+func votingDelegationQueuePostIDPrefix(completionTime time.Time, vendorID, postID uint64) []byte {
 	bz := sdk.Uint64ToBigEndian(postID)
 	return append(votingDelegationQueueVendorPrefix(completionTime, vendorID), bz...)
 }
 
-func votingDelegationQueueVendorPrefix(completionTime time.Time, vendorID uint32) []byte {
-	return append(VotingDelegationQueueTimeKeyPrefix(completionTime), uint32ToBigEndian(vendorID)...)
+func votingDelegationQueueVendorPrefix(completionTime time.Time, vendorID uint64) []byte {
+	return append(VotingDelegationQueueTimeKeyPrefix(completionTime), sdk.Uint64ToBigEndian(vendorID)...)
 }
 
 func VotingDelegationQueueTimeKeyPrefix(completionTime time.Time) []byte {
 	bz := sdk.FormatTimeBytes(completionTime)
 	return append(KeyPrefixVotingDelegationQueue, bz...)
-}
-
-// marshals uint32 to a big endian byte slice so it can be sorted
-func uint32ToBigEndian(i uint32) []byte {
-	b := make([]byte, 3)
-	binary.BigEndian.PutUint32(b, i)
-	return b
 }
 
 // returns bytes to be used as a key for a given stake index.

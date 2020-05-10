@@ -11,7 +11,7 @@ func TestPost(t *testing.T) {
 	_, app, ctx := createTestInput()
 
 	postID := uint64(500)
-	vendorID := uint32(10000)
+	vendorID := uint64(100)
 	votingPeriod := time.Hour * 24 * 7
 	app.StakeKeeper.CreatePost(ctx, postID, vendorID, "body string", votingPeriod)
 

@@ -72,7 +72,7 @@ message Post {
         (gogoproto.customname) = "ID",
         (gogoproto.moretags) = "yaml:\"id\""
     ];
-    uint32 vendor_id = 2 [
+    uint64 vendor_id = 2 [
         (gogoproto.customname) = "VendorID",
         (gogoproto.moretags) = "yaml:\"vendor_id\""
     ];
