@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/binary"
+	"fmt"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -31,6 +32,8 @@ var (
 	// 0x13
 	KeyIndexStakeID = []byte{0x13}
 )
+
+var lenTime = len(sdk.FormatTimeBytes(time.Now()))
 
 func PostKey(vendorID, postID uint64) []byte {
 	vendorIDBz := sdk.Uint64ToBigEndian(vendorID)
@@ -65,6 +68,22 @@ func StakeIndexToKey(index uint64) []byte {
 // returns a stake index for a given byte key
 func StakeIndexFromKey(key []byte) uint64 {
 	return bigEndianToUint64(key)
+}
+
+func SplitVotingDelegationQueueKey(key []byte) (endTime time.Time, vendorID, postID uint64) {
+	if len(key[1:]) != 8+lenTime {
+		panic(fmt.Sprintf("unexpected key length (%d ≠ %d)", len(key[1:]), lenTime+8))
+	}
+
+	endTime, err := sdk.ParseTimeBytes(key[1 : 1+lenTime])
+	if err != nil {
+		panic(err)
+	}
+
+	vendorID = binary.BigEndian.Uint64(key[1+lenTime : 8])
+	postID = binary.BigEndian.Uint64(key[1+lenTime+8:])
+
+	return endTime, vendorID, postID
 }
 
 // returns an uint64 from big endian encoded bytes. If encoding

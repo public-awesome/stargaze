@@ -6,6 +6,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/rocket-protocol/stakebird/x/stake/types"
 )
 
@@ -65,9 +66,27 @@ func (k Keeper) setVotingDelegationQueue(ctx sdk.Context, key []byte, delegation
 	store.Set(key, value)
 }
 
+func (k Keeper) IterateVotingDelegationQueue(ctx sdk.Context, endTime time.Time,
+	cb func(vendorID, postID uint64, delegation stakingtypes.Delegation) (stop bool)) {
+
+	iterator := k.VotingDelegationQueueIterator(ctx, endTime)
+
+	defer iterator.Close()
+	for ; iterator.Valid(); iterator.Next() {
+		_, vendorID, postID := types.SplitVotingDelegationQueueKey(iterator.Key())
+		spew.Dump(vendorID, postID)
+		var delegation stakingtypes.Delegation
+		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &delegation)
+
+		if cb(vendorID, postID, delegation) {
+			break
+		}
+	}
+}
+
 // Returns all delegation timeslices from time 0 until completion time
-func (k Keeper) VotingDelegationQueueIterator(ctx sdk.Context, completionTime time.Time) sdk.Iterator {
+func (k Keeper) VotingDelegationQueueIterator(ctx sdk.Context, endTime time.Time) sdk.Iterator {
 	store := ctx.KVStore(k.storeKey)
 	return store.Iterator(types.KeyPrefixVotingDelegationQueue,
-		sdk.InclusiveEndBytes(types.VotingDelegationQueueTimeKeyPrefix(completionTime)))
+		sdk.InclusiveEndBytes(types.VotingDelegationQueueTimeKeyPrefix(endTime)))
 }

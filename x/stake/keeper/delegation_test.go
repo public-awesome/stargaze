@@ -39,4 +39,19 @@ func TestDelegation(t *testing.T) {
 	amount := sdk.NewInt64Coin("ufuel", 10000)
 	err = app.StakeKeeper.Delegate(ctx, vendorID, postID, delAddrs[0], valAddrs[0], votingPeriod, amount)
 	require.NoError(t, err)
+
+	// check if delegation is stored in staking store
+	delegations := app.StakingKeeper.GetAllDelegations(ctx)
+	require.Len(t, delegations, 1)
+}
+
+func TestIteration(t *testing.T) {
+	// // check if delegation is in voting queue
+	// endTime := ctx.BlockTime()
+	// app.StakeKeeper.IterateVotingDelegationQueue(ctx, endTime, func(vendorID, postID uint64, delegation stakingtypes.Delegation) bool {
+	// 	spew.Dump(delegation)
+	// 	require.True(t, delegation.GetShares().Equal(amount.Amount.ToDec()))
+	// 	return true
+	// })
+	// require.Fail(t, "failureMessage strings")
 }
