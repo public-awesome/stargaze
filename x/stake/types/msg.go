@@ -19,17 +19,10 @@ type MsgPost struct {
 	VotingPeriod time.Duration `json:"voting_period" yaml:"voting_period"`
 }
 
-func NewMsgPost(vendorID, postID uint64, body string, delAddr sdk.AccAddress,
-	valAddr sdk.ValAddress, amount sdk.Coin, votingPeriod time.Duration) MsgPost {
+func NewMsgPost(body string, msg MsgDelegate, votingPeriod time.Duration) MsgPost {
 
 	return MsgPost{
-		MsgDelegate: &MsgDelegate{
-			VendorID:      vendorID,
-			PostID:        postID,
-			DelegatorAddr: delAddr,
-			ValidatorAddr: valAddr,
-			Amount:        amount,
-		},
+		MsgDelegate:  &msg,
 		Body:         body,
 		VotingPeriod: votingPeriod,
 	}

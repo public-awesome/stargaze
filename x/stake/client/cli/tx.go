@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -121,8 +122,21 @@ $ %s tx stake post cosmosvaloper1l2rsakp388kuv9k8qzq6lrm9taddae7fpx59wm 1000stak
 				return err
 			}
 
-			msg := types.NewMsgDelegate(vendorID, postID, delAddr, valAddr, amount)
-			// msg := types.NewMsgPost(id, vendorID, body, votingPeriod, votingStartTime, delegation)
+			var body string
+			if len(args) > 3 {
+				body = args[4]
+			}
+
+			var votingPeriod time.Duration
+			if len(args) > 4 {
+				votingPeriod, err = time.ParseDuration(args[5])
+				if err != nil {
+					panic("Failed parsing voting period")
+				}
+			}
+
+			msgDel := types.NewMsgDelegate(vendorID, postID, delAddr, valAddr, amount)
+			msg := types.NewMsgPost(body, msgDel, votingPeriod)
 
 			return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},

@@ -21,6 +21,10 @@ func (k Keeper) GetPost(ctx sdk.Context, vendorID, postID uint64) (post types.Po
 }
 
 func (k Keeper) CreatePost(ctx sdk.Context, postID, vendorID uint64, body string, votingPeriod time.Duration) types.Post {
+	// use default voting period if not specified
+	if votingPeriod == 0 {
+		votingPeriod = k.GetParams(ctx).VotingPeriod
+	}
 	post := types.NewPost(postID, vendorID, body, votingPeriod, ctx.BlockTime())
 	store := ctx.KVStore(k.storeKey)
 	key := types.PostKey(vendorID, postID)
