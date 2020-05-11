@@ -30,6 +30,7 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 	}
 
 	stakeTxCmd.AddCommand(flags.PostCommands(
+		GetCmdPost(cdc),
 		GetCmdDelegate(cdc),
 	)...)
 
@@ -86,7 +87,7 @@ $ %s tx stake delegate cosmosvaloper1l2rsakp388kuv9k8qzq6lrm9taddae7fpx59wm 1000
 func GetCmdPost(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "post [validator-addr] [amount] [vendor-id] [post-id] [body] [voting-period]",
-		Args:  cobra.ExactArgs(4),
+		Args:  cobra.MinimumNArgs(4),
 		Short: "Delegate liquid tokens to a validator for creating a post",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Delegate an amount of liquid coins to a validator from your wallet.
