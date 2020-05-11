@@ -43,18 +43,12 @@ func (msg MsgPost) GetSignBytes() []byte {
 
 // ValidateBasic validity check for the AnteHandler
 func (msg MsgPost) ValidateBasic() error {
-	if msg.PostID == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid post id")
-	}
-	if msg.VendorID == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid vendor id")
+	if err := msg.MsgDelegate.ValidateBasic(); err != nil {
+		return err
 	}
 	// TODO: skip body for now
 	if msg.VotingPeriod < 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid voting period")
-	}
-	if msg.DelegatorAddr.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing delegator address")
 	}
 	return nil
 }
