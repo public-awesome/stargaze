@@ -43,13 +43,13 @@ func handleMsgDelegate(ctx sdk.Context, k Keeper, msg types.MsgDelegate) (*sdk.R
 }
 
 func handleMsgPost(ctx sdk.Context, k Keeper, msg types.MsgPost) (*sdk.Result, error) {
-	k.CreatePost(ctx, msg.ID, msg.VendorID, msg.Body, msg.VotingPeriod)
+	k.CreatePost(ctx, msg.PostID, msg.VendorID, msg.Body, msg.VotingPeriod)
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Delegation.ValidatorAddress.String()),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.ValidatorAddr.String()),
 		),
 	)
 

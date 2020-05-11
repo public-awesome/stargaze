@@ -5,7 +5,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
 // Implements the interface of `sdk.Msg`
@@ -14,24 +13,25 @@ var _ sdk.Msg = &MsgDelegate{}
 var _ sdk.Msg = &MsgPost{}
 
 type MsgPost struct {
-	ID              uint64                  `json:"id" yaml:"id"`
-	VendorID        uint64                  `json:"vendor_id" yaml:"vendor_id"`
-	Body            string                  `json:"body" yaml:"body"`
-	VotingPeriod    time.Duration           `json:"voting_period" yaml:"voting_period"`
-	VotingStartTime time.Time               `json:"voting_start_time" yaml:"voting_start_time"`
-	Delegation      stakingtypes.Delegation `json:"delegation" yaml:"delegation"`
+	*MsgDelegate
+
+	Body         string        `json:"body" yaml:"body"`
+	VotingPeriod time.Duration `json:"voting_period" yaml:"voting_period"`
 }
 
-func NewPostMsg(id, vendorID uint64, body string, votingPeriod time.Duration, votingStartTime time.Time,
-	delegation stakingtypes.Delegation) MsgPost {
+func NewMsgPost(vendorID, postID uint64, body string, delAddr sdk.AccAddress,
+	valAddr sdk.ValAddress, amount sdk.Coin, votingPeriod time.Duration) MsgPost {
 
 	return MsgPost{
-		ID:              id,
-		VendorID:        vendorID,
-		Body:            body,
-		VotingPeriod:    votingPeriod,
-		VotingStartTime: votingStartTime,
-		Delegation:      delegation,
+		MsgDelegate: &MsgDelegate{
+			VendorID:      vendorID,
+			PostID:        postID,
+			DelegatorAddr: delAddr,
+			ValidatorAddr: valAddr,
+			Amount:        amount,
+		},
+		Body:         body,
+		VotingPeriod: votingPeriod,
 	}
 }
 
@@ -39,7 +39,7 @@ func NewPostMsg(id, vendorID uint64, body string, votingPeriod time.Duration, vo
 func (msg MsgPost) Route() string { return RouterKey }
 func (msg MsgPost) Type() string  { return "post" }
 func (msg MsgPost) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{msg.Delegation.DelegatorAddress}
+	return []sdk.AccAddress{msg.DelegatorAddr}
 }
 
 // GetSignBytes gets the bytes for the message signer to sign on
@@ -50,7 +50,7 @@ func (msg MsgPost) GetSignBytes() []byte {
 
 // ValidateBasic validity check for the AnteHandler
 func (msg MsgPost) ValidateBasic() error {
-	if msg.ID == 0 {
+	if msg.PostID == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid post id")
 	}
 	if msg.VendorID == 0 {
@@ -60,10 +60,7 @@ func (msg MsgPost) ValidateBasic() error {
 	if msg.VotingPeriod < 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid voting period")
 	}
-	if msg.VotingStartTime.IsZero() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid voting start time")
-	}
-	if msg.Delegation.DelegatorAddress.Empty() {
+	if msg.DelegatorAddr.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing delegator address")
 	}
 	return nil

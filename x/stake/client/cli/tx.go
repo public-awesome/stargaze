@@ -40,7 +40,7 @@ func GetCmdDelegate(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "delegate [validator-addr] [amount] [vendor-id] [post-id]",
 		Args:  cobra.ExactArgs(4),
-		Short: "Delegate liquid tokens to a validator for a post",
+		Short: "Delegate liquid tokens to a validator for curating a post",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Delegate an amount of liquid coins to a validator from your wallet.
 Example:
@@ -76,6 +76,54 @@ $ %s tx stake delegate cosmosvaloper1l2rsakp388kuv9k8qzq6lrm9taddae7fpx59wm 1000
 			}
 
 			msg := types.NewMsgDelegate(vendorID, postID, delAddr, valAddr, amount)
+			return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+}
+
+// GetCmdPost implements the delegate command.
+func GetCmdPost(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "post [validator-addr] [amount] [vendor-id] [post-id] [body] [voting-period]",
+		Args:  cobra.ExactArgs(4),
+		Short: "Delegate liquid tokens to a validator for creating a post",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Delegate an amount of liquid coins to a validator from your wallet.
+Example:
+$ %s tx stake post cosmosvaloper1l2rsakp388kuv9k8qzq6lrm9taddae7fpx59wm 1000stake 1 2 "body" 72h  --from mykey
+`,
+				version.ClientName,
+			),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(auth.DefaultTxEncoder(cdc))
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+
+			amount, err := sdk.ParseCoin(args[1])
+			if err != nil {
+				return err
+			}
+
+			delAddr := cliCtx.GetFromAddress()
+			valAddr, err := sdk.ValAddressFromBech32(args[0])
+			if err != nil {
+				return err
+			}
+
+			vendorID, err := strconv.ParseUint(args[2], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			postID, err := strconv.ParseUint(args[3], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgDelegate(vendorID, postID, delAddr, valAddr, amount)
+			// msg := types.NewMsgPost(id, vendorID, body, votingPeriod, votingStartTime, delegation)
+
 			return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
