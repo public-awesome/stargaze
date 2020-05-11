@@ -51,7 +51,7 @@ func createTestInput() (*codec.Codec, *testdata.SimApp, sdk.Context) {
 
 	genesisState := testdata.ModuleBasics.DefaultGenesis(app.Codec())
 	// genesisState := NewDefaultGenesisState()
-	// spew.Dump(genesisState)
+	spew.Dump(genesisState)
 	stateBytes, err := codec.MarshalJSONIndent(app.Codec(), genesisState)
 	if err != nil {
 		panic(err)

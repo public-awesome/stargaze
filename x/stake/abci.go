@@ -26,6 +26,8 @@ func EndBlocker(ctx sdk.Context, k Keeper) {
 	// ..iterate all stakes to calculate final rewards
 	// ..distribute rewards
 
+	spew.Dump("voting period", k.VotingPeriod(ctx))
+
 	endTime := ctx.BlockTime()
 	spew.Dump(endTime)
 	k.IterateVotingDelegationQueue(ctx, endTime, func(endTime time.Time, vendorID, postID, stakeID uint64, delegation types.Delegation) bool {
