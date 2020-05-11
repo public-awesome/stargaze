@@ -80,15 +80,13 @@ type MsgDelegate struct {
 }
 
 // NewMsgDelegate creates a new MsgDelegate instance
-func NewMsgDelegate(vendorID, postID uint64, delegatorAddr sdk.AccAddress, validatorAddr sdk.ValAddress,
-	votingPeriod time.Duration, amount sdk.Coin) MsgDelegate {
+func NewMsgDelegate(vendorID, postID uint64, delegatorAddr sdk.AccAddress, validatorAddr sdk.ValAddress, amount sdk.Coin) MsgDelegate {
 
 	return MsgDelegate{
 		VendorID:      vendorID,
 		PostID:        postID,
 		DelegatorAddr: delegatorAddr,
 		ValidatorAddr: validatorAddr,
-		VotingPeriod:  votingPeriod,
 		Amount:        amount,
 	}
 }

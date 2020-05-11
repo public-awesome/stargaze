@@ -20,10 +20,12 @@ func (k Keeper) GetPost(ctx sdk.Context, vendorID, postID uint64) (post types.Po
 	return post, true
 }
 
-func (k Keeper) CreatePost(ctx sdk.Context, postID, vendorID uint64, body string, votingPeriod time.Duration) {
+func (k Keeper) CreatePost(ctx sdk.Context, postID, vendorID uint64, body string, votingPeriod time.Duration) types.Post {
 	post := types.NewPost(postID, vendorID, body, votingPeriod, ctx.BlockTime())
 	store := ctx.KVStore(k.storeKey)
 	key := types.PostKey(vendorID, postID)
 	value := k.cdc.MustMarshalBinaryBare(&post)
 	store.Set(key, value)
+
+	return post
 }

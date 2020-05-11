@@ -11,13 +11,11 @@ import (
 )
 
 // Perform a delegation
-func (k Keeper) Delegate(ctx sdk.Context, vendorID, postID uint64, delAddr sdk.AccAddress,
-	valAddress sdk.ValAddress, votingPeriod time.Duration, amount sdk.Coin) (err error) {
-
+func (k Keeper) Delegate(ctx sdk.Context, vendorID, postID uint64, delAddr sdk.AccAddress, valAddress sdk.ValAddress, amount sdk.Coin) (err error) {
 	// check if post exist, if not, create it and begin the voting period
-	_, found := k.GetPost(ctx, vendorID, postID)
+	post, found := k.GetPost(ctx, vendorID, postID)
 	if !found {
-		k.CreatePost(ctx, postID, vendorID, "", votingPeriod)
+		post = k.CreatePost(ctx, postID, vendorID, "", k.GetParams(ctx).VotingPeriod)
 	}
 
 	// find validator
@@ -29,7 +27,7 @@ func (k Keeper) Delegate(ctx sdk.Context, vendorID, postID uint64, delAddr sdk.A
 	// add delegation to voting delegation queue
 	shares := amount.Amount.ToDec()
 	delegation := stakingtypes.NewDelegation(delAddr, valAddress, shares)
-	votingCompletionTime := ctx.BlockTime().Add(votingPeriod)
+	votingCompletionTime := ctx.BlockTime().Add(post.VotingPeriod)
 	k.InsertVotingDelegationQueue(ctx, vendorID, postID, delegation, votingCompletionTime)
 
 	// perform delegation on chain
