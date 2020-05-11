@@ -32,7 +32,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	"github.com/cosmos/cosmos-sdk/x/staking"
-	"github.com/rocket-protocol/rocketzone/app"
+	"github.com/rocket-protocol/stakebird/app"
 )
 
 var (

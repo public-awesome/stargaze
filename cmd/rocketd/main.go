@@ -24,7 +24,7 @@ import (
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 
-	"github.com/rocket-protocol/rocketzone/app"
+	"github.com/rocket-protocol/stakebird/app"
 )
 
 const flagInvCheckPeriod = "inv-check-period"

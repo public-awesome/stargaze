@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package rocket_protocol.stakebird.x.stake.v1;
+
+option go_package = "github.com/rocket-protocol/stakebird/x/stake/types";
+
+import "proto/gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+
+message Post {
+    uint64 id = 1 [
+        (gogoproto.customname) = "ID",
+        (gogoproto.moretags) = "yaml:\"id\""
+    ];
+    uint64 vendor_id = 2 [
+        (gogoproto.customname) = "VendorID",
+        (gogoproto.moretags) = "yaml:\"vendor_id\""
+    ];
+    string body = 3 [(gogoproto.moretags) = "yaml:\"body\""];
+    google.protobuf.Timestamp vote_end = 5 [
+        (gogoproto.stdtime) = true, 
+        (gogoproto.nullable) = false, 
+        (gogoproto.moretags) = "yaml:\"vote_end\""
+    ];
+}
