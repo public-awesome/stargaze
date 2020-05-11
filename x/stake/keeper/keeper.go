@@ -25,8 +25,7 @@ func NewKeeper(cdc codec.Marshaler, key sdk.StoreKey, stakingKeeper stakingkeepe
 		storeKey:      key,
 		cdc:           cdc,
 		stakingKeeper: stakingKeeper,
-		// paramspace:    paramspace.WithKeyTable(types.ParamKeyTable()),
-		paramspace: nil,
+		paramspace:    paramspace.WithKeyTable(types.ParamKeyTable()),
 	}
 	return keeper
 }
@@ -35,14 +34,3 @@ func NewKeeper(cdc codec.Marshaler, key sdk.StoreKey, stakingKeeper stakingkeepe
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", types.ModuleName)
 }
-
-// func (k Keeper) set(ctx sdk.Context, key string, value /* TODO: fill out this type */ ) {
-// 	store := ctx.KVStore(k.storeKey)
-// 	bz := k.cdc.MustMarshalBinaryLengthPrefixed(value)
-// 	store.Set([]byte(key), bz)
-// }
-
-// func (k Keeper) delete(ctx sdk.Context, key string) {
-// 	store := ctx.KVStore(k.storeKey)
-// 	store.Delete([]byte(key))
-// }
