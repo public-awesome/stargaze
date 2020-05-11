@@ -330,7 +330,7 @@ func NewSimApp(
 		upgrade.ModuleName, mint.ModuleName, distr.ModuleName, slashing.ModuleName,
 		evidence.ModuleName, staking.ModuleName, ibc.ModuleName,
 	)
-	app.mm.SetOrderEndBlockers(crisis.ModuleName, gov.ModuleName, staking.ModuleName)
+	app.mm.SetOrderEndBlockers(crisis.ModuleName, gov.ModuleName, staking.ModuleName, stake.ModuleName)
 
 	// NOTE: The genutils module must occur after staking so that pools are
 	// properly initialized with tokens from genesis accounts.
@@ -341,6 +341,7 @@ func NewSimApp(
 		capability.ModuleName, auth.ModuleName, distr.ModuleName, staking.ModuleName, bank.ModuleName,
 		slashing.ModuleName, gov.ModuleName, mint.ModuleName, crisis.ModuleName,
 		ibc.ModuleName, genutil.ModuleName, evidence.ModuleName, transfer.ModuleName,
+		stake.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -361,6 +362,7 @@ func NewSimApp(
 		slashing.NewAppModule(appCodec, app.SlashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 		params.NewAppModule(app.ParamsKeeper),
 		evidence.NewAppModule(appCodec, app.EvidenceKeeper),
+		// stake.NewAppModule(appCodec, app.StakeKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()

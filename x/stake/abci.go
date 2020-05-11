@@ -5,7 +5,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/davecgh/go-spew/spew"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
@@ -26,13 +25,8 @@ func EndBlocker(ctx sdk.Context, k Keeper) {
 	// ..iterate all stakes to calculate final rewards
 	// ..distribute rewards
 
-	spew.Dump("voting period", k.VotingPeriod(ctx))
-
 	endTime := ctx.BlockTime()
-	spew.Dump(endTime)
 	k.IterateVotingDelegationQueue(ctx, endTime, func(endTime time.Time, vendorID, postID, stakeID uint64, delegation types.Delegation) bool {
-		// spew.Dump(vendorID, postID, delegation)
-
 		// undelegate from validator
 		k.Undelegate(ctx, endTime, vendorID, postID, stakeID)
 

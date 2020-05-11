@@ -48,10 +48,6 @@ func (AppModuleBasic) DefaultGenesis(cdc codec.JSONMarshaler) json.RawMessage {
 // ValidateGenesis performs genesis state validation for the x/stake module.
 func (AppModuleBasic) ValidateGenesis(cdc codec.JSONMarshaler, bz json.RawMessage) error {
 	var data GenesisState
-	// err := ModuleCdc.UnmarshalJSON(bz, &data)
-	// if err != nil {
-	// 	return err
-	// }
 	if err := cdc.UnmarshalJSON(bz, &data); err != nil {
 		return fmt.Errorf("failed to unmarshal %s genesis state: %w", types.ModuleName, err)
 	}

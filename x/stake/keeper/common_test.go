@@ -14,7 +14,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/bank"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/rocket-protocol/stakebird/x/stake/testdata"
 	"github.com/rocket-protocol/stakebird/x/stake/types"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -35,13 +34,6 @@ var (
 	distrAcc = auth.NewEmptyModuleAccount(types.ModuleName)
 )
 
-// type GenesisState map[string]json.RawMessage
-
-// func NewDefaultGenesisState() GenesisState {
-// 	cdc := std.MakeCodec(testdata.ModuleBasics)
-// 	return testdata.ModuleBasics.DefaultGenesis(cdc)
-// }
-
 func createTestInput() (*codec.Codec, *testdata.SimApp, sdk.Context) {
 	db := dbm.NewMemDB()
 	logger := log.NewTMJSONLogger(log.NewSyncWriter(os.Stdout))
@@ -50,8 +42,6 @@ func createTestInput() (*codec.Codec, *testdata.SimApp, sdk.Context) {
 	app := testdata.NewSimApp(logger, db, nil, true, 0, map[int64]bool{}, simapp.DefaultNodeHome, opts...)
 
 	genesisState := testdata.ModuleBasics.DefaultGenesis(app.Codec())
-	// genesisState := NewDefaultGenesisState()
-	spew.Dump(genesisState)
 	stateBytes, err := codec.MarshalJSONIndent(app.Codec(), genesisState)
 	if err != nil {
 		panic(err)
@@ -64,14 +54,10 @@ func createTestInput() (*codec.Codec, *testdata.SimApp, sdk.Context) {
 			AppStateBytes: stateBytes,
 		},
 	)
-	app.Commit()
 
 	header := abci.Header{Height: app.LastBlockHeight() + 1, Time: time.Now()}
 	app.BeginBlock(abci.RequestBeginBlock{Header: header})
-
 	ctx := app.NewContext(false, header)
-
-	spew.Dump("params", app.StakeKeeper.GetParams(ctx))
 
 	return codec.New(), app, ctx
 }
