@@ -41,6 +41,26 @@ func (k Keeper) Delegate(ctx sdk.Context, vendorID, postID uint64, delAddr sdk.A
 	return nil
 }
 
+func (k Keeper) Undelegate(ctx sdk.Context, endTime time.Time, vendorID, postID, stakeID uint64) error {
+	d := k.getDelegation(ctx, endTime, vendorID, postID, stakeID)
+	_, err := k.stakingKeeper.Undelegate(ctx, d.DelegatorAddress, d.ValidatorAddress, d.Shares)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (k Keeper) getDelegation(ctx sdk.Context, endTime time.Time, vendorID, postID, stakeID uint64) stakingtypes.Delegation {
+	store := ctx.KVStore(k.storeKey)
+	key := types.VotingDelegationQueueKey(endTime, vendorID, postID, stakeID)
+	value := store.Get(key)
+	var delegation stakingtypes.Delegation
+	k.cdc.UnmarshalBinaryBare(value, &delegation)
+
+	return delegation
+}
+
 func (k Keeper) InsertVotingDelegationQueue(ctx sdk.Context, vendorID, postID uint64,
 	delegation stakingtypes.Delegation, completionTime time.Time) {
 	// get current stake index

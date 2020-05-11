@@ -30,7 +30,12 @@ func EndBlocker(ctx sdk.Context, k Keeper) {
 	spew.Dump(endTime)
 	k.IterateVotingDelegationQueue(ctx, endTime, func(endTime time.Time, vendorID, postID, stakeID uint64, delegation stakingtypes.Delegation) bool {
 		// spew.Dump(vendorID, postID, delegation)
+
+		// undelegate from validator
+		k.Undelegate(ctx, endTime, vendorID, postID, stakeID)
+
 		k.RemoveFromVotingDelegationQueue(ctx, endTime, vendorID, postID, stakeID)
+
 		return true
 	})
 }

@@ -65,14 +65,3 @@ func TestDelegation(t *testing.T) {
 		return true
 	})
 }
-
-func TestABCI(t *testing.T) {
-	// // check if delegation is in voting queue
-	// endTime := ctx.BlockTime()
-	// app.StakeKeeper.IterateVotingDelegationQueue(ctx, endTime, func(vendorID, postID uint64, delegation stakingtypes.Delegation) bool {
-	// 	spew.Dump(delegation)
-	// 	require.True(t, delegation.GetShares().Equal(amount.Amount.ToDec()))
-	// 	return true
-	// })
-	// require.Fail(t, "failureMessage strings")
-}
