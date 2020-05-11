@@ -61,6 +61,12 @@ func (k Keeper) InsertVotingDelegationQueue(ctx sdk.Context, vendorID, postID ui
 	store.Set(types.KeyIndexStakeID, types.StakeIndexToKey(stakeID+1))
 }
 
+func (k Keeper) RemoveFromVotingDelegationQueue(ctx sdk.Context, endTime time.Time, vendorID, postID, stakeID uint64) {
+	store := ctx.KVStore(k.storeKey)
+	key := types.VotingDelegationQueueKey(endTime, vendorID, postID, stakeID)
+	store.Delete(key)
+}
+
 func (k Keeper) setVotingDelegationQueue(ctx sdk.Context, key []byte, delegation stakingtypes.Delegation) {
 	store := ctx.KVStore(k.storeKey)
 	value := k.cdc.MustMarshalBinaryBare(&delegation)
@@ -68,18 +74,19 @@ func (k Keeper) setVotingDelegationQueue(ctx sdk.Context, key []byte, delegation
 }
 
 func (k Keeper) IterateVotingDelegationQueue(ctx sdk.Context, endTime time.Time,
-	cb func(vendorID, postID uint64, delegation stakingtypes.Delegation) (stop bool)) {
+	cb func(endTime time.Time, vendorID, postID, stakeID uint64, delegation stakingtypes.Delegation) (stop bool)) {
 
 	iterator := k.VotingDelegationQueueIterator(ctx, endTime)
 
 	defer iterator.Close()
 	for ; iterator.Valid(); iterator.Next() {
-		_, vendorID, postID, stakeID := types.SplitVotingDelegationQueueKey(iterator.Key())
-		spew.Dump("vendorID, postID, stakeID", vendorID, postID, stakeID)
+		spew.Dump(iterator.Key())
+		endTime, vendorID, postID, stakeID := types.SplitVotingDelegationQueueKey(iterator.Key())
+		// spew.Dump("vendorID, postID, stakeID", vendorID, postID, stakeID)
 		var delegation stakingtypes.Delegation
 		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &delegation)
 
-		if cb(vendorID, postID, delegation) {
+		if cb(endTime, vendorID, postID, stakeID, delegation) {
 			break
 		}
 	}

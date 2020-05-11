@@ -7,6 +7,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	"github.com/davecgh/go-spew/spew"
+	"github.com/rocket-protocol/stakebird/x/stake"
 	"github.com/stretchr/testify/require"
 )
 
@@ -46,15 +48,22 @@ func TestDelegation(t *testing.T) {
 	require.Len(t, delegations, 1)
 
 	// check if delegation is in voting delegation queue
-	// endTime := ctx.BlockTime().Add(votingPeriod * 5 * time.Hour) // after block time
+	// endTime1 := ctx.BlockTime().Add(votingPeriod * 5 * time.Hour) // after block time
 	endTime := ctx.BlockTime().Add(votingPeriod * -5 * time.Hour) // before block time
-
-	app.StakeKeeper.IterateVotingDelegationQueue(ctx, endTime, func(vendorID, postID uint64, delegation stakingtypes.Delegation) bool {
+	spew.Dump(endTime)
+	app.StakeKeeper.IterateVotingDelegationQueue(ctx, endTime, func(endTime time.Time, vendorID, postID, stakeID uint64, delegation stakingtypes.Delegation) bool {
 		require.True(t, delegation.GetShares().Equal(amount.Amount.ToDec()))
 		return true
 	})
 
-	// TODO: test end blocker
+	// test end blocker, should remove delegation from voting delegation queue
+	ctx = ctx.WithBlockTime(endTime)
+	stake.EndBlocker(ctx, app.StakeKeeper)
+
+	app.StakeKeeper.IterateVotingDelegationQueue(ctx, endTime, func(endTime time.Time, vendorID, postID, stakeID uint64, delegation stakingtypes.Delegation) bool {
+		require.Fail(t, "queue should be empty")
+		return true
+	})
 }
 
 func TestABCI(t *testing.T) {
