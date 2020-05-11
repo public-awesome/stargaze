@@ -41,22 +41,22 @@ func PostKey(vendorID, postID uint64) []byte {
 	return append(KeyPrefixPost, append(vendorIDBz, postIDBz...)...)
 }
 
-func VotingDelegationQueueKey(completionTime time.Time, vendorID, postID, stakeID uint64) []byte {
+func VotingDelegationQueueKey(endTime time.Time, vendorID, postID, stakeID uint64) []byte {
 	bz := sdk.Uint64ToBigEndian(stakeID)
-	return append(votingDelegationQueuePostIDPrefix(completionTime, vendorID, postID), bz...)
+	return append(votingDelegationQueuePostIDPrefix(endTime, vendorID, postID), bz...)
 }
 
-func votingDelegationQueuePostIDPrefix(completionTime time.Time, vendorID, postID uint64) []byte {
+func votingDelegationQueuePostIDPrefix(endTime time.Time, vendorID, postID uint64) []byte {
 	bz := sdk.Uint64ToBigEndian(postID)
-	return append(votingDelegationQueueVendorPrefix(completionTime, vendorID), bz...)
+	return append(votingDelegationQueueVendorPrefix(endTime, vendorID), bz...)
 }
 
-func votingDelegationQueueVendorPrefix(completionTime time.Time, vendorID uint64) []byte {
-	return append(VotingDelegationQueueTimeKeyPrefix(completionTime), sdk.Uint64ToBigEndian(vendorID)...)
+func votingDelegationQueueVendorPrefix(endTime time.Time, vendorID uint64) []byte {
+	return append(VotingDelegationQueueTimeKeyPrefix(endTime), sdk.Uint64ToBigEndian(vendorID)...)
 }
 
-func VotingDelegationQueueTimeKeyPrefix(completionTime time.Time) []byte {
-	bz := sdk.FormatTimeBytes(completionTime)
+func VotingDelegationQueueTimeKeyPrefix(endTime time.Time) []byte {
+	bz := sdk.FormatTimeBytes(endTime)
 	return append(KeyPrefixVotingDelegationQueue, bz...)
 }
 
@@ -70,9 +70,13 @@ func StakeIndexFromKey(key []byte) uint64 {
 	return bigEndianToUint64(key)
 }
 
-func SplitVotingDelegationQueueKey(key []byte) (endTime time.Time, vendorID, postID uint64) {
-	if len(key[1:]) != 8+lenTime {
-		panic(fmt.Sprintf("unexpected key length (%d ≠ %d)", len(key[1:]), lenTime+8))
+func SplitVotingDelegationQueueKey(key []byte) (endTime time.Time, vendorID, postID, stakeID uint64) {
+	lenVendorID := 8
+	lenPostID := 8
+	lenStakeID := 8
+
+	if len(key[1:]) != lenTime+lenVendorID+lenPostID+lenStakeID {
+		panic(fmt.Sprintf("unexpected key length (%d ≠ %d)", len(key[1:]), lenTime+24))
 	}
 
 	endTime, err := sdk.ParseTimeBytes(key[1 : 1+lenTime])
@@ -80,17 +84,19 @@ func SplitVotingDelegationQueueKey(key []byte) (endTime time.Time, vendorID, pos
 		panic(err)
 	}
 
-	vendorID = binary.BigEndian.Uint64(key[1+lenTime : 8])
-	postID = binary.BigEndian.Uint64(key[1+lenTime+8:])
+	vendorID = binary.BigEndian.Uint64(key[1+lenTime : 1+lenTime+lenVendorID])
+	postID = binary.BigEndian.Uint64(key[1+lenTime+lenVendorID : 1+lenTime+lenVendorID+lenPostID])
+	stakeID = binary.BigEndian.Uint64(key[1+lenTime+lenVendorID+lenPostID:])
 
-	return endTime, vendorID, postID
+	return endTime, vendorID, postID, stakeID
 }
 
 // returns an uint64 from big endian encoded bytes. If encoding
-// is empty, zero is returned.
+// is empty, one is returned.
 func bigEndianToUint64(bz []byte) uint64 {
 	if len(bz) == 0 {
-		return 0
+		// start with an index of 1 (easier debugging)
+		return 1
 	}
 
 	return binary.BigEndian.Uint64(bz)

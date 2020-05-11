@@ -6,6 +6,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -33,8 +34,8 @@ func TestDelegation(t *testing.T) {
 	require.Equal(t, uint64(2), app.DistrKeeper.GetValidatorHistoricalReferenceCount(ctx))
 
 	// perform end-user delegation
-	vendorID := uint64(100)
-	postID := uint64(200)
+	vendorID := uint64(1)
+	postID := uint64(1)
 	votingPeriod := time.Hour * 24 * 7
 	amount := sdk.NewInt64Coin("ufuel", 10000)
 	err = app.StakeKeeper.Delegate(ctx, vendorID, postID, delAddrs[0], valAddrs[0], votingPeriod, amount)
@@ -43,9 +44,20 @@ func TestDelegation(t *testing.T) {
 	// check if delegation is stored in staking store
 	delegations := app.StakingKeeper.GetAllDelegations(ctx)
 	require.Len(t, delegations, 1)
+
+	// check if delegation is in voting delegation queue
+	// endTime := ctx.BlockTime().Add(votingPeriod * 5 * time.Hour) // after block time
+	endTime := ctx.BlockTime().Add(votingPeriod * -5 * time.Hour) // before block time
+
+	app.StakeKeeper.IterateVotingDelegationQueue(ctx, endTime, func(vendorID, postID uint64, delegation stakingtypes.Delegation) bool {
+		require.True(t, delegation.GetShares().Equal(amount.Amount.ToDec()))
+		return true
+	})
+
+	// TODO: test end blocker
 }
 
-func TestIteration(t *testing.T) {
+func TestABCI(t *testing.T) {
 	// // check if delegation is in voting queue
 	// endTime := ctx.BlockTime()
 	// app.StakeKeeper.IterateVotingDelegationQueue(ctx, endTime, func(vendorID, postID uint64, delegation stakingtypes.Delegation) bool {

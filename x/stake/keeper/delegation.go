@@ -50,8 +50,9 @@ func (k Keeper) InsertVotingDelegationQueue(ctx sdk.Context, vendorID, postID ui
 
 	// create voting delegation queue key
 	queueKey := types.VotingDelegationQueueKey(completionTime, vendorID, postID, stakeID)
-	check := store.Get(queueKey)
-	if len(check) == 0 {
+
+	value = store.Get(queueKey)
+	if len(value) == 0 {
 		// add to queue at the right time
 		k.setVotingDelegationQueue(ctx, queueKey, delegation)
 	}
@@ -73,8 +74,8 @@ func (k Keeper) IterateVotingDelegationQueue(ctx sdk.Context, endTime time.Time,
 
 	defer iterator.Close()
 	for ; iterator.Valid(); iterator.Next() {
-		_, vendorID, postID := types.SplitVotingDelegationQueueKey(iterator.Key())
-		spew.Dump(vendorID, postID)
+		_, vendorID, postID, stakeID := types.SplitVotingDelegationQueueKey(iterator.Key())
+		spew.Dump("vendorID, postID, stakeID", vendorID, postID, stakeID)
 		var delegation stakingtypes.Delegation
 		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &delegation)
 
