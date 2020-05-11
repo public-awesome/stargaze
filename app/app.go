@@ -301,7 +301,7 @@ func NewRocketApp(
 	app.evidenceKeeper = *evidenceKeeper
 
 	// create stake keeper
-	app.stakeKeeper = stake.NewKeeper(appCodec, keys[stake.StoreKey], app.stakingKeeper, app.subspaces[stake.ModuleName])
+	app.stakeKeeper = stake.NewKeeper(appCodec, keys[stake.StoreKey], &app.stakingKeeper, app.subspaces[stake.ModuleName])
 
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
@@ -321,7 +321,7 @@ func NewRocketApp(
 		ibc.NewAppModule(app.ibcKeeper),
 		params.NewAppModule(app.paramsKeeper),
 		transferModule,
-		stake.NewAppModule(app.stakeKeeper),
+		stake.NewAppModule(appCodec, app.stakeKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that

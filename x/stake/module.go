@@ -2,6 +2,7 @@ package stake
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
@@ -14,6 +15,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/rocket-protocol/stakebird/x/stake/client/cli"
 	"github.com/rocket-protocol/stakebird/x/stake/client/rest"
+	"github.com/rocket-protocol/stakebird/x/stake/types"
 )
 
 // Type check to ensure the interface is properly implemented
@@ -23,7 +25,9 @@ var (
 )
 
 // AppModuleBasic defines the basic application module used by the x/stake module.
-type AppModuleBasic struct{}
+type AppModuleBasic struct {
+	cdc codec.Marshaler
+}
 
 // Name returns the x/stake module's name.
 func (AppModuleBasic) Name() string {
@@ -44,10 +48,14 @@ func (AppModuleBasic) DefaultGenesis(cdc codec.JSONMarshaler) json.RawMessage {
 // ValidateGenesis performs genesis state validation for the x/stake module.
 func (AppModuleBasic) ValidateGenesis(cdc codec.JSONMarshaler, bz json.RawMessage) error {
 	var data GenesisState
-	err := ModuleCdc.UnmarshalJSON(bz, &data)
-	if err != nil {
-		return err
+	// err := ModuleCdc.UnmarshalJSON(bz, &data)
+	// if err != nil {
+	// 	return err
+	// }
+	if err := cdc.UnmarshalJSON(bz, &data); err != nil {
+		return fmt.Errorf("failed to unmarshal %s genesis state: %w", types.ModuleName, err)
 	}
+
 	return ValidateGenesis(data)
 }
 
@@ -73,15 +81,13 @@ type AppModule struct {
 	AppModuleBasic
 
 	keeper Keeper
-	// TODO: Add keepers that your application depends on
 }
 
 // NewAppModule creates a new AppModule object
-func NewAppModule(k Keeper /*TODO: Add Keepers that your application depends on*/) AppModule {
+func NewAppModule(cdc codec.Marshaler, k Keeper) AppModule {
 	return AppModule{
-		AppModuleBasic: AppModuleBasic{},
+		AppModuleBasic: AppModuleBasic{cdc: cdc},
 		keeper:         k,
-		// TODO: Add keepers that your application depends on
 	}
 }
 
@@ -126,7 +132,7 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONMarshaler, data j
 // module.
 func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONMarshaler) json.RawMessage {
 	gs := ExportGenesis(ctx, am.keeper)
-	return ModuleCdc.MustMarshalJSON(gs)
+	return cdc.MustMarshalJSON(gs)
 }
 
 // BeginBlock returns the begin blocker for the x/stake module.

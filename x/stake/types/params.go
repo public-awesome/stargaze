@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/x/params"
+	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"gopkg.in/yaml.v2"
 )
 
@@ -19,12 +19,7 @@ var (
 	KeyVotingPeriod = []byte("VotingPeriod")
 )
 
-// ParamKeyTable for x/stake module
-func ParamKeyTable() params.KeyTable {
-	return params.NewKeyTable().RegisterParamSet(&Params{})
-}
-
-// Params - used for initializing default parameter for x/stake at genesis
+// Params - used for initializing default parameter for stake at genesis
 type Params struct {
 	VotingPeriod time.Duration `json:"voting_period" yaml:"voting_period"`
 }
@@ -43,9 +38,9 @@ func (p Params) String() string {
 }
 
 // ParamSetPairs - Implements params.ParamSet
-func (p *Params) ParamSetPairs() params.ParamSetPairs {
-	return params.ParamSetPairs{
-		params.NewParamSetPair(KeyVotingPeriod, &p.VotingPeriod, validateVotingPeriod),
+func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
+	return paramtypes.ParamSetPairs{
+		paramtypes.NewParamSetPair(KeyVotingPeriod, &p.VotingPeriod, validateVotingPeriod),
 	}
 }
 

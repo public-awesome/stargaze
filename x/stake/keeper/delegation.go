@@ -19,7 +19,7 @@ func (k Keeper) Delegate(ctx sdk.Context, vendorID, postID uint64, delAddr sdk.A
 	}
 
 	// find validator
-	validator, found := k.stakingKeeper.GetValidator(ctx, valAddress)
+	validator, found := k.sk.GetValidator(ctx, valAddress)
 	if !found {
 		return errors.New("validator not found")
 	}
@@ -27,11 +27,10 @@ func (k Keeper) Delegate(ctx sdk.Context, vendorID, postID uint64, delAddr sdk.A
 	// add delegation to voting delegation queue
 	shares := amount.Amount.ToDec()
 	delegation := stakingtypes.NewDelegation(delAddr, valAddress, shares)
-	votingCompletionTime := ctx.BlockTime().Add(post.VotingPeriod)
-	k.InsertVotingDelegationQueue(ctx, vendorID, postID, delegation, votingCompletionTime)
+	k.InsertVotingDelegationQueue(ctx, vendorID, postID, delegation, post.VoteEnd)
 
 	// perform delegation on chain
-	_, err = k.stakingKeeper.Delegate(ctx, delAddr, amount.Amount, sdk.Unbonded, validator, false)
+	_, err = k.sk.Delegate(ctx, delAddr, amount.Amount, sdk.Unbonded, validator, false)
 	if err != nil {
 		return err
 	}
@@ -41,7 +40,7 @@ func (k Keeper) Delegate(ctx sdk.Context, vendorID, postID uint64, delAddr sdk.A
 
 func (k Keeper) Undelegate(ctx sdk.Context, endTime time.Time, vendorID, postID, stakeID uint64) error {
 	d := k.getDelegation(ctx, endTime, vendorID, postID, stakeID)
-	_, err := k.stakingKeeper.Undelegate(ctx, d.DelegatorAddress, d.ValidatorAddress, d.Shares)
+	_, err := k.sk.Unbond(ctx, d.DelegatorAddress, d.ValidatorAddress, d.Shares)
 	if err != nil {
 		return err
 	}

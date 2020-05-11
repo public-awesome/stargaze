@@ -320,8 +320,7 @@ func NewSimApp(
 		ibc.NewAppModule(app.IBCKeeper),
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
-		// TODO: need to pass appCodec?
-		stake.NewAppModule(app.StakeKeeper),
+		stake.NewAppModule(appCodec, app.StakeKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
