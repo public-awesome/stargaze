@@ -1,10 +1,12 @@
 package stake
 
 import (
+	"strconv"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/staking/types"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	"github.com/rocket-protocol/stakebird/x/stake/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
@@ -26,11 +28,21 @@ func EndBlocker(ctx sdk.Context, k Keeper) {
 	// ..distribute rewards
 
 	endTime := ctx.BlockTime()
-	k.IterateVotingDelegationQueue(ctx, endTime, func(endTime time.Time, vendorID, postID, stakeID uint64, delegation types.Delegation) bool {
+	k.IterateVotingDelegationQueue(ctx, endTime, func(endTime time.Time, vendorID, postID, stakeID uint64, delegation stakingtypes.Delegation) bool {
 		// undelegate from validator
 		k.Undelegate(ctx, endTime, vendorID, postID, stakeID)
 
 		k.RemoveFromVotingDelegationQueue(ctx, endTime, vendorID, postID, stakeID)
+
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeVoteEnd,
+				sdk.NewAttribute(sdk.AttributeKeyAmount, delegation.Shares.String()),
+				sdk.NewAttribute(types.AttributeKeyVendorID, strconv.FormatUint(vendorID, 10)),
+				sdk.NewAttribute(types.AttributeKeyPostID, strconv.FormatUint(postID, 10)),
+				sdk.NewAttribute(types.AttributeKeyDelegator, delegation.DelegatorAddress.String()),
+			),
+		)
 
 		return true
 	})

@@ -2,6 +2,7 @@ package stake
 
 import (
 	"fmt"
+	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -31,27 +32,45 @@ func handleMsgDelegate(ctx sdk.Context, k Keeper, msg types.MsgDelegate) (*sdk.R
 		return nil, err
 	}
 
-	ctx.EventManager().EmitEvent(
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypeDelegate,
+			sdk.NewAttribute(types.AttributeKeyVendorID, strconv.FormatUint(msg.VendorID, 10)),
+			sdk.NewAttribute(types.AttributeKeyPostID, strconv.FormatUint(msg.PostID, 10)),
+			sdk.NewAttribute(types.AttributeKeyAmount, msg.Amount.String()),
+		),
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.ValidatorAddr.String()),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.DelegatorAddr.String()),
 		),
-	)
+	})
 
 	return &sdk.Result{Events: ctx.EventManager().ABCIEvents()}, nil
 }
 
 func handleMsgPost(ctx sdk.Context, k Keeper, msg types.MsgPost) (*sdk.Result, error) {
 	k.CreatePost(ctx, msg.PostID, msg.VendorID, msg.Body, msg.VotingPeriod)
+	err := k.Delegate(ctx, msg.VendorID, msg.PostID, msg.DelegatorAddr, msg.ValidatorAddr, msg.Amount)
+	if err != nil {
+		return nil, err
+	}
 
-	ctx.EventManager().EmitEvent(
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypePost,
+			sdk.NewAttribute(types.AttributeKeyVendorID, strconv.FormatUint(msg.VendorID, 10)),
+			sdk.NewAttribute(types.AttributeKeyPostID, strconv.FormatUint(msg.PostID, 10)),
+			sdk.NewAttribute(types.AttributeKeyBody, msg.Body),
+			sdk.NewAttribute(types.AttributeKeyVotingPeriod, msg.VotingPeriod.String()),
+			sdk.NewAttribute(types.AttributeKeyAmount, msg.Amount.String()),
+		),
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.ValidatorAddr.String()),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.DelegatorAddr.String()),
 		),
-	)
+	})
 
 	return &sdk.Result{Events: ctx.EventManager().ABCIEvents()}, nil
 }
