@@ -1,6 +1,6 @@
-# Rocket Zone
+# Stakebird Chain
 
-Rocket Zone chain for Game Of Zones
+Blockchain that powers Stakebird, as well as the zone for [Game Of Zones](https://cosmos.network/goz).
 
 # Run
 
@@ -15,4 +15,13 @@ make init
 
 # run
 rocketd start
+```
+
+# CLI
+
+The Stake module can be accessed via CLI and REST API.
+
+```sh
+rocketcli tx stake post -h
+rocketcli tx stake delegate -h
 ```
