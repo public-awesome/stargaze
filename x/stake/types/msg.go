@@ -54,11 +54,12 @@ func (msg MsgPost) ValidateBasic() error {
 }
 
 // NewMsgDelegate creates a new MsgDelegate instance
-func NewMsgDelegate(vendorID, postID uint64, delegatorAddr sdk.AccAddress, validatorAddr sdk.ValAddress, amount sdk.Coin) MsgDelegate {
+func NewMsgDelegate(vendorID, postID uint64, downvote bool, delegatorAddr sdk.AccAddress, validatorAddr sdk.ValAddress, amount sdk.Coin) MsgDelegate {
 
 	return MsgDelegate{
 		VendorID:      vendorID,
 		PostID:        postID,
+		Downvote:      downvote,
 		DelegatorAddr: delegatorAddr,
 		ValidatorAddr: validatorAddr,
 		Amount:        amount,

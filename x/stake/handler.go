@@ -27,7 +27,7 @@ func NewHandler(k Keeper) sdk.Handler {
 
 // handleMsgDelegate calls the keeper to perform the Delegate operation
 func handleMsgDelegate(ctx sdk.Context, k Keeper, msg types.MsgDelegate) (*sdk.Result, error) {
-	err := k.Delegate(ctx, msg.VendorID, msg.PostID, msg.DelegatorAddr, msg.ValidatorAddr, msg.Amount)
+	err := k.Delegate(ctx, msg.VendorID, msg.PostID, msg.Downvote, msg.DelegatorAddr, msg.ValidatorAddr, msg.Amount)
 	if err != nil {
 		return nil, err
 	}

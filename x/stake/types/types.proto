@@ -38,13 +38,17 @@ message MsgDelegate {
         (gogoproto.moretags)   = "yaml:\"post_id\"",
         (gogoproto.jsontag)    = "post_id"
     ];
-    bytes delegator_addr = 3 [
+    bool downvote = 3 [
+        (gogoproto.moretags)   = "yaml:\"downvote\"",
+        (gogoproto.jsontag)    = "downvote"
+    ];
+    bytes delegator_addr = 4 [
         (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
         (gogoproto.moretags) = "yaml:\"delegator_addr\""
     ];
-    bytes validator_addr = 4 [
+    bytes validator_addr = 5 [
         (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress",
         (gogoproto.moretags) = "yaml:\"validator_addr\""
     ];
-    cosmos_sdk.v1.Coin amount = 5 [(gogoproto.nullable) = false];
+    cosmos_sdk.v1.Coin amount = 6 [(gogoproto.nullable) = false];
 }
