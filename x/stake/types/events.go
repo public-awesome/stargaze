@@ -1,15 +1,17 @@
 package types
 
-// x/stake module event types
+// stake module event types
 const (
-	// TODO: Create your event types
-	// EventType<Action>    		= "action"
+	EventTypeVoteEnd  = "voting_period_end"
+	EventTypeDelegate = "delegate"
+	EventTypePost     = "post"
 
-	// TODO: Create keys fo your events, the values will be derivided from the msg
-	// AttributeKeyAddress  		= "address"
-
-	// TODO: Some events may not have values for that reason you want to emit that something happened.
-	// AttributeValueDoubleSign = "double_sign"
+	AttributeKeyVendorID     = "vendor_id"
+	AttributeKeyPostID       = "post_id"
+	AttributeKeyDelegator    = "delegator"
+	AttributeKeyAmount       = "amount"
+	AttributeKeyBody         = "body"
+	AttributeKeyVotingPeriod = "voting_period"
 
 	AttributeValueCategory = ModuleName
 )
