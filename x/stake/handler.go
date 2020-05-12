@@ -51,7 +51,7 @@ func handleMsgDelegate(ctx sdk.Context, k Keeper, msg types.MsgDelegate) (*sdk.R
 
 func handleMsgPost(ctx sdk.Context, k Keeper, msg types.MsgPost) (*sdk.Result, error) {
 	k.CreatePost(ctx, msg.PostID, msg.VendorID, msg.Body, msg.VotingPeriod)
-	err := k.Delegate(ctx, msg.VendorID, msg.PostID, msg.DelegatorAddr, msg.ValidatorAddr, msg.Amount)
+	err := k.Delegate(ctx, msg.VendorID, msg.PostID, false, msg.DelegatorAddr, msg.ValidatorAddr, msg.Amount)
 	if err != nil {
 		return nil, err
 	}
