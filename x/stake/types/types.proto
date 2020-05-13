@@ -4,8 +4,8 @@ package rocket_protocol.stakebird.x.stake.v1;
 
 option go_package = "github.com/rocket-protocol/stakebird/x/stake/types";
 
-import "third_party/proto/gogoproto/gogo.proto";
-import "third_party/proto/cosmos-proto/types.proto";
+import "contrib/proto/gogoproto/gogo.proto";
+import "contrib/proto/cosmos-proto/types.proto";
 import "google/protobuf/timestamp.proto";
 
 message Post {
