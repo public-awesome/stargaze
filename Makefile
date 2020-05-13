@@ -60,7 +60,7 @@ docker-test: build-linux
 proto-all: proto-gen proto-lint proto-check-breaking
 
 proto-gen:
-	@./scripts/protocgen.sh
+	@./contrib/protocgen.sh
 
 proto-lint:
 	@buf check lint --error-format=json
