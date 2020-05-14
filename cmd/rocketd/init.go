@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/server"
@@ -22,10 +23,11 @@ import (
 )
 
 const (
-	flagStakeDenom = "stake-denom"
+	flagStakeDenom      = "stake-denom"
+	flagUnbondingPeriod = "unbonding-period"
 )
 
-func initGenesis(cdc codec.JSONMarshaler, genDoc *types.GenesisDoc, stakeDenom string) (genutil.AppMap, error) {
+func initGenesis(cdc codec.JSONMarshaler, genDoc *types.GenesisDoc, stakeDenom, unbondingPeriod string) (genutil.AppMap, error) {
 	var appState genutil.AppMap
 	if err := cdc.UnmarshalJSON(genDoc.AppState, &appState); err != nil {
 		return appState, errors.Wrap(err, "failed to JSON unmarshal initial genesis state")
@@ -38,7 +40,15 @@ func initGenesis(cdc codec.JSONMarshaler, genDoc *types.GenesisDoc, stakeDenom s
 		if err != nil {
 			return appState, err
 		}
+
 		stakingGenState.Params.BondDenom = stakeDenom
+
+		d, err := time.ParseDuration(unbondingPeriod)
+		if err != nil {
+			return appState, errors.Wrap(err, "failed to parse unbonding period")
+		}
+		stakingGenState.Params.UnbondingTime = d
+
 		appState[staking.ModuleName] = cdc.MustMarshalJSON(stakingGenState)
 	}
 	// migrate crisis state
@@ -99,7 +109,8 @@ func InitCmd(ctx *server.Context, cdc codec.JSONMarshaler, mbm module.BasicManag
 			}
 		}
 		stakeDenom := viper.GetString(flagStakeDenom)
-		appState, err := initGenesis(cdc, genDoc, stakeDenom)
+		unbondingPeriod := viper.GetString(flagUnbondingPeriod)
+		appState, err := initGenesis(cdc, genDoc, stakeDenom, unbondingPeriod)
 		if err != nil {
 			return err
 		}
@@ -115,5 +126,6 @@ func InitCmd(ctx *server.Context, cdc codec.JSONMarshaler, mbm module.BasicManag
 	}
 
 	init.Flags().String(flagStakeDenom, app.DefaultStakeDenom, "app's stake denom")
+	init.Flags().String(flagUnbondingPeriod, app.DefaultUnbondingPeriod, "app's unbonding period")
 	return init
 }
