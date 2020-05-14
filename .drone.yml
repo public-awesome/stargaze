@@ -5,7 +5,7 @@ name: default
 
 steps:
   - name: build
-    image: golang:1.14.1-alpine
+    image: golang:1.14.2
     commands:
       - ./contrib/build.sh
   - name: publish-test
@@ -23,6 +23,34 @@ steps:
       event:
         - push
       branch: ibc
+  - name: deploy-devnet
+    image: appleboy/drone-scp
+    settings:
+      username: ubuntu
+      host: 
+        from_secret: devnet_host
+      key:
+        from_secret: deploy_key
+      target: 
+        from_secret: deploy_home
+      source:
+        - bin/
+    when:
+      branch: master
+  - name: deploy-devnet-srv
+    image: appleboy/drone-ssh
+    settings:
+      username: ubuntu
+      host: 
+        from_secret: devnet_host
+      key:
+        from_secret: deploy_key
+      target: 
+        from_secret: deploy_home
+      script:
+        - sh ~/deploy-devnet.sh
+    when:
+      branch: master
   - name: slack
     image: plugins/slack
     settings:
@@ -32,4 +60,6 @@ steps:
       status: [success, failure]
 ---
 kind: signature
-hmac: 650f43ab3d611d4e1305345af94df4df4426771900c9e454e246ac927f54c034
+hmac: 062bf547b4423ec6c610364e3631e7f58c3bf51a72e433eafc02b7fef5ef057b
+
+...
