@@ -240,7 +240,8 @@ func InitTestnet(
 		srvconfig.WriteConfigFile(rocketConfigFilePath, rocketConfig)
 	}
 	stakeDenom := viper.GetString(flagStakeDenom)
-	if err := initGenFiles(cdc, mbm, chainID, stakeDenom, genAccounts, genBalances, genFiles, numValidators); err != nil {
+	unbondingPeriod := viper.GetString(flagUnbondingPeriod)
+	if err := initGenFiles(cdc, mbm, chainID, stakeDenom, unbondingPeriod, genAccounts, genBalances, genFiles, numValidators); err != nil {
 		return err
 	}
 
@@ -257,7 +258,7 @@ func InitTestnet(
 }
 
 func initGenFiles(
-	cdc *codec.Codec, mbm module.BasicManager, chainID, stakeDenom string,
+	cdc *codec.Codec, mbm module.BasicManager, chainID, stakeDenom, unbondingPeriod string,
 	genAccounts []authexported.GenesisAccount, genBalances []bank.Balance,
 	genFiles []string, numValidators int,
 ) error {
@@ -288,7 +289,7 @@ func initGenFiles(
 		AppState:   appGenStateJSON,
 		Validators: nil,
 	}
-	appState, err := initGenesis(cdc, &genDoc, stakeDenom)
+	appState, err := initGenesis(cdc, &genDoc, stakeDenom, unbondingPeriod)
 	if err != nil {
 		return err
 	}

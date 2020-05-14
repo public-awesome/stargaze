@@ -36,6 +36,8 @@ steps:
       source:
         - bin/
     when:
+      event:
+        - push
       branch: master
   - name: deploy-devnet-srv
     image: appleboy/drone-ssh
@@ -50,6 +52,8 @@ steps:
       script:
         - sh ~/deploy-devnet.sh
     when:
+      event:
+        - push
       branch: master
   - name: slack
     image: plugins/slack
@@ -60,6 +64,6 @@ steps:
       status: [success, failure]
 ---
 kind: signature
-hmac: 062bf547b4423ec6c610364e3631e7f58c3bf51a72e433eafc02b7fef5ef057b
+hmac: c358f1cabf97c70f1fada83eb8e55ea6da8c682bc0b0c7488d6d04b213936cb9
 
 ...
