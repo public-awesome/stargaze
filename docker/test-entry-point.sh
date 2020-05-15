@@ -15,20 +15,20 @@ fi
 
 # Build genesis file incl account for passed address
 coins="100000000000ufuel,100000000000nitro"
-rocketd init --chain-id $CHAINID $CHAINID
-rocketcli keys add validator --keyring-backend="test"
-rocketd add-genesis-account validator $coins --keyring-backend="test"
-rocketd add-genesis-account $GENACCT $coins --keyring-backend="test"
-rocketd gentx --name validator --amount 1000000ufuel --keyring-backend="test"
-rocketd collect-gentxs
+staked init --chain-id $CHAINID $CHAINID
+stakecli keys add validator --keyring-backend="test"
+staked add-genesis-account validator $coins --keyring-backend="test"
+staked add-genesis-account $GENACCT $coins --keyring-backend="test"
+staked gentx --name validator --amount 1000000ufuel --keyring-backend="test"
+staked collect-gentxs
 
 
 # Set proper defaults and change ports
-sed -i 's/"leveldb"/"goleveldb"/g' ~/.rocketd/config/config.toml
-sed -i 's#"tcp://127.0.0.1:26657"#"tcp://0.0.0.0:26657"#g' ~/.rocketd/config/config.toml
-sed -i 's/timeout_commit = "5s"/timeout_commit = "1s"/g' ~/.rocketd/config/config.toml
-sed -i 's/timeout_propose = "3s"/timeout_propose = "1s"/g' ~/.rocketd/config/config.toml
-sed -i 's/index_all_keys = false/index_all_keys = true/g' ~/.rocketd/config/config.toml
+sed -i 's/"leveldb"/"goleveldb"/g' ~/.staked/config/config.toml
+sed -i 's#"tcp://127.0.0.1:26657"#"tcp://0.0.0.0:26657"#g' ~/.staked/config/config.toml
+sed -i 's/timeout_commit = "5s"/timeout_commit = "1s"/g' ~/.staked/config/config.toml
+sed -i 's/timeout_propose = "3s"/timeout_propose = "1s"/g' ~/.staked/config/config.toml
+sed -i 's/index_all_keys = false/index_all_keys = true/g' ~/.staked/config/config.toml
 
-# Start the rocket
-rocketd start --pruning=nothing
+# Start the stake
+staked start --pruning=nothing

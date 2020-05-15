@@ -42,9 +42,12 @@ import (
 )
 
 const (
-	appName = "rocket"
-	// DefaultStakeDenom for rocket hub
+	appName = "stake"
+	// DefaultStakeDenom for Stakebird
 	DefaultStakeDenom = "ufuel"
+
+	// DefaultUnbondingPeriod for Stakebird
+	DefaultUnbondingPeriod = "72h"
 
 	// Bech32MainPrefix defines the Bech32 prefix of an account's address
 	Bech32MainPrefix = "cosmos"

@@ -30,8 +30,8 @@ var (
 	// StakeIndexFromKey   = types.StakeIndexFromKey
 
 	// variable aliases
-	ModuleCdc = types.ModuleCdc
-	// VotingQueueKey = types.VotingDelegationQueueKey
+	ModuleCdc        = types.ModuleCdc
+	EventTypeVoteEnd = types.EventTypeVoteEnd
 )
 
 type (

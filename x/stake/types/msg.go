@@ -53,16 +53,6 @@ func (msg MsgPost) ValidateBasic() error {
 	return nil
 }
 
-// MsgDelegate - struct for delegating to a validator
-type MsgDelegate struct {
-	VendorID      uint64         `json:"vendor_id" yaml:"vendor_id"`
-	PostID        uint64         `json:"post_id" yaml:"post_id"`
-	DelegatorAddr sdk.AccAddress `json:"delegator_address" yaml:"delegator_address"`
-	ValidatorAddr sdk.ValAddress `json:"validator_address" yaml:"validator_address"`
-	VotingPeriod  time.Duration  `json:"voting_period" yaml:"voting_period"`
-	Amount        sdk.Coin       `json:"amount" yaml:"amount"`
-}
-
 // NewMsgDelegate creates a new MsgDelegate instance
 func NewMsgDelegate(vendorID, postID uint64, delegatorAddr sdk.AccAddress, validatorAddr sdk.ValAddress, amount sdk.Coin) MsgDelegate {
 

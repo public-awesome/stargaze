@@ -4,7 +4,8 @@ package rocket_protocol.stakebird.x.stake.v1;
 
 option go_package = "github.com/rocket-protocol/stakebird/x/stake/types";
 
-import "proto/gogoproto/gogo.proto";
+import "contrib/proto/gogoproto/gogo.proto";
+import "contrib/proto/cosmos-proto/types.proto";
 import "google/protobuf/timestamp.proto";
 
 message Post {
@@ -22,4 +23,28 @@ message Post {
         (gogoproto.nullable) = false, 
         (gogoproto.moretags) = "yaml:\"vote_end\""
     ];
+}
+
+message MsgDelegate {
+    option (gogoproto.equal) = true;
+
+    uint64 vendor_id = 1 [
+        (gogoproto.customname) = "VendorID",
+        (gogoproto.moretags)   = "yaml:\"vendor_id\"",
+        (gogoproto.jsontag)    = "vendor_id"
+    ];
+    uint64 post_id = 2 [
+        (gogoproto.customname) = "PostID",
+        (gogoproto.moretags)   = "yaml:\"post_id\"",
+        (gogoproto.jsontag)    = "post_id"
+    ];
+    bytes delegator_addr = 3 [
+        (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
+        (gogoproto.moretags) = "yaml:\"delegator_addr\""
+    ];
+    bytes validator_addr = 4 [
+        (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress",
+        (gogoproto.moretags) = "yaml:\"validator_addr\""
+    ];
+    cosmos_sdk.v1.Coin amount = 5 [(gogoproto.nullable) = false];
 }
