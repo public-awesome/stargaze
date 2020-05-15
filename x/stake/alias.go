@@ -1,0 +1,43 @@
+package stake
+
+import (
+	"github.com/rocket-protocol/stakebird/x/stake/keeper"
+	"github.com/rocket-protocol/stakebird/x/stake/types"
+
+	stakingTypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+)
+
+const (
+	// TODO: define constants that you would like exposed from your module
+
+	ModuleName        = types.ModuleName
+	RouterKey         = types.RouterKey
+	StoreKey          = types.StoreKey
+	DefaultParamspace = types.DefaultParamspace
+	QueryParams       = types.QueryParams
+	QuerierRoute      = types.QuerierRoute
+)
+
+var (
+	// functions aliases
+	NewKeeper           = keeper.NewKeeper
+	NewQuerier          = keeper.NewQuerier
+	RegisterCodec       = types.RegisterCodec
+	NewGenesisState     = types.NewGenesisState
+	DefaultGenesisState = types.DefaultGenesisState
+	ValidateGenesis     = types.ValidateGenesis
+	NewDelegation       = stakingTypes.NewDelegation
+	// StakeIndexFromKey   = types.StakeIndexFromKey
+
+	// variable aliases
+	ModuleCdc = types.ModuleCdc
+	// VotingQueueKey = types.VotingDelegationQueueKey
+)
+
+type (
+	Keeper       = keeper.Keeper
+	GenesisState = types.GenesisState
+	Params       = types.Params
+	Post         = types.Post
+	Delegation   = stakingTypes.Delegation
+)
