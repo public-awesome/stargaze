@@ -411,7 +411,7 @@ func NewRocketApp(
 	// sub-keepers.
 	// This must be done during creation of baseapp rather than in InitChain so
 	// that in-memory capabilities get regenerated on app restart
-	ctx := app.BaseApp.NewUncachedContext(true, abci.Header{Height: -1})
+	ctx := app.BaseApp.NewUncachedContext(true, abci.Header{})
 	app.capabilityKeeper.InitializeAndSeal(ctx)
 
 	app.scopedIBCKeeper = scopedIBCKeeper
