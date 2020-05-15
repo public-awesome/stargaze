@@ -7,6 +7,8 @@ steps:
   - name: build
     image: golang:1.14.2
     commands:
+      - apt-get update && apt-get install -y cmake
+      - make test
       - ./contrib/build.sh
   - name: publish-test
     image: plugins/docker:18
@@ -27,11 +29,11 @@ steps:
     image: appleboy/drone-scp
     settings:
       username: ubuntu
-      host: 
+      host:
         from_secret: devnet_host
       key:
         from_secret: deploy_key
-      target: 
+      target:
         from_secret: deploy_home
       source:
         - bin/
@@ -43,11 +45,11 @@ steps:
     image: appleboy/drone-ssh
     settings:
       username: ubuntu
-      host: 
+      host:
         from_secret: devnet_host
       key:
         from_secret: deploy_key
-      target: 
+      target:
         from_secret: deploy_home
       script:
         - sh ~/deploy-devnet.sh
@@ -64,6 +66,6 @@ steps:
       status: [success, failure]
 ---
 kind: signature
-hmac: c358f1cabf97c70f1fada83eb8e55ea6da8c682bc0b0c7488d6d04b213936cb9
+hmac: d06bfbb453db04a176976438ca013e61d4a98f75c9ae580688986b32236dcc14
 
 ...

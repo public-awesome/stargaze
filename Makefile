@@ -54,6 +54,12 @@ build-linux:
 docker-test: build-linux
 	docker build -f docker/Dockerfile.test -t rocketprotocol/stakebird-relayer-test:latest .
 
+
+test:
+	go test github.com/rocket-protocol/stakebird/x/...
+
+.PHONY: test build-linux docker-test lint  build init install
+
 ###############################################################################
 ###                                Protobuf                                 ###
 ###############################################################################

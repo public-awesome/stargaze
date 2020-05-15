@@ -51,7 +51,7 @@ func main() {
 	// with the cdc
 
 	rootCmd := &cobra.Command{
-		Use:   "rocketcli",
+		Use:   "stakecli",
 		Short: "Command line interface for interacting with appd",
 	}
 
