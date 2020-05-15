@@ -14,6 +14,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
+	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/std"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -172,6 +173,20 @@ type SimApp struct {
 	sm *module.SimulationManager
 }
 
+// MakeCodecs constructs the *std.Codec and *codec.Codec instances used by
+// simapp. It is useful for tests and clients who do not want to construct the
+// full simapp
+func MakeCodecs() (*std.Codec, *codec.Codec) {
+	cdc := std.MakeCodec(ModuleBasics)
+	interfaceRegistry := cdctypes.NewInterfaceRegistry()
+	appCodec := std.NewAppCodec(cdc, interfaceRegistry)
+
+	sdk.RegisterInterfaces(interfaceRegistry)
+	ModuleBasics.RegisterInterfaceModules(interfaceRegistry)
+
+	return appCodec, cdc
+}
+
 func NewSimApp(
 	logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest bool,
 	invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string,
@@ -180,7 +195,7 @@ func NewSimApp(
 
 	// TODO: Remove cdc in favor of appCodec once all modules are migrated.
 	cdc := std.MakeCodec(ModuleBasics)
-	appCodec := std.NewAppCodec(cdc)
+	appCodec, cdc := MakeCodecs()
 
 	bApp := baseapp.NewBaseApp(appName, logger, db, auth.DefaultTxDecoder(cdc), baseAppOptions...)
 	bApp.SetCommitMultiStoreTracer(traceStore)
@@ -275,12 +290,12 @@ func NewSimApp(
 
 	// Create IBC Keeper
 	app.IBCKeeper = ibc.NewKeeper(
-		app.cdc, keys[ibc.StoreKey], app.StakingKeeper, ScopedIBCKeeper,
+		app.cdc, appCodec, keys[ibc.StoreKey], app.StakingKeeper, ScopedIBCKeeper,
 	)
 
 	// Create Transfer Keepers
 	app.TransferKeeper = transfer.NewKeeper(
-		app.cdc, keys[transfer.StoreKey],
+		appCodec, keys[transfer.StoreKey],
 		app.IBCKeeper.ChannelKeeper, &app.IBCKeeper.PortKeeper,
 		app.AccountKeeper, app.BankKeeper,
 		ScopedTransferKeeper,
@@ -316,7 +331,7 @@ func NewSimApp(
 		distr.NewAppModule(appCodec, app.DistrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 		upgrade.NewAppModule(app.UpgradeKeeper),
-		evidence.NewAppModule(appCodec, app.EvidenceKeeper),
+		evidence.NewAppModule(app.EvidenceKeeper),
 		ibc.NewAppModule(app.IBCKeeper),
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
@@ -361,7 +376,7 @@ func NewSimApp(
 		distr.NewAppModule(appCodec, app.DistrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 		slashing.NewAppModule(appCodec, app.SlashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 		params.NewAppModule(app.ParamsKeeper),
-		evidence.NewAppModule(appCodec, app.EvidenceKeeper),
+		evidence.NewAppModule(app.EvidenceKeeper),
 		// stake.NewAppModule(appCodec, app.StakeKeeper),
 	)
 
@@ -394,7 +409,7 @@ func NewSimApp(
 	// sub-keepers.
 	// This must be done during creation of baseapp rather than in InitChain so
 	// that in-memory capabilities get regenerated on app restart
-	ctx := app.BaseApp.NewContext(true, abci.Header{})
+	ctx := app.BaseApp.NewUncachedContext(true, abci.Header{})
 	app.CapabilityKeeper.InitializeAndSeal(ctx)
 
 	app.ScopedIBCKeeper = ScopedIBCKeeper

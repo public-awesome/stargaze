@@ -12,6 +12,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/std"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -174,6 +175,20 @@ type RocketApp struct {
 	sm *module.SimulationManager
 }
 
+// MakeCodecs constructs the *std.Codec and *codec.Codec instances used by
+// simapp. It is useful for tests and clients who do not want to construct the
+// full simapp
+func MakeCodecs() (*std.Codec, *codec.Codec) {
+	cdc := std.MakeCodec(ModuleBasics)
+	interfaceRegistry := types.NewInterfaceRegistry()
+	appCodec := std.NewAppCodec(cdc, interfaceRegistry)
+
+	sdk.RegisterInterfaces(interfaceRegistry)
+	ModuleBasics.RegisterInterfaceModules(interfaceRegistry)
+
+	return appCodec, cdc
+}
+
 // NewRocketApp is a constructor function for mothershipApp
 func NewRocketApp(
 	logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest bool,
@@ -183,7 +198,7 @@ func NewRocketApp(
 
 	// TODO: Remove cdc in favor of appCodec once all modules are migrated.
 	cdc := std.MakeCodec(ModuleBasics)
-	appCodec := std.NewAppCodec(cdc)
+	appCodec, cdc := MakeCodecs()
 
 	bApp := baseapp.NewBaseApp(appName, logger, db, auth.DefaultTxDecoder(cdc), baseAppOptions...)
 	bApp.SetCommitMultiStoreTracer(traceStore)
@@ -276,12 +291,12 @@ func NewRocketApp(
 
 	// Create IBC Keeper
 	app.ibcKeeper = ibc.NewKeeper(
-		app.cdc, keys[ibc.StoreKey], app.stakingKeeper, scopedIBCKeeper,
+		app.cdc, appCodec, keys[ibc.StoreKey], app.stakingKeeper, scopedIBCKeeper,
 	)
 
 	// Create Transfer Keepers
 	app.transferKeeper = transfer.NewKeeper(
-		app.cdc, keys[transfer.StoreKey],
+		appCodec, keys[transfer.StoreKey],
 		app.ibcKeeper.ChannelKeeper, &app.ibcKeeper.PortKeeper,
 		app.accountKeeper, app.bankKeeper,
 		scopedTransferKeeper,
@@ -320,7 +335,7 @@ func NewRocketApp(
 		distr.NewAppModule(appCodec, app.distrKeeper, app.accountKeeper, app.bankKeeper, app.stakingKeeper),
 		staking.NewAppModule(appCodec, app.stakingKeeper, app.accountKeeper, app.bankKeeper),
 		upgrade.NewAppModule(app.upgradeKeeper),
-		evidence.NewAppModule(appCodec, app.evidenceKeeper),
+		evidence.NewAppModule(app.evidenceKeeper),
 		ibc.NewAppModule(app.ibcKeeper),
 		params.NewAppModule(app.paramsKeeper),
 		transferModule,
@@ -367,8 +382,7 @@ func NewRocketApp(
 		distr.NewAppModule(appCodec, app.distrKeeper, app.accountKeeper, app.bankKeeper, app.stakingKeeper),
 		slashing.NewAppModule(appCodec, app.slashingKeeper, app.accountKeeper, app.bankKeeper, app.stakingKeeper),
 		params.NewAppModule(app.paramsKeeper),
-		evidence.NewAppModule(appCodec, app.evidenceKeeper),
-		// stake.NewAppModule(app.stakeKeeper),
+		evidence.NewAppModule(app.evidenceKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()
@@ -400,7 +414,7 @@ func NewRocketApp(
 	// sub-keepers.
 	// This must be done during creation of baseapp rather than in InitChain so
 	// that in-memory capabilities get regenerated on app restart
-	ctx := app.BaseApp.NewContext(true, abci.Header{})
+	ctx := app.BaseApp.NewUncachedContext(true, abci.Header{})
 	app.capabilityKeeper.InitializeAndSeal(ctx)
 
 	app.scopedIBCKeeper = scopedIBCKeeper
