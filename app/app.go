@@ -41,7 +41,7 @@ import (
 )
 
 const (
-	appName = "rocket"
+	appName = "stake"
 	// DefaultStakeDenom for Stakebird
 	DefaultStakeDenom = "ufuel"
 

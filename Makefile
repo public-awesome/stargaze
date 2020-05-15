@@ -5,8 +5,8 @@ COMMIT := $(shell git log -1 --format='%H')
 
 # TODO: Update the ldflags with the app, client & server names
 ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=NewApp \
-	-X github.com/cosmos/cosmos-sdk/version.ServerName=rocketd \
-	-X github.com/cosmos/cosmos-sdk/version.ClientName=rocketcli \
+	-X github.com/cosmos/cosmos-sdk/version.ServerName=staked \
+	-X github.com/cosmos/cosmos-sdk/version.ClientName=stakecli \
 	-X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
 	-X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) 
 
@@ -15,22 +15,22 @@ BUILD_FLAGS := -ldflags '$(ldflags)'
 all: install
 
 create-wallet:
-	bin/rocketcli keys add validator --keyring-backend test
+	bin/stakecli keys add validator --keyring-backend test
 
 init:
-	rm -rf ~/.rocketd
-	bin/rocketd init rocket
-	bin/rocketd add-genesis-account $(shell bin/rocketcli keys show validator -a --keyring-backend test) 10000000000ufuel --keyring-backend test
-	bin/rocketd gentx --name=validator --amount 10000000000ufuel --keyring-backend test
-	bin/rocketd collect-gentxs 
+	rm -rf ~/.staked
+	bin/staked init stakebird
+	bin/staked add-genesis-account $(shell bin/stakecli keys show validator -a --keyring-backend test) 10000000000ufuel --keyring-backend test
+	bin/staked gentx --name=validator --amount 10000000000ufuel --keyring-backend test
+	bin/staked collect-gentxs 
 
 install: go.sum
-		go install -mod=readonly $(BUILD_FLAGS) ./cmd/rocketd
-		go install -mod=readonly $(BUILD_FLAGS) ./cmd/rocketcli
+		go install -mod=readonly $(BUILD_FLAGS) ./cmd/staked
+		go install -mod=readonly $(BUILD_FLAGS) ./cmd/stakecli
 
 build:
-		go build -o bin/rocketd ./cmd/rocketd
-		go build -o bin/rocketcli ./cmd/rocketcli
+		go build -o bin/staked ./cmd/staked
+		go build -o bin/stakecli ./cmd/stakecli
 
 go.sum: go.mod
 		@echo "--> Ensure dependencies have not been modified"
@@ -48,11 +48,11 @@ lint:
 
 
 build-linux: 
-	GOARCH=amd64 GOOS=linux go build -o bin/rocketd github.com/rocket-protocol/stakebird/cmd/rocketd
-	GOARCH=amd64 GOOS=linux  go build -o bin/rocketcli github.com/rocket-protocol/stakebird/cmd/rocketcli
+	GOARCH=amd64 GOOS=linux go build -o bin/staked github.com/rocket-protocol/stakebird/cmd/staked
+	GOARCH=amd64 GOOS=linux  go build -o bin/stakecli github.com/rocket-protocol/stakebird/cmd/stakecli
 
 docker-test: build-linux
-	docker build -f docker/Dockerfile.test -t rocketprotocol/rocketzone-relayer-test:latest .
+	docker build -f docker/Dockerfile.test -t rocketprotocol/stakebird-relayer-test:latest .
 
 ###############################################################################
 ###                                Protobuf                                 ###
