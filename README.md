@@ -14,7 +14,7 @@ make create-wallet
 make init
 
 # run
-rocketd start
+staked start
 ```
 
 # CLI
@@ -22,6 +22,6 @@ rocketd start
 The Stake module can be accessed via CLI and REST API.
 
 ```sh
-rocketcli tx stake post -h
-rocketcli tx stake delegate -h
+stakecli tx stake post -h
+stakecli tx stake delegate -h
 ```
