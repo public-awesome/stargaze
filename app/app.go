@@ -47,7 +47,7 @@ const (
 	DefaultStakeDenom = "ufuel"
 
 	// DefaultUnbondingPeriod for Stakebird
-	DefaultUnbondingPeriod = "72h"
+	DefaultUnbondingPeriod = "504h"
 
 	// Bech32MainPrefix defines the Bech32 prefix of an account's address
 	Bech32MainPrefix = "stake"
