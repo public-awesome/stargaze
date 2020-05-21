@@ -94,6 +94,8 @@ Example:
 		"Minimum gas prices to accept for transactions; All fees in a tx must meet this minimum (e.g. 0.01photino,0.001stake)")
 	cmd.Flags().String(flags.FlagKeyringBackend, flags.DefaultKeyringBackend, "Select keyring's backend (os|file|test)")
 	cmd.Flags().String(flagStakeDenom, app.DefaultStakeDenom, "app's stake denom")
+	cmd.Flags().String(flagUnbondingPeriod, app.DefaultUnbondingPeriod, "app's unbonding period")
+
 	return cmd
 }
 
