@@ -20,7 +20,7 @@ create-wallet:
 init:
 	rm -rf ~/.staked
 	bin/staked init stakebird
-	bin/staked add-genesis-account $(shell bin/stakecli keys show validator -a --keyring-backend test) 10000000000ufuel --keyring-backend test
+	bin/staked add-genesis-account $(shell bin/stakecli keys show validator -a --keyring-backend test) 10000000000000000ufuel --keyring-backend test
 	bin/staked gentx --name=validator --amount 10000000000ufuel --keyring-backend test
 	bin/staked collect-gentxs 
 
