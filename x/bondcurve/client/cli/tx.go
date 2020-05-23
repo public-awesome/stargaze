@@ -1,13 +1,20 @@
 package cli
 
 import (
+	"bufio"
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/version"
+	"github.com/cosmos/cosmos-sdk/x/auth"
+	authclient "github.com/cosmos/cosmos-sdk/x/auth/client"
 	"github.com/rocket-protocol/stakebird/x/bondcurve/types"
 )
 
@@ -22,33 +29,38 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 	}
 
 	bondcurveTxCmd.AddCommand(flags.PostCommands(
-	// TODO: Add tx based commands
-	// GetCmd<Action>(cdc)
+		GetCmdLockCollateral(cdc),
 	)...)
 
 	return bondcurveTxCmd
 }
 
-// Example:
-//
-// GetCmd<Action> is the CLI command for doing <Action>
-// func GetCmd<Action>(cdc *codec.Codec) *cobra.Command {
-// 	return &cobra.Command{
-// 		Use:   "/* Describe your action cmd */",
-// 		Short: "/* Provide a short description on the cmd */",
-// 		Args:  cobra.ExactArgs(2), // Does your request require arguments
-// 		RunE: func(cmd *cobra.Command, args []string) error {
-// 			cliCtx := context.NewCLIContext().WithCodec(cdc)
-// 			inBuf := bufio.NewReader(cmd.InOrStdin())
-// 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+func GetCmdLockCollateral(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "lock [amount]",
+		Args:  cobra.MinimumNArgs(1),
+		Short: "Lock collateral on chain",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Locks collateral on chain that will be used as reserves for the bonding curve.
+Example:
+$ %s tx bondcurve lock 1000stake --from mykey
+`,
+				version.ClientName,
+			),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(auth.DefaultTxEncoder(cdc))
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-// 			msg := types.NewMsg<Action>(/* Action params */)
-// 			err = msg.ValidateBasic()
-// 			if err != nil {
-// 				return err
-// 			}
+			amount, err := sdk.ParseCoin(args[0])
+			if err != nil {
+				return err
+			}
+			senderAddr := cliCtx.GetFromAddress()
+			msg := types.NewMsgLockCollateral(amount, senderAddr)
 
-// 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
-// 		},
-// 	}
-// }
+			return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+}

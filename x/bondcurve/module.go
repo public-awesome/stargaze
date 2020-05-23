@@ -23,7 +23,9 @@ var (
 )
 
 // AppModuleBasic defines the basic application module used by the bondcurve module.
-type AppModuleBasic struct{}
+type AppModuleBasic struct {
+	cdc codec.Marshaler
+}
 
 // Name returns the bondcurve module's name.
 func (AppModuleBasic) Name() string {
@@ -77,11 +79,10 @@ type AppModule struct {
 }
 
 // NewAppModule creates a new AppModule object
-func NewAppModule(k Keeper /*TODO: Add Keepers that your application depends on*/) AppModule {
+func NewAppModule(cdc codec.Marshaler, k Keeper) AppModule {
 	return AppModule{
-		AppModuleBasic: AppModuleBasic{},
+		AppModuleBasic: AppModuleBasic{cdc: cdc},
 		keeper:         k,
-		// TODO: Add keepers that your application depends on
 	}
 }
 

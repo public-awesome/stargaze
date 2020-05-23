@@ -4,6 +4,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/rocket-protocol/stakebird/x/bondcurve"
 	"github.com/rocket-protocol/stakebird/x/stake"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -111,6 +112,7 @@ var (
 		evidence.AppModuleBasic{},
 		transfer.AppModuleBasic{},
 		stake.AppModuleBasic{},
+		bondcurve.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -122,6 +124,7 @@ var (
 		staking.NotBondedPoolName:       {auth.Burner, auth.Staking},
 		gov.ModuleName:                  {auth.Burner},
 		transfer.GetModuleAccountName(): {auth.Minter, auth.Burner},
+		bondcurve.ModuleName:            {auth.Minter},
 	}
 
 	// module accounts that are allowed to receive tokens
@@ -163,6 +166,7 @@ type RocketApp struct {
 	evidenceKeeper   evidence.Keeper
 	transferKeeper   transfer.Keeper
 	stakeKeeper      stake.Keeper
+	bcKeeper         bondcurve.Keeper
 
 	// make scoped keepers public for test purposes
 	scopedIBCKeeper      capability.ScopedKeeper
@@ -209,7 +213,7 @@ func NewRocketApp(
 		mint.StoreKey, distr.StoreKey, slashing.StoreKey,
 		gov.StoreKey, params.StoreKey, ibc.StoreKey, upgrade.StoreKey,
 		evidence.StoreKey, transfer.StoreKey, capability.StoreKey,
-		stake.StoreKey,
+		stake.StoreKey, bondcurve.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capability.MemStoreKey)
@@ -239,6 +243,7 @@ func NewRocketApp(
 	app.subspaces[gov.ModuleName] = app.paramsKeeper.Subspace(gov.DefaultParamspace).WithKeyTable(gov.ParamKeyTable())
 	app.subspaces[crisis.ModuleName] = app.paramsKeeper.Subspace(crisis.DefaultParamspace)
 	app.subspaces[stake.ModuleName] = app.paramsKeeper.Subspace(stake.DefaultParamspace)
+	app.subspaces[bondcurve.ModuleName] = app.paramsKeeper.Subspace(bondcurve.DefaultParamspace)
 
 	bApp.SetParamStore(app.paramsKeeper.Subspace(baseapp.Paramspace).WithKeyTable(std.ConsensusParamsKeyTable()))
 
@@ -318,8 +323,9 @@ func NewRocketApp(
 	evidenceKeeper.SetRouter(evidenceRouter)
 	app.evidenceKeeper = *evidenceKeeper
 
-	// create stake keeper
+	// create stakebird keepers
 	app.stakeKeeper = stake.NewKeeper(appCodec, keys[stake.StoreKey], &app.stakingKeeper, app.subspaces[stake.ModuleName])
+	app.bcKeeper = bondcurve.NewKeeper(appCodec, keys[bondcurve.StoreKey], app.bankKeeper, app.ibcKeeper.ChannelKeeper, app.subspaces[bondcurve.ModuleName])
 
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
@@ -340,6 +346,7 @@ func NewRocketApp(
 		params.NewAppModule(app.paramsKeeper),
 		transferModule,
 		stake.NewAppModule(appCodec, app.stakeKeeper),
+		bondcurve.NewAppModule(appCodec, app.bcKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
