@@ -1,13 +1,12 @@
 package types
 
-
 // Query endpoints supported by the bondcurve querier
 const (
-	// TODO: Describe query parameters, update <action> with your query
-	// Query<Action>    = "<action>"
+	// TODO: Describe query parameters, update Params with your query
+	QueryParams = "params"
 )
 
-/* 
+/*
 Below you will be able how to set your own queries:
 
 

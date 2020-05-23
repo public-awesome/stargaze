@@ -2,17 +2,12 @@ package cli
 
 import (
 	"fmt"
-	"bufio"
 
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/rocket-protocol/stakebird/x/bondcurve/types"
 )
 
@@ -27,8 +22,8 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 	}
 
 	bondcurveTxCmd.AddCommand(flags.PostCommands(
-		// TODO: Add tx based commands
-		// GetCmd<Action>(cdc)
+	// TODO: Add tx based commands
+	// GetCmd<Action>(cdc)
 	)...)
 
 	return bondcurveTxCmd
