@@ -1,4 +1,4 @@
-package keeper_test
+package testdata
 
 import (
 	"bytes"
@@ -14,7 +14,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/bank"
-	"github.com/rocket-protocol/stakebird/x/stake/testdata"
 	"github.com/rocket-protocol/stakebird/x/stake/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -24,24 +23,24 @@ import (
 var (
 	PKs = simapp.CreateTestPubKeys(5)
 
-	valConsPk1 = PKs[0]
-	valConsPk2 = PKs[1]
-	valConsPk3 = PKs[2]
+	ValConsPk1 = PKs[0]
+	ValConsPk2 = PKs[1]
+	ValConsPk3 = PKs[2]
 
-	valConsAddr1 = sdk.ConsAddress(valConsPk1.Address())
-	valConsAddr2 = sdk.ConsAddress(valConsPk2.Address())
+	ValConsAddr1 = sdk.ConsAddress(ValConsPk1.Address())
+	ValConsAddr2 = sdk.ConsAddress(ValConsPk2.Address())
 
 	distrAcc = auth.NewEmptyModuleAccount(types.ModuleName)
 )
 
-func createTestInput() (*codec.Codec, *testdata.SimApp, sdk.Context) {
+func CreateTestInput() (*codec.Codec, *SimApp, sdk.Context) {
 	db := dbm.NewMemDB()
 	logger := log.NewTMJSONLogger(log.NewSyncWriter(os.Stdout))
 
 	opts := []func(*baseapp.BaseApp){baseapp.SetPruning(store.PruneNothing)}
-	app := testdata.NewSimApp(logger, db, nil, true, 0, map[int64]bool{}, simapp.DefaultNodeHome, opts...)
+	app := NewSimApp(logger, db, nil, true, 0, map[int64]bool{}, simapp.DefaultNodeHome, opts...)
 
-	genesisState := testdata.ModuleBasics.DefaultGenesis(app.Codec())
+	genesisState := ModuleBasics.DefaultGenesis(app.Codec())
 	stateBytes, err := codec.MarshalJSONIndent(app.Codec(), genesisState)
 	if err != nil {
 		panic(err)
@@ -66,7 +65,7 @@ type GenerateAccountStrategy func(int) []sdk.AccAddress
 
 // AddTestAddrs constructs and returns accNum amount of accounts with an
 // initial balance of accAmt in random order
-func AddTestAddrsIncremental(app *testdata.SimApp, ctx sdk.Context, accNum int, accAmt sdk.Int) []sdk.AccAddress {
+func AddTestAddrsIncremental(app *SimApp, ctx sdk.Context, accNum int, accAmt sdk.Int) []sdk.AccAddress {
 	return addTestAddrs(app, ctx, accNum, accAmt, createIncrementalAccounts)
 }
 
@@ -81,10 +80,13 @@ func ConvertAddrsToValAddrs(addrs []sdk.AccAddress) []sdk.ValAddress {
 	return valAddrs
 }
 
-func addTestAddrs(app *testdata.SimApp, ctx sdk.Context, accNum int, accAmt sdk.Int, strategy GenerateAccountStrategy) []sdk.AccAddress {
+func addTestAddrs(app *SimApp, ctx sdk.Context, accNum int, accAmt sdk.Int, strategy GenerateAccountStrategy) []sdk.AccAddress {
 	testAddrs := strategy(accNum)
 
-	initCoins := sdk.NewCoins(sdk.NewCoin(app.StakingKeeper.BondDenom(ctx), accAmt))
+	stakeCoin := sdk.NewCoin("stake", accAmt)
+	fuelCoin := sdk.NewCoin("ufuel", accAmt)
+	ibcCoin := sdk.NewCoin("transfer/ibczeroxfer/stake", accAmt)
+	initCoins := sdk.NewCoins(stakeCoin, fuelCoin, ibcCoin)
 	setTotalSupply(app, ctx, accAmt, accNum)
 
 	// fill all the addresses with some coins, set the loose pool tokens simultaneously
@@ -96,14 +98,14 @@ func addTestAddrs(app *testdata.SimApp, ctx sdk.Context, accNum int, accAmt sdk.
 }
 
 // setTotalSupply provides the total supply based on accAmt * totalAccounts.
-func setTotalSupply(app *testdata.SimApp, ctx sdk.Context, accAmt sdk.Int, totalAccounts int) {
+func setTotalSupply(app *SimApp, ctx sdk.Context, accAmt sdk.Int, totalAccounts int) {
 	totalSupply := sdk.NewCoins(sdk.NewCoin(app.StakingKeeper.BondDenom(ctx), accAmt.MulRaw(int64(totalAccounts))))
 	prevSupply := app.BankKeeper.GetSupply(ctx)
 	app.BankKeeper.SetSupply(ctx, bank.NewSupply(prevSupply.GetTotal().Add(totalSupply...)))
 }
 
 // saveAccount saves the provided account into the simapp with balance based on initCoins.
-func saveAccount(app *testdata.SimApp, ctx sdk.Context, addr sdk.AccAddress, initCoins sdk.Coins) {
+func saveAccount(app *SimApp, ctx sdk.Context, addr sdk.AccAddress, initCoins sdk.Coins) {
 	acc := app.AccountKeeper.NewAccountWithAddress(ctx, addr)
 	app.AccountKeeper.SetAccount(ctx, acc)
 	_, err := app.BankKeeper.AddCoins(ctx, addr, initCoins)
