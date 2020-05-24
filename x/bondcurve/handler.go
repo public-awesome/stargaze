@@ -58,16 +58,22 @@ func handleMsgBuy(ctx sdk.Context, k Keeper, msg types.MsgBuy) (*sdk.Result, err
 }
 
 func handleMsgSell(ctx sdk.Context, k Keeper, msg types.MsgSell) (*sdk.Result, error) {
-	// burn FUEL
-	err := k.SupplyKeeper.BurnCoins(ctx, ModuleName, sdk.NewCoins(msg.Amount))
-	if err != nil {
-		// return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidCoins, "can't burn %s", msg.Amount.Denom)
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidCoins, err.Error())
-	}
+	// burn sender's FUEL
+	k.SupplyKeeper.SubtractCoins(ctx, msg.Sender, sdk.NewCoins(msg.Amount))
+
+	// TODO: send coins to a "burned" module account
+	// properly keep track of fuel supply in module account
+
+	// err := k.SupplyKeeper.BurnCoins(ctx, ModuleName, sdk.NewCoins(msg.Amount))
+	// if err != nil {
+	// 	// return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidCoins, "can't burn %s", msg.Amount.Denom)
+	// 	return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidCoins, err.Error())
+	// }
 
 	// send ATOM from module account to sender
-	reserveCoin := sdk.NewCoin(types.CounterpartyDenom, msg.Amount.Amount)
-	err = k.SupplyKeeper.SendCoinsFromModuleToAccount(ctx, ModuleName, msg.Sender, sdk.NewCoins(reserveCoin))
+	reserveDenom := fmt.Sprintf("transfer/%s/%s", types.Counterparty, types.CounterpartyDenom)
+	reserveCoin := sdk.NewCoin(reserveDenom, msg.Amount.Amount)
+	err := k.SupplyKeeper.SendCoinsFromModuleToAccount(ctx, ModuleName, msg.Sender, sdk.NewCoins(reserveCoin))
 	if err != nil {
 		return nil, sdkerrors.Wrapf(
 			sdkerrors.ErrInsufficientFunds, "can't transfer %s coins from module account to sender", reserveCoin.Denom)
