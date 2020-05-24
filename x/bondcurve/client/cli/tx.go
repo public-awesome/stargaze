@@ -30,6 +30,7 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 
 	bondcurveTxCmd.AddCommand(flags.PostCommands(
 		GetCmdBuy(cdc),
+		GetCmdSell(cdc),
 	)...)
 
 	return bondcurveTxCmd
@@ -59,6 +60,36 @@ $ %s tx bondcurve buy 1000stake --from mykey
 			}
 			senderAddr := cliCtx.GetFromAddress()
 			msg := types.NewMsgBuy(amount, senderAddr)
+
+			return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+}
+
+func GetCmdSell(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "sell [amount]",
+		Args:  cobra.MinimumNArgs(1),
+		Short: "Sell FUEL and get back ATOM from bonding curve",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Sell FUEL and get back ATOM from bonding curve.
+Example:
+$ %s tx bondcurve sell 1000ufuel --from mykey
+`,
+				version.ClientName,
+			),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(auth.DefaultTxEncoder(cdc))
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+
+			amount, err := sdk.ParseCoin(args[0])
+			if err != nil {
+				return err
+			}
+			senderAddr := cliCtx.GetFromAddress()
+			msg := types.NewMsgSell(amount, senderAddr)
 
 			return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
