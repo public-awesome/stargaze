@@ -29,21 +29,21 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 	}
 
 	bondcurveTxCmd.AddCommand(flags.PostCommands(
-		GetCmdLockCollateral(cdc),
+		GetCmdBuy(cdc),
 	)...)
 
 	return bondcurveTxCmd
 }
 
-func GetCmdLockCollateral(cdc *codec.Codec) *cobra.Command {
+func GetCmdBuy(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "lock [amount]",
+		Use:   "buy [amount]",
 		Args:  cobra.MinimumNArgs(1),
-		Short: "Lock collateral on chain",
+		Short: "Buy FUEL with ATOM reserves from the bonding curve",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Locks collateral on chain that will be used as reserves for the bonding curve.
+			fmt.Sprintf(`Locks collateral that will be used as reserves for the bonding curve. Mints new FUEL.
 Example:
-$ %s tx bondcurve lock 1000stake --from mykey
+$ %s tx bondcurve buy 1000stake --from mykey
 `,
 				version.ClientName,
 			),
@@ -58,7 +58,7 @@ $ %s tx bondcurve lock 1000stake --from mykey
 				return err
 			}
 			senderAddr := cliCtx.GetFromAddress()
-			msg := types.NewMsgLockCollateral(amount, senderAddr)
+			msg := types.NewMsgBuy(amount, senderAddr)
 
 			return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},

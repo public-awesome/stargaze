@@ -7,7 +7,7 @@ option go_package = "github.com/rocket-protocol/stakebird/x/bondcurve/types";
 import "contrib/proto/gogoproto/gogo.proto";
 import "contrib/proto/cosmos-proto/types.proto";
 
-message MsgLockCollateral {
+message MsgBuy {
     option (gogoproto.equal) = true;
 
     cosmos_sdk.v1.Coin amount = 1 [(gogoproto.nullable) = false];
