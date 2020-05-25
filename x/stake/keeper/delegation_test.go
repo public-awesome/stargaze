@@ -8,21 +8,22 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/davecgh/go-spew/spew"
+	"github.com/rocket-protocol/stakebird/testdata"
 	"github.com/rocket-protocol/stakebird/x/stake"
 	"github.com/stretchr/testify/require"
 )
 
 func TestDelegation(t *testing.T) {
-	_, app, ctx := createTestInput()
+	_, app, ctx := testdata.CreateTestInput()
 
 	// create fake addresses
-	delAddrs := AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(10000))
-	valAddrs := ConvertAddrsToValAddrs(delAddrs)
+	delAddrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(10000))
+	valAddrs := testdata.ConvertAddrsToValAddrs(delAddrs)
 
 	// create validator with 50% commission
 	commission := staking.NewCommissionRates(sdk.NewDecWithPrec(5, 1), sdk.NewDecWithPrec(5, 1), sdk.NewDec(0))
 	msg := staking.NewMsgCreateValidator(
-		valAddrs[0], valConsPk1, sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(100)), staking.Description{}, commission, sdk.OneInt(),
+		valAddrs[0], testdata.ValConsPk1, sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(100)), staking.Description{}, commission, sdk.OneInt(),
 	)
 	sh := staking.NewHandler(app.StakingKeeper)
 	res, err := sh(ctx, msg)

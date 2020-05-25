@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package rocket_protocol.stakebird.x.bondcurve.v1;
+
+option go_package = "github.com/rocket-protocol/stakebird/x/bondcurve/types";
+
+import "contrib/proto/gogoproto/gogo.proto";
+import "contrib/proto/cosmos-proto/types.proto";
+
+message MsgBuy {
+    option (gogoproto.equal) = true;
+
+    cosmos_sdk.v1.Coin amount = 1 [(gogoproto.nullable) = false];
+    bytes sender = 2 [
+        (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
+        (gogoproto.moretags) = "yaml:\"sender\""
+    ];
+}
+
+message MsgSell {
+    option (gogoproto.equal) = true;
+
+    cosmos_sdk.v1.Coin amount = 1 [(gogoproto.nullable) = false];
+    bytes sender = 2 [
+        (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
+        (gogoproto.moretags) = "yaml:\"sender\""
+    ];
+}

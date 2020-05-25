@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/rocket-protocol/stakebird/x/bondcurve"
 	"github.com/rocket-protocol/stakebird/x/stake"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -110,6 +111,7 @@ var (
 		evidence.AppModuleBasic{},
 		transfer.AppModuleBasic{},
 		stake.AppModuleBasic{},
+		bondcurve.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -121,6 +123,7 @@ var (
 		staking.NotBondedPoolName:       {auth.Burner, auth.Staking},
 		gov.ModuleName:                  {auth.Burner},
 		transfer.GetModuleAccountName(): {auth.Minter, auth.Burner},
+		bondcurve.ModuleName:            {auth.Minter, auth.Burner},
 	}
 
 	// module accounts that are allowed to receive tokens
@@ -161,6 +164,7 @@ type SimApp struct {
 	EvidenceKeeper   evidence.Keeper
 	TransferKeeper   transfer.Keeper
 	StakeKeeper      stake.Keeper
+	BondCurveKeeper  bondcurve.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper      capability.ScopedKeeper
@@ -206,7 +210,7 @@ func NewSimApp(
 		mint.StoreKey, distr.StoreKey, slashing.StoreKey,
 		gov.StoreKey, params.StoreKey, ibc.StoreKey, upgrade.StoreKey,
 		evidence.StoreKey, transfer.StoreKey, capability.StoreKey,
-		stake.StoreKey,
+		stake.StoreKey, bondcurve.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capability.MemStoreKey)
@@ -236,6 +240,7 @@ func NewSimApp(
 	app.subspaces[gov.ModuleName] = app.ParamsKeeper.Subspace(gov.DefaultParamspace).WithKeyTable(gov.ParamKeyTable())
 	app.subspaces[crisis.ModuleName] = app.ParamsKeeper.Subspace(crisis.DefaultParamspace)
 	app.subspaces[stake.ModuleName] = app.ParamsKeeper.Subspace(stake.DefaultParamspace)
+	app.subspaces[bondcurve.ModuleName] = app.ParamsKeeper.Subspace(bondcurve.DefaultParamspace)
 
 	bApp.SetParamStore(app.ParamsKeeper.Subspace(baseapp.Paramspace).WithKeyTable(std.ConsensusParamsKeyTable()))
 
@@ -317,6 +322,9 @@ func NewSimApp(
 	EvidenceKeeper.SetRouter(evidenceRouter)
 	app.EvidenceKeeper = *EvidenceKeeper
 
+	app.BondCurveKeeper = bondcurve.NewKeeper(
+		appCodec, keys[bondcurve.StoreKey], app.BankKeeper, app.IBCKeeper.ChannelKeeper, app.subspaces[bondcurve.ModuleName])
+
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
 	app.mm = module.NewManager(
@@ -336,6 +344,7 @@ func NewSimApp(
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
 		stake.NewAppModule(appCodec, app.StakeKeeper),
+		bondcurve.NewAppModule(appCodec, app.BondCurveKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -356,7 +365,7 @@ func NewSimApp(
 		capability.ModuleName, auth.ModuleName, distr.ModuleName, staking.ModuleName, bank.ModuleName,
 		slashing.ModuleName, gov.ModuleName, mint.ModuleName, crisis.ModuleName,
 		ibc.ModuleName, genutil.ModuleName, evidence.ModuleName, transfer.ModuleName,
-		stake.ModuleName,
+		stake.ModuleName, bondcurve.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -377,7 +386,6 @@ func NewSimApp(
 		slashing.NewAppModule(appCodec, app.SlashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 		params.NewAppModule(app.ParamsKeeper),
 		evidence.NewAppModule(app.EvidenceKeeper),
-		// stake.NewAppModule(appCodec, app.StakeKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()
