@@ -15,8 +15,6 @@ func NewHandler(k Keeper) sdk.Handler {
 		switch msg := msg.(type) {
 		case types.MsgBuy:
 			return handleMsgBuy(ctx, k, msg)
-		case types.MsgSell:
-			return handleMsgSell(ctx, k, msg)
 		default:
 			errMsg := fmt.Sprintf("unrecognized %s message type: %T", ModuleName, msg)
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
@@ -35,15 +33,10 @@ func handleMsgBuy(ctx sdk.Context, k Keeper, msg types.MsgBuy) (*sdk.Result, err
 			sdkerrors.ErrInsufficientFunds, "can't transfer %s coins from sender to dao", denom)
 	}
 
-	newCoin := sdk.NewCoin(types.Denom, msg.Amount.Amount)
-	err = k.SupplyKeeper.MintCoins(ctx, ModuleName, sdk.NewCoins(newCoin))
-	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidCoins, "can't mint %s", newCoin.Denom)
-	}
-	err = k.SupplyKeeper.SendCoinsFromModuleToAccount(ctx, ModuleName, msg.Sender, sdk.NewCoins(newCoin))
+	err = mintNewToken(ctx, k, msg.Amount.Amount, msg.Sender)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(
-			sdkerrors.ErrInsufficientFunds, "can't transfer %s coins from module account to sender", newCoin.Denom)
+			sdkerrors.ErrInsufficientFunds, "can't mint new token from bonding curve")
 	}
 
 	ctx.EventManager().EmitEvent(
@@ -57,35 +50,17 @@ func handleMsgBuy(ctx sdk.Context, k Keeper, msg types.MsgBuy) (*sdk.Result, err
 	return &sdk.Result{Events: ctx.EventManager().ABCIEvents()}, nil
 }
 
-func handleMsgSell(ctx sdk.Context, k Keeper, msg types.MsgSell) (*sdk.Result, error) {
-	// burn sender's FUEL
-	k.SupplyKeeper.SubtractCoins(ctx, msg.Sender, sdk.NewCoins(msg.Amount))
-
-	// TODO: send coins to a "burned" module account
-	// properly keep track of fuel supply in module account
-
-	// err := k.SupplyKeeper.BurnCoins(ctx, ModuleName, sdk.NewCoins(msg.Amount))
-	// if err != nil {
-	// 	// return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidCoins, "can't burn %s", msg.Amount.Denom)
-	// 	return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidCoins, err.Error())
-	// }
-
-	// send ATOM from module account to sender
-	reserveDenom := fmt.Sprintf("transfer/%s/%s", types.Counterparty, types.CounterpartyDenom)
-	reserveCoin := sdk.NewCoin(reserveDenom, msg.Amount.Amount)
-	err := k.SupplyKeeper.SendCoinsFromModuleToAccount(ctx, ModuleName, msg.Sender, sdk.NewCoins(reserveCoin))
+func mintNewToken(ctx sdk.Context, k Keeper, amount sdk.Int, sender sdk.AccAddress) error {
+	newCoin := sdk.NewCoin(types.Denom, amount)
+	err := k.SupplyKeeper.MintCoins(ctx, ModuleName, sdk.NewCoins(newCoin))
 	if err != nil {
-		return nil, sdkerrors.Wrapf(
-			sdkerrors.ErrInsufficientFunds, "can't transfer %s coins from module account to sender", reserveCoin.Denom)
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidCoins, "can't mint %s", newCoin.Denom)
+	}
+	err = k.SupplyKeeper.SendCoinsFromModuleToAccount(ctx, ModuleName, sender, sdk.NewCoins(newCoin))
+	if err != nil {
+		return sdkerrors.Wrapf(
+			sdkerrors.ErrInsufficientFunds, "can't transfer %s coins from module account to sender", newCoin.Denom)
 	}
 
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Sender.String()),
-		),
-	)
-
-	return &sdk.Result{Events: ctx.EventManager().ABCIEvents()}, nil
+	return nil
 }
