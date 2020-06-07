@@ -29,10 +29,10 @@ func handleMsgBuy(ctx sdk.Context, k Keeper, msg types.MsgBuy) (*sdk.Result, err
 	denom := fmt.Sprintf("transfer/%s/%s", types.Counterparty, types.CounterpartyDenom)
 	lockCoin := sdk.NewCoin(denom, msg.Amount.Amount)
 
-	err := k.SupplyKeeper.SendCoinsFromAccountToModule(ctx, msg.Sender, ModuleName, sdk.NewCoins(lockCoin))
+	err := k.DistributionKeeper.FundCommunityPool(ctx, sdk.NewCoins(lockCoin), msg.Sender)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(
-			sdkerrors.ErrInsufficientFunds, "can't transfer %s coins from sender to module account", denom)
+			sdkerrors.ErrInsufficientFunds, "can't transfer %s coins from sender to dao", denom)
 	}
 
 	newCoin := sdk.NewCoin(types.Denom, msg.Amount.Amount)

@@ -12,21 +12,25 @@ import (
 
 // Keeper of the bondcurve store
 type Keeper struct {
-	storeKey      sdk.StoreKey
-	cdc           codec.Marshaler
-	SupplyKeeper  types.SupplyKeeper
-	ChannelKeeper types.ChannelKeeper
-	paramspace    types.ParamSubspace
+	storeKey           sdk.StoreKey
+	cdc                codec.Marshaler
+	SupplyKeeper       types.SupplyKeeper
+	ChannelKeeper      types.ChannelKeeper
+	DistributionKeeper types.DistributionKeeper
+	paramspace         types.ParamSubspace
 }
 
 // NewKeeper creates a bondcurve keeper
-func NewKeeper(cdc codec.Marshaler, key sdk.StoreKey, supplyKeeper types.SupplyKeeper, channelKeeper types.ChannelKeeper, paramspace types.ParamSubspace) Keeper {
+func NewKeeper(cdc codec.Marshaler, key sdk.StoreKey, supplyKeeper types.SupplyKeeper,
+	channelKeeper types.ChannelKeeper, distKeeper types.DistributionKeeper, paramspace types.ParamSubspace) Keeper {
+
 	keeper := Keeper{
-		storeKey:      key,
-		cdc:           cdc,
-		SupplyKeeper:  supplyKeeper,
-		ChannelKeeper: channelKeeper,
-		paramspace:    paramspace.WithKeyTable(types.ParamKeyTable()),
+		storeKey:           key,
+		cdc:                cdc,
+		SupplyKeeper:       supplyKeeper,
+		ChannelKeeper:      channelKeeper,
+		DistributionKeeper: distKeeper,
+		paramspace:         paramspace.WithKeyTable(types.ParamKeyTable()),
 	}
 	return keeper
 }

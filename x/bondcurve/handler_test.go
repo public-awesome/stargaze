@@ -23,25 +23,6 @@ func TestHandleMsgBuy(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, res)
 
-	// moduleAccount := app.AccountKeeper.GetModuleAccount(ctx, bondcurve.ModuleName)
-	// addr := moduleAccount.GetAddress()
-	// coin := app.BankKeeper.GetBalance(ctx, addr, "transfer/ibczeroxfer/stake")
-	// fmt.Println(coin)
-	// coin = app.BankKeeper.GetBalance(ctx, addr, "stake")
-	// fmt.Println(coin)
-	// coin = app.BankKeeper.GetBalance(ctx, addr, "ufuel")
-	// fmt.Println(coin)
-
-	// coin = app.BankKeeper.GetBalance(ctx, sender, "transfer/ibczeroxfer/stake")
-	// fmt.Println(coin)
-	// coin = app.BankKeeper.GetBalance(ctx, sender, "stake")
-	// fmt.Println(coin)
-	// coin = app.BankKeeper.GetBalance(ctx, sender, "ufuel")
-	// fmt.Println(coin)
-
-	fuelCoin := sdk.NewCoin("ufuel", sdk.NewInt(10000))
-	msgSell := types.NewMsgSell(fuelCoin, sender)
-	res, err = handler(ctx, msgSell)
-	require.NoError(t, err)
-	require.NotNil(t, res)
+	communityPool := app.BondCurveKeeper.DistributionKeeper.GetFeePool(ctx).CommunityPool
+	require.Equal(t, "10000.000000000000000000", communityPool.AmountOf("transfer/ibczeroxfer/stake").String())
 }
