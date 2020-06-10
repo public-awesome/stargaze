@@ -325,7 +325,9 @@ func NewRocketApp(
 
 	// create stakebird keepers
 	app.stakeKeeper = stake.NewKeeper(appCodec, keys[stake.StoreKey], &app.stakingKeeper, app.subspaces[stake.ModuleName])
-	app.bcKeeper = bondcurve.NewKeeper(appCodec, keys[bondcurve.StoreKey], app.bankKeeper, app.ibcKeeper.ChannelKeeper, app.subspaces[bondcurve.ModuleName])
+	app.bcKeeper = bondcurve.NewKeeper(appCodec, keys[bondcurve.StoreKey], app.bankKeeper, app.ibcKeeper.ChannelKeeper,
+		app.distrKeeper, app.subspaces[bondcurve.ModuleName],
+	)
 
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.

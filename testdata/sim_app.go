@@ -323,7 +323,9 @@ func NewSimApp(
 	app.EvidenceKeeper = *EvidenceKeeper
 
 	app.BondCurveKeeper = bondcurve.NewKeeper(
-		appCodec, keys[bondcurve.StoreKey], app.BankKeeper, app.IBCKeeper.ChannelKeeper, app.subspaces[bondcurve.ModuleName])
+		appCodec, keys[bondcurve.StoreKey], app.BankKeeper, app.IBCKeeper.ChannelKeeper,
+		app.DistrKeeper, app.subspaces[bondcurve.ModuleName],
+	)
 
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
