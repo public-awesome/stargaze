@@ -17,7 +17,7 @@ func TestDelegation(t *testing.T) {
 	_, app, ctx := testdata.CreateTestInput()
 
 	// create fake addresses
-	delAddrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(10000))
+	delAddrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(100000))
 	valAddrs := testdata.ConvertAddrsToValAddrs(delAddrs)
 
 	// create validator with 50% commission
