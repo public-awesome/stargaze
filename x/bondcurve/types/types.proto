@@ -16,13 +16,3 @@ message MsgBuy {
         (gogoproto.moretags) = "yaml:\"sender\""
     ];
 }
-
-message MsgSell {
-    option (gogoproto.equal) = true;
-
-    cosmos_sdk.v1.Coin amount = 1 [(gogoproto.nullable) = false];
-    bytes sender = 2 [
-        (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
-        (gogoproto.moretags) = "yaml:\"sender\""
-    ];
-}

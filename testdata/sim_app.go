@@ -124,6 +124,7 @@ var (
 		gov.ModuleName:                  {auth.Burner},
 		transfer.GetModuleAccountName(): {auth.Minter, auth.Burner},
 		bondcurve.ModuleName:            {auth.Minter, auth.Burner},
+		stake.RewardPoolName:            {auth.Minter, auth.Burner},
 	}
 
 	// module accounts that are allowed to receive tokens
@@ -291,7 +292,10 @@ func NewSimApp(
 		staking.NewMultiStakingHooks(app.DistrKeeper.Hooks(), app.SlashingKeeper.Hooks()),
 	)
 
-	app.StakeKeeper = stake.NewKeeper(appCodec, keys[stake.StoreKey], app.StakingKeeper, app.subspaces[stake.ModuleName])
+	app.StakeKeeper = stake.NewKeeper(
+		appCodec, keys[stake.StoreKey], app.AccountKeeper, app.StakingKeeper,
+		app.BankKeeper, app.subspaces[stake.ModuleName],
+	)
 
 	// Create IBC Keeper
 	app.IBCKeeper = ibc.NewKeeper(
@@ -323,7 +327,9 @@ func NewSimApp(
 	app.EvidenceKeeper = *EvidenceKeeper
 
 	app.BondCurveKeeper = bondcurve.NewKeeper(
-		appCodec, keys[bondcurve.StoreKey], app.BankKeeper, app.IBCKeeper.ChannelKeeper, app.subspaces[bondcurve.ModuleName])
+		appCodec, keys[bondcurve.StoreKey], app.BankKeeper, app.IBCKeeper.ChannelKeeper,
+		app.DistrKeeper, app.subspaces[bondcurve.ModuleName],
+	)
 
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
@@ -351,8 +357,8 @@ func NewSimApp(
 	// there is nothing left over in the validator fee pool, so as to keep the
 	// CanWithdrawInvariant invariant.
 	app.mm.SetOrderBeginBlockers(
-		upgrade.ModuleName, mint.ModuleName, distr.ModuleName, slashing.ModuleName,
-		evidence.ModuleName, staking.ModuleName, ibc.ModuleName,
+		upgrade.ModuleName, mint.ModuleName, stake.ModuleName, distr.ModuleName,
+		slashing.ModuleName, evidence.ModuleName, staking.ModuleName, ibc.ModuleName,
 	)
 	app.mm.SetOrderEndBlockers(crisis.ModuleName, gov.ModuleName, staking.ModuleName, stake.ModuleName)
 

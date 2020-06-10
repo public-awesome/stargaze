@@ -19,7 +19,7 @@ func (k Keeper) Delegate(ctx sdk.Context, vendorID, postID uint64, delAddr sdk.A
 	}
 
 	// find validator
-	validator, found := k.sk.GetValidator(ctx, valAddress)
+	validator, found := k.stakingKeeper.GetValidator(ctx, valAddress)
 	if !found {
 		return errors.New("validator not found")
 	}
@@ -30,7 +30,7 @@ func (k Keeper) Delegate(ctx sdk.Context, vendorID, postID uint64, delAddr sdk.A
 	k.InsertVotingDelegationQueue(ctx, vendorID, postID, delegation, post.VoteEnd)
 
 	// perform delegation on chain
-	_, err = k.sk.Delegate(ctx, delAddr, amount.Amount, sdk.Unbonded, validator, true)
+	_, err = k.stakingKeeper.Delegate(ctx, delAddr, amount.Amount, sdk.Unbonded, validator, true)
 	if err != nil {
 		return err
 	}
@@ -40,7 +40,7 @@ func (k Keeper) Delegate(ctx sdk.Context, vendorID, postID uint64, delAddr sdk.A
 
 func (k Keeper) Undelegate(ctx sdk.Context, endTime time.Time, vendorID, postID, stakeID uint64) error {
 	d := k.getDelegation(ctx, endTime, vendorID, postID, stakeID)
-	_, err := k.sk.Unbond(ctx, d.DelegatorAddress, d.ValidatorAddress, d.Shares)
+	_, err := k.stakingKeeper.Unbond(ctx, d.DelegatorAddress, d.ValidatorAddress, d.Shares)
 	if err != nil {
 		return err
 	}
