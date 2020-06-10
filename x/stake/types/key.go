@@ -20,6 +20,12 @@ const (
 
 	// QuerierRoute to be used for querierer msgs
 	QuerierRoute = ModuleName
+
+	// RewardPoolName is the name for the module account for the reward pool
+	RewardPoolName = "reward_pool"
+
+	// StakeDenom is the staking denom for the zone
+	StakeDenom = "ufuel"
 )
 
 var (

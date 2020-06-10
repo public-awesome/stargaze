@@ -55,7 +55,6 @@ func CreateTestInput() (*codec.Codec, *SimApp, sdk.Context) {
 	)
 
 	header := abci.Header{Height: app.LastBlockHeight() + 1, Time: time.Now()}
-	app.BeginBlock(abci.RequestBeginBlock{Header: header})
 	ctx := app.NewContext(false, header)
 
 	return codec.New(), app, ctx
