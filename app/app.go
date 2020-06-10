@@ -125,6 +125,7 @@ var (
 		gov.ModuleName:                  {auth.Burner},
 		transfer.GetModuleAccountName(): {auth.Minter, auth.Burner},
 		bondcurve.ModuleName:            {auth.Minter, auth.Burner},
+		stake.RewardPoolName:            {auth.Minter, auth.Burner},
 	}
 
 	// module accounts that are allowed to receive tokens
@@ -166,7 +167,7 @@ type RocketApp struct {
 	evidenceKeeper   evidence.Keeper
 	transferKeeper   transfer.Keeper
 	stakeKeeper      stake.Keeper
-	bcKeeper         bondcurve.Keeper
+	bondCurveKeeper  bondcurve.Keeper
 
 	// make scoped keepers public for test purposes
 	scopedIBCKeeper      capability.ScopedKeeper
@@ -324,8 +325,13 @@ func NewRocketApp(
 	app.evidenceKeeper = *evidenceKeeper
 
 	// create stakebird keepers
-	app.stakeKeeper = stake.NewKeeper(appCodec, keys[stake.StoreKey], &app.stakingKeeper, app.subspaces[stake.ModuleName])
-	app.bcKeeper = bondcurve.NewKeeper(appCodec, keys[bondcurve.StoreKey], app.bankKeeper, app.ibcKeeper.ChannelKeeper,
+	app.stakeKeeper = stake.NewKeeper(
+		appCodec, keys[stake.StoreKey], app.accountKeeper, app.stakingKeeper,
+		app.bankKeeper, app.subspaces[stake.ModuleName],
+	)
+
+	app.bondCurveKeeper = bondcurve.NewKeeper(
+		appCodec, keys[bondcurve.StoreKey], app.bankKeeper, app.ibcKeeper.ChannelKeeper,
 		app.distrKeeper, app.subspaces[bondcurve.ModuleName],
 	)
 
@@ -348,15 +354,15 @@ func NewRocketApp(
 		params.NewAppModule(app.paramsKeeper),
 		transferModule,
 		stake.NewAppModule(appCodec, app.stakeKeeper),
-		bondcurve.NewAppModule(appCodec, app.bcKeeper),
+		bondcurve.NewAppModule(appCodec, app.bondCurveKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
 	// there is nothing left over in the validator fee pool, so as to keep the
 	// CanWithdrawInvariant invariant.
 	app.mm.SetOrderBeginBlockers(
-		upgrade.ModuleName, mint.ModuleName, distr.ModuleName, slashing.ModuleName,
-		evidence.ModuleName, staking.ModuleName, ibc.ModuleName,
+		upgrade.ModuleName, mint.ModuleName, stake.ModuleName, distr.ModuleName,
+		slashing.ModuleName, evidence.ModuleName, staking.ModuleName, ibc.ModuleName,
 	)
 	app.mm.SetOrderEndBlockers(
 		crisis.ModuleName, gov.ModuleName, staking.ModuleName, stake.ModuleName,

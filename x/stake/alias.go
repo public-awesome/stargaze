@@ -16,6 +16,7 @@ const (
 	DefaultParamspace = types.DefaultParamspace
 	QueryParams       = types.QueryParams
 	QuerierRoute      = types.QuerierRoute
+	RewardPoolName    = types.RewardPoolName
 )
 
 var (
