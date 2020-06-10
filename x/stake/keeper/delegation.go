@@ -30,7 +30,7 @@ func (k Keeper) Delegate(ctx sdk.Context, vendorID, postID uint64, delAddr sdk.A
 	k.InsertVotingDelegationQueue(ctx, vendorID, postID, delegation, post.VoteEnd)
 
 	// perform delegation on chain
-	_, err = k.stakingKeeper.Delegate(ctx, delAddr, amount.Amount, sdk.Unbonded, validator, false)
+	_, err = k.stakingKeeper.Delegate(ctx, delAddr, amount.Amount, sdk.Unbonded, validator, true)
 	if err != nil {
 		return err
 	}
