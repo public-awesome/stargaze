@@ -10,12 +10,12 @@ import (
 	"github.com/rocket-protocol/stakebird/x/stake/types"
 )
 
-// Perform a delegation
+// Delegate performs a delegation
 func (k Keeper) Delegate(ctx sdk.Context, vendorID, postID uint64, delAddr sdk.AccAddress, valAddress sdk.ValAddress, amount sdk.Coin) (err error) {
 	// check if post exist, if not, create it and begin the voting period
 	post, found := k.GetPost(ctx, vendorID, postID)
 	if !found {
-		post = k.CreatePost(ctx, postID, vendorID, "", k.VotingPeriod(ctx))
+		return errors.New("post not found")
 	}
 
 	// find validator
