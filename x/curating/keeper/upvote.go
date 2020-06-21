@@ -11,7 +11,7 @@ import (
 )
 
 // Perform a delegation
-func (k Keeper) Delegate(ctx sdk.Context, vendorID, postID uint64, delAddr sdk.AccAddress, valAddress sdk.ValAddress, amount sdk.Coin) (err error) {
+func (k Keeper) Upvote(ctx sdk.Context, vendorID, postID uint64, delAddr sdk.AccAddress, valAddress sdk.ValAddress, amount sdk.Coin) (err error) {
 	// check if post exist, if not, create it and begin the voting period
 	post, found := k.GetPost(ctx, vendorID, postID)
 	if !found {
