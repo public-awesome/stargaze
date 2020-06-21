@@ -2,16 +2,16 @@ package types
 
 // stake module event types
 const (
-	EventTypeVoteEnd  = "voting_period_end"
-	EventTypeDelegate = "delegate"
-	EventTypePost     = "post"
+	EventTypeCuratingEndTime = "curating_end_time"
+	EventTypeDelegate        = "delegate"
+	EventTypePost            = "post"
 
-	AttributeKeyVendorID     = "vendor_id"
-	AttributeKeyPostID       = "post_id"
-	AttributeKeyDelegator    = "delegator"
-	AttributeKeyAmount       = "amount"
-	AttributeKeyBody         = "body"
-	AttributeKeyVotingPeriod = "voting_period"
+	AttributeKeyVendorID       = "vendor_id"
+	AttributeKeyPostID         = "post_id"
+	AttributeKeyCreator        = "creator"
+	AttributeKeyStake          = "stake"
+	AttributeKeyHash           = "hash"
+	AttributeKeyCurationWindow = "curation_window"
 
 	AttributeValueCategory = ModuleName
 )

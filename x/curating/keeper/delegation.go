@@ -7,7 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/davecgh/go-spew/spew"
-	"github.com/public-awesome/stakebird/x/stake/types"
+	"github.com/public-awesome/stakebird/x/curating/types"
 )
 
 // Perform a delegation
@@ -15,7 +15,7 @@ func (k Keeper) Delegate(ctx sdk.Context, vendorID, postID uint64, delAddr sdk.A
 	// check if post exist, if not, create it and begin the voting period
 	post, found := k.GetPost(ctx, vendorID, postID)
 	if !found {
-		post = k.CreatePost(ctx, postID, vendorID, "", k.VotingPeriod(ctx))
+		// post = k.CreatePost(ctx, postID, vendorID, "", k.VotingPeriod(ctx))
 	}
 
 	// find validator
@@ -27,7 +27,7 @@ func (k Keeper) Delegate(ctx sdk.Context, vendorID, postID uint64, delAddr sdk.A
 	// add delegation to voting delegation queue
 	shares := amount.Amount.ToDec()
 	delegation := stakingtypes.NewDelegation(delAddr, valAddress, shares)
-	k.InsertVotingDelegationQueue(ctx, vendorID, postID, delegation, post.VoteEnd)
+	k.InsertVotingDelegationQueue(ctx, vendorID, postID, delegation, post.CuratingEndTime)
 
 	// perform delegation on chain
 	_, err = k.stakingKeeper.Delegate(ctx, delAddr, amount.Amount, sdk.Unbonded, validator, true)

@@ -10,7 +10,7 @@ import (
 
 const (
 	// ModuleName is the name of the module
-	ModuleName = "stake"
+	ModuleName = "curating"
 
 	// StoreKey to be used when creating the KVStore
 	StoreKey = ModuleName
@@ -22,7 +22,7 @@ const (
 	QuerierRoute = ModuleName
 
 	// RewardPoolName is the name for the module account for the reward pool
-	RewardPoolName = "reward_pool"
+	RewardPoolName = "matching_reward_pool"
 
 	// StakeDenom is the staking denom for the zone
 	StakeDenom = "ufuel"

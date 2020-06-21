@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/public-awesome/stakebird/x/bondcurve"
+	"github.com/public-awesome/stakebird/x/curating"
 	"github.com/public-awesome/stakebird/x/stake"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -112,6 +113,7 @@ var (
 		transfer.AppModuleBasic{},
 		stake.AppModuleBasic{},
 		bondcurve.AppModuleBasic{},
+		curating.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -125,6 +127,7 @@ var (
 		transfer.GetModuleAccountName(): {auth.Minter, auth.Burner},
 		bondcurve.ModuleName:            {auth.Minter, auth.Burner},
 		stake.RewardPoolName:            {auth.Minter, auth.Burner},
+		curating.RewardPoolName:         {auth.Minter, auth.Burner},
 	}
 
 	// module accounts that are allowed to receive tokens
@@ -166,6 +169,7 @@ type SimApp struct {
 	TransferKeeper   transfer.Keeper
 	StakeKeeper      stake.Keeper
 	BondCurveKeeper  bondcurve.Keeper
+	CuratingKeeper   curating.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper      capability.ScopedKeeper
@@ -211,7 +215,7 @@ func NewSimApp(
 		mint.StoreKey, distr.StoreKey, slashing.StoreKey,
 		gov.StoreKey, params.StoreKey, ibc.StoreKey, upgrade.StoreKey,
 		evidence.StoreKey, transfer.StoreKey, capability.StoreKey,
-		stake.StoreKey, bondcurve.StoreKey,
+		stake.StoreKey, bondcurve.StoreKey, curating.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capability.MemStoreKey)
@@ -242,6 +246,7 @@ func NewSimApp(
 	app.subspaces[crisis.ModuleName] = app.ParamsKeeper.Subspace(crisis.DefaultParamspace)
 	app.subspaces[stake.ModuleName] = app.ParamsKeeper.Subspace(stake.DefaultParamspace)
 	app.subspaces[bondcurve.ModuleName] = app.ParamsKeeper.Subspace(bondcurve.DefaultParamspace)
+	app.subspaces[curating.ModuleName] = app.ParamsKeeper.Subspace(curating.DefaultParamspace)
 
 	bApp.SetParamStore(app.ParamsKeeper.Subspace(baseapp.Paramspace).WithKeyTable(std.ConsensusParamsKeyTable()))
 
@@ -295,6 +300,11 @@ func NewSimApp(
 	app.StakeKeeper = stake.NewKeeper(
 		appCodec, keys[stake.StoreKey], app.AccountKeeper, app.StakingKeeper,
 		app.BankKeeper, app.subspaces[stake.ModuleName],
+	)
+
+	app.CuratingKeeper = curating.NewKeeper(
+		appCodec, keys[curating.StoreKey], app.AccountKeeper, app.StakingKeeper,
+		app.BankKeeper, app.subspaces[curating.ModuleName],
 	)
 
 	// Create IBC Keeper
@@ -351,13 +361,14 @@ func NewSimApp(
 		transferModule,
 		stake.NewAppModule(appCodec, app.StakeKeeper),
 		bondcurve.NewAppModule(appCodec, app.BondCurveKeeper),
+		curating.NewAppModule(appCodec, app.CuratingKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
 	// there is nothing left over in the validator fee pool, so as to keep the
 	// CanWithdrawInvariant invariant.
 	app.mm.SetOrderBeginBlockers(
-		upgrade.ModuleName, mint.ModuleName, stake.ModuleName, distr.ModuleName,
+		upgrade.ModuleName, mint.ModuleName, stake.ModuleName, curating.ModuleName, distr.ModuleName,
 		slashing.ModuleName, evidence.ModuleName, staking.ModuleName, ibc.ModuleName,
 	)
 	app.mm.SetOrderEndBlockers(crisis.ModuleName, gov.ModuleName, staking.ModuleName, stake.ModuleName)
@@ -371,7 +382,7 @@ func NewSimApp(
 		capability.ModuleName, auth.ModuleName, distr.ModuleName, staking.ModuleName, bank.ModuleName,
 		slashing.ModuleName, gov.ModuleName, mint.ModuleName, crisis.ModuleName,
 		ibc.ModuleName, genutil.ModuleName, evidence.ModuleName, transfer.ModuleName,
-		stake.ModuleName, bondcurve.ModuleName,
+		stake.ModuleName, bondcurve.ModuleName, curating.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)

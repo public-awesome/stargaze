@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -15,7 +14,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	authclient "github.com/cosmos/cosmos-sdk/x/auth/client"
-	"github.com/public-awesome/stakebird/x/stake/types"
+	"github.com/public-awesome/stakebird/x/curating/types"
 	"github.com/spf13/cobra"
 )
 
@@ -31,7 +30,7 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 
 	stakeTxCmd.AddCommand(flags.PostCommands(
 		GetCmdPost(cdc),
-		GetCmdDelegate(cdc),
+		// GetCmdDelegate(cdc),
 	)...)
 
 	return stakeTxCmd
@@ -56,29 +55,30 @@ $ %s tx stake delegate cosmosvaloper1l2rsakp388kuv9k8qzq6lrm9taddae7fpx59wm 1000
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(auth.DefaultTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-			amount, err := sdk.ParseCoin(args[1])
-			if err != nil {
-				return err
-			}
+			// amount, err := sdk.ParseCoin(args[1])
+			// if err != nil {
+			// 	return err
+			// }
 
-			delAddr := cliCtx.GetFromAddress()
-			valAddr, err := sdk.ValAddressFromBech32(args[0])
-			if err != nil {
-				return err
-			}
+			// delAddr := cliCtx.GetFromAddress()
+			// valAddr, err := sdk.ValAddressFromBech32(args[0])
+			// if err != nil {
+			// 	return err
+			// }
 
-			vendorID, err := strconv.ParseUint(args[2], 10, 64)
-			if err != nil {
-				return err
-			}
+			// vendorID, err := strconv.ParseUint(args[2], 10, 64)
+			// if err != nil {
+			// 	return err
+			// }
 
-			postID, err := strconv.ParseUint(args[3], 10, 64)
-			if err != nil {
-				return err
-			}
+			// postID, err := strconv.ParseUint(args[3], 10, 64)
+			// if err != nil {
+			// 	return err
+			// }
 
-			msg := types.NewMsgDelegate(vendorID, postID, delAddr, valAddr, amount)
-			return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			// msg := types.NewMsgDelegate(vendorID, postID, delAddr, valAddr, amount)
+			// return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{})
 		},
 	}
 }
@@ -86,13 +86,13 @@ $ %s tx stake delegate cosmosvaloper1l2rsakp388kuv9k8qzq6lrm9taddae7fpx59wm 1000
 // GetCmdPost implements the delegate command.
 func GetCmdPost(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "post [validator-addr] [amount] [vendor-id] [post-id] [body] [voting-period]",
+		Use:   "post [stake] [vendor-id] [post-id] [hash]",
 		Args:  cobra.MinimumNArgs(4),
-		Short: "Delegate liquid tokens to a validator for creating a post",
+		Short: "Create a post with a stake",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Delegate an amount of liquid coins to a validator from your wallet.
+			fmt.Sprintf(`Create a post with a stake.
 Example:
-$ %s tx stake post cosmosvaloper1l2rsakp388kuv9k8qzq6lrm9taddae7fpx59wm 1000stake 1 2 "body" 72h  --from mykey
+$ %s tx curating post 1000stake 1 2 "bodyhash"  --from mykey
 `,
 				version.ClientName,
 			),
@@ -102,16 +102,12 @@ $ %s tx stake post cosmosvaloper1l2rsakp388kuv9k8qzq6lrm9taddae7fpx59wm 1000stak
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(auth.DefaultTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-			amount, err := sdk.ParseCoin(args[1])
+			stake, err := sdk.ParseCoin(args[1])
 			if err != nil {
 				return err
 			}
 
-			delAddr := cliCtx.GetFromAddress()
-			valAddr, err := sdk.ValAddressFromBech32(args[0])
-			if err != nil {
-				return err
-			}
+			creator := cliCtx.GetFromAddress()
 
 			vendorID, err := strconv.ParseUint(args[2], 10, 64)
 			if err != nil {
@@ -123,21 +119,12 @@ $ %s tx stake post cosmosvaloper1l2rsakp388kuv9k8qzq6lrm9taddae7fpx59wm 1000stak
 				return err
 			}
 
-			var body string
+			var hash string
 			if len(args) > 3 {
-				body = args[4]
+				hash = args[4]
 			}
 
-			var votingPeriod time.Duration
-			if len(args) > 4 {
-				votingPeriod, err = time.ParseDuration(args[5])
-				if err != nil {
-					panic("Failed parsing voting period")
-				}
-			}
-
-			msgDel := types.NewMsgDelegate(vendorID, postID, delAddr, valAddr, amount)
-			msg := types.NewMsgPost(body, msgDel, votingPeriod)
+			msg := types.NewMsgPost(vendorID, postID, creator, hash, stake)
 
 			return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},

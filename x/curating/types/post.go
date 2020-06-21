@@ -2,13 +2,15 @@ package types
 
 import (
 	"time"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func NewPost(id, vendorID uint64, body string, voteEnd time.Time) Post {
+func NewPost(id, vendorID uint64, hash string, creator sdk.AccAddress, stake sdk.Coin, curationEndTime time.Time) Post {
 	return Post{
-		ID:       id,
-		VendorID: vendorID,
-		Body:     body,
-		VoteEnd:  voteEnd,
+		Creator:         creator,
+		Hash:            hash,
+		Stake:           stake,
+		CuratingEndTime: curationEndTime,
 	}
 }

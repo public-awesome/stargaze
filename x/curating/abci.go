@@ -35,11 +35,11 @@ func EndBlocker(ctx sdk.Context, k Keeper) {
 
 		ctx.EventManager().EmitEvent(
 			sdk.NewEvent(
-				types.EventTypeVoteEnd,
+				types.EventTypeCuratingEndTime,
 				sdk.NewAttribute(sdk.AttributeKeyAmount, delegation.Shares.String()),
 				sdk.NewAttribute(types.AttributeKeyVendorID, strconv.FormatUint(vendorID, 10)),
 				sdk.NewAttribute(types.AttributeKeyPostID, strconv.FormatUint(postID, 10)),
-				sdk.NewAttribute(types.AttributeKeyDelegator, delegation.DelegatorAddress.String()),
+				// sdk.NewAttribute(types.AttributeKeyDelegator, delegation.DelegatorAddress.String()),
 			),
 		)
 

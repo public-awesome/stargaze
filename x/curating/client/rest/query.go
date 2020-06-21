@@ -8,12 +8,12 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/public-awesome/stakebird/x/stake/types"
+	"github.com/public-awesome/stakebird/x/curating/types"
 )
 
 func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	r.HandleFunc(
-		"/stake/parameters",
+		"/curating/parameters",
 		queryParamsHandlerFn(cliCtx),
 	).Methods("GET")
 }

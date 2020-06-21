@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	authexported "github.com/cosmos/cosmos-sdk/x/auth/exported"
-	"github.com/public-awesome/stakebird/x/stake/types"
+	"github.com/public-awesome/stakebird/x/curating/types"
 )
 
 func (k Keeper) GetRewardPool(ctx sdk.Context) (rewardPool authexported.ModuleAccountI) {

@@ -31,8 +31,8 @@ var (
 	// StakeIndexFromKey   = types.StakeIndexFromKey
 
 	// variable aliases
-	ModuleCdc        = types.ModuleCdc
-	EventTypeVoteEnd = types.EventTypeVoteEnd
+	ModuleCdc                = types.ModuleCdc
+	EventTypeCuratingEndTime = types.EventTypeCuratingEndTime
 )
 
 type (

@@ -11,8 +11,8 @@ import (
 
 // Default parameter namespace
 const (
-	DefaultParamspace                 = ModuleName
-	DefaultVotingPeriod time.Duration = time.Hour * 24 * 3
+	DefaultParamspace                   = ModuleName
+	DefaultCurationWindow time.Duration = time.Hour * 24 * 3
 )
 
 // 50%
@@ -22,20 +22,20 @@ var (
 
 // Parameter store keys
 var (
-	KeyVotingPeriod         = []byte("VotingPeriod")
+	KeyCurationWindow       = []byte("CurationWindow")
 	KeyRewardPoolAllocation = []byte("RewardPoolAllocation")
 )
 
 // Params - used for initializing default parameter for stake at genesis
 type Params struct {
-	VotingPeriod         time.Duration `json:"voting_period" yaml:"voting_period"`
+	CurationWindow       time.Duration `json:"curation_window" yaml:"curation_window"`
 	RewardPoolAllocation sdk.Dec       `json:"reward_pool_allocation" yaml:"reward_pool_allocation"`
 }
 
 // NewParams creates a new Params object
-func NewParams(votingPeriod time.Duration, rewardPoolAllocation sdk.Dec) Params {
+func NewParams(curationWindow time.Duration, rewardPoolAllocation sdk.Dec) Params {
 	return Params{
-		VotingPeriod:         votingPeriod,
+		CurationWindow:       curationWindow,
 		RewardPoolAllocation: rewardPoolAllocation,
 	}
 }
@@ -49,32 +49,32 @@ func (p Params) String() string {
 // ParamSetPairs - Implements params.ParamSet
 func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
-		paramtypes.NewParamSetPair(KeyVotingPeriod, &p.VotingPeriod, validateVotingPeriod),
+		paramtypes.NewParamSetPair(KeyCurationWindow, &p.CurationWindow, validateCurationWindow),
 		paramtypes.NewParamSetPair(KeyRewardPoolAllocation, &p.RewardPoolAllocation, validateRewardPoolAllocation),
 	}
 }
 
 // DefaultParams defines the parameters for this module
 func DefaultParams() Params {
-	return NewParams(DefaultVotingPeriod, DefaultRewardPoolAllocation)
+	return NewParams(DefaultCurationWindow, DefaultRewardPoolAllocation)
 }
 
 func (p Params) Validate() error {
-	if err := validateVotingPeriod(p.VotingPeriod); err != nil {
+	if err := validateCurationWindow(p.CurationWindow); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func validateVotingPeriod(i interface{}) error {
+func validateCurationWindow(i interface{}) error {
 	v, ok := i.(time.Duration)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
 	}
 
 	if v <= 0 {
-		return fmt.Errorf("voting period must be positive: %d", v)
+		return fmt.Errorf("curation window must be positive: %d", v)
 	}
 
 	return nil

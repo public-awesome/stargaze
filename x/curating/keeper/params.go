@@ -15,8 +15,8 @@ func ParamKeyTable() paramtypes.KeyTable {
 	return paramtypes.NewKeyTable().RegisterParamSet(&types.Params{})
 }
 
-func (k Keeper) VotingPeriod(ctx sdk.Context) (res time.Duration) {
-	k.paramstore.Get(ctx, types.KeyVotingPeriod, &res)
+func (k Keeper) CurationWindow(ctx sdk.Context) (res time.Duration) {
+	k.paramstore.Get(ctx, types.KeyCurationWindow, &res)
 	return
 }
 
