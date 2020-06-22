@@ -8,8 +8,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/davecgh/go-spew/spew"
-	"github.com/rocket-protocol/stakebird/testdata"
-	"github.com/rocket-protocol/stakebird/x/stake"
+	"github.com/public-awesome/stakebird/testdata"
+	"github.com/public-awesome/stakebird/x/stake"
 	"github.com/stretchr/testify/require"
 )
 

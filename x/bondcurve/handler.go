@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/rocket-protocol/stakebird/x/bondcurve/types"
+	"github.com/public-awesome/stakebird/x/bondcurve/types"
 )
 
 // NewHandler creates an sdk.Handler for all the bondcurve type messages

@@ -1,8 +1,8 @@
 package bondcurve
 
 import (
-	"github.com/rocket-protocol/stakebird/x/bondcurve/keeper"
-	"github.com/rocket-protocol/stakebird/x/bondcurve/types"
+	"github.com/public-awesome/stakebird/x/bondcurve/keeper"
+	"github.com/public-awesome/stakebird/x/bondcurve/types"
 )
 
 const (
@@ -27,7 +27,7 @@ var (
 	// TODO: Fill out function aliases
 
 	// variable aliases
-	ModuleCdc     = types.ModuleCdc
+	ModuleCdc = types.ModuleCdc
 	// TODO: Fill out variable aliases
 )
 

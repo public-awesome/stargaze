@@ -5,8 +5,8 @@ import (
 	"io"
 	"os"
 
-	"github.com/rocket-protocol/stakebird/x/bondcurve"
-	"github.com/rocket-protocol/stakebird/x/stake"
+	"github.com/public-awesome/stakebird/x/bondcurve"
+	"github.com/public-awesome/stakebird/x/stake"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"

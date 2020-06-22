@@ -5,9 +5,9 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/rocket-protocol/stakebird/testdata"
-	"github.com/rocket-protocol/stakebird/x/stake"
-	"github.com/rocket-protocol/stakebird/x/stake/types"
+	"github.com/public-awesome/stakebird/testdata"
+	"github.com/public-awesome/stakebird/x/stake"
+	"github.com/public-awesome/stakebird/x/stake/types"
 	"github.com/stretchr/testify/require"
 )
 

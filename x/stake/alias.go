@@ -1,8 +1,8 @@
 package stake
 
 import (
-	"github.com/rocket-protocol/stakebird/x/stake/keeper"
-	"github.com/rocket-protocol/stakebird/x/stake/types"
+	"github.com/public-awesome/stakebird/x/stake/keeper"
+	"github.com/public-awesome/stakebird/x/stake/types"
 
 	stakingTypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )

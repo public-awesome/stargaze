@@ -1,4 +1,5 @@
 package rest
+
 // The packages below are commented out at first to prevent an error if this file isn't initially saved.
 import (
 	// "bytes"
@@ -10,7 +11,7 @@ import (
 	// sdk "github.com/cosmos/cosmos-sdk/types"
 	// "github.com/cosmos/cosmos-sdk/types/rest"
 	// "github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	// "github.com/rocket-protocol/stakebird/x/bondcurve/types"
+	// "github.com/public-awesome/stakebird/x/bondcurve/types"
 )
 
 func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {

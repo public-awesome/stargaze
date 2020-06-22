@@ -13,9 +13,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/rocket-protocol/stakebird/x/stake/client/cli"
-	"github.com/rocket-protocol/stakebird/x/stake/client/rest"
-	"github.com/rocket-protocol/stakebird/x/stake/types"
+	"github.com/public-awesome/stakebird/x/stake/client/cli"
+	"github.com/public-awesome/stakebird/x/stake/client/rest"
+	"github.com/public-awesome/stakebird/x/stake/types"
 )
 
 // Type check to ensure the interface is properly implemented

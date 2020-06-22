@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package rocket_protocol.stakebird.x.bondcurve.v1;
 
-option go_package = "github.com/rocket-protocol/stakebird/x/bondcurve/types";
+option go_package = "github.com/public-awesome/stakebird/x/bondcurve/types";
 
 import "contrib/proto/gogoproto/gogo.proto";
 import "contrib/proto/cosmos-proto/types.proto";

@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/rocket-protocol/stakebird/testdata"
+	"github.com/public-awesome/stakebird/testdata"
 	"github.com/stretchr/testify/require"
 )
 

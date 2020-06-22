@@ -12,8 +12,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/rocket-protocol/stakebird/x/bondcurve/client/cli"
-	"github.com/rocket-protocol/stakebird/x/bondcurve/client/rest"
+	"github.com/public-awesome/stakebird/x/bondcurve/client/cli"
+	"github.com/public-awesome/stakebird/x/bondcurve/client/rest"
 )
 
 // Type check to ensure the interface is properly implemented
