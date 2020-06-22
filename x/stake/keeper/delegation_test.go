@@ -8,8 +8,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/davecgh/go-spew/spew"
-	"github.com/rocket-protocol/stakebird/testdata"
-	"github.com/rocket-protocol/stakebird/x/stake"
+	"github.com/public-awesome/stakebird/testdata"
+	"github.com/public-awesome/stakebird/x/stake"
 	"github.com/stretchr/testify/require"
 )
 
@@ -17,7 +17,7 @@ func TestDelegation(t *testing.T) {
 	_, app, ctx := testdata.CreateTestInput()
 
 	// create fake addresses
-	delAddrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(100000))
+	delAddrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
 	valAddrs := testdata.ConvertAddrsToValAddrs(delAddrs)
 
 	// create validator with 50% commission
@@ -41,6 +41,8 @@ func TestDelegation(t *testing.T) {
 	postID := uint64(1)
 	votingPeriod := time.Hour * 24 * 7
 	amount := sdk.NewInt64Coin("ufuel", 10000)
+	app.StakeKeeper.CreatePost(ctx, postID, vendorID, "body string", votingPeriod)
+
 	err = app.StakeKeeper.Delegate(ctx, vendorID, postID, delAddrs[0], valAddrs[0], amount)
 	require.NoError(t, err)
 

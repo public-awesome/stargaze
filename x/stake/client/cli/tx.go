@@ -15,7 +15,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	authclient "github.com/cosmos/cosmos-sdk/x/auth/client"
-	"github.com/rocket-protocol/stakebird/x/stake/types"
+	"github.com/public-awesome/stakebird/x/stake/types"
 	"github.com/spf13/cobra"
 )
 

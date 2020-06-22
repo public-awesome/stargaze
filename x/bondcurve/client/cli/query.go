@@ -9,7 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/rocket-protocol/stakebird/x/bondcurve/types"
+	"github.com/public-awesome/stakebird/x/bondcurve/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module

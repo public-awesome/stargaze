@@ -6,7 +6,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/rocket-protocol/stakebird/x/stake/types"
+	"github.com/public-awesome/stakebird/x/stake/types"
 )
 
 // NewHandler creates an sdk.Handler for all the x/stake type messages
@@ -38,6 +38,7 @@ func handleMsgDelegate(ctx sdk.Context, k Keeper, msg types.MsgDelegate) (*sdk.R
 			sdk.NewAttribute(types.AttributeKeyVendorID, strconv.FormatUint(msg.VendorID, 10)),
 			sdk.NewAttribute(types.AttributeKeyPostID, strconv.FormatUint(msg.PostID, 10)),
 			sdk.NewAttribute(types.AttributeKeyAmount, msg.Amount.String()),
+			sdk.NewAttribute(types.AttributeKeyDelegator, msg.DelegatorAddr.String()),
 		),
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
@@ -60,6 +61,7 @@ func handleMsgPost(ctx sdk.Context, k Keeper, msg types.MsgPost) (*sdk.Result, e
 		sdk.NewEvent(
 			types.EventTypePost,
 			sdk.NewAttribute(types.AttributeKeyVendorID, strconv.FormatUint(msg.VendorID, 10)),
+			sdk.NewAttribute(types.AttributeKeyDelegator, msg.DelegatorAddr.String()),
 			sdk.NewAttribute(types.AttributeKeyPostID, strconv.FormatUint(msg.PostID, 10)),
 			sdk.NewAttribute(types.AttributeKeyBody, msg.Body),
 			sdk.NewAttribute(types.AttributeKeyVotingPeriod, msg.VotingPeriod.String()),

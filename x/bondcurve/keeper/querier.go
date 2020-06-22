@@ -6,7 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/rocket-protocol/stakebird/x/bondcurve/types"
+	"github.com/public-awesome/stakebird/x/bondcurve/types"
 )
 
 // NewQuerier creates a new querier for bondcurve clients.

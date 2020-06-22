@@ -4,7 +4,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/rocket-protocol/stakebird/x/stake/types"
+	"github.com/public-awesome/stakebird/x/stake/types"
 )
 
 // Return post if one exists for (vendor_id | post_id)

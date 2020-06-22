@@ -4,7 +4,7 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/rocket-protocol/stakebird/x/bondcurve/types"
+	"github.com/public-awesome/stakebird/x/bondcurve/types"
 )
 
 // GetParams returns the total set of bondcurve parameters.

@@ -24,7 +24,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	bankcmd "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 
-	"github.com/rocket-protocol/stakebird/app"
+	"github.com/public-awesome/stakebird/app"
 )
 
 var (

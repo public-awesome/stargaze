@@ -6,7 +6,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/rocket-protocol/stakebird/x/stake/types"
+	"github.com/public-awesome/stakebird/x/stake/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 

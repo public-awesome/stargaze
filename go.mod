@@ -1,4 +1,4 @@
-module github.com/rocket-protocol/stakebird
+module github.com/public-awesome/stakebird
 
 go 1.14
 

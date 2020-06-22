@@ -7,15 +7,15 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/davecgh/go-spew/spew"
-	"github.com/rocket-protocol/stakebird/x/stake/types"
+	"github.com/public-awesome/stakebird/x/stake/types"
 )
 
-// Perform a delegation
+// Delegate performs a delegation
 func (k Keeper) Delegate(ctx sdk.Context, vendorID, postID uint64, delAddr sdk.AccAddress, valAddress sdk.ValAddress, amount sdk.Coin) (err error) {
 	// check if post exist, if not, create it and begin the voting period
 	post, found := k.GetPost(ctx, vendorID, postID)
 	if !found {
-		post = k.CreatePost(ctx, postID, vendorID, "", k.VotingPeriod(ctx))
+		return errors.New("post not found")
 	}
 
 	// find validator
