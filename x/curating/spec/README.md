@@ -42,6 +42,7 @@ type Post struct {
 	VendorID        uint64
 	PostID          uint64
 	Creator         sdk.AccAddress
+	RewardAccount	sdk.AccAddress
 	BodyHash        string
 	Deposit         sdk.Coin
 	CurationEndTime time.Time
@@ -105,15 +106,18 @@ Post curation begins as soon as the post is registered on-chain.
 
 ```go
 type MsgPost struct {
-	VendorID uint64 // 1 = twitter, 2 = reddit, etc.
-	PostID   uint64
-	Creator  sdk.AccAddress
-	BodyHash string // hex string, optional
-	Deposit  sdk.Coin
+	VendorID      uint64 // 1 = twitter, 2 = reddit, etc.
+	PostID        uint64
+	Creator       sdk.AccAddress
+	RewardAccount sdk.AccAddress // optional
+	BodyHash      string // hex string, optional
+	Deposit       sdk.Coin
 }
 ```
 
 Posts are persisted with the key `0x01|vendorID|postID`.
+
+An optional reward account enables rewards to go to a different account than the creator. 
 
 Validate the post, calculate the curation end time, and insert the vendor/post_id pair into the post curation queue.
 
@@ -142,7 +146,7 @@ type MsgUpvote struct {
 
 Upvotes are persisted with the key `0x02|vendorID|postID|curator`.
 
-If the corresponding post doesn't exist yet for an upvote, then also create the post with the curator being the creator. This way, the curator earns creator rewards as well.
+If the corresponding post doesn't exist yet for an upvote, then also create the post with the curator being the `RewardAccount` for the creator. This way, the curator earns creator rewards as well.
 
 ### MsgModerate
 
