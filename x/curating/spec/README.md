@@ -25,12 +25,12 @@ Each of these parameters can be voted on by governance, but will be assigned san
 ```go
 type Params struct {
 	CurationWindow       	 time.Duration
-	DefaultPostDeposit       sdk.Coin
-	DefaultUpvoteDepost  	 sdk.Coin
-	DefaultModerationDeposit sdk.Coin
-	DefaultVoteAmount        sdk.Coin // amount for 1 vote
-	MaxNumVotes              uint16 // upper-limit on QV voting
-	MaxVendors               uint16 // upper-limit on vendor_ids
+	PostDeposit              sdk.Coin
+	UpvoteDepost  	         sdk.Coin
+	ModerationDeposit        sdk.Coin
+	VoteAmount               sdk.Coin // amount for 1 vote
+	MaxNumVotes              uint32 // upper-limit on QV voting
+	MaxVendors               uint32 // upper-limit on vendor_ids
 	RewardPoolAllocation 	 sdk.Dec // from inflation
 }
 ```
@@ -39,11 +39,11 @@ type Params struct {
 
 ```go
 type Post struct {
-	VendorID        uint64
-	PostID          uint64
+	VendorID        uint32
+	PostID          string
 	Creator         sdk.AccAddress
 	RewardAccount	sdk.AccAddress
-	BodyHash        string
+	Body            string
 	Deposit         sdk.Coin
 	CurationEndTime time.Time
 }
@@ -51,8 +51,8 @@ type Post struct {
 
 ```go
 type Upvote struct {
-	VendorID        uint64
-	PostID          uint64
+	VendorID        uint32
+	PostID          string
 	Curator         sdk.AccAddress
 	VoteAmount      sdk.Coin
 	Deposit         sdk.Coin
@@ -89,8 +89,8 @@ For the purpose of tracking the end of post curation windows the post curation q
 
 ```go
 type VPPair struct {
-    VendorID uint64
-    PostID   uint64
+    VendorID uint32
+    PostID   string
 }
 ```
 
@@ -106,11 +106,11 @@ Post curation begins as soon as the post is registered on-chain.
 
 ```go
 type MsgPost struct {
-	VendorID      uint64 // 1 = twitter, 2 = reddit, etc.
-	PostID        uint64
+	VendorID      uint32 // 1 = twitter, 2 = reddit, etc.
+	PostID        string
 	Creator       sdk.AccAddress
 	RewardAccount sdk.AccAddress // optional
-	BodyHash      string // hex string, optional
+	Body          string // hex string, optional
 	Deposit       sdk.Coin
 }
 ```
@@ -136,10 +136,10 @@ The amount of vote credits (`VoteAmount`) is quadratically associated to `VoteNu
 
 ```go
 type MsgUpvote struct {
-	VendorID uint64
-	PostID   uint64
+	VendorID uint32
+	PostID   string
 	Curator  sdk.AccAddress
-	VoteNum	 uint8 // 1 = 1, 2 = 4, 3 = 9 (quadratic)
+	VoteNum  uint32 // 1 = 1, 2 = 4, 3 = 9 (quadratic)
 	Deposit  sdk.Coin
 }
 ```
@@ -156,8 +156,8 @@ If the corresponding post doesn't exist yet for an upvote, then also create the 
 
 ```go
 type MsgModerate struct {
-	VendorID  uint64
-	PostID    uint64
+	VendorID  uint32
+	PostID    string
 	Moderator sdk.AccAddress
 	Deposit   sdk.Coin
 }
@@ -182,6 +182,8 @@ Iterate `PostCurationQueue` and process all upvotes that have completed their cu
 
 | Type                  | Attribute Key         | Attribute Value           |
 | --------------------- | --------------------- | ------------------------- |
+| complete_curation     | vendor_id             | {vendorID}                |
+| complete_curation     | post_id               | {postID}                  |
 | complete_curation     | vote_count            | {totalVoteCount}          |
 | complete_curation     | vote_amount           | {totalVoteAmount}         |
 | complete_curation     | voting_pool           | {totalVotingPool}         |
@@ -195,13 +197,15 @@ Iterate `PostCurationQueue` and process all upvotes that have completed their cu
 
 #### MsgPost
 
-| Type     | Attribute Key | Attribute Value    |
-| -------- | ------------- | ------------------ |
-| post     | vendor_id     | {vendorID}         |
-| post     | post_id       | {postID}           |
-| message  | module        | curating           |
-| message  | action        | post               |
-| message  | sender        | {creatorAddress}   |
+| Type     | Attribute Key  | Attribute Value    |
+| -------- | -------------- | ------------------ |
+| post     | vendor_id      | {vendorID}         |
+| post     | post_id        | {postID}           |
+| post     | creator        | {creatorAddress}   |
+| post     | reward_account | {rewardAddress}    |
+| message  | module         | curating           |
+| message  | action         | post               |
+| message  | sender         | {creatorAddress}   |
 
 #### MsgUpvote
 
@@ -209,6 +213,7 @@ Iterate `PostCurationQueue` and process all upvotes that have completed their cu
 | -------- | ------------- | ------------------ |
 | upvote   | vendor_id     | {vendorID}         |
 | upvote   | post_id       | {postID}           |
+| upvote   | curator       | {curatorAddress}   |
 | message  | module        | curating           |
 | message  | action        | upvote             |
 | message  | sender        | {curatorAddress}   |
@@ -219,6 +224,7 @@ Iterate `PostCurationQueue` and process all upvotes that have completed their cu
 | -------- | ------------- | ------------------ |
 | moderate | vendor_id     | {vendorID}         |
 | moderate | post_id       | {postID}           |
+| moderate | moderator     | {moderatorAddress} |
 | message  | module        | curating           |
 | message  | action        | moderate           |
 | message  | sender        | {moderatorAddress} |
