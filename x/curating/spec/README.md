@@ -152,6 +152,16 @@ If the corresponding post doesn't exist yet for an upvote, then also create the 
 
 `MsgModerate` is to signify spam or illegal content. Moderation delegates to the Cosmos governance module, creating a new text proposal for each moderation message.
 
+Text proposal:
+```
+title: "Content moderation proposal {vendor_id} - {post_id}"
+description: hash of the post
+type: "Text"
+deposit: `MsgModerate.Deposit`
+```
+
+Governance will have to match the hash of the post with the actual post, and moderate the content.
+
 [TODO] Figure out how to handle the result of moderation (i.e: re-start curation or delete/flag post). See https://github.com/public-awesome/stakebird/issues/51.
 
 ```go
