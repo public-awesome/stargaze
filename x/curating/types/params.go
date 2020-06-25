@@ -77,12 +77,12 @@ func (p Params) String() string {
 func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
 		paramtypes.NewParamSetPair(KeyCurationWindow, &p.CurationWindow, validateCurationWindow),
-		paramtypes.NewParamSetPair(KeyPostDeposit, &p.PostDeposit, validateCoin),
-		paramtypes.NewParamSetPair(KeyUpvoteDeposit, &p.UpvoteDeposit, validateCoin),
-		paramtypes.NewParamSetPair(KeyModerateDeposit, &p.ModerateDeposit, validateCoin),
-		paramtypes.NewParamSetPair(KeyVoteAmount, &p.VoteAmount, validateCoin),
-		paramtypes.NewParamSetPair(KeyMaxNumVotes, &p.MaxNumVotes, validateUint16),
-		paramtypes.NewParamSetPair(KeyMaxVendors, &p.MaxVendors, validateUint16),
+		paramtypes.NewParamSetPair(KeyPostDeposit, &p.PostDeposit, validatePostDeposit),
+		paramtypes.NewParamSetPair(KeyUpvoteDeposit, &p.UpvoteDeposit, validateUpvoteDeposit),
+		paramtypes.NewParamSetPair(KeyModerateDeposit, &p.ModerateDeposit, validateModerateDeposit),
+		paramtypes.NewParamSetPair(KeyVoteAmount, &p.VoteAmount, validateVoteAmount),
+		paramtypes.NewParamSetPair(KeyMaxNumVotes, &p.MaxNumVotes, validateMaxNumVotes),
+		paramtypes.NewParamSetPair(KeyMaxVendors, &p.MaxVendors, validateMaxVendors),
 		paramtypes.NewParamSetPair(KeyRewardPoolAllocation, &p.RewardPoolAllocation, validateRewardPoolAllocation),
 	}
 }
@@ -98,19 +98,22 @@ func (p Params) Validate() error {
 	if err := validateCurationWindow(p.CurationWindow); err != nil {
 		return err
 	}
-	if err := validateCoin(p.PostDeposit); err != nil {
+	if err := validatePostDeposit(p.PostDeposit); err != nil {
 		return err
 	}
-	if err := validateCoin(p.UpvoteDeposit); err != nil {
+	if err := validateUpvoteDeposit(p.UpvoteDeposit); err != nil {
 		return err
 	}
-	if err := validateCoin(p.ModerateDeposit); err != nil {
+	if err := validateModerateDeposit(p.ModerateDeposit); err != nil {
 		return err
 	}
-	if err := validateUint16(p.MaxNumVotes); err != nil {
+	if err := validateVoteAmount(p.VoteAmount); err != nil {
 		return err
 	}
-	if err := validateUint16(p.MaxVendors); err != nil {
+	if err := validateMaxNumVotes(p.MaxNumVotes); err != nil {
+		return err
+	}
+	if err := validateMaxVendors(p.MaxVendors); err != nil {
 		return err
 	}
 	if err := validateCurationWindow(p.CurationWindow); err != nil {
@@ -120,35 +123,79 @@ func (p Params) Validate() error {
 	return nil
 }
 
-func validateCoin(i interface{}) error {
-	_, ok := i.(sdk.Coin)
+func validatePostDeposit(i interface{}) error {
+	v, ok := i.(sdk.Coin)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
 	}
 
-	// spew.Dump(v)
-
-	// // if v.IsValid() {
-	// // 	return fmt.Errorf("invalid coins: %v", v)
-	// // }
-	// spew.Dump(v.Denom)
-	// spew.Dump(v.Amount)
-
-	// if v.IsPositive() {
-	// 	return fmt.Errorf("not positive: %v", v)
-	// }
+	if !v.IsValid() {
+		return fmt.Errorf("invalid post deposit: %s", v)
+	}
 
 	return nil
 }
 
-func validateUint16(i interface{}) error {
+func validateUpvoteDeposit(i interface{}) error {
+	v, ok := i.(sdk.Coin)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
+	if !v.IsValid() {
+		return fmt.Errorf("invalid upvote deposit: %s", v)
+	}
+
+	return nil
+}
+
+func validateModerateDeposit(i interface{}) error {
+	v, ok := i.(sdk.Coin)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
+	if !v.IsValid() {
+		return fmt.Errorf("invalid moderate deposit: %s", v)
+	}
+
+	return nil
+}
+
+func validateVoteAmount(i interface{}) error {
+	v, ok := i.(sdk.Coin)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
+	if !v.IsValid() {
+		return fmt.Errorf("invalid vote amount: %s", v)
+	}
+
+	return nil
+}
+
+func validateMaxNumVotes(i interface{}) error {
 	v, ok := i.(uint16)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
 	}
 
 	if v <= 0 {
-		return fmt.Errorf("value must be greater than or equal to 1: %d", v)
+		return fmt.Errorf("max num votes must be greater than or equal to 1: %d", v)
+	}
+
+	return nil
+}
+
+func validateMaxVendors(i interface{}) error {
+	v, ok := i.(uint16)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
+	if v <= 0 {
+		return fmt.Errorf("max vendors must be greater than or equal to 1: %d", v)
 	}
 
 	return nil

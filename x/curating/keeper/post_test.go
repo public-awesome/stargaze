@@ -19,7 +19,10 @@ func TestPost(t *testing.T) {
 	app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", deposit, addrs[0], addrs[0])
 
 	_, found := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
-	require.True(t, found, "Post should be found")
+	require.True(t, found, "post should be found")
+
+	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ufuel")
+	require.Equal(t, "0", creatorBal.Amount.String())
 
 	vps := app.CuratingKeeper.GetCurationQueueTimeSlice(ctx, ctx.BlockTime())
 	require.NotNil(t, vps)

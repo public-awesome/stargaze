@@ -36,6 +36,12 @@ func (k Keeper) CreatePost(
 	if err != nil {
 		return post, err
 	}
+
+	err = k.lockDeposit(ctx, creator, deposit)
+	if err != nil {
+		return post, err
+	}
+
 	curationWindow := k.GetParams(ctx).CurationWindow
 	curationEndTime := ctx.BlockTime().Add(curationWindow)
 	post = types.NewPost(bodyHash, creator, rewardAccount, deposit, curationEndTime)

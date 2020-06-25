@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/public-awesome/stakebird/x/bondcurve"
+	"github.com/public-awesome/stakebird/x/curating"
 	"github.com/public-awesome/stakebird/x/stake"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -126,6 +127,8 @@ var (
 		transfer.GetModuleAccountName(): {auth.Minter, auth.Burner},
 		bondcurve.ModuleName:            {auth.Minter, auth.Burner},
 		stake.RewardPoolName:            {auth.Minter, auth.Burner},
+		curating.ModuleName:             nil,
+		curating.RewardPoolName:         {auth.Minter, auth.Burner},
 	}
 
 	// module accounts that are allowed to receive tokens

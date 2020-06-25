@@ -49,3 +49,13 @@ func NewKeeper(cdc codec.Marshaler, key sdk.StoreKey, accountKeeper types.Accoun
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", types.ModuleName)
 }
+
+// lockDeposit locks up a deposit in the module account
+func (k Keeper) lockDeposit(ctx sdk.Context, account sdk.AccAddress, deposit sdk.Coin) error {
+	err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, account, types.ModuleName, sdk.NewCoins(deposit))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -127,6 +127,7 @@ var (
 		transfer.GetModuleAccountName(): {auth.Minter, auth.Burner},
 		bondcurve.ModuleName:            {auth.Minter, auth.Burner},
 		stake.RewardPoolName:            {auth.Minter, auth.Burner},
+		curating.ModuleName:             nil,
 		curating.RewardPoolName:         {auth.Minter, auth.Burner},
 	}
 

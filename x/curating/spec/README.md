@@ -136,11 +136,12 @@ The amount of vote credits (`VoteAmount`) is quadratically associated to `VoteNu
 
 ```go
 type MsgUpvote struct {
-	VendorID uint32
-	PostID   string
-	Curator  sdk.AccAddress
-	VoteNum  uint32 // 1 = 1, 2 = 4, 3 = 9 (quadratic)
-	Deposit  sdk.Coin
+	VendorID      uint32
+	PostID        string
+	Curator       sdk.AccAddress
+	RewardAccount sdk.AccAddress
+	VoteNum       uint32 // 1 = 1, 2 = 4, 3 = 9 (quadratic)
+	Deposit       sdk.Coin
 }
 ```
 
