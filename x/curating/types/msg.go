@@ -8,14 +8,15 @@ import (
 // verify interface at compile time
 var _ sdk.Msg = &MsgPost{}
 
-func NewMsgPost(vendorID, postID uint64, creator sdk.AccAddress, hash string, stake sdk.Coin) MsgPost {
+func NewMsgPost(vendorID uint32, postID string, creator, rewardAccount sdk.AccAddress, body string, deposit sdk.Coin) MsgPost {
 
 	return MsgPost{
-		VendorID: vendorID,
-		PostID:   postID,
-		Creator:  creator,
-		Hash:     hash,
-		Stake:    stake,
+		VendorID:      vendorID,
+		PostID:        postID,
+		Creator:       creator,
+		RewardAccount: rewardAccount,
+		Body:          body,
+		Deposit:       deposit,
 	}
 }
 

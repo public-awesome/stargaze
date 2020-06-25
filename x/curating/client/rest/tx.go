@@ -19,11 +19,12 @@ func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {
 }
 
 type PostRequest struct {
-	BaseReq  rest.BaseReq `json:"base_req" yaml:"base_req"`
-	Stake    sdk.Coin     `json:"stake" yaml:"stake"`
-	VendorID uint64       `json:"vendor_id" yaml:"vendor_id"`
-	PostID   uint64       `json:"post_id" yaml:"post_id"`
-	BodyHash string       `json:"body_hash" yaml:"body_hash"`
+	BaseReq       rest.BaseReq `json:"base_req" yaml:"base_req"`
+	RewardAccount string       `json:"reward_account,omitempty" yaml:"reward_account"`
+	Deposit       sdk.Coin     `json:"deposit" yaml:"deposit"`
+	VendorID      uint32       `json:"vendor_id" yaml:"vendor_id"`
+	PostID        string       `json:"post_id" yaml:"post_id"`
+	Body          string       `json:"body" yaml:"body"`
 }
 
 func postPostsHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
@@ -45,7 +46,16 @@ func postPostsHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgPost(req.VendorID, req.PostID, fromAddr, req.BodyHash, req.Stake)
+		var rewardAddr sdk.AccAddress
+		if req.RewardAccount != "" {
+			rewardAddr, err = sdk.AccAddressFromBech32(req.RewardAccount)
+			if err != nil {
+				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+				return
+			}
+		}
+
+		msg := types.NewMsgPost(req.VendorID, req.PostID, fromAddr, rewardAddr, req.Body, req.Deposit)
 		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return

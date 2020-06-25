@@ -43,7 +43,7 @@ type Post struct {
 	PostID          string
 	Creator         sdk.AccAddress
 	RewardAccount	sdk.AccAddress
-	Body            string
+	BodyHash        []byte
 	Deposit         sdk.Coin
 	CurationEndTime time.Time
 }
@@ -213,6 +213,8 @@ Iterate `PostCurationQueue` and process all upvotes that have completed their cu
 | post     | post_id        | {postID}           |
 | post     | creator        | {creatorAddress}   |
 | post     | reward_account | {rewardAddress}    |
+| post     | body           | {body}             |
+| post     | deposit        | {deposit}          |
 | message  | module         | curating           |
 | message  | action         | post               |
 | message  | sender         | {creatorAddress}   |

@@ -15,12 +15,12 @@ func (k Keeper) GetRewardPool(ctx sdk.Context) (rewardPool authexported.ModuleAc
 
 func (k Keeper) InflateRewardPool(ctx sdk.Context) {
 	blockInflationAddr := k.accountKeeper.GetModuleAccount(ctx, auth.FeeCollectorName).GetAddress()
-	blockInflation := k.bankKeeper.GetBalance(ctx, blockInflationAddr, types.StakeDenom)
+	blockInflation := k.bankKeeper.GetBalance(ctx, blockInflationAddr, types.DefaultStakeDenom)
 	rewardPoolAllocation := k.GetParams(ctx).RewardPoolAllocation
 
 	blockInflationDec := sdk.NewDecFromInt(blockInflation.Amount)
 	rewardAmount := blockInflationDec.Mul(rewardPoolAllocation)
-	rewardCoin := sdk.NewCoin(types.StakeDenom, rewardAmount.TruncateInt())
+	rewardCoin := sdk.NewCoin(types.DefaultStakeDenom, rewardAmount.TruncateInt())
 
 	err := k.bankKeeper.SendCoinsFromModuleToModule(
 		ctx, auth.FeeCollectorName, types.RewardPoolName, sdk.NewCoins(rewardCoin))

@@ -48,16 +48,17 @@ func NewHandler(k Keeper) sdk.Handler {
 // }
 
 func handleMsgPost(ctx sdk.Context, k Keeper, msg types.MsgPost) (*sdk.Result, error) {
-	k.CreatePost(ctx, msg.PostID, msg.VendorID, msg.Hash, msg.Stake, msg.Creator)
+	k.CreatePost(ctx, msg.VendorID, msg.PostID, msg.Body, msg.Deposit, msg.Creator, msg.RewardAccount)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypePost,
-			sdk.NewAttribute(types.AttributeKeyVendorID, strconv.FormatUint(msg.VendorID, 10)),
-			sdk.NewAttribute(types.AttributeKeyPostID, strconv.FormatUint(msg.PostID, 10)),
-			sdk.NewAttribute(types.AttributeKeyHash, msg.Hash),
-			// sdk.NewAttribute(types.AttributeKeyVotingPeriod, msg.VotingPeriod.String()),
-			sdk.NewAttribute(types.AttributeKeyStake, msg.Stake.String()),
+			sdk.NewAttribute(types.AttributeKeyVendorID, strconv.FormatUint(uint64(msg.VendorID), 10)),
+			sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID),
+			sdk.NewAttribute(types.AttributeKeyCreator, msg.Creator.String()),
+			sdk.NewAttribute(types.AttributeKeyRewardAccount, msg.RewardAccount.String()),
+			sdk.NewAttribute(types.AttributeKeyBody, msg.Body),
+			sdk.NewAttribute(types.AttributeKeyDeposit, msg.Deposit.String()),
 		),
 		sdk.NewEvent(
 			sdk.EventTypeMessage,

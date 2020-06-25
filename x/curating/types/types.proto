@@ -13,24 +13,41 @@ message Post {
         (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
         (gogoproto.moretags) = "yaml:\"creator\""
     ];
-    string hash = 2 [(gogoproto.moretags) = "yaml:\"hash\""];
-    cosmos_sdk.v1.Coin stake = 3 [(gogoproto.nullable) = false];
-    google.protobuf.Timestamp curating_end_time = 4 [
+    bytes reward_account = 2 [
+        (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
+        (gogoproto.moretags) = "yaml:\"reward_account\""
+    ];
+    bytes body_hash = 3 [(gogoproto.moretags) = "yaml:\"body_hash\""];
+    cosmos_sdk.v1.Coin deposit = 4 [(gogoproto.nullable) = false];
+    google.protobuf.Timestamp curating_end_time = 5 [
         (gogoproto.stdtime) = true, 
         (gogoproto.nullable) = false, 
         (gogoproto.moretags) = "yaml:\"curating_end_time\""
     ];
 }
 
+message Upvote {
+    bytes curator = 1 [
+        (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
+        (gogoproto.moretags) = "yaml:\"curator\""
+    ];
+    bytes reward_account = 2 [
+        (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
+        (gogoproto.moretags) = "yaml:\"reward_account\""
+    ];
+    cosmos_sdk.v1.Coin vote_amount = 3 [(gogoproto.nullable) = false];
+    cosmos_sdk.v1.Coin deposit = 4 [(gogoproto.nullable) = false];
+}
+
 message MsgPost {
     option (gogoproto.equal) = true;
 
-    uint64 vendor_id = 1 [
+    uint32 vendor_id = 1 [
         (gogoproto.customname) = "VendorID",
         (gogoproto.moretags)   = "yaml:\"vendor_id\"",
         (gogoproto.jsontag)    = "vendor_id"
     ];
-    uint64 post_id = 2 [
+    string post_id = 2 [
         (gogoproto.customname) = "PostID",
         (gogoproto.moretags)   = "yaml:\"post_id\"",
         (gogoproto.jsontag)    = "post_id"
@@ -39,6 +56,84 @@ message MsgPost {
         (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
         (gogoproto.moretags) = "yaml:\"creator\""
     ];
-    string hash = 4 [(gogoproto.moretags) = "yaml:\"hash\""];
-    cosmos_sdk.v1.Coin stake = 5 [(gogoproto.nullable) = false];
+    bytes reward_account = 4 [
+        (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
+        (gogoproto.moretags) = "yaml:\"reward_account\""
+    ];
+    string body = 5 [(gogoproto.moretags) = "yaml:\"body\""];
+    cosmos_sdk.v1.Coin deposit = 6 [(gogoproto.nullable) = false];
 }
+
+message MsgUpvote {
+    option (gogoproto.equal) = true;
+
+    uint32 vendor_id = 1 [
+        (gogoproto.customname) = "VendorID",
+        (gogoproto.moretags)   = "yaml:\"vendor_id\"",
+        (gogoproto.jsontag)    = "vendor_id"
+    ];
+    string post_id = 2 [
+        (gogoproto.customname) = "PostID",
+        (gogoproto.moretags)   = "yaml:\"post_id\"",
+        (gogoproto.jsontag)    = "post_id"
+    ];
+    bytes curator = 3 [
+        (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
+        (gogoproto.moretags) = "yaml:\"curator\""
+    ];
+    bytes reward_account = 4 [
+        (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
+        (gogoproto.moretags) = "yaml:\"reward_account\""
+    ];
+    int32 vote_num = 5;
+    cosmos_sdk.v1.Coin deposit = 6 [(gogoproto.nullable) = false];
+}
+
+message MsgModerate {
+    option (gogoproto.equal) = true;
+
+    uint32 vendor_id = 1 [
+        (gogoproto.customname) = "VendorID",
+        (gogoproto.moretags)   = "yaml:\"vendor_id\"",
+        (gogoproto.jsontag)    = "vendor_id"
+    ];
+    string post_id = 2 [
+        (gogoproto.customname) = "PostID",
+        (gogoproto.moretags)   = "yaml:\"post_id\"",
+        (gogoproto.jsontag)    = "post_id"
+    ];
+    bytes moderator = 3 [
+        (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
+        (gogoproto.moretags) = "yaml:\"moderator\""
+    ];
+    bytes reward_account = 4 [
+        (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
+        (gogoproto.moretags) = "yaml:\"reward_account\""
+    ];
+    cosmos_sdk.v1.Coin deposit = 5 [(gogoproto.nullable) = false];
+}
+
+// VPPair is struct that just has a vendor_id, post_id pair with no other data.
+// It is intended to be used as a marshalable pointer. For example, a VPPair can
+// be used to construct the key to getting an Upvote from state.
+message VPPair {
+    option (gogoproto.equal)            = true;
+    option (gogoproto.goproto_stringer) = true;
+  
+    uint32 vendor_id = 1 [
+        (gogoproto.customname) = "VendorID",
+        (gogoproto.moretags)   = "yaml:\"vendor_id\"",
+        (gogoproto.jsontag)    = "vendor_id"
+    ];
+    string post_id = 2 [
+        (gogoproto.customname) = "PostID",
+        (gogoproto.moretags)   = "yaml:\"post_id\"",
+        (gogoproto.jsontag)    = "post_id"
+    ];
+  }
+  
+  // VPPairs defines an array of VPPair objects.
+  message VPPairs {
+    repeated VPPair pairs = 1 [(gogoproto.nullable) = false];
+  }
+  

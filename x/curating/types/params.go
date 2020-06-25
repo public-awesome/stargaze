@@ -6,7 +6,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/davecgh/go-spew/spew"
 	"gopkg.in/yaml.v2"
 )
 
@@ -20,7 +19,7 @@ const (
 
 // 50%
 var (
-	DefaultPostDeposit          = sdk.NewInt64Coin(DefaultStakeDenom, 1000000)
+	DefaultPostDeposit          = sdk.NewInt64Coin(DefaultStakeDenom, int64(10))
 	DefaultUpvoteDeposit        = sdk.NewInt64Coin(DefaultStakeDenom, 1000000)
 	DefaultModerateDeposit      = sdk.NewInt64Coin(DefaultStakeDenom, 1000000)
 	DefaultVoteAmount           = sdk.NewInt64Coin(DefaultStakeDenom, 1000000)
@@ -122,19 +121,21 @@ func (p Params) Validate() error {
 }
 
 func validateCoin(i interface{}) error {
-	v, ok := i.(sdk.Coin)
+	_, ok := i.(sdk.Coin)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
 	}
 
-	spew.Dump(v)
+	// spew.Dump(v)
 
-	if v.IsValid() {
-		return fmt.Errorf("invalid coins: %v", v)
-	}
+	// // if v.IsValid() {
+	// // 	return fmt.Errorf("invalid coins: %v", v)
+	// // }
+	// spew.Dump(v.Denom)
+	// spew.Dump(v.Amount)
 
 	// if v.IsPositive() {
-	// 	return fmt.Errorf("invalid coins: %v", v)
+	// 	return fmt.Errorf("not positive: %v", v)
 	// }
 
 	return nil

@@ -86,11 +86,11 @@ $ %s tx stake delegate cosmosvaloper1l2rsakp388kuv9k8qzq6lrm9taddae7fpx59wm 1000
 // GetCmdPost implements the delegate command.
 func GetCmdPost(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "post [stake] [vendor-id] [post-id] [hash]",
+		Use:   "post [deposit] [vendor-id] [post-id] [body] [reward_address]",
 		Args:  cobra.MinimumNArgs(4),
-		Short: "Create a post with a stake",
+		Short: "Create a post with a deposit",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Create a post with a stake.
+			fmt.Sprintf(`Create a post with a deposit.
 Example:
 $ %s tx curating post 1000stake 1 2 "bodyhash"  --from mykey
 `,
@@ -109,22 +109,34 @@ $ %s tx curating post 1000stake 1 2 "bodyhash"  --from mykey
 
 			creator := cliCtx.GetFromAddress()
 
-			vendorID, err := strconv.ParseUint(args[2], 10, 64)
+			vendorID, err := strconv.ParseUint(args[2], 10, 32)
 			if err != nil {
 				return err
 			}
 
-			postID, err := strconv.ParseUint(args[3], 10, 64)
-			if err != nil {
-				return err
+			var postID string
+			if len(args) > 2 {
+				postID = args[3]
 			}
 
-			var hash string
+			var body string
 			if len(args) > 3 {
-				hash = args[4]
+				body = args[4]
 			}
 
-			msg := types.NewMsgPost(vendorID, postID, creator, hash, stake)
+			var rewardAddrStr string
+			var rewardAddr sdk.AccAddress
+			if len(args) > 4 {
+				rewardAddrStr = args[5]
+			}
+			if rewardAddrStr != "" {
+				rewardAddr, err = sdk.AccAddressFromBech32(rewardAddrStr)
+				if err != nil {
+					return err
+				}
+			}
+
+			msg := types.NewMsgPost(uint32(vendorID), postID, creator, rewardAddr, body, stake)
 
 			return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
