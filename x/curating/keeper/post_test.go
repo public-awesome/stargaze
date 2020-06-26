@@ -13,8 +13,8 @@ func TestPost(t *testing.T) {
 
 	postID := "500"
 	vendorID := uint32(1)
-	deposit := sdk.NewInt64Coin("ufuel", 100000)
-	addrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(100000))
+	deposit := sdk.NewInt64Coin("ufuel", 1000000)
+	addrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
 
 	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", deposit, addrs[0], addrs[0])
 	require.NoError(t, err)

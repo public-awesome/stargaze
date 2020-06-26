@@ -5,9 +5,8 @@ import (
 	"github.com/public-awesome/stakebird/x/curating/types"
 )
 
+// constants exposed from module
 const (
-	// TODO: define constants that you would like exposed from your module
-
 	ModuleName        = types.ModuleName
 	RouterKey         = types.RouterKey
 	StoreKey          = types.StoreKey
@@ -17,8 +16,8 @@ const (
 	RewardPoolName    = types.RewardPoolName
 )
 
+// functions aliases
 var (
-	// functions aliases
 	NewKeeper           = keeper.NewKeeper
 	NewQuerier          = keeper.NewQuerier
 	RegisterCodec       = types.RegisterCodec
@@ -28,12 +27,16 @@ var (
 
 	// variable aliases
 	ModuleCdc                = types.ModuleCdc
+	EventTypePost            = types.EventTypePost
+	EventTypeUpvote          = types.EventTypeUpvote
 	EventTypeCuratingEndTime = types.EventTypeCuratingEndTime
 )
 
+// type aliases
 type (
 	Keeper       = keeper.Keeper
 	GenesisState = types.GenesisState
 	Params       = types.Params
 	Post         = types.Post
+	Upvote       = types.Upvote
 )

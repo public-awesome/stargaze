@@ -2,7 +2,6 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	// stakingexported "github.com/cosmos/cosmos-sdk/x/staking/exported"
 	authexported "github.com/cosmos/cosmos-sdk/x/auth/exported"
 )
 

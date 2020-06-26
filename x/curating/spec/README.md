@@ -39,8 +39,6 @@ type Params struct {
 
 ```go
 type Post struct {
-	VendorID        uint32
-	PostID          string
 	Creator         sdk.AccAddress
 	RewardAccount	sdk.AccAddress
 	BodyHash        []byte
@@ -51,8 +49,6 @@ type Post struct {
 
 ```go
 type Upvote struct {
-	VendorID        uint32
-	PostID          string
 	Curator         sdk.AccAddress
 	VoteAmount      sdk.Coin
 	Deposit         sdk.Coin

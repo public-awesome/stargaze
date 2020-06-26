@@ -2,9 +2,9 @@ package types
 
 // curating module event types
 const (
-	EventTypeCuratingEndTime = "curating_end_time"
-	EventTypeUpvote          = "upvote"
 	EventTypePost            = "post"
+	EventTypeUpvote          = "upvote"
+	EventTypeCuratingEndTime = "curating_end_time"
 
 	AttributeKeyVendorID      = "vendor_id"
 	AttributeKeyPostID        = "post_id"

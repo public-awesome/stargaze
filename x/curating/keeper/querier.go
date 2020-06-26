@@ -9,7 +9,11 @@ import (
 	"github.com/public-awesome/stakebird/x/curating/types"
 )
 
-// NewQuerier creates a new querier for x/stake clients.
+// [TODO]
+// https://github.com/public-awesome/stakebird/issues/57
+// https://github.com/public-awesome/stakebird/issues/58
+
+// NewQuerier creates a new querier for curating clients.
 func NewQuerier(k Keeper) sdk.Querier {
 	return func(ctx sdk.Context, path []string, req abci.RequestQuery) ([]byte, error) {
 		switch path[0] {
@@ -17,7 +21,7 @@ func NewQuerier(k Keeper) sdk.Querier {
 			return queryParams(ctx, k)
 			// TODO: Put the modules query routes
 		default:
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "unknown x/stake query endpoint")
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "unknown curating query endpoint")
 		}
 	}
 }

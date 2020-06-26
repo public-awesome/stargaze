@@ -11,6 +11,10 @@ import (
 	"github.com/public-awesome/stakebird/x/curating/types"
 )
 
+// [TODO]
+// https://github.com/public-awesome/stakebird/issues/61
+// https://github.com/public-awesome/stakebird/issues/62
+
 func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	r.HandleFunc(
 		"/curating/parameters",

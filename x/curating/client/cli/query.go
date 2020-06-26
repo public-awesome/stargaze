@@ -4,16 +4,18 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/spf13/cobra"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/version"
-
 	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/spf13/cobra"
 )
+
+// [TODO]
+// https://github.com/public-awesome/stakebird/issues/57
+// https://github.com/public-awesome/stakebird/issues/58
 
 // GetQueryCmd returns the cli query commands for this module
 func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {

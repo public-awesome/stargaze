@@ -1,12 +1,12 @@
 package types
 
-// Query endpoints supported by the x/stake querier
+// Query endpoints supported by the curating querier
 const (
 	QueryParams = "parameters"
 )
 
 /*
-Below you will be able how to set your own queries:
+How to set your own queries:
 
 
 // QueryResList Queries Result Payload for a query

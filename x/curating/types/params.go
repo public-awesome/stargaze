@@ -19,7 +19,7 @@ const (
 
 // 50%
 var (
-	DefaultPostDeposit          = sdk.NewInt64Coin(DefaultStakeDenom, int64(10))
+	DefaultPostDeposit          = sdk.NewInt64Coin(DefaultStakeDenom, 1000000)
 	DefaultUpvoteDeposit        = sdk.NewInt64Coin(DefaultStakeDenom, 1000000)
 	DefaultModerateDeposit      = sdk.NewInt64Coin(DefaultStakeDenom, 1000000)
 	DefaultVoteAmount           = sdk.NewInt64Coin(DefaultStakeDenom, 1000000)
