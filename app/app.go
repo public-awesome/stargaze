@@ -114,6 +114,7 @@ var (
 		transfer.AppModuleBasic{},
 		stake.AppModuleBasic{},
 		bondcurve.AppModuleBasic{},
+		curating.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -171,6 +172,7 @@ type RocketApp struct {
 	transferKeeper   transfer.Keeper
 	stakeKeeper      stake.Keeper
 	bondCurveKeeper  bondcurve.Keeper
+	curatingKeeper   curating.Keeper
 
 	// make scoped keepers public for test purposes
 	scopedIBCKeeper      capability.ScopedKeeper
@@ -217,7 +219,7 @@ func NewRocketApp(
 		mint.StoreKey, distr.StoreKey, slashing.StoreKey,
 		gov.StoreKey, params.StoreKey, ibc.StoreKey, upgrade.StoreKey,
 		evidence.StoreKey, transfer.StoreKey, capability.StoreKey,
-		stake.StoreKey, bondcurve.StoreKey,
+		stake.StoreKey, bondcurve.StoreKey, curating.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capability.MemStoreKey)
@@ -248,6 +250,7 @@ func NewRocketApp(
 	app.subspaces[crisis.ModuleName] = app.paramsKeeper.Subspace(crisis.DefaultParamspace)
 	app.subspaces[stake.ModuleName] = app.paramsKeeper.Subspace(stake.DefaultParamspace)
 	app.subspaces[bondcurve.ModuleName] = app.paramsKeeper.Subspace(bondcurve.DefaultParamspace)
+	app.subspaces[curating.ModuleName] = app.paramsKeeper.Subspace(curating.DefaultParamspace)
 
 	bApp.SetParamStore(app.paramsKeeper.Subspace(baseapp.Paramspace).WithKeyTable(std.ConsensusParamsKeyTable()))
 
@@ -338,6 +341,11 @@ func NewRocketApp(
 		app.distrKeeper, app.subspaces[bondcurve.ModuleName],
 	)
 
+	app.curatingKeeper = curating.NewKeeper(
+		appCodec, keys[curating.StoreKey], app.accountKeeper, app.bankKeeper,
+		app.subspaces[curating.ModuleName],
+	)
+
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
 	app.mm = module.NewManager(
@@ -358,6 +366,7 @@ func NewRocketApp(
 		transferModule,
 		stake.NewAppModule(appCodec, app.stakeKeeper),
 		bondcurve.NewAppModule(appCodec, app.bondCurveKeeper),
+		curating.NewAppModule(appCodec, app.curatingKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -365,10 +374,10 @@ func NewRocketApp(
 	// CanWithdrawInvariant invariant.
 	app.mm.SetOrderBeginBlockers(
 		upgrade.ModuleName, mint.ModuleName, stake.ModuleName, distr.ModuleName,
-		slashing.ModuleName, evidence.ModuleName, staking.ModuleName, ibc.ModuleName,
+		slashing.ModuleName, evidence.ModuleName, curating.ModuleName, ibc.ModuleName,
 	)
 	app.mm.SetOrderEndBlockers(
-		crisis.ModuleName, gov.ModuleName, staking.ModuleName, stake.ModuleName,
+		crisis.ModuleName, gov.ModuleName, curating.ModuleName, stake.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -380,7 +389,7 @@ func NewRocketApp(
 		capability.ModuleName, auth.ModuleName, distr.ModuleName, staking.ModuleName, bank.ModuleName,
 		slashing.ModuleName, gov.ModuleName, mint.ModuleName, crisis.ModuleName,
 		ibc.ModuleName, genutil.ModuleName, evidence.ModuleName, transfer.ModuleName,
-		stake.ModuleName,
+		stake.ModuleName, curating.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.crisisKeeper)
