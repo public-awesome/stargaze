@@ -30,22 +30,22 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 
 	stakeTxCmd.AddCommand(flags.PostCommands(
 		GetCmdPost(cdc),
-		// GetCmdDelegate(cdc),
+		GetCmdUpvote(cdc),
 	)...)
 
 	return stakeTxCmd
 }
 
-// GetCmdDelegate implements the delegate command.
-func GetCmdDelegate(cdc *codec.Codec) *cobra.Command {
+// GetCmdUpvote implements the upvote command.
+func GetCmdUpvote(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "delegate [validator-addr] [amount] [vendor-id] [post-id]",
+		Use:   "upvote [deposit] [vendor-id] [post-id] [voteNum] [reward-addr]",
 		Args:  cobra.ExactArgs(4),
-		Short: "Delegate liquid tokens to a validator for curating a post",
+		Short: "Upvote a post",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Delegate an amount of liquid coins to a validator from your wallet.
+			fmt.Sprintf(`Curating a post by upvoting.
 Example:
-$ %s tx stake delegate cosmosvaloper1l2rsakp388kuv9k8qzq6lrm9taddae7fpx59wm 1000stake 1 2 --from mykey
+$ %s tx curating upvote 1000stake 1 "2" 5 --from mykey
 `,
 				version.ClientName,
 			),
@@ -55,30 +55,42 @@ $ %s tx stake delegate cosmosvaloper1l2rsakp388kuv9k8qzq6lrm9taddae7fpx59wm 1000
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(auth.DefaultTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-			// amount, err := sdk.ParseCoin(args[1])
-			// if err != nil {
-			// 	return err
-			// }
+			deposit, err := sdk.ParseCoin(args[1])
+			if err != nil {
+				return err
+			}
 
-			// delAddr := cliCtx.GetFromAddress()
-			// valAddr, err := sdk.ValAddressFromBech32(args[0])
-			// if err != nil {
-			// 	return err
-			// }
+			curator := cliCtx.GetFromAddress()
 
-			// vendorID, err := strconv.ParseUint(args[2], 10, 64)
-			// if err != nil {
-			// 	return err
-			// }
+			vendorID, err := strconv.ParseUint(args[2], 10, 32)
+			if err != nil {
+				return err
+			}
 
-			// postID, err := strconv.ParseUint(args[3], 10, 64)
-			// if err != nil {
-			// 	return err
-			// }
+			var postID string
+			if len(args) > 2 {
+				postID = args[3]
+			}
 
-			// msg := types.NewMsgDelegate(vendorID, postID, delAddr, valAddr, amount)
-			// return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
-			return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{})
+			voteNum, err := strconv.ParseUint(args[4], 10, 32)
+			if err != nil {
+				return err
+			}
+
+			var rewardAddrStr string
+			var rewardAddr sdk.AccAddress
+			if len(args) > 4 {
+				rewardAddrStr = args[5]
+			}
+			if rewardAddrStr != "" {
+				rewardAddr, err = sdk.AccAddressFromBech32(rewardAddrStr)
+				if err != nil {
+					return err
+				}
+			}
+
+			msg := types.NewMsgUpvote(uint32(vendorID), postID, curator, rewardAddr, int32(voteNum), deposit)
+			return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
 }

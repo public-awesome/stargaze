@@ -18,7 +18,7 @@ import (
 // GetQueryCmd returns the cli query commands for this module
 func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	// Group stake queries under a subcommand
-	stakeQueryCmd := &cobra.Command{
+	curatingQueryCmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      fmt.Sprintf("Querying commands for the %s module", types.ModuleName),
 		DisableFlagParsing:         true,
@@ -26,13 +26,13 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	stakeQueryCmd.AddCommand(
+	curatingQueryCmd.AddCommand(
 		flags.GetCommands(
 			GetCmdQueryParams(queryRoute, cdc),
 		)...,
 	)
 
-	return stakeQueryCmd
+	return curatingQueryCmd
 }
 
 // GetCmdQueryParams implements the params query command.
