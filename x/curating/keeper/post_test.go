@@ -12,11 +12,12 @@ func TestPost(t *testing.T) {
 	_, app, ctx := testdata.CreateTestInput()
 
 	postID := "500"
-	vendorID := uint32(100)
+	vendorID := uint32(1)
 	deposit := sdk.NewInt64Coin("ufuel", 100000)
 	addrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(100000))
 
-	app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", deposit, addrs[0], addrs[0])
+	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", deposit, addrs[0], addrs[0])
+	require.NoError(t, err)
 
 	_, found := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
 	require.True(t, found, "post should be found")

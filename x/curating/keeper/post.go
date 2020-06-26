@@ -2,9 +2,11 @@ package keeper
 
 import (
 	"crypto/sha1"
+	"strconv"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/public-awesome/stakebird/x/curating/types"
 )
 
@@ -26,7 +28,16 @@ func (k Keeper) GetPost(
 // CreatePost registers a post on-chain and starts the curation period
 func (k Keeper) CreatePost(
 	ctx sdk.Context, vendorID uint32, postID, body string, deposit sdk.Coin,
-	creator, rewardAccount sdk.AccAddress) (post types.Post, err error) {
+	creator, rewardAccount sdk.AccAddress) error {
+
+	err := k.validateVendorID(ctx, vendorID)
+	if err != nil {
+		return err
+	}
+
+	if deposit.IsLT(k.GetParams(ctx).PostDeposit) {
+		return sdkerrors.Wrap(sdkerrors.ErrInsufficientFunds, deposit.String())
+	}
 
 	if rewardAccount == nil {
 		rewardAccount = creator
@@ -34,17 +45,17 @@ func (k Keeper) CreatePost(
 
 	bodyHash, err := encodeBody(body)
 	if err != nil {
-		return post, err
+		return err
 	}
 
 	err = k.lockDeposit(ctx, creator, deposit)
 	if err != nil {
-		return post, err
+		return err
 	}
 
 	curationWindow := k.GetParams(ctx).CurationWindow
 	curationEndTime := ctx.BlockTime().Add(curationWindow)
-	post = types.NewPost(bodyHash, creator, rewardAccount, deposit, curationEndTime)
+	post := types.NewPost(bodyHash, creator, rewardAccount, deposit, curationEndTime)
 
 	store := ctx.KVStore(k.storeKey)
 	key := types.PostKey(vendorID, postID)
@@ -53,7 +64,18 @@ func (k Keeper) CreatePost(
 
 	k.InsertCurationQueue(ctx, vendorID, postID, curationEndTime)
 
-	return post, nil
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypePost,
+			sdk.NewAttribute(types.AttributeKeyVendorID, strconv.FormatUint(uint64(vendorID), 10)),
+			sdk.NewAttribute(types.AttributeKeyPostID, postID),
+			sdk.NewAttribute(types.AttributeKeyCreator, creator.String()),
+			sdk.NewAttribute(types.AttributeKeyBody, body),
+			sdk.NewAttribute(types.AttributeKeyDeposit, deposit.String()),
+		),
+	})
+
+	return nil
 }
 
 // InsertCurationQueue inserts a VPPair into the right timeslot in the curation queue

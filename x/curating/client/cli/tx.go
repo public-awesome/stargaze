@@ -92,7 +92,7 @@ func GetCmdPost(cdc *codec.Codec) *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Create a post with a deposit.
 Example:
-$ %s tx curating post 1000stake 1 2 "bodyhash"  --from mykey
+$ %s tx curating post 1000stake 1 2 "body"  --from mykey
 `,
 				version.ClientName,
 			),

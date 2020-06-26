@@ -11,6 +11,9 @@ import (
 	"github.com/public-awesome/stakebird/x/curating/types"
 )
 
+// TODO
+// add upvote
+
 func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	r.HandleFunc(
 		"/curating/{creatorAddr}/posts",

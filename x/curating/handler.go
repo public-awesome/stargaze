@@ -2,7 +2,6 @@ package curating
 
 import (
 	"fmt"
-	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -27,43 +26,31 @@ func NewHandler(k Keeper) sdk.Handler {
 
 // handleMsgUpvote calls the keeper to perform the upvote operation
 func handleMsgUpvote(ctx sdk.Context, k Keeper, msg types.MsgUpvote) (*sdk.Result, error) {
-	// err := k.Delegate(ctx, msg.VendorID, msg.PostID, msg.DelegatorAddr, msg.ValidatorAddr, msg.Amount)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	err := k.CreateUpvote(
+		ctx, msg.VendorID, msg.PostID, msg.Curator, msg.RewardAccount, msg.VoteNum, msg.Deposit)
+	if err != nil {
+		return nil, err
+	}
 
-	// ctx.EventManager().EmitEvents(sdk.Events{
-	// 	sdk.NewEvent(
-	// 		types.EventTypeDelegate,
-	// 		sdk.NewAttribute(types.AttributeKeyVendorID, strconv.FormatUint(msg.VendorID, 10)),
-	// 		sdk.NewAttribute(types.AttributeKeyPostID, strconv.FormatUint(msg.PostID, 10)),
-	// 		sdk.NewAttribute(types.AttributeKeyAmount, msg.Amount.String()),
-	// 	),
-	// 	sdk.NewEvent(
-	// 		sdk.EventTypeMessage,
-	// 		sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-	// 		sdk.NewAttribute(sdk.AttributeKeySender, msg.DelegatorAddr.String()),
-	// 	),
-	// })
-
-	// k.CreateUpvote(ctx, msg.VendorID, msg.PostID, msg.Curator, msg.RewardAccount, msg.VoteNum, msg.Deposit)
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Curator.String()),
+		),
+	})
 
 	return &sdk.Result{Events: ctx.EventManager().ABCIEvents()}, nil
 }
 
 func handleMsgPost(ctx sdk.Context, k Keeper, msg types.MsgPost) (*sdk.Result, error) {
-	k.CreatePost(ctx, msg.VendorID, msg.PostID, msg.Body, msg.Deposit, msg.Creator, msg.RewardAccount)
+	err := k.CreatePost(
+		ctx, msg.VendorID, msg.PostID, msg.Body, msg.Deposit, msg.Creator, msg.RewardAccount)
+	if err != nil {
+		return nil, err
+	}
 
 	ctx.EventManager().EmitEvents(sdk.Events{
-		sdk.NewEvent(
-			types.EventTypePost,
-			sdk.NewAttribute(types.AttributeKeyVendorID, strconv.FormatUint(uint64(msg.VendorID), 10)),
-			sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID),
-			sdk.NewAttribute(types.AttributeKeyCreator, msg.Creator.String()),
-			sdk.NewAttribute(types.AttributeKeyRewardAccount, msg.RewardAccount.String()),
-			sdk.NewAttribute(types.AttributeKeyBody, msg.Body),
-			sdk.NewAttribute(types.AttributeKeyDeposit, msg.Deposit.String()),
-		),
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),

@@ -13,8 +13,8 @@ import (
 const (
 	DefaultParamspace                   = ModuleName
 	DefaultCurationWindow time.Duration = time.Hour * 24 * 3
-	DefaultMaxNumVotes    uint16        = 5
-	DefaultMaxVendors     uint16        = 1
+	DefaultMaxNumVotes    uint32        = 5
+	DefaultMaxVendors     uint32        = 1
 )
 
 // 50%
@@ -45,15 +45,15 @@ type Params struct {
 	UpvoteDeposit        sdk.Coin      `json:"upvote_deposit" yaml:"upvote_depsoit"`
 	ModerateDeposit      sdk.Coin      `json:"moderate_deposit" yaml:"moderate_deposit"`
 	VoteAmount           sdk.Coin      `json:"vote_amount" yaml:"vote_amount"`
-	MaxNumVotes          uint16        `json:"max_num_votes" yaml:"max_num_votes"`
-	MaxVendors           uint16        `json:"max_vendors" yaml:"max_vendors"`
+	MaxNumVotes          uint32        `json:"max_num_votes" yaml:"max_num_votes"`
+	MaxVendors           uint32        `json:"max_vendors" yaml:"max_vendors"`
 	RewardPoolAllocation sdk.Dec       `json:"reward_pool_allocation" yaml:"reward_pool_allocation"`
 }
 
 // NewParams creates a new Params object
 func NewParams(
 	curationWindow time.Duration, postDeposit, upvoteDeposit, moderateDeposit, voteAmount sdk.Coin,
-	maxNumVotes, maxVendors uint16, rewardPoolAllocation sdk.Dec) Params {
+	maxNumVotes, maxVendors uint32, rewardPoolAllocation sdk.Dec) Params {
 
 	return Params{
 		CurationWindow:       curationWindow,
@@ -176,7 +176,7 @@ func validateVoteAmount(i interface{}) error {
 }
 
 func validateMaxNumVotes(i interface{}) error {
-	v, ok := i.(uint16)
+	v, ok := i.(uint32)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
 	}
@@ -189,7 +189,7 @@ func validateMaxNumVotes(i interface{}) error {
 }
 
 func validateMaxVendors(i interface{}) error {
-	v, ok := i.(uint16)
+	v, ok := i.(uint32)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
 	}

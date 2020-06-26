@@ -5,6 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/public-awesome/stakebird/x/curating/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -14,7 +15,6 @@ import (
 type Keeper struct {
 	storeKey      sdk.StoreKey
 	cdc           codec.Marshaler
-	stakingKeeper types.StakingKeeper
 	accountKeeper types.AccountKeeper
 	bankKeeper    types.BankKeeper
 	paramstore    paramtypes.Subspace
@@ -22,7 +22,7 @@ type Keeper struct {
 
 // NewKeeper creates a x/stake keeper
 func NewKeeper(cdc codec.Marshaler, key sdk.StoreKey, accountKeeper types.AccountKeeper,
-	stakingKeeper types.StakingKeeper, bankKeeper types.BankKeeper, ps paramtypes.Subspace) Keeper {
+	bankKeeper types.BankKeeper, ps paramtypes.Subspace) Keeper {
 
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -37,7 +37,6 @@ func NewKeeper(cdc codec.Marshaler, key sdk.StoreKey, accountKeeper types.Accoun
 	keeper := Keeper{
 		storeKey:      key,
 		cdc:           cdc,
-		stakingKeeper: stakingKeeper,
 		accountKeeper: accountKeeper,
 		bankKeeper:    bankKeeper,
 		paramstore:    ps,
@@ -55,6 +54,15 @@ func (k Keeper) lockDeposit(ctx sdk.Context, account sdk.AccAddress, deposit sdk
 	err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, account, types.ModuleName, sdk.NewCoins(deposit))
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (k Keeper) validateVendorID(ctx sdk.Context, vendorID uint32) error {
+	if vendorID > k.GetParams(ctx).MaxVendors {
+		return sdkerrors.Wrap(
+			sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid vendor_id %d", vendorID))
 	}
 
 	return nil

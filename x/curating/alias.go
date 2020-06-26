@@ -3,8 +3,6 @@ package curating
 import (
 	"github.com/public-awesome/stakebird/x/curating/keeper"
 	"github.com/public-awesome/stakebird/x/curating/types"
-
-	stakingTypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
 const (
@@ -27,8 +25,6 @@ var (
 	NewGenesisState     = types.NewGenesisState
 	DefaultGenesisState = types.DefaultGenesisState
 	ValidateGenesis     = types.ValidateGenesis
-	NewDelegation       = stakingTypes.NewDelegation
-	// StakeIndexFromKey   = types.StakeIndexFromKey
 
 	// variable aliases
 	ModuleCdc                = types.ModuleCdc
@@ -40,5 +36,4 @@ type (
 	GenesisState = types.GenesisState
 	Params       = types.Params
 	Post         = types.Post
-	Delegation   = stakingTypes.Delegation
 )

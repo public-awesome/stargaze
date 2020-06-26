@@ -2,6 +2,7 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 // Implements the interface of `sdk.Msg`
@@ -36,7 +37,22 @@ func (msg MsgPost) GetSignBytes() []byte {
 
 // ValidateBasic validity check for the AnteHandler
 func (msg MsgPost) ValidateBasic() error {
-	// TODO: fill
+	if msg.Body == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty body")
+	}
+	if msg.Creator.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty creator")
+	}
+	if !msg.Deposit.IsValid() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidCoins, "deposit not valid")
+	}
+	if msg.PostID == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty post_id")
+	}
+	if msg.VendorID < 1 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid vendor_id")
+	}
+
 	return nil
 }
 
@@ -72,6 +88,21 @@ func (msg MsgUpvote) GetSignBytes() []byte {
 
 // ValidateBasic validity check for the AnteHandler
 func (msg MsgUpvote) ValidateBasic() error {
-	// TODO: fill
+	if msg.Curator.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty curator")
+	}
+	if !msg.Deposit.IsValid() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidCoins, "deposit not valid")
+	}
+	if msg.PostID == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty post_id")
+	}
+	if msg.VendorID < 1 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid vendor_id")
+	}
+	if msg.VoteNum < 1 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid vote_num")
+	}
+
 	return nil
 }

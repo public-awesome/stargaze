@@ -304,7 +304,7 @@ func NewSimApp(
 	)
 
 	app.CuratingKeeper = curating.NewKeeper(
-		appCodec, keys[curating.StoreKey], app.AccountKeeper, app.StakingKeeper,
+		appCodec, keys[curating.StoreKey], app.AccountKeeper,
 		app.BankKeeper, app.subspaces[curating.ModuleName],
 	)
 

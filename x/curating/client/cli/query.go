@@ -40,11 +40,11 @@ func GetCmdQueryParams(storeName string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "params",
 		Args:  cobra.NoArgs,
-		Short: "Query the current stake parameters information",
+		Short: "Query the current curating parameters information",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Query values set as stake parameters.
+			fmt.Sprintf(`Query values set as curating parameters.
 Example:
-$ %s query stake params
+$ %s query curating params
 `,
 				version.ClientName,
 			),
