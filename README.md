@@ -1,27 +1,29 @@
-# Stakebird Chain
+# Stakebird DAO
 
-Blockchain that powers Stakebird, as well as the zone for [Game Of Zones](https://cosmos.network/goz).
+Stakebird is a [content curation DAO](https://ethresear.ch/t/prediction-markets-for-content-curation-daos/1312).
 
-# Run
+Testnet coming soon.
+
+## Run
 
 ```sh
 # install binaries
 make install
+
 # create keys
 make create-wallet
 
-# init
+# initialize chain
 make init
 
 # run
 staked start
 ```
 
-# CLI
-
-The Stake module can be accessed via CLI and REST API.
+## CLI
+The curating module can be accessed via CLI and REST API.
 
 ```sh
-stakecli tx stake post -h
-stakecli tx stake delegate -h
+stakecli tx curating post -h
+stakecli tx curating upvote -h
 ```
