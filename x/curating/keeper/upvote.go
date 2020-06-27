@@ -56,7 +56,8 @@ func (k Keeper) CreateUpvote(
 	}
 
 	voteAmt := k.voteAmount(ctx, int64(voteNum))
-	upvote := types.NewUpvote(curator, rewardAccount, voteAmt, deposit)
+	upvote := types.NewUpvote(
+		curator, rewardAccount, voteAmt, deposit, ctx.BlockTime())
 
 	store := ctx.KVStore(k.storeKey)
 	key := types.UpvoteKey(vendorID, postIDHash, curator)
