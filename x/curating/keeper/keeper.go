@@ -78,3 +78,13 @@ func (k Keeper) RefundDeposit(ctx sdk.Context, account sdk.AccAddress, deposit s
 
 	return nil
 }
+
+func (k Keeper) RewardAccount(ctx sdk.Context, account sdk.AccAddress, amt sdk.Coin) error {
+	err := k.bankKeeper.SendCoinsFromModuleToAccount(
+		ctx, types.VotingPoolName, account, sdk.NewCoins(amt))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

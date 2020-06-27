@@ -14,6 +14,7 @@ const (
 	QueryParams       = types.QueryParams
 	QuerierRoute      = types.QuerierRoute
 	RewardPoolName    = types.RewardPoolName
+	VotingPoolName    = types.VotingPoolName
 )
 
 // functions aliases

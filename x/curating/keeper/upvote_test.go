@@ -14,7 +14,7 @@ func TestCreateUpvote(t *testing.T) {
 	postID := "500"
 	vendorID := uint32(1)
 	deposit := sdk.NewInt64Coin("ufuel", 1000000)
-	addrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
+	addrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(26_000_000))
 
 	err := app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5, deposit)
 	require.NoError(t, err)

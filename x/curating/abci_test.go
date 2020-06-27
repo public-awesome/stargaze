@@ -14,10 +14,12 @@ func TestEndBlockerExpiringPost(t *testing.T) {
 
 	postID := "500"
 	vendorID := uint32(1)
-	deposit := sdk.NewInt64Coin("ufuel", 1000000)
-	addrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
 
-	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", deposit, addrs[0], addrs[0])
+	deposit := sdk.NewInt64Coin("ufuel", 1_000_000)
+	addrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(5_000_000))
+
+	err := app.CuratingKeeper.CreatePost(
+		ctx, vendorID, postID, "body string", deposit, addrs[0], addrs[0])
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -25,19 +27,79 @@ func TestEndBlockerExpiringPost(t *testing.T) {
 	require.True(t, found, "post should be found")
 
 	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ufuel")
-	require.Equal(t, "0", creatorBal.Amount.String())
+	require.Equal(t, "4000000", creatorBal.Amount.String())
 
 	// curator1
-	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[1], addrs[1], 5, deposit)
+	err = app.CuratingKeeper.CreateUpvote(
+		ctx, vendorID, postID, addrs[1], addrs[1], 1, deposit)
 	require.NoError(t, err)
 	_, found, err = app.CuratingKeeper.GetUpvote(ctx, vendorID, postID, addrs[1])
 	require.NoError(t, err)
 	require.True(t, found, "upvote should be found")
 	curatorBal := app.BankKeeper.GetBalance(ctx, addrs[1], "ufuel")
-	require.Equal(t, "0", curatorBal.Amount.String())
+	require.Equal(t, "3000000", curatorBal.Amount.String())
 
 	// curator2
-	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[2], addrs[2], 5, deposit)
+	err = app.CuratingKeeper.CreateUpvote(
+		ctx, vendorID, postID, addrs[2], addrs[2], 1, deposit)
+	require.NoError(t, err)
+	_, found, err = app.CuratingKeeper.GetUpvote(ctx, vendorID, postID, addrs[2])
+	require.NoError(t, err)
+	require.True(t, found, "upvote should be found")
+	curatorBal = app.BankKeeper.GetBalance(ctx, addrs[2], "ufuel")
+	require.Equal(t, "3000000", curatorBal.Amount.String())
+
+	// fast-forward blocktime to simulate end of curation window
+	h := ctx.BlockHeader()
+	h.Time = ctx.BlockHeader().Time.Add(
+		app.CuratingKeeper.GetParams(ctx).CurationWindow)
+	ctx = ctx.WithBlockHeader(h)
+
+	curating.EndBlocker(ctx, app.CuratingKeeper)
+
+	creatorBal = app.BankKeeper.GetBalance(ctx, addrs[0], "ufuel")
+	require.Equal(t, "5000000", creatorBal.Amount.String())
+
+	curatorBal = app.BankKeeper.GetBalance(ctx, addrs[1], "ufuel")
+	require.Equal(t, "5000000", curatorBal.Amount.String())
+
+	curatorBal = app.BankKeeper.GetBalance(ctx, addrs[2], "ufuel")
+	require.Equal(t, "5000000", curatorBal.Amount.String())
+}
+
+func TestEndBlockerQVExpiringPost(t *testing.T) {
+	_, app, ctx := testdata.CreateTestInput()
+
+	postID := "500"
+	vendorID := uint32(1)
+
+	deposit := sdk.NewInt64Coin("ufuel", 1_000_000)
+	addrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(5_000_000))
+
+	err := app.CuratingKeeper.CreatePost(
+		ctx, vendorID, postID, "body string", deposit, addrs[0], addrs[0])
+	require.NoError(t, err)
+
+	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
+	require.NoError(t, err)
+	require.True(t, found, "post should be found")
+
+	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ufuel")
+	require.Equal(t, "4000000", creatorBal.Amount.String())
+
+	// curator1
+	err = app.CuratingKeeper.CreateUpvote(
+		ctx, vendorID, postID, addrs[1], addrs[1], 1, deposit)
+	require.NoError(t, err)
+	_, found, err = app.CuratingKeeper.GetUpvote(ctx, vendorID, postID, addrs[1])
+	require.NoError(t, err)
+	require.True(t, found, "upvote should be found")
+	curatorBal := app.BankKeeper.GetBalance(ctx, addrs[1], "ufuel")
+	require.Equal(t, "3000000", curatorBal.Amount.String())
+
+	// curator2
+	err = app.CuratingKeeper.CreateUpvote(
+		ctx, vendorID, postID, addrs[2], addrs[2], 2, deposit)
 	require.NoError(t, err)
 	_, found, err = app.CuratingKeeper.GetUpvote(ctx, vendorID, postID, addrs[2])
 	require.NoError(t, err)
@@ -47,17 +109,18 @@ func TestEndBlockerExpiringPost(t *testing.T) {
 
 	// fast-forward blocktime to simulate end of curation window
 	h := ctx.BlockHeader()
-	h.Time = ctx.BlockHeader().Time.Add(app.CuratingKeeper.GetParams(ctx).CurationWindow)
+	h.Time = ctx.BlockHeader().Time.Add(
+		app.CuratingKeeper.GetParams(ctx).CurationWindow)
 	ctx = ctx.WithBlockHeader(h)
 
 	curating.EndBlocker(ctx, app.CuratingKeeper)
 
 	creatorBal = app.BankKeeper.GetBalance(ctx, addrs[0], "ufuel")
-	require.Equal(t, "1000000", creatorBal.Amount.String())
+	require.Equal(t, "5000000", creatorBal.Amount.String())
 
 	curatorBal = app.BankKeeper.GetBalance(ctx, addrs[1], "ufuel")
-	require.Equal(t, "1000000", curatorBal.Amount.String())
+	require.Equal(t, "6500000", curatorBal.Amount.String())
 
 	curatorBal = app.BankKeeper.GetBalance(ctx, addrs[2], "ufuel")
-	require.Equal(t, "1000000", curatorBal.Amount.String())
+	require.Equal(t, "3500000", curatorBal.Amount.String())
 }
