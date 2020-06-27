@@ -28,10 +28,10 @@ const (
 )
 
 var (
-	// 0x00 | vendor_id | post_id
+	// 0x00 | vendor_id | post_id -> Post
 	KeyPrefixPost = []byte{0x00}
 
-	// 0x01 | vendor_id | post_id | curator
+	// 0x01 | vendor_id | post_id | curator -> Upvote
 	KeyPrefixUpvote = []byte{0x01}
 
 	// 0x02 | format(curation_end_time) -> []VPPair

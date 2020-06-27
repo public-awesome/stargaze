@@ -9,17 +9,27 @@ import "contrib/proto/cosmos-proto/types.proto";
 import "google/protobuf/timestamp.proto";
 
 message Post {
-    bytes creator = 1 [
+    uint32 vendor_id = 1 [
+        (gogoproto.customname) = "VendorID",
+        (gogoproto.moretags)   = "yaml:\"vendor_id\"",
+        (gogoproto.jsontag)    = "vendor_id"
+    ];
+    string post_id = 2 [
+        (gogoproto.customname) = "PostID",
+        (gogoproto.moretags)   = "yaml:\"post_id\"",
+        (gogoproto.jsontag)    = "post_id"
+    ];
+    bytes creator = 3 [
         (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
         (gogoproto.moretags) = "yaml:\"creator\""
     ];
-    bytes reward_account = 2 [
+    bytes reward_account = 4 [
         (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
         (gogoproto.moretags) = "yaml:\"reward_account\""
     ];
-    bytes body_hash = 3 [(gogoproto.moretags) = "yaml:\"body_hash\""];
-    cosmos_sdk.v1.Coin deposit = 4 [(gogoproto.nullable) = false];
-    google.protobuf.Timestamp curating_end_time = 5 [
+    bytes body_hash = 5 [(gogoproto.moretags) = "yaml:\"body_hash\""];
+    cosmos_sdk.v1.Coin deposit = 6 [(gogoproto.nullable) = false];
+    google.protobuf.Timestamp curating_end_time = 7 [
         (gogoproto.stdtime) = true, 
         (gogoproto.nullable) = false, 
         (gogoproto.moretags) = "yaml:\"curating_end_time\""

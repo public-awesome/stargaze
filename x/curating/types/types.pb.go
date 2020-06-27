@@ -31,11 +31,13 @@ var _ = time.Kitchen
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type Post struct {
-	Creator         github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,1,opt,name=creator,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"creator,omitempty" yaml:"creator"`
-	RewardAccount   github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,2,opt,name=reward_account,json=rewardAccount,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"reward_account,omitempty" yaml:"reward_account"`
-	BodyHash        []byte                                        `protobuf:"bytes,3,opt,name=body_hash,json=bodyHash,proto3" json:"body_hash,omitempty" yaml:"body_hash"`
-	Deposit         types.Coin                                    `protobuf:"bytes,4,opt,name=deposit,proto3" json:"deposit"`
-	CuratingEndTime time.Time                                     `protobuf:"bytes,5,opt,name=curating_end_time,json=curatingEndTime,proto3,stdtime" json:"curating_end_time" yaml:"curating_end_time"`
+	VendorID        uint32                                        `protobuf:"varint,1,opt,name=vendor_id,json=vendorId,proto3" json:"vendor_id" yaml:"vendor_id"`
+	PostID          string                                        `protobuf:"bytes,2,opt,name=post_id,json=postId,proto3" json:"post_id" yaml:"post_id"`
+	Creator         github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,3,opt,name=creator,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"creator,omitempty" yaml:"creator"`
+	RewardAccount   github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,4,opt,name=reward_account,json=rewardAccount,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"reward_account,omitempty" yaml:"reward_account"`
+	BodyHash        []byte                                        `protobuf:"bytes,5,opt,name=body_hash,json=bodyHash,proto3" json:"body_hash,omitempty" yaml:"body_hash"`
+	Deposit         types.Coin                                    `protobuf:"bytes,6,opt,name=deposit,proto3" json:"deposit"`
+	CuratingEndTime time.Time                                     `protobuf:"bytes,7,opt,name=curating_end_time,json=curatingEndTime,proto3,stdtime" json:"curating_end_time" yaml:"curating_end_time"`
 }
 
 func (m *Post) Reset()         { *m = Post{} }
@@ -70,6 +72,20 @@ func (m *Post) XXX_DiscardUnknown() {
 }
 
 var xxx_messageInfo_Post proto.InternalMessageInfo
+
+func (m *Post) GetVendorID() uint32 {
+	if m != nil {
+		return m.VendorID
+	}
+	return 0
+}
+
+func (m *Post) GetPostID() string {
+	if m != nil {
+		return m.PostID
+	}
+	return ""
+}
 
 func (m *Post) GetCreator() github_com_cosmos_cosmos_sdk_types.AccAddress {
 	if m != nil {
@@ -749,7 +765,7 @@ func (m *Post) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i -= n1
 	i = encodeVarintTypes(dAtA, i, uint64(n1))
 	i--
-	dAtA[i] = 0x2a
+	dAtA[i] = 0x3a
 	{
 		size, err := m.Deposit.MarshalToSizedBuffer(dAtA[:i])
 		if err != nil {
@@ -759,27 +775,39 @@ func (m *Post) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i = encodeVarintTypes(dAtA, i, uint64(size))
 	}
 	i--
-	dAtA[i] = 0x22
+	dAtA[i] = 0x32
 	if len(m.BodyHash) > 0 {
 		i -= len(m.BodyHash)
 		copy(dAtA[i:], m.BodyHash)
 		i = encodeVarintTypes(dAtA, i, uint64(len(m.BodyHash)))
 		i--
-		dAtA[i] = 0x1a
+		dAtA[i] = 0x2a
 	}
 	if len(m.RewardAccount) > 0 {
 		i -= len(m.RewardAccount)
 		copy(dAtA[i:], m.RewardAccount)
 		i = encodeVarintTypes(dAtA, i, uint64(len(m.RewardAccount)))
 		i--
-		dAtA[i] = 0x12
+		dAtA[i] = 0x22
 	}
 	if len(m.Creator) > 0 {
 		i -= len(m.Creator)
 		copy(dAtA[i:], m.Creator)
 		i = encodeVarintTypes(dAtA, i, uint64(len(m.Creator)))
 		i--
-		dAtA[i] = 0xa
+		dAtA[i] = 0x1a
+	}
+	if len(m.PostID) > 0 {
+		i -= len(m.PostID)
+		copy(dAtA[i:], m.PostID)
+		i = encodeVarintTypes(dAtA, i, uint64(len(m.PostID)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.VendorID != 0 {
+		i = encodeVarintTypes(dAtA, i, uint64(m.VendorID))
+		i--
+		dAtA[i] = 0x8
 	}
 	return len(dAtA) - i, nil
 }
@@ -1119,6 +1147,13 @@ func (m *Post) Size() (n int) {
 	}
 	var l int
 	_ = l
+	if m.VendorID != 0 {
+		n += 1 + sovTypes(uint64(m.VendorID))
+	}
+	l = len(m.PostID)
+	if l > 0 {
+		n += 1 + l + sovTypes(uint64(l))
+	}
 	l = len(m.Creator)
 	if l > 0 {
 		n += 1 + l + sovTypes(uint64(l))
@@ -1311,6 +1346,57 @@ func (m *Post) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field VendorID", wireType)
+			}
+			m.VendorID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.VendorID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PostID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PostID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
 			}
@@ -1344,7 +1430,7 @@ func (m *Post) Unmarshal(dAtA []byte) error {
 				m.Creator = []byte{}
 			}
 			iNdEx = postIndex
-		case 2:
+		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field RewardAccount", wireType)
 			}
@@ -1378,7 +1464,7 @@ func (m *Post) Unmarshal(dAtA []byte) error {
 				m.RewardAccount = []byte{}
 			}
 			iNdEx = postIndex
-		case 3:
+		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field BodyHash", wireType)
 			}
@@ -1412,7 +1498,7 @@ func (m *Post) Unmarshal(dAtA []byte) error {
 				m.BodyHash = []byte{}
 			}
 			iNdEx = postIndex
-		case 4:
+		case 6:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Deposit", wireType)
 			}
@@ -1445,7 +1531,7 @@ func (m *Post) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 5:
+		case 7:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CuratingEndTime", wireType)
 			}

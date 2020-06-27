@@ -66,7 +66,8 @@ func (k Keeper) CreatePost(
 
 	curationWindow := k.GetParams(ctx).CurationWindow
 	curationEndTime := ctx.BlockTime().Add(curationWindow)
-	post := types.NewPost(bodyHash, creator, rewardAccount, deposit, curationEndTime)
+	post := types.NewPost(
+		vendorID, postID, bodyHash, creator, rewardAccount, deposit, curationEndTime)
 
 	store := ctx.KVStore(k.storeKey)
 	key := types.PostKey(vendorID, postIDHash)
@@ -108,6 +109,7 @@ func (k Keeper) InsertCurationQueue(
 	return
 }
 
+// GetCurationQueueTimeSlice returns a slice of Vendor/PostID pairs for a give time
 func (k Keeper) GetCurationQueueTimeSlice(
 	ctx sdk.Context, timestamp time.Time) (vpPairs []types.VPPair) {
 	store := ctx.KVStore(k.storeKey)
@@ -123,6 +125,7 @@ func (k Keeper) GetCurationQueueTimeSlice(
 	return vps.Pairs
 }
 
+// SetCurationQueueTimeSlice sets a slice of Vendor/PostIDs in the curation queue
 func (k Keeper) SetCurationQueueTimeSlice(
 	ctx sdk.Context, timestamp time.Time, vps []types.VPPair) {
 
@@ -141,4 +144,35 @@ func hash(body string) ([]byte, error) {
 		return nil, err
 	}
 	return h.Sum(nil), nil
+}
+
+// IterateExpiredPosts iterates over posts that have finished their
+// curation period, and performs a callback fuction.
+func (k Keeper) IterateExpiredPosts(
+	ctx sdk.Context, cb func(post types.Post) (stop bool)) {
+
+	it := k.CurationQueueIterator(ctx, ctx.BlockTime())
+	defer it.Close()
+
+	for ; it.Valid(); it.Next() {
+		vps := types.VPPairs{}
+		k.cdc.MustUnmarshalBinaryBare(it.Value(), &vps)
+		for _, vp := range vps.Pairs {
+			post, found := k.GetPost(ctx, vp.VendorID, vp.PostID)
+			if found {
+				cb(post)
+			}
+		}
+	}
+}
+
+// CurationQueueIterator returns an sdk.Iterator for all the posts
+// in the queue that expire by endTime
+func (k Keeper) CurationQueueIterator(
+	ctx sdk.Context, endTime time.Time) sdk.Iterator {
+
+	store := ctx.KVStore(k.storeKey)
+	return store.Iterator(
+		types.KeyPrefixCurationQueue,
+		sdk.PrefixEndBytes(types.CurationQueueByTimeKey(endTime)))
 }

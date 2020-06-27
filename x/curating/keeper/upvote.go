@@ -44,14 +44,14 @@ func (k Keeper) CreateUpvote(
 		if err != nil {
 			return err
 		}
+		// shadow deposit as its no longer available
+		deposit = deposit.Sub(deposit)
 	} else {
 		// lock deposit only if post already exists
 		err = k.lockDeposit(ctx, curator, deposit)
 		if err != nil {
 			return err
 		}
-		// deposit is no longer available
-		deposit = deposit.Sub(deposit)
 	}
 
 	voteAmt := k.voteAmount(ctx, int64(voteNum))
@@ -105,4 +105,23 @@ func (k Keeper) voteAmount(ctx sdk.Context, voteNum int64) sdk.Coin {
 		MulRaw(voteNum)
 
 	return sdk.NewCoin(amtPerVote.Denom, amt)
+}
+
+// IterateUpvotes performs a callback function for each upvoter on a post
+func (k Keeper) IterateUpvotes(
+	ctx sdk.Context, vendorID uint32, postID string, cb func(upvote types.Upvote) (stop bool)) {
+
+	store := ctx.KVStore(k.storeKey)
+
+	// iterator over upvoters on a post
+	it := sdk.KVStorePrefixIterator(store, types.UpvotePrefixKey(vendorID, postID))
+	defer it.Close()
+
+	for ; it.Valid(); it.Next() {
+		var upvote types.Upvote
+		k.cdc.MustUnmarshalBinaryBare(it.Value(), &upvote)
+		if cb(upvote) {
+			break
+		}
+	}
 }

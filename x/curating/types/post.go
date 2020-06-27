@@ -7,10 +7,12 @@ import (
 )
 
 func NewPost(
-	bodyHash []byte, creator, rewardAccount sdk.AccAddress,
-	deposit sdk.Coin, curatingEndTime time.Time) Post {
+	vendorID uint32, postID string, bodyHash []byte, creator,
+	rewardAccount sdk.AccAddress, deposit sdk.Coin, curatingEndTime time.Time) Post {
 
 	return Post{
+		VendorID:        vendorID,
+		PostID:          postID,
 		Creator:         creator,
 		RewardAccount:   rewardAccount,
 		BodyHash:        bodyHash,

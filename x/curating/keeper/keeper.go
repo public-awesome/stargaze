@@ -51,7 +51,8 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 
 // lockDeposit locks up a deposit in the module account
 func (k Keeper) lockDeposit(ctx sdk.Context, account sdk.AccAddress, deposit sdk.Coin) error {
-	err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, account, types.ModuleName, sdk.NewCoins(deposit))
+	err := k.bankKeeper.SendCoinsFromAccountToModule(
+		ctx, account, types.ModuleName, sdk.NewCoins(deposit))
 	if err != nil {
 		return err
 	}
@@ -63,6 +64,16 @@ func (k Keeper) validateVendorID(ctx sdk.Context, vendorID uint32) error {
 	if vendorID > k.GetParams(ctx).MaxVendors {
 		return sdkerrors.Wrap(
 			sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid vendor_id %d", vendorID))
+	}
+
+	return nil
+}
+
+func (k Keeper) RefundDeposit(ctx sdk.Context, account sdk.AccAddress, deposit sdk.Coin) error {
+	err := k.bankKeeper.SendCoinsFromModuleToAccount(
+		ctx, types.ModuleName, account, sdk.NewCoins(deposit))
+	if err != nil {
+		return err
 	}
 
 	return nil
