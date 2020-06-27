@@ -45,6 +45,8 @@ func (k Keeper) CreateUpvote(
 		if err != nil {
 			return err
 		}
+		// shadow deposit as its no longer available
+		deposit = deposit.Sub(deposit)
 	} else {
 		// lock deposit only if post already exists
 		err = k.lockDeposit(ctx, curator, deposit)
