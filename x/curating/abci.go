@@ -14,6 +14,9 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k Keeper) {
 }
 
 // EndBlocker called after each block to process rewards
+// Iterates all expired posts, processing each upvote twice:
+// First upvote iteration: refund deposits, collect QV data
+// Second upvote iteration: distribute QV rewards
 func EndBlocker(ctx sdk.Context, k Keeper) {
 	k.IterateExpiredPosts(ctx, func(post types.Post) bool {
 		k.Logger(ctx).Info(
@@ -25,35 +28,49 @@ func EndBlocker(ctx sdk.Context, k Keeper) {
 			panic(err)
 		}
 
-		numVotes := 0
-		postVotingPool := sdk.NewCoin(types.DefaultStakeDenom, sdk.ZeroInt())
+		qv := NewQVFData()
 
-		// iterate upvoters, and return their deposits
-		k.IterateUpvotes(ctx, post.VendorID, post.PostIDHash, func(upvote types.Upvote) (stop bool) {
-			// return curator deposit
-			err := k.RefundDeposit(ctx, upvote.Curator, upvote.Deposit)
-			if err != nil {
-				panic(err)
-			}
+		// iterate upvoters, returning deposits, and tallying upvotes
+		k.IterateUpvotes(ctx, post.VendorID, post.PostIDHash,
+			func(upvote types.Upvote) (stop bool) {
+				// return curator deposit
+				err := k.RefundDeposit(ctx, upvote.Curator, upvote.Deposit)
+				if err != nil {
+					panic(err)
+				}
 
-			numVotes++
-			postVotingPool = postVotingPool.Add(upvote.VoteAmount)
+				qv, err = qv.TallyVote(upvote.VoteAmount.Amount)
+				if err != nil {
+					panic(err)
+				}
 
-			return false
-		})
+				return false
+			})
 
-		curatorRewardAmount := sdk.NewCoin(
-			types.DefaultStakeDenom, postVotingPool.Amount.QuoRaw(int64(numVotes)))
+		err = k.RewardCreator(ctx, post.RewardAccount, qv.MatchPool())
+		if err != nil {
+			panic(err)
+		}
 
-		// distribute quadratic voting per capita reward
-		k.IterateUpvotes(ctx, post.VendorID, post.PostIDHash, func(upvote types.Upvote) (stop bool) {
-			err := k.RewardAccount(ctx, upvote.RewardAccount, curatorRewardAmount)
-			if err != nil {
-				panic(err)
-			}
+		curatorVotingReward := qv.VoterReward()
+		curatorMatchReward := qv.MatchReward()
 
-			return false
-		})
+		k.IterateUpvotes(ctx, post.VendorID, post.PostIDHash,
+			func(upvote types.Upvote) (stop bool) {
+				// distribute quadratic voting per capita reward from voting pool
+				err := k.SendVotingReward(ctx, upvote.RewardAccount, curatorVotingReward)
+				if err != nil {
+					panic(err)
+				}
+
+				// distribute quadratic funding reward from protocol reward pool
+				err = k.SendMatchingReward(ctx, upvote.RewardAccount, curatorMatchReward)
+				if err != nil {
+					panic(err)
+				}
+
+				return false
+			})
 
 		return false
 	})
