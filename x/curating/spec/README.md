@@ -39,11 +39,9 @@ type Params struct {
 
 ```go
 type Post struct {
-	VendorID        uint32
-	PostID          string
 	Creator         sdk.AccAddress
 	RewardAccount	sdk.AccAddress
-	Body            string
+	BodyHash        []byte
 	Deposit         sdk.Coin
 	CurationEndTime time.Time
 }
@@ -51,8 +49,6 @@ type Post struct {
 
 ```go
 type Upvote struct {
-	VendorID        uint32
-	PostID          string
 	Curator         sdk.AccAddress
 	VoteAmount      sdk.Coin
 	Deposit         sdk.Coin
@@ -136,11 +132,12 @@ The amount of vote credits (`VoteAmount`) is quadratically associated to `VoteNu
 
 ```go
 type MsgUpvote struct {
-	VendorID uint32
-	PostID   string
-	Curator  sdk.AccAddress
-	VoteNum  uint32 // 1 = 1, 2 = 4, 3 = 9 (quadratic)
-	Deposit  sdk.Coin
+	VendorID      uint32
+	PostID        string
+	Curator       sdk.AccAddress
+	RewardAccount sdk.AccAddress
+	VoteNum       uint32 // 1 = 1, 2 = 4, 3 = 9 (quadratic)
+	Deposit       sdk.Coin
 }
 ```
 
@@ -213,6 +210,8 @@ Iterate `PostCurationQueue` and process all upvotes that have completed their cu
 | post     | post_id        | {postID}           |
 | post     | creator        | {creatorAddress}   |
 | post     | reward_account | {rewardAddress}    |
+| post     | body           | {body}             |
+| post     | deposit        | {deposit}          |
 | message  | module         | curating           |
 | message  | action         | post               |
 | message  | sender         | {creatorAddress}   |
