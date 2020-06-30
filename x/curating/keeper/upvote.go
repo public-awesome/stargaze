@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"strconv"
+	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -56,7 +56,7 @@ func (k Keeper) CreateUpvote(
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeUpvote,
-			sdk.NewAttribute(types.AttributeKeyVendorID, strconv.FormatUint(uint64(vendorID), 10)),
+			sdk.NewAttribute(types.AttributeKeyVendorID, fmt.Sprintf("%d", vendorID)),
 			sdk.NewAttribute(types.AttributeKeyPostID, postID),
 			sdk.NewAttribute(types.AttributeKeyCurator, curator.String()),
 			sdk.NewAttribute(types.AttributeKeyDeposit, deposit.String()),
