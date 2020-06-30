@@ -19,7 +19,8 @@ func TestPost(t *testing.T) {
 	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", deposit, addrs[0], addrs[0])
 	require.NoError(t, err)
 
-	_, found := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
+	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
+	require.NoError(t, err)
 	require.True(t, found, "post should be found")
 
 	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ufuel")

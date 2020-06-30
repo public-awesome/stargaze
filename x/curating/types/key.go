@@ -40,12 +40,12 @@ var (
 
 var lenTime = len(sdk.FormatTimeBytes(time.Now()))
 
-func PostKey(vendorID uint32, postID string) []byte {
+func PostKey(vendorID uint32, postID []byte) []byte {
 	vendorIDBz := uint32ToBigEndian(vendorID)
-	return append(KeyPrefixPost, append(vendorIDBz, []byte(postID)...)...)
+	return append(KeyPrefixPost, append(vendorIDBz, postID...)...)
 }
 
-func UpvoteKey(vendorID uint32, postID string, curator sdk.AccAddress) []byte {
+func UpvoteKey(vendorID uint32, postID []byte, curator sdk.AccAddress) []byte {
 	return append(PostKey(vendorID, postID), curator.Bytes()...)
 }
 

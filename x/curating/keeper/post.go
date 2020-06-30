@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"crypto/sha1"
+	"crypto/md5"
 	"fmt"
 	"time"
 
@@ -12,17 +12,22 @@ import (
 
 // GetPost returns post if one exists
 func (k Keeper) GetPost(
-	ctx sdk.Context, vendorID uint32, postID string) (post types.Post, found bool) {
+	ctx sdk.Context, vendorID uint32, postID string) (post types.Post, found bool, err error) {
 
 	store := ctx.KVStore(k.storeKey)
-	key := types.PostKey(vendorID, postID)
+	postIDHash, err := hash(postID)
+	if err != nil {
+		return post, false, err
+	}
+
+	key := types.PostKey(vendorID, postIDHash)
 	value := store.Get(key)
 	if value == nil {
-		return post, false
+		return post, false, nil
 	}
 	k.cdc.MustUnmarshalBinaryBare(value, &post)
 
-	return post, true
+	return post, true, nil
 }
 
 // CreatePost registers a post on-chain and starts the curation period
@@ -43,7 +48,13 @@ func (k Keeper) CreatePost(
 		rewardAccount = creator
 	}
 
-	bodyHash, err := encodeBody(body)
+	// hash postID to avoid non-determinism
+	postIDHash, err := hash(postID)
+	if err != nil {
+		return err
+	}
+
+	bodyHash, err := hash(body)
 	if err != nil {
 		return err
 	}
@@ -58,11 +69,11 @@ func (k Keeper) CreatePost(
 	post := types.NewPost(bodyHash, creator, rewardAccount, deposit, curationEndTime)
 
 	store := ctx.KVStore(k.storeKey)
-	key := types.PostKey(vendorID, postID)
+	key := types.PostKey(vendorID, postIDHash)
 	value := k.cdc.MustMarshalBinaryBare(&post)
 	store.Set(key, value)
 
-	k.InsertCurationQueue(ctx, vendorID, postID, curationEndTime)
+	k.InsertCurationQueue(ctx, vendorID, postIDHash, curationEndTime)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
@@ -81,7 +92,7 @@ func (k Keeper) CreatePost(
 
 // InsertCurationQueue inserts a VPPair into the right timeslot in the curation queue
 func (k Keeper) InsertCurationQueue(
-	ctx sdk.Context, vendorID uint32, postID string, curationEndTime time.Time) {
+	ctx sdk.Context, vendorID uint32, postID []byte, curationEndTime time.Time) {
 	vpPair := types.VPPair{vendorID, postID}
 
 	timeSlice := k.GetCurationQueueTimeSlice(ctx, curationEndTime)
@@ -120,8 +131,8 @@ func (k Keeper) SetCurationQueueTimeSlice(
 	store.Set(types.CurationQueueByTimeKey(timestamp), bz)
 }
 
-func encodeBody(body string) ([]byte, error) {
-	h := sha1.New()
+func hash(body string) ([]byte, error) {
+	h := md5.New()
 	_, err := h.Write([]byte(body))
 	if err != nil {
 		return nil, err

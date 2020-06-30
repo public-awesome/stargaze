@@ -125,7 +125,7 @@ message VPPair {
         (gogoproto.moretags)   = "yaml:\"vendor_id\"",
         (gogoproto.jsontag)    = "vendor_id"
     ];
-    string post_id = 2 [
+    bytes post_id = 2 [
         (gogoproto.customname) = "PostID",
         (gogoproto.moretags)   = "yaml:\"post_id\"",
         (gogoproto.jsontag)    = "post_id"

@@ -19,10 +19,12 @@ func TestCreateUpvote(t *testing.T) {
 	err := app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5, deposit)
 	require.NoError(t, err)
 
-	_, found := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
+	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
+	require.NoError(t, err)
 	require.True(t, found, "post should be found")
 
-	upvote, found := app.CuratingKeeper.GetUpvote(ctx, vendorID, postID, addrs[0])
+	upvote, found, err := app.CuratingKeeper.GetUpvote(ctx, vendorID, postID, addrs[0])
+	require.NoError(t, err)
 	require.True(t, found, "upvote should be found")
 
 	require.Equal(t, "25000000ufuel", upvote.VoteAmount.String())

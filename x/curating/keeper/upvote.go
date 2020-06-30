@@ -13,7 +13,13 @@ func (k Keeper) CreateUpvote(
 	ctx sdk.Context, vendorID uint32, postID string, curator,
 	rewardAccount sdk.AccAddress, voteNum int32, deposit sdk.Coin) error {
 
-	err := k.validateVendorID(ctx, vendorID)
+	// hash postID to avoid non-determinism
+	postIDHash, err := hash(postID)
+	if err != nil {
+		return err
+	}
+
+	err = k.validateVendorID(ctx, vendorID)
 	if err != nil {
 		return err
 	}
@@ -27,7 +33,10 @@ func (k Keeper) CreateUpvote(
 	}
 
 	// check if post exist, if not, create it and start the curation period
-	_, found := k.GetPost(ctx, vendorID, postID)
+	_, found, err := k.GetPost(ctx, vendorID, postID)
+	if err != nil {
+		return err
+	}
 	if !found {
 		// pass the deposit along to the post to be locked
 		// this curator gets both creator + curator rewards
@@ -49,7 +58,7 @@ func (k Keeper) CreateUpvote(
 	upvote := types.NewUpvote(curator, rewardAccount, voteAmt, deposit)
 
 	store := ctx.KVStore(k.storeKey)
-	key := types.UpvoteKey(vendorID, postID, curator)
+	key := types.UpvoteKey(vendorID, postIDHash, curator)
 	value := k.cdc.MustMarshalBinaryBare(&upvote)
 	store.Set(key, value)
 
@@ -69,17 +78,22 @@ func (k Keeper) CreateUpvote(
 // GetUpvote returns an upvote if one exists
 func (k Keeper) GetUpvote(
 	ctx sdk.Context, vendorID uint32, postID string,
-	curator sdk.AccAddress) (upvote types.Upvote, found bool) {
+	curator sdk.AccAddress) (upvote types.Upvote, found bool, err error) {
 
 	store := ctx.KVStore(k.storeKey)
-	key := types.UpvoteKey(vendorID, postID, curator)
+	postIDHash, err := hash(postID)
+	if err != nil {
+		return upvote, false, err
+	}
+
+	key := types.UpvoteKey(vendorID, postIDHash, curator)
 	value := store.Get(key)
 	if value == nil {
-		return upvote, false
+		return upvote, false, nil
 	}
 	k.cdc.MustUnmarshalBinaryBare(value, &upvote)
 
-	return upvote, true
+	return upvote, true, nil
 }
 
 // voteAmount does the quadratic voting calculation
