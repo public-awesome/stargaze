@@ -131,6 +131,9 @@ func (k Keeper) SetCurationQueueTimeSlice(
 	store.Set(types.CurationQueueByTimeKey(timestamp), bz)
 }
 
+// md5 is used over sha256 because it's faster and produces a more compact result.
+// Collisions are unlikely since it's always paired with another id (vendor_id) or
+// only used to verify content bodies.
 func hash(body string) ([]byte, error) {
 	h := md5.New()
 	_, err := h.Write([]byte(body))
