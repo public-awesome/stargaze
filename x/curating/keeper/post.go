@@ -87,10 +87,14 @@ func (k Keeper) InsertCurationQueue(
 	timeSlice := k.GetCurationQueueTimeSlice(ctx, curationEndTime)
 	if len(timeSlice) == 0 {
 		k.SetCurationQueueTimeSlice(ctx, curationEndTime, []types.VPPair{vpPair})
-	} else {
-		timeSlice := append(timeSlice, vpPair)
-		k.SetCurationQueueTimeSlice(ctx, curationEndTime, timeSlice)
+
+		return
 	}
+
+	timeSlice = append(timeSlice, vpPair)
+	k.SetCurationQueueTimeSlice(ctx, curationEndTime, timeSlice)
+
+	return
 }
 
 func (k Keeper) GetCurationQueueTimeSlice(

@@ -26,10 +26,10 @@ var (
 	ValidateGenesis     = types.ValidateGenesis
 
 	// variable aliases
-	ModuleCdc                = types.ModuleCdc
-	EventTypePost            = types.EventTypePost
-	EventTypeUpvote          = types.EventTypeUpvote
-	EventTypeCuratingEndTime = types.EventTypeCuratingEndTime
+	ModuleCdc                 = types.ModuleCdc
+	EventTypePost             = types.EventTypePost
+	EventTypeUpvote           = types.EventTypeUpvote
+	EventTypeCurationComplete = types.EventTypeCurationComplete
 )
 
 // type aliases
