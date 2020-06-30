@@ -2,7 +2,7 @@ package keeper
 
 import (
 	"crypto/sha1"
-	"strconv"
+	"fmt"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -67,11 +67,12 @@ func (k Keeper) CreatePost(
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypePost,
-			sdk.NewAttribute(types.AttributeKeyVendorID, strconv.FormatUint(uint64(vendorID), 10)),
+			sdk.NewAttribute(types.AttributeKeyVendorID, fmt.Sprintf("%d", vendorID)),
 			sdk.NewAttribute(types.AttributeKeyPostID, postID),
 			sdk.NewAttribute(types.AttributeKeyCreator, creator.String()),
 			sdk.NewAttribute(types.AttributeKeyBody, body),
 			sdk.NewAttribute(types.AttributeKeyDeposit, deposit.String()),
+			sdk.NewAttribute(types.AttributeCurationEndTime, curationEndTime.Format(time.RFC3339)),
 		),
 	})
 
