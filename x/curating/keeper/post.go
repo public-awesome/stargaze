@@ -168,6 +168,8 @@ func (k Keeper) IterateExpiredPosts(
 		for _, vp := range vps.Pairs {
 			post, found, err := k.GetPostZ(ctx, vp.VendorID, vp.PostID)
 			if err != nil {
+				// Do want to panic here because if a post doesn't exist for an upvote
+				// it means there's some kind of consensus failure, so halt the chain.
 				panic(err)
 			}
 			if found {
