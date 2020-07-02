@@ -20,7 +20,8 @@ func TestEndBlockerExpiringPost(t *testing.T) {
 	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", deposit, addrs[0], addrs[0])
 	require.NoError(t, err)
 
-	_, found := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
+	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
+	require.NoError(t, err)
 	require.True(t, found, "post should be found")
 
 	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ufuel")
@@ -29,7 +30,8 @@ func TestEndBlockerExpiringPost(t *testing.T) {
 	// curator1
 	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[1], addrs[1], 5, deposit)
 	require.NoError(t, err)
-	_, found = app.CuratingKeeper.GetUpvote(ctx, vendorID, postID, addrs[1])
+	_, found, err = app.CuratingKeeper.GetUpvote(ctx, vendorID, postID, addrs[1])
+	require.NoError(t, err)
 	require.True(t, found, "upvote should be found")
 	curatorBal := app.BankKeeper.GetBalance(ctx, addrs[1], "ufuel")
 	require.Equal(t, "0", curatorBal.Amount.String())
@@ -37,7 +39,8 @@ func TestEndBlockerExpiringPost(t *testing.T) {
 	// curator2
 	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[2], addrs[2], 5, deposit)
 	require.NoError(t, err)
-	_, found = app.CuratingKeeper.GetUpvote(ctx, vendorID, postID, addrs[2])
+	_, found, err = app.CuratingKeeper.GetUpvote(ctx, vendorID, postID, addrs[2])
+	require.NoError(t, err)
 	require.True(t, found, "upvote should be found")
 	curatorBal = app.BankKeeper.GetBalance(ctx, addrs[2], "ufuel")
 	require.Equal(t, "0", curatorBal.Amount.String())

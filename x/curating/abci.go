@@ -17,7 +17,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k Keeper) {
 func EndBlocker(ctx sdk.Context, k Keeper) {
 	k.IterateExpiredPosts(ctx, func(post types.Post) bool {
 		k.Logger(ctx).Info(
-			fmt.Sprintf("Processing vendor %d post %v", post.VendorID, post.PostID))
+			fmt.Sprintf("Processing vendor %d post %v", post.VendorID, post.PostIDHash))
 
 		// return creator deposit
 		err := k.RefundDeposit(ctx, post.Creator, post.Deposit)
@@ -26,7 +26,7 @@ func EndBlocker(ctx sdk.Context, k Keeper) {
 		}
 
 		// iterate upvoters, and return their deposits
-		k.IterateUpvotes(ctx, post.VendorID, post.PostID, func(upvote types.Upvote) (stop bool) {
+		k.IterateUpvotes(ctx, post.VendorID, post.PostIDHash, func(upvote types.Upvote) (stop bool) {
 			// return curator deposit
 			err := k.RefundDeposit(ctx, upvote.Curator, upvote.Deposit)
 			if err != nil {

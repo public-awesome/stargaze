@@ -109,12 +109,12 @@ func (k Keeper) voteAmount(ctx sdk.Context, voteNum int64) sdk.Coin {
 
 // IterateUpvotes performs a callback function for each upvoter on a post
 func (k Keeper) IterateUpvotes(
-	ctx sdk.Context, vendorID uint32, postID string, cb func(upvote types.Upvote) (stop bool)) {
+	ctx sdk.Context, vendorID uint32, postIDHash []byte, cb func(upvote types.Upvote) (stop bool)) {
 
 	store := ctx.KVStore(k.storeKey)
 
 	// iterator over upvoters on a post
-	it := sdk.KVStorePrefixIterator(store, types.UpvotePrefixKey(vendorID, postID))
+	it := sdk.KVStorePrefixIterator(store, types.UpvotePrefixKey(vendorID, postIDHash))
 	defer it.Close()
 
 	for ; it.Valid(); it.Next() {

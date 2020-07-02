@@ -40,13 +40,19 @@ var (
 
 var lenTime = len(sdk.FormatTimeBytes(time.Now()))
 
-func PostKey(vendorID uint32, postID []byte) []byte {
+func PostKey(vendorID uint32, postIDHash []byte) []byte {
 	vendorIDBz := uint32ToBigEndian(vendorID)
-	return append(KeyPrefixPost, append(vendorIDBz, postID...)...)
+	return append(KeyPrefixPost, append(vendorIDBz, postIDHash...)...)
 }
 
-func UpvoteKey(vendorID uint32, postID []byte, curator sdk.AccAddress) []byte {
-	return append(PostKey(vendorID, postID), curator.Bytes()...)
+func UpvoteKey(vendorID uint32, postIDHash []byte, curator sdk.AccAddress) []byte {
+	return append(UpvotePrefixKey(vendorID, postIDHash), curator.Bytes()...)
+}
+
+// UpvotePrefixKey 0x01|vendorID|postID|...
+func UpvotePrefixKey(vendorID uint32, postIDHash []byte) []byte {
+	vendorIDBz := uint32ToBigEndian(vendorID)
+	return append(KeyPrefixUpvote, append(vendorIDBz, postIDHash...)...)
 }
 
 // CurationQueueByTimeKey gets the curation queue key by curation end time

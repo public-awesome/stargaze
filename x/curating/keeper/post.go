@@ -14,11 +14,19 @@ import (
 func (k Keeper) GetPost(
 	ctx sdk.Context, vendorID uint32, postID string) (post types.Post, found bool, err error) {
 
-	store := ctx.KVStore(k.storeKey)
 	postIDHash, err := hash(postID)
 	if err != nil {
 		return post, false, err
 	}
+
+	return k.GetPostZ(ctx, vendorID, postIDHash)
+}
+
+// GetPostZ returns post if one exists
+func (k Keeper) GetPostZ(
+	ctx sdk.Context, vendorID uint32, postIDHash []byte) (post types.Post, found bool, err error) {
+
+	store := ctx.KVStore(k.storeKey)
 
 	key := types.PostKey(vendorID, postIDHash)
 	value := store.Get(key)
@@ -67,7 +75,7 @@ func (k Keeper) CreatePost(
 	curationWindow := k.GetParams(ctx).CurationWindow
 	curationEndTime := ctx.BlockTime().Add(curationWindow)
 	post := types.NewPost(
-		vendorID, postID, bodyHash, creator, rewardAccount, deposit, curationEndTime)
+		vendorID, postIDHash, bodyHash, creator, rewardAccount, deposit, curationEndTime)
 
 	store := ctx.KVStore(k.storeKey)
 	key := types.PostKey(vendorID, postIDHash)
@@ -158,7 +166,10 @@ func (k Keeper) IterateExpiredPosts(
 		vps := types.VPPairs{}
 		k.cdc.MustUnmarshalBinaryBare(it.Value(), &vps)
 		for _, vp := range vps.Pairs {
-			post, found := k.GetPost(ctx, vp.VendorID, vp.PostID)
+			post, found, err := k.GetPostZ(ctx, vp.VendorID, vp.PostID)
+			if err != nil {
+				panic(err)
+			}
 			if found {
 				cb(post)
 			}
