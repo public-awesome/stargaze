@@ -39,13 +39,11 @@ func (k Keeper) CreateUpvote(
 	}
 	if !found {
 		// pass the deposit along to the post to be locked
-		// this curator gets both creator + curator rewards
-		err = k.CreatePost(ctx, vendorID, postID, "", deposit, curator, rewardAccount)
+		// this curator gets both creator + curator rewards (sent to reward_account)
+		err = k.CreatePost(ctx, vendorID, postID, "", sdk.Coin{}, nil, rewardAccount)
 		if err != nil {
 			return err
 		}
-		// shadow deposit as its no longer available
-		deposit = deposit.Sub(deposit)
 	} else {
 		// lock deposit only if post already exists
 		err = k.lockDeposit(ctx, curator, deposit)
