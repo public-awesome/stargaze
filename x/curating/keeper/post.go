@@ -54,7 +54,7 @@ func (k Keeper) CreatePost(
 		return sdkerrors.Wrap(sdkerrors.ErrInsufficientFunds, deposit.String())
 	}
 
-	if rewardAccount == nil {
+	if rewardAccount.Empty() {
 		rewardAccount = creator
 	}
 

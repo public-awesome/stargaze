@@ -28,7 +28,7 @@ func (k Keeper) CreateUpvote(
 		return sdkerrors.Wrap(sdkerrors.ErrInsufficientFunds, deposit.String())
 	}
 
-	if rewardAccount == nil {
+	if rewardAccount.Empty() {
 		rewardAccount = curator
 	}
 
