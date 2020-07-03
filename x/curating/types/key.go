@@ -23,6 +23,9 @@ const (
 	// RewardPoolName is the name for the module account for the reward pool
 	RewardPoolName = "reward_matching_pool"
 
+	// VotingPoolName is the name of the global voting pool module account
+	VotingPoolName = "voting_pool"
+
 	// DefaultStakeDenom is the staking denom for the zone
 	DefaultStakeDenom = "ufuel"
 )

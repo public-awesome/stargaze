@@ -28,7 +28,7 @@ func (k Keeper) CreateUpvote(
 		return sdkerrors.Wrap(sdkerrors.ErrInsufficientFunds, deposit.String())
 	}
 
-	if rewardAccount == nil {
+	if rewardAccount.Empty() {
 		rewardAccount = curator
 	}
 
@@ -59,6 +59,13 @@ func (k Keeper) CreateUpvote(
 	key := types.UpvoteKey(vendorID, postIDHash, curator)
 	value := k.cdc.MustMarshalBinaryBare(&upvote)
 	store.Set(key, value)
+
+	// add vote amount to the voting pool
+	err = k.bankKeeper.SendCoinsFromAccountToModule(
+		ctx, curator, types.VotingPoolName, sdk.NewCoins(voteAmt))
+	if err != nil {
+		return err
+	}
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(

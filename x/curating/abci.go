@@ -25,10 +25,29 @@ func EndBlocker(ctx sdk.Context, k Keeper) {
 			panic(err)
 		}
 
+		numVotes := 0
+		postVotingPool := sdk.NewCoin(types.DefaultStakeDenom, sdk.ZeroInt())
+
 		// iterate upvoters, and return their deposits
 		k.IterateUpvotes(ctx, post.VendorID, post.PostIDHash, func(upvote types.Upvote) (stop bool) {
 			// return curator deposit
 			err := k.RefundDeposit(ctx, upvote.Curator, upvote.Deposit)
+			if err != nil {
+				panic(err)
+			}
+
+			numVotes++
+			postVotingPool = postVotingPool.Add(upvote.VoteAmount)
+
+			return false
+		})
+
+		curatorRewardAmount := sdk.NewCoin(
+			types.DefaultStakeDenom, postVotingPool.Amount.QuoRaw(int64(numVotes)))
+
+		// distribute quadratic voting per capita reward
+		k.IterateUpvotes(ctx, post.VendorID, post.PostIDHash, func(upvote types.Upvote) (stop bool) {
+			err := k.RewardAccount(ctx, upvote.RewardAccount, curatorRewardAmount)
 			if err != nil {
 				panic(err)
 			}
