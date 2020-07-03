@@ -135,10 +135,10 @@ message VPPair {
         (gogoproto.moretags)   = "yaml:\"vendor_id\"",
         (gogoproto.jsontag)    = "vendor_id"
     ];
-    bytes post_id = 2 [
-        (gogoproto.customname) = "PostID",
-        (gogoproto.moretags)   = "yaml:\"post_id\"",
-        (gogoproto.jsontag)    = "post_id"
+    bytes post_id_hash = 2 [
+        (gogoproto.customname) = "PostIDHash",
+        (gogoproto.moretags)   = "yaml:\"post_id_hash\"",
+        (gogoproto.jsontag)    = "post_id_hash"
     ];
   }
   

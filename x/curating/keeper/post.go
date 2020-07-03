@@ -166,7 +166,7 @@ func (k Keeper) IterateExpiredPosts(
 		vps := types.VPPairs{}
 		k.cdc.MustUnmarshalBinaryBare(it.Value(), &vps)
 		for _, vp := range vps.Pairs {
-			post, found, err := k.GetPostZ(ctx, vp.VendorID, vp.PostID)
+			post, found, err := k.GetPostZ(ctx, vp.VendorID, vp.PostIDHash)
 			if err != nil {
 				// Do want to panic here because if a post doesn't exist for an upvote
 				// it means there's some kind of consensus failure, so halt the chain.
