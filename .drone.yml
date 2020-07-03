@@ -4,6 +4,9 @@ type: docker
 name: default
 
 steps:
+  - name: fetch
+    commands:
+      - git fetch --tags
   - name: build
     image: golang:1.14.2
     commands:
@@ -66,6 +69,6 @@ steps:
       status: [success, failure]
 ---
 kind: signature
-hmac: d06bfbb453db04a176976438ca013e61d4a98f75c9ae580688986b32236dcc14
+hmac: 3965fec0efbb27cf32a968c4b131357f62f52f725ca08de80e4a315b9cca82f0
 
 ...
