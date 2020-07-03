@@ -38,7 +38,9 @@ func (k Keeper) GetPostZ(
 	return post, true, nil
 }
 
-// CreatePost registers a post on-chain and starts the curation period
+// CreatePost registers a post on-chain and starts the curation period.
+// It can be called from CreateUpvote() when a post doesn't exist yet.
+// In this case, the creator and deposit will be nil.
 func (k Keeper) CreatePost(
 	ctx sdk.Context, vendorID uint32, postID, body string, deposit sdk.Coin,
 	creator, rewardAccount sdk.AccAddress) error {
@@ -48,7 +50,7 @@ func (k Keeper) CreatePost(
 		return err
 	}
 
-	if deposit.IsLT(k.GetParams(ctx).PostDeposit) {
+	if deposit.IsValid() && deposit.IsLT(k.GetParams(ctx).PostDeposit) {
 		return sdkerrors.Wrap(sdkerrors.ErrInsufficientFunds, deposit.String())
 	}
 
@@ -67,9 +69,11 @@ func (k Keeper) CreatePost(
 		return err
 	}
 
-	err = k.lockDeposit(ctx, creator, deposit)
-	if err != nil {
-		return err
+	if deposit.IsValid() {
+		err = k.lockDeposit(ctx, creator, deposit)
+		if err != nil {
+			return err
+		}
 	}
 
 	curationWindow := k.GetParams(ctx).CurationWindow
