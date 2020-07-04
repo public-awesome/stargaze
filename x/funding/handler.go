@@ -1,14 +1,14 @@
-package bondcurve
+package funding
 
 import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/public-awesome/stakebird/x/bondcurve/types"
+	"github.com/public-awesome/stakebird/x/funding/types"
 )
 
-// NewHandler creates an sdk.Handler for all the bondcurve type messages
+// NewHandler creates an sdk.Handler for all the funding type messages
 func NewHandler(k Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())

@@ -14,23 +14,23 @@ const (
 
 // Parameter store keys
 var (
-	// TODO: Define your keys for the parameter store
-	// KeyParamName          = []byte("ParamName")
+// TODO: Define your keys for the parameter store
+// KeyParamName          = []byte("ParamName")
 )
 
-// ParamKeyTable for bondcurve module
+// ParamKeyTable for funding module
 func ParamKeyTable() params.KeyTable {
 	return params.NewKeyTable().RegisterParamSet(&Params{})
 }
 
-// Params - used for initializing default parameter for bondcurve at genesis
+// Params - used for initializing default parameter for funding at genesis
 type Params struct {
 	// TODO: Add your Paramaters to the Paramter struct
 	// KeyParamName string `json:"key_param_name"`
 }
 
 // NewParams creates a new Params object
-func NewParams(/* TODO: Pass in the paramters*/) Params {
+func NewParams( /* TODO: Pass in the paramters*/ ) Params {
 	return Params{
 		// TODO: Create your Params Type
 	}
@@ -40,7 +40,7 @@ func NewParams(/* TODO: Pass in the paramters*/) Params {
 func (p Params) String() string {
 	return fmt.Sprintf(`
 	// TODO: Return all the params as a string
-	`, )
+	`)
 }
 
 // ParamSetPairs - Implements params.ParamSet

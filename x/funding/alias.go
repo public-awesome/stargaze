@@ -1,8 +1,8 @@
-package bondcurve
+package funding
 
 import (
-	"github.com/public-awesome/stakebird/x/bondcurve/keeper"
-	"github.com/public-awesome/stakebird/x/bondcurve/types"
+	"github.com/public-awesome/stakebird/x/funding/keeper"
+	"github.com/public-awesome/stakebird/x/funding/types"
 )
 
 const (

@@ -1,6 +1,6 @@
 package types
 
-// bondcurve module event types
+// funding module event types
 const (
 	// TODO: Create your event types
 	// EventType<Action>    		= "action"

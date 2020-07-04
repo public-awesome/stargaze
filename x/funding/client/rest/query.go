@@ -8,13 +8,13 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/public-awesome/stakebird/x/bondcurve/types"
+	"github.com/public-awesome/stakebird/x/funding/types"
 )
 
 func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	// TODO: Define your GET REST endpoints
 	r.HandleFunc(
-		"/bondcurve/parameters",
+		"/funding/parameters",
 		queryParamsHandlerFn(cliCtx),
 	).Methods("GET")
 }

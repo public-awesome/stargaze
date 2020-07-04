@@ -6,10 +6,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/public-awesome/stakebird/x/bondcurve/types"
+	"github.com/public-awesome/stakebird/x/funding/types"
 )
 
-// NewQuerier creates a new querier for bondcurve clients.
+// NewQuerier creates a new querier for funding clients.
 func NewQuerier(k Keeper) sdk.Querier {
 	return func(ctx sdk.Context, path []string, req abci.RequestQuery) ([]byte, error) {
 		switch path[0] {
@@ -17,7 +17,7 @@ func NewQuerier(k Keeper) sdk.Querier {
 			return queryParams(ctx, k)
 			// TODO: Put the modules query routes
 		default:
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "unknown bondcurve query endpoint")
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "unknown funding query endpoint")
 		}
 	}
 }

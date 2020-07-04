@@ -1,4 +1,4 @@
-package bondcurve
+package funding
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"

@@ -1,4 +1,4 @@
-# bondcurve module specification
+# funding module specification
 
 ## Abstract
 

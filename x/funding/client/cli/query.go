@@ -9,13 +9,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/public-awesome/stakebird/x/bondcurve/types"
+	"github.com/public-awesome/stakebird/x/funding/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module
 func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
-	// Group bondcurve queries under a subcommand
-	bondcurveQueryCmd := &cobra.Command{
+	// Group funding queries under a subcommand
+	fundingQueryCmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      fmt.Sprintf("Querying commands for the %s module", types.ModuleName),
 		DisableFlagParsing:         true,
@@ -23,13 +23,13 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	bondcurveQueryCmd.AddCommand(
+	fundingQueryCmd.AddCommand(
 		flags.GetCommands(
 		// TODO: Add query Cmds
 		)...,
 	)
 
-	return bondcurveQueryCmd
+	return fundingQueryCmd
 }
 
 // TODO: Add Query Commands

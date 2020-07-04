@@ -7,10 +7,10 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stakebird/x/bondcurve/types"
+	"github.com/public-awesome/stakebird/x/funding/types"
 )
 
-// Keeper of the bondcurve store
+// Keeper of the funding store
 type Keeper struct {
 	storeKey           sdk.StoreKey
 	cdc                codec.Marshaler
@@ -20,7 +20,7 @@ type Keeper struct {
 	paramspace         types.ParamSubspace
 }
 
-// NewKeeper creates a bondcurve keeper
+// NewKeeper creates a funding keeper
 func NewKeeper(cdc codec.Marshaler, key sdk.StoreKey, supplyKeeper types.SupplyKeeper,
 	channelKeeper types.ChannelKeeper, distKeeper types.DistributionKeeper, paramspace types.ParamSubspace) Keeper {
 

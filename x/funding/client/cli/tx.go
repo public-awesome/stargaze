@@ -15,12 +15,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	authclient "github.com/cosmos/cosmos-sdk/x/auth/client"
-	"github.com/public-awesome/stakebird/x/bondcurve/types"
+	"github.com/public-awesome/stakebird/x/funding/types"
 )
 
 // GetTxCmd returns the transaction commands for this module
 func GetTxCmd(cdc *codec.Codec) *cobra.Command {
-	bondcurveTxCmd := &cobra.Command{
+	fundingTxCmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      fmt.Sprintf("%s transactions subcommands", types.ModuleName),
 		DisableFlagParsing:         true,
@@ -28,11 +28,11 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	bondcurveTxCmd.AddCommand(flags.PostCommands(
+	fundingTxCmd.AddCommand(flags.PostCommands(
 		GetCmdBuy(cdc),
 	)...)
 
-	return bondcurveTxCmd
+	return fundingTxCmd
 }
 
 func GetCmdBuy(cdc *codec.Codec) *cobra.Command {
@@ -43,7 +43,7 @@ func GetCmdBuy(cdc *codec.Codec) *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Locks collateral that will be used as reserves for the bonding curve. Mints new FUEL.
 Example:
-$ %s tx bondcurve buy 1000stake --from mykey
+$ %s tx funding buy 1000stake --from mykey
 `,
 				version.ClientName,
 			),

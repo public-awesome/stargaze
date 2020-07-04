@@ -4,8 +4,8 @@ import (
 	"io"
 	"os"
 
-	"github.com/public-awesome/stakebird/x/bondcurve"
 	"github.com/public-awesome/stakebird/x/curating"
+	"github.com/public-awesome/stakebird/x/funding"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
@@ -111,7 +111,7 @@ var (
 		upgrade.AppModuleBasic{},
 		evidence.AppModuleBasic{},
 		transfer.AppModuleBasic{},
-		bondcurve.AppModuleBasic{},
+		funding.AppModuleBasic{},
 		curating.AppModuleBasic{},
 	)
 
@@ -124,7 +124,7 @@ var (
 		staking.NotBondedPoolName:       {auth.Burner, auth.Staking},
 		gov.ModuleName:                  {auth.Burner},
 		transfer.GetModuleAccountName(): {auth.Minter, auth.Burner},
-		bondcurve.ModuleName:            {auth.Minter, auth.Burner},
+		funding.ModuleName:              {auth.Minter, auth.Burner},
 		curating.ModuleName:             nil,
 		curating.RewardPoolName:         {auth.Minter, auth.Burner},
 		curating.VotingPoolName:         {auth.Minter, auth.Burner},
@@ -168,7 +168,7 @@ type RocketApp struct {
 	ibcKeeper        *ibc.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
 	evidenceKeeper   evidence.Keeper
 	transferKeeper   transfer.Keeper
-	bondCurveKeeper  bondcurve.Keeper
+	fundingKeeper    funding.Keeper
 	curatingKeeper   curating.Keeper
 
 	// make scoped keepers public for test purposes
@@ -216,7 +216,7 @@ func NewRocketApp(
 		mint.StoreKey, distr.StoreKey, slashing.StoreKey,
 		gov.StoreKey, params.StoreKey, ibc.StoreKey, upgrade.StoreKey,
 		evidence.StoreKey, transfer.StoreKey, capability.StoreKey,
-		bondcurve.StoreKey, curating.StoreKey,
+		funding.StoreKey, curating.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capability.MemStoreKey)
@@ -245,7 +245,7 @@ func NewRocketApp(
 	app.subspaces[slashing.ModuleName] = app.paramsKeeper.Subspace(slashing.DefaultParamspace)
 	app.subspaces[gov.ModuleName] = app.paramsKeeper.Subspace(gov.DefaultParamspace).WithKeyTable(gov.ParamKeyTable())
 	app.subspaces[crisis.ModuleName] = app.paramsKeeper.Subspace(crisis.DefaultParamspace)
-	app.subspaces[bondcurve.ModuleName] = app.paramsKeeper.Subspace(bondcurve.DefaultParamspace)
+	app.subspaces[funding.ModuleName] = app.paramsKeeper.Subspace(funding.DefaultParamspace)
 	app.subspaces[curating.ModuleName] = app.paramsKeeper.Subspace(curating.DefaultParamspace)
 
 	bApp.SetParamStore(app.paramsKeeper.Subspace(baseapp.Paramspace).WithKeyTable(std.ConsensusParamsKeyTable()))
@@ -326,9 +326,10 @@ func NewRocketApp(
 	evidenceKeeper.SetRouter(evidenceRouter)
 	app.evidenceKeeper = *evidenceKeeper
 
-	app.bondCurveKeeper = bondcurve.NewKeeper(
-		appCodec, keys[bondcurve.StoreKey], app.bankKeeper, app.ibcKeeper.ChannelKeeper,
-		app.distrKeeper, app.subspaces[bondcurve.ModuleName],
+	// create stakebird keepers
+	app.fundingKeeper = funding.NewKeeper(
+		appCodec, keys[funding.StoreKey], app.bankKeeper, app.ibcKeeper.ChannelKeeper,
+		app.distrKeeper, app.subspaces[funding.ModuleName],
 	)
 
 	app.curatingKeeper = curating.NewKeeper(
@@ -354,7 +355,7 @@ func NewRocketApp(
 		ibc.NewAppModule(app.ibcKeeper),
 		params.NewAppModule(app.paramsKeeper),
 		transferModule,
-		bondcurve.NewAppModule(appCodec, app.bondCurveKeeper),
+		funding.NewAppModule(appCodec, app.fundingKeeper),
 		curating.NewAppModule(appCodec, app.curatingKeeper),
 	)
 

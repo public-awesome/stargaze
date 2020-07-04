@@ -1,12 +1,12 @@
 package types
 
-// GenesisState - all bondcurve state that must be provided at genesis
+// GenesisState - all funding state that must be provided at genesis
 type GenesisState struct {
 	// TODO: Fill out what is needed by the module for genesis
 }
 
 // NewGenesisState creates a new GenesisState object
-func NewGenesisState( /* TODO: Fill out with what is needed for genesis state */) GenesisState {
+func NewGenesisState( /* TODO: Fill out with what is needed for genesis state */ ) GenesisState {
 	return GenesisState{
 		// TODO: Fill out according to your genesis state
 	}
@@ -19,7 +19,7 @@ func DefaultGenesisState() GenesisState {
 	}
 }
 
-// ValidateGenesis validates the bondcurve genesis parameters
+// ValidateGenesis validates the funding genesis parameters
 func ValidateGenesis(data GenesisState) error {
 	// TODO: Create a sanity check to make sure the state conforms to the modules needs
 	return nil
