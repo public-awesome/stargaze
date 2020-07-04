@@ -13,23 +13,23 @@ func (k Keeper) CreateUpvote(
 	ctx sdk.Context, vendorID uint32, postID string, curator,
 	rewardAccount sdk.AccAddress, voteNum int32, deposit sdk.Coin) error {
 
+	err := k.validateVendorID(ctx, vendorID)
+	if err != nil {
+		return err
+	}
+	if rewardAccount.Empty() {
+		rewardAccount = curator
+	}
+	ud := k.GetParams(ctx).UpvoteDeposit
+	if !deposit.IsEqual(ud) {
+		return sdkerrors.Wrap(
+			sdkerrors.ErrInsufficientFunds, fmt.Sprintf("%v != %v", deposit, ud))
+	}
+
 	// hash postID to avoid non-determinism
 	postIDHash, err := hash(postID)
 	if err != nil {
 		return err
-	}
-
-	err = k.validateVendorID(ctx, vendorID)
-	if err != nil {
-		return err
-	}
-
-	if deposit.IsLT(k.GetParams(ctx).UpvoteDeposit) {
-		return sdkerrors.Wrap(sdkerrors.ErrInsufficientFunds, deposit.String())
-	}
-
-	if rewardAccount.Empty() {
-		rewardAccount = curator
 	}
 
 	// check if post exist, if not, create it and start the curation period
@@ -37,6 +37,7 @@ func (k Keeper) CreateUpvote(
 	if err != nil {
 		return err
 	}
+
 	if !found {
 		// pass the deposit along to the post to be locked
 		// this curator gets both creator + curator rewards (sent to reward_account)

@@ -130,6 +130,7 @@ var (
 		stake.RewardPoolName:            {auth.Minter, auth.Burner},
 		curating.ModuleName:             nil,
 		curating.RewardPoolName:         {auth.Minter, auth.Burner},
+		curating.VotingPoolName:         {auth.Minter, auth.Burner},
 	}
 
 	// module accounts that are allowed to receive tokens
