@@ -1,6 +1,6 @@
 package types
 
-// Query endpoints supported by the bondcurve querier
+// Query endpoints supported by the funding querier
 const (
 	// TODO: Describe query parameters, update Params with your query
 	QueryParams = "params"

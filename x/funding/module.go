@@ -1,4 +1,4 @@
-package bondcurve
+package funding
 
 import (
 	"encoding/json"
@@ -12,8 +12,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/public-awesome/stakebird/x/bondcurve/client/cli"
-	"github.com/public-awesome/stakebird/x/bondcurve/client/rest"
+	"github.com/public-awesome/stakebird/x/funding/client/cli"
+	"github.com/public-awesome/stakebird/x/funding/client/rest"
 )
 
 // Type check to ensure the interface is properly implemented
@@ -22,28 +22,28 @@ var (
 	_ module.AppModuleBasic = AppModuleBasic{}
 )
 
-// AppModuleBasic defines the basic application module used by the bondcurve module.
+// AppModuleBasic defines the basic application module used by the funding module.
 type AppModuleBasic struct {
 	cdc codec.Marshaler
 }
 
-// Name returns the bondcurve module's name.
+// Name returns the funding module's name.
 func (AppModuleBasic) Name() string {
 	return ModuleName
 }
 
-// RegisterCodec registers the bondcurve module's types for the given codec.
+// RegisterCodec registers the funding module's types for the given codec.
 func (AppModuleBasic) RegisterCodec(cdc *codec.Codec) {
 	RegisterCodec(cdc)
 }
 
-// DefaultGenesis returns default genesis state as raw bytes for the bondcurve
+// DefaultGenesis returns default genesis state as raw bytes for the funding
 // module.
 func (AppModuleBasic) DefaultGenesis(cdc codec.JSONMarshaler) json.RawMessage {
 	return ModuleCdc.MustMarshalJSON(DefaultGenesisState())
 }
 
-// ValidateGenesis performs genesis state validation for the bondcurve module.
+// ValidateGenesis performs genesis state validation for the funding module.
 func (AppModuleBasic) ValidateGenesis(cdc codec.JSONMarshaler, bz json.RawMessage) error {
 	var data GenesisState
 	err := ModuleCdc.UnmarshalJSON(bz, &data)
@@ -53,24 +53,24 @@ func (AppModuleBasic) ValidateGenesis(cdc codec.JSONMarshaler, bz json.RawMessag
 	return ValidateGenesis(data)
 }
 
-// RegisterRESTRoutes registers the REST routes for the bondcurve module.
+// RegisterRESTRoutes registers the REST routes for the funding module.
 func (AppModuleBasic) RegisterRESTRoutes(ctx context.CLIContext, rtr *mux.Router) {
 	rest.RegisterRoutes(ctx, rtr)
 }
 
-// GetTxCmd returns the root tx command for the bondcurve module.
+// GetTxCmd returns the root tx command for the funding module.
 func (AppModuleBasic) GetTxCmd(cdc *codec.Codec) *cobra.Command {
 	return cli.GetTxCmd(cdc)
 }
 
-// GetQueryCmd returns no root query command for the bondcurve module.
+// GetQueryCmd returns no root query command for the funding module.
 func (AppModuleBasic) GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 	return cli.GetQueryCmd(StoreKey, cdc)
 }
 
 //____________________________________________________________________________
 
-// AppModule implements an application module for the bondcurve module.
+// AppModule implements an application module for the funding module.
 type AppModule struct {
 	AppModuleBasic
 
@@ -86,35 +86,35 @@ func NewAppModule(cdc codec.Marshaler, k Keeper) AppModule {
 	}
 }
 
-// Name returns the bondcurve module's name.
+// Name returns the funding module's name.
 func (AppModule) Name() string {
 	return ModuleName
 }
 
-// RegisterInvariants registers the bondcurve module invariants.
+// RegisterInvariants registers the funding module invariants.
 func (am AppModule) RegisterInvariants(_ sdk.InvariantRegistry) {}
 
-// Route returns the message routing key for the bondcurve module.
+// Route returns the message routing key for the funding module.
 func (AppModule) Route() string {
 	return RouterKey
 }
 
-// NewHandler returns an sdk.Handler for the bondcurve module.
+// NewHandler returns an sdk.Handler for the funding module.
 func (am AppModule) NewHandler() sdk.Handler {
 	return NewHandler(am.keeper)
 }
 
-// QuerierRoute returns the bondcurve module's querier route name.
+// QuerierRoute returns the funding module's querier route name.
 func (AppModule) QuerierRoute() string {
 	return QuerierRoute
 }
 
-// NewQuerierHandler returns the bondcurve module sdk.Querier.
+// NewQuerierHandler returns the funding module sdk.Querier.
 func (am AppModule) NewQuerierHandler() sdk.Querier {
 	return NewQuerier(am.keeper)
 }
 
-// InitGenesis performs genesis initialization for the bondcurve module. It returns
+// InitGenesis performs genesis initialization for the funding module. It returns
 // no validator updates.
 func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONMarshaler, data json.RawMessage) []abci.ValidatorUpdate {
 	var genesisState GenesisState
@@ -123,19 +123,19 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONMarshaler, data j
 	return []abci.ValidatorUpdate{}
 }
 
-// ExportGenesis returns the exported genesis state as raw bytes for the bondcurve
+// ExportGenesis returns the exported genesis state as raw bytes for the funding
 // module.
 func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONMarshaler) json.RawMessage {
 	gs := ExportGenesis(ctx, am.keeper)
 	return ModuleCdc.MustMarshalJSON(gs)
 }
 
-// BeginBlock returns the begin blocker for the bondcurve module.
+// BeginBlock returns the begin blocker for the funding module.
 func (am AppModule) BeginBlock(ctx sdk.Context, req abci.RequestBeginBlock) {
 	BeginBlocker(ctx, req, am.keeper)
 }
 
-// EndBlock returns the end blocker for the bondcurve module. It returns no validator
+// EndBlock returns the end blocker for the funding module. It returns no validator
 // updates.
 func (AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
 	return []abci.ValidatorUpdate{}

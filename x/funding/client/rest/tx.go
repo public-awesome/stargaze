@@ -11,7 +11,7 @@ import (
 	// sdk "github.com/cosmos/cosmos-sdk/types"
 	// "github.com/cosmos/cosmos-sdk/types/rest"
 	// "github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	// "github.com/public-awesome/stakebird/x/bondcurve/types"
+	// "github.com/public-awesome/stakebird/x/funding/types"
 )
 
 func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {
