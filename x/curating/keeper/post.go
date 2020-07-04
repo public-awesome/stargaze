@@ -49,13 +49,15 @@ func (k Keeper) CreatePost(
 	if err != nil {
 		return err
 	}
-
-	if deposit.IsValid() && deposit.IsLT(k.GetParams(ctx).PostDeposit) {
-		return sdkerrors.Wrap(sdkerrors.ErrInsufficientFunds, deposit.String())
-	}
-
 	if rewardAccount.Empty() {
 		rewardAccount = creator
+	}
+	if deposit.IsValid() {
+		pd := k.GetParams(ctx).PostDeposit
+		if !deposit.IsEqual(pd) {
+			return sdkerrors.Wrap(
+				sdkerrors.ErrInsufficientFunds, fmt.Sprintf("%v != %v", deposit, pd))
+		}
 	}
 
 	// hash postID to avoid non-determinism
