@@ -8,10 +8,11 @@ import (
 var _ sdk.Msg = &MsgBuy{}
 
 // NewMsgBuy creates a new MsgBuy instance
-func NewMsgBuy(amount sdk.Coin, sender sdk.AccAddress) MsgBuy {
+func NewMsgBuy(maxAmount sdk.Coin, quantity uint64, sender sdk.AccAddress) MsgBuy {
 	return MsgBuy{
-		Amount: amount,
-		Sender: sender,
+		MaxAmount: maxAmount,
+		Quantity:  quantity,
+		Sender:    sender,
 	}
 }
 
@@ -29,8 +30,11 @@ func (msg MsgBuy) GetSignBytes() []byte {
 
 // ValidateBasic validity check for the AnteHandler
 func (msg MsgBuy) ValidateBasic() error {
-	if !msg.Amount.IsValid() {
+	if !msg.MaxAmount.IsValid() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidCoins, "invalid coins")
+	}
+	if msg.Quantity < 1 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid quantity")
 	}
 	if msg.Sender.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing sender address")

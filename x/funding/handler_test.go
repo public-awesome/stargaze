@@ -16,7 +16,7 @@ func TestHandleMsgBuy(t *testing.T) {
 	sender := addrs[0]
 
 	ibcCoin := sdk.NewCoin("transfer/ibczeroxfer/stake", sdk.NewInt(10000))
-	msgBuy := types.NewMsgBuy(ibcCoin, sender)
+	msgBuy := types.NewMsgBuy(ibcCoin, 10, sender)
 
 	handler := funding.NewHandler(app.FundingKeeper)
 	res, err := handler(ctx, msgBuy)
@@ -24,5 +24,7 @@ func TestHandleMsgBuy(t *testing.T) {
 	require.NotNil(t, res)
 
 	communityPool := app.FundingKeeper.DistributionKeeper.GetFeePool(ctx).CommunityPool
-	require.Equal(t, "10000.000000000000000000", communityPool.AmountOf("transfer/ibczeroxfer/stake").String())
+	require.Equal(t, "35.000000000000000000", communityPool.AmountOf("transfer/ibczeroxfer/stake").String())
 }
+
+// TODO: add more tests

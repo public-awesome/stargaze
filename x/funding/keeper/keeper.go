@@ -14,20 +14,20 @@ import (
 type Keeper struct {
 	storeKey           sdk.StoreKey
 	cdc                codec.Marshaler
-	SupplyKeeper       types.SupplyKeeper
+	BankKeeper         types.BankKeeper
 	ChannelKeeper      types.ChannelKeeper
 	DistributionKeeper types.DistributionKeeper
 	paramspace         types.ParamSubspace
 }
 
 // NewKeeper creates a funding keeper
-func NewKeeper(cdc codec.Marshaler, key sdk.StoreKey, supplyKeeper types.SupplyKeeper,
+func NewKeeper(cdc codec.Marshaler, key sdk.StoreKey, bankKeeper types.BankKeeper,
 	channelKeeper types.ChannelKeeper, distKeeper types.DistributionKeeper, paramspace types.ParamSubspace) Keeper {
 
 	keeper := Keeper{
 		storeKey:           key,
 		cdc:                cdc,
-		SupplyKeeper:       supplyKeeper,
+		BankKeeper:         bankKeeper,
 		ChannelKeeper:      channelKeeper,
 		DistributionKeeper: distKeeper,
 		paramspace:         paramspace.WithKeyTable(types.ParamKeyTable()),

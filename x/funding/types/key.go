@@ -13,9 +13,9 @@ const (
 	// QuerierRoute to be used for querierer msgs
 	QuerierRoute = ModuleName
 
-	Counterparty      = "ibczeroxfer"
-	CounterpartyDenom = "stake"
-	Denom             = "ufuel"
+	Counterparty = "ibczeroxfer"
+	ReserveDenom = "stake"
+	Denom        = "ufuel"
 )
 
 var (

@@ -3,6 +3,7 @@ package cli
 import (
 	"bufio"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -37,7 +38,7 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 
 func GetCmdBuy(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "buy [amount]",
+		Use:   "buy [max_amount] [quantity]",
 		Args:  cobra.MinimumNArgs(1),
 		Short: "Buy FUEL with ATOM reserves from the bonding curve",
 		Long: strings.TrimSpace(
@@ -53,12 +54,18 @@ $ %s tx funding buy 1000stake --from mykey
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(auth.DefaultTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-			amount, err := sdk.ParseCoin(args[0])
+			maxAmount, err := sdk.ParseCoin(args[0])
 			if err != nil {
 				return err
 			}
+
+			quantity, err := strconv.ParseUint(args[1], 10, 64)
+			if err != nil {
+				return err
+			}
+
 			senderAddr := cliCtx.GetFromAddress()
-			msg := types.NewMsgBuy(amount, senderAddr)
+			msg := types.NewMsgBuy(maxAmount, quantity, senderAddr)
 
 			return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
