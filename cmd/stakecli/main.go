@@ -52,7 +52,7 @@ func main() {
 
 	rootCmd := &cobra.Command{
 		Use:   "stakecli",
-		Short: "Command line interface for interacting with appd",
+		Short: "Command line interface for interacting with staked",
 	}
 
 	// Add --chain-id to persistent flags and mark it required
