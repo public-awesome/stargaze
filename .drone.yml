@@ -63,7 +63,7 @@ steps:
       branch: master
 
   - name: release
-    image: appleboy/drone-ssh
+    image: golang:1.14.2
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -82,5 +82,3 @@ steps:
 ---
 kind: signature
 hmac: a7810b80c7316a8be2310ff8dfe098f797e99890a892c582e5a2045b037e40ea
-
-...
