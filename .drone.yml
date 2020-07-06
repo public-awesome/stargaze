@@ -61,6 +61,17 @@ steps:
       event:
         - push
       branch: master
+
+  - name: release
+    image: appleboy/drone-ssh
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    commands:
+      - curl -sL https://git.io/goreleaser | bash
+    when:
+      event:
+        - tag
   - name: slack
     image: plugins/slack
     settings:
@@ -70,4 +81,6 @@ steps:
       status: [success, failure]
 ---
 kind: signature
-hmac: 3bbe6ee7d07936b48c03a99877f589f4118f153b199c2ebec8ab3145c69ea7b6
+hmac: a7810b80c7316a8be2310ff8dfe098f797e99890a892c582e5a2045b037e40ea
+
+...
