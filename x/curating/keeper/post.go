@@ -195,3 +195,20 @@ func (k Keeper) CurationQueueIterator(
 		types.KeyPrefixCurationQueue,
 		sdk.PrefixEndBytes(types.CurationQueueByTimeKey(endTime)))
 }
+
+func (k Keeper) GetPosts(ctx sdk.Context) []types.Post {
+	store := ctx.KVStore(k.storeKey)
+	iterator := store.Iterator(types.KeyPrefixPost, nil)
+
+	var posts []types.Post
+
+	defer iterator.Close()
+	for ; iterator.Valid(); iterator.Next() {
+		var object types.Post
+		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &object)
+		posts = append(posts, object)
+	}
+
+	return posts
+
+}

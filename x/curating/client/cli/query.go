@@ -31,6 +31,8 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	curatingQueryCmd.AddCommand(
 		flags.GetCommands(
 			GetCmdQueryParams(queryRoute, cdc),
+			GetCmdQueryPost(queryRoute, cdc),
+			GetCmdQueryPosts(queryRoute, cdc),
 		)...,
 	)
 
@@ -63,6 +65,74 @@ $ %s query curating params
 			var params types.Params
 			cdc.MustUnmarshalJSON(bz, &params)
 			return cliCtx.PrintOutput(params)
+		},
+	}
+}
+
+// GetCmdQueryPost implements the post query command.
+func GetCmdQueryPost(storeName string, cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "post [vendor-id] [post-id]",
+		Args:  cobra.MinimumNArgs(2),
+		Short: "Query for a post by vendor ID and post ID",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Query post by vendor ID and post ID.
+Example:
+$ %s query curating posts 1 123
+`,
+				version.ClientName,
+			),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+
+			vendorID := args[0]
+			postID := args[1]
+
+			route := fmt.Sprintf("custom/%s/%s/%s/%s", storeName, types.QueryPost, vendorID, postID)
+
+			cliCtx.PrintOutput(route)
+
+			bz, _, err := cliCtx.QueryWithData(route, nil)
+			if err != nil {
+				return err
+			}
+
+			var post types.Post
+			cdc.MustUnmarshalJSON(bz, &post)
+			return cliCtx.PrintOutput(post)
+		},
+	}
+}
+
+// GetCmdQueryPosts implements the posts query command.
+func GetCmdQueryPosts(storeName string, cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "posts [vendor-id]",
+		Args:  cobra.MinimumNArgs(1),
+		Short: "Query all posts for a given vendor ID",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Query posts for a given vendor ID.
+Example:
+$ %s query curating posts 1
+`,
+				version.ClientName,
+			),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+
+			vendorID := args[0]
+
+			route := fmt.Sprintf("custom/%s/%s/%s", storeName, types.QueryPosts, vendorID)
+			bz, _, err := cliCtx.QueryWithData(route, nil)
+			if err != nil {
+				return err
+			}
+
+			var posts []types.Post
+			cdc.MustUnmarshalJSON(bz, &posts)
+			return cliCtx.PrintOutput(posts)
 		},
 	}
 }
