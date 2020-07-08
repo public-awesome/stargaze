@@ -24,8 +24,8 @@ func NewQuerier(k Keeper) sdk.Querier {
 			return queryParams(ctx, k)
 		case types.QueryPost:
 			return queryPost(ctx, path[1:], req, k)
-		// case types.QueryPosts:
-		// 	return queryPosts(ctx, k)
+		case types.QueryPosts:
+			return queryPosts(ctx, k)
 		default:
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "unknown curating query endpoint")
 		}
@@ -61,13 +61,13 @@ func queryPost(ctx sdk.Context, path []string, req abci.RequestQuery, k Keeper) 
 	return res, nil
 }
 
-// func queryPosts(ctx sdk.Context, k Keeper) ([]byte, error) {
-// 	posts := k.GetPosts(ctx)
+func queryPosts(ctx sdk.Context, k Keeper) ([]byte, error) {
+	posts := k.GetPosts(ctx)
 
-// 	res, err := codec.MarshalJSONIndent(types.ModuleCdc, posts)
-// 	if err != nil {
-// 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
-// 	}
+	res, err := codec.MarshalJSONIndent(types.ModuleCdc, posts)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+	}
 
-// 	return res, nil
-// }
+	return res, nil
+}
