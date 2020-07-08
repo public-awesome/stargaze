@@ -195,3 +195,7 @@ func (k Keeper) CurationQueueIterator(
 		types.KeyPrefixCurationQueue,
 		sdk.PrefixEndBytes(types.CurationQueueByTimeKey(endTime)))
 }
+
+// func (k Keeper) GetPosts(ctx sdk.Context) []types.Post {
+// 	return
+// }

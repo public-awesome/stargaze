@@ -12,6 +12,8 @@ const (
 	StoreKey          = types.StoreKey
 	DefaultParamspace = types.DefaultParamspace
 	QueryParams       = types.QueryParams
+	QueryPost         = types.QueryPost
+	QueryPosts        = types.QueryPosts
 	QuerierRoute      = types.QuerierRoute
 	RewardPoolName    = types.RewardPoolName
 	VotingPoolName    = types.VotingPoolName
