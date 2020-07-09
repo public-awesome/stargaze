@@ -64,8 +64,22 @@ steps:
         from_secret: slack_webhook
     when:
       status: [success, failure]
+
+---
+kind: pipeline
+type: docker
+name: integration
+
+trigger:
+  branch:
+    - jhernandezb/integration-test
+
+steps:
+  - name: build
+    image: golang:1.14.2
+    commands:
+      - ./contrib/ci/setup-gaia.sh
+
 ---
 kind: signature
 hmac: d06bfbb453db04a176976438ca013e61d4a98f75c9ae580688986b32236dcc14
-
-...
