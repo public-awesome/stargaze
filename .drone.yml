@@ -77,11 +77,20 @@ trigger:
 steps:
   - name: gaiad
     image: golang:1.14.2
+    detach: true
     commands:
       - ./contrib/ci/setup-gaia.sh
-
+  - name: stakebird
+    image: golang:1.14.2
+    commands:
+      - ./contrib/ci/setup-stakebird.sh
+    detach: true
+  - name: relayer
+    image: golang:1.14.2
+    commands:
+      - sleep 300
 ---
 kind: signature
-hmac: 9b95cffeaa5a4e610d5b7637e68a8b8feb1fcedf24a60fc74de0e5de43d98a86
+hmac: bd9a0cb047badc1bcba7b575f126e64430aef23e7017e34ad2a0804725cb3195
 
 ...

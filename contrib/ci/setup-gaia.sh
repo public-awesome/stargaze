@@ -1,5 +1,6 @@
 GAIA_TAG="goz-phase-3"
 DENOM=stake
+CHAINID=gaia
 
 # install gaia
 git clone https://github.com/cosmos/gaia
