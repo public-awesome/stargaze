@@ -75,13 +75,13 @@ trigger:
     - jhernandezb/integration-test
 
 steps:
-  - name: build
+  - name: gaiad
     image: golang:1.14.2
     commands:
       - ./contrib/ci/setup-gaia.sh
 
 ---
 kind: signature
-hmac: 934ce343c1fd184fb3ea8e13b690e8371fcb2c7a26692c3d69a124ff06205a3f
+hmac: 9b95cffeaa5a4e610d5b7637e68a8b8feb1fcedf24a60fc74de0e5de43d98a86
 
 ...
