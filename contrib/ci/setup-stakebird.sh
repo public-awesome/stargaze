@@ -17,4 +17,4 @@ staked add-genesis-account $(stakecli keys --keyring-backend test show validator
 staked gentx --name validator --keyring-backend test --amount 900000000$DENOM
 staked collect-gentxs
 
-staked --pruning nothing
+staked start --pruning nothing

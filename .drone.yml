@@ -1,7 +1,7 @@
 ---
 kind: pipeline
 type: docker
-name: default
+name: default-build
 
 steps:
   - name: build
@@ -70,10 +70,6 @@ kind: pipeline
 type: docker
 name: integration
 
-trigger:
-  branch:
-    - jhernandezb/integration-test
-
 steps:
   - name: gaiad
     image: golang:1.14.2
@@ -90,8 +86,15 @@ steps:
     commands:
       - ./contrib/ci/setup-relayer.sh
       - sleep 120
+
+trigger:
+  branch:
+    - jhernandezb/integration-test
+
+depends_on:
+  - default-build
 ---
 kind: signature
-hmac: f37ab0c480873ac9fcf517669dbee34cf6acd6b6b75f0886ef052499b51edb18
+hmac: d32fcc28f0226af67053f050a9fab4b75697e25d0cbbe0b415aaa5d0218526a1
 
 ...
