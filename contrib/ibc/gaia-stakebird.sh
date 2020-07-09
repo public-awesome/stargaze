@@ -8,7 +8,7 @@ if [[ ! -x "$(which go)" ]]; then
   exit 1
 fi
 
-GAIA_TAG="goz-phase-2"
+GAIA_TAG="goz-phase-3"
 CHAIN_DATA="$(pwd)/data"
 
 rm -rf $CHAIN_DATA &> /dev/null

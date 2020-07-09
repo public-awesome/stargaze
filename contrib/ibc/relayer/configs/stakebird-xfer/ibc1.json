@@ -1,1 +1,10 @@
-{"key":"testkey","chain-id":"ibc1","rpc-addr":"http://localhost:26557","account-prefix":"stake","gas":200000,"gas-prices":"0.025ufuel","default-denom":"ufuel","trusting-period":"336h"}
+{
+  "key": "testkey",
+  "chain-id": "ibc1",
+  "rpc-addr": "http://localhost:26557",
+  "account-prefix": "stake",
+  "gas": 200000,
+  "gas-prices": "0.025ufuel",
+  "default-denom": "ufuel",
+  "trusting-period": "336h"
+}

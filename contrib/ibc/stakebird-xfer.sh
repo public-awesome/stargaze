@@ -5,7 +5,7 @@ if [[ ! -x "$(which jq)" ]]; then
   exit 1
 fi
 
-RELAYER_TAG="goz-phase-2"
+RELAYER_TAG="goz-phase-3"
 
 # start gaia + stakebird
 ./contrib/ibc/gaia-stakebird.sh
