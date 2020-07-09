@@ -22,3 +22,5 @@ gaiacli keys --keyring-backend test add validator
 gaiad add-genesis-account $(gaiacli keys --keyring-backend test show validator -a) 100000000000$DENOM
 gaiad gentx --name validator --keyring-backend test --amount 900000000$DENOM
 gaiad collect-gentxs
+
+gaiad start --pruning nothing
