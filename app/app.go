@@ -364,7 +364,7 @@ func NewRocketApp(
 	// CanWithdrawInvariant invariant.
 	app.mm.SetOrderBeginBlockers(
 		upgrade.ModuleName, mint.ModuleName, curating.ModuleName, distr.ModuleName,
-		slashing.ModuleName, evidence.ModuleName, ibc.ModuleName,
+		slashing.ModuleName, evidence.ModuleName, staking.ModuleName, ibc.ModuleName,
 	)
 	app.mm.SetOrderEndBlockers(
 		crisis.ModuleName, gov.ModuleName, curating.ModuleName,
