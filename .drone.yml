@@ -88,9 +88,10 @@ steps:
   - name: relayer
     image: golang:1.14.2
     commands:
-      - sleep 300
+      - ./contrib/ci/setup-relayer.sh
+      - sleep 120
 ---
 kind: signature
-hmac: bd9a0cb047badc1bcba7b575f126e64430aef23e7017e34ad2a0804725cb3195
+hmac: f37ab0c480873ac9fcf517669dbee34cf6acd6b6b75f0886ef052499b51edb18
 
 ...
