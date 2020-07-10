@@ -13,10 +13,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// [TODO]
-// https://github.com/public-awesome/stakebird/issues/57
-// https://github.com/public-awesome/stakebird/issues/58
-
 // GetQueryCmd returns the cli query commands for this module
 func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	// Group stake queries under a subcommand
@@ -33,6 +29,7 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			GetCmdQueryParams(queryRoute, cdc),
 			GetCmdQueryPost(queryRoute, cdc),
 			GetCmdQueryPosts(queryRoute, cdc),
+			GetCmdQueryUpvotes(queryRoute, cdc),
 		)...,
 	)
 
@@ -90,9 +87,6 @@ $ %s query curating posts 1 123
 			postID := args[1]
 
 			route := fmt.Sprintf("custom/%s/%s/%s/%s", storeName, types.QueryPost, vendorID, postID)
-
-			cliCtx.PrintOutput(route)
-
 			bz, _, err := cliCtx.QueryWithData(route, nil)
 			if err != nil {
 				return err
@@ -133,6 +127,39 @@ $ %s query curating posts 1
 			var posts []types.Post
 			cdc.MustUnmarshalJSON(bz, &posts)
 			return cliCtx.PrintOutput(posts)
+		},
+	}
+}
+
+// GetCmdQueryUpvote implements the upvotes query command.
+func GetCmdQueryUpvotes(storeName string, cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "upvote [vendor-id] [post-id]",
+		Args:  cobra.MinimumNArgs(2),
+		Short: "Query for an upvote by vendor ID and post ID",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Query upvote by vendor ID and post ID.
+Example:
+$ %s query curating upvotes 1 123
+`,
+				version.ClientName,
+			),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+
+			vendorID := args[0]
+			postID := args[1]
+
+			route := fmt.Sprintf("custom/%s/%s/%s/%s", storeName, types.QueryUpvote, vendorID, postID)
+			bz, _, err := cliCtx.QueryWithData(route, nil)
+			if err != nil {
+				return err
+			}
+
+			var upvote []types.Upvote
+			cdc.MustUnmarshalJSON(bz, &upvote)
+			return cliCtx.PrintOutput(upvote)
 		},
 	}
 }
