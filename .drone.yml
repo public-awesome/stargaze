@@ -85,7 +85,6 @@ steps:
     image: golang:1.14.2
     commands:
       - ./contrib/ci/setup-relayer.sh
-      - sleep 120
 
 trigger:
   branch:
@@ -95,6 +94,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: d32fcc28f0226af67053f050a9fab4b75697e25d0cbbe0b415aaa5d0218526a1
+hmac: e1701ff67fbc95ae9b18119a5dfae2ca1e59645d69ebd0a7769b9549c99f3b00
 
 ...
