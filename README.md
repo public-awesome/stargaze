@@ -6,7 +6,7 @@ Testnet coming soon.
 
 ## Install
 
-Stakebird is a sovereign chain that connects to other chains via [IBC](https://cosmos.network/ibc). At minimum, it requires [Gaia](https://github.com/cosmos/gaia) (Cosmos Hub), and a [relayer](https://github.com/iqlusioninc/relayer) to facilitate connections.
+Stakebird is built as a sovereign proof-of-stake blockchain that aims to interoperate with Cosmos Hub, Ethereum, and Bitcoin. 
 
 ### Run a local, single-node chain
 
@@ -24,7 +24,9 @@ make init
 staked start
 ```
 
-### Run a local testnet with IBC
+### Run a local testnet with a connection to Gaia (Cosmos Hub)
+
+Stakebird requires [Gaia](https://github.com/cosmos/gaia) (Cosmos Hub), and an IBC [relayer](https://github.com/iqlusioninc/relayer) to facilitate connections.
 
 To setup a local testnet running Gaia and Stakebird, run:
 ```
@@ -34,6 +36,35 @@ To setup a local testnet running Gaia and Stakebird, run:
 To setup the relayer and do a token transfer between chains, run:
 ```
 ./contrib/ibc/stakebird-xfer.sh
+```
+
+### [WIP] Ethereum Interoperability
+
+#### Setup
+```shell script
+cd testnet-contracts/
+
+# Create .env with environment variables required for contract deployment
+cp .env.example .env
+
+# Download dependencies
+yarn
+```
+
+#### Start local Ethereum blockchain simulator (Ganache)
+```shell script
+# Open a new terminal window
+
+# Start local blockchain
+yarn develop
+```
+
+#### Compile and deploy bridge contracts
+```shell script
+# Open a new terminal window (in project root)
+
+# Deploy and set up contracts, mint ERC20 TEST tokens and approve some to bank contract
+yarn peggy:all
 ```
 
 ## CLI

@@ -3,3 +3,7 @@
 bin/
 .idea/
 data/
+
+node_modules/
+.env
+build/
