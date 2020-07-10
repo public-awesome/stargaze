@@ -13,10 +13,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// [TODO]
-// https://github.com/public-awesome/stakebird/issues/57
-// https://github.com/public-awesome/stakebird/issues/58
-
 // GetQueryCmd returns the cli query commands for this module
 func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	// Group stake queries under a subcommand
@@ -32,7 +28,7 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		flags.GetCommands(
 			GetCmdQueryParams(queryRoute, cdc),
 			GetCmdQueryPost(queryRoute, cdc),
-			GetCmdQueryPosts(queryRoute, cdc),
+			GetCmdQueryUpvotes(queryRoute, cdc),
 		)...,
 	)
 
@@ -90,9 +86,6 @@ $ %s query curating posts 1 123
 			postID := args[1]
 
 			route := fmt.Sprintf("custom/%s/%s/%s/%s", storeName, types.QueryPost, vendorID, postID)
-
-			cliCtx.PrintOutput(route)
-
 			bz, _, err := cliCtx.QueryWithData(route, nil)
 			if err != nil {
 				return err
@@ -105,17 +98,22 @@ $ %s query curating posts 1 123
 	}
 }
 
-// GetCmdQueryPosts implements the posts query command.
-func GetCmdQueryPosts(storeName string, cdc *codec.Codec) *cobra.Command {
+// GetCmdQueryUpvote implements the upvotes query command.
+func GetCmdQueryUpvotes(storeName string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "posts [vendor-id]",
+		Use:   "upvote [vendor-id] [post-id]",
 		Args:  cobra.MinimumNArgs(1),
-		Short: "Query all posts for a given vendor ID",
+		Short: "Query for an upvote by vendor ID and post ID",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Query posts for a given vendor ID.
+			fmt.Sprintf(`Query upvote by vendor ID and optionally post ID.
 Example:
-$ %s query curating posts 1
+$ %s query curating upvotes 1 "123"
+
+or...
+
+$ %s query curating upvotes 1
 `,
+				version.ClientName,
 				version.ClientName,
 			),
 		),
@@ -124,15 +122,17 @@ $ %s query curating posts 1
 
 			vendorID := args[0]
 
-			route := fmt.Sprintf("custom/%s/%s/%s", storeName, types.QueryPosts, vendorID)
+			postID := args[1]
+			route := fmt.Sprintf("custom/%s/%s/%s/%s", storeName, types.QueryUpvotes, vendorID, postID)
+
 			bz, _, err := cliCtx.QueryWithData(route, nil)
 			if err != nil {
 				return err
 			}
 
-			var posts []types.Post
-			cdc.MustUnmarshalJSON(bz, &posts)
-			return cliCtx.PrintOutput(posts)
+			var upvote []types.Upvote
+			cdc.MustUnmarshalJSON(bz, &upvote)
+			return cliCtx.PrintOutput(upvote)
 		},
 	}
 }
