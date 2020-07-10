@@ -108,12 +108,7 @@ func GetCmdQueryUpvotes(storeName string, cdc *codec.Codec) *cobra.Command {
 			fmt.Sprintf(`Query upvote by vendor ID and optionally post ID.
 Example:
 $ %s query curating upvotes 1 "123"
-
-or...
-
-$ %s query curating upvotes 1
 `,
-				version.ClientName,
 				version.ClientName,
 			),
 		),
