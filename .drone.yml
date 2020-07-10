@@ -85,6 +85,13 @@ steps:
     image: golang:1.14.2
     commands:
       - /bin/bash ./contrib/ci/setup-relayer.sh
+  - name: slack
+    image: plugins/slack
+    settings:
+      webhook:
+        from_secret: slack_webhook
+    when:
+      status: [success, failure]
 
 trigger:
   branch:
@@ -96,6 +103,4 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: 734117b316f94e2103f7054eeaf05cf531a7bde042a35f80c654257740752453
-
-...
+hmac: 3b8f1479ee12b5cab90d167a85354e3d3239d2c09935c2ba59a6e07cf898db05
