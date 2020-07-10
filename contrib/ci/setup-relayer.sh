@@ -14,9 +14,11 @@ sleep 75
 RLYKEY=integration-test
 DIRECTORY=`dirname $0`
 MNEMONIC=$(head -n 1 $DIRECTORY/mnemonic.txt)
+
+rly cfg add-dir $DIRECTORY/chains/
 rly keys restore $GAIA_CHAINID $RLYKEY "$MNEMONIC"
 rly keys restore $STAKEBIRD_CHAINID $RLYKEY "$MNEMONIC"
-rly cfg add-dir $DIRECTORY/chains/
+
 cat ~/.relayer/config/config.yaml
 rly lite init $GAIA_CHAINID -f
 rly lite init $STAKEBIRD_CHAINID -f
