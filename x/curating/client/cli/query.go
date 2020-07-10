@@ -103,7 +103,7 @@ func GetCmdQueryUpvotes(storeName string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "upvote [vendor-id] [post-id]",
 		Args:  cobra.ExactArgs(2),
-		Short: "Query for an upvote by vendor ID and post ID",
+		Short: "Query for upvotes by vendor ID and post ID",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Query upvote by vendor ID and optionally post ID.
 Example:
@@ -125,9 +125,9 @@ $ %s query curating upvotes 1 "123"
 				return err
 			}
 
-			var upvote []types.Upvote
-			cdc.MustUnmarshalJSON(bz, &upvote)
-			return cliCtx.PrintOutput(upvote)
+			var upvotes []types.Upvote
+			cdc.MustUnmarshalJSON(bz, &upvotes)
+			return cliCtx.PrintOutput(upvotes)
 		},
 	}
 }
