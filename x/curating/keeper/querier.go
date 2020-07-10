@@ -1,7 +1,6 @@
 package keeper
 
 import (
-	"fmt"
 	"strconv"
 
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -44,9 +43,9 @@ func queryPost(ctx sdk.Context, path []string, req abci.RequestQuery, k Keeper) 
 	vendorID := uint32(i64)
 	postID := path[1]
 
-	post, _, err := k.GetPost(ctx, vendorID, postID)
-	if err != nil {
-		fmt.Println(err)
+	post, found, err := k.GetPost(ctx, vendorID, postID)
+	if err != nil || !found {
+		return nil, types.ErrPostNotFound
 	}
 
 	res, err := codec.MarshalJSONIndent(types.ModuleCdc, post)
@@ -63,7 +62,10 @@ func queryUpvotes(ctx sdk.Context, path []string, req abci.RequestQuery, k Keepe
 	var upvotes []types.Upvote
 
 	postID := path[1]
-	post, _, _ := k.GetPost(ctx, vendorID, postID)
+	post, found, err := k.GetPost(ctx, vendorID, postID)
+	if err != nil || !found {
+		return nil, types.ErrPostNotFound
+	}
 	k.IterateUpvotes(ctx, vendorID, post.PostIDHash, func(upvote types.Upvote) (stop bool) {
 		upvotes = append(upvotes, upvote)
 		return false

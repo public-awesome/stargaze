@@ -69,7 +69,7 @@ $ %s query curating params
 func GetCmdQueryPost(storeName string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "post [vendor-id] [post-id]",
-		Args:  cobra.MinimumNArgs(2),
+		Args:  cobra.ExactArgs(2),
 		Short: "Query for a post by vendor ID and post ID",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Query post by vendor ID and post ID.
@@ -102,7 +102,7 @@ $ %s query curating posts 1 123
 func GetCmdQueryUpvotes(storeName string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "upvote [vendor-id] [post-id]",
-		Args:  cobra.MinimumNArgs(1),
+		Args:  cobra.ExactArgs(2),
 		Short: "Query for an upvote by vendor ID and post ID",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Query upvote by vendor ID and optionally post ID.
