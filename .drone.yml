@@ -68,7 +68,7 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: integration
+name: ibc-integration-test
 
 steps:
   - name: gaiad
@@ -88,12 +88,14 @@ steps:
 
 trigger:
   branch:
-    - jhernandezb/integration-test
+    - master
+  event:
+    - push
 
 depends_on:
   - default-build
 ---
 kind: signature
-hmac: 53b26cc9d9cf0d00d1e515a07ecf2a98ee04bc078b008f1283db5280c2147b53
+hmac: 734117b316f94e2103f7054eeaf05cf531a7bde042a35f80c654257740752453
 
 ...
