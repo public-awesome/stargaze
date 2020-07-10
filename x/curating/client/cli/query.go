@@ -135,12 +135,16 @@ $ %s query curating posts 1
 func GetCmdQueryUpvotes(storeName string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "upvote [vendor-id] [post-id]",
-		Args:  cobra.MinimumNArgs(2),
+		Args:  cobra.MinimumNArgs(1),
 		Short: "Query for an upvote by vendor ID and post ID",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Query upvote by vendor ID and post ID.
+			fmt.Sprintf(`Query upvote by vendor ID and optionally post ID.
 Example:
-$ %s query curating upvotes 1 123
+$ %s query curating upvotes 1 "123"
+
+or...
+
+$ %s query curating upvotes 1
 `,
 				version.ClientName,
 			),
@@ -149,9 +153,14 @@ $ %s query curating upvotes 1 123
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
 			vendorID := args[0]
-			postID := args[1]
+			var route string
+			if len(args) > 1 {
+				postID := args[1]
+				route = fmt.Sprintf("custom/%s/%s/%s/%s", storeName, types.QueryUpvotes, vendorID, postID)
+			} else {
+				route = fmt.Sprintf("custom/%s/%s/%s", storeName, types.QueryUpvotes, vendorID)
+			}
 
-			route := fmt.Sprintf("custom/%s/%s/%s/%s", storeName, types.QueryUpvotes, vendorID, postID)
 			bz, _, err := cliCtx.QueryWithData(route, nil)
 			if err != nil {
 				return err

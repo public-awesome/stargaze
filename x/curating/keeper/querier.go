@@ -73,17 +73,20 @@ func queryPosts(ctx sdk.Context, k Keeper) ([]byte, error) {
 func queryUpvotes(ctx sdk.Context, path []string, req abci.RequestQuery, k Keeper) ([]byte, error) {
 	i64, _ := strconv.ParseUint(path[0], 10, 32)
 	vendorID := uint32(i64)
-	postID := path[1]
-
-	fmt.Println(postID)
-	post, _, _ := k.GetPost(ctx, vendorID, postID)
-
 	var upvotes []types.Upvote
-	k.IterateUpvotes(ctx, vendorID, post.PostIDHash, func(upvote types.Upvote) (stop bool) {
-		upvotes = append(upvotes, upvote)
-		fmt.Println(upvote)
-		return false
-	})
+	if len(path) > 1 {
+		postID := path[1]
+		post, _, _ := k.GetPost(ctx, vendorID, postID)
+		k.IterateUpvotes(ctx, vendorID, post.PostIDHash, func(upvote types.Upvote) (stop bool) {
+			upvotes = append(upvotes, upvote)
+			return false
+		})
+	} else {
+		k.IterateAllUpvotes(ctx, vendorID, func(upvote types.Upvote) (stop bool) {
+			upvotes = append(upvotes, upvote)
+			return false
+		})
+	}
 
 	res, err := codec.MarshalJSONIndent(types.ModuleCdc, upvotes)
 	if err != nil {

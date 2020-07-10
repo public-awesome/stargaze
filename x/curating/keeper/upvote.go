@@ -131,3 +131,22 @@ func (k Keeper) IterateUpvotes(
 		}
 	}
 }
+
+// IterateUpvotes performs a callback function for each upvote
+func (k Keeper) IterateAllUpvotes(
+	ctx sdk.Context, vendorID uint32, cb func(upvote types.Upvote) (stop bool)) {
+
+	store := ctx.KVStore(k.storeKey)
+
+	// iterator over upvoters on a post
+	it := sdk.KVStorePrefixIterator(store, nil)
+	defer it.Close()
+
+	for ; it.Valid(); it.Next() {
+		var upvote types.Upvote
+		k.cdc.MustUnmarshalBinaryBare(it.Value(), &upvote)
+		if cb(upvote) {
+			break
+		}
+	}
+}
