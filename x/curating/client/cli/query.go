@@ -147,6 +147,7 @@ or...
 $ %s query curating upvotes 1
 `,
 				version.ClientName,
+				version.ClientName,
 			),
 		),
 		RunE: func(cmd *cobra.Command, args []string) error {
