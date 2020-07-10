@@ -1,6 +1,4 @@
 set -ex
-sudo apt-get update
-sudo apt-get install -y popd pushd
 RELAYER_TAG="goz-phase-3"
 GAIA_CHAINID=gaia
 STAKEBIRD_CHAINID=stakebird
