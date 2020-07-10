@@ -15,7 +15,7 @@ sed -i 's/pruning = "syncable"/pruning = "nothing"/g' ~/.staked/config/app.toml
 stakecli keys --keyring-backend test add validator
 
 staked add-genesis-account $(stakecli keys --keyring-backend test show validator -a) 100000000000$DENOM
-gaiad add-genesis-account $RLYKEY 100000000000$DENOM
+staked add-genesis-account $RLYKEY 100000000000$DENOM
 staked gentx --name validator --keyring-backend test --amount 900000000$DENOM
 staked collect-gentxs
 
