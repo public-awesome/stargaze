@@ -151,7 +151,7 @@ $ %s query curating upvotes 1 123
 			vendorID := args[0]
 			postID := args[1]
 
-			route := fmt.Sprintf("custom/%s/%s/%s/%s", storeName, types.QueryUpvote, vendorID, postID)
+			route := fmt.Sprintf("custom/%s/%s/%s/%s", storeName, types.QueryUpvotes, vendorID, postID)
 			bz, _, err := cliCtx.QueryWithData(route, nil)
 			if err != nil {
 				return err
