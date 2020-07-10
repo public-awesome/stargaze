@@ -3,14 +3,14 @@ RELAYER_TAG="goz-phase-3"
 GAIA_CHAINID=gaia
 STAKEBIRD_CHAINID=stakebird
 
-git clone https://github.com/iqlusioninc/relayer
-cd relayer
+git clone https://github.com/iqlusioninc/relayer /tmp/relayer
+pushd /tmp/relayer
 make install
-cd
+popd
 
 rly version 
 
-sleep 60
+sleep 75
 RLYKEY=integration-test
 DIRECTORY=`dirname $0`
 MNEMONIC=$(head -n 1 $DIRECTORY/mnemonic.txt)
