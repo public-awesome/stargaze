@@ -2,7 +2,9 @@ package types
 
 // Query endpoints supported by the curating querier
 const (
-	QueryParams = "parameters"
+	QueryParams  = "parameters"
+	QueryPost    = "post"
+	QueryUpvotes = "upvotes"
 )
 
 /*
