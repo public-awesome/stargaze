@@ -13,7 +13,7 @@ const (
 	DefaultParamspace = types.DefaultParamspace
 	QueryParams       = types.QueryParams
 	QueryPost         = types.QueryPost
-	QueryPosts        = types.QueryPosts
+	QueryUpvotes      = types.QueryUpvotes
 	QuerierRoute      = types.QuerierRoute
 	RewardPoolName    = types.RewardPoolName
 	VotingPoolName    = types.VotingPoolName

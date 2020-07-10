@@ -4,7 +4,6 @@ package types
 const (
 	QueryParams  = "parameters"
 	QueryPost    = "post"
-	QueryPosts   = "posts"
 	QueryUpvotes = "upvotes"
 )
 
