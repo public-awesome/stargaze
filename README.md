@@ -1,5 +1,7 @@
 # Stakebird DAO
 
+[![Build Status](https://ci.publicawesome.com/api/badges/public-awesome/stakebird/status.svg)](https://ci.publicawesome.com/public-awesome/stakebird)
+
 Stakebird is a [content curation DAO](https://ethresear.ch/t/prediction-markets-for-content-curation-daos/1312).
 
 Testnet coming soon.
