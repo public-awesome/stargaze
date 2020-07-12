@@ -1,6 +1,7 @@
 # Stakebird DAO
 
 [![Build Status](https://ci.publicawesome.com/api/badges/public-awesome/stakebird/status.svg)](https://ci.publicawesome.com/public-awesome/stakebird)
+[![Go Report Card](https://goreportcard.com/badge/github.com/public-awesome/stakebird)](https://goreportcard.com/report/github.com/public-awesome/stakebird)
 
 Stakebird is a [content curation DAO](https://ethresear.ch/t/prediction-markets-for-content-curation-daos/1312).
 
