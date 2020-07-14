@@ -71,12 +71,8 @@ func (k Keeper) CreatePost(
 		return err
 	}
 
-	if deposit.IsValid() {
-		lockAdress := creator
-		if lockAdress.Empty() {
-			lockAdress = rewardAccount
-		}
-		err = k.lockDeposit(ctx, lockAdress, deposit)
+	if deposit.IsValid() && !creator.Empty() {
+		err = k.lockDeposit(ctx, creator, deposit)
 		if err != nil {
 			return err
 		}
