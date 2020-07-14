@@ -47,6 +47,11 @@ message Upvote {
     ];
     cosmos_sdk.v1.Coin vote_amount = 3 [(gogoproto.nullable) = false];
     cosmos_sdk.v1.Coin deposit = 4 [(gogoproto.nullable) = false];
+    google.protobuf.Timestamp curated_time = 5 [
+        (gogoproto.stdtime) = true, 
+        (gogoproto.nullable) = false, 
+        (gogoproto.moretags) = "yaml:\"curated_time\""
+    ];
 }
 
 message MsgPost {
