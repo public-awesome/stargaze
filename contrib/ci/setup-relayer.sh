@@ -5,6 +5,8 @@ STAKEBIRD_CHAINID=stakebird
 
 git clone https://github.com/iqlusioninc/relayer /tmp/relayer
 pushd /tmp/relayer
+git fetch --tags origin 
+git checkout $RELAYER_TAG
 make install
 popd
 
