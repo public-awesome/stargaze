@@ -1,8 +1,6 @@
 package keeper
 
 import (
-	"fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	authexported "github.com/cosmos/cosmos-sdk/x/auth/exported"
@@ -13,7 +11,7 @@ func (k Keeper) GetRewardPool(ctx sdk.Context) (rewardPool authexported.ModuleAc
 	return k.accountKeeper.GetModuleAccount(ctx, types.RewardPoolName)
 }
 
-func (k Keeper) InflateRewardPool(ctx sdk.Context) {
+func (k Keeper) InflateRewardPool(ctx sdk.Context) error {
 	blockInflationAddr := k.accountKeeper.GetModuleAccount(ctx, auth.FeeCollectorName).GetAddress()
 	blockInflation := k.bankKeeper.GetBalance(ctx, blockInflationAddr, types.DefaultStakeDenom)
 	rewardPoolAllocation := k.GetParams(ctx).RewardPoolAllocation
@@ -22,9 +20,6 @@ func (k Keeper) InflateRewardPool(ctx sdk.Context) {
 	rewardAmount := blockInflationDec.Mul(rewardPoolAllocation)
 	rewardCoin := sdk.NewCoin(types.DefaultStakeDenom, rewardAmount.TruncateInt())
 
-	err := k.bankKeeper.SendCoinsFromModuleToModule(
+	return k.bankKeeper.SendCoinsFromModuleToModule(
 		ctx, auth.FeeCollectorName, types.RewardPoolName, sdk.NewCoins(rewardCoin))
-	if err != nil {
-		panic(fmt.Sprintf("Error funding reward pool: %s", err.Error()))
-	}
 }

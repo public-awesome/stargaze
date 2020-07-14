@@ -10,7 +10,9 @@ import (
 
 // BeginBlocker to fund reward pool on every begin block
 func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k Keeper) {
-	k.InflateRewardPool(ctx)
+	if err := k.InflateRewardPool(ctx); err != nil {
+		panic(fmt.Sprintf("Error funding reward pool: %s", err.Error()))
+	}
 }
 
 // EndBlocker called after each block to process rewards
