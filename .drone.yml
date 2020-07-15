@@ -34,16 +34,15 @@ steps:
     settings:
       dockerfile: docker/Dockerfile
       repo: publicawesome/stakebird
+      auto_tag: true
       username:
         from_secret: docker_username
       password:
         from_secret: docker_password
-      tags:
-        - latest
     when:
       event:
         - push
-      branch: jhernandezb/release-automation
+        - tag
   - name: deploy-devnet
     image: appleboy/drone-scp
     settings:
@@ -133,6 +132,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: 5e684a40a70c5149fbc13294788c7bf5ca67e904f9a32ce4d820880e993a8401
+hmac: f17cd6aedb7089de9b61f06e5e084e2aa4f52be000e9abaa7a01c2353035544b
 
 ...

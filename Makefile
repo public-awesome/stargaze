@@ -4,7 +4,7 @@ VERSION := $(shell echo $(shell git describe --tags --always) | sed 's/^v//')
 COMMIT := $(shell git log -1 --format='%H')
 
 # TODO: Update the ldflags with the app, client & server names
-ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=NewApp \
+ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=StakeApp \
 	-X github.com/cosmos/cosmos-sdk/version.ServerName=staked \
 	-X github.com/cosmos/cosmos-sdk/version.ClientName=stakecli \
 	-X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
