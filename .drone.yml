@@ -13,7 +13,7 @@ steps:
     commands:
       - apt-get update && apt-get install -y cmake
       - make test
-      - ./contrib/build.sh
+      - make build
   - name: publish-test
     image: plugins/docker:18
     settings:
@@ -132,6 +132,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: f17cd6aedb7089de9b61f06e5e084e2aa4f52be000e9abaa7a01c2353035544b
+hmac: dc094a42f430394ec4c1cb50f028582f216fcf506f042b58a4febaccec68adc4
 
 ...

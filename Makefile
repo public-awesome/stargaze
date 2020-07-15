@@ -32,8 +32,8 @@ start:
 	bin/staked start --pruning=nothing
 
 build:
-		go build -o bin/staked ./cmd/staked
-		go build -o bin/stakecli ./cmd/stakecli
+		go build $(BUILD_FLAGS) -o bin/staked ./cmd/staked
+		go build $(BUILD_FLAGS) -o bin/stakecli ./cmd/stakecli
 
 go.sum: go.mod
 		@echo "--> Ensure dependencies have not been modified"
@@ -51,8 +51,8 @@ lint:
 
 
 build-linux: 
-	GOARCH=amd64 GOOS=linux go build -o bin/staked github.com/public-awesome/stakebird/cmd/staked
-	GOARCH=amd64 GOOS=linux  go build -o bin/stakecli github.com/public-awesome/stakebird/cmd/stakecli
+	GOARCH=amd64 GOOS=linux go build $(BUILD_FLAGS) -o bin/staked github.com/public-awesome/stakebird/cmd/staked
+	GOARCH=amd64 GOOS=linux go build $(BUILD_FLAGS) -o bin/stakecli github.com/public-awesome/stakebird/cmd/stakecli
 
 docker-test: build-linux
 	docker build -f docker/Dockerfile.test -t rocketprotocol/stakebird-relayer-test:latest .
