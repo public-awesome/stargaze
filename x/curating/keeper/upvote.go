@@ -39,22 +39,21 @@ func (k Keeper) CreateUpvote(
 	}
 
 	if !found {
-		// pass the deposit along to the post to be locked
+		// no deposit is locked
 		// this curator gets both creator + curator rewards (sent to reward_account)
 		err = k.CreatePost(ctx, vendorID, postID, "", sdk.Coin{}, nil, rewardAccount)
 		if err != nil {
 			return err
 		}
-	} else {
-		// lock deposit only if post already exists
-		err = k.lockDeposit(ctx, curator, deposit)
-		if err != nil {
-			return err
-		}
+	}
+	err = k.lockDeposit(ctx, curator, deposit)
+	if err != nil {
+		return err
 	}
 
 	voteAmt := k.voteAmount(ctx, int64(voteNum))
-	upvote := types.NewUpvote(curator, rewardAccount, voteAmt, deposit)
+	upvote := types.NewUpvote(
+		curator, rewardAccount, voteAmt, deposit, ctx.BlockTime())
 
 	store := ctx.KVStore(k.storeKey)
 	key := types.UpvoteKey(vendorID, postIDHash, curator)

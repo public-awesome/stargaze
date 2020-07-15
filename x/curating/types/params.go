@@ -24,6 +24,7 @@ var (
 	DefaultModerateDeposit      = sdk.NewInt64Coin(DefaultStakeDenom, 1000000)
 	DefaultVoteAmount           = sdk.NewInt64Coin(DefaultStakeDenom, 1000000)
 	DefaultRewardPoolAllocation = sdk.NewDecWithPrec(50, 2)
+	DefaultCreatorAllocation    = sdk.NewDecWithPrec(50, 2)
 )
 
 // Parameter store keys
@@ -36,6 +37,7 @@ var (
 	KeyMaxNumVotes          = []byte("MaxNumVotes")
 	KeyMaxVendors           = []byte("MaxVendors")
 	KeyRewardPoolAllocation = []byte("RewardPoolAllocation")
+	KeyCreatorAllocation    = []byte("CreatorAllocation")
 )
 
 // Params - used for initializing default parameter for stake at genesis
@@ -48,12 +50,13 @@ type Params struct {
 	MaxNumVotes          uint32        `json:"max_num_votes" yaml:"max_num_votes"`
 	MaxVendors           uint32        `json:"max_vendors" yaml:"max_vendors"`
 	RewardPoolAllocation sdk.Dec       `json:"reward_pool_allocation" yaml:"reward_pool_allocation"`
+	CreatorAllocation    sdk.Dec       `json:"creator_allocation" yaml:"creator_allocation"`
 }
 
 // NewParams creates a new Params object
 func NewParams(
 	curationWindow time.Duration, postDeposit, upvoteDeposit, moderateDeposit, voteAmount sdk.Coin,
-	maxNumVotes, maxVendors uint32, rewardPoolAllocation sdk.Dec) Params {
+	maxNumVotes, maxVendors uint32, rewardPoolAllocation, creatorAllocation sdk.Dec) Params {
 
 	return Params{
 		CurationWindow:       curationWindow,
@@ -64,6 +67,7 @@ func NewParams(
 		MaxNumVotes:          maxNumVotes,
 		MaxVendors:           maxVendors,
 		RewardPoolAllocation: rewardPoolAllocation,
+		CreatorAllocation:    creatorAllocation,
 	}
 }
 
@@ -84,6 +88,7 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 		paramtypes.NewParamSetPair(KeyMaxNumVotes, &p.MaxNumVotes, validateMaxNumVotes),
 		paramtypes.NewParamSetPair(KeyMaxVendors, &p.MaxVendors, validateMaxVendors),
 		paramtypes.NewParamSetPair(KeyRewardPoolAllocation, &p.RewardPoolAllocation, validateRewardPoolAllocation),
+		paramtypes.NewParamSetPair(KeyCreatorAllocation, &p.CreatorAllocation, validateRewardPoolAllocation),
 	}
 }
 
@@ -91,9 +96,11 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 func DefaultParams() Params {
 	return NewParams(
 		DefaultCurationWindow, DefaultPostDeposit, DefaultUpvoteDeposit, DefaultModerateDeposit,
-		DefaultVoteAmount, DefaultMaxNumVotes, DefaultMaxVendors, DefaultRewardPoolAllocation)
+		DefaultVoteAmount, DefaultMaxNumVotes, DefaultMaxVendors, DefaultRewardPoolAllocation,
+		DefaultCreatorAllocation)
 }
 
+// Validate validates all params
 func (p Params) Validate() error {
 	if err := validateCurationWindow(p.CurationWindow); err != nil {
 		return err
@@ -117,6 +124,12 @@ func (p Params) Validate() error {
 		return err
 	}
 	if err := validateCurationWindow(p.CurationWindow); err != nil {
+		return err
+	}
+	if err := validateRewardPoolAllocation(p.RewardPoolAllocation); err != nil {
+		return err
+	}
+	if err := validateCreatorAllocation(p.CreatorAllocation); err != nil {
 		return err
 	}
 
@@ -222,6 +235,19 @@ func validateRewardPoolAllocation(i interface{}) error {
 
 	if v.IsZero() {
 		return fmt.Errorf("reward pool allocation can't be zero: %d", v)
+	}
+
+	return nil
+}
+
+func validateCreatorAllocation(i interface{}) error {
+	v, ok := i.(sdk.Dec)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
+	if v.IsZero() {
+		return fmt.Errorf("creator allocation can't be zero: %d", v)
 	}
 
 	return nil

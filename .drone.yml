@@ -1,7 +1,7 @@
 ---
 kind: pipeline
 type: docker
-name: default
+name: default-build
 
 steps:
   - name: fetch
@@ -79,6 +79,43 @@ steps:
         from_secret: slack_webhook
     when:
       status: [success, failure]
+
+---
+kind: pipeline
+type: docker
+name: ibc-integration-test
+
+steps:
+  - name: gaiad
+    image: golang:1.14.2
+    detach: true
+    commands:
+      - ./contrib/ci/setup-gaia.sh
+  - name: stakebird
+    image: golang:1.14.2
+    commands:
+      - ./contrib/ci/setup-stakebird.sh
+    detach: true
+  - name: relayer
+    image: golang:1.14.2
+    commands:
+      - /bin/bash ./contrib/ci/setup-relayer.sh
+  - name: slack
+    image: plugins/slack
+    settings:
+      webhook:
+        from_secret: slack_webhook
+    when:
+      status: [success, failure]
+
+trigger:
+  branch:
+    - master
+  event:
+    - push
+
+depends_on:
+  - default-build
 ---
 kind: signature
-hmac: 2d06c79956a0a2c67357deb7a622ef7a6c892ccccdd3e63b6c5b10581f991631
+hmac: 3b8f1479ee12b5cab90d167a85354e3d3239d2c09935c2ba59a6e07cf898db05

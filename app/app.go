@@ -1,11 +1,13 @@
 package app
 
 import (
+	"github.com/public-awesome/stakebird/x/ethbridge"
 	"io"
 	"os"
 
 	"github.com/public-awesome/stakebird/x/curating"
 	"github.com/public-awesome/stakebird/x/funding"
+	"github.com/public-awesome/stakebird/x/oracle"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
@@ -85,8 +87,6 @@ var (
 	// DefaultCLIHome default home directories for the application CLI
 	DefaultCLIHome = os.ExpandEnv("$HOME/.stakecli")
 
-	// TODO: rename your daemon
-
 	// DefaultNodeHome sets the folder where the applcation data and configuration will be stored
 	DefaultNodeHome = os.ExpandEnv("$HOME/.staked")
 
@@ -113,6 +113,8 @@ var (
 		transfer.AppModuleBasic{},
 		funding.AppModuleBasic{},
 		curating.AppModuleBasic{},
+		oracle.AppModuleBasic{},
+		ethbridge.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -128,6 +130,7 @@ var (
 		curating.ModuleName:             nil,
 		curating.RewardPoolName:         {auth.Minter, auth.Burner},
 		curating.VotingPoolName:         {auth.Minter, auth.Burner},
+		ethbridge.ModuleName:            {auth.Minter, auth.Burner},
 	}
 
 	// module accounts that are allowed to receive tokens
@@ -170,6 +173,8 @@ type RocketApp struct {
 	transferKeeper   transfer.Keeper
 	fundingKeeper    funding.Keeper
 	curatingKeeper   curating.Keeper
+	oracleKeeper     oracle.Keeper
+	ethKeeper        ethbridge.Keeper
 
 	// make scoped keepers public for test purposes
 	scopedIBCKeeper      capability.ScopedKeeper
@@ -216,7 +221,7 @@ func NewRocketApp(
 		mint.StoreKey, distr.StoreKey, slashing.StoreKey,
 		gov.StoreKey, params.StoreKey, ibc.StoreKey, upgrade.StoreKey,
 		evidence.StoreKey, transfer.StoreKey, capability.StoreKey,
-		funding.StoreKey, curating.StoreKey,
+		funding.StoreKey, curating.StoreKey, oracle.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capability.MemStoreKey)
@@ -337,6 +342,11 @@ func NewRocketApp(
 		app.subspaces[curating.ModuleName],
 	)
 
+	app.oracleKeeper = oracle.NewKeeper(
+		cdc, keys[oracle.StoreKey], app.stakingKeeper, oracle.DefaultConsensusNeeded)
+
+	app.ethKeeper = ethbridge.NewKeeper(cdc, app.bankKeeper, app.oracleKeeper)
+
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
 	app.mm = module.NewManager(
@@ -357,6 +367,8 @@ func NewRocketApp(
 		transferModule,
 		funding.NewAppModule(appCodec, app.fundingKeeper),
 		curating.NewAppModule(appCodec, app.curatingKeeper),
+		oracle.NewAppModule(app.oracleKeeper),
+		ethbridge.NewAppModule(app.oracleKeeper, app.bankKeeper, app.accountKeeper, app.ethKeeper, cdc),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -364,7 +376,7 @@ func NewRocketApp(
 	// CanWithdrawInvariant invariant.
 	app.mm.SetOrderBeginBlockers(
 		upgrade.ModuleName, mint.ModuleName, curating.ModuleName, distr.ModuleName,
-		slashing.ModuleName, evidence.ModuleName, ibc.ModuleName,
+		slashing.ModuleName, evidence.ModuleName, staking.ModuleName, ibc.ModuleName,
 	)
 	app.mm.SetOrderEndBlockers(
 		crisis.ModuleName, gov.ModuleName, curating.ModuleName,
@@ -379,7 +391,7 @@ func NewRocketApp(
 		capability.ModuleName, auth.ModuleName, distr.ModuleName, staking.ModuleName, bank.ModuleName,
 		slashing.ModuleName, gov.ModuleName, mint.ModuleName, crisis.ModuleName,
 		ibc.ModuleName, genutil.ModuleName, evidence.ModuleName, transfer.ModuleName,
-		curating.ModuleName,
+		curating.ModuleName, ethbridge.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.crisisKeeper)
