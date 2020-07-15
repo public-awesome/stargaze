@@ -2,6 +2,7 @@
 
 bin/
 .idea/
+dist/
 data/
 
 node_modules/

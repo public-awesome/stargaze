@@ -4,12 +4,16 @@ type: docker
 name: default-build
 
 steps:
+  - name: fetch
+    image: alpine/git
+    commands:
+      - git fetch --tags
   - name: build
     image: golang:1.14.2
     commands:
       - apt-get update && apt-get install -y cmake
       - make test
-      - ./contrib/build.sh
+      - make build
   - name: publish-test
     image: plugins/docker:18
     settings:
@@ -25,6 +29,20 @@ steps:
       event:
         - push
       branch: ibc
+  - name: publish-docker
+    image: plugins/docker:18
+    settings:
+      dockerfile: docker/Dockerfile
+      repo: publicawesome/stakebird
+      auto_tag: true
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+    when:
+      event:
+        - push
+        - tag
   - name: deploy-devnet
     image: appleboy/drone-scp
     settings:
@@ -57,6 +75,17 @@ steps:
       event:
         - push
       branch: master
+
+  - name: release
+    image: golang:1.14.2
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    commands:
+      - curl -sL https://git.io/goreleaser | bash
+    when:
+      event:
+        - tag
   - name: slack
     image: plugins/slack
     settings:
@@ -103,4 +132,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: 3b8f1479ee12b5cab90d167a85354e3d3239d2c09935c2ba59a6e07cf898db05
+hmac: dc094a42f430394ec4c1cb50f028582f216fcf506f042b58a4febaccec68adc4
+
+...

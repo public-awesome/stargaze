@@ -43,7 +43,7 @@ func main() {
 	cobra.EnableCommandSorting = false
 	rootCmd := &cobra.Command{
 		Use:               "staked",
-		Short:             "app Daemon (server)",
+		Short:             "Stakebird Daemon (server)",
 		PersistentPreRunE: server.PersistentPreRunEFn(ctx),
 	}
 
