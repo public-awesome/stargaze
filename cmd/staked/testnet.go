@@ -4,11 +4,14 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"net"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -42,6 +45,7 @@ var (
 	flagNodeDaemonHome    = "node-daemon-home"
 	flagNodeCLIHome       = "node-cli-home"
 	flagStartingIPAddress = "starting-ip-address"
+	defaultKeyringBackend = "test"
 )
 
 // get cmd to initialize all files for tendermint testnet and application
@@ -92,7 +96,7 @@ Example:
 	cmd.Flags().String(
 		server.FlagMinGasPrices, fmt.Sprintf("0.000006%s", app.DefaultStakeDenom),
 		"Minimum gas prices to accept for transactions; All fees in a tx must meet this minimum (e.g. 0.01photino,0.001stake)")
-	cmd.Flags().String(flags.FlagKeyringBackend, flags.DefaultKeyringBackend, "Select keyring's backend (os|file|test)")
+	cmd.Flags().String(flags.FlagKeyringBackend, defaultKeyringBackend, "Select keyring's backend (os|file|test)")
 	cmd.Flags().String(flagStakeDenom, app.DefaultStakeDenom, "app's stake denom")
 	cmd.Flags().String(flagUnbondingPeriod, app.DefaultUnbondingPeriod, "app's unbonding period")
 
@@ -100,6 +104,15 @@ Example:
 }
 
 const nodeDirPerm = 0755
+
+// TestnetNode holds configuration for nodes
+type TestnetNode struct {
+	Name             string
+	P2PPort          int
+	RPCPort          int
+	OutsidePortRange string
+	InsidePortRange  string
+}
 
 // InitTestnet the testnet
 func InitTestnet(
@@ -117,8 +130,8 @@ func InitTestnet(
 	nodeIDs := make([]string, numValidators)
 	valPubKeys := make([]crypto.PubKey, numValidators)
 
-	rocketConfig := srvconfig.DefaultConfig()
-	rocketConfig.MinGasPrices = minGasPrices
+	appConfig := srvconfig.DefaultConfig()
+	appConfig.MinGasPrices = minGasPrices
 
 	//nolint:prealloc
 	var (
@@ -128,15 +141,27 @@ func InitTestnet(
 	)
 
 	inBuf := bufio.NewReader(cmd.InOrStdin())
+	initialPort := 26656
+	allocatedPorts := 2
+
+	nodes := make([]TestnetNode, numValidators)
 	// generate private keys, node IDs, and initial transactions
 	for i := 0; i < numValidators; i++ {
 		nodeDirName := fmt.Sprintf("%s%d", nodeDirPrefix, i)
 		nodeDir := filepath.Join(outputDir, nodeDirName, nodeDaemonHome)
 		clientDir := filepath.Join(outputDir, nodeDirName, nodeCLIHome)
 		gentxsDir := filepath.Join(outputDir, "gentxs")
-
+		endPort := initialPort + allocatedPorts
+		nodes[i] = TestnetNode{
+			Name:             nodeDirName,
+			P2PPort:          initialPort,
+			RPCPort:          initialPort + 1,
+			OutsidePortRange: fmt.Sprintf("%d-%d", initialPort, endPort),
+			InsidePortRange:  fmt.Sprintf("%d-%d", 26656, 26656+allocatedPorts),
+		}
+		initialPort = endPort + 1
 		config.SetRoot(nodeDir)
-		config.RPC.ListenAddress = "tcp://0.0.0.0:26657"
+		config.RPC.ListenAddress = fmt.Sprintf("tcp://0.0.0.0:%d", nodes[i].RPCPort)
 
 		if err := os.MkdirAll(filepath.Join(nodeDir, "config"), nodeDirPerm); err != nil {
 			_ = os.RemoveAll(outputDir)
@@ -151,19 +176,20 @@ func InitTestnet(
 		monikers = append(monikers, nodeDirName)
 		config.Moniker = nodeDirName
 
-		ip, err := getIP(i, startingIPAddress)
+		// ip, err := getIP(i, startingIPAddress)
+		// if err != nil {
+		// 	_ = os.RemoveAll(outputDir)
+		// 	return err
+		// }
+
+		nodeID, valPubKey, err := genutil.InitializeNodeValidatorFiles(config)
 		if err != nil {
 			_ = os.RemoveAll(outputDir)
 			return err
 		}
-
-		nodeIDs[i], valPubKeys[i], err = genutil.InitializeNodeValidatorFiles(config)
-		if err != nil {
-			_ = os.RemoveAll(outputDir)
-			return err
-		}
-
-		memo := fmt.Sprintf("%s@%s:26656", nodeIDs[i], ip)
+		nodeIDs[i] = nodeID
+		valPubKeys[i] = valPubKey
+		memo := fmt.Sprintf("%s@%s:%d", nodeIDs[i], nodes[i].Name, nodes[i].P2PPort)
 		genFiles = append(genFiles, config.GenesisFile())
 
 		kb, err := keyring.New(
@@ -238,8 +264,8 @@ func InitTestnet(
 
 		// TODO: Rename config file to server.toml as it's not particular to Gaia
 		// (REF: https://github.com/cosmos/cosmos-sdk/issues/4125).
-		rocketConfigFilePath := filepath.Join(nodeDir, "config/staked.toml")
-		srvconfig.WriteConfigFile(rocketConfigFilePath, rocketConfig)
+		appConfigPath := filepath.Join(nodeDir, "config/app.toml")
+		srvconfig.WriteConfigFile(appConfigPath, appConfig)
 	}
 	stakeDenom := viper.GetString(flagStakeDenom)
 	unbondingPeriod := viper.GetString(flagUnbondingPeriod)
@@ -255,6 +281,16 @@ func InitTestnet(
 		return err
 	}
 
+	def, err := docker(nodes)
+	if err != nil {
+		return err
+	}
+
+	err = writeFile("docker-compose.yml", ".", []byte(def))
+
+	if err != nil {
+		return err
+	}
 	cmd.PrintErrf("Successfully initialized %d node directories\n", numValidators)
 	return nil
 }
@@ -396,4 +432,33 @@ func writeFile(name string, dir string, contents []byte) error {
 	}
 
 	return nil
+}
+
+const dockerComposeDefinition = `# Stakebird Testnet
+version: '3.1'
+
+services:{{range $node := .Nodes }}
+	{{ $node.Name }}:
+		image: publicawesome/stakebird
+		ports:
+			- {{ $node.OutsidePortRange}}:{{ $node.InsidePortRange}}
+		volumes:
+			- ./{{ $.TestnetName }}/{{$node.Name}}/staked:/data/.staked/
+{{end}}
+`
+
+func docker(nodes []TestnetNode) (string, error) {
+	def := strings.ReplaceAll(dockerComposeDefinition, "\t", "  ")
+	t, _ := template.New("definition").Parse(def)
+	d := struct {
+		TestnetName string
+		Nodes       []TestnetNode
+	}{TestnetName: "mytestnet", Nodes: nodes}
+
+	buf := bytes.NewBufferString("")
+	err := t.Execute(buf, d)
+	if err != nil {
+		return "", err
+	}
+	return buf.String(), nil
 }
