@@ -144,7 +144,7 @@ func InitTestnet(
 	initialPort := 26656
 	allocatedPorts := 2
 
-	nodes := make([]TestnetNode, numValidators)
+	nodes := make([]TestnetNode, 0)
 	// generate private keys, node IDs, and initial transactions
 	for i := 0; i < numValidators; i++ {
 		nodeDirName := fmt.Sprintf("%s%d", nodeDirPrefix, i)
@@ -152,16 +152,16 @@ func InitTestnet(
 		clientDir := filepath.Join(outputDir, nodeDirName, nodeCLIHome)
 		gentxsDir := filepath.Join(outputDir, "gentxs")
 		endPort := initialPort + allocatedPorts
-		nodes[i] = TestnetNode{
+		testnetNode := TestnetNode{
 			Name:             nodeDirName,
-			P2PPort:          initialPort,
-			RPCPort:          initialPort + 1,
 			OutsidePortRange: fmt.Sprintf("%d-%d", initialPort, endPort),
 			InsidePortRange:  fmt.Sprintf("%d-%d", 26656, 26656+allocatedPorts),
 		}
+		nodes = append(nodes, testnetNode)
 		initialPort = endPort + 1
 		config.SetRoot(nodeDir)
-		config.RPC.ListenAddress = fmt.Sprintf("tcp://0.0.0.0:%d", nodes[i].RPCPort)
+		fmt.Println("test", testnetNode.Name, testnetNode.RPCPort)
+		config.RPC.ListenAddress = fmt.Sprintf("tcp://0.0.0.0:26657")
 
 		if err := os.MkdirAll(filepath.Join(nodeDir, "config"), nodeDirPerm); err != nil {
 			_ = os.RemoveAll(outputDir)
@@ -189,7 +189,7 @@ func InitTestnet(
 		}
 		nodeIDs[i] = nodeID
 		valPubKeys[i] = valPubKey
-		memo := fmt.Sprintf("%s@%s:%d", nodeIDs[i], nodes[i].Name, nodes[i].P2PPort)
+		memo := fmt.Sprintf("%s@%s:26656", nodeIDs[i], testnetNode.Name)
 		genFiles = append(genFiles, config.GenesisFile())
 
 		kb, err := keyring.New(
@@ -445,6 +445,20 @@ services:{{range $node := .Nodes }}
 		volumes:
 			- ./{{$node.Name}}/staked:/data/.staked/
 {{end}}
+
+	rest-server:
+		image: publicawesome/stakebird
+		ports:
+			- 1317:1317
+		command:
+			- stakecli
+			- rest-server
+			- --laddr
+			- tcp://:1317
+			- --node
+			- tcp://{{ (index .Nodes 0).Name }}:26657
+			- --trust-node
+
 `
 
 func docker(nodes []TestnetNode) (string, error) {
