@@ -85,7 +85,7 @@ func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer) abci.Application
 		skipUpgradeHeights[int64(h)] = true
 	}
 
-	return app.NewRocketApp(
+	return app.NewStakebirdApp(
 		logger, db, traceStore, true, invCheckPeriod, skipUpgradeHeights,
 		viper.GetString(flags.FlagHome),
 		baseapp.SetPruning(store.NewPruningOptionsFromString(viper.GetString("pruning"))),
@@ -101,7 +101,7 @@ func exportAppStateAndTMValidators(
 ) (json.RawMessage, []tmtypes.GenesisValidator, *abci.ConsensusParams, error) {
 
 	if height != -1 {
-		rocketApp := app.NewRocketApp(logger, db, traceStore, false, uint(1), map[int64]bool{}, "")
+		rocketApp := app.NewStakebirdApp(logger, db, traceStore, false, uint(1), map[int64]bool{}, "")
 		err := rocketApp.LoadHeight(height)
 		if err != nil {
 			return nil, nil, nil, err
@@ -110,6 +110,6 @@ func exportAppStateAndTMValidators(
 		return rocketApp.ExportAppStateAndValidators(forZeroHeight, jailWhiteList)
 	}
 
-	rocketApp := app.NewRocketApp(logger, db, traceStore, true, uint(1), map[int64]bool{}, "")
+	rocketApp := app.NewStakebirdApp(logger, db, traceStore, true, uint(1), map[int64]bool{}, "")
 	return rocketApp.ExportAppStateAndValidators(forZeroHeight, jailWhiteList)
 }

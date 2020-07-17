@@ -1,10 +1,11 @@
 FROM alpine:3.12
 RUN apk add -U --no-cache ca-certificates
 
-WORKDIR /root
+WORKDIR /data
+ENV HOME=/data
 COPY ./bin/staked /usr/bin/staked
 COPY ./bin/stakecli /usr/bin/stakecli
 COPY ./docker/entry-point.sh ./entry-point.sh
 EXPOSE 26657
 
-ENTRYPOINT [ "./entry-point.sh" ]
+CMD ["staked", "start", "--pruning", "nothing"]

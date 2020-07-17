@@ -1,9 +1,10 @@
 package app
 
 import (
-	"github.com/public-awesome/stakebird/x/ethbridge"
 	"io"
 	"os"
+
+	"github.com/public-awesome/stakebird/x/ethbridge"
 
 	"github.com/public-awesome/stakebird/x/curating"
 	"github.com/public-awesome/stakebird/x/funding"
@@ -140,10 +141,10 @@ var (
 )
 
 // verify app interface at compile time
-var _ simapp.App = (*RocketApp)(nil)
+var _ simapp.App = (*StakebirdApp)(nil)
 
-// RocketApp extended ABCI application
-type RocketApp struct {
+// StakebirdApp extended ABCI application
+type StakebirdApp struct {
 	*baseapp.BaseApp
 	cdc *codec.Codec
 
@@ -201,12 +202,12 @@ func MakeCodecs() (*std.Codec, *codec.Codec) {
 	return appCodec, cdc
 }
 
-// NewRocketApp is a constructor function for mothershipApp
-func NewRocketApp(
+// NewStakebirdApp is a constructor function for mothershipApp
+func NewStakebirdApp(
 	logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest bool,
 	invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string,
 	baseAppOptions ...func(*baseapp.BaseApp),
-) *RocketApp {
+) *StakebirdApp {
 
 	// TODO: Remove cdc in favor of appCodec once all modules are migrated.
 	cdc := std.MakeCodec(ModuleBasics)
@@ -227,7 +228,7 @@ func NewRocketApp(
 	memKeys := sdk.NewMemoryStoreKeys(capability.MemStoreKey)
 
 	// Here you initialize your application with the store keys it requires
-	var app = &RocketApp{
+	var app = &StakebirdApp{
 		BaseApp:        bApp,
 		cdc:            cdc,
 		invCheckPeriod: invCheckPeriod,
@@ -453,20 +454,20 @@ func NewRocketApp(
 }
 
 // Name returns the name of the App
-func (app *RocketApp) Name() string { return app.BaseApp.Name() }
+func (app *StakebirdApp) Name() string { return app.BaseApp.Name() }
 
 // BeginBlocker application updates every begin block
-func (app *RocketApp) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
+func (app *StakebirdApp) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
 	return app.mm.BeginBlock(ctx, req)
 }
 
 // EndBlocker application updates every end block
-func (app *RocketApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
+func (app *StakebirdApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
 	return app.mm.EndBlock(ctx, req)
 }
 
 // InitChainer application update at chain initialization
-func (app *RocketApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
+func (app *StakebirdApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
 	var genesisState simapp.GenesisState
 	app.cdc.MustUnmarshalJSON(req.AppStateBytes, &genesisState)
 
@@ -474,12 +475,12 @@ func (app *RocketApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) ab
 }
 
 // LoadHeight loads a particular height
-func (app *RocketApp) LoadHeight(height int64) error {
+func (app *StakebirdApp) LoadHeight(height int64) error {
 	return app.LoadVersion(height)
 }
 
 // ModuleAccountAddrs returns all the app's module account addresses.
-func (app *RocketApp) ModuleAccountAddrs() map[string]bool {
+func (app *StakebirdApp) ModuleAccountAddrs() map[string]bool {
 	modAccAddrs := make(map[string]bool)
 	for acc := range maccPerms {
 		modAccAddrs[auth.NewModuleAddress(acc).String()] = true
@@ -489,7 +490,7 @@ func (app *RocketApp) ModuleAccountAddrs() map[string]bool {
 }
 
 // BlacklistedAccAddrs returns all the app's module account addresses black listed for receiving tokens.
-func (app *RocketApp) BlacklistedAccAddrs() map[string]bool {
+func (app *StakebirdApp) BlacklistedAccAddrs() map[string]bool {
 	blacklistedAddrs := make(map[string]bool)
 	for acc := range maccPerms {
 		blacklistedAddrs[auth.NewModuleAddress(acc).String()] = !allowedReceivingModAcc[acc]
@@ -498,16 +499,16 @@ func (app *RocketApp) BlacklistedAccAddrs() map[string]bool {
 	return blacklistedAddrs
 }
 
-// Codec returns RocketApp's codec.
+// Codec returns StakebirdApp's codec.
 //
 // NOTE: This is solely to be used for testing purposes as it may be desirable
 // for modules to register their own custom testing types.
-func (app *RocketApp) Codec() *codec.Codec {
+func (app *StakebirdApp) Codec() *codec.Codec {
 	return app.cdc
 }
 
 // SimulationManager implements the SimulationApp interface
-func (app *RocketApp) SimulationManager() *module.SimulationManager {
+func (app *StakebirdApp) SimulationManager() *module.SimulationManager {
 	return app.sm
 }
 
