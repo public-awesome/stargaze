@@ -286,7 +286,7 @@ func InitTestnet(
 		return err
 	}
 
-	err = writeFile("docker-compose.yml", ".", []byte(def))
+	err = writeFile("docker-compose.yml", outputDir, []byte(def))
 
 	if err != nil {
 		return err
@@ -443,7 +443,7 @@ services:{{range $node := .Nodes }}
 		ports:
 			- {{ $node.OutsidePortRange}}:{{ $node.InsidePortRange}}
 		volumes:
-			- ./{{ $.TestnetName }}/{{$node.Name}}/staked:/data/.staked/
+			- ./{{$node.Name}}/staked:/data/.staked/
 {{end}}
 `
 
@@ -451,9 +451,8 @@ func docker(nodes []TestnetNode) (string, error) {
 	def := strings.ReplaceAll(dockerComposeDefinition, "\t", "  ")
 	t, _ := template.New("definition").Parse(def)
 	d := struct {
-		TestnetName string
-		Nodes       []TestnetNode
-	}{TestnetName: "mytestnet", Nodes: nodes}
+		Nodes []TestnetNode
+	}{Nodes: nodes}
 
 	buf := bytes.NewBufferString("")
 	err := t.Execute(buf, d)
