@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"net"
 	"os"
 	"path/filepath"
 	"strings"
@@ -108,8 +107,6 @@ const nodeDirPerm = 0755
 // TestnetNode holds configuration for nodes
 type TestnetNode struct {
 	Name             string
-	P2PPort          int
-	RPCPort          int
 	OutsidePortRange string
 	InsidePortRange  string
 }
@@ -160,7 +157,6 @@ func InitTestnet(
 		nodes = append(nodes, testnetNode)
 		initialPort = endPort + 1
 		config.SetRoot(nodeDir)
-		fmt.Println("test", testnetNode.Name, testnetNode.RPCPort)
 		config.RPC.ListenAddress = fmt.Sprintf("tcp://0.0.0.0:26657")
 
 		if err := os.MkdirAll(filepath.Join(nodeDir, "config"), nodeDirPerm); err != nil {
@@ -175,13 +171,6 @@ func InitTestnet(
 
 		monikers = append(monikers, nodeDirName)
 		config.Moniker = nodeDirName
-
-		// ip, err := getIP(i, startingIPAddress)
-		// if err != nil {
-		// 	_ = os.RemoveAll(outputDir)
-		// 	return err
-		// }
-
 		nodeID, valPubKey, err := genutil.InitializeNodeValidatorFiles(config)
 		if err != nil {
 			_ = os.RemoveAll(outputDir)
@@ -391,30 +380,6 @@ func collectGenFiles(
 	}
 
 	return nil
-}
-
-func getIP(i int, startingIPAddr string) (ip string, err error) {
-	if len(startingIPAddr) == 0 {
-		ip, err = server.ExternalIP()
-		if err != nil {
-			return "", err
-		}
-		return ip, nil
-	}
-	return calculateIP(startingIPAddr, i)
-}
-
-func calculateIP(ip string, i int) (string, error) {
-	ipv4 := net.ParseIP(ip).To4()
-	if ipv4 == nil {
-		return "", fmt.Errorf("%v: non ipv4 address", ip)
-	}
-
-	for j := 0; j < i; j++ {
-		ipv4[3]++
-	}
-
-	return ipv4.String(), nil
 }
 
 func writeFile(name string, dir string, contents []byte) error {
