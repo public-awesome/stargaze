@@ -73,6 +73,9 @@ func (k Keeper) CreateUpvote(
 			sdk.NewAttribute(types.AttributeKeyVendorID, fmt.Sprintf("%d", vendorID)),
 			sdk.NewAttribute(types.AttributeKeyPostID, postID),
 			sdk.NewAttribute(types.AttributeKeyCurator, curator.String()),
+			sdk.NewAttribute(types.AttributeKeyRewardAccount, rewardAccount.String()),
+			sdk.NewAttribute(types.AttributeKeyVoteNumber, fmt.Sprintf("%d", voteNum)),
+			sdk.NewAttribute(types.AttributeKeyVoteAmount, voteAmt.String()),
 			sdk.NewAttribute(types.AttributeKeyDeposit, deposit.String()),
 		),
 	})

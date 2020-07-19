@@ -16,6 +16,8 @@ const (
 	AttributeKeyDeposit       = "deposit"
 	AttributeKeyBody          = "body"
 	AttributeCurationEndTime  = "curation_end_time"
+	AttributeKeyVoteNumber    = "vote_number"
+	AttributeKeyVoteAmount    = "vote_amount"
 
 	AttributeValueCategory = ModuleName
 )
