@@ -8,3 +8,4 @@ data/
 node_modules/
 .env
 build/
+*.swp
