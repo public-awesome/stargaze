@@ -15,29 +15,30 @@ BUILD_FLAGS := -ldflags '$(ldflags)'
 all: install
 
 create-wallet:
-	bin/stakecli keys add validator --keyring-backend test
+	stakecli config keyring-backend test
+	stakecli config chain-id localnet-1
+	stakecli keys add validator
 
 init:
-	rm -rf ~/.staked
-	bin/staked init stakebird
-	bin/staked add-genesis-account $(shell bin/stakecli keys show validator -a --keyring-backend test) 10000000000000000ufuel --keyring-backend test
-	bin/staked gentx --name=validator --amount 10000000000ufuel --keyring-backend test
-	bin/staked collect-gentxs 
+	staked init stakebird --chain-id localnet-1
+	staked add-genesis-account $(shell bin/stakecli keys show validator -a) 10000000000000000ufuel --keyring-backend test
+	staked gentx --name=validator --amount 10000000000ufuel --keyring-backend test
+	staked collect-gentxs 
 
 install: go.sum
-		go install -mod=readonly $(BUILD_FLAGS) ./cmd/staked
-		go install -mod=readonly $(BUILD_FLAGS) ./cmd/stakecli
+	go install -mod=readonly $(BUILD_FLAGS) ./cmd/staked
+	go install -mod=readonly $(BUILD_FLAGS) ./cmd/stakecli
 
 start:
-	bin/staked start --pruning=nothing
+	staked start --pruning=nothing --log_level "curating:info,funding:info,main:info,state:info,*:error"
 
 build:
-		go build $(BUILD_FLAGS) -o bin/staked ./cmd/staked
-		go build $(BUILD_FLAGS) -o bin/stakecli ./cmd/stakecli
+	go build $(BUILD_FLAGS) -o bin/staked ./cmd/staked
+	go build $(BUILD_FLAGS) -o bin/stakecli ./cmd/stakecli
 
 go.sum: go.mod
-		@echo "--> Ensure dependencies have not been modified"
-		GO111MODULE=on go mod verify
+	@echo "--> Ensure dependencies have not been modified"
+	GO111MODULE=on go mod verify
 
 # Uncomment when you have some tests
 # test:
