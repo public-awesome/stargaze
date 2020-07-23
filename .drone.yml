@@ -14,6 +14,20 @@ steps:
       - apt-get update && apt-get install -y cmake
       - make test
       - make build
+  - name: test
+    image: golang:1.14.2
+    commands:
+      - ./contrib/go-test.sh
+  - name: coverage
+    image: plugins/codecov
+    settings:
+      required: true
+      token:
+        from_secret: codecov-token
+    when:
+      event:
+        - push
+      # branch: master
   - name: publish-test
     image: plugins/docker:18
     settings:
@@ -133,5 +147,3 @@ depends_on:
 ---
 kind: signature
 hmac: dc094a42f430394ec4c1cb50f028582f216fcf506f042b58a4febaccec68adc4
-
-...
