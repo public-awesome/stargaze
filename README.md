@@ -16,7 +16,7 @@ Stakebird is built as a sovereign proof-of-stake blockchain that aims to interop
 
 ```sh
 # install binaries
-make install
+make
 
 # create keys
 make create-wallet
