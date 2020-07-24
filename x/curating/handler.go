@@ -25,8 +25,10 @@ func NewHandler(k Keeper) sdk.Handler {
 }
 
 func handleMsgPost(ctx sdk.Context, k Keeper, msg types.MsgPost) (*sdk.Result, error) {
+	deposit := k.GetParams(ctx).PostDeposit
+
 	err := k.CreatePost(
-		ctx, msg.VendorID, msg.PostID, msg.Body, msg.Deposit, msg.Creator, msg.RewardAccount)
+		ctx, msg.VendorID, msg.PostID, msg.Body, deposit, msg.Creator, msg.RewardAccount)
 	if err != nil {
 		return nil, err
 	}
@@ -44,8 +46,10 @@ func handleMsgPost(ctx sdk.Context, k Keeper, msg types.MsgPost) (*sdk.Result, e
 
 // handleMsgUpvote calls the keeper to perform the upvote operation
 func handleMsgUpvote(ctx sdk.Context, k Keeper, msg types.MsgUpvote) (*sdk.Result, error) {
+	deposit := k.GetParams(ctx).UpvoteDeposit
+
 	err := k.CreateUpvote(
-		ctx, msg.VendorID, msg.PostID, msg.Curator, msg.RewardAccount, msg.VoteNum, msg.Deposit)
+		ctx, msg.VendorID, msg.PostID, msg.Curator, msg.RewardAccount, msg.VoteNum, deposit)
 	if err != nil {
 		return nil, err
 	}

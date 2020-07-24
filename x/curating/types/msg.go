@@ -12,15 +12,13 @@ import (
 var _ sdk.Msg = &MsgPost{}
 var _ sdk.Msg = &MsgUpvote{}
 
-func NewMsgPost(vendorID uint32, postID string, creator, rewardAccount sdk.AccAddress, body string, deposit sdk.Coin) MsgPost {
-
+func NewMsgPost(vendorID uint32, postID string, creator, rewardAccount sdk.AccAddress, body string) MsgPost {
 	return MsgPost{
 		VendorID:      vendorID,
 		PostID:        postID,
 		Creator:       creator,
 		RewardAccount: rewardAccount,
 		Body:          body,
-		Deposit:       deposit,
 	}
 }
 
@@ -45,13 +43,6 @@ func (msg MsgPost) ValidateBasic() error {
 	if msg.Creator.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty creator")
 	}
-	if !msg.Deposit.IsValid() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidCoins, "deposit not valid")
-	}
-	err := validateDenom(msg.Deposit.Denom)
-	if err != nil {
-		return err
-	}
 	if msg.PostID == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty post_id")
 	}
@@ -65,17 +56,13 @@ func (msg MsgPost) ValidateBasic() error {
 // ---
 
 // NewMsgUpvote fills a MsgUpvote struct
-func NewMsgUpvote(
-	vendorID uint32, postID string, curator, rewardAccount sdk.AccAddress,
-	voteNum int32, deposit sdk.Coin) MsgUpvote {
-
+func NewMsgUpvote(vendorID uint32, postID string, curator, rewardAccount sdk.AccAddress, voteNum int32) MsgUpvote {
 	return MsgUpvote{
 		VendorID:      vendorID,
 		PostID:        postID,
 		Curator:       curator,
 		RewardAccount: rewardAccount,
 		VoteNum:       voteNum,
-		Deposit:       deposit,
 	}
 }
 
@@ -96,13 +83,6 @@ func (msg MsgUpvote) GetSignBytes() []byte {
 func (msg MsgUpvote) ValidateBasic() error {
 	if msg.Curator.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty curator")
-	}
-	if !msg.Deposit.IsValid() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidCoins, "deposit not valid")
-	}
-	err := validateDenom(msg.Deposit.Denom)
-	if err != nil {
-		return err
 	}
 	if msg.PostID == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty post_id")

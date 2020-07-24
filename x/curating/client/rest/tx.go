@@ -25,7 +25,6 @@ func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {
 type PostRequest struct {
 	BaseReq       rest.BaseReq `json:"base_req" yaml:"base_req"`
 	RewardAccount string       `json:"reward_account,omitempty" yaml:"reward_account"`
-	Deposit       sdk.Coin     `json:"deposit" yaml:"deposit"`
 	VendorID      uint32       `json:"vendor_id" yaml:"vendor_id"`
 	PostID        string       `json:"post_id" yaml:"post_id"`
 	Body          string       `json:"body" yaml:"body"`
@@ -59,7 +58,7 @@ func postPostsHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			}
 		}
 
-		msg := types.NewMsgPost(req.VendorID, req.PostID, fromAddr, rewardAddr, req.Body, req.Deposit)
+		msg := types.NewMsgPost(req.VendorID, req.PostID, fromAddr, rewardAddr, req.Body)
 		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -73,7 +72,6 @@ func postPostsHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 type UpvoteRequest struct {
 	BaseReq       rest.BaseReq `json:"base_req" yaml:"base_req"`
 	RewardAccount string       `json:"reward_account,omitempty" yaml:"reward_account"`
-	Deposit       sdk.Coin     `json:"deposit" yaml:"deposit"`
 	VendorID      uint32       `json:"vendor_id" yaml:"vendor_id"`
 	PostID        string       `json:"post_id" yaml:"post_id"`
 	VoteNum       int32        `json:"vote_num" yaml:"vote_num"`
@@ -110,7 +108,7 @@ func postUpvoteHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		msg := types.NewMsgUpvote(
-			req.VendorID, req.PostID, fromAddr, rewardAddr, req.VoteNum, req.Deposit)
+			req.VendorID, req.PostID, fromAddr, rewardAddr, req.VoteNum)
 		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
