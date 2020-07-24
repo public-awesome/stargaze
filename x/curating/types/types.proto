@@ -76,7 +76,6 @@ message MsgPost {
         (gogoproto.moretags) = "yaml:\"reward_account\""
     ];
     string body = 5 [(gogoproto.moretags) = "yaml:\"body\""];
-    cosmos_sdk.v1.Coin deposit = 6 [(gogoproto.nullable) = false];
 }
 
 message MsgUpvote {
@@ -101,7 +100,6 @@ message MsgUpvote {
         (gogoproto.moretags) = "yaml:\"reward_account\""
     ];
     int32 vote_num = 5;
-    cosmos_sdk.v1.Coin deposit = 6 [(gogoproto.nullable) = false];
 }
 
 message MsgModerate {
@@ -125,7 +123,6 @@ message MsgModerate {
         (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
         (gogoproto.moretags) = "yaml:\"reward_account\""
     ];
-    cosmos_sdk.v1.Coin deposit = 5 [(gogoproto.nullable) = false];
 }
 
 // VPPair is struct that just has a vendor_id, post_id pair with no other data.
