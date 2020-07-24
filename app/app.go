@@ -210,7 +210,6 @@ func NewStakebirdApp(
 ) *StakebirdApp {
 
 	// TODO: Remove cdc in favor of appCodec once all modules are migrated.
-	cdc := std.MakeCodec(ModuleBasics) // nolint
 	appCodec, cdc := MakeCodecs()
 
 	bApp := baseapp.NewBaseApp(appName, logger, db, auth.DefaultTxDecoder(cdc), baseAppOptions...)
