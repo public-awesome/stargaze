@@ -1,10 +1,11 @@
 package curating_test
 
 import (
+	"testing"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/public-awesome/stakebird/x/curating"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 // 1 vote  = 1 vote credit

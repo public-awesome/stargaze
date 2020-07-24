@@ -16,8 +16,8 @@ const (
 	QuerierRoute      = types.QuerierRoute
 )
 
+// functions aliases
 var (
-	// functions aliases
 	NewKeeper           = keeper.NewKeeper
 	NewQuerier          = keeper.NewQuerier
 	RegisterCodec       = types.RegisterCodec
@@ -25,8 +25,10 @@ var (
 	DefaultGenesisState = types.DefaultGenesisState
 	ValidateGenesis     = types.ValidateGenesis
 	// TODO: Fill out function aliases
+)
 
-	// variable aliases
+// variable aliases
+var (
 	ModuleCdc = types.ModuleCdc
 	// TODO: Fill out variable aliases
 )
