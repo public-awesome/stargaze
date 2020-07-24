@@ -17,6 +17,7 @@ steps:
   - name: lint
     image: golangci/golangci-lint
     commands:
+      - go mod vendor
       - golangci-lint run ./...
   - name: test
     image: golang:1.14.2
@@ -150,4 +151,4 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: 2e709ad2dd35f6a02f0700411db544db516fd43a48a95e63e0f7ca27fd08e608
+hmac: 5e62350748d2f51cacd3e3e85218fb182c20c7f993d7021ab0a966cef78bdcc6
