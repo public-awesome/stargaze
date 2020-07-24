@@ -8,16 +8,13 @@ steps:
     image: alpine/git
     commands:
       - git fetch --tags
-  - name: build
+  - name: build-lint
     image: golang:1.14.2
     commands:
       - apt-get update && apt-get install -y cmake
       - make test
       - make build
-  - name: lint
-    image: golangci/golangci-lint
-    commands:
-      - golangci-lint run ./... --concurrency 1
+      - make lint
   - name: test
     image: golang:1.14.2
     commands:
@@ -150,4 +147,4 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: 5450d96fa9c511b92c5e9daddcbc8b093d259ea1f183644526853cc55e1f7e0f
+hmac: 3891185fa5acdaca40cd745c99e32e2123fc3cae4518be52b3529b4734243156
