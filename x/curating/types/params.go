@@ -72,9 +72,12 @@ func NewParams(
 }
 
 // String implements the stringer interface for Params
-func (p Params) String() string {
-	out, _ := yaml.Marshal(p) // nolint
-	return string(out)
+func (p Params) String() (string, error) {
+	out, err := yaml.Marshal(p)
+	if err != nil {
+		return "", err
+	}
+	return string(out), nil
 }
 
 // ParamSetPairs - Implements params.ParamSet

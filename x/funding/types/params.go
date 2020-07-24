@@ -1,8 +1,6 @@
 package types
 
 import (
-	"fmt"
-
 	"github.com/cosmos/cosmos-sdk/x/params"
 )
 
@@ -39,7 +37,7 @@ func NewParams( /* TODO: Pass in the parameters*/ ) Params {
 // String implements the stringer interface for Params
 func (p Params) String() string {
 	// TODO: Return all the params as a string
-	return fmt.Sprintf(``) // nolint
+	return ""
 }
 
 // ParamSetPairs - Implements params.ParamSet

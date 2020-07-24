@@ -28,10 +28,9 @@ func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	).Methods("GET")
 }
 
-var ok bool
-
 func queryParamsHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var ok bool
 		cliCtx, ok = rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
 		if !ok {
 			return
@@ -52,6 +51,7 @@ func queryParamsHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 
 func queryPostHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var ok bool
 		cliCtx, ok = rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
 		if !ok {
 			return
@@ -76,6 +76,7 @@ func queryPostHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 
 func queryUpvotesHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var ok bool
 		cliCtx, ok = rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
 		if !ok {
 			return
