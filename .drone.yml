@@ -14,8 +14,11 @@ steps:
       - apt-get update && apt-get install -y cmake
       - make test
       - make build
-      - wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.27.0
-      - make lint
+  - name: lint
+    image: golangci/golangci-lint
+    commands:
+      - chmod 666 go.sum
+      - golangci-lint run -v
   - name: test
     image: golang:1.14.2
     commands:
@@ -148,4 +151,4 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: 62616ad914508c8fd3e9ff76eb108747cf894c2666d597b3a895f1d6d99c5c01
+hmac: 123b2492b00375cf0a51fe1a4ea6791425a81f211ef2269016617b7f0d457d72
