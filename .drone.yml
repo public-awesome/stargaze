@@ -16,8 +16,10 @@ steps:
       - make build
   - name: lint
     image: golangci/golangci-lint
+    custom_dns: 8.8.8.8
     commands:
-      - golangci-lint run
+      - chmod 666 go.sum
+      - golangci-lint run -v
   - name: test
     image: golang:1.14.2
     commands:
@@ -150,6 +152,4 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: 2e709ad2dd35f6a02f0700411db544db516fd43a48a95e63e0f7ca27fd08e608
-
-...
+hmac: 6b09abab578013ded88bc823cc45261a44b5a61515ce2d5b4c79e376c69f6f32
