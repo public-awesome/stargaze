@@ -73,7 +73,10 @@ func NewParams(
 
 // String implements the stringer interface for Params
 func (p Params) String() string {
-	out, _ := yaml.Marshal(p)
+	out, err := yaml.Marshal(p)
+	if err != nil {
+		return ""
+	}
 	return string(out)
 }
 
@@ -194,7 +197,7 @@ func validateMaxNumVotes(i interface{}) error {
 		return fmt.Errorf("invalid parameter type: %T", i)
 	}
 
-	if v <= 0 {
+	if v == 0 {
 		return fmt.Errorf("max num votes must be greater than or equal to 1: %d", v)
 	}
 
@@ -207,7 +210,7 @@ func validateMaxVendors(i interface{}) error {
 		return fmt.Errorf("invalid parameter type: %T", i)
 	}
 
-	if v <= 0 {
+	if v == 0 {
 		return fmt.Errorf("max vendors must be greater than or equal to 1: %d", v)
 	}
 

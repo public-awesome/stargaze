@@ -27,7 +27,12 @@ const (
 	flagUnbondingPeriod = "unbonding-period"
 )
 
-func initGenesis(cdc codec.JSONMarshaler, genDoc *types.GenesisDoc, stakeDenom, unbondingPeriod string) (genutil.AppMap, error) {
+func initGenesis(
+	cdc codec.JSONMarshaler,
+	genDoc *types.GenesisDoc,
+	stakeDenom,
+	unbondingPeriod string,
+) (genutil.AppMap, error) {
 	var appState genutil.AppMap
 	if err := cdc.UnmarshalJSON(genDoc.AppState, &appState); err != nil {
 		return appState, errors.Wrap(err, "failed to JSON unmarshal initial genesis state")

@@ -8,16 +8,19 @@ steps:
     image: alpine/git
     commands:
       - git fetch --tags
-  - name: build
-    image: golang:1.14.2
+  - name: lint
+    image: golangci/golangci-lint:v1.29
+    commands:
+      - export GL_DEBUG=linters_output
+      - export GOPACKAGESPRINTGOLISTERRORS=1
+      - go mod download
+      - golangci-lint run -v --timeout 3m
+  - name: test-and-build
+    image: golang:1.14.6
     commands:
       - apt-get update && apt-get install -y cmake
-      - make test
-      - make build
-  - name: test
-    image: golang:1.14.2
-    commands:
       - ./contrib/go-test.sh
+      - make build
   - name: coverage
     image: plugins/codecov
     settings:
@@ -27,7 +30,7 @@ steps:
     when:
       event:
         - push
-      # branch: master
+        - pull_request
   - name: publish-test
     image: plugins/docker:18
     settings:
@@ -91,7 +94,7 @@ steps:
       branch: master
 
   - name: release
-    image: golang:1.14.2
+    image: golang:1.14.6
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -115,17 +118,17 @@ name: ibc-integration-test
 
 steps:
   - name: gaiad
-    image: golang:1.14.2
+    image: golang:1.14.6
     detach: true
     commands:
       - ./contrib/ci/setup-gaia.sh
   - name: stakebird
-    image: golang:1.14.2
+    image: golang:1.14.6
     commands:
       - ./contrib/ci/setup-stakebird.sh
     detach: true
   - name: relayer
-    image: golang:1.14.2
+    image: golang:1.14.6
     commands:
       - /bin/bash ./contrib/ci/setup-relayer.sh
   - name: slack
@@ -146,6 +149,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: 2e709ad2dd35f6a02f0700411db544db516fd43a48a95e63e0f7ca27fd08e608
+hmac: c5e0634575612a76969f1ac76079fe9e73fe822c2a25a5c79221f5ba5c6d7486
 
 ...

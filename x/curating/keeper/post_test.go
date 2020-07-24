@@ -8,10 +8,11 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+var postID = "500"
+
 func TestPost(t *testing.T) {
 	_, app, ctx := testdata.CreateTestInput()
 
-	postID := "500"
 	vendorID := uint32(1)
 	deposit := sdk.NewInt64Coin("ufuel", 1000000)
 	addrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
@@ -33,7 +34,6 @@ func TestPost(t *testing.T) {
 func TestPost_EmptyCreator(t *testing.T) {
 	_, app, ctx := testdata.CreateTestInput()
 
-	postID := "500"
 	vendorID := uint32(1)
 	deposit := sdk.NewInt64Coin("ufuel", 1000000)
 	addrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
@@ -58,7 +58,6 @@ func TestPost_EmptyCreator(t *testing.T) {
 func TestPost_EmptyRewardAccount(t *testing.T) {
 	_, app, ctx := testdata.CreateTestInput()
 
-	postID := "500"
 	vendorID := uint32(1)
 	deposit := sdk.NewInt64Coin("ufuel", 1000000)
 	addrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
@@ -76,10 +75,10 @@ func TestPost_EmptyRewardAccount(t *testing.T) {
 	vps := app.CuratingKeeper.GetCurationQueueTimeSlice(ctx, ctx.BlockTime())
 	require.NotNil(t, vps)
 }
+
 func TestPost_WithRewardAccount(t *testing.T) {
 	_, app, ctx := testdata.CreateTestInput()
 
-	postID := "500"
 	vendorID := uint32(1)
 	deposit := sdk.NewInt64Coin("ufuel", 1000000)
 	addrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))

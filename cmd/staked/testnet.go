@@ -88,10 +88,12 @@ Example:
 		"Home directory of the node's daemon configuration")
 	cmd.Flags().String(flagNodeCLIHome, "stakecli",
 		"Home directory of the node's cli configuration")
+	// nolint:lll
 	cmd.Flags().String(flagStartingIPAddress, "192.168.0.1",
 		"Starting IP address (192.168.0.1 results in persistent peers list ID0@192.168.0.1:46656, ID1@192.168.0.2:46656, ...)")
 	cmd.Flags().String(
 		flags.FlagChainID, "", "genesis file chain-id, if left blank will be randomly created")
+	// nolint:lll
 	cmd.Flags().String(
 		server.FlagMinGasPrices, fmt.Sprintf("0.000006%s", app.DefaultStakeDenom),
 		"Minimum gas prices to accept for transactions; All fees in a tx must meet this minimum (e.g. 0.01photino,0.001stake)")
@@ -157,7 +159,7 @@ func InitTestnet(
 		nodes = append(nodes, testnetNode)
 		initialPort = endPort + 1
 		config.SetRoot(nodeDir)
-		config.RPC.ListenAddress = fmt.Sprintf("tcp://0.0.0.0:26657")
+		config.RPC.ListenAddress = "tcp://0.0.0.0:26657"
 
 		if err := os.MkdirAll(filepath.Join(nodeDir, "config"), nodeDirPerm); err != nil {
 			_ = os.RemoveAll(outputDir)
@@ -206,7 +208,7 @@ func InitTestnet(
 		}
 
 		// save private key seed words
-		if err := writeFile(fmt.Sprintf("%v.json", "key_seed"), clientDir, cliPrint); err != nil {
+		if err = writeFile(fmt.Sprintf("%v.json", "key_seed"), clientDir, cliPrint); err != nil {
 			return err
 		}
 
@@ -258,7 +260,17 @@ func InitTestnet(
 	}
 	stakeDenom := viper.GetString(flagStakeDenom)
 	unbondingPeriod := viper.GetString(flagUnbondingPeriod)
-	if err := initGenFiles(cdc, mbm, chainID, stakeDenom, unbondingPeriod, genAccounts, genBalances, genFiles, numValidators); err != nil {
+	if err := initGenFiles(
+		cdc,
+		mbm,
+		chainID,
+		stakeDenom,
+		unbondingPeriod,
+		genAccounts,
+		genBalances,
+		genFiles,
+		numValidators,
+	); err != nil {
 		return err
 	}
 
@@ -284,6 +296,7 @@ func InitTestnet(
 	return nil
 }
 
+// nolint:interfacer
 func initGenFiles(
 	cdc *codec.Codec, mbm module.BasicManager, chainID, stakeDenom, unbondingPeriod string,
 	genAccounts []authexported.GenesisAccount, genBalances []bank.Balance,
@@ -428,13 +441,16 @@ services:{{range $node := .Nodes }}
 
 func docker(nodes []TestnetNode) (string, error) {
 	def := strings.ReplaceAll(dockerComposeDefinition, "\t", "  ")
-	t, _ := template.New("definition").Parse(def)
+	t, err := template.New("definition").Parse(def)
+	if err != nil {
+		return "", err
+	}
 	d := struct {
 		Nodes []TestnetNode
 	}{Nodes: nodes}
 
 	buf := bytes.NewBufferString("")
-	err := t.Execute(buf, d)
+	err = t.Execute(buf, d)
 	if err != nil {
 		return "", err
 	}

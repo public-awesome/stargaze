@@ -8,7 +8,7 @@ import (
 	"github.com/public-awesome/stakebird/x/curating/types"
 )
 
-// ParamTable for staking module
+// ParamKeyTable for staking module
 func ParamKeyTable() paramtypes.KeyTable {
 	return paramtypes.NewKeyTable().RegisterParamSet(&types.Params{})
 }

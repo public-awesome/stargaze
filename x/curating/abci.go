@@ -36,7 +36,7 @@ func EndBlocker(ctx sdk.Context, k Keeper) {
 		k.IterateUpvotes(ctx, post.VendorID, post.PostIDHash,
 			func(upvote types.Upvote) (stop bool) {
 				// return curator deposit
-				err := k.RefundDeposit(ctx, upvote.Curator, upvote.Deposit)
+				err = k.RefundDeposit(ctx, upvote.Curator, upvote.Deposit)
 				if err != nil {
 					panic(err)
 				}

@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"crypto/md5"
+	"crypto/sha256"
 	"fmt"
 	"time"
 
@@ -113,7 +113,7 @@ func (k Keeper) CreatePost(
 // InsertCurationQueue inserts a VPPair into the right timeslot in the curation queue
 func (k Keeper) InsertCurationQueue(
 	ctx sdk.Context, vendorID uint32, postID []byte, curationEndTime time.Time) {
-	vpPair := types.VPPair{vendorID, postID}
+	vpPair := types.VPPair{VendorID: vendorID, PostIDHash: postID}
 
 	timeSlice := k.GetCurationQueueTimeSlice(ctx, curationEndTime)
 	if len(timeSlice) == 0 {
@@ -124,8 +124,6 @@ func (k Keeper) InsertCurationQueue(
 
 	timeSlice = append(timeSlice, vpPair)
 	k.SetCurationQueueTimeSlice(ctx, curationEndTime, timeSlice)
-
-	return
 }
 
 // GetCurationQueueTimeSlice returns a slice of Vendor/PostID pairs for a give time
@@ -149,7 +147,7 @@ func (k Keeper) SetCurationQueueTimeSlice(
 	ctx sdk.Context, timestamp time.Time, vps []types.VPPair) {
 
 	store := ctx.KVStore(k.storeKey)
-	bz := k.cdc.MustMarshalBinaryBare(&types.VPPairs{vps})
+	bz := k.cdc.MustMarshalBinaryBare(&types.VPPairs{Pairs: vps})
 	store.Set(types.CurationQueueByTimeKey(timestamp), bz)
 }
 
@@ -157,7 +155,7 @@ func (k Keeper) SetCurationQueueTimeSlice(
 // Collisions are unlikely since it's always paired with another id (vendor_id) or
 // only used to verify content bodies.
 func hash(body string) ([]byte, error) {
-	h := md5.New()
+	h := sha256.New()
 	_, err := h.Write([]byte(body))
 	if err != nil {
 		return nil, err

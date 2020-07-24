@@ -1,8 +1,9 @@
 package curating_test
 
 import (
-	"github.com/public-awesome/stakebird/x/curating"
 	"testing"
+
+	"github.com/public-awesome/stakebird/x/curating"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/public-awesome/stakebird/testdata"

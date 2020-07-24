@@ -31,17 +31,15 @@ const (
 )
 
 var (
-	// 0x00 | vendor_id | post_id -> Post
+	// KeyPrefixPost 0x00 | vendor_id | post_id -> Post
 	KeyPrefixPost = []byte{0x00}
 
-	// 0x01 | vendor_id | post_id | curator -> Upvote
+	// KeyPrefixUpvote 0x01 | vendor_id | post_id | curator -> Upvote
 	KeyPrefixUpvote = []byte{0x01}
 
-	// 0x02 | format(curation_end_time) -> []VPPair
+	// KeyPrefixCurationQueue 0x02 | format(curation_end_time) -> []VPPair
 	KeyPrefixCurationQueue = []byte{0x02}
 )
-
-var lenTime = len(sdk.FormatTimeBytes(time.Now()))
 
 func PostKey(vendorID uint32, postIDHash []byte) []byte {
 	vendorIDBz := uint32ToBigEndian(vendorID)

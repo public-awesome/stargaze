@@ -1,8 +1,6 @@
 package types
 
 import (
-	"fmt"
-
 	"github.com/cosmos/cosmos-sdk/x/params"
 )
 
@@ -25,12 +23,12 @@ func ParamKeyTable() params.KeyTable {
 
 // Params - used for initializing default parameter for funding at genesis
 type Params struct {
-	// TODO: Add your Paramaters to the Paramter struct
+	// TODO: Add your parameters to the parameter struct
 	// KeyParamName string `json:"key_param_name"`
 }
 
 // NewParams creates a new Params object
-func NewParams( /* TODO: Pass in the paramters*/ ) Params {
+func NewParams( /* TODO: Pass in the parameters*/ ) Params {
 	return Params{
 		// TODO: Create your Params Type
 	}
@@ -38,9 +36,8 @@ func NewParams( /* TODO: Pass in the paramters*/ ) Params {
 
 // String implements the stringer interface for Params
 func (p Params) String() string {
-	return fmt.Sprintf(`
 	// TODO: Return all the params as a string
-	`)
+	return ""
 }
 
 // ParamSetPairs - Implements params.ParamSet

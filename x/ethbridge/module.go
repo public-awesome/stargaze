@@ -21,7 +21,6 @@ var (
 	_ module.AppModuleBasic = AppModuleBasic{}
 )
 
-
 // AppModuleBasic defines the basic application module used by the ethbridge module.
 type AppModuleBasic struct{}
 
