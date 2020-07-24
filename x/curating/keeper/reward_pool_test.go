@@ -27,9 +27,7 @@ func TestInflateRewards(t *testing.T) {
 	require.Equal(t, fakeInflationCoin, blockInflation)
 
 	err = app.CuratingKeeper.InflateRewardPool(ctx)
-	if err != nil {
-		t.Error(err)
-	}
+	require.NoError(t, err)
 
 	rewardPoolAddr := app.AccountKeeper.GetModuleAccount(ctx, curating.RewardPoolName).GetAddress()
 	rewardPool := app.BankKeeper.GetBalance(ctx, rewardPoolAddr, types.DefaultStakeDenom)
