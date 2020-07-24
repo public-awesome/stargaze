@@ -8,7 +8,7 @@ steps:
     image: alpine/git
     commands:
       - git fetch --tags
-  - name: build-lint
+  - name: build
     image: golang:1.14.2
     commands:
       - apt-get update && apt-get install -y cmake
@@ -16,6 +16,7 @@ steps:
       - make build
   - name: lint
     image: golangci/golangci-lint
+    custom_dns: 8.8.8.8
     commands:
       - chmod 666 go.sum
       - golangci-lint run -v
@@ -151,4 +152,4 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: 123b2492b00375cf0a51fe1a4ea6791425a81f211ef2269016617b7f0d457d72
+hmac: 6b09abab578013ded88bc823cc45261a44b5a61515ce2d5b4c79e376c69f6f32
