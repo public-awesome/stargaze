@@ -12,7 +12,14 @@ import (
 var _ sdk.Msg = &MsgPost{}
 var _ sdk.Msg = &MsgUpvote{}
 
-func NewMsgPost(vendorID uint32, postID string, creator, rewardAccount sdk.AccAddress, body string, deposit sdk.Coin) MsgPost {
+func NewMsgPost(
+	vendorID uint32,
+	postID string,
+	creator,
+	rewardAccount sdk.AccAddress,
+	body string,
+	deposit sdk.Coin,
+) MsgPost {
 
 	return MsgPost{
 		VendorID:      vendorID,

@@ -109,7 +109,7 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 				genAccount = baseAccount
 			}
 
-			if err := genAccount.Validate(); err != nil {
+			if err = genAccount.Validate(); err != nil {
 				return fmt.Errorf("failed to validate new genesis account: %w", err)
 			}
 

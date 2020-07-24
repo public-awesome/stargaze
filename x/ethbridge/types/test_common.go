@@ -67,7 +67,10 @@ func CreateTestQueryEthProphecyResponse(
 	testTokenAddress := NewEthereumAddress(TestTokenContractAddress)
 	ethBridgeClaim := CreateTestEthClaim(t, testContractAddress, testTokenAddress, validatorAddress,
 		testEthereumAddress, TestCoinsAmount, TestCoinsSymbol, claimType)
-	oracleClaim, _ := CreateOracleClaimFromEthClaim(cdc, ethBridgeClaim)
+	oracleClaim, err := CreateOracleClaimFromEthClaim(cdc, ethBridgeClaim)
+	if err != nil {
+		t.Error(err)
+	}
 	ethBridgeClaims := []EthBridgeClaim{ethBridgeClaim}
 
 	return NewQueryEthProphecyResponse(

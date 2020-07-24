@@ -124,8 +124,6 @@ func (k Keeper) InsertCurationQueue(
 
 	timeSlice = append(timeSlice, vpPair)
 	k.SetCurationQueueTimeSlice(ctx, curationEndTime, timeSlice)
-
-	return
 }
 
 // GetCurationQueueTimeSlice returns a slice of Vendor/PostID pairs for a give time
