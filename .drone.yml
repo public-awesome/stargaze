@@ -18,7 +18,8 @@ steps:
     image: golangci/golangci-lint
     custom_dns: 8.8.8.8
     commands:
-      - chmod 666 go.sum
+      - go mod tidy
+      - go mod vendor
       - golangci-lint run -v
   - name: test
     image: golang:1.14.2
@@ -152,4 +153,4 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: 6b09abab578013ded88bc823cc45261a44b5a61515ce2d5b4c79e376c69f6f32
+hmac: fcf5122dbd1befafda2dd9ef952d75516505f8eceedcb4280fb1c01ae9e9698d
