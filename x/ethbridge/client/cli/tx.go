@@ -2,9 +2,10 @@ package cli
 
 import (
 	"bufio"
-	"github.com/cosmos/cosmos-sdk/x/auth"
 	"regexp"
 	"strconv"
+
+	"github.com/cosmos/cosmos-sdk/x/auth"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/pkg/errors"
@@ -100,7 +101,7 @@ func GetCmdCreateEthBridgeClaim(cdc *codec.Codec) *cobra.Command {
 }
 
 // GetCmdBurn is the CLI command for burning some of your eth and triggering an event
-//nolint:lll
+//nolint
 func GetCmdBurn(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "burn [cosmos-sender-address] [ethereum-receiver-address] [amount] [symbol] --ethereum-chain-id [ethereum-chain-id]",
@@ -156,7 +157,7 @@ func GetCmdBurn(cdc *codec.Codec) *cobra.Command {
 
 // GetCmdLock is the CLI command for locking some of your coins and triggering an event
 func GetCmdLock(cdc *codec.Codec) *cobra.Command {
-	//nolint:lll
+	//nolint
 	return &cobra.Command{
 		Use:   "lock [cosmos-sender-address] [ethereum-receiver-address] [amount] [symbol] --ethereum-chain-id [ethereum-chain-id]",
 		Short: "This should be used to lock Cosmos-originating coins (eg: ATOM). It will lock up your coins in the supply module, removing them from your account. It will also trigger an event on the Cosmos Chain for relayers to watch so that they can trigger the minting of the pegged token on Etherum to you!",

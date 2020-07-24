@@ -73,7 +73,7 @@ func NewParams(
 
 // String implements the stringer interface for Params
 func (p Params) String() string {
-	out, _ := yaml.Marshal(p)
+	out, _ := yaml.Marshal(p) // nolint
 	return string(out)
 }
 

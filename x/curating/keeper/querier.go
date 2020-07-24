@@ -39,7 +39,10 @@ func queryParams(ctx sdk.Context, k Keeper) ([]byte, error) {
 }
 
 func queryPost(ctx sdk.Context, path []string, req abci.RequestQuery, k Keeper) ([]byte, error) {
-	i64, _ := strconv.ParseUint(path[0], 10, 32)
+	i64, err := strconv.ParseUint(path[0], 10, 32)
+	if err != nil {
+		return nil, err
+	}
 	vendorID := uint32(i64)
 	postID := path[1]
 
@@ -57,7 +60,10 @@ func queryPost(ctx sdk.Context, path []string, req abci.RequestQuery, k Keeper) 
 }
 
 func queryUpvotes(ctx sdk.Context, path []string, req abci.RequestQuery, k Keeper) ([]byte, error) {
-	i64, _ := strconv.ParseUint(path[0], 10, 32)
+	i64, err := strconv.ParseUint(path[0], 10, 32)
+	if err != nil {
+		return nil, err
+	}
 	vendorID := uint32(i64)
 	var upvotes []types.Upvote
 

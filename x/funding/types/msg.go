@@ -18,7 +18,7 @@ func NewMsgBuy(amount sdk.Coin, sender sdk.AccAddress) MsgBuy {
 func (msg MsgBuy) Route() string { return RouterKey }
 func (msg MsgBuy) Type() string  { return "buy" }
 func (msg MsgBuy) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{sdk.AccAddress(msg.Sender)}
+	return []sdk.AccAddress{msg.Sender}
 }
 
 // GetSignBytes gets the bytes for the message signer to sign on
