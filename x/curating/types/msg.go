@@ -1,8 +1,6 @@
 package types
 
 import (
-	"fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -98,16 +96,6 @@ func (msg MsgUpvote) ValidateBasic() error {
 	}
 	if msg.VoteNum < 1 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid vote_num")
-	}
-
-	return nil
-}
-
-func validateDenom(denom string) error {
-	if denom != DefaultStakeDenom {
-		return sdkerrors.Wrap(
-			sdkerrors.ErrInvalidCoins,
-			fmt.Sprintf("invalid deposit denom, expecting %v, got %v", DefaultStakeDenom, denom))
 	}
 
 	return nil
