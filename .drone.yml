@@ -11,7 +11,10 @@ steps:
   - name: lint
     image: golangci/golangci-lint:v1.29
     commands:
-      - golangci-lint run -v
+      - export GL_DEBUG=linters_output
+      - export GOPACKAGESPRINTGOLISTERRORS=1
+      - go mod download
+      - golangci-lint run -v --timeout 3m
   - name: test-and-build
     image: golang:1.14.4
     commands:
@@ -150,5 +153,3 @@ depends_on:
 ---
 kind: signature
 hmac: 8be6863f0235db98ff81b53c60004518c0e1221e6eb9265c041706f233b4dfbc
-
-...
