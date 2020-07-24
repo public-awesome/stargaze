@@ -7,10 +7,12 @@ import (
 	"github.com/public-awesome/stakebird/x/curating/types"
 )
 
+// GetRewardPool returns the reward pool account.
 func (k Keeper) GetRewardPool(ctx sdk.Context) (rewardPool authexported.ModuleAccountI) {
 	return k.accountKeeper.GetModuleAccount(ctx, types.RewardPoolName)
 }
 
+// InflateRewardPool process the designated inflation to the reward pool
 func (k Keeper) InflateRewardPool(ctx sdk.Context) error {
 	blockInflationAddr := k.accountKeeper.GetModuleAccount(ctx, auth.FeeCollectorName).GetAddress()
 	blockInflation := k.bankKeeper.GetBalance(ctx, blockInflationAddr, types.DefaultStakeDenom)
