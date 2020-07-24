@@ -30,6 +30,7 @@ steps:
     when:
       event:
         - push
+        - pull_request
   - name: publish-test
     image: plugins/docker:18
     settings:
@@ -149,5 +150,3 @@ depends_on:
 ---
 kind: signature
 hmac: c641fad1a97e596f9046bfce80800d2c22a6949f76fd90dcfaf3ea79ab297951
-
-...
