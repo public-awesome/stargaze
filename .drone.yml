@@ -20,7 +20,7 @@ steps:
     commands:
       - go mod tidy
       - go mod vendor
-      - golangci-lint run -v
+      - golangci-lint run -v --timeout 10m6s
   - name: test
     image: golang:1.14.2
     commands:
@@ -153,4 +153,4 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: fcf5122dbd1befafda2dd9ef952d75516505f8eceedcb4280fb1c01ae9e9698d
+hmac: 5ee550826901e028feb48ee21bbe8729288d6ec24a2ee07ac632ddc000182393
