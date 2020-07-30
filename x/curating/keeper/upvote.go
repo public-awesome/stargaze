@@ -104,6 +104,20 @@ func (k Keeper) GetUpvote(
 	return upvote, true, nil
 }
 
+// DeleteUpvote removes an upvote
+func (k Keeper) DeleteUpvote(ctx sdk.Context, vendorID uint32, postIDHash []byte, upvote types.Upvote) error {
+	err := k.validateVendorID(ctx, vendorID)
+	if err != nil {
+		return err
+	}
+
+	store := ctx.KVStore(k.storeKey)
+	key := types.UpvoteKey(vendorID, postIDHash, upvote.Curator)
+
+	store.Delete(key)
+	return nil
+}
+
 // voteAmount does the quadratic voting calculation
 func (k Keeper) voteAmount(ctx sdk.Context, voteNum int64) sdk.Coin {
 	amtPerVote := k.GetParams(ctx).VoteAmount

@@ -71,8 +71,14 @@ func EndBlocker(ctx sdk.Context, k Keeper) {
 					panic(err)
 				}
 
+				// Remove upvote
+				k.DeleteUpvote(ctx, post.VendorID, post.PostIDHash, upvote)
+
 				return false
 			})
+
+		// Remove post
+		k.DeletePost(ctx, post.VendorID, post.PostIDHash)
 
 		return false
 	})
