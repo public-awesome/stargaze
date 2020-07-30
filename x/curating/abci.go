@@ -60,7 +60,7 @@ func EndBlocker(ctx sdk.Context, k Keeper) {
 		k.IterateUpvotes(ctx, post.VendorID, post.PostIDHash,
 			func(upvote types.Upvote) (stop bool) {
 				// distribute quadratic voting per capita reward from voting pool
-				err := k.SendVotingReward(ctx, upvote.RewardAccount, curatorVotingReward)
+				err = k.SendVotingReward(ctx, upvote.RewardAccount, curatorVotingReward)
 				if err != nil {
 					panic(err)
 				}
@@ -72,13 +72,19 @@ func EndBlocker(ctx sdk.Context, k Keeper) {
 				}
 
 				// Remove upvote
-				k.DeleteUpvote(ctx, post.VendorID, post.PostIDHash, upvote)
+				err = k.DeleteUpvote(ctx, post.VendorID, post.PostIDHash, upvote)
+				if err != nil {
+					panic(err)
+				}
 
 				return false
 			})
 
 		// Remove post
-		k.DeletePost(ctx, post.VendorID, post.PostIDHash)
+		err = k.DeletePost(ctx, post.VendorID, post.PostIDHash)
+		if err != nil {
+			panic(err)
+		}
 
 		return false
 	})
