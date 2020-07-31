@@ -39,10 +39,16 @@ func (q QVFData) MatchPool() sdk.Dec {
 
 // VoterReward returns the distribution for a voter
 func (q QVFData) VoterReward() sdk.Int {
+	if q.VoterCount == 0 {
+		return sdk.ZeroInt()
+	}
 	return q.VotingPool.QuoRaw(q.VoterCount)
 }
 
 // MatchReward returns the funding match for a voter
 func (q QVFData) MatchReward() sdk.Dec {
+	if q.VoterCount == 0 {
+		return sdk.ZeroDec()
+	}
 	return q.MatchPool().QuoInt64(q.VoterCount)
 }
