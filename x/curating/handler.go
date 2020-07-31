@@ -48,17 +48,7 @@ func handleMsgPost(ctx sdk.Context, k Keeper, msg types.MsgPost) (*sdk.Result, e
 func handleMsgUpvote(ctx sdk.Context, k Keeper, msg types.MsgUpvote) (*sdk.Result, error) {
 	deposit := k.GetParams(ctx).UpvoteDeposit
 
-	_, found, err := k.GetUpvote(ctx, msg.VendorID, msg.PostID, msg.Curator)
-	if err != nil {
-		return nil, err
-	}
-
-	// If post upvote exists, do nothing, return already found error
-	if found {
-		return nil, types.ErrAlreadyVoted
-	}
-
-	err = k.CreateUpvote(
+	err := k.CreateUpvote(
 		ctx, msg.VendorID, msg.PostID, msg.Curator, msg.RewardAccount, msg.VoteNum, deposit)
 	if err != nil {
 		return nil, err
@@ -73,5 +63,4 @@ func handleMsgUpvote(ctx sdk.Context, k Keeper, msg types.MsgUpvote) (*sdk.Resul
 	})
 
 	return &sdk.Result{Events: ctx.EventManager().ABCIEvents()}, nil
-
 }
