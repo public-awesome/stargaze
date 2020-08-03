@@ -32,8 +32,17 @@ func (k Keeper) CreateUpvote(
 		return err
 	}
 
+	// check if there is already an upvote
+	_, found, err := k.GetUpvote(ctx, vendorID, postID, curator)
+	if err != nil {
+		return err
+	}
+	if found {
+		return types.ErrAlreadyVoted
+	}
+
 	// check if post exist, if not, create it and start the curation period
-	_, found, err := k.GetPost(ctx, vendorID, postID)
+	_, found, err = k.GetPost(ctx, vendorID, postID)
 	if err != nil {
 		return err
 	}

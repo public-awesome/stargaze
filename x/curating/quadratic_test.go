@@ -27,3 +27,14 @@ func TestQVF(t *testing.T) {
 	require.Equal(t, "5", q.VoterReward().String())
 	require.Equal(t, "3.000000000000000000", q.MatchReward().String())
 }
+
+func TestQVFZeroVotes(t *testing.T) {
+	q := curating.NewQVFData()
+
+	require.Equal(t, int64(0), q.VoterCount)
+	require.Equal(t, "0", q.VotingPool.String())
+	require.Equal(t, "0.000000000000000000", q.RootSum.String())
+	require.Equal(t, "0.000000000000000000", q.MatchPool().String())
+	require.Equal(t, "0", q.VoterReward().String())
+	require.Equal(t, "0.000000000000000000", q.MatchReward().String())
+}
