@@ -110,6 +110,20 @@ func (k Keeper) CreatePost(
 	return nil
 }
 
+// DeletePost removes a post
+func (k Keeper) DeletePost(ctx sdk.Context, vendorID uint32, postIDHash []byte) error {
+	err := k.validateVendorID(ctx, vendorID)
+	if err != nil {
+		return err
+	}
+
+	store := ctx.KVStore(k.storeKey)
+	key := types.PostKey(vendorID, postIDHash)
+
+	store.Delete(key)
+	return nil
+}
+
 // InsertCurationQueue inserts a VPPair into the right timeslot in the curation queue
 func (k Keeper) InsertCurationQueue(
 	ctx sdk.Context, vendorID uint32, postID []byte, curationEndTime time.Time) {
