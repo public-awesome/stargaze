@@ -30,7 +30,7 @@ func EndBlocker(ctx sdk.Context, k Keeper) {
 			panic(err)
 		}
 
-		qv := NewQVFData()
+		qv := NewQVFData(ctx, k)
 
 		// iterate upvoters, returning deposits, and tallying upvotes
 		k.IterateUpvotes(ctx, post.VendorID, post.PostIDHash,

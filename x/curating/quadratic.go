@@ -6,49 +6,63 @@ import (
 
 // QVFData holds vars for quadratic voting+funding calculations
 type QVFData struct {
-	VoterCount int64
-	VotingPool sdk.Int
-	RootSum    sdk.Dec
+	ctx        sdk.Context
+	keeper     Keeper
+	voterCount int64
+	votingPool sdk.Int
+	rootSum    sdk.Dec
 }
 
-func NewQVFData() QVFData {
+func NewQVFData(ctx sdk.Context, k Keeper) QVFData {
 	return QVFData{
-		VotingPool: sdk.ZeroInt(),
-		RootSum:    sdk.ZeroDec(),
+		ctx:        ctx,
+		keeper:     k,
+		votingPool: sdk.ZeroInt(),
+		rootSum:    sdk.ZeroDec(),
 	}
 }
 
 // TallyVote tallies a vote
 func (q QVFData) TallyVote(amount sdk.Int) (QVFData, error) {
-	q.VoterCount++
-	q.VotingPool = q.VotingPool.Add(amount)
+	q.voterCount++
+	q.votingPool = q.votingPool.Add(amount)
 
 	sqrt, err := amount.ToDec().ApproxSqrt()
 	if err != nil {
 		return q, err
 	}
-	q.RootSum = q.RootSum.Add(sqrt)
+	q.rootSum = q.rootSum.Add(sqrt)
 
 	return q, nil
 }
 
 // MatchPool calculates and returns the quadratic match pool
 func (q QVFData) MatchPool() sdk.Dec {
-	return q.RootSum.Power(2).Sub(q.VotingPool.ToDec())
+	idealPoolSize := q.rootSum.Power(2).Sub(q.votingPool.ToDec())
+
+	rewardPool := q.keeper.GetRewardPoolBalance(q.ctx).Amount.ToDec()
+	maxPoolPercent := q.keeper.GetParams(q.ctx).RewardPoolCurationMaxAlloc
+	maxPoolSize := rewardPool.MulTruncate(maxPoolPercent)
+
+	if idealPoolSize.GT(maxPoolSize) {
+		return maxPoolSize
+	}
+
+	return idealPoolSize
 }
 
 // VoterReward returns the distribution for a voter
 func (q QVFData) VoterReward() sdk.Int {
-	if q.VoterCount == 0 {
+	if q.voterCount == 0 {
 		return sdk.ZeroInt()
 	}
-	return q.VotingPool.QuoRaw(q.VoterCount)
+	return q.votingPool.QuoRaw(q.voterCount)
 }
 
 // MatchReward returns the funding match for a voter
 func (q QVFData) MatchReward() sdk.Dec {
-	if q.VoterCount == 0 {
+	if q.voterCount == 0 {
 		return sdk.ZeroDec()
 	}
-	return q.MatchPool().QuoInt64(q.VoterCount)
+	return q.MatchPool().QuoInt64(q.voterCount)
 }
