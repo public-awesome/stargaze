@@ -12,6 +12,11 @@ func (k Keeper) GetRewardPool(ctx sdk.Context) (rewardPool authexported.ModuleAc
 	return k.accountKeeper.GetModuleAccount(ctx, types.RewardPoolName)
 }
 
+// GetRewardPoolBalance returns the reward pool balance
+func (k Keeper) GetRewardPoolBalance(ctx sdk.Context) sdk.Coin {
+	return k.bankKeeper.GetBalance(ctx, k.GetRewardPool(ctx).GetAddress(), types.DefaultStakeDenom)
+}
+
 // InflateRewardPool process the designated inflation to the reward pool
 func (k Keeper) InflateRewardPool(ctx sdk.Context) error {
 	blockInflationAddr := k.accountKeeper.GetModuleAccount(ctx, auth.FeeCollectorName).GetAddress()
