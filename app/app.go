@@ -48,7 +48,7 @@ import (
 const (
 	appName = "stake"
 	// DefaultStakeDenom for Stakebird
-	DefaultStakeDenom = "ufuel"
+	DefaultStakeDenom = "ustb"
 
 	// DefaultUnbondingPeriod for Stakebird
 	DefaultUnbondingPeriod = "504h"

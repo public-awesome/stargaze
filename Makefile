@@ -21,8 +21,8 @@ create-wallet:
 
 init:
 	staked init stakebird --chain-id localnet-1
-	staked add-genesis-account $(shell stakecli keys show validator -a) 10000000000000000ufuel --keyring-backend test
-	staked gentx --name=validator --amount 10000000000ufuel --keyring-backend test
+	staked add-genesis-account $(shell stakecli keys show validator -a) 10000000000000000ustb --keyring-backend test
+	staked gentx --name=validator --amount 10000000000ustb --keyring-backend test
 	staked collect-gentxs 
 
 install: go.sum
