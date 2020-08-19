@@ -27,7 +27,7 @@ const (
 	VotingPoolName = "voting_pool"
 
 	// DefaultStakeDenom is the staking denom for the zone
-	DefaultStakeDenom = "ufuel"
+	DefaultStakeDenom = "ustb"
 )
 
 var (

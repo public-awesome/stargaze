@@ -47,7 +47,7 @@ import (
 const (
 	appName = "SimApp"
 	// DefaultStakeDenom for rocket hub
-	DefaultStakeDenom = "ufuel"
+	DefaultStakeDenom = "ustb"
 
 	// Bech32MainPrefix defines the Bech32 prefix of an account's address
 	Bech32MainPrefix = "stake"

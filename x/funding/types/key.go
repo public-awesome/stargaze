@@ -15,7 +15,7 @@ const (
 
 	Counterparty      = "ibczeroxfer"
 	CounterpartyDenom = "stake"
-	Denom             = "ufuel"
+	Denom             = "ustb"
 )
 
 var (

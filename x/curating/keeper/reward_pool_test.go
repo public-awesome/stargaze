@@ -19,7 +19,7 @@ func TestInflateRewards(t *testing.T) {
 	blockInflation := app.BankKeeper.GetBalance(ctx, blockInflationAddr, types.DefaultStakeDenom)
 	require.True(t, blockInflation.Amount.IsZero())
 
-	fakeInflationCoin := sdk.NewInt64Coin("ufuel", 1000000)
+	fakeInflationCoin := sdk.NewInt64Coin("ustb", 1000000)
 	err := app.BankKeeper.SetBalance(ctx, blockInflationAddr, fakeInflationCoin)
 	app.AccountKeeper.SetModuleAccount(ctx, blockInflationAcct)
 	require.NoError(t, err)

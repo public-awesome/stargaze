@@ -18,7 +18,7 @@ func TestQVF(t *testing.T) {
 	_, app, ctx := testdata.CreateTestInput()
 
 	// add funds to reward pool
-	funds := sdk.NewInt64Coin("ufuel", 10_000_000)
+	funds := sdk.NewInt64Coin("ustb", 10_000_000)
 	err := app.BankKeeper.MintCoins(ctx, curating.RewardPoolName, sdk.NewCoins(funds))
 	require.NoError(t, err)
 
@@ -41,7 +41,7 @@ func TestQVFZeroVotes(t *testing.T) {
 	_, app, ctx := testdata.CreateTestInput()
 
 	// add funds to reward pool
-	funds := sdk.NewInt64Coin("ufuel", 10_000_000)
+	funds := sdk.NewInt64Coin("ustb", 10_000_000)
 	err := app.BankKeeper.MintCoins(ctx, curating.RewardPoolName, sdk.NewCoins(funds))
 	require.NoError(t, err)
 

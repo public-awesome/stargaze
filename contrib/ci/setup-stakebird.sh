@@ -1,5 +1,5 @@
 GAIA_TAG="goz-phase-3"
-DENOM=ufuel
+DENOM=ustb
 CHAINID=stakebird
 RLYKEY=stake10dmk2q0numq3v0s7vwsx20dm4hq040vsawpj35
 make install

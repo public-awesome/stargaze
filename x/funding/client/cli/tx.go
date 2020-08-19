@@ -39,9 +39,9 @@ func GetCmdBuy(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "buy [amount]",
 		Args:  cobra.MinimumNArgs(1),
-		Short: "Buy FUEL with ATOM reserves from the bonding curve",
+		Short: "Buy STB with ATOM reserves from the bonding curve",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Locks collateral that will be used as reserves for the bonding curve. Mints new FUEL.
+			fmt.Sprintf(`Locks collateral that will be used as reserves for the bonding curve. Mints new STB.
 Example:
 $ %s tx funding buy 1000stake --from mykey
 `,

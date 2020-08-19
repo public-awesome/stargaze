@@ -14,12 +14,12 @@ if [ -z "$2" ]; then
 fi
 
 # Build genesis file incl account for passed address
-coins="100000000000ufuel,100000000000nitro"
+coins="100000000000ustb,100000000000nitro"
 staked init --chain-id $CHAINID $CHAINID
 stakecli keys add validator --keyring-backend="test"
 staked add-genesis-account validator $coins --keyring-backend="test"
 staked add-genesis-account $GENACCT $coins --keyring-backend="test"
-staked gentx --name validator --amount 1000000ufuel --keyring-backend="test"
+staked gentx --name validator --amount 1000000ustb --keyring-backend="test"
 staked collect-gentxs
 
 
