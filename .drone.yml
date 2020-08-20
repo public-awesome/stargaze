@@ -20,7 +20,7 @@ steps:
     commands:
       - apt-get update && apt-get install -y cmake
       - ./contrib/go-test.sh
-      - make build
+      - make build-linux
   - name: coverage
     image: plugins/codecov
     settings:
@@ -149,6 +149,4 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: c5e0634575612a76969f1ac76079fe9e73fe822c2a25a5c79221f5ba5c6d7486
-
-...
+hmac: 4ec0d8a488bb45ba960e8aa9e3197e6c39927339e1ad3ba19af4959f756db8d9
