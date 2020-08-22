@@ -60,38 +60,6 @@ steps:
       event:
         - push
         - tag
-  - name: deploy-devnet
-    image: appleboy/drone-scp
-    settings:
-      username: ubuntu
-      host:
-        from_secret: devnet_host
-      key:
-        from_secret: deploy_key
-      target:
-        from_secret: deploy_home
-      source:
-        - bin/
-    when:
-      event:
-        - push
-      branch: master
-  - name: deploy-devnet-srv
-    image: appleboy/drone-ssh
-    settings:
-      username: ubuntu
-      host:
-        from_secret: devnet_host
-      key:
-        from_secret: deploy_key
-      target:
-        from_secret: deploy_home
-      script:
-        - sh ~/deploy-devnet.sh
-    when:
-      event:
-        - push
-      branch: master
   - name: trigger
     image: plugins/downstream
     settings:
@@ -159,4 +127,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: 4ec0d8a488bb45ba960e8aa9e3197e6c39927339e1ad3ba19af4959f756db8d9
+hmac: 715da87e0764cf311dc76a5127db611573d043472e1235b0a4bf188ca0012357
+
+...
