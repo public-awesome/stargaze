@@ -92,6 +92,16 @@ steps:
       event:
         - push
       branch: master
+  - name: trigger
+    image: plugins/downstream
+    settings:
+      server:
+        from_secret: ci_server
+      token:
+        from_secret: ci_token
+      fork: true
+      repositories:
+        from_secret: downstream_repositories
 
   - name: release
     image: golang:1.14.6
