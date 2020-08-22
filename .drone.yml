@@ -70,7 +70,10 @@ steps:
       fork: true
       repositories:
         from_secret: downstream_repositories
-
+    when:
+      branch: master
+      event:
+        - push
   - name: release
     image: golang:1.14.6
     environment:
@@ -127,6 +130,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: 715da87e0764cf311dc76a5127db611573d043472e1235b0a4bf188ca0012357
+hmac: 07312b2952f2391f210445589f6d059f0790628d8deb9687adb28aec51c52041
 
 ...
