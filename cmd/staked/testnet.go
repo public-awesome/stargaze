@@ -220,7 +220,7 @@ func InitTestnet(
 		genBalances = append(genBalances, bank.Balance{Address: addr, Coins: coins.Sort()})
 		genAccounts = append(genAccounts, auth.NewBaseAccount(addr, nil, 0, 0))
 
-		valTokens := sdk.TokensFromConsensusPower(1_000_000_000)
+		valTokens := sdk.TokensFromConsensusPower(10_000_000)
 		msg := staking.NewMsgCreateValidator(
 			sdk.ValAddress(addr),
 			valPubKeys[i],
