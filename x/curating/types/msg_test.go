@@ -10,7 +10,7 @@ import (
 	"github.com/public-awesome/stakebird/x/curating/types"
 )
 
-func TestPost(t *testing.T) {
+func TestNewMsgPost(t *testing.T) {
 	_, app, ctx := testdata.CreateTestInput()
 
 	vendorID := uint32(1)
@@ -24,4 +24,76 @@ func TestPost(t *testing.T) {
 	require.Equal(t, msg.GetBody(), body)
 	require.Equal(t, msg.GetCreator(), addresses[0])
 	require.Equal(t, msg.GetRewardAccount(), addresses[0])
+}
+
+func TestValidateBasicMsgPost_EmptyBody(t *testing.T) {
+	_, app, ctx := testdata.CreateTestInput()
+
+	vendorID := uint32(1)
+	postID := "100"
+	addresses := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
+	body := ""
+
+	msg := types.NewMsgPost(vendorID, postID, addresses[0], addresses[0], body)
+	require.Equal(t, msg.GetVendorID(), vendorID)
+	require.Equal(t, msg.GetPostID(), postID)
+	require.Equal(t, msg.GetCreator(), addresses[0])
+	require.Equal(t, msg.GetRewardAccount(), addresses[0])
+
+	err := msg.ValidateBasic()
+	require.NotNil(t, err)
+}
+
+func TestValidateBasicMsgPost_EmptyCreator(t *testing.T) {
+	_, app, ctx := testdata.CreateTestInput()
+
+	vendorID := uint32(1)
+	postID := "100"
+	addresses := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
+	body := "lorem ipsum"
+
+	msg := types.NewMsgPost(vendorID, postID, nil, addresses[0], body)
+	require.Equal(t, msg.GetVendorID(), vendorID)
+	require.Equal(t, msg.GetPostID(), postID)
+	require.Equal(t, msg.GetRewardAccount(), addresses[0])
+	require.Equal(t, msg.GetBody(), body)
+
+	err := msg.ValidateBasic()
+	require.NotNil(t, err)
+}
+
+func TestValidateBasicMsgPost_EmptyPostID(t *testing.T) {
+	_, app, ctx := testdata.CreateTestInput()
+
+	vendorID := uint32(1)
+	postID := ""
+	addresses := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
+	body := "lorem ipsum"
+
+	msg := types.NewMsgPost(vendorID, postID, addresses[0], addresses[0], body)
+	require.Equal(t, msg.GetVendorID(), vendorID)
+	require.Equal(t, msg.GetCreator(), addresses[0])
+	require.Equal(t, msg.GetRewardAccount(), addresses[0])
+	require.Equal(t, msg.GetBody(), body)
+
+	err := msg.ValidateBasic()
+	require.NotNil(t, err)
+}
+
+func TestValidateBasicMsgPost_InvalidVendorID(t *testing.T) {
+	_, app, ctx := testdata.CreateTestInput()
+
+	vendorID := uint32(0)
+	postID := "100"
+	addresses := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
+	body := "lorem ipsum"
+
+	msg := types.NewMsgPost(vendorID, postID, addresses[0], addresses[0], body)
+	require.Equal(t, msg.GetPostID(), postID)
+	require.Equal(t, msg.GetCreator(), addresses[0])
+	require.Equal(t, msg.GetRewardAccount(), addresses[0])
+	require.Equal(t, msg.GetBody(), body)
+
+	err := msg.ValidateBasic()
+	require.NotNil(t, err)
 }
