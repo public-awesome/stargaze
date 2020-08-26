@@ -14,7 +14,7 @@ steps:
       - export GL_DEBUG=linters_output
       - export GOPACKAGESPRINTGOLISTERRORS=1
       - go mod download
-      - golangci-lint run -v --timeout 3m
+      - golangci-lint run -v --timeout 3m --tests=false
   - name: test-and-build
     image: golang:1.14.6
     commands:
