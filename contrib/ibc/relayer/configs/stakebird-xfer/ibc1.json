@@ -2,7 +2,7 @@
   "key": "testkey",
   "chain-id": "ibc1",
   "rpc-addr": "http://localhost:26557",
-  "account-prefix": "stake",
+  "account-prefix": "stb",
   "gas": 200000,
   "gas-prices": "0.025ustb",
   "default-denom": "ustb",
