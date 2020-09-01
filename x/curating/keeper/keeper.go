@@ -103,7 +103,7 @@ func (k Keeper) RewardCreator(
 func (k Keeper) SendVotingReward(
 	ctx sdk.Context, account sdk.AccAddress, curatorReward sdk.Int) error {
 
-	rewardCoin := sdk.NewCoin(types.DefaultStakeDenom, curatorReward)
+	rewardCoin := sdk.NewCoin(types.DefaultVoteDenom, curatorReward)
 	k.Logger(ctx).Debug(fmt.Sprintf("curator reward: %v", rewardCoin))
 
 	err := k.bankKeeper.SendCoinsFromModuleToAccount(

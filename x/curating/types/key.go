@@ -28,6 +28,9 @@ const (
 
 	// DefaultStakeDenom is the staking denom for the zone
 	DefaultStakeDenom = "ustb"
+
+	// DefaultVoteDenom is the denom for quadratic voting
+	DefaultVoteDenom = "uatom"
 )
 
 var (
