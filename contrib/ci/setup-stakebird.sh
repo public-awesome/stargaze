@@ -16,7 +16,7 @@ stakecli keys --keyring-backend test add validator
 
 staked add-genesis-account $(stakecli keys --keyring-backend test show validator -a) 100000000000$DENOM,100000000000uatom
 staked add-genesis-account $RLYKEY 100000000000$DENOM,100000000000uatom
-staked gentx --name validator --keyring-backend test --amount 900000000$DENOM,100000000000uatom
+staked gentx --name validator --keyring-backend test --amount 900000000$DENOM
 staked collect-gentxs
 
 staked start --pruning nothing
