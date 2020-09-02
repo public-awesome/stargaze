@@ -4,7 +4,7 @@
   "rpc-addr": "http://stakebird:26657",
   "account-prefix": "stake",
   "gas": 200000,
-  "gas-prices": "0.025ustb",
+  "gas-prices": "0.025ustb,0.025uatom",
   "default-denom": "ustb",
   "trusting-period": "330h"
 }

@@ -84,8 +84,9 @@ func addTestAddrs(app *SimApp, ctx sdk.Context, accNum int, accAmt sdk.Int, stra
 
 	stakeCoin := sdk.NewCoin("stake", accAmt)
 	stbCoin := sdk.NewCoin("ustb", accAmt)
+	atomCoin := sdk.NewCoin("uatom", accAmt)
 	ibcCoin := sdk.NewCoin("transfer/ibczeroxfer/stake", accAmt)
-	initCoins := sdk.NewCoins(stakeCoin, stbCoin, ibcCoin)
+	initCoins := sdk.NewCoins(stakeCoin, stbCoin, ibcCoin, atomCoin)
 	setTotalSupply(app, ctx, accAmt, accNum)
 
 	// fill all the addresses with some coins, set the loose pool tokens simultaneously
