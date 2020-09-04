@@ -10,7 +10,7 @@ require (
 	github.com/gorilla/mux v1.7.4
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.0.0
-	github.com/spf13/viper v1.7.0
+	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.5.1
 	github.com/tendermint/go-amino v0.15.1
 	github.com/tendermint/tendermint v0.33.4

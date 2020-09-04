@@ -38,13 +38,15 @@ import (
 )
 
 var (
-	flagNodeDirPrefix     = "node-dir-prefix"
-	flagNumValidators     = "v"
-	flagOutputDir         = "output-dir"
-	flagNodeDaemonHome    = "node-daemon-home"
-	flagNodeCLIHome       = "node-cli-home"
-	flagStartingIPAddress = "starting-ip-address"
-	defaultKeyringBackend = "test"
+	flagNodeDirPrefix        = "node-dir-prefix"
+	flagNumValidators        = "v"
+	flagOutputDir            = "output-dir"
+	flagNodeDaemonHome       = "node-daemon-home"
+	flagNodeCLIHome          = "node-cli-home"
+	flagStartingIPAddress    = "starting-ip-address"
+	flagInitialCoins         = "coins"
+	flagInitialStakingAmount = "initial-staking-amount"
+	defaultKeyringBackend    = "test"
 )
 
 // get cmd to initialize all files for tendermint testnet and application
@@ -88,6 +90,10 @@ Example:
 		"Home directory of the node's daemon configuration")
 	cmd.Flags().String(flagNodeCLIHome, "stakecli",
 		"Home directory of the node's cli configuration")
+	cmd.Flags().String(flagInitialCoins, fmt.Sprintf("1000000000%s", app.DefaultStakeDenom),
+		"Validator genesis coins: 100000stb,1000000uatom")
+	cmd.Flags().Int64(flagInitialStakingAmount, 100000000,
+		"Flag initial staking amount: 100000000")
 	// nolint:lll
 	cmd.Flags().String(flagStartingIPAddress, "192.168.0.1",
 		"Starting IP address (192.168.0.1 results in persistent peers list ID0@192.168.0.1:46656, ID1@192.168.0.2:46656, ...)")
@@ -211,20 +217,23 @@ func InitTestnet(
 		if err = writeFile(fmt.Sprintf("%v.json", "key_seed"), clientDir, cliPrint); err != nil {
 			return err
 		}
+		stakeDenom := viper.GetString(flagStakeDenom)
 
-		accStakingTokens := sdk.TokensFromConsensusPower(1_000_000_000)
-		coins := sdk.Coins{
-			sdk.NewCoin(app.DefaultStakeDenom, accStakingTokens),
+		initialCoins := viper.GetString(flagInitialCoins)
+		valCoins, err := sdk.ParseCoins(initialCoins)
+		if err != nil {
+			return err
 		}
 
-		genBalances = append(genBalances, bank.Balance{Address: addr, Coins: coins.Sort()})
+		genBalances = append(genBalances, bank.Balance{Address: addr, Coins: valCoins.Sort()})
 		genAccounts = append(genAccounts, auth.NewBaseAccount(addr, nil, 0, 0))
 
-		valTokens := sdk.TokensFromConsensusPower(10_000_000)
+		stakingAmount := viper.GetInt64(flagInitialStakingAmount)
+
 		msg := staking.NewMsgCreateValidator(
 			sdk.ValAddress(addr),
 			valPubKeys[i],
-			sdk.NewCoin(app.DefaultStakeDenom, valTokens),
+			sdk.NewCoin(stakeDenom, sdk.NewInt(stakingAmount)),
 			staking.NewDescription(nodeDirName, "", "", "", ""),
 			staking.NewCommissionRates(sdk.OneDec(), sdk.OneDec(), sdk.OneDec()),
 			sdk.OneInt(),
