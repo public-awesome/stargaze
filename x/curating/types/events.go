@@ -18,6 +18,7 @@ const (
 	AttributeCurationEndTime  = "curation_end_time"
 	AttributeKeyVoteNumber    = "vote_number"
 	AttributeKeyVoteAmount    = "vote_amount"
+	AttributeKeyVoteDenom     = "vote_denom"
 
 	AttributeValueCategory = ModuleName
 )
