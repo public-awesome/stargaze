@@ -15,12 +15,16 @@ steps:
       - export GOPACKAGESPRINTGOLISTERRORS=1
       - go mod download
       - golangci-lint run -v --timeout 3m --tests=false
+    environment:
+      GOPROXY: http://goproxy
   - name: test-and-build
     image: golang:1.14.6
     commands:
       - apt-get update && apt-get install -y cmake
       - ./contrib/go-test.sh
       - make build-linux
+    environment:
+      GOPROXY: http://goproxy
   - name: coverage
     image: plugins/codecov
     settings:
@@ -81,6 +85,8 @@ steps:
         from_secret: github_token
     commands:
       - curl -sL https://git.io/goreleaser | bash
+    environment:
+      GOPROXY: http://goproxy
     when:
       event:
         - tag
@@ -103,15 +109,21 @@ steps:
     detach: true
     commands:
       - ./contrib/ci/setup-gaia.sh
+    environment:
+      GOPROXY: http://goproxy
   - name: stakebird
     image: golang:1.14.6
     commands:
       - ./contrib/ci/setup-stakebird.sh
+    environment:
+      GOPROXY: http://goproxy
     detach: true
   - name: relayer
     image: golang:1.14.6
     commands:
       - /bin/bash ./contrib/ci/setup-relayer.sh
+    environment:
+      GOPROXY: http://goproxy
   - name: slack
     image: plugins/slack
     settings:
@@ -130,6 +142,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: 9ecf48ad24fac3d76fa28cd67f44de522cc66dc1f41eab03a476df65be105740
+hmac: 958910b22adcb95d7993adc6bc91337c92b19b8c6635dccffa57828c689b68c7
 
 ...
