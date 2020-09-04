@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -35,6 +36,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/public-awesome/stakebird/app"
+	"github.com/public-awesome/stakebird/x/curating"
 )
 
 var (
@@ -46,6 +48,7 @@ var (
 	flagStartingIPAddress    = "starting-ip-address"
 	flagInitialCoins         = "coins"
 	flagInitialStakingAmount = "initial-staking-amount"
+	flagCurationWindow       = "curation-window"
 	defaultKeyringBackend    = "test"
 )
 
@@ -106,6 +109,8 @@ Example:
 	cmd.Flags().String(flags.FlagKeyringBackend, defaultKeyringBackend, "Select keyring's backend (os|file|test)")
 	cmd.Flags().String(flagStakeDenom, app.DefaultStakeDenom, "app's stake denom")
 	cmd.Flags().String(flagUnbondingPeriod, app.DefaultUnbondingPeriod, "app's unbonding period")
+	cmd.Flags().String(flagCurationWindow, "72h",
+		"Curation Window for post expiration: 72h, 3h, 90m")
 
 	return cmd
 }
@@ -325,6 +330,18 @@ func initGenFiles(
 
 	bankGenState.Balances = genBalances
 	appGenState[bank.ModuleName] = cdc.MustMarshalJSON(bankGenState)
+
+	// curating module
+	curationWindow := viper.GetString(flagCurationWindow)
+	curationWindowDuration, err := time.ParseDuration(curationWindow)
+	if err != nil {
+		return err
+	}
+
+	var curatingGenState curating.GenesisState
+	cdc.MustUnmarshalJSON(appGenState[curating.ModuleName], &curatingGenState)
+	curatingGenState.Params.CurationWindow = curationWindowDuration
+	appGenState[curating.ModuleName] = cdc.MustMarshalJSON(curatingGenState)
 
 	appGenStateJSON, err := codec.MarshalJSONIndent(cdc, appGenState)
 	if err != nil {
