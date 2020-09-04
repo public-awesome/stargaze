@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/public-awesome/stakebird/x/curating"
-	"github.com/public-awesome/stakebird/x/funding"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
@@ -120,7 +119,6 @@ var (
 		staking.NotBondedPoolName:       {auth.Burner, auth.Staking},
 		gov.ModuleName:                  {auth.Burner},
 		transfer.GetModuleAccountName(): {auth.Minter, auth.Burner},
-		funding.ModuleName:              {auth.Minter, auth.Burner},
 		curating.ModuleName:             nil,
 		curating.RewardPoolName:         {auth.Minter, auth.Burner},
 		curating.VotingPoolName:         {auth.Minter, auth.Burner},
