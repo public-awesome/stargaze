@@ -6,7 +6,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	authclient "github.com/cosmos/cosmos-sdk/x/auth/client"
 	"github.com/gorilla/mux"
 	"github.com/public-awesome/stakebird/x/curating/types"
 )
@@ -64,7 +63,7 @@ func postPostsHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		authclient.WriteGenerateStdTxResponse(w, cliCtx, req.BaseReq, []sdk.Msg{msg})
+		utils.WriteGenerateStdTxResponse(w, cliCtx, BaseReq, []sdk.Msg{msg})
 	}
 }
 
@@ -114,6 +113,6 @@ func postUpvoteHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		authclient.WriteGenerateStdTxResponse(w, cliCtx, req.BaseReq, []sdk.Msg{msg})
+		utils.WriteGenerateStdTxResponse(w, cliCtx, BaseReq, []sdk.Msg{msg})
 	}
 }
