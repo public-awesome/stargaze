@@ -108,6 +108,7 @@ var (
 		upgrade.AppModuleBasic{},
 		evidence.AppModuleBasic{},
 		transfer.AppModuleBasic{},
+		curating.AppModuleBasic{},
 	)
 
 	// module account permissions
