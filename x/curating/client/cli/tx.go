@@ -13,7 +13,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	authclient "github.com/cosmos/cosmos-sdk/x/auth/client"
 	"github.com/public-awesome/stakebird/x/curating/types"
 	"github.com/spf13/cobra"
 )
@@ -99,9 +98,9 @@ $ %s tx curating upvote 1 "2" 5 --from mykey
 			),
 		),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(auth.DefaultTxEncoder(cdc))
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 
 			curator := cliCtx.GetFromAddress()
 
@@ -129,9 +128,13 @@ $ %s tx curating upvote 1 "2" 5 --from mykey
 				}
 			}
 
-			msg := types.NewMsgUpvote(
-				uint32(vendorID), postID, curator, rewardAddr, int32(voteNum))
-			return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			msg := types.NewMsgUpvote(uint32(vendorID), postID, curator, rewardAddr, int32(voteNum))
+			err = msg.ValidateBasic()
+			if err != nil {
+				return err
+			}
+
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
 }
