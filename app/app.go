@@ -4,11 +4,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/public-awesome/stakebird/x/ethbridge"
-
 	"github.com/public-awesome/stakebird/x/curating"
-	"github.com/public-awesome/stakebird/x/funding"
-	"github.com/public-awesome/stakebird/x/oracle"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
@@ -112,10 +108,7 @@ var (
 		upgrade.AppModuleBasic{},
 		evidence.AppModuleBasic{},
 		transfer.AppModuleBasic{},
-		funding.AppModuleBasic{},
 		curating.AppModuleBasic{},
-		oracle.AppModuleBasic{},
-		ethbridge.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -127,11 +120,9 @@ var (
 		staking.NotBondedPoolName:       {auth.Burner, auth.Staking},
 		gov.ModuleName:                  {auth.Burner},
 		transfer.GetModuleAccountName(): {auth.Minter, auth.Burner},
-		funding.ModuleName:              {auth.Minter, auth.Burner},
 		curating.ModuleName:             nil,
 		curating.RewardPoolName:         {auth.Minter, auth.Burner},
 		curating.VotingPoolName:         {auth.Minter, auth.Burner},
-		ethbridge.ModuleName:            {auth.Minter, auth.Burner},
 	}
 
 	// module accounts that are allowed to receive tokens
@@ -172,10 +163,7 @@ type StakebirdApp struct {
 	ibcKeeper        *ibc.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
 	evidenceKeeper   evidence.Keeper
 	transferKeeper   transfer.Keeper
-	fundingKeeper    funding.Keeper
 	curatingKeeper   curating.Keeper
-	oracleKeeper     oracle.Keeper
-	ethKeeper        ethbridge.Keeper
 
 	// make scoped keepers public for test purposes
 	scopedIBCKeeper      capability.ScopedKeeper
@@ -221,7 +209,7 @@ func NewStakebirdApp(
 		mint.StoreKey, distr.StoreKey, slashing.StoreKey,
 		gov.StoreKey, params.StoreKey, ibc.StoreKey, upgrade.StoreKey,
 		evidence.StoreKey, transfer.StoreKey, capability.StoreKey,
-		funding.StoreKey, curating.StoreKey, oracle.StoreKey,
+		curating.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capability.MemStoreKey)
@@ -250,7 +238,6 @@ func NewStakebirdApp(
 	app.subspaces[slashing.ModuleName] = app.paramsKeeper.Subspace(slashing.DefaultParamspace)
 	app.subspaces[gov.ModuleName] = app.paramsKeeper.Subspace(gov.DefaultParamspace).WithKeyTable(gov.ParamKeyTable())
 	app.subspaces[crisis.ModuleName] = app.paramsKeeper.Subspace(crisis.DefaultParamspace)
-	app.subspaces[funding.ModuleName] = app.paramsKeeper.Subspace(funding.DefaultParamspace)
 	app.subspaces[curating.ModuleName] = app.paramsKeeper.Subspace(curating.DefaultParamspace)
 
 	bApp.SetParamStore(app.paramsKeeper.Subspace(baseapp.Paramspace).WithKeyTable(std.ConsensusParamsKeyTable()))
@@ -332,20 +319,10 @@ func NewStakebirdApp(
 	app.evidenceKeeper = *evidenceKeeper
 
 	// create stakebird keepers
-	app.fundingKeeper = funding.NewKeeper(
-		appCodec, keys[funding.StoreKey], app.bankKeeper, app.ibcKeeper.ChannelKeeper,
-		app.distrKeeper, app.subspaces[funding.ModuleName],
-	)
-
 	app.curatingKeeper = curating.NewKeeper(
 		appCodec, keys[curating.StoreKey], app.accountKeeper, app.bankKeeper,
 		app.subspaces[curating.ModuleName],
 	)
-
-	app.oracleKeeper = oracle.NewKeeper(
-		cdc, keys[oracle.StoreKey], app.stakingKeeper, oracle.DefaultConsensusNeeded)
-
-	app.ethKeeper = ethbridge.NewKeeper(cdc, app.bankKeeper, app.oracleKeeper)
 
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
@@ -365,10 +342,7 @@ func NewStakebirdApp(
 		ibc.NewAppModule(app.ibcKeeper),
 		params.NewAppModule(app.paramsKeeper),
 		transferModule,
-		funding.NewAppModule(appCodec, app.fundingKeeper),
 		curating.NewAppModule(appCodec, app.curatingKeeper),
-		oracle.NewAppModule(app.oracleKeeper),
-		ethbridge.NewAppModule(app.oracleKeeper, app.bankKeeper, app.accountKeeper, app.ethKeeper, cdc),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -391,7 +365,7 @@ func NewStakebirdApp(
 		capability.ModuleName, auth.ModuleName, distr.ModuleName, staking.ModuleName, bank.ModuleName,
 		slashing.ModuleName, gov.ModuleName, mint.ModuleName, crisis.ModuleName,
 		ibc.ModuleName, genutil.ModuleName, evidence.ModuleName, transfer.ModuleName,
-		curating.ModuleName, ethbridge.ModuleName,
+		curating.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.crisisKeeper)

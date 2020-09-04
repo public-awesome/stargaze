@@ -43,35 +43,6 @@ To setup the relayer and do a token transfer between chains, run:
 ./contrib/ibc/stakebird-xfer.sh
 ```
 
-### [WIP] Ethereum Interoperability
-
-#### Setup
-```shell script
-cd testnet-contracts/
-
-# Create .env with environment variables required for contract deployment
-cp .env.example .env
-
-# Download dependencies
-yarn
-```
-
-#### Start local Ethereum blockchain simulator (Ganache)
-```shell script
-# Open a new terminal window
-
-# Start local blockchain
-yarn develop
-```
-
-#### Compile and deploy bridge contracts
-```shell script
-# Open a new terminal window (in project root)
-
-# Deploy and set up contracts, mint ERC20 TEST tokens and approve some to bank contract
-yarn peggy:all
-```
-
 ## CLI
 The curating module can be accessed via CLI and REST API.
 

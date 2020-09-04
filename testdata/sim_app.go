@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/public-awesome/stakebird/x/curating"
-	"github.com/public-awesome/stakebird/x/funding"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
@@ -110,7 +109,6 @@ var (
 		upgrade.AppModuleBasic{},
 		evidence.AppModuleBasic{},
 		transfer.AppModuleBasic{},
-		funding.AppModuleBasic{},
 		curating.AppModuleBasic{},
 	)
 
@@ -123,7 +121,6 @@ var (
 		staking.NotBondedPoolName:       {auth.Burner, auth.Staking},
 		gov.ModuleName:                  {auth.Burner},
 		transfer.GetModuleAccountName(): {auth.Minter, auth.Burner},
-		funding.ModuleName:              {auth.Minter, auth.Burner},
 		curating.ModuleName:             nil,
 		curating.RewardPoolName:         {auth.Minter, auth.Burner},
 		curating.VotingPoolName:         {auth.Minter, auth.Burner},
@@ -166,7 +163,6 @@ type SimApp struct {
 	IBCKeeper        *ibc.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
 	EvidenceKeeper   evidence.Keeper
 	TransferKeeper   transfer.Keeper
-	FundingKeeper    funding.Keeper
 	CuratingKeeper   curating.Keeper
 
 	// make scoped keepers public for test purposes
@@ -213,7 +209,7 @@ func NewSimApp(
 		mint.StoreKey, distr.StoreKey, slashing.StoreKey,
 		gov.StoreKey, params.StoreKey, ibc.StoreKey, upgrade.StoreKey,
 		evidence.StoreKey, transfer.StoreKey, capability.StoreKey,
-		funding.StoreKey, curating.StoreKey,
+		curating.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capability.MemStoreKey)
@@ -242,7 +238,6 @@ func NewSimApp(
 	app.subspaces[slashing.ModuleName] = app.ParamsKeeper.Subspace(slashing.DefaultParamspace)
 	app.subspaces[gov.ModuleName] = app.ParamsKeeper.Subspace(gov.DefaultParamspace).WithKeyTable(gov.ParamKeyTable())
 	app.subspaces[crisis.ModuleName] = app.ParamsKeeper.Subspace(crisis.DefaultParamspace)
-	app.subspaces[funding.ModuleName] = app.ParamsKeeper.Subspace(funding.DefaultParamspace)
 	app.subspaces[curating.ModuleName] = app.ParamsKeeper.Subspace(curating.DefaultParamspace)
 
 	bApp.SetParamStore(app.ParamsKeeper.Subspace(baseapp.Paramspace).WithKeyTable(std.ConsensusParamsKeyTable()))
@@ -328,11 +323,6 @@ func NewSimApp(
 	EvidenceKeeper.SetRouter(evidenceRouter)
 	app.EvidenceKeeper = *EvidenceKeeper
 
-	app.FundingKeeper = funding.NewKeeper(
-		appCodec, keys[funding.StoreKey], app.BankKeeper, app.IBCKeeper.ChannelKeeper,
-		app.DistrKeeper, app.subspaces[funding.ModuleName],
-	)
-
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
 	app.mm = module.NewManager(
@@ -351,7 +341,6 @@ func NewSimApp(
 		ibc.NewAppModule(app.IBCKeeper),
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
-		funding.NewAppModule(appCodec, app.FundingKeeper),
 		curating.NewAppModule(appCodec, app.CuratingKeeper),
 	)
 
@@ -373,7 +362,7 @@ func NewSimApp(
 		capability.ModuleName, auth.ModuleName, distr.ModuleName, staking.ModuleName, bank.ModuleName,
 		slashing.ModuleName, gov.ModuleName, mint.ModuleName, crisis.ModuleName,
 		ibc.ModuleName, genutil.ModuleName, evidence.ModuleName, transfer.ModuleName,
-		funding.ModuleName, curating.ModuleName,
+		curating.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
