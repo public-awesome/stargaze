@@ -104,6 +104,7 @@ func (k Keeper) CreatePost(
 			sdk.NewAttribute(types.AttributeKeyBody, body),
 			sdk.NewAttribute(types.AttributeKeyDeposit, d.String()),
 			sdk.NewAttribute(types.AttributeCurationEndTime, curationEndTime.Format(time.RFC3339)),
+			sdk.NewAttribute(types.AttributeKeyVoteDenom, types.DefaultVoteDenom),
 		),
 	})
 

@@ -91,7 +91,7 @@ Example:
 	cmd.Flags().String(flagNodeCLIHome, "stakecli",
 		"Home directory of the node's cli configuration")
 	cmd.Flags().String(flagInitialCoins, fmt.Sprintf("1000000000%s", app.DefaultStakeDenom),
-		"Validator genesis coins: 100000stb,1000000uatom")
+		"Validator genesis coins: 100000ustb,1000000uatom")
 	cmd.Flags().Int64(flagInitialStakingAmount, 100000000,
 		"Flag initial staking amount: 100000000")
 	// nolint:lll
