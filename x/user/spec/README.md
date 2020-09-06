@@ -41,7 +41,7 @@ type Params struct {
 
 ```go
 type Vouch struct {
-	Voucher         sdk.AccAddress
+    Voucher         sdk.AccAddress
     Vouched         sdk.AccAddress
     Comment         string // can be used by the voucher to add some notes
 }
