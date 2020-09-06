@@ -29,7 +29,7 @@ type Params struct {
     // minimum rewards to be earned to unlock the right to vouch
     // it is an array because on networks like Reddit's,
     // the threshold can be defined as a combination of multiple coins
-    ThresholdAmount     []sdk.Coin
+    ThresholdAmount     sdk.Coins
     
     // number of vouches made available to the user,
     // when they reach the threshold amount
