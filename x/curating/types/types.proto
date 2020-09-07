@@ -28,7 +28,6 @@ message Post {
         (gogoproto.moretags) = "yaml:\"reward_account\""
     ];
     bytes body_hash = 5 [(gogoproto.moretags) = "yaml:\"body_hash\""];
-    cosmos_sdk.v1.Coin deposit = 6 [(gogoproto.nullable) = false];
     google.protobuf.Timestamp curating_end_time = 7 [
         (gogoproto.stdtime) = true, 
         (gogoproto.nullable) = false, 
@@ -46,7 +45,6 @@ message Upvote {
         (gogoproto.moretags) = "yaml:\"reward_account\""
     ];
     cosmos_sdk.v1.Coin vote_amount = 3 [(gogoproto.nullable) = false];
-    cosmos_sdk.v1.Coin deposit = 4 [(gogoproto.nullable) = false];
     google.protobuf.Timestamp curated_time = 5 [
         (gogoproto.stdtime) = true, 
         (gogoproto.nullable) = false, 
