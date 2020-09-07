@@ -1,4 +1,4 @@
-# Curating Module Specification
+# user Module Specification
 
 ## Abstract
 
@@ -61,7 +61,7 @@ type Upvote struct {
 _Stores are KVStores in the multi-store. The key to find the store is the first
 parameter in the list_.
 
-We will use one KVStore `curating` to store two mappings:
+We will use one KVStore `user` to store two mappings:
 
 - A mapping from `0x01|vendorID|postID` to `Post`.
 - A mapping from `0x02|vendorID|postID|curator` to `Upvote`.
@@ -212,7 +212,7 @@ Iterate `PostCurationQueue` and process all upvotes that have completed their cu
 | post     | reward_account | {rewardAddress}    |
 | post     | body           | {body}             |
 | post     | deposit        | {deposit}          |
-| message  | module         | curating           |
+| message  | module         | user           |
 | message  | action         | post               |
 | message  | sender         | {creatorAddress}   |
 
@@ -223,7 +223,7 @@ Iterate `PostCurationQueue` and process all upvotes that have completed their cu
 | upvote   | vendor_id     | {vendorID}         |
 | upvote   | post_id       | {postID}           |
 | upvote   | curator       | {curatorAddress}   |
-| message  | module        | curating           |
+| message  | module        | user           |
 | message  | action        | upvote             |
 | message  | sender        | {curatorAddress}   |
 
@@ -234,6 +234,6 @@ Iterate `PostCurationQueue` and process all upvotes that have completed their cu
 | moderate | vendor_id     | {vendorID}         |
 | moderate | post_id       | {postID}           |
 | moderate | moderator     | {moderatorAddress} |
-| message  | module        | curating           |
+| message  | module        | user           |
 | message  | action        | moderate           |
 | message  | sender        | {moderatorAddress} |

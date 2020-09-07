@@ -8,16 +8,16 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	authclient "github.com/cosmos/cosmos-sdk/x/auth/client"
 	"github.com/gorilla/mux"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stakebird/x/user/types"
 )
 
 func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	r.HandleFunc(
-		"/curating/{creatorAddr}/posts", postPostsHandlerFn(cliCtx),
+		"/user/{creatorAddr}/posts", postPostsHandlerFn(cliCtx),
 	).Methods("POST")
 
 	r.HandleFunc(
-		"/curating/{curatorAddr}/upvotes", postUpvoteHandlerFn(cliCtx),
+		"/user/{curatorAddr}/upvotes", postUpvoteHandlerFn(cliCtx),
 	).Methods("POST")
 }
 

@@ -4,7 +4,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	authexported "github.com/cosmos/cosmos-sdk/x/auth/exported"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stakebird/x/user/types"
 )
 
 // GetRewardPool returns the reward pool account.

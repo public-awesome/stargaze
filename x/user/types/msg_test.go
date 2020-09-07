@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/public-awesome/stakebird/testdata"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stakebird/x/user/types"
 )
 
 func TestNewMsgPost(t *testing.T) {

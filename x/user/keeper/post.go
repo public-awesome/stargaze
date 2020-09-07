@@ -7,7 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stakebird/x/user/types"
 )
 
 // GetPost returns post if one exists

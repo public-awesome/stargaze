@@ -8,7 +8,7 @@ import (
 
 func NewPost(
 	vendorID uint32, postIDHash []byte, bodyHash []byte, creator,
-	rewardAccount sdk.AccAddress, deposit sdk.Coin, curatingEndTime time.Time) Post {
+	rewardAccount sdk.AccAddress, deposit sdk.Coin, userEndTime time.Time) Post {
 
 	return Post{
 		VendorID:        vendorID,
@@ -17,6 +17,6 @@ func NewPost(
 		RewardAccount:   rewardAccount,
 		BodyHash:        bodyHash,
 		Deposit:         deposit,
-		CuratingEndTime: curatingEndTime,
+		userEndTime: userEndTime,
 	}
 }

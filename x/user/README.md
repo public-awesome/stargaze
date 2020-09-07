@@ -1,4 +1,4 @@
-# Curating Module
+# User Module
 
-This module provides functionality to curate social media content and earn rewards in cryptocurrency via market-based mechanisms.
+This module provides Sybil resistance.
 

@@ -28,7 +28,7 @@ func NewMsgPost(
 
 // nolint
 func (msg MsgPost) Route() string { return RouterKey }
-func (msg MsgPost) Type() string  { return "curating_post" }
+func (msg MsgPost) Type() string  { return "user_post" }
 func (msg MsgPost) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Creator}
 }
@@ -72,7 +72,7 @@ func NewMsgUpvote(vendorID uint32, postID string, curator, rewardAccount sdk.Acc
 
 // nolint
 func (msg MsgUpvote) Route() string { return RouterKey }
-func (msg MsgUpvote) Type() string  { return "curating_upvote" }
+func (msg MsgUpvote) Type() string  { return "user_upvote" }
 func (msg MsgUpvote) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Curator}
 }

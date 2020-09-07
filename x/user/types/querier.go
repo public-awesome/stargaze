@@ -1,6 +1,6 @@
 package types
 
-// Query endpoints supported by the curating querier
+// Query endpoints supported by the user querier
 const (
 	QueryParams  = "parameters"
 	QueryPost    = "post"

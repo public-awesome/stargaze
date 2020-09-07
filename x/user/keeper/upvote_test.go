@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/public-awesome/stakebird/testdata"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stakebird/x/user/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -17,14 +17,14 @@ func TestCreateUpvote(t *testing.T) {
 	deposit := sdk.NewInt64Coin("ustb", 1000000)
 	addrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(27_000_000))
 
-	err := app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5, deposit)
+	err := app.userKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5, deposit)
 	require.NoError(t, err)
 
-	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
+	_, found, err := app.userKeeper.GetPost(ctx, vendorID, postID)
 	require.NoError(t, err)
 	require.True(t, found, "post should be found")
 
-	upvote, found, err := app.CuratingKeeper.GetUpvote(ctx, vendorID, postID, addrs[0])
+	upvote, found, err := app.userKeeper.GetUpvote(ctx, vendorID, postID, addrs[0])
 	require.NoError(t, err)
 	require.True(t, found, "upvote should be found")
 
@@ -42,17 +42,17 @@ func TestCreateUpvote_ExistingPost(t *testing.T) {
 	deposit := sdk.NewInt64Coin("ustb", 1000000)
 	addrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(27_000_000))
 
-	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", deposit, addrs[1], addrs[1])
+	err := app.userKeeper.CreatePost(ctx, vendorID, postID, "body string", deposit, addrs[1], addrs[1])
 	require.NoError(t, err)
 
-	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5, deposit)
+	err = app.userKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5, deposit)
 	require.NoError(t, err)
 
-	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
+	_, found, err := app.userKeeper.GetPost(ctx, vendorID, postID)
 	require.NoError(t, err)
 	require.True(t, found, "post should be found")
 
-	upvote, found, err := app.CuratingKeeper.GetUpvote(ctx, vendorID, postID, addrs[0])
+	upvote, found, err := app.userKeeper.GetUpvote(ctx, vendorID, postID, addrs[0])
 	require.NoError(t, err)
 	require.True(t, found, "upvote should be found")
 
@@ -73,12 +73,12 @@ func TestCreateUpvote_ExistingUpvote(t *testing.T) {
 	deposit := sdk.NewInt64Coin("ustb", 1000000)
 	addrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(27_000_000))
 
-	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", deposit, addrs[1], addrs[1])
+	err := app.userKeeper.CreatePost(ctx, vendorID, postID, "body string", deposit, addrs[1], addrs[1])
 	require.NoError(t, err)
 
-	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5, deposit)
+	err = app.userKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5, deposit)
 	require.NoError(t, err)
 
-	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5, deposit)
+	err = app.userKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5, deposit)
 	require.Error(t, types.ErrAlreadyVoted, err)
 }

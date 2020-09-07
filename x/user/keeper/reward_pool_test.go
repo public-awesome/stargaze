@@ -6,8 +6,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/public-awesome/stakebird/testdata"
-	"github.com/public-awesome/stakebird/x/curating"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stakebird/x/user"
+	"github.com/public-awesome/stakebird/x/user/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -26,10 +26,10 @@ func TestInflateRewards(t *testing.T) {
 	blockInflation = app.BankKeeper.GetBalance(ctx, blockInflationAddr, types.DefaultStakeDenom)
 	require.Equal(t, fakeInflationCoin, blockInflation)
 
-	err = app.CuratingKeeper.InflateRewardPool(ctx)
+	err = app.userKeeper.InflateRewardPool(ctx)
 	require.NoError(t, err)
 
-	rewardPoolAddr := app.AccountKeeper.GetModuleAccount(ctx, curating.RewardPoolName).GetAddress()
+	rewardPoolAddr := app.AccountKeeper.GetModuleAccount(ctx, user.RewardPoolName).GetAddress()
 	rewardPool := app.BankKeeper.GetBalance(ctx, rewardPoolAddr, types.DefaultStakeDenom)
 	require.Equal(t, "500000", rewardPool.Amount.String())
 }

@@ -8,10 +8,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stakebird/x/user/types"
 )
 
-// NewQuerier creates a new querier for curating clients.
+// NewQuerier creates a new querier for user clients.
 func NewQuerier(k Keeper) sdk.Querier {
 	return func(ctx sdk.Context, path []string, req abci.RequestQuery) ([]byte, error) {
 		switch path[0] {
@@ -22,7 +22,7 @@ func NewQuerier(k Keeper) sdk.Querier {
 		case types.QueryUpvotes:
 			return queryUpvotes(ctx, path[1:], req, k)
 		default:
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "unknown curating query endpoint")
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "unknown user query endpoint")
 		}
 	}
 }

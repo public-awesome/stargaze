@@ -1,9 +1,9 @@
-package curating_test
+package user_test
 
 import (
 	"testing"
 
-	"github.com/public-awesome/stakebird/x/curating"
+	"github.com/public-awesome/stakebird/x/user"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/public-awesome/stakebird/testdata"
@@ -21,11 +21,11 @@ func setup(t *testing.T) (*testdata.SimApp, sdk.Context) {
 	deposit := sdk.NewInt64Coin("ustb", 1_000_000)
 	addrs = testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(10_000_000))
 
-	err := app.CuratingKeeper.CreatePost(
+	err := app.userKeeper.CreatePost(
 		ctx, vendorID, postID, "body string", deposit, addrs[0], addrs[0])
 	require.NoError(t, err)
 
-	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
+	_, found, err := app.userKeeper.GetPost(ctx, vendorID, postID)
 	require.NoError(t, err)
 	require.True(t, found, "post should be found")
 
@@ -34,10 +34,10 @@ func setup(t *testing.T) (*testdata.SimApp, sdk.Context) {
 	require.Equal(t, "9000000", creatorBal.AmountOf("ustb").String())
 
 	// curator1
-	err = app.CuratingKeeper.CreateUpvote(
+	err = app.userKeeper.CreateUpvote(
 		ctx, vendorID, postID, addrs[1], addrs[1], 1, deposit)
 	require.NoError(t, err)
-	_, found, err = app.CuratingKeeper.GetUpvote(ctx, vendorID, postID, addrs[1])
+	_, found, err = app.userKeeper.GetUpvote(ctx, vendorID, postID, addrs[1])
 	require.NoError(t, err)
 	require.True(t, found, "upvote should be found")
 	curator1Bal := app.BankKeeper.GetBalance(ctx, addrs[1], "uatom")
@@ -45,10 +45,10 @@ func setup(t *testing.T) (*testdata.SimApp, sdk.Context) {
 		"10 (initial bal) - 1 (upvote)")
 
 	// curator2
-	err = app.CuratingKeeper.CreateUpvote(
+	err = app.userKeeper.CreateUpvote(
 		ctx, vendorID, postID, addrs[2], addrs[2], 3, deposit)
 	require.NoError(t, err)
-	_, found, err = app.CuratingKeeper.GetUpvote(ctx, vendorID, postID, addrs[2])
+	_, found, err = app.userKeeper.GetUpvote(ctx, vendorID, postID, addrs[2])
 	require.NoError(t, err)
 	require.True(t, found, "upvote should be found")
 	curator2Bal := app.BankKeeper.GetBalance(ctx, addrs[2], "uatom")
@@ -58,7 +58,7 @@ func setup(t *testing.T) (*testdata.SimApp, sdk.Context) {
 	// fast-forward blocktime to simulate end of curation window
 	h := ctx.BlockHeader()
 	h.Time = ctx.BlockHeader().Time.Add(
-		app.CuratingKeeper.GetParams(ctx).CurationWindow)
+		app.userKeeper.GetParams(ctx).CurationWindow)
 	ctx = ctx.WithBlockHeader(h)
 
 	return app, ctx
@@ -80,10 +80,10 @@ func TestEndBlockerExpiringPost(t *testing.T) {
 
 	// add funds to reward pool
 	funds := sdk.NewInt64Coin("ustb", 10_000_000_000)
-	err := app.BankKeeper.MintCoins(ctx, curating.RewardPoolName, sdk.NewCoins(funds))
+	err := app.BankKeeper.MintCoins(ctx, user.RewardPoolName, sdk.NewCoins(funds))
 	require.NoError(t, err)
 
-	curating.EndBlocker(ctx, app.CuratingKeeper)
+	user.EndBlocker(ctx, app.userKeeper)
 
 	// creator match reward = 0.5 * match_reward = 3 STB
 	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ustb")
@@ -108,10 +108,10 @@ func TestEndBlockerExpiringPostWithSmolRewardPool(t *testing.T) {
 
 	// add funds to reward pool
 	funds := sdk.NewInt64Coin("ustb", 1_000_000)
-	err := app.BankKeeper.MintCoins(ctx, curating.RewardPoolName, sdk.NewCoins(funds))
+	err := app.BankKeeper.MintCoins(ctx, user.RewardPoolName, sdk.NewCoins(funds))
 	require.NoError(t, err)
 
-	curating.EndBlocker(ctx, app.CuratingKeeper)
+	user.EndBlocker(ctx, app.userKeeper)
 
 	// creator match reward = 0.5 * match_reward = 3 STB
 	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ustb")

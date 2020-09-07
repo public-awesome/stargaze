@@ -1,8 +1,8 @@
-package curating
+package user
 
 import (
-	"github.com/public-awesome/stakebird/x/curating/keeper"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stakebird/x/user/keeper"
+	"github.com/public-awesome/stakebird/x/user/types"
 )
 
 // constants exposed from module

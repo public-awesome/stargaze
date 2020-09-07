@@ -1,4 +1,4 @@
-package curating
+package user
 
 import (
 	"encoding/json"
@@ -13,9 +13,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/public-awesome/stakebird/x/curating/client/cli"
-	"github.com/public-awesome/stakebird/x/curating/client/rest"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stakebird/x/user/client/cli"
+	"github.com/public-awesome/stakebird/x/user/client/rest"
+	"github.com/public-awesome/stakebird/x/user/types"
 )
 
 // Type check to ensure the interface is properly implemented

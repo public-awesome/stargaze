@@ -1,6 +1,6 @@
 package types
 
-// curating module event types
+// user module event types
 const (
 	EventTypePost             = "post"
 	EventTypeUpvote           = "upvote"

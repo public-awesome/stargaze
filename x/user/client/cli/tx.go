@@ -14,7 +14,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	authclient "github.com/cosmos/cosmos-sdk/x/auth/client"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stakebird/x/user/types"
 	"github.com/spf13/cobra"
 )
 
@@ -45,7 +45,7 @@ func GetCmdPost(cdc *codec.Codec) *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Create a post.
 Example:
-$ %s tx curating post 1 "2" "body" --from mykey
+$ %s tx user post 1 "2" "body" --from mykey
 `,
 				version.ClientName,
 			),
@@ -91,9 +91,9 @@ func GetCmdUpvote(cdc *codec.Codec) *cobra.Command {
 		Args:  cobra.MinimumNArgs(3),
 		Short: "Upvote a post",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Curating a post by upvoting.
+			fmt.Sprintf(`user a post by upvoting.
 Example:
-$ %s tx curating upvote 1 "2" 5 --from mykey
+$ %s tx user upvote 1 "2" 5 --from mykey
 `,
 				version.ClientName,
 			),
