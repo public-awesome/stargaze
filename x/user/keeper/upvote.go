@@ -69,13 +69,6 @@ func (k Keeper) CreateUpvote(
 	value := k.cdc.MustMarshalBinaryBare(&upvote)
 	store.Set(key, value)
 
-	// add vote amount to the voting pool
-	err = k.bankKeeper.SendCoinsFromAccountToModule(
-		ctx, curator, types.VotingPoolName, sdk.NewCoins(voteAmt))
-	if err != nil {
-		return err
-	}
-
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeUpvote,

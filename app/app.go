@@ -375,7 +375,7 @@ func NewStakebirdApp(
 		capability.ModuleName, auth.ModuleName, distr.ModuleName, staking.ModuleName, bank.ModuleName,
 		slashing.ModuleName, gov.ModuleName, mint.ModuleName, crisis.ModuleName,
 		ibc.ModuleName, genutil.ModuleName, evidence.ModuleName, transfer.ModuleName,
-		curating.ModuleName,
+		curating.ModuleName, user.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.crisisKeeper)
