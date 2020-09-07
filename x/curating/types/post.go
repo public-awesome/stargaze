@@ -6,9 +6,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+// NewPost allocates and returns a new `Post` struct
 func NewPost(
 	vendorID uint32, postIDHash []byte, bodyHash []byte, creator,
-	rewardAccount sdk.AccAddress, deposit sdk.Coin, curatingEndTime time.Time) Post {
+	rewardAccount sdk.AccAddress, curatingEndTime time.Time) Post {
 
 	return Post{
 		VendorID:        vendorID,
@@ -16,7 +17,6 @@ func NewPost(
 		Creator:         creator,
 		RewardAccount:   rewardAccount,
 		BodyHash:        bodyHash,
-		Deposit:         deposit,
 		CuratingEndTime: curatingEndTime,
 	}
 }

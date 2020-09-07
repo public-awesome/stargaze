@@ -4,14 +4,13 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/public-awesome/stakebird/x/curating/types"
 )
 
 // CreateUpvote performs an upvote operation
 func (k Keeper) CreateUpvote(
 	ctx sdk.Context, vendorID uint32, postID string, curator,
-	rewardAccount sdk.AccAddress, voteNum int32, deposit sdk.Coin) error {
+	rewardAccount sdk.AccAddress, voteNum int32) error {
 
 	err := k.validateVendorID(ctx, vendorID)
 	if err != nil {
@@ -19,11 +18,6 @@ func (k Keeper) CreateUpvote(
 	}
 	if rewardAccount.Empty() {
 		rewardAccount = curator
-	}
-	ud := k.GetParams(ctx).UpvoteDeposit
-	if !deposit.IsEqual(ud) {
-		return sdkerrors.Wrap(
-			sdkerrors.ErrInsufficientFunds, fmt.Sprintf("%v != %v", deposit, ud))
 	}
 
 	// hash postID to avoid non-determinism
@@ -50,19 +44,14 @@ func (k Keeper) CreateUpvote(
 	if !found {
 		// no deposit is locked
 		// this curator gets both creator + curator rewards (sent to reward_account)
-		err = k.CreatePost(ctx, vendorID, postID, "", sdk.Coin{}, nil, rewardAccount)
+		err = k.CreatePost(ctx, vendorID, postID, "", nil, rewardAccount)
 		if err != nil {
 			return err
 		}
 	}
-	err = k.lockDeposit(ctx, curator, deposit)
-	if err != nil {
-		return err
-	}
 
 	voteAmt := k.voteAmount(ctx, int64(voteNum))
-	upvote := types.NewUpvote(
-		curator, rewardAccount, voteAmt, deposit, ctx.BlockTime())
+	upvote := types.NewUpvote(curator, rewardAccount, voteAmt, ctx.BlockTime())
 
 	store := ctx.KVStore(k.storeKey)
 	key := types.UpvoteKey(vendorID, postIDHash, curator)
@@ -85,7 +74,6 @@ func (k Keeper) CreateUpvote(
 			sdk.NewAttribute(types.AttributeKeyRewardAccount, rewardAccount.String()),
 			sdk.NewAttribute(types.AttributeKeyVoteNumber, fmt.Sprintf("%d", voteNum)),
 			sdk.NewAttribute(types.AttributeKeyVoteAmount, voteAmt.String()),
-			sdk.NewAttribute(types.AttributeKeyDeposit, deposit.String()),
 		),
 	})
 

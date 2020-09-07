@@ -18,10 +18,9 @@ func TestPost(t *testing.T) {
 	_, app, ctx := testdata.CreateTestInput()
 
 	vendorID := uint32(1)
-	deposit := sdk.NewInt64Coin("ustb", 1000000)
 	addrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
 
-	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", deposit, addrs[0], addrs[0])
+	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], addrs[0])
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -29,7 +28,7 @@ func TestPost(t *testing.T) {
 	require.True(t, found, "post should be found")
 
 	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ustb")
-	require.Equal(t, "0", creatorBal.Amount.String())
+	require.Equal(t, "1000000", creatorBal.Amount.String())
 
 	vps := app.CuratingKeeper.GetCurationQueueTimeSlice(ctx, ctx.BlockTime())
 	require.NotNil(t, vps)
@@ -39,10 +38,9 @@ func TestPost_EmptyCreator(t *testing.T) {
 	_, app, ctx := testdata.CreateTestInput()
 
 	vendorID := uint32(1)
-	deposit := sdk.NewInt64Coin("ustb", 1000000)
 	addrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
 
-	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", deposit, nil, addrs[1])
+	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", nil, addrs[1])
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -63,10 +61,9 @@ func TestPost_EmptyRewardAccount(t *testing.T) {
 	_, app, ctx := testdata.CreateTestInput()
 
 	vendorID := uint32(1)
-	deposit := sdk.NewInt64Coin("ustb", 1000000)
 	addrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
 
-	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", deposit, addrs[0], nil)
+	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], nil)
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -74,7 +71,7 @@ func TestPost_EmptyRewardAccount(t *testing.T) {
 	require.True(t, found, "post should be found")
 
 	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ustb")
-	require.Equal(t, "0", creatorBal.Amount.String())
+	require.Equal(t, "1000000", creatorBal.Amount.String())
 
 	vps := app.CuratingKeeper.GetCurationQueueTimeSlice(ctx, ctx.BlockTime())
 	require.NotNil(t, vps)
@@ -84,10 +81,9 @@ func TestPost_WithRewardAccount(t *testing.T) {
 	_, app, ctx := testdata.CreateTestInput()
 
 	vendorID := uint32(1)
-	deposit := sdk.NewInt64Coin("ustb", 1000000)
 	addrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
 
-	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", deposit, addrs[0], addrs[1])
+	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], addrs[1])
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -95,7 +91,7 @@ func TestPost_WithRewardAccount(t *testing.T) {
 	require.True(t, found, "post should be found")
 
 	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ustb")
-	require.Equal(t, "0", creatorBal.Amount.String())
+	require.Equal(t, "1000000", creatorBal.Amount.String())
 
 	rewardAccountBal := app.BankKeeper.GetBalance(ctx, addrs[1], "ustb")
 	require.Equal(t, "1000000", rewardAccountBal.Amount.String())
@@ -108,10 +104,9 @@ func TestDeletePost(t *testing.T) {
 	_, app, ctx := testdata.CreateTestInput()
 
 	vendorID := uint32(1)
-	deposit := sdk.NewInt64Coin("ustb", 1000000)
 	addrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
 
-	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", deposit, addrs[0], addrs[1])
+	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], addrs[1])
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)

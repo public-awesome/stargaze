@@ -28,7 +28,6 @@ message Post {
         (gogoproto.moretags) = "yaml:\"reward_account\""
     ];
     bytes body_hash = 5 [(gogoproto.moretags) = "yaml:\"body_hash\""];
-    cosmos_sdk.v1.Coin deposit = 6 [(gogoproto.nullable) = false];
     google.protobuf.Timestamp curating_end_time = 7 [
         (gogoproto.stdtime) = true, 
         (gogoproto.nullable) = false, 
@@ -46,7 +45,6 @@ message Upvote {
         (gogoproto.moretags) = "yaml:\"reward_account\""
     ];
     cosmos_sdk.v1.Coin vote_amount = 3 [(gogoproto.nullable) = false];
-    cosmos_sdk.v1.Coin deposit = 4 [(gogoproto.nullable) = false];
     google.protobuf.Timestamp curated_time = 5 [
         (gogoproto.stdtime) = true, 
         (gogoproto.nullable) = false, 
@@ -100,29 +98,6 @@ message MsgUpvote {
         (gogoproto.moretags) = "yaml:\"reward_account\""
     ];
     int32 vote_num = 5;
-}
-
-message MsgModerate {
-    option (gogoproto.equal) = true;
-
-    uint32 vendor_id = 1 [
-        (gogoproto.customname) = "VendorID",
-        (gogoproto.moretags)   = "yaml:\"vendor_id\"",
-        (gogoproto.jsontag)    = "vendor_id"
-    ];
-    string post_id = 2 [
-        (gogoproto.customname) = "PostID",
-        (gogoproto.moretags)   = "yaml:\"post_id\"",
-        (gogoproto.jsontag)    = "post_id"
-    ];
-    bytes moderator = 3 [
-        (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
-        (gogoproto.moretags) = "yaml:\"moderator\""
-    ];
-    bytes reward_account = 4 [
-        (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
-        (gogoproto.moretags) = "yaml:\"reward_account\""
-    ];
 }
 
 // VPPair is struct that just has a vendor_id, post_id pair with no other data.
