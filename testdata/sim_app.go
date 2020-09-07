@@ -242,6 +242,7 @@ func NewSimApp(
 	app.subspaces[gov.ModuleName] = app.ParamsKeeper.Subspace(gov.DefaultParamspace).WithKeyTable(gov.ParamKeyTable())
 	app.subspaces[crisis.ModuleName] = app.ParamsKeeper.Subspace(crisis.DefaultParamspace)
 	app.subspaces[curating.ModuleName] = app.ParamsKeeper.Subspace(curating.DefaultParamspace)
+	app.subspaces[user.ModuleName] = app.ParamsKeeper.Subspace(user.DefaultParamspace)
 
 	bApp.SetParamStore(app.ParamsKeeper.Subspace(baseapp.Paramspace).WithKeyTable(std.ConsensusParamsKeyTable()))
 
