@@ -11,12 +11,12 @@ func NewPost(
 	rewardAccount sdk.AccAddress, deposit sdk.Coin, userEndTime time.Time) Post {
 
 	return Post{
-		VendorID:        vendorID,
-		PostIDHash:      postIDHash,
-		Creator:         creator,
-		RewardAccount:   rewardAccount,
-		BodyHash:        bodyHash,
-		Deposit:         deposit,
-		userEndTime: userEndTime,
+		VendorID:      vendorID,
+		PostIDHash:    postIDHash,
+		Creator:       creator,
+		RewardAccount: rewardAccount,
+		BodyHash:      bodyHash,
+		Deposit:       deposit,
+		userEndTime:   userEndTime,
 	}
 }
