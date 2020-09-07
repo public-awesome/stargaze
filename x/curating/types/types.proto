@@ -100,29 +100,6 @@ message MsgUpvote {
     int32 vote_num = 5;
 }
 
-message MsgModerate {
-    option (gogoproto.equal) = true;
-
-    uint32 vendor_id = 1 [
-        (gogoproto.customname) = "VendorID",
-        (gogoproto.moretags)   = "yaml:\"vendor_id\"",
-        (gogoproto.jsontag)    = "vendor_id"
-    ];
-    string post_id = 2 [
-        (gogoproto.customname) = "PostID",
-        (gogoproto.moretags)   = "yaml:\"post_id\"",
-        (gogoproto.jsontag)    = "post_id"
-    ];
-    bytes moderator = 3 [
-        (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
-        (gogoproto.moretags) = "yaml:\"moderator\""
-    ];
-    bytes reward_account = 4 [
-        (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
-        (gogoproto.moretags) = "yaml:\"reward_account\""
-    ];
-}
-
 // VPPair is struct that just has a vendor_id, post_id pair with no other data.
 // It is intended to be used as a marshalable pointer. For example, a VPPair can
 // be used to construct the key to getting an Upvote from state.
