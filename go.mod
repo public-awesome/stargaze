@@ -16,5 +16,5 @@ require (
 	github.com/tendermint/tm-db v0.5.1
 	golang.org/x/crypto v0.0.0-20200707235045-ab33eee955e0 // indirect
 	golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae // indirect
-	gopkg.in/yaml.v2 v2.2.8
+	gopkg.in/yaml.v2 v2.3.0
 )
