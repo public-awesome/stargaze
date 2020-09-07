@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/public-awesome/stakebird/x/curating"
+	"github.com/public-awesome/stakebird/x/user"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
@@ -110,6 +111,7 @@ var (
 		evidence.AppModuleBasic{},
 		transfer.AppModuleBasic{},
 		curating.AppModuleBasic{},
+		user.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -164,6 +166,7 @@ type SimApp struct {
 	EvidenceKeeper   evidence.Keeper
 	TransferKeeper   transfer.Keeper
 	CuratingKeeper   curating.Keeper
+	UserKeeper       user.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper      capability.ScopedKeeper
@@ -209,7 +212,7 @@ func NewSimApp(
 		mint.StoreKey, distr.StoreKey, slashing.StoreKey,
 		gov.StoreKey, params.StoreKey, ibc.StoreKey, upgrade.StoreKey,
 		evidence.StoreKey, transfer.StoreKey, capability.StoreKey,
-		curating.StoreKey,
+		curating.StoreKey, user.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capability.MemStoreKey)
@@ -239,6 +242,7 @@ func NewSimApp(
 	app.subspaces[gov.ModuleName] = app.ParamsKeeper.Subspace(gov.DefaultParamspace).WithKeyTable(gov.ParamKeyTable())
 	app.subspaces[crisis.ModuleName] = app.ParamsKeeper.Subspace(crisis.DefaultParamspace)
 	app.subspaces[curating.ModuleName] = app.ParamsKeeper.Subspace(curating.DefaultParamspace)
+	app.subspaces[user.ModuleName] = app.ParamsKeeper.Subspace(user.DefaultParamspace)
 
 	bApp.SetParamStore(app.ParamsKeeper.Subspace(baseapp.Paramspace).WithKeyTable(std.ConsensusParamsKeyTable()))
 
@@ -294,6 +298,11 @@ func NewSimApp(
 		app.BankKeeper, app.subspaces[curating.ModuleName],
 	)
 
+	app.UserKeeper = user.NewKeeper(
+		appCodec, keys[user.StoreKey], app.AccountKeeper,
+		app.BankKeeper, app.subspaces[user.ModuleName],
+	)
+
 	// Create IBC Keeper
 	app.IBCKeeper = ibc.NewKeeper(
 		app.cdc, appCodec, keys[ibc.StoreKey], app.StakingKeeper, ScopedIBCKeeper,
@@ -342,6 +351,7 @@ func NewSimApp(
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
 		curating.NewAppModule(appCodec, app.CuratingKeeper),
+		user.NewAppModule(appCodec, app.UserKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -362,7 +372,7 @@ func NewSimApp(
 		capability.ModuleName, auth.ModuleName, distr.ModuleName, staking.ModuleName, bank.ModuleName,
 		slashing.ModuleName, gov.ModuleName, mint.ModuleName, crisis.ModuleName,
 		ibc.ModuleName, genutil.ModuleName, evidence.ModuleName, transfer.ModuleName,
-		curating.ModuleName,
+		curating.ModuleName, user.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)

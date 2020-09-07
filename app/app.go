@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/public-awesome/stakebird/x/curating"
+	"github.com/public-awesome/stakebird/x/user"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
@@ -109,6 +110,7 @@ var (
 		evidence.AppModuleBasic{},
 		transfer.AppModuleBasic{},
 		curating.AppModuleBasic{},
+		user.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -164,6 +166,7 @@ type StakebirdApp struct {
 	evidenceKeeper   evidence.Keeper
 	transferKeeper   transfer.Keeper
 	curatingKeeper   curating.Keeper
+	userKeeper       user.Keeper
 
 	// make scoped keepers public for test purposes
 	scopedIBCKeeper      capability.ScopedKeeper
@@ -209,7 +212,7 @@ func NewStakebirdApp(
 		mint.StoreKey, distr.StoreKey, slashing.StoreKey,
 		gov.StoreKey, params.StoreKey, ibc.StoreKey, upgrade.StoreKey,
 		evidence.StoreKey, transfer.StoreKey, capability.StoreKey,
-		curating.StoreKey,
+		curating.StoreKey, user.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capability.MemStoreKey)
@@ -239,6 +242,7 @@ func NewStakebirdApp(
 	app.subspaces[gov.ModuleName] = app.paramsKeeper.Subspace(gov.DefaultParamspace).WithKeyTable(gov.ParamKeyTable())
 	app.subspaces[crisis.ModuleName] = app.paramsKeeper.Subspace(crisis.DefaultParamspace)
 	app.subspaces[curating.ModuleName] = app.paramsKeeper.Subspace(curating.DefaultParamspace)
+	app.subspaces[user.ModuleName] = app.paramsKeeper.Subspace(user.DefaultParamspace)
 
 	bApp.SetParamStore(app.paramsKeeper.Subspace(baseapp.Paramspace).WithKeyTable(std.ConsensusParamsKeyTable()))
 
@@ -324,6 +328,11 @@ func NewStakebirdApp(
 		app.subspaces[curating.ModuleName],
 	)
 
+	app.userKeeper = user.NewKeeper(
+		appCodec, keys[user.StoreKey], app.accountKeeper, app.bankKeeper,
+		app.subspaces[user.ModuleName],
+	)
+
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
 	app.mm = module.NewManager(
@@ -343,6 +352,7 @@ func NewStakebirdApp(
 		params.NewAppModule(app.paramsKeeper),
 		transferModule,
 		curating.NewAppModule(appCodec, app.curatingKeeper),
+		user.NewAppModule(appCodec, app.userKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -365,7 +375,7 @@ func NewStakebirdApp(
 		capability.ModuleName, auth.ModuleName, distr.ModuleName, staking.ModuleName, bank.ModuleName,
 		slashing.ModuleName, gov.ModuleName, mint.ModuleName, crisis.ModuleName,
 		ibc.ModuleName, genutil.ModuleName, evidence.ModuleName, transfer.ModuleName,
-		curating.ModuleName,
+		curating.ModuleName, user.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.crisisKeeper)
