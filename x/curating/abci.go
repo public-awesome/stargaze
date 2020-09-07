@@ -24,23 +24,12 @@ func EndBlocker(ctx sdk.Context, k Keeper) {
 		k.Logger(ctx).Info(
 			fmt.Sprintf("Processing vendor %d post %v", post.VendorID, post.PostIDHash))
 
-		// return creator deposit
-		err := k.RefundDeposit(ctx, post.Creator, post.Deposit)
-		if err != nil {
-			panic(err)
-		}
-
 		qv := NewQVFData(ctx, k)
 
 		// iterate upvoters, returning deposits, and tallying upvotes
 		k.IterateUpvotes(ctx, post.VendorID, post.PostIDHash,
 			func(upvote types.Upvote) (stop bool) {
-				// return curator deposit
-				err = k.RefundDeposit(ctx, upvote.Curator, upvote.Deposit)
-				if err != nil {
-					panic(err)
-				}
-
+				var err error
 				qv, err = qv.TallyVote(upvote.VoteAmount.Amount)
 				if err != nil {
 					panic(err)
@@ -49,7 +38,7 @@ func EndBlocker(ctx sdk.Context, k Keeper) {
 				return false
 			})
 
-		err = k.RewardCreator(ctx, post.RewardAccount, qv.MatchPool())
+		err := k.RewardCreator(ctx, post.RewardAccount, qv.MatchPool())
 		if err != nil {
 			panic(err)
 		}

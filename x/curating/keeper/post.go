@@ -6,7 +6,6 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/public-awesome/stakebird/x/curating/types"
 )
 
@@ -40,10 +39,8 @@ func (k Keeper) GetPostZ(
 
 // CreatePost registers a post on-chain and starts the curation period.
 // It can be called from CreateUpvote() when a post doesn't exist yet.
-// In this case, the creator and deposit will be nil.
 func (k Keeper) CreatePost(
-	ctx sdk.Context, vendorID uint32, postID, body string, deposit sdk.Coin,
-	creator, rewardAccount sdk.AccAddress) error {
+	ctx sdk.Context, vendorID uint32, postID, body string, creator, rewardAccount sdk.AccAddress) error {
 
 	err := k.validateVendorID(ctx, vendorID)
 	if err != nil {
@@ -51,13 +48,6 @@ func (k Keeper) CreatePost(
 	}
 	if rewardAccount.Empty() {
 		rewardAccount = creator
-	}
-	if deposit.IsValid() {
-		pd := k.GetParams(ctx).PostDeposit
-		if !deposit.IsEqual(pd) {
-			return sdkerrors.Wrap(
-				sdkerrors.ErrInsufficientFunds, fmt.Sprintf("%v != %v", deposit, pd))
-		}
 	}
 
 	// hash postID to avoid non-determinism
@@ -71,17 +61,10 @@ func (k Keeper) CreatePost(
 		return err
 	}
 
-	if deposit.IsValid() && !creator.Empty() {
-		err = k.lockDeposit(ctx, creator, deposit)
-		if err != nil {
-			return err
-		}
-	}
-
 	curationWindow := k.GetParams(ctx).CurationWindow
 	curationEndTime := ctx.BlockTime().Add(curationWindow)
 	post := types.NewPost(
-		vendorID, postIDHash, bodyHash, creator, rewardAccount, deposit, curationEndTime)
+		vendorID, postIDHash, bodyHash, creator, rewardAccount, curationEndTime)
 
 	store := ctx.KVStore(k.storeKey)
 	key := types.PostKey(vendorID, postIDHash)
@@ -90,10 +73,6 @@ func (k Keeper) CreatePost(
 
 	k.InsertCurationQueue(ctx, vendorID, postIDHash, curationEndTime)
 
-	d := sdk.NewInt64Coin(types.DefaultStakeDenom, 0)
-	if deposit.IsValid() {
-		d = deposit
-	}
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypePost,
@@ -102,7 +81,6 @@ func (k Keeper) CreatePost(
 			sdk.NewAttribute(types.AttributeKeyCreator, creator.String()),
 			sdk.NewAttribute(types.AttributeKeyRewardAccount, rewardAccount.String()),
 			sdk.NewAttribute(types.AttributeKeyBody, body),
-			sdk.NewAttribute(types.AttributeKeyDeposit, d.String()),
 			sdk.NewAttribute(types.AttributeCurationEndTime, curationEndTime.Format(time.RFC3339)),
 			sdk.NewAttribute(types.AttributeKeyVoteDenom, types.DefaultVoteDenom),
 		),

@@ -18,11 +18,9 @@ func setup(t *testing.T) (*testdata.SimApp, sdk.Context) {
 	postID := "500"
 	vendorID := uint32(1)
 
-	deposit := sdk.NewInt64Coin("ustb", 1_000_000)
 	addrs = testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(10_000_000))
 
-	err := app.CuratingKeeper.CreatePost(
-		ctx, vendorID, postID, "body string", deposit, addrs[0], addrs[0])
+	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], addrs[0])
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -31,11 +29,10 @@ func setup(t *testing.T) (*testdata.SimApp, sdk.Context) {
 
 	creatorBal := app.BankKeeper.GetAllBalances(ctx, addrs[0])
 	require.Equal(t, "10000000", creatorBal.AmountOf("uatom").String())
-	require.Equal(t, "9000000", creatorBal.AmountOf("ustb").String())
+	require.Equal(t, "10000000", creatorBal.AmountOf("ustb").String())
 
 	// curator1
-	err = app.CuratingKeeper.CreateUpvote(
-		ctx, vendorID, postID, addrs[1], addrs[1], 1, deposit)
+	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[1], addrs[1], 1)
 	require.NoError(t, err)
 	_, found, err = app.CuratingKeeper.GetUpvote(ctx, vendorID, postID, addrs[1])
 	require.NoError(t, err)
@@ -45,8 +42,7 @@ func setup(t *testing.T) (*testdata.SimApp, sdk.Context) {
 		"10 (initial bal) - 1 (upvote)")
 
 	// curator2
-	err = app.CuratingKeeper.CreateUpvote(
-		ctx, vendorID, postID, addrs[2], addrs[2], 3, deposit)
+	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[2], addrs[2], 3)
 	require.NoError(t, err)
 	_, found, err = app.CuratingKeeper.GetUpvote(ctx, vendorID, postID, addrs[2])
 	require.NoError(t, err)

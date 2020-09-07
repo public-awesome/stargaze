@@ -19,9 +19,6 @@ const (
 
 // Default vars
 var (
-	DefaultPostDeposit                     = sdk.NewInt64Coin(DefaultStakeDenom, 1000000)
-	DefaultUpvoteDeposit                   = sdk.NewInt64Coin(DefaultStakeDenom, 1000000)
-	DefaultModerateDeposit                 = sdk.NewInt64Coin(DefaultStakeDenom, 1000000)
 	DefaultVoteAmount                      = sdk.NewInt64Coin(DefaultVoteDenom, 1000000)
 	DefaultRewardPoolAllocation            = sdk.NewDecWithPrec(50, 2)
 	DefaultCreatorAllocation               = sdk.NewDecWithPrec(50, 2)
@@ -31,9 +28,6 @@ var (
 // Parameter store keys
 var (
 	KeyCurationWindow             = []byte("CurationWindow")
-	KeyPostDeposit                = []byte("PostDeposit")
-	KeyUpvoteDeposit              = []byte("UpvoteDeposit")
-	KeyModerateDeposit            = []byte("ModerateDeposit")
 	KeyVoteAmount                 = []byte("VoteAmount")
 	KeyMaxNumVotes                = []byte("MaxNumVotes")
 	KeyMaxVendors                 = []byte("MaxVendors")
@@ -45,9 +39,6 @@ var (
 // Params - used for initializing default parameter for stake at genesis
 type Params struct {
 	CurationWindow             time.Duration `json:"curation_window" yaml:"curation_window"`
-	PostDeposit                sdk.Coin      `json:"post_deposit" yaml:"post_deposit"`
-	UpvoteDeposit              sdk.Coin      `json:"upvote_deposit" yaml:"upvote_depsoit"`
-	ModerateDeposit            sdk.Coin      `json:"moderate_deposit" yaml:"moderate_deposit"`
 	VoteAmount                 sdk.Coin      `json:"vote_amount" yaml:"vote_amount"`
 	MaxNumVotes                uint32        `json:"max_num_votes" yaml:"max_num_votes"`
 	MaxVendors                 uint32        `json:"max_vendors" yaml:"max_vendors"`
@@ -58,15 +49,12 @@ type Params struct {
 
 // NewParams creates a new Params object
 func NewParams(
-	curationWindow time.Duration, postDeposit, upvoteDeposit, moderateDeposit, voteAmount sdk.Coin,
+	curationWindow time.Duration, voteAmount sdk.Coin,
 	maxNumVotes, maxVendors uint32, rewardPoolAllocation, creatorAllocation,
 	rewardPoolCurationMaxAllocation sdk.Dec) Params {
 
 	return Params{
 		CurationWindow:             curationWindow,
-		PostDeposit:                postDeposit,
-		UpvoteDeposit:              upvoteDeposit,
-		ModerateDeposit:            moderateDeposit,
 		VoteAmount:                 voteAmount,
 		MaxNumVotes:                maxNumVotes,
 		MaxVendors:                 maxVendors,
@@ -89,9 +77,6 @@ func (p Params) String() string {
 func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
 		paramtypes.NewParamSetPair(KeyCurationWindow, &p.CurationWindow, validateCurationWindow),
-		paramtypes.NewParamSetPair(KeyPostDeposit, &p.PostDeposit, validatePostDeposit),
-		paramtypes.NewParamSetPair(KeyUpvoteDeposit, &p.UpvoteDeposit, validateUpvoteDeposit),
-		paramtypes.NewParamSetPair(KeyModerateDeposit, &p.ModerateDeposit, validateModerateDeposit),
 		paramtypes.NewParamSetPair(KeyVoteAmount, &p.VoteAmount, validateVoteAmount),
 		paramtypes.NewParamSetPair(KeyMaxNumVotes, &p.MaxNumVotes, validateMaxNumVotes),
 		paramtypes.NewParamSetPair(KeyMaxVendors, &p.MaxVendors, validateMaxVendors),
@@ -104,23 +89,13 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 // DefaultParams defines the parameters for this module
 func DefaultParams() Params {
 	return NewParams(
-		DefaultCurationWindow, DefaultPostDeposit, DefaultUpvoteDeposit, DefaultModerateDeposit,
-		DefaultVoteAmount, DefaultMaxNumVotes, DefaultMaxVendors, DefaultRewardPoolAllocation,
-		DefaultCreatorAllocation, DefaultRewardPoolCurationMaxAllocation)
+		DefaultCurationWindow, DefaultVoteAmount, DefaultMaxNumVotes, DefaultMaxVendors,
+		DefaultRewardPoolAllocation, DefaultCreatorAllocation, DefaultRewardPoolCurationMaxAllocation)
 }
 
 // Validate validates all params
 func (p Params) Validate() error {
 	if err := validateCurationWindow(p.CurationWindow); err != nil {
-		return err
-	}
-	if err := validatePostDeposit(p.PostDeposit); err != nil {
-		return err
-	}
-	if err := validateUpvoteDeposit(p.UpvoteDeposit); err != nil {
-		return err
-	}
-	if err := validateModerateDeposit(p.ModerateDeposit); err != nil {
 		return err
 	}
 	if err := validateVoteAmount(p.VoteAmount); err != nil {
@@ -143,45 +118,6 @@ func (p Params) Validate() error {
 	}
 	if err := validateRewardPoolCurationMaxAllocation(p.RewardPoolCurationMaxAlloc); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-func validatePostDeposit(i interface{}) error {
-	v, ok := i.(sdk.Coin)
-	if !ok {
-		return fmt.Errorf("invalid parameter type: %T", i)
-	}
-
-	if !v.IsValid() {
-		return fmt.Errorf("invalid post deposit: %s", v)
-	}
-
-	return nil
-}
-
-func validateUpvoteDeposit(i interface{}) error {
-	v, ok := i.(sdk.Coin)
-	if !ok {
-		return fmt.Errorf("invalid parameter type: %T", i)
-	}
-
-	if !v.IsValid() {
-		return fmt.Errorf("invalid upvote deposit: %s", v)
-	}
-
-	return nil
-}
-
-func validateModerateDeposit(i interface{}) error {
-	v, ok := i.(sdk.Coin)
-	if !ok {
-		return fmt.Errorf("invalid parameter type: %T", i)
-	}
-
-	if !v.IsValid() {
-		return fmt.Errorf("invalid moderate deposit: %s", v)
 	}
 
 	return nil
