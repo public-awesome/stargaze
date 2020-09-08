@@ -42,7 +42,15 @@ func (k Keeper) GetPostZ(
 func (k Keeper) CreatePost(
 	ctx sdk.Context, vendorID uint32, postID, body string, creator, rewardAccount sdk.AccAddress) error {
 
-	err := k.validateVendorID(ctx, vendorID)
+	_, found, err := k.GetPost(ctx, vendorID, postID)
+	if err != nil {
+		return err
+	}
+	if found {
+		return types.ErrDuplicatePost
+	}
+
+	err = k.validateVendorID(ctx, vendorID)
 	if err != nil {
 		return err
 	}

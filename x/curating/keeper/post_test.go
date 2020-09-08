@@ -32,6 +32,9 @@ func TestPost(t *testing.T) {
 
 	vps := app.CuratingKeeper.GetCurationQueueTimeSlice(ctx, ctx.BlockTime())
 	require.NotNil(t, vps)
+
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], addrs[0])
+	require.Equal(t, types.ErrDuplicatePost, err)
 }
 
 func TestPost_EmptyCreator(t *testing.T) {
