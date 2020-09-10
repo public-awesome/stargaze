@@ -1,20 +1,19 @@
 module github.com/public-awesome/stakebird
 
-go 1.14
+go 1.15
 
 require (
-	github.com/cosmos/cosmos-sdk v0.34.4-0.20200530180557-ba70f4d4dc2e
+	github.com/cosmos/cosmos-sdk v0.34.4-0.20200921130040-27db2cf89772
 	github.com/gogo/protobuf v1.3.1
 	github.com/golang/protobuf v1.4.2
 	github.com/gorilla/mux v1.8.0
-	github.com/pkg/errors v0.9.1
+	github.com/grpc-ecosystem/grpc-gateway v1.14.8
+	github.com/rakyll/statik v0.1.7
+	github.com/spf13/cast v1.3.1
 	github.com/spf13/cobra v1.0.0
-	github.com/spf13/viper v1.7.1
-	github.com/stretchr/testify v1.6.1
-	github.com/tendermint/go-amino v0.15.1
-	github.com/tendermint/tendermint v0.33.4
-	github.com/tendermint/tm-db v0.5.1
-	golang.org/x/crypto v0.0.0-20200707235045-ab33eee955e0 // indirect
-	golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae // indirect
+	github.com/tendermint/tendermint v0.34.0-rc3.0.20200907055413-3359e0bf2f84
+	github.com/tendermint/tm-db v0.6.2
 	gopkg.in/yaml.v2 v2.3.0
 )
+
+replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.2-alpha.regen.4

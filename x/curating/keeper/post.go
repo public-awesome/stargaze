@@ -127,6 +127,11 @@ func (k Keeper) InsertCurationQueue(
 	k.SetCurationQueueTimeSlice(ctx, curationEndTime, timeSlice)
 }
 
+// RemoveFromCurationQueue will remove an entire VPPair set from the queue
+func (k Keeper) RemoveFromCurationQueue(ctx sdk.Context, curationEndTime time.Time) {
+	ctx.KVStore(k.storeKey).Delete(types.CurationQueueByTimeKey(curationEndTime))
+}
+
 // GetCurationQueueTimeSlice returns a slice of Vendor/PostID pairs for a give time
 func (k Keeper) GetCurationQueueTimeSlice(
 	ctx sdk.Context, timestamp time.Time) (vpPairs []types.VPPair) {

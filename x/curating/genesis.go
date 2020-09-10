@@ -2,11 +2,13 @@ package curating
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/public-awesome/stakebird/x/curating/keeper"
+	"github.com/public-awesome/stakebird/x/curating/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 // InitGenesis initialize default parameters
-func InitGenesis(ctx sdk.Context, k Keeper, data GenesisState) (res []abci.ValidatorUpdate) {
+func InitGenesis(ctx sdk.Context, k keeper.Keeper, data types.GenesisState) (res []abci.ValidatorUpdate) {
 	k.SetParams(ctx, data.Params)
 
 	if k.GetRewardPoolBalance(ctx).IsZero() {
@@ -22,6 +24,6 @@ func InitGenesis(ctx sdk.Context, k Keeper, data GenesisState) (res []abci.Valid
 // ExportGenesis writes the current store values
 // to a genesis file, which can be imported again
 // with InitGenesis
-func ExportGenesis(ctx sdk.Context, k Keeper) (data GenesisState) {
-	return NewGenesisState(k.GetParams(ctx))
+func ExportGenesis(ctx sdk.Context, k keeper.Keeper) (data types.GenesisState) {
+	return types.NewGenesisState(k.GetParams(ctx))
 }
