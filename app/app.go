@@ -3,6 +3,7 @@ package app
 import (
 	"io"
 	"os"
+	"time"
 
 	"github.com/public-awesome/stakebird/x/curating"
 	"github.com/public-awesome/stakebird/x/faucet"
@@ -127,6 +128,7 @@ var (
 		curating.ModuleName:             nil,
 		curating.RewardPoolName:         {auth.Minter, auth.Burner},
 		curating.VotingPoolName:         {auth.Minter, auth.Burner},
+		faucet.ModuleName:               {auth.Minter},
 	}
 
 	// module accounts that are allowed to receive tokens
@@ -169,6 +171,7 @@ type StakebirdApp struct {
 	transferKeeper   transfer.Keeper
 	curatingKeeper   curating.Keeper
 	userKeeper       user.Keeper
+	faucetKeeper     faucet.Keeper
 
 	// make scoped keepers public for test purposes
 	scopedIBCKeeper      capability.ScopedKeeper
@@ -214,7 +217,7 @@ func NewStakebirdApp(
 		mint.StoreKey, distr.StoreKey, slashing.StoreKey,
 		gov.StoreKey, params.StoreKey, ibc.StoreKey, upgrade.StoreKey,
 		evidence.StoreKey, transfer.StoreKey, capability.StoreKey,
-		curating.StoreKey, user.StoreKey,
+		curating.StoreKey, user.StoreKey, faucet.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capability.MemStoreKey)
@@ -335,6 +338,14 @@ func NewStakebirdApp(
 		app.subspaces[user.ModuleName],
 	)
 
+	app.faucetKeeper = faucet.NewKeeper(
+		app.bankKeeper,
+		app.stakingKeeper,
+		10*1000000,   // amount for mint
+		24*time.Hour, // rate limit by time
+		keys[faucet.StoreKey],
+		appCodec)
+
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
 	app.mm = module.NewManager(
@@ -355,6 +366,7 @@ func NewStakebirdApp(
 		transferModule,
 		curating.NewAppModule(appCodec, app.curatingKeeper),
 		user.NewAppModule(appCodec, app.userKeeper),
+		faucet.NewAppModule(app.faucetKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
