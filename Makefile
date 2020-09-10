@@ -29,6 +29,10 @@ install: go.sum
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/staked
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/stakecli
 
+install-with-faucet: go.sum
+	go install -mod=readonly $(BUILD_FLAGS) -tags faucet ./cmd/staked
+	go install -mod=readonly $(BUILD_FLAGS) -tags faucet ./cmd/stakecli
+
 start:
 	staked start --pruning=nothing --log_level "curating:info,funding:info,main:info,state:info,*:error"
 
