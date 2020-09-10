@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/public-awesome/stakebird/x/curating"
+	"github.com/public-awesome/stakebird/x/faucet"
 	"github.com/public-awesome/stakebird/x/user"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -111,6 +112,7 @@ var (
 		transfer.AppModuleBasic{},
 		curating.AppModuleBasic{},
 		user.AppModuleBasic{},
+		faucet.AppModuleBasic{},
 	)
 
 	// module account permissions
