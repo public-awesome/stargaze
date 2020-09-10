@@ -61,10 +61,10 @@ func (k Keeper) CanVouch(
 
 	vouches := k.GetVouchesByVoucher(ctx, address)
 
-	// TODO: check the condition for the threshold amount
+	balances := k.bankKeeper.GetAllBalances(ctx, address)
 
-	// if already vouched enough time
-	return uint32(len(vouches)) < k.GetParams(ctx).VouchCount
+	return balances.IsAllGTE(k.GetParams(ctx).ThresholdAmount) &&
+		uint32(len(vouches)) < k.GetParams(ctx).VouchCount
 }
 
 // CreateVouch registers a vouch on-chain.
