@@ -60,9 +60,9 @@ func (AppModuleBasic) GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 func (AppModuleBasic) GetTxCmd(cdc *codec.Codec) *cobra.Command {
 	if profile == TESTNET {
 		return cli.GetTxCmd(StoreKey, cdc)
-	} else {
-		return nil
 	}
+
+	return nil
 }
 
 type AppModule struct {
@@ -91,9 +91,9 @@ func (am AppModule) Route() string {
 func (am AppModule) NewHandler() sdk.Handler {
 	if profile == TESTNET {
 		return NewHandler(am.keeper)
-	} else {
-		return nil
 	}
+
+	return nil
 }
 func (am AppModule) QuerierRoute() string {
 	return ModuleName

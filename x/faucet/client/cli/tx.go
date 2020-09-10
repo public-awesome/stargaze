@@ -75,10 +75,13 @@ func GetCmdMintFor(cdc *codec.Codec) *cobra.Command {
 
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(auth.DefaultTxEncoder(cdc))
 
-			address, _ := sdk.AccAddressFromBech32(args[0])
+			address, err := sdk.AccAddressFromBech32(args[0])
+			if err != nil {
+				return err
+			}
 
 			msg := types.NewMsgMint(cliCtx.GetFromAddress(), address, time.Now().Unix())
-			err := msg.ValidateBasic()
+			err = msg.ValidateBasic()
 			if err != nil {
 				return err
 			}
@@ -98,7 +101,11 @@ func GetPublishKey(cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(auth.DefaultTxEncoder(cdc))
-			kb, errkb := keyring.New(sdk.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), inBuf)
+			kb, errkb := keyring.New(
+				sdk.KeyringServiceName(),
+				viper.GetString(flags.FlagKeyringBackend),
+				viper.GetString(flags.FlagHome),
+				inBuf)
 			if errkb != nil {
 				return errkb
 			}
@@ -129,7 +136,11 @@ func GetCmdInitial(cdc *codec.Codec) *cobra.Command {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
-			kb, errkb := keyring.New(sdk.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), inBuf)
+			kb, errkb := keyring.New(
+				sdk.KeyringServiceName(),
+				viper.GetString(flags.FlagKeyringBackend),
+				viper.GetString(flags.FlagHome),
+				inBuf)
 			if errkb != nil {
 				return errkb
 			}
@@ -149,10 +160,13 @@ func GetCmdInitial(cdc *codec.Codec) *cobra.Command {
 			cdc.MustUnmarshalJSON(res, &rkey)
 
 			if len(rkey.Armor) == 0 {
-				return errors.New("Faucet key has not published")
+				return errors.New("faucet key has not published")
 			}
 			// import to keybase
-			kb.ImportPubKey(types.ModuleName, rkey.Armor)
+			err = kb.ImportPubKey(types.ModuleName, rkey.Armor)
+			if err != nil {
+				return err
+			}
 			fmt.Println("The faucet has been loaded successfully.")
 			return nil
 
