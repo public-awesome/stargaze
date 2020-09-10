@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestPost(t *testing.T) {
+func TestVouch(t *testing.T) {
 	_, app, ctx := testdata.CreateTestInput()
 
 	addresses := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
@@ -18,13 +18,11 @@ func TestPost(t *testing.T) {
 	err := app.UserKeeper.CreateVouch(ctx, voucher, vouched, "")
 	require.NoError(t, err)
 
-	vouchByVoucher, found, err := app.UserKeeper.GetVouchByVoucher(ctx, voucher)
-	require.NoError(t, err)
-	require.True(t, found, "vouch should be found")
-
 	vouchByVouched, found, err := app.UserKeeper.GetVouchByVouched(ctx, vouched)
 	require.NoError(t, err)
 	require.True(t, found, "vouch should be found")
 
-	require.Equal(t, vouchByVoucher, vouchByVouched)
+	vouchesByVoucher, err := app.UserKeeper.GetVouchesByVoucher(ctx, voucher)
+	require.NoError(t, err)
+	require.Contains(t, vouchesByVoucher, vouchByVouched, "vouch should be found")
 }

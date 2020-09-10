@@ -19,14 +19,18 @@ const (
 )
 
 var (
-	// KeyPrefixVoucher 0x00 | voucher -> Vouch
+	// KeyPrefixVoucher 0x00 | voucher | vouched -> Vouch
 	KeyPrefixVoucher = []byte{0x00}
 
 	// KeyPrefixVouched 0x01 | vouched -> Vouch
 	KeyPrefixVouched = []byte{0x01}
 )
 
-func VoucherKey(voucher sdk.AccAddress) []byte {
+func VoucherKey(voucher, vouched sdk.AccAddress) []byte {
+	return append(KeyPrefixVoucher, append(voucher.Bytes(), vouched.Bytes()...)...)
+}
+
+func VoucherPrefixKey(voucher sdk.AccAddress) []byte {
 	return append(KeyPrefixVoucher, voucher.Bytes()...)
 }
 

@@ -5,20 +5,23 @@ import (
 	"github.com/public-awesome/stakebird/x/user/types"
 )
 
-// GetVouchByVoucher returns the vouch if one exists
-func (k Keeper) GetVouchByVoucher(
-	ctx sdk.Context, voucher sdk.AccAddress) (vouch types.Vouch, found bool, err error) {
+// GetVouchesByVoucher returns the vouch if one exists
+func (k Keeper) GetVouchesByVoucher(
+	ctx sdk.Context, voucher sdk.AccAddress) (vouches []types.Vouch, err error) {
 
 	store := ctx.KVStore(k.storeKey)
 
-	key := types.VoucherKey(voucher)
-	value := store.Get(key)
-	if value == nil {
-		return vouch, false, nil
-	}
-	k.cdc.MustUnmarshalBinaryBare(value, &vouch)
+	// iterator over vouches by a voucher
+	it := sdk.KVStorePrefixIterator(store, types.VoucherPrefixKey(voucher))
+	defer it.Close()
 
-	return vouch, true, nil
+	for ; it.Valid(); it.Next() {
+		var vouch types.Vouch
+		k.cdc.MustUnmarshalBinaryBare(it.Value(), &vouch)
+		vouches = append(vouches, vouch)
+	}
+
+	return vouches, nil
 }
 
 // GetVouchByVouched returns the vouch if one exists
@@ -62,7 +65,7 @@ func (k Keeper) CreateVouch(
 
 	store := ctx.KVStore(k.storeKey)
 	vouchedKey := types.VouchedKey(vouched)
-	voucherKey := types.VoucherKey(voucher)
+	voucherKey := types.VoucherKey(voucher, vouched)
 	value := k.cdc.MustMarshalBinaryBare(&vouch)
 	store.Set(vouchedKey, value)
 	store.Set(voucherKey, value)
