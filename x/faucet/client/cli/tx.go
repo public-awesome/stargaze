@@ -104,7 +104,6 @@ func GetPublishKey(cdc *codec.Codec) *cobra.Command {
 			}
 
 			// check local key
-			// armor, err := kb.Export(cliCtx.GetFromName())
 			armor, err := kb.ExportPubKeyArmor(cliCtx.GetFromName())
 			if err != nil {
 				return err
@@ -130,7 +129,6 @@ func GetCmdInitial(cdc *codec.Codec) *cobra.Command {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
-			//txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 			kb, errkb := keyring.New(sdk.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), inBuf)
 			if errkb != nil {
 				return errkb
@@ -154,7 +152,6 @@ func GetCmdInitial(cdc *codec.Codec) *cobra.Command {
 				return errors.New("Faucet key has not published")
 			}
 			// import to keybase
-			// kb.Import(types.ModuleName, rkey.Armor)
 			kb.ImportPubKey(types.ModuleName, rkey.Armor)
 			fmt.Println("The faucet has been loaded successfully.")
 			return nil

@@ -24,27 +24,3 @@ message Mining {
 message FaucetKey {
     string armor = 1;
 }
-
-// message MsgPost {
-//     option (gogoproto.equal) = true;
-
-//     uint32 vendor_id = 1 [
-//         (gogoproto.customname) = "VendorID",
-//         (gogoproto.moretags)   = "yaml:\"vendor_id\"",
-//         (gogoproto.jsontag)    = "vendor_id"
-//     ];
-//     string post_id = 2 [
-//         (gogoproto.customname) = "PostID",
-//         (gogoproto.moretags)   = "yaml:\"post_id\"",
-//         (gogoproto.jsontag)    = "post_id"
-//     ];
-//     bytes creator = 3 [
-//         (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
-//         (gogoproto.moretags) = "yaml:\"creator\""
-//     ];
-//     bytes reward_account = 4 [
-//         (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
-//         (gogoproto.moretags) = "yaml:\"reward_account\""
-//     ];
-//     string body = 5 [(gogoproto.moretags) = "yaml:\"body\""];
-// }
