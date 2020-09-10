@@ -104,7 +104,8 @@ func GetPublishKey(cdc *codec.Codec) *cobra.Command {
 			}
 
 			// check local key
-			armor, err := kb.Export(cliCtx.GetFromName())
+			// armor, err := kb.Export(cliCtx.GetFromName())
+			armor, err := kb.ExportPubKeyArmor(cliCtx.GetFromName())
 			if err != nil {
 				return err
 			}
@@ -136,7 +137,7 @@ func GetCmdInitial(cdc *codec.Codec) *cobra.Command {
 			}
 
 			// check local key
-			_, err := kb.Get(types.ModuleName)
+			_, err := kb.Key(types.ModuleName)
 			if err == nil {
 				return errors.New("faucet existed")
 			}
@@ -153,7 +154,8 @@ func GetCmdInitial(cdc *codec.Codec) *cobra.Command {
 				return errors.New("Faucet key has not published")
 			}
 			// import to keybase
-			kb.Import(types.ModuleName, rkey.Armor)
+			// kb.Import(types.ModuleName, rkey.Armor)
+			kb.ImportPubKey(types.ModuleName, rkey.Armor)
 			fmt.Println("The faucet has been loaded successfully.")
 			return nil
 
