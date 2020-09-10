@@ -95,7 +95,7 @@ func (k Keeper) setMining(ctx sdk.Context, minter sdk.AccAddress, mining types.M
 		return
 	}
 	store := ctx.KVStore(k.storeKey)
-	store.Set(minter.Bytes(), k.cdc.MustMarshalBinaryBare(mining))
+	store.Set(minter.Bytes(), k.cdc.MustMarshalBinaryBare(&mining))
 }
 
 // IsPresent check if the name is present in the store or not
@@ -115,7 +115,7 @@ func (k Keeper) GetFaucetKey(ctx sdk.Context) types.FaucetKey {
 func (k Keeper) SetFaucetKey(ctx sdk.Context, armor string) {
 	store := ctx.KVStore(k.storeKey)
 	faucet := types.NewFaucetKey(armor)
-	store.Set([]byte(FaucetStoreKey), k.cdc.MustMarshalBinaryBare(faucet))
+	store.Set([]byte(FaucetStoreKey), k.cdc.MustMarshalBinaryBare(&faucet))
 }
 
 func (k Keeper) HasFaucetKey(ctx sdk.Context) bool {

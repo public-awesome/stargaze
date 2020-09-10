@@ -13,12 +13,16 @@ message Mining {
         (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
         (gogoproto.moretags) = "yaml:\"minter\""
     ];
-    uint64 last_time = 2 [
+    int64 last_time = 2 [
         (gogoproto.customname) = "LastTime",
         (gogoproto.moretags)   = "yaml:\"last_time\"",
         (gogoproto.jsontag)    = "last_time"
     ];
     cosmos_sdk.v1.Coin total = 3 [(gogoproto.nullable) = false];
+}
+
+message FaucetKey {
+    string armor = 1;
 }
 
 // message MsgPost {

@@ -17,6 +17,6 @@ func NewPost(
 		RewardAccount: rewardAccount,
 		BodyHash:      bodyHash,
 		Deposit:       deposit,
-		userEndTime:   userEndTime,
+		UserEndTime:   userEndTime,
 	}
 }
