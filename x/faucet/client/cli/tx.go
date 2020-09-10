@@ -4,9 +4,10 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/cosmos/cosmos-sdk/crypto/keys"
 	"github.com/spf13/viper"
-	"time"
 
 	"github.com/spf13/cobra"
 
