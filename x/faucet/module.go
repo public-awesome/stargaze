@@ -9,8 +9,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/modules/incubator/faucet/client/cli"
-	"github.com/cosmos/modules/incubator/faucet/client/rest"
+	"github.com/public-awesome/stakebird/x/faucet/client/cli"
+	"github.com/public-awesome/stakebird/x/faucet/client/rest"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -23,7 +23,9 @@ var (
 )
 
 // app module Basics object
-type AppModuleBasic struct{}
+type AppModuleBasic struct {
+	// cdc codec.Marshaler
+}
 
 func (AppModuleBasic) Name() string {
 	return ModuleName

@@ -2,11 +2,12 @@ package keeper
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/modules/incubator/faucet/internal/types"
+	"github.com/public-awesome/stakebird/x/faucet/internal/types"
 	"github.com/tendermint/tendermint/libs/log"
-	"time"
 )
 
 const FaucetStoreKey = "DefaultFaucetStoreKey"
@@ -18,7 +19,7 @@ type Keeper struct {
 	amount        int64         // set default amount for each mint.
 	Limit         time.Duration // rate limiting for mint, etc 24 * time.Hours
 	storeKey      sdk.StoreKey  // Unexposed key to access store from sdk.Context
-	cdc           *codec.Codec  // The wire codec for binary encoding/decoding.
+	cdc           codec.Marshaler
 }
 
 // NewKeeper creates new instances of the Faucet Keeper
@@ -28,7 +29,7 @@ func NewKeeper(
 	amount int64,
 	rateLimit time.Duration,
 	storeKey sdk.StoreKey,
-	cdc *codec.Codec) Keeper {
+	cdc codec.Marshaler) Keeper {
 	return Keeper{
 		SupplyKeeper:  supplyKeeper,
 		StakingKeeper: stakingKeeper,

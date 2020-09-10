@@ -1,13 +1,14 @@
 package rest
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	"github.com/cosmos/modules/incubator/faucet/internal/types"
-	"net/http"
-	"time"
+	authclient "github.com/cosmos/cosmos-sdk/x/auth/client"
+	"github.com/public-awesome/stakebird/x/faucet/internal/types"
 )
 
 // PostProposalReq defines the properties of a proposal request's body.
@@ -49,6 +50,6 @@ func mintHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+		authclient.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
 	}
 }
