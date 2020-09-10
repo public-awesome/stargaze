@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package public_awesome.stakebird.x.faucet.v1;
+
+option go_package = "github.com/public-awesome/stakebird/x/faucet/types";
+
+import "contrib/proto/gogoproto/gogo.proto";
+import "contrib/proto/cosmos-proto/types.proto";
+// import "google/protobuf/timestamp.proto";
+
+message Mining {
+    bytes minter = 1 [
+        (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
+        (gogoproto.moretags) = "yaml:\"minter\""
+    ];
+    uint64 last_time = 2 [
+        (gogoproto.customname) = "LastTime",
+        (gogoproto.moretags)   = "yaml:\"last_time\"",
+        (gogoproto.jsontag)    = "last_time"
+    ];
+    cosmos_sdk.v1.Coin total = 3 [(gogoproto.nullable) = false];
+}
+
+// message MsgPost {
+//     option (gogoproto.equal) = true;
+
+//     uint32 vendor_id = 1 [
+//         (gogoproto.customname) = "VendorID",
+//         (gogoproto.moretags)   = "yaml:\"vendor_id\"",
+//         (gogoproto.jsontag)    = "vendor_id"
+//     ];
+//     string post_id = 2 [
+//         (gogoproto.customname) = "PostID",
+//         (gogoproto.moretags)   = "yaml:\"post_id\"",
+//         (gogoproto.jsontag)    = "post_id"
+//     ];
+//     bytes creator = 3 [
+//         (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
+//         (gogoproto.moretags) = "yaml:\"creator\""
+//     ];
+//     bytes reward_account = 4 [
+//         (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
+//         (gogoproto.moretags) = "yaml:\"reward_account\""
+//     ];
+//     string body = 5 [(gogoproto.moretags) = "yaml:\"body\""];
+// }
