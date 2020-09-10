@@ -16,7 +16,7 @@ func TestNewMsgVouch(t *testing.T) {
 	addresses := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
 	comment := "lorem ipsum"
 
-	msg := types.NewVouch(addresses[0], addresses[1], comment)
+	msg := types.NewMsgVouch(addresses[0], addresses[1], comment)
 	require.Equal(t, msg.GetVoucher(), addresses[0])
 	require.Equal(t, msg.GetVouched(), addresses[1])
 	require.Equal(t, msg.GetComment(), comment)
