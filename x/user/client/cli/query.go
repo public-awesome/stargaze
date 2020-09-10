@@ -27,8 +27,7 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	userQueryCmd.AddCommand(
 		flags.GetCommands(
 			GetCmdQueryParams(queryRoute, cdc),
-			GetCmdQueryPost(queryRoute, cdc),
-			GetCmdQueryUpvotes(queryRoute, cdc),
+			// GetCmdQueryPost(queryRoute, cdc),
 		)...,
 	)
 
@@ -66,68 +65,34 @@ $ %s query user params
 }
 
 // GetCmdQueryPost implements the post query command.
-func GetCmdQueryPost(storeName string, cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
-		Use:   "post [vendor-id] [post-id]",
-		Args:  cobra.ExactArgs(2),
-		Short: "Query for a post by vendor ID and post ID",
-		Long: strings.TrimSpace(
-			fmt.Sprintf(`Query post by vendor ID and post ID.
-Example:
-$ %s query user posts 1 123
-`,
-				version.ClientName,
-			),
-		),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
+// func GetCmdQueryPost(storeName string, cdc *codec.Codec) *cobra.Command {
+// 	return &cobra.Command{
+// 		Use:   "post [vendor-id] [post-id]",
+// 		Args:  cobra.ExactArgs(2),
+// 		Short: "Query for a post by vendor ID and post ID",
+// 		Long: strings.TrimSpace(
+// 			fmt.Sprintf(`Query post by vendor ID and post ID.
+// Example:
+// $ %s query user posts 1 123
+// `,
+// 				version.ClientName,
+// 			),
+// 		),
+// 		RunE: func(cmd *cobra.Command, args []string) error {
+// 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
-			vendorID := args[0]
-			postID := args[1]
+// 			vendorID := args[0]
+// 			postID := args[1]
 
-			route := fmt.Sprintf("custom/%s/%s/%s/%s", storeName, types.QueryPost, vendorID, postID)
-			bz, _, err := cliCtx.QueryWithData(route, nil)
-			if err != nil {
-				return err
-			}
+// 			route := fmt.Sprintf("custom/%s/%s/%s/%s", storeName, types.QueryPost, vendorID, postID)
+// 			bz, _, err := cliCtx.QueryWithData(route, nil)
+// 			if err != nil {
+// 				return err
+// 			}
 
-			var post types.Post
-			cdc.MustUnmarshalJSON(bz, &post)
-			return cliCtx.PrintOutput(post)
-		},
-	}
-}
-
-// GetCmdQueryUpvote implements the upvotes query command.
-func GetCmdQueryUpvotes(storeName string, cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
-		Use:   "upvote [vendor-id] [post-id]",
-		Args:  cobra.ExactArgs(2),
-		Short: "Query for upvotes by vendor ID and post ID",
-		Long: strings.TrimSpace(
-			fmt.Sprintf(`Query upvote by vendor ID and optionally post ID.
-Example:
-$ %s query user upvotes 1 "123"
-`,
-				version.ClientName,
-			),
-		),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-
-			vendorID := args[0]
-
-			postID := args[1]
-			route := fmt.Sprintf("custom/%s/%s/%s/%s", storeName, types.QueryUpvotes, vendorID, postID)
-
-			bz, _, err := cliCtx.QueryWithData(route, nil)
-			if err != nil {
-				return err
-			}
-
-			var upvotes []types.Upvote
-			cdc.MustUnmarshalJSON(bz, &upvotes)
-			return cliCtx.PrintOutput(upvotes)
-		},
-	}
-}
+// 			var post types.Post
+// 			cdc.MustUnmarshalJSON(bz, &post)
+// 			return cliCtx.PrintOutput(post)
+// 		},
+// 	}
+// }

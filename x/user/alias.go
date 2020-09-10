@@ -38,6 +38,5 @@ type (
 	Keeper       = keeper.Keeper
 	GenesisState = types.GenesisState
 	Params       = types.Params
-	Post         = types.Post
-	Upvote       = types.Upvote
+	Vouch        = types.Vouch
 )
