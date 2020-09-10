@@ -51,11 +51,8 @@ func (k Keeper) IsVouched(
 
 	key := types.VouchedKey(address)
 	value := store.Get(key)
-	if value == nil {
-		return false
-	}
 
-	return true
+	return value != nil
 }
 
 // CanVouch returns whether the given address can vouch for someone
@@ -67,11 +64,7 @@ func (k Keeper) CanVouch(
 	// TODO: check the condition for the threshold amount
 
 	// if already vouched enough time
-	if uint32(len(vouches)) < k.GetParams(ctx).VouchCount {
-		return true
-	}
-
-	return false
+	return uint32(len(vouches)) < k.GetParams(ctx).VouchCount
 }
 
 // CreateVouch registers a vouch on-chain.
