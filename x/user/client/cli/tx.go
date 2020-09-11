@@ -1,11 +1,19 @@
 package cli
 
 import (
+	"bufio"
 	"fmt"
+	"strings"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	authclient "github.com/cosmos/cosmos-sdk/x/auth/client"
 
 	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/version"
+	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/public-awesome/stakebird/x/user/types"
 	"github.com/spf13/cobra"
 )
@@ -21,56 +29,44 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 	}
 
 	stakeTxCmd.AddCommand(flags.PostCommands(
-	// GetCmdPost(cdc),
+		GetCmdVouch(cdc),
 	)...)
 
 	return stakeTxCmd
 }
 
-// GetCmdPost implements the delegate command.
-// func GetCmdPost(cdc *codec.Codec) *cobra.Command {
-// 	return &cobra.Command{
-// 		Use:   "post [vendor-id] [post-id] [body] [reward_address]",
-// 		Args:  cobra.MinimumNArgs(3),
-// 		Short: "Register a post",
-// 		Long: strings.TrimSpace(
-// 			fmt.Sprintf(`Create a post.
-// Example:
-// $ %s tx user post 1 "2" "body" --from mykey
-// `,
-// 				version.ClientName,
-// 			),
-// 		),
-// 		RunE: func(cmd *cobra.Command, args []string) error {
-// 			inBuf := bufio.NewReader(cmd.InOrStdin())
-// 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(auth.DefaultTxEncoder(cdc))
-// 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+// GetCmdVouch implements the delegate command.
+func GetCmdVouch(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "vouch [vouched] [comment]",
+		Args:  cobra.MinimumNArgs(1),
+		Short: "Vouch a user",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Vouch a user.
+Example:
+$ %s tx user vouch [vouched-address] "comment here" --from mykey
+`,
+				version.ClientName,
+			),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(auth.DefaultTxEncoder(cdc))
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-// 			creator := cliCtx.GetFromAddress()
+			voucher := cliCtx.GetFromAddress()
+			vouched, err := sdk.AccAddressFromBech32(args[0])
+			if err != nil {
+				return err
+			}
+			comment := ""
+			if len(args) > 1 {
+				comment = args[1]
+			}
 
-// 			vendorID, err := strconv.ParseUint(args[0], 10, 32)
-// 			if err != nil {
-// 				return err
-// 			}
+			msg := types.NewMsgVouch(voucher, vouched, comment)
 
-// 			postID := args[1]
-// 			body := args[2]
-
-// 			var rewardAddrStr string
-// 			var rewardAddr sdk.AccAddress
-// 			if len(args) > 3 {
-// 				rewardAddrStr = args[3]
-// 			}
-// 			if rewardAddrStr != "" {
-// 				rewardAddr, err = sdk.AccAddressFromBech32(rewardAddrStr)
-// 				if err != nil {
-// 					return err
-// 				}
-// 			}
-
-// 			msg := types.NewMsgPost(uint32(vendorID), postID, creator, rewardAddr, body)
-
-// 			return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
-// 		},
-// 	}
-// }
+			return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+}
