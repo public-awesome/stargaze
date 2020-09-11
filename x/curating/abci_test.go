@@ -102,9 +102,14 @@ func TestEndBlockerExpiringPost(t *testing.T) {
 func TestEndBlockerExpiringPostWithSmolRewardPool(t *testing.T) {
 	app, ctx := setup(t)
 
+	// burn existing funds from the reward pool to reset it
+	funds := app.CuratingKeeper.GetRewardPoolBalance(ctx)
+	err := app.BankKeeper.BurnCoins(ctx, curating.RewardPoolName, sdk.NewCoins(funds))
+	require.NoError(t, err)
+
 	// add funds to reward pool
-	funds := sdk.NewInt64Coin("ustb", 1_000_000)
-	err := app.BankKeeper.MintCoins(ctx, curating.RewardPoolName, sdk.NewCoins(funds))
+	funds = sdk.NewInt64Coin("ustb", 1_000_000)
+	err = app.BankKeeper.MintCoins(ctx, curating.RewardPoolName, sdk.NewCoins(funds))
 	require.NoError(t, err)
 
 	curating.EndBlocker(ctx, app.CuratingKeeper)
