@@ -9,9 +9,11 @@ import (
 func InitGenesis(ctx sdk.Context, k Keeper, data GenesisState) (res []abci.ValidatorUpdate) {
 	k.SetParams(ctx, data.Params)
 
-	err := k.InitializeRewardPool(ctx, k.GetParams(ctx).InitialRewardPool)
-	if err != nil {
-		panic(err)
+	if k.GetRewardPoolBalance(ctx).IsZero() {
+		err := k.InitializeRewardPool(ctx, k.GetParams(ctx).InitialRewardPool)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	return []abci.ValidatorUpdate{}
