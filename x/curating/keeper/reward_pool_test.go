@@ -31,5 +31,5 @@ func TestInflateRewards(t *testing.T) {
 
 	rewardPoolAddr := app.AccountKeeper.GetModuleAccount(ctx, curating.RewardPoolName).GetAddress()
 	rewardPool := app.BankKeeper.GetBalance(ctx, rewardPoolAddr, types.DefaultStakeDenom)
-	require.Equal(t, "500000", rewardPool.Amount.String())
+	require.Equal(t, "21000000500000", rewardPool.Amount.String())
 }
