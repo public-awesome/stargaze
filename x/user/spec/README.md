@@ -53,7 +53,7 @@ _Stores are KVStores in the multi-store. The key to find the store is the first 
 
 We will use one KVStore `vouches` to store the following two mappings:
 
-- A mapping from `0x01|voucherAddress` to `Vouch`.
+- A mapping from `0x01|voucherAddress|vouchedAddress` to `Vouch`.
 - A mapping from `0x02|vouchedAddress` to `Vouch`.
 
 ## Messages
