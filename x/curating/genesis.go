@@ -9,8 +9,10 @@ import (
 func InitGenesis(ctx sdk.Context, k Keeper, data GenesisState) (res []abci.ValidatorUpdate) {
 	k.SetParams(ctx, data.Params)
 
-	// creates the reward pool if it doesn't exist
-	k.GetRewardPool(ctx)
+	err := k.InitializeRewardPool(ctx, k.GetParams(ctx).InitialRewardPool)
+	if err != nil {
+		panic(err)
+	}
 
 	return []abci.ValidatorUpdate{}
 }
