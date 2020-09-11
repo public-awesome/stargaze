@@ -30,3 +30,8 @@ func (k Keeper) InflateRewardPool(ctx sdk.Context) error {
 	return k.bankKeeper.SendCoinsFromModuleToModule(
 		ctx, auth.FeeCollectorName, types.RewardPoolName, sdk.NewCoins(rewardCoin))
 }
+
+// InitializeRewardPool sets up the reward pool from genesis
+func (k Keeper) InitializeRewardPool(ctx sdk.Context, funds sdk.Coin) error {
+	return k.bankKeeper.MintCoins(ctx, types.RewardPoolName, sdk.NewCoins(funds))
+}
