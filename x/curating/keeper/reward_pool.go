@@ -35,8 +35,3 @@ func (k Keeper) InflateRewardPool(ctx sdk.Context) error {
 func (k Keeper) InitializeRewardPool(ctx sdk.Context, funds sdk.Coin) error {
 	return k.bankKeeper.MintCoins(ctx, types.RewardPoolName, sdk.NewCoins(funds))
 }
-
-// BurnRewardPool burns funds in the reward pool
-func (k Keeper) BurnRewardPool(ctx sdk.Context, amount sdk.Coin) error {
-	return k.bankKeeper.BurnCoins(ctx, types.RewardPoolName, sdk.NewCoins(amount))
-}
