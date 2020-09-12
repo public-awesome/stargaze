@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/public-awesome/stakebird/x/curating/types"
-	curatingTypes "github.com/public-awesome/stakebird/x/curating/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/public-awesome/stakebird/testdata"
@@ -140,7 +139,7 @@ func TestInsertCurationQueue(t *testing.T) {
 	timeSlice := app.CuratingKeeper.GetCurationQueueTimeSlice(ctx, curationEndTime)
 	require.Len(t, timeSlice, 1)
 
-	vpPair := curatingTypes.VPPair{VendorID: vendorID, PostIDHash: postIDHash}
+	vpPair := types.VPPair{VendorID: vendorID, PostIDHash: postIDHash}
 	require.Equal(t, vpPair, timeSlice[0])
 }
 
@@ -150,7 +149,7 @@ func TestCurationQueueTimeSlice(t *testing.T) {
 	vendorID := uint32(1)
 	postIDHash, err := hash(postID)
 	require.NoError(t, err)
-	vpPair := curatingTypes.VPPair{VendorID: vendorID, PostIDHash: postIDHash}
+	vpPair := types.VPPair{VendorID: vendorID, PostIDHash: postIDHash}
 
 	curationWindow := app.CuratingKeeper.GetParams(ctx).CurationWindow
 	curationEndTime := ctx.BlockTime().Add(curationWindow)
