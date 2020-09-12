@@ -38,7 +38,7 @@ func (app *StakebirdApp) ExportAppStateAndValidators(forZeroHeight bool, jailWhi
 func (app *StakebirdApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhiteList []string) {
 	applyWhiteList := false
 
-	//Check if there is a whitelist
+	// Check if there is a whitelist
 	if len(jailWhiteList) > 0 {
 		applyWhiteList = true
 	}
