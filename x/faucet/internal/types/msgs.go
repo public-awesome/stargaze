@@ -13,11 +13,12 @@ type MsgMint struct {
 	Sender sdk.AccAddress
 	Minter sdk.AccAddress
 	Time   int64
+	Denom  string
 }
 
 // NewMsgMint is a constructor function for NewMsgMint
-func NewMsgMint(sender sdk.AccAddress, minter sdk.AccAddress, mTime int64) MsgMint {
-	return MsgMint{Sender: sender, Minter: minter, Time: mTime}
+func NewMsgMint(sender sdk.AccAddress, minter sdk.AccAddress, mTime int64, denom string) MsgMint {
+	return MsgMint{Sender: sender, Minter: minter, Time: mTime, Denom: denom}
 }
 
 // Route should return the name of the module

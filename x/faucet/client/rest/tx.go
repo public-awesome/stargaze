@@ -15,6 +15,7 @@ import (
 type PostMintReq struct {
 	BaseReq rest.BaseReq `json:"base_req" yaml:"base_req"`
 	Minter  string       `json:"minter" yaml:"minter"` // Address of the minter
+	Denom   string       `json:"denom" yaml:"denom"`   // Denom of the token
 }
 
 func mintHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
@@ -41,9 +42,10 @@ func mintHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
+		denom := req.Denom
 
 		// create the message
-		msg := types.NewMsgMint(sender, minter, time.Now().Unix())
+		msg := types.NewMsgMint(sender, minter, time.Now().Unix(), denom)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
