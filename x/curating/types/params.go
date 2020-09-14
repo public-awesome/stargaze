@@ -22,7 +22,7 @@ var (
 	DefaultVoteAmount                      = sdk.NewInt64Coin(DefaultVoteDenom, 1_000_000)
 	DefaultInitialRewardPool               = sdk.NewInt64Coin(DefaultStakeDenom, 21_000_000_000_000)
 	DefaultRewardPoolAllocation            = sdk.NewDecWithPrec(50, 2)
-	DefaultCreatorAllocation               = sdk.NewDecWithPrec(50, 2)
+	DefaultCreatorAllocation               = sdk.NewDecWithPrec(5, 2)
 	DefaultRewardPoolCurationMaxAllocation = sdk.NewDecWithPrec(1, 3)
 )
 
