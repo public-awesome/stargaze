@@ -69,11 +69,12 @@ func EndBlocker(ctx sdk.Context, k Keeper) {
 				return false
 			})
 
-		// Remove post
-		err = k.DeletePost(ctx, post.VendorID, post.PostIDHash)
-		if err != nil {
-			panic(err)
-		}
+		// [NOTE]: not deleting posts until we store a historical record of them (SSV)
+		// https://github.com/public-awesome/stakebird/issues/194
+		// err = k.DeletePost(ctx, post.VendorID, post.PostIDHash)
+		// if err != nil {
+		// panic(err)
+		// }
 
 		return false
 	})
