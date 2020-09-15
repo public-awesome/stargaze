@@ -21,7 +21,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k Keeper) {
 // First upvote iteration: refund deposits, collect QV data
 // Second upvote iteration: distribute QV rewards
 func EndBlocker(ctx sdk.Context, k Keeper) {
-	endTimes := make(map[time.Time]bool, 0)
+	endTimes := make(map[time.Time]bool)
 	k.IterateExpiredPosts(ctx, func(post types.Post) bool {
 		k.Logger(ctx).Info(
 			fmt.Sprintf("Processing vendor %d post %v", post.VendorID, post.PostIDHash))

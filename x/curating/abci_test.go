@@ -159,7 +159,7 @@ func TestEndBlocker_RemoveFromExpiredQueue(t *testing.T) {
 	ctx = ctx.WithBlockHeader(h)
 
 	posts := make([]types.Post, 0)
-	curatingEndTimes := make(map[time.Time]bool, 0)
+	curatingEndTimes := make(map[time.Time]bool)
 	app.CuratingKeeper.IterateExpiredPosts(ctx, func(p types.Post) bool {
 		curatingEndTimes[p.GetCuratingEndTime()] = true
 		posts = append(posts, p)
