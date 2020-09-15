@@ -2,8 +2,10 @@ package curating_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/public-awesome/stakebird/x/curating"
+	"github.com/public-awesome/stakebird/x/curating/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/public-awesome/stakebird/testdata"
@@ -130,4 +132,49 @@ func TestEndBlockerExpiringPostWithSmolRewardPool(t *testing.T) {
 		"1 (bal) + 5 (voter reward)")
 	require.Equal(t, "10000474", curator1Bal.AmountOf("ustb").String(),
 		"9 (bal) + 1 (deposit) + 474u (match reward)")
+}
+
+func TestEndBlocker_RemoveFromExpiredQueue(t *testing.T) {
+	_, app, ctx := testdata.CreateTestInput()
+
+	addrs = testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(10_000_000))
+
+	err := app.CuratingKeeper.CreatePost(ctx, uint32(1), "777", "body string", addrs[0], addrs[0])
+	require.NoError(t, err)
+
+	err = app.CuratingKeeper.CreatePost(ctx, uint32(1), "888", "body string", addrs[0], addrs[0])
+	require.NoError(t, err)
+
+	// force 2 different keys in the iterator underlying store
+	b := ctx.BlockHeader()
+	b.Time = ctx.BlockHeader().Time.Add(time.Second)
+
+	err = app.CuratingKeeper.CreatePost(ctx.WithBlockHeader(b), uint32(1), "999", "body string", addrs[0], addrs[0])
+	require.NoError(t, err)
+
+	// fast-forward blocktime to simulate end of curation window
+	h := ctx.BlockHeader()
+	h.Time = ctx.BlockHeader().Time.Add(
+		app.CuratingKeeper.GetParams(ctx).CurationWindow + time.Minute)
+	ctx = ctx.WithBlockHeader(h)
+
+	posts := make([]types.Post, 0)
+	curatingEndTimes := make(map[time.Time]bool)
+	app.CuratingKeeper.IterateExpiredPosts(ctx, func(p types.Post) bool {
+		curatingEndTimes[p.GetCuratingEndTime()] = true
+		posts = append(posts, p)
+		return false
+	})
+
+	require.Len(t, curatingEndTimes, 2, "it should have 2 different end times")
+	require.Len(t, posts, 3, "it should have 3 posts")
+
+	curating.EndBlocker(ctx, app.CuratingKeeper)
+	posts = make([]types.Post, 0)
+	app.CuratingKeeper.IterateExpiredPosts(ctx, func(p types.Post) bool {
+		posts = append(posts, p)
+		return false
+	})
+
+	require.Len(t, posts, 0, "posts should have been removed from queue")
 }
