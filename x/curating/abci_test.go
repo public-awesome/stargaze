@@ -168,4 +168,13 @@ func TestEndBlocker_RemoveFromExipiredQueue(t *testing.T) {
 
 	require.Len(t, curatingEndTimes, 2, "it should have 2 different end times")
 	require.Len(t, posts, 3, "it should have 3 posts")
+
+	curating.EndBlocker(ctx, app.CuratingKeeper)
+	posts = make([]types.Post, 0)
+	app.CuratingKeeper.IterateExpiredPosts(ctx, func(p types.Post) bool {
+		posts = append(posts, p)
+		return false
+	})
+
+	require.Len(t, posts, 0, "posts should have been removed from queue")
 }
