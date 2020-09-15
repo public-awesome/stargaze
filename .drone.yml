@@ -97,6 +97,15 @@ steps:
         from_secret: slack_webhook
     when:
       status: [success, failure]
+  - name: discord
+    image: appleboy/drone-discord
+    settings:
+      webhook_id: 
+        from_secret: discord_webhook_id
+      webhook_token: 
+        from_secret: discord_webhook_token
+    when:
+      status: [success, failure]
 
 ---
 kind: pipeline
@@ -142,6 +151,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: 9b5dce9d4815ba2193d08ddf80a0794edd752962ab6bd19edbc458c7451cfe7b
+hmac: d2a6627c061b33b20a88fd19cab5df8b5410b4571a0f1cb2d7df05b6498d8a09
 
 ...
