@@ -147,7 +147,7 @@ func TestEndBlocker_RemoveFromExipiredQueue(t *testing.T) {
 
 	// force 2 different keys in the iterator underlying store
 	b := ctx.BlockHeader()
-	b.Time = ctx.BlockHeader().Time.Add(time.Minute)
+	b.Time = ctx.BlockHeader().Time.Add(time.Second)
 
 	err = app.CuratingKeeper.CreatePost(ctx.WithBlockHeader(b), uint32(1), "999", "body string", addrs[0], addrs[0])
 	require.NoError(t, err)
@@ -155,7 +155,7 @@ func TestEndBlocker_RemoveFromExipiredQueue(t *testing.T) {
 	// fast-forward blocktime to simulate end of curation window
 	h := ctx.BlockHeader()
 	h.Time = ctx.BlockHeader().Time.Add(
-		app.CuratingKeeper.GetParams(ctx).CurationWindow)
+		app.CuratingKeeper.GetParams(ctx).CurationWindow + time.Minute)
 	ctx = ctx.WithBlockHeader(h)
 
 	posts := make([]types.Post, 0)
