@@ -2,6 +2,7 @@ package curating
 
 import (
 	"fmt"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/public-awesome/stakebird/x/curating/types"
@@ -20,6 +21,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k Keeper) {
 // First upvote iteration: refund deposits, collect QV data
 // Second upvote iteration: distribute QV rewards
 func EndBlocker(ctx sdk.Context, k Keeper) {
+	endTimes := make(map[time.Time]bool, 0)
 	k.IterateExpiredPosts(ctx, func(post types.Post) bool {
 		k.Logger(ctx).Info(
 			fmt.Sprintf("Processing vendor %d post %v", post.VendorID, post.PostIDHash))
@@ -69,6 +71,7 @@ func EndBlocker(ctx sdk.Context, k Keeper) {
 				return false
 			})
 
+		endTimes[post.GetCuratingEndTime()] = true
 		// [NOTE]: not deleting posts until we store a historical record of them (SSV)
 		// https://github.com/public-awesome/stakebird/issues/194
 		// err = k.DeletePost(ctx, post.VendorID, post.PostIDHash)
@@ -78,4 +81,9 @@ func EndBlocker(ctx sdk.Context, k Keeper) {
 
 		return false
 	})
+
+	// remove processed curationEndtime from queue
+	for t := range endTimes {
+		k.RemoveFromCurationQueue(ctx, t)
+	}
 }
