@@ -134,7 +134,7 @@ func TestEndBlockerExpiringPostWithSmolRewardPool(t *testing.T) {
 		"9 (bal) + 1 (deposit) + 249u (match reward)")
 }
 
-func TestEndBlocker_RemoveFromExipiredQueue(t *testing.T) {
+func TestEndBlocker_RemoveFromExpiredQueue(t *testing.T) {
 	_, app, ctx := testdata.CreateTestInput()
 
 	addrs = testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(10_000_000))
