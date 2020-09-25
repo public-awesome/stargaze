@@ -43,9 +43,7 @@ func (AppModuleBasic) Name() string {
 }
 
 // RegisterLegacyAminoCodec registers the staking module's types on the given LegacyAmino codec.
-func (AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	types.RegisterLegacyAminoCodec(cdc)
-}
+func (AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {}
 
 // RegisterInterfaces registers the module's interface types
 func (b AppModuleBasic) RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
@@ -144,19 +142,15 @@ func (am AppModule) RegisterQueryService(server grpc.Server) {
 // no validator updates.
 func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONMarshaler, data json.RawMessage) []abci.ValidatorUpdate {
 	var genesisState types.GenesisState
-
 	cdc.MustUnmarshalJSON(data, &genesisState)
-
-	// return InitGenesis(ctx, am.keeper, &genesisState)
-	return nil
+	am.keeper.InitGenesis(ctx, genesisState)
+	return []abci.ValidatorUpdate{}
 }
 
 // ExportGenesis returns the exported genesis state as raw bytes for the staking
 // module.
 func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONMarshaler) json.RawMessage {
-	// gs := ExportGenesis(ctx, am.keeper)
-	// return cdc.MustMarshalJSON(gs)
-	return nil
+	return cdc.MustMarshalJSON(am.keeper.ExportGenesis(ctx))
 }
 
 // BeginBlock returns the begin blocker for the staking module.

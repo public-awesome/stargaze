@@ -44,11 +44,13 @@ var (
 	KeyPrefixCurationQueue = []byte{0x02}
 )
 
+// PostKey is the key used to store a post
 func PostKey(vendorID uint32, postIDHash []byte) []byte {
 	vendorIDBz := uint32ToBigEndian(vendorID)
 	return append(KeyPrefixPost, append(vendorIDBz, postIDHash...)...)
 }
 
+// UpvoteKey key is the key used to store an upvote
 func UpvoteKey(vendorID uint32, postIDHash []byte, curator sdk.AccAddress) []byte {
 	return append(UpvotePrefixKey(vendorID, postIDHash), curator.Bytes()...)
 }

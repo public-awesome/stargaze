@@ -1,27 +1,93 @@
 package curating
 
 import (
+	"fmt"
 	"time"
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/staking/keeper"
-	"github.com/cosmos/cosmos-sdk/x/staking/types"
+	"github.com/public-awesome/stakebird/x/curating/keeper"
+	"github.com/public-awesome/stakebird/x/curating/types"
 )
 
-// BeginBlocker will persist the current header and validator set as a historical entry
-// and prune the oldest entry based on the HistoricalEntries parameter
+// BeginBlocker to fund reward pool on every begin block
 func BeginBlocker(ctx sdk.Context, k keeper.Keeper) {
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyBeginBlocker)
+	if err := k.InflateRewardPool(ctx); err != nil {
+		panic(fmt.Sprintf("Error funding reward pool: %s", err.Error()))
+	}
 
-	k.TrackHistoricalInfo(ctx)
 }
 
 // EndBlocker called every block, update validator set
 func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyEndBlocker)
+	endTimes := make(map[time.Time]bool)
+	k.IterateExpiredPosts(ctx, func(post types.Post) bool {
+		k.Logger(ctx).Info(
+			fmt.Sprintf("Processing vendor %d post %v", post.VendorID, post.PostIDHash))
 
-	return k.BlockValidatorUpdates(ctx)
+		qv := NewQVFData(ctx, k)
+
+		// iterate upvoters, returning deposits, and tallying upvotes
+		k.IterateUpvotes(ctx, post.VendorID, post.PostIDHash,
+			func(upvote types.Upvote) (stop bool) {
+				var err error
+				qv, err = qv.TallyVote(upvote.VoteAmount.Amount)
+				if err != nil {
+					panic(err)
+				}
+
+				return false
+			})
+
+		err := k.RewardCreator(ctx, post.RewardAccount, qv.MatchPool())
+		if err != nil {
+			panic(err)
+		}
+
+		curatorVotingReward := qv.VoterReward()
+		curatorMatchReward := qv.MatchReward()
+
+		k.IterateUpvotes(ctx, post.VendorID, post.PostIDHash,
+			func(upvote types.Upvote) (stop bool) {
+				// distribute quadratic voting per capita reward from voting pool
+				err = k.SendVotingReward(ctx, upvote.RewardAccount, curatorVotingReward)
+				if err != nil {
+					panic(err)
+				}
+
+				// distribute quadratic funding reward from protocol reward pool
+				err = k.SendMatchingReward(ctx, upvote.RewardAccount, curatorMatchReward)
+				if err != nil {
+					panic(err)
+				}
+
+				// Remove upvote
+				err = k.DeleteUpvote(ctx, post.VendorID, post.PostIDHash, upvote)
+				if err != nil {
+					panic(err)
+				}
+
+				return false
+			})
+
+		endTimes[post.GetCuratingEndTime()] = true
+		// [NOTE]: not deleting posts until we store a historical record of them (SSV)
+		// https://github.com/public-awesome/stakebird/issues/194
+		// err = k.DeletePost(ctx, post.VendorID, post.PostIDHash)
+		// if err != nil {
+		// panic(err)
+		// }
+
+		return false
+	})
+
+	// remove processed curationEndtime from queue
+	for t := range endTimes {
+		k.RemoveFromCurationQueue(ctx, t)
+	}
+	return []abci.ValidatorUpdate{}
 }
