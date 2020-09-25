@@ -13,11 +13,12 @@ import (
 func NewHandler(k keeper.Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
+
 		switch msg := msg.(type) {
-		// case types.MsgPost:
-		// 	return handleMsgPost(ctx, k, msg)
-		// case types.MsgUpvote:
-		// 	return handleMsgUpvote(ctx, k, msg)
+		case *types.MsgPost:
+			return handleMsgPost(ctx, k, msg)
+		case *types.MsgUpvote:
+			return handleMsgUpvote(ctx, k, msg)
 		default:
 			errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, msg)
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
@@ -25,7 +26,7 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 	}
 }
 
-func handleMsgPost(ctx sdk.Context, k keeper.Keeper, msg types.MsgPost) (*sdk.Result, error) {
+func handleMsgPost(ctx sdk.Context, k keeper.Keeper, msg *types.MsgPost) (*sdk.Result, error) {
 	err := k.CreatePost(
 		ctx, msg.VendorID, msg.PostID, msg.Body, msg.Creator, msg.RewardAccount)
 	if err != nil {
@@ -44,7 +45,7 @@ func handleMsgPost(ctx sdk.Context, k keeper.Keeper, msg types.MsgPost) (*sdk.Re
 }
 
 // handleMsgUpvote calls the keeper to perform the upvote operation
-func handleMsgUpvote(ctx sdk.Context, k keeper.Keeper, msg types.MsgUpvote) (*sdk.Result, error) {
+func handleMsgUpvote(ctx sdk.Context, k keeper.Keeper, msg *types.MsgUpvote) (*sdk.Result, error) {
 	err := k.CreateUpvote(
 		ctx, msg.VendorID, msg.PostID, msg.Curator, msg.RewardAccount, msg.VoteNum)
 	if err != nil {

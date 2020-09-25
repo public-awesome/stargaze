@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"time"
 
@@ -16,7 +17,6 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/pkg/errors"
 	stakebird "github.com/public-awesome/stakebird/app"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -29,7 +29,7 @@ const (
 	flagUnbondingPeriod = "unbonding-period"
 )
 
-// InitCmd wraps the genutil.InitCmd to inject specific settings for rocket chain
+// InitCmd wraps the genutil.InitCmd to inject specific settings for stakebird chain
 func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 
 	init := genutilcli.InitCmd(mbm, defaultNodeHome)
@@ -53,7 +53,7 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 		} else {
 			genDoc, err = types.GenesisDocFromFile(genFile)
 			if err != nil {
-				return errors.Wrap(err, "Failed to read genesis doc from file")
+				return fmt.Errorf("Failed to read genesis doc from file %w", err)
 			}
 		}
 		stakeDenom := viper.GetString(flagStakeDenom)
@@ -64,7 +64,7 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 		}
 		genDoc.AppState = appState
 		if err = genutil.ExportGenesisFile(genDoc, genFile); err != nil {
-			return errors.Wrap(err, "Failed to export gensis file")
+			return fmt.Errorf("Failed to export gensis file %w", err)
 		}
 		return nil
 	}
@@ -82,7 +82,7 @@ func initGenesis(
 ) (json.RawMessage, error) {
 	appState := make(map[string]json.RawMessage)
 	if err := tmjson.Unmarshal(genDoc.AppState, &appState); err != nil {
-		return nil, errors.Wrap(err, "failed to JSON unmarshal initial genesis state")
+		return nil, fmt.Errorf("failed to JSON unmarshal initial genesis state %w", err)
 	}
 	// migrate staking state
 	if appState[stakingtypes.ModuleName] != nil {
@@ -96,7 +96,7 @@ func initGenesis(
 
 		d, err := time.ParseDuration(unbondingPeriod)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to parse unbonding period")
+			return nil, fmt.Errorf("failed to parse unbonding period %w", err)
 		}
 		stakingGenState.Params.UnbondingTime = d
 
