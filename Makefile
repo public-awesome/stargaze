@@ -15,14 +15,12 @@ BUILD_FLAGS := -ldflags '$(ldflags)'
 all: install
 
 create-wallet:
-	stakecli config keyring-backend test
-	stakecli config chain-id localnet-1
-	stakecli keys add validator
+	staked keys add validator --keyring-backend test
 
 init:
 	staked init stakebird --chain-id localnet-1
-	staked add-genesis-account $(shell stakecli keys show validator -a) 10000000000000000ustb,10000000000000000uatom --keyring-backend test
-	staked gentx --name=validator --amount 10000000000ustb --keyring-backend test
+	staked add-genesis-account $(shell staked keys show validator -a --keyring-backend test) 10000000000000000ustb,10000000000000000uatom
+	staked gentx validator --chain-id localnet-1 --amount 10000000000ustb --keyring-backend test
 	staked collect-gentxs 
 
 install: go.sum
