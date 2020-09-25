@@ -8,13 +8,14 @@ import (
 
 // RegisterLegacyAminoCodec registers concrete types on the LegacyAmino codec
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	cdc.RegisterConcrete(MsgPost{}, "curating/MsgPost", nil)
-	cdc.RegisterConcrete(MsgUpvote{}, "curating/MsgUpvote", nil)
 }
 
+// RegisterInterfaces register the curating module interfaces to protobuf
+// Any.
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgPost{},
+		&MsgUpvote{},
 	)
 }
 

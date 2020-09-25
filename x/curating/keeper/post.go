@@ -32,7 +32,7 @@ func (k Keeper) GetPostZ(
 	if value == nil {
 		return post, false, nil
 	}
-	k.cdc.MustUnmarshalBinaryBare(value, &post)
+	k.MustUnmarshalPost(value, &post)
 
 	return post, true, nil
 }
@@ -76,7 +76,7 @@ func (k Keeper) CreatePost(
 
 	store := ctx.KVStore(k.storeKey)
 	key := types.PostKey(vendorID, postIDHash)
-	value := k.cdc.MustMarshalBinaryBare(&post)
+	value := k.MustMarshalPost(post)
 	store.Set(key, value)
 
 	k.InsertCurationQueue(ctx, vendorID, postIDHash, curationEndTime)
@@ -157,9 +157,6 @@ func (k Keeper) SetCurationQueueTimeSlice(
 	store.Set(types.CurationQueueByTimeKey(timestamp), bz)
 }
 
-// md5 is used over sha256 because it's faster and produces a more compact result.
-// Collisions are unlikely since it's always paired with another id (vendor_id) or
-// only used to verify content bodies.
 func hash(body string) ([]byte, error) {
 	h := sha256.New()
 	_, err := h.Write([]byte(body))

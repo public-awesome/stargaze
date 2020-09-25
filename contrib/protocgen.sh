@@ -11,6 +11,11 @@ for dir in $proto_dirs; do
 Mgoogle/protobuf/any.proto=github.com/cosmos/cosmos-sdk/codec/types:. \
   $(find "${dir}" -maxdepth 1 -name '*.proto')
 
+  protoc \
+  -I "proto" \
+  -I "third_party/proto" \
+  --grpc-gateway_out=logtostderr=true:. \
+  $(find "${dir}" -maxdepth 1 -name '*.proto')
 done
 
 

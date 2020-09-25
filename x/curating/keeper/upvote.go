@@ -55,7 +55,7 @@ func (k Keeper) CreateUpvote(
 
 	store := ctx.KVStore(k.storeKey)
 	key := types.UpvoteKey(vendorID, postIDHash, curator)
-	value := k.cdc.MustMarshalBinaryBare(&upvote)
+	value := k.MustMarshalUpvote(upvote)
 	store.Set(key, value)
 
 	// add vote amount to the voting pool

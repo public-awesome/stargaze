@@ -18,8 +18,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	"github.com/cosmos/cosmos-sdk/x/staking/client/rest"
 	"github.com/cosmos/cosmos-sdk/x/staking/simulation"
+	"github.com/public-awesome/stakebird/x/curating/client/cli"
 	"github.com/public-awesome/stakebird/x/curating/keeper"
 	"github.com/public-awesome/stakebird/x/curating/types"
 )
@@ -72,7 +72,6 @@ func (AppModuleBasic) ValidateGenesis(cdc codec.JSONMarshaler, config client.TxE
 
 // RegisterRESTRoutes registers the REST routes for the staking module.
 func (AppModuleBasic) RegisterRESTRoutes(clientCtx client.Context, rtr *mux.Router) {
-	rest.RegisterHandlers(clientCtx, rtr)
 }
 
 // RegisterGRPCRoutes registers the gRPC Gateway routes for the staking module.
@@ -82,12 +81,12 @@ func (AppModuleBasic) RegisterGRPCRoutes(clientCtx client.Context, mux *runtime.
 
 // GetTxCmd returns the root tx command for the staking module.
 func (AppModuleBasic) GetTxCmd() *cobra.Command {
-	return nil
+	return cli.NewTxCmd()
 }
 
 // GetQueryCmd returns no root query command for the staking module.
 func (AppModuleBasic) GetQueryCmd() *cobra.Command {
-	return nil
+	return cli.GetQueryCmd()
 }
 
 // AppModule implements an application module for the staking module.
@@ -117,7 +116,7 @@ func (AppModule) Name() string {
 
 // RegisterInvariants registers the staking module invariants.
 func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
-	// keeper.RegisterInvariants(ir, am.keeper)
+	// TODO: https://github.com/public-awesome/stakebird/issues/108
 }
 
 // Route returns the message routing key for the staking module.
@@ -138,7 +137,7 @@ func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sd
 // RegisterQueryService registers a GRPC query service to respond to the
 // module-specific GRPC queries.
 func (am AppModule) RegisterQueryService(server grpc.Server) {
-	// TODO: querier
+	types.RegisterQueryServer(server, am.keeper)
 }
 
 // InitGenesis performs genesis initialization for the staking module. It returns
