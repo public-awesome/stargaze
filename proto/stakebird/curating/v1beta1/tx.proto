@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package stakebird.user.v1beta1;
+package stakebird.curating.v1beta1;
 
 option go_package = "github.com/public-awesome/stakebird/x/curating/types";
 

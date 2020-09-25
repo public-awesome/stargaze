@@ -25,18 +25,15 @@ init:
 
 install: go.sum
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/staked
-	go install -mod=readonly $(BUILD_FLAGS) ./cmd/stakecli
 
 install-with-faucet: go.sum
 	go install -mod=readonly $(BUILD_FLAGS) -tags faucet ./cmd/staked
-	go install -mod=readonly $(BUILD_FLAGS) -tags faucet ./cmd/stakecli
 
 start:
 	staked start
 
 build:
 	go build $(BUILD_FLAGS) -o bin/staked ./cmd/staked
-	#go build $(BUILD_FLAGS) -o bin/stakecli ./cmd/stakecli
 
 go.sum: go.mod
 	@echo "--> Ensure dependencies have not been modified"
