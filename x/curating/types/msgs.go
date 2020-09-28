@@ -25,8 +25,8 @@ func NewMsgPost(
 	creator,
 	rewardAccount sdk.AccAddress,
 	body string,
-) MsgPost {
-	return MsgPost{
+) *MsgPost {
+	return &MsgPost{
 		VendorID:      vendorID,
 		PostID:        postID,
 		Creator:       creator,
@@ -70,8 +70,8 @@ func (msg MsgPost) ValidateBasic() error {
 }
 
 // NewMsgUpvote creates a new MsgUpvote instance
-func NewMsgUpvote(vendorID uint32, postID string, curator, rewardAccount sdk.AccAddress, voteNum int32) MsgUpvote {
-	return MsgUpvote{
+func NewMsgUpvote(vendorID uint32, postID string, curator, rewardAccount sdk.AccAddress, voteNum int32) *MsgUpvote {
+	return &MsgUpvote{
 		VendorID:      vendorID,
 		PostID:        postID,
 		Curator:       curator,

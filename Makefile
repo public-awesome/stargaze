@@ -30,7 +30,7 @@ install-with-faucet: go.sum
 	go install -mod=readonly $(BUILD_FLAGS) -tags faucet ./cmd/staked
 
 start:
-	staked start
+	staked start --grpc.address 0.0.0.0:9091
 
 build:
 	go build $(BUILD_FLAGS) -o bin/staked ./cmd/staked
@@ -84,3 +84,6 @@ proto-check-breaking:
 
 ci-sign: 
 	drone sign public-awesome/stakebird --save
+
+post: 
+	staked tx curating post 1 1 "test" --from validator --keyring-backend test --chain-id localnet-1

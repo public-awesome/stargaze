@@ -15,7 +15,9 @@ func GetQueryCmd() *cobra.Command {
 		SuggestionsMinimumDistance: 2,
 	}
 
-	queryCmd.AddCommand()
+	queryCmd.AddCommand(
+		GetCmdQueryPost(),
+	)
 
 	return queryCmd
 }
@@ -30,7 +32,9 @@ func NewTxCmd() *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	txCmd.AddCommand()
+	txCmd.AddCommand(
+		NewPostTxCmd(),
+	)
 
 	return txCmd
 }
