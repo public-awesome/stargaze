@@ -38,5 +38,6 @@ message QueryUpvotesRequest {
 }
 
 message QueryUpvotesResponse {
-  repeated stakebird.curating.v1beta1.Upvote upvotes = 1;
+  repeated stakebird.curating.v1beta1.Upvote upvotes = 1
+      [ (gogoproto.nullable) = false ];
 }

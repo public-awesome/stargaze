@@ -28,13 +28,13 @@ func (k Keeper) Post(c context.Context, req *types.QueryPostRequest) (*types.Que
 // Upvotes returns all upvotes for a given vendor and post id
 func (k Keeper) Upvotes(c context.Context, req *types.QueryUpvotesRequest) (*types.QueryUpvotesResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
-	var upvotes []*types.Upvote
+	var upvotes []types.Upvote
 	post, found, err := k.GetPost(ctx, req.VendorId, req.PostId)
 	if err != nil || !found {
 		return nil, types.ErrPostNotFound
 	}
 	k.IterateUpvotes(ctx, req.VendorId, post.PostIDHash, func(upvote types.Upvote) (stop bool) {
-		upvotes = append(upvotes, &upvote)
+		upvotes = append(upvotes, upvote)
 		return false
 	})
 	return &types.QueryUpvotesResponse{
