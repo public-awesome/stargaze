@@ -176,8 +176,11 @@ func AddTestAddrsIncremental(app *SimApp, ctx sdk.Context, accNum int, accAmt sd
 
 func addTestAddrs(app *SimApp, ctx sdk.Context, accNum int, accAmt sdk.Int, strategy GenerateAccountStrategy) []sdk.AccAddress {
 	testAddrs := strategy(accNum)
-
-	initCoins := sdk.NewCoins(sdk.NewCoin(app.StakingKeeper.BondDenom(ctx), accAmt))
+	stakeCoin := sdk.NewCoin("stake", accAmt)
+	stbCoin := sdk.NewCoin("ustb", accAmt)
+	atomCoin := sdk.NewCoin("uatom", accAmt)
+	ibcCoin := sdk.NewCoin("transfer/ibczeroxfer/stake", accAmt)
+	initCoins := sdk.NewCoins(stakeCoin, stbCoin, ibcCoin, atomCoin)
 	setTotalSupply(app, ctx, accAmt, accNum)
 
 	// fill all the addresses with some coins, set the loose pool tokens simultaneously
