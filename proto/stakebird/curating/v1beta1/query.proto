@@ -13,6 +13,10 @@ service Query {
     option (google.api.http).get =
         "/stakebird/curating/v1beta1/posts/{vendor_id}/{post_id}";
   }
+  rpc Upvotes(QueryUpvotesRequest) returns (QueryUpvotesResponse) {
+    option (google.api.http).get =
+        "/stakebird/curating/v1beta1/posts/{vendor_id}/{post_id}/upvotes";
+  }
 }
 
 message QueryPostRequest {
@@ -24,3 +28,15 @@ message QueryPostRequest {
 }
 
 message QueryPostResponse { stakebird.curating.v1beta1.Post post = 1; }
+
+message QueryUpvotesRequest {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  uint32 vendor_id = 1;
+  string post_id = 2;
+}
+
+message QueryUpvotesResponse {
+  repeated stakebird.curating.v1beta1.Upvote upvotes = 1;
+}

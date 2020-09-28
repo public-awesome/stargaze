@@ -68,3 +68,60 @@ $ %s tx curating post 1 "2" "body" --from mykey
 	flags.AddTxFlagsToCmd(cmd)
 	return cmd
 }
+
+// NewUpvoteTxCmd returns the upvote command
+func NewUpvoteTxCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "upvote [vendor-id] [post-id] [voteNum] [reward-addr]",
+		Args:  cobra.MinimumNArgs(3),
+		Short: "Upvote a post",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Curating a post by upvoting.
+Example:
+$ %s tx curating upvote 1 "2" 5 --from mykey
+`,
+				version.AppName,
+			),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			curator := clientCtx.GetFromAddress()
+
+			vendorID, err := strconv.ParseUint(args[0], 10, 32)
+			if err != nil {
+				return err
+			}
+
+			postID := args[1]
+
+			voteNum, err := strconv.ParseUint(args[2], 10, 32)
+			if err != nil {
+				return err
+			}
+
+			var rewardAddrStr string
+			var rewardAddr sdk.AccAddress
+			if len(args) > 3 {
+				rewardAddrStr = args[3]
+			}
+			if rewardAddrStr != "" {
+				rewardAddr, err = sdk.AccAddressFromBech32(rewardAddrStr)
+				if err != nil {
+					return err
+				}
+			}
+
+			msg := types.NewMsgUpvote(
+				uint32(vendorID), postID, curator, rewardAddr, int32(voteNum))
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}

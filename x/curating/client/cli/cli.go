@@ -16,7 +16,8 @@ func GetQueryCmd() *cobra.Command {
 	}
 
 	queryCmd.AddCommand(
-		GetCmdQueryPost(),
+		NewPostQueryCmd(),
+		NewUpvotesQueryCmd(),
 	)
 
 	return queryCmd
@@ -34,6 +35,7 @@ func NewTxCmd() *cobra.Command {
 
 	txCmd.AddCommand(
 		NewPostTxCmd(),
+		NewUpvoteTxCmd(),
 	)
 
 	return txCmd
