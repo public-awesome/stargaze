@@ -18,9 +18,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	"github.com/cosmos/cosmos-sdk/x/staking/simulation"
 	"github.com/public-awesome/stakebird/x/curating/client/cli"
 	"github.com/public-awesome/stakebird/x/curating/keeper"
+	"github.com/public-awesome/stakebird/x/curating/simulation"
 	"github.com/public-awesome/stakebird/x/curating/types"
 )
 
