@@ -1,6 +1,7 @@
 package curating
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"math/rand"
@@ -71,7 +72,7 @@ func (AppModuleBasic) RegisterRESTRoutes(clientCtx client.Context, rtr *mux.Rout
 
 // RegisterGRPCRoutes registers the gRPC Gateway routes for the staking module.
 func (AppModuleBasic) RegisterGRPCRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
-	// TODO: register grpc
+	types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
 }
 
 // GetTxCmd returns the root tx command for the staking module.
@@ -188,8 +189,5 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 
 // WeightedOperations returns the all the staking module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	// return simulation.WeightedOperations(
-	// 	simState.AppParams, simState.Cdc, am.accountKeeper, am.bankKeeper, am.keeper,
-	// )
 	return nil
 }
