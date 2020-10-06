@@ -71,6 +71,7 @@ func NewUpvotesQueryCmd() *cobra.Command {
 		Short: "Query for upvotes by vendor ID and post ID",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Query upvotes by vendor ID and post ID.
+
 Example:
 $ %s query curating upvotes 1 "123"
 `,
@@ -84,23 +85,23 @@ $ %s query curating upvotes 1 "123"
 				return err
 			}
 
-			vendorID, err := strconv.ParseUint(args[0], 10, 32)
-			if err != nil {
-				return err
-			}
 			postID := strings.TrimSpace(args[1])
-
 			if postID == "" {
 				return fmt.Errorf("invalid post id")
 			}
 
-			queryClient := types.NewQueryClient(clientCtx)
-			req := &types.QueryUpvotesRequest{
+			vendorID, err := strconv.ParseUint(args[0], 10, 32)
+			if err != nil {
+				return err
+			}
+
+			qClient := types.NewQueryClient(clientCtx)
+			queryUpvotes := &types.QueryUpvotesRequest{
 				VendorId: uint32(vendorID),
 				PostId:   postID,
 			}
 
-			res, err := queryClient.Upvotes(context.Background(), req)
+			res, err := qClient.Upvotes(context.Background(), queryUpvotes)
 			if err != nil {
 				return err
 			}
