@@ -53,7 +53,6 @@ lint:
 
 build-linux: 
 	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build $(BUILD_FLAGS) -o bin/staked github.com/public-awesome/stakebird/cmd/staked
-	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build $(BUILD_FLAGS) -o bin/stakecli github.com/public-awesome/stakebird/cmd/stakecli
 
 build-docker: build-linux
 	docker build -f docker/Dockerfile -t publicawesome/stakebird .
