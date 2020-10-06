@@ -1,3 +1,5 @@
+//Package simapp ...
+//nolint
 package simapp
 
 import (
@@ -123,7 +125,7 @@ func createRandomAccounts(accNum int) []sdk.AccAddress {
 
 // createIncrementalAccounts is a strategy used by addTestAddrs() in order to generated addresses in ascending order.
 func createIncrementalAccounts(accNum int) []sdk.AccAddress {
-	var addresses []sdk.AccAddress
+	addresses := make([]sdk.AccAddress, 0)
 	var buffer bytes.Buffer
 
 	// start at 100 so we can make up to 999 test addresses with valid test addresses

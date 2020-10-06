@@ -48,8 +48,8 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 
 			config.SetRoot(clientCtx.HomeDir)
 
-			addr, err := sdk.AccAddressFromBech32(args[0])
-			if err != nil {
+			addr, addrErr := sdk.AccAddressFromBech32(args[0])
+			if addrErr != nil {
 				inBuf := bufio.NewReader(cmd.InOrStdin())
 				keyringBackend, err := cmd.Flags().GetString(flags.FlagKeyringBackend)
 				if err != nil {

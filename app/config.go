@@ -33,25 +33,35 @@ var (
 func GetSimulatorFlags() {
 	// config fields
 	flag.StringVar(&FlagGenesisFileValue, "Genesis", "", "custom simulation genesis file; cannot be used with params file")
-	flag.StringVar(&FlagParamsFileValue, "Params", "", "custom simulation params file which overrides any random params; cannot be used with genesis")
-	flag.StringVar(&FlagExportParamsPathValue, "ExportParamsPath", "", "custom file path to save the exported params JSON")
-	flag.IntVar(&FlagExportParamsHeightValue, "ExportParamsHeight", 0, "height to which export the randomly generated params")
-	flag.StringVar(&FlagExportStatePathValue, "ExportStatePath", "", "custom file path to save the exported app state JSON")
-	flag.StringVar(&FlagExportStatsPathValue, "ExportStatsPath", "", "custom file path to save the exported simulation statistics JSON")
+	flag.StringVar(&FlagParamsFileValue, "Params", "",
+		"custom simulation params file which overrides any random params; cannot be used with genesis")
+	flag.StringVar(&FlagExportParamsPathValue, "ExportParamsPath", "",
+		"custom file path to save the exported params JSON")
+	flag.IntVar(&FlagExportParamsHeightValue, "ExportParamsHeight", 0,
+		"height to which export the randomly generated params")
+	flag.StringVar(&FlagExportStatePathValue, "ExportStatePath", "",
+		"custom file path to save the exported app state JSON")
+	flag.StringVar(&FlagExportStatsPathValue, "ExportStatsPath", "",
+		"custom file path to save the exported simulation statistics JSON")
 	flag.Int64Var(&FlagSeedValue, "Seed", 42, "simulation random seed")
-	flag.IntVar(&FlagInitialBlockHeightValue, "InitialBlockHeight", 1, "initial block to start the simulation")
-	flag.IntVar(&FlagNumBlocksValue, "NumBlocks", 500, "number of new blocks to simulate from the initial block height")
+	flag.IntVar(&FlagInitialBlockHeightValue, "InitialBlockHeight", 1,
+		"initial block to start the simulation")
+	flag.IntVar(&FlagNumBlocksValue, "NumBlocks", 500,
+		"number of new blocks to simulate from the initial block height")
 	flag.IntVar(&FlagBlockSizeValue, "BlockSize", 200, "operations per block")
 	flag.BoolVar(&FlagLeanValue, "Lean", false, "lean simulation log output")
 	flag.BoolVar(&FlagCommitValue, "Commit", false, "have the simulation commit")
-	flag.BoolVar(&FlagOnOperationValue, "SimulateEveryOperation", false, "run slow invariants every operation")
-	flag.BoolVar(&FlagAllInvariantsValue, "PrintAllInvariants", false, "print all invariants if a broken invariant is found")
+	flag.BoolVar(&FlagOnOperationValue, "SimulateEveryOperation", false,
+		"run slow invariants every operation")
+	flag.BoolVar(&FlagAllInvariantsValue, "PrintAllInvariants", false,
+		"print all invariants if a broken invariant is found")
 
 	// simulation flags
 	flag.BoolVar(&FlagEnabledValue, "Enabled", false, "enable the simulation")
 	flag.BoolVar(&FlagVerboseValue, "Verbose", false, "verbose log output")
 	flag.UintVar(&FlagPeriodValue, "Period", 0, "run slow invariants only once every period assertions")
-	flag.Int64Var(&FlagGenesisTimeValue, "GenesisTime", 0, "override genesis UNIX time instead of using a random UNIX time")
+	flag.Int64Var(&FlagGenesisTimeValue, "GenesisTime", 0,
+		"override genesis UNIX time instead of using a random UNIX time")
 }
 
 // NewConfigFromFlags creates a simulation from the retrieved values of the flags.

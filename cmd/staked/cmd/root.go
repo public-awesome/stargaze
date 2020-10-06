@@ -88,7 +88,8 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		InitCmd(stakebird.ModuleBasics, stakebird.DefaultNodeHome),
 		genutilcli.CollectGenTxsCmd(banktypes.GenesisBalancesIterator{}, stakebird.DefaultNodeHome),
 		genutilcli.MigrateGenesisCmd(),
-		genutilcli.GenTxCmd(stakebird.ModuleBasics, encodingConfig.TxConfig, banktypes.GenesisBalancesIterator{}, stakebird.DefaultNodeHome),
+		genutilcli.GenTxCmd(stakebird.ModuleBasics, encodingConfig.TxConfig,
+			banktypes.GenesisBalancesIterator{}, stakebird.DefaultNodeHome),
 		genutilcli.ValidateGenesisCmd(stakebird.ModuleBasics, encodingConfig.TxConfig),
 		AddGenesisAccountCmd(stakebird.DefaultNodeHome),
 		tmcli.NewCompletionCmd(rootCmd, true),
@@ -159,7 +160,8 @@ func txCommand() *cobra.Command {
 	return cmd
 }
 
-func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, appOpts servertypes.AppOptions) servertypes.Application {
+func newApp(logger log.Logger, db dbm.DB,
+	traceStore io.Writer, appOpts servertypes.AppOptions) servertypes.Application {
 	var cache sdk.MultiStorePersistentCache
 
 	if cast.ToBool(appOpts.Get(server.FlagInterBlockCache)) {
