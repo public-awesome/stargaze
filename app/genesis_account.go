@@ -15,15 +15,23 @@ type SimGenesisAccount struct {
 	*authtypes.BaseAccount
 
 	// vesting account fields
-	OriginalVesting  sdk.Coins `json:"original_vesting" yaml:"original_vesting"`   // total vesting coins upon initialization
-	DelegatedFree    sdk.Coins `json:"delegated_free" yaml:"delegated_free"`       // delegated vested coins at time of delegation
-	DelegatedVesting sdk.Coins `json:"delegated_vesting" yaml:"delegated_vesting"` // delegated vesting coins at time of delegation
-	StartTime        int64     `json:"start_time" yaml:"start_time"`               // vesting start time (UNIX Epoch time)
-	EndTime          int64     `json:"end_time" yaml:"end_time"`                   // vesting end time (UNIX Epoch time)
+	OriginalVesting sdk.Coins `json:"original_vesting" yaml:"original_vesting"` // total vesting coins upon initialization
 
+	// delegated vested coins at time of delegation
+	DelegatedFree sdk.Coins `json:"delegated_free" yaml:"delegated_free"`
+	// delegated vesting coins at time of delegation
+	DelegatedVesting sdk.Coins `json:"delegated_vesting" yaml:"delegated_vesting"`
+	// vesting start time (UNIX Epoch time)
+	StartTime int64 `json:"start_time" yaml:"start_time"`
+	// vesting end time (UNIX Epoch time)
+
+	EndTime int64 `json:"end_time" yaml:"end_time"`
 	// module account fields
-	ModuleName        string   `json:"module_name" yaml:"module_name"`               // name of the module account
-	ModulePermissions []string `json:"module_permissions" yaml:"module_permissions"` // permissions of module account
+
+	// name of the module account
+	ModuleName string `json:"module_name" yaml:"module_name"`
+	// permissions of module account
+	ModulePermissions []string `json:"module_permissions" yaml:"module_permissions"`
 }
 
 // Validate checks for errors on the vesting and module account parameters

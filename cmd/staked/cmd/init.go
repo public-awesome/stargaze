@@ -53,7 +53,7 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 		} else {
 			genDoc, err = types.GenesisDocFromFile(genFile)
 			if err != nil {
-				return fmt.Errorf("Failed to read genesis doc from file %w", err)
+				return fmt.Errorf("failed to read genesis doc from file %w", err)
 			}
 		}
 		stakeDenom := viper.GetString(flagStakeDenom)
@@ -64,7 +64,7 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 		}
 		genDoc.AppState = appState
 		if err = genutil.ExportGenesisFile(genDoc, genFile); err != nil {
-			return fmt.Errorf("Failed to export gensis file %w", err)
+			return fmt.Errorf("failed to export gensis file %w", err)
 		}
 		return nil
 	}
