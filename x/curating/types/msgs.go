@@ -29,8 +29,8 @@ func NewMsgPost(
 	return &MsgPost{
 		VendorID:      vendorID,
 		PostID:        postID,
-		Creator:       creator,
-		RewardAccount: rewardAccount,
+		Creator:       creator.String(),
+		RewardAccount: rewardAccount.String(),
 		Body:          body,
 	}
 }
@@ -43,7 +43,11 @@ func (msg MsgPost) Type() string { return TypeMsgPost }
 
 // GetSigners implements sdk.Msg
 func (msg MsgPost) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{msg.Creator}
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
 }
 
 // GetSignBytes gets the bytes for the message signer to sign on
@@ -56,7 +60,7 @@ func (msg MsgPost) ValidateBasic() error {
 	if msg.Body == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty body")
 	}
-	if msg.Creator.Empty() {
+	if strings.TrimSpace(msg.Creator) == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty creator")
 	}
 	if strings.TrimSpace(msg.PostID) == "" {
@@ -74,8 +78,8 @@ func NewMsgUpvote(vendorID uint32, postID string, curator, rewardAccount sdk.Acc
 	return &MsgUpvote{
 		VendorID:      vendorID,
 		PostID:        postID,
-		Curator:       curator,
-		RewardAccount: rewardAccount,
+		Curator:       curator.String(),
+		RewardAccount: rewardAccount.String(),
 		VoteNum:       voteNum,
 	}
 }
@@ -88,7 +92,11 @@ func (msg MsgUpvote) Type() string { return TypeMsgUpvote }
 
 // GetSigners implements sdk.Msg
 func (msg MsgUpvote) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{msg.Curator}
+	curator, err := sdk.AccAddressFromBech32(msg.Curator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{curator}
 }
 
 // GetSignBytes gets the bytes for the message signer to sign on
@@ -98,7 +106,7 @@ func (msg MsgUpvote) GetSignBytes() []byte {
 
 // ValidateBasic validity check for the AnteHandler
 func (msg MsgUpvote) ValidateBasic() error {
-	if msg.Curator.Empty() {
+	if strings.TrimSpace(msg.Curator) == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty curator")
 	}
 	if strings.TrimSpace(msg.PostID) == "" {

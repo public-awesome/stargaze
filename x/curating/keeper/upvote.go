@@ -109,7 +109,11 @@ func (k Keeper) DeleteUpvote(ctx sdk.Context, vendorID uint32, postIDHash []byte
 	}
 
 	store := ctx.KVStore(k.storeKey)
-	key := types.UpvoteKey(vendorID, postIDHash, upvote.Curator)
+	curator, err := sdk.AccAddressFromBech32(upvote.Curator)
+	if err != nil {
+		return err
+	}
+	key := types.UpvoteKey(vendorID, postIDHash, curator)
 
 	store.Delete(key)
 	return nil

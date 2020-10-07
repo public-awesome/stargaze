@@ -1,0 +1,7 @@
+syntax = "proto3";
+package stakebird.user.v1beta1;
+
+option go_package = "github.com/public-awesome/stakebird/x/user/types";
+
+// Query defines the gRPC querier service.
+service Query {}

@@ -27,8 +27,17 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 }
 
 func handleMsgPost(ctx sdk.Context, k keeper.Keeper, msg *types.MsgPost) (*sdk.Result, error) {
-	err := k.CreatePost(
-		ctx, msg.VendorID, msg.PostID, msg.Body, msg.Creator, msg.RewardAccount)
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, err
+	}
+
+	rewardAccount, err := sdk.AccAddressFromBech32(msg.RewardAccount)
+	if err != nil {
+		return nil, err
+	}
+	err = k.CreatePost(
+		ctx, msg.VendorID, msg.PostID, msg.Body, creator, rewardAccount)
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +46,7 @@ func handleMsgPost(ctx sdk.Context, k keeper.Keeper, msg *types.MsgPost) (*sdk.R
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator.String()),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
 		),
 	})
 
@@ -46,8 +55,18 @@ func handleMsgPost(ctx sdk.Context, k keeper.Keeper, msg *types.MsgPost) (*sdk.R
 
 // handleMsgUpvote calls the keeper to perform the upvote operation
 func handleMsgUpvote(ctx sdk.Context, k keeper.Keeper, msg *types.MsgUpvote) (*sdk.Result, error) {
-	err := k.CreateUpvote(
-		ctx, msg.VendorID, msg.PostID, msg.Curator, msg.RewardAccount, msg.VoteNum)
+	curator, err := sdk.AccAddressFromBech32(msg.Curator)
+	if err != nil {
+		return nil, err
+	}
+
+	rewardAccount, err := sdk.AccAddressFromBech32(msg.RewardAccount)
+	if err != nil {
+		return nil, err
+	}
+
+	err = k.CreateUpvote(
+		ctx, msg.VendorID, msg.PostID, curator, rewardAccount, msg.VoteNum)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +75,7 @@ func handleMsgUpvote(ctx sdk.Context, k keeper.Keeper, msg *types.MsgUpvote) (*s
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Curator.String()),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Curator),
 		),
 	})
 

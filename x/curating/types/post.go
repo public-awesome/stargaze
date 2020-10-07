@@ -14,8 +14,8 @@ func NewPost(
 	return Post{
 		VendorID:        vendorID,
 		PostIDHash:      postIDHash,
-		Creator:         creator,
-		RewardAccount:   rewardAccount,
+		Creator:         creator.String(),
+		RewardAccount:   rewardAccount.String(),
 		BodyHash:        bodyHash,
 		CuratingEndTime: curatingEndTime,
 	}

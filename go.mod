@@ -3,7 +3,7 @@ module github.com/public-awesome/stakebird
 go 1.15
 
 require (
-	github.com/cosmos/cosmos-sdk v0.34.4-0.20201005133838-ee80f10cc66c
+	github.com/cosmos/cosmos-sdk v0.34.4-0.20201005215609-4a1b2fba43b1
 	github.com/gogo/protobuf v1.3.1
 	github.com/golang/protobuf v1.4.2
 	github.com/gorilla/mux v1.8.0

@@ -43,7 +43,11 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 				return false
 			})
 
-		err := k.RewardCreator(ctx, post.RewardAccount, qv.MatchPool())
+		rewardAccount, err := sdk.AccAddressFromBech32(post.RewardAccount)
+		if err != nil {
+			panic(err)
+		}
+		err = k.RewardCreator(ctx, rewardAccount, qv.MatchPool())
 		if err != nil {
 			panic(err)
 		}
@@ -53,14 +57,18 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 
 		k.IterateUpvotes(ctx, post.VendorID, post.PostIDHash,
 			func(upvote types.Upvote) (stop bool) {
+				rewardAccount, err := sdk.AccAddressFromBech32(upvote.RewardAccount)
+				if err != nil {
+					panic(err)
+				}
 				// distribute quadratic voting per capita reward from voting pool
-				err = k.SendVotingReward(ctx, upvote.RewardAccount, curatorVotingReward)
+				err = k.SendVotingReward(ctx, rewardAccount, curatorVotingReward)
 				if err != nil {
 					panic(err)
 				}
 
 				// distribute quadratic funding reward from protocol reward pool
-				err = k.SendMatchingReward(ctx, upvote.RewardAccount, curatorMatchReward)
+				err = k.SendMatchingReward(ctx, rewardAccount, curatorMatchReward)
 				if err != nil {
 					panic(err)
 				}

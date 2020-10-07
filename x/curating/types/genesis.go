@@ -1,13 +1,13 @@
 package types
 
-// DefaultGenesisState - default GenesisState used by Cosmos Hub
+// DefaultGenesisState - default GenesisState
 func DefaultGenesisState() *GenesisState {
 	return &GenesisState{
 		Params: DefaultParams(),
 	}
 }
 
-// Validate validates the x/stake genesis parameters
+// Validate validates the x/user genesis parameters
 func (gs GenesisState) Validate() error {
 	err := gs.Params.Validate()
 	if err != nil {

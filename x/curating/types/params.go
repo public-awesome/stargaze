@@ -11,7 +11,7 @@ import (
 
 // Default parameter namespace
 const (
-	DefaultParamspace                   = ModuleName
+	DefaultParamspace     string        = ModuleName
 	DefaultCurationWindow time.Duration = time.Hour * 24 * 3
 	DefaultMaxNumVotes    uint32        = 5
 	DefaultMaxVendors     uint32        = 1
