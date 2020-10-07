@@ -24,8 +24,8 @@ func TestNewMsgPost(t *testing.T) {
 	require.Equal(t, msg.GetVendorID(), vendorID)
 	require.Equal(t, msg.GetPostID(), postID)
 	require.Equal(t, msg.GetBody(), body)
-	require.Equal(t, msg.GetCreator(), addresses[0])
-	require.Equal(t, msg.GetRewardAccount(), addresses[0])
+	require.Equal(t, msg.GetCreator(), addresses[0].String())
+	require.Equal(t, msg.GetRewardAccount(), addresses[0].String())
 }
 
 func TestValidateBasicMsgPost_EmptyBody(t *testing.T) {
@@ -40,8 +40,8 @@ func TestValidateBasicMsgPost_EmptyBody(t *testing.T) {
 	msg := types.NewMsgPost(vendorID, postID, addresses[0], addresses[0], body)
 	require.Equal(t, msg.GetVendorID(), vendorID)
 	require.Equal(t, msg.GetPostID(), postID)
-	require.Equal(t, msg.GetCreator(), addresses[0])
-	require.Equal(t, msg.GetRewardAccount(), addresses[0])
+	require.Equal(t, msg.GetCreator(), addresses[0].String())
+	require.Equal(t, msg.GetRewardAccount(), addresses[0].String())
 
 	err := msg.ValidateBasic()
 	require.NotNil(t, err)
@@ -59,7 +59,7 @@ func TestValidateBasicMsgPost_EmptyCreator(t *testing.T) {
 	msg := types.NewMsgPost(vendorID, postID, nil, addresses[0], body)
 	require.Equal(t, msg.GetVendorID(), vendorID)
 	require.Equal(t, msg.GetPostID(), postID)
-	require.Equal(t, msg.GetRewardAccount(), addresses[0])
+	require.Equal(t, msg.GetRewardAccount(), addresses[0].String())
 	require.Equal(t, msg.GetBody(), body)
 
 	err := msg.ValidateBasic()
@@ -77,8 +77,8 @@ func TestValidateBasicMsgPost_EmptyPostID(t *testing.T) {
 
 	msg := types.NewMsgPost(vendorID, postID, addresses[0], addresses[0], body)
 	require.Equal(t, msg.GetVendorID(), vendorID)
-	require.Equal(t, msg.GetCreator(), addresses[0])
-	require.Equal(t, msg.GetRewardAccount(), addresses[0])
+	require.Equal(t, msg.GetCreator(), addresses[0].String())
+	require.Equal(t, msg.GetRewardAccount(), addresses[0].String())
 	require.Equal(t, msg.GetBody(), body)
 
 	err := msg.ValidateBasic()
@@ -96,8 +96,8 @@ func TestValidateBasicMsgPost_InvalidVendorID(t *testing.T) {
 
 	msg := types.NewMsgPost(vendorID, postID, addresses[0], addresses[0], body)
 	require.Equal(t, msg.GetPostID(), postID)
-	require.Equal(t, msg.GetCreator(), addresses[0])
-	require.Equal(t, msg.GetRewardAccount(), addresses[0])
+	require.Equal(t, msg.GetCreator(), addresses[0].String())
+	require.Equal(t, msg.GetRewardAccount(), addresses[0].String())
 	require.Equal(t, msg.GetBody(), body)
 
 	err := msg.ValidateBasic()
@@ -116,8 +116,8 @@ func TestNewMsgUpvote(t *testing.T) {
 	msg := types.NewMsgUpvote(vendorID, postID, addresses[0], addresses[0], voteNum)
 	require.Equal(t, msg.GetVendorID(), vendorID)
 	require.Equal(t, msg.GetPostID(), postID)
-	require.Equal(t, msg.GetCurator(), addresses[0])
-	require.Equal(t, msg.GetRewardAccount(), addresses[0])
+	require.Equal(t, msg.GetCurator(), addresses[0].String())
+	require.Equal(t, msg.GetRewardAccount(), addresses[0].String())
 	require.Equal(t, msg.GetVoteNum(), voteNum)
 }
 
@@ -133,7 +133,7 @@ func TestValidateBasicMsgUpvote_EmptyCurator(t *testing.T) {
 	msg := types.NewMsgUpvote(vendorID, postID, nil, addresses[0], voteNum)
 	require.Equal(t, msg.GetVendorID(), vendorID)
 	require.Equal(t, msg.GetPostID(), postID)
-	require.Equal(t, msg.GetRewardAccount(), addresses[0])
+	require.Equal(t, msg.GetRewardAccount(), addresses[0].String())
 	require.Equal(t, msg.GetVoteNum(), voteNum)
 
 	err := msg.ValidateBasic()
@@ -151,8 +151,8 @@ func TestValidateBasicMsgUpvote_EmptyPostID(t *testing.T) {
 
 	msg := types.NewMsgUpvote(vendorID, postID, addresses[0], addresses[0], voteNum)
 	require.Equal(t, msg.GetVendorID(), vendorID)
-	require.Equal(t, msg.GetCurator(), addresses[0])
-	require.Equal(t, msg.GetRewardAccount(), addresses[0])
+	require.Equal(t, msg.GetCurator(), addresses[0].String())
+	require.Equal(t, msg.GetRewardAccount(), addresses[0].String())
 	require.Equal(t, msg.GetVoteNum(), voteNum)
 
 	err := msg.ValidateBasic()
@@ -170,8 +170,8 @@ func TestValidateBasicMsgUpvote_InvalidVendorID(t *testing.T) {
 
 	msg := types.NewMsgUpvote(vendorID, postID, addresses[0], addresses[0], voteNum)
 	require.Equal(t, msg.GetPostID(), postID)
-	require.Equal(t, msg.GetCurator(), addresses[0])
-	require.Equal(t, msg.GetRewardAccount(), addresses[0])
+	require.Equal(t, msg.GetCurator(), addresses[0].String())
+	require.Equal(t, msg.GetRewardAccount(), addresses[0].String())
 	require.Equal(t, msg.GetVoteNum(), voteNum)
 
 	err := msg.ValidateBasic()
@@ -192,8 +192,8 @@ func TestValidateBasicMsgUpvote_InvalidVoteNum(t *testing.T) {
 	msg := types.NewMsgUpvote(vendorID, postID, addresses[0], addresses[0], voteNum)
 	require.Equal(t, msg.GetVendorID(), vendorID)
 	require.Equal(t, msg.GetPostID(), postID)
-	require.Equal(t, msg.GetCurator(), addresses[0])
-	require.Equal(t, msg.GetRewardAccount(), addresses[0])
+	require.Equal(t, msg.GetCurator(), addresses[0].String())
+	require.Equal(t, msg.GetRewardAccount(), addresses[0].String())
 
 	err := msg.ValidateBasic()
 	require.NotNil(t, err)
@@ -204,8 +204,8 @@ func TestValidateBasicMsgUpvote_InvalidVoteNum(t *testing.T) {
 	msg = types.NewMsgUpvote(vendorID, postID, addresses[0], addresses[0], voteNum)
 	require.Equal(t, msg.GetVendorID(), vendorID)
 	require.Equal(t, msg.GetPostID(), postID)
-	require.Equal(t, msg.GetCurator(), addresses[0])
-	require.Equal(t, msg.GetRewardAccount(), addresses[0])
+	require.Equal(t, msg.GetCurator(), addresses[0].String())
+	require.Equal(t, msg.GetRewardAccount(), addresses[0].String())
 
 	err = msg.ValidateBasic()
 	require.NotNil(t, err)
