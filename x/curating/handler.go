@@ -5,28 +5,39 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/public-awesome/stakebird/x/curating/keeper"
 	"github.com/public-awesome/stakebird/x/curating/types"
 )
 
 // NewHandler creates an sdk.Handler for all the x/curating type messages
-func NewHandler(k Keeper) sdk.Handler {
+func NewHandler(k keeper.Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
+
 		switch msg := msg.(type) {
-		case types.MsgPost:
+		case *types.MsgPost:
 			return handleMsgPost(ctx, k, msg)
-		case types.MsgUpvote:
+		case *types.MsgUpvote:
 			return handleMsgUpvote(ctx, k, msg)
 		default:
-			errMsg := fmt.Sprintf("unrecognized %s message type: %T", ModuleName, msg)
+			errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, msg)
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
 		}
 	}
 }
 
-func handleMsgPost(ctx sdk.Context, k Keeper, msg types.MsgPost) (*sdk.Result, error) {
-	err := k.CreatePost(
-		ctx, msg.VendorID, msg.PostID, msg.Body, msg.Creator, msg.RewardAccount)
+func handleMsgPost(ctx sdk.Context, k keeper.Keeper, msg *types.MsgPost) (*sdk.Result, error) {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, err
+	}
+
+	rewardAccount, err := sdk.AccAddressFromBech32(msg.RewardAccount)
+	if err != nil {
+		return nil, err
+	}
+	err = k.CreatePost(
+		ctx, msg.VendorID, msg.PostID, msg.Body, creator, rewardAccount)
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +46,7 @@ func handleMsgPost(ctx sdk.Context, k Keeper, msg types.MsgPost) (*sdk.Result, e
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator.String()),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
 		),
 	})
 
@@ -43,9 +54,19 @@ func handleMsgPost(ctx sdk.Context, k Keeper, msg types.MsgPost) (*sdk.Result, e
 }
 
 // handleMsgUpvote calls the keeper to perform the upvote operation
-func handleMsgUpvote(ctx sdk.Context, k Keeper, msg types.MsgUpvote) (*sdk.Result, error) {
-	err := k.CreateUpvote(
-		ctx, msg.VendorID, msg.PostID, msg.Curator, msg.RewardAccount, msg.VoteNum)
+func handleMsgUpvote(ctx sdk.Context, k keeper.Keeper, msg *types.MsgUpvote) (*sdk.Result, error) {
+	curator, err := sdk.AccAddressFromBech32(msg.Curator)
+	if err != nil {
+		return nil, err
+	}
+
+	rewardAccount, err := sdk.AccAddressFromBech32(msg.RewardAccount)
+	if err != nil {
+		return nil, err
+	}
+
+	err = k.CreateUpvote(
+		ctx, msg.VendorID, msg.PostID, curator, rewardAccount, msg.VoteNum)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +75,7 @@ func handleMsgUpvote(ctx sdk.Context, k Keeper, msg types.MsgUpvote) (*sdk.Resul
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Curator.String()),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Curator),
 		),
 	})
 

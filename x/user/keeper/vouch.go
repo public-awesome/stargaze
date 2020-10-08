@@ -95,14 +95,6 @@ func (k Keeper) CreateVouch(
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypePost,
-			// sdk.NewAttribute(types.AttributeKeyVendorID, fmt.Sprintf("%d", vendorID)),
-			// sdk.NewAttribute(types.AttributeKeyPostID, postID),
-			// sdk.NewAttribute(types.AttributeKeyCreator, creator.String()),
-			// sdk.NewAttribute(types.AttributeKeyRewardAccount, rewardAccount.String()),
-			// sdk.NewAttribute(types.AttributeKeyBody, body),
-			// sdk.NewAttribute(types.AttributeKeyDeposit, d.String()),
-			// sdk.NewAttribute(types.AttributeCurationEndTime, curationEndTime.Format(time.RFC3339)),
-			// sdk.NewAttribute(types.AttributeKeyVoteDenom, types.DefaultVoteDenom),
 		),
 	})
 

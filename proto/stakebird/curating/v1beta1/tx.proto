@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package stakebird.curating.v1beta1;
+
+option go_package = "github.com/public-awesome/stakebird/x/curating/types";
+
+import "gogoproto/gogo.proto";
+
+message MsgPost {
+  option (gogoproto.equal) = true;
+
+  uint32 vendor_id = 1 [
+    (gogoproto.customname) = "VendorID",
+    (gogoproto.moretags) = "yaml:\"vendor_id\"",
+    (gogoproto.jsontag) = "vendor_id"
+  ];
+  string post_id = 2 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\"",
+    (gogoproto.jsontag) = "post_id"
+  ];
+  string creator = 3 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+  string reward_account = 4
+      [ (gogoproto.moretags) = "yaml:\"reward_account\"" ];
+  string body = 5 [ (gogoproto.moretags) = "yaml:\"body\"" ];
+}
+
+message MsgUpvote {
+  option (gogoproto.equal) = true;
+
+  uint32 vendor_id = 1 [
+    (gogoproto.customname) = "VendorID",
+    (gogoproto.moretags) = "yaml:\"vendor_id\"",
+    (gogoproto.jsontag) = "vendor_id"
+  ];
+  string post_id = 2 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\"",
+    (gogoproto.jsontag) = "post_id"
+  ];
+  string curator = 3 [ (gogoproto.moretags) = "yaml:\"curator\"" ];
+  string reward_account = 4
+      [ (gogoproto.moretags) = "yaml:\"reward_account\"" ];
+  int32 vote_num = 5;
+}

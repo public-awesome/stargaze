@@ -2,18 +2,20 @@ package curating
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/public-awesome/stakebird/x/curating/keeper"
 )
 
 // QVFData holds vars for quadratic voting+funding calculations
 type QVFData struct {
 	ctx        sdk.Context
-	keeper     Keeper
+	keeper     keeper.Keeper
 	voterCount int64
 	votingPool sdk.Int
 	rootSum    sdk.Dec
 }
 
-func NewQVFData(ctx sdk.Context, k Keeper) QVFData {
+// NewQVFData returns an instance of QVFData
+func NewQVFData(ctx sdk.Context, k keeper.Keeper) QVFData {
 	return QVFData{
 		ctx:        ctx,
 		keeper:     k,

@@ -11,7 +11,7 @@ import (
 
 // Default parameter namespace
 const (
-	DefaultParamspace                   = ModuleName
+	DefaultParamspace     string        = ModuleName
 	DefaultCurationWindow time.Duration = time.Hour * 24 * 3
 	DefaultMaxNumVotes    uint32        = 5
 	DefaultMaxVendors     uint32        = 1
@@ -37,18 +37,6 @@ var (
 	KeyRewardPoolCurationMaxAlloc = []byte("RewardPoolCurationMaxAlloc")
 	KeyInitialRewardPool          = []byte("InitialRewardPool")
 )
-
-// Params - used for initializing default parameter for stake at genesis
-type Params struct {
-	CurationWindow             time.Duration `json:"curation_window" yaml:"curation_window"`
-	VoteAmount                 sdk.Coin      `json:"vote_amount" yaml:"vote_amount"`
-	MaxNumVotes                uint32        `json:"max_num_votes" yaml:"max_num_votes"`
-	MaxVendors                 uint32        `json:"max_vendors" yaml:"max_vendors"`
-	RewardPoolAllocation       sdk.Dec       `json:"reward_pool_allocation" yaml:"reward_pool_allocation"`
-	CreatorAllocation          sdk.Dec       `json:"creator_allocation" yaml:"creator_allocation"`
-	RewardPoolCurationMaxAlloc sdk.Dec       `json:"reward_pool_curation_max_alloc" yaml:"reward_pool_curation_max_alloc"`
-	InitialRewardPool          sdk.Coin      `json:"initial_reward_pool" yaml:"initial_reward_pool"`
-}
 
 // NewParams creates a new Params object
 func NewParams(

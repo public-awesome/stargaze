@@ -17,7 +17,7 @@ type Keeper struct {
 	paramstore    paramtypes.Subspace
 }
 
-// NewKeeper creates a x/stake keeper
+// NewKeeper creates a x/user keeper
 func NewKeeper(cdc codec.Marshaler, key sdk.StoreKey, accountKeeper types.AccountKeeper,
 	bankKeeper types.BankKeeper, ps paramtypes.Subspace) Keeper {
 
