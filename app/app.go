@@ -85,6 +85,10 @@ import (
 	"github.com/public-awesome/stakebird/x/curating"
 	curatingkeeper "github.com/public-awesome/stakebird/x/curating/keeper"
 	curatingtypes "github.com/public-awesome/stakebird/x/curating/types"
+
+	"github.com/public-awesome/stakebird/x/user"
+	userkeeper "github.com/public-awesome/stakebird/x/user/keeper"
+	usertypes "github.com/public-awesome/stakebird/x/user/types"
 )
 
 const appName = "StakebirdApp"
@@ -120,6 +124,7 @@ var (
 
 		// Stakebird Modules
 		curating.AppModuleBasic{},
+		user.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -179,6 +184,7 @@ type StakebirdApp struct {
 
 	// Stakebird Keepers
 	CuratingKeeper curatingkeeper.Keeper
+	UserKeeper     userkeeper.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
@@ -225,6 +231,7 @@ func NewStakebirdApp(
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		// Stakebird Stores
 		curatingtypes.StoreKey,
+		usertypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -326,6 +333,9 @@ func NewStakebirdApp(
 	app.CuratingKeeper = curatingkeeper.NewKeeper(
 		appCodec, keys[curatingtypes.StoreKey], app.AccountKeeper, app.BankKeeper, app.GetSubspace(curatingtypes.ModuleName))
 
+	app.UserKeeper = userkeeper.NewKeeper(
+		appCodec, keys[curatingtypes.StoreKey], app.AccountKeeper, app.BankKeeper, app.GetSubspace(usertypes.ModuleName))
+
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
 
@@ -351,6 +361,7 @@ func NewStakebirdApp(
 		transferModule,
 		// StakebirdModules
 		curating.NewAppModule(appCodec, app.CuratingKeeper, app.AccountKeeper, app.BankKeeper),
+		user.NewAppModule(appCodec, app.UserKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -359,7 +370,7 @@ func NewStakebirdApp(
 	// NOTE: staking module is required if HistoricalEntries param > 0
 	app.mm.SetOrderBeginBlockers(
 		upgradetypes.ModuleName, minttypes.ModuleName,
-		// must runb before distribution
+		// must run before distribution
 		curatingtypes.ModuleName,
 		distrtypes.ModuleName, slashingtypes.ModuleName,
 		evidencetypes.ModuleName, stakingtypes.ModuleName, ibchost.ModuleName,
@@ -381,6 +392,7 @@ func NewStakebirdApp(
 		evidencetypes.ModuleName, ibctransfertypes.ModuleName,
 		// stakebird init genesis
 		curatingtypes.ModuleName,
+		usertypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -609,6 +621,7 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler,
 
 	// Stakebird Modules
 	paramsKeeper.Subspace(curatingtypes.ModuleName)
+	paramsKeeper.Subspace(usertypes.ModuleName)
 
 	return paramsKeeper
 }

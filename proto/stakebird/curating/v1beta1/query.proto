@@ -9,6 +9,10 @@ option go_package = "github.com/public-awesome/stakebird/x/curating/types";
 
 // Query defines the gRPC querier service.
 service Query {
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/stakebird/curating/v1beta1/params";
+  }
+
   rpc Post(QueryPostRequest) returns (QueryPostResponse) {
     option (google.api.http).get =
         "/stakebird/curating/v1beta1/posts/{vendor_id}/{post_id}";
@@ -17,6 +21,12 @@ service Query {
     option (google.api.http).get =
         "/stakebird/curating/v1beta1/posts/{vendor_id}/{post_id}/upvotes";
   }
+}
+
+message QueryParamsRequest {}
+
+message QueryParamsResponse {
+  Params params = 1 [ (gogoproto.nullable) = false ];
 }
 
 message QueryPostRequest {

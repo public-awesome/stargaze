@@ -10,6 +10,15 @@ import (
 
 var _ types.QueryServer = Keeper{}
 
+// Params returns module params
+func (k Keeper) Params(c context.Context, req *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {
+	ctx := sdk.UnwrapSDKContext(c)
+
+	return &types.QueryParamsResponse{
+		Params: k.GetParams(ctx),
+	}, nil
+}
+
 // Post returns a post based on vendor and post id
 func (k Keeper) Post(c context.Context, req *types.QueryPostRequest) (*types.QueryPostResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)

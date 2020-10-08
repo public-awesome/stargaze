@@ -76,8 +76,12 @@ all: install
 create-wallet:
 	staked keys add validator --keyring-backend test
 
-init:
+reset: clean init
+clean:
 	rm -rf ~/.staked/config
+	rm -rf ~/.staked/data
+
+init:
 	staked init stakebird --chain-id localnet-1
 	staked add-genesis-account $(shell staked keys show validator -a --keyring-backend test) 10000000000000000ustb,10000000000000000uatom
 	staked gentx validator --chain-id localnet-1 --amount 10000000000ustb --keyring-backend test

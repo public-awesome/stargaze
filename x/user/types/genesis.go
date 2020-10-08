@@ -7,7 +7,7 @@ func DefaultGenesisState() *GenesisState {
 	}
 }
 
-// Validate validates the x/curating genesis parameters
+// Validate validates the x/user genesis parameters
 func (gs GenesisState) Validate() error {
 	err := gs.Params.Validate()
 	if err != nil {
