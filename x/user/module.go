@@ -119,7 +119,7 @@ func (am AppModule) Route() sdk.Route {
 
 // QuerierRoute returns the staking module's querier route name.
 func (AppModule) QuerierRoute() string {
-	return types.QuerierRoute
+	return types.QuerierKey
 }
 
 // LegacyQuerierHandler returns the staking module sdk.Querier.

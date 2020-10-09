@@ -117,14 +117,14 @@ func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
 	// TODO: https://github.com/public-awesome/stakebird/issues/108
 }
 
-// Route returns the message routing key for the staking module.
+// Route returns the message routing key for the curating module.
 func (am AppModule) Route() sdk.Route {
 	return sdk.NewRoute(types.RouterKey, NewHandler(am.keeper))
 }
 
 // QuerierRoute returns the staking module's querier route name.
 func (AppModule) QuerierRoute() string {
-	return types.QuerierRoute
+	return types.QuerierKey
 }
 
 // LegacyQuerierHandler returns the staking module sdk.Querier.
@@ -153,7 +153,7 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONMarshaler) json
 	return cdc.MustMarshalJSON(am.keeper.ExportGenesis(ctx))
 }
 
-// BeginBlock returns the begin blocker for the staking module.
+// BeginBlock returns the begin blocker for the curating module.
 func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 	BeginBlocker(ctx, am.keeper)
 }

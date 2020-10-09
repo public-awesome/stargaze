@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec/types"
@@ -89,6 +90,8 @@ import (
 	"github.com/public-awesome/stakebird/x/user"
 	userkeeper "github.com/public-awesome/stakebird/x/user/keeper"
 	usertypes "github.com/public-awesome/stakebird/x/user/types"
+
+	"github.com/public-awesome/stakebird/x/faucet"
 )
 
 const appName = "StakebirdApp"
@@ -125,6 +128,7 @@ var (
 		// Stakebird Modules
 		curating.AppModuleBasic{},
 		user.AppModuleBasic{},
+		faucet.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -140,6 +144,7 @@ var (
 		curatingtypes.ModuleName:     nil,
 		curatingtypes.RewardPoolName: {authtypes.Minter, authtypes.Burner},
 		curatingtypes.VotingPoolName: {authtypes.Minter, authtypes.Burner},
+		faucet.ModuleName:            {authtypes.Minter},
 	}
 
 	// module accounts that are allowed to receive tokens
@@ -185,6 +190,7 @@ type StakebirdApp struct {
 	// Stakebird Keepers
 	CuratingKeeper curatingkeeper.Keeper
 	UserKeeper     userkeeper.Keeper
+	FaucetKeeper   faucet.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
@@ -232,6 +238,7 @@ func NewStakebirdApp(
 		// Stakebird Stores
 		curatingtypes.StoreKey,
 		usertypes.StoreKey,
+		faucet.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -336,6 +343,12 @@ func NewStakebirdApp(
 	app.UserKeeper = userkeeper.NewKeeper(
 		appCodec, keys[curatingtypes.StoreKey], app.AccountKeeper, app.BankKeeper, app.GetSubspace(usertypes.ModuleName))
 
+	app.FaucetKeeper = faucet.NewKeeper(appCodec, keys[faucet.StoreKey],
+		app.BankKeeper,
+		app.StakingKeeper,
+		10*1000000,   // amount for mint
+		24*time.Hour, // rate limit by time
+	)
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
 
@@ -362,6 +375,7 @@ func NewStakebirdApp(
 		// StakebirdModules
 		curating.NewAppModule(appCodec, app.CuratingKeeper, app.AccountKeeper, app.BankKeeper),
 		user.NewAppModule(appCodec, app.UserKeeper),
+		faucet.NewAppModule(app.FaucetKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that

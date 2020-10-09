@@ -17,8 +17,8 @@ const (
 	// RouterKey to be used for routing msgs
 	RouterKey = ModuleName
 
-	// QuerierRoute to be used for querierer msgs
-	QuerierRoute = ModuleName
+	// QuerierKey to be used for querierer msgs
+	QuerierKey = ModuleName
 
 	// RewardPoolName is the name for the module account for the reward pool
 	RewardPoolName = "reward_matching_pool"

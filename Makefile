@@ -7,12 +7,17 @@ COMMIT := $(shell git log -1 --format='%H')
 LEDGER_ENABLED ?= false
 SDK_PACK := $(shell go list -m github.com/cosmos/cosmos-sdk | sed  's/ /\@/g')
 BUILDDIR ?= $(CURDIR)/build
+FAUCET_ENABLED ?= FALSE
 
 export GO111MODULE = on
 
 # process build tags
 
 build_tags = netgo
+ifeq ($(FAUCET_ENABLED),true)
+ build_tags += faucet
+endif
+
 ifeq ($(LEDGER_ENABLED),true)
   ifeq ($(OS),Windows_NT)
     GCCEXE = $(shell where gcc.exe 2> NUL)

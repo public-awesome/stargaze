@@ -22,6 +22,7 @@ steps:
     commands:
       - apt-get update && apt-get install -y cmake
       - ./contrib/go-test.sh
+      - FAUCET_ENABLED=true make build-linux
       - make build-linux
     environment:
       GOPROXY: http://goproxy
@@ -151,6 +152,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: 085a3bf1bdd946ccf674af77a5109c91e451afa7d5f5d1d3a38dd4902c58b14c
+hmac: 83f8b4fe0100449c50b38bd78f57ecd14ad8163d6d1eb14d54080b73762cdb33
 
 ...
