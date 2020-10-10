@@ -2,6 +2,7 @@ package curating
 
 import (
 	"fmt"
+	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -32,7 +33,11 @@ func handleMsgPost(ctx sdk.Context, k keeper.Keeper, msg *types.MsgPost) (*sdk.R
 		return nil, err
 	}
 
-	rewardAccount, err := sdk.AccAddressFromBech32(msg.RewardAccount)
+	rewardAccount := sdk.AccAddress{}
+	if strings.TrimSpace(msg.RewardAccount) != "" {
+		rewardAccount, err = sdk.AccAddressFromBech32(msg.RewardAccount)
+	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +65,11 @@ func handleMsgUpvote(ctx sdk.Context, k keeper.Keeper, msg *types.MsgUpvote) (*s
 		return nil, err
 	}
 
-	rewardAccount, err := sdk.AccAddressFromBech32(msg.RewardAccount)
+	rewardAccount := sdk.AccAddress{}
+	if strings.TrimSpace(msg.RewardAccount) != "" {
+		rewardAccount, err = sdk.AccAddressFromBech32(msg.RewardAccount)
+	}
+
 	if err != nil {
 		return nil, err
 	}
