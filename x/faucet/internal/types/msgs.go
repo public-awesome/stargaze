@@ -19,8 +19,8 @@ const (
 )
 
 // NewMsgMint is a constructor function for NewMsgMint
-func NewMsgMint(sender sdk.AccAddress, minter sdk.AccAddress, mTime int64, denom string) MsgMint {
-	return MsgMint{Sender: sender.String(), Minter: minter.String(), Time: mTime, Denom: denom}
+func NewMsgMint(sender sdk.AccAddress, minter sdk.AccAddress, mTime int64, denom string) *MsgMint {
+	return &MsgMint{Sender: sender.String(), Minter: minter.String(), Time: mTime, Denom: denom}
 }
 
 // Route should return the name of the module
@@ -55,8 +55,8 @@ func (msg MsgMint) GetSigners() []sdk.AccAddress {
 }
 
 // NewMsgFaucetKey is a constructor function for MsgFaucetKey
-func NewMsgFaucetKey(sender sdk.AccAddress, armor string) MsgFaucetKey {
-	return MsgFaucetKey{Sender: sender.String(), Armor: armor}
+func NewMsgFaucetKey(sender sdk.AccAddress, armor string) *MsgFaucetKey {
+	return &MsgFaucetKey{Sender: sender.String(), Armor: armor}
 }
 
 // Route should return the name of the module
