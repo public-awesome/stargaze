@@ -11,6 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/input"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/public-awesome/stakebird/x/faucet/internal/types"
 	"github.com/spf13/cobra"
@@ -21,7 +22,7 @@ func NewMintCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "mint [denom]",
 		Args:  cobra.MinimumNArgs(1),
-		Short: "Mint [denom] coin to sender andress",
+		Short: "Mint [denom] coin to sender address",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Mint
 Example:
@@ -44,6 +45,51 @@ $ %s tx faucet mint ustb --from address
 				return fmt.Errorf("must provide a --from key")
 			}
 			msg := types.NewMsgMint(sender, sender, time.Now().Unix(), denom)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
+
+// NewMintForCmd returns the mint for command
+func NewMintForCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "mintfor [address] [denom]",
+		Args:  cobra.MinimumNArgs(2),
+		Short: "Mint [denom] coin to a new address",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Mint
+Example:
+$ %s tx faucet mintfor stb14lq34sm8yp687sz3v37s9jk9j3vek0vxl4w0pe ustb --from address
+`,
+				version.AppName,
+			),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			denom := strings.TrimSpace(args[1])
+			sender := clientCtx.GetFromAddress()
+
+			address, err := sdk.AccAddressFromBech32(args[0])
+			if err != nil {
+				return fmt.Errorf("must provide a valid address %w", err)
+			}
+
+			if sender.Empty() {
+				return fmt.Errorf("must provide a --from key")
+			}
+
+			msg := types.NewMsgMint(sender, address, time.Now().Unix(), denom)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

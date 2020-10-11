@@ -7,7 +7,7 @@ COMMIT := $(shell git log -1 --format='%H')
 LEDGER_ENABLED ?= false
 SDK_PACK := $(shell go list -m github.com/cosmos/cosmos-sdk | sed  's/ /\@/g')
 BUILDDIR ?= $(CURDIR)/build
-FAUCET_ENABLED ?= FALSE
+FAUCET_ENABLED ?= false
 
 export GO111MODULE = on
 
