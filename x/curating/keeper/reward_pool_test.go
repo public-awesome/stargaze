@@ -4,17 +4,18 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/public-awesome/stakebird/testdata"
-	"github.com/public-awesome/stakebird/x/curating"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/public-awesome/stakebird/simapp"
 	"github.com/public-awesome/stakebird/x/curating/types"
 	"github.com/stretchr/testify/require"
+	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
 func TestInflateRewards(t *testing.T) {
-	_, app, ctx := testdata.CreateTestInput()
+	app := simapp.Setup(false)
+	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
-	blockInflationAcct := app.AccountKeeper.GetModuleAccount(ctx, auth.FeeCollectorName)
+	blockInflationAcct := app.AccountKeeper.GetModuleAccount(ctx, authtypes.FeeCollectorName)
 	blockInflationAddr := blockInflationAcct.GetAddress()
 	blockInflation := app.BankKeeper.GetBalance(ctx, blockInflationAddr, types.DefaultStakeDenom)
 	require.True(t, blockInflation.Amount.IsZero())
@@ -29,7 +30,7 @@ func TestInflateRewards(t *testing.T) {
 	err = app.CuratingKeeper.InflateRewardPool(ctx)
 	require.NoError(t, err)
 
-	rewardPoolAddr := app.AccountKeeper.GetModuleAccount(ctx, curating.RewardPoolName).GetAddress()
+	rewardPoolAddr := app.AccountKeeper.GetModuleAccount(ctx, types.RewardPoolName).GetAddress()
 	rewardPool := app.BankKeeper.GetBalance(ctx, rewardPoolAddr, types.DefaultStakeDenom)
 	require.Equal(t, "21000000500000", rewardPool.Amount.String())
 }

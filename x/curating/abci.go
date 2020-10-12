@@ -4,23 +4,26 @@ import (
 	"fmt"
 	"time"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stakebird/x/curating/types"
 	abci "github.com/tendermint/tendermint/abci/types"
+
+	"github.com/cosmos/cosmos-sdk/telemetry"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/public-awesome/stakebird/x/curating/keeper"
+	"github.com/public-awesome/stakebird/x/curating/types"
 )
 
 // BeginBlocker to fund reward pool on every begin block
-func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k Keeper) {
+func BeginBlocker(ctx sdk.Context, k keeper.Keeper) {
+	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyBeginBlocker)
 	if err := k.InflateRewardPool(ctx); err != nil {
 		panic(fmt.Sprintf("Error funding reward pool: %s", err.Error()))
 	}
+
 }
 
-// EndBlocker called after each block to process rewards
-// Iterates all expired posts, processing each upvote twice:
-// First upvote iteration: refund deposits, collect QV data
-// Second upvote iteration: distribute QV rewards
-func EndBlocker(ctx sdk.Context, k Keeper) {
+// EndBlocker called every block, update validator set
+func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
+	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyEndBlocker)
 	endTimes := make(map[time.Time]bool)
 	k.IterateExpiredPosts(ctx, func(post types.Post) bool {
 		k.Logger(ctx).Info(
@@ -40,7 +43,11 @@ func EndBlocker(ctx sdk.Context, k Keeper) {
 				return false
 			})
 
-		err := k.RewardCreator(ctx, post.RewardAccount, qv.MatchPool())
+		rewardAccount, err := sdk.AccAddressFromBech32(post.RewardAccount)
+		if err != nil {
+			panic(err)
+		}
+		err = k.RewardCreator(ctx, rewardAccount, qv.MatchPool())
 		if err != nil {
 			panic(err)
 		}
@@ -50,14 +57,18 @@ func EndBlocker(ctx sdk.Context, k Keeper) {
 
 		k.IterateUpvotes(ctx, post.VendorID, post.PostIDHash,
 			func(upvote types.Upvote) (stop bool) {
+				rewardAccount, err := sdk.AccAddressFromBech32(upvote.RewardAccount)
+				if err != nil {
+					panic(err)
+				}
 				// distribute quadratic voting per capita reward from voting pool
-				err = k.SendVotingReward(ctx, upvote.RewardAccount, curatorVotingReward)
+				err = k.SendVotingReward(ctx, rewardAccount, curatorVotingReward)
 				if err != nil {
 					panic(err)
 				}
 
 				// distribute quadratic funding reward from protocol reward pool
-				err = k.SendMatchingReward(ctx, upvote.RewardAccount, curatorMatchReward)
+				err = k.SendMatchingReward(ctx, rewardAccount, curatorMatchReward)
 				if err != nil {
 					panic(err)
 				}
@@ -86,4 +97,5 @@ func EndBlocker(ctx sdk.Context, k Keeper) {
 	for t := range endTimes {
 		k.RemoveFromCurationQueue(ctx, t)
 	}
+	return []abci.ValidatorUpdate{}
 }

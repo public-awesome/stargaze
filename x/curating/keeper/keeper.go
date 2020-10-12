@@ -3,26 +3,29 @@ package keeper
 import (
 	"fmt"
 
+	"github.com/tendermint/tendermint/libs/log"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/public-awesome/stakebird/x/curating/types"
-	"github.com/tendermint/tendermint/libs/log"
 )
 
-// Keeper of the x/stake store
+// Keeper of the x/curating store
 type Keeper struct {
 	storeKey      sdk.StoreKey
-	cdc           codec.Marshaler
+	cdc           codec.BinaryMarshaler
 	accountKeeper types.AccountKeeper
 	bankKeeper    types.BankKeeper
 	paramstore    paramtypes.Subspace
 }
 
-// NewKeeper creates a x/stake keeper
-func NewKeeper(cdc codec.Marshaler, key sdk.StoreKey, accountKeeper types.AccountKeeper,
-	bankKeeper types.BankKeeper, ps paramtypes.Subspace) Keeper {
+// NewKeeper creates a new staking Keeper instance
+func NewKeeper(
+	cdc codec.BinaryMarshaler, key sdk.StoreKey, ak types.AccountKeeper, bk types.BankKeeper,
+	ps paramtypes.Subspace,
+) Keeper {
 
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -30,15 +33,15 @@ func NewKeeper(cdc codec.Marshaler, key sdk.StoreKey, accountKeeper types.Accoun
 	}
 
 	// ensure reward pool module account is set
-	if addr := accountKeeper.GetModuleAddress(types.RewardPoolName); addr == nil {
+	if addr := ak.GetModuleAddress(types.RewardPoolName); addr == nil {
 		panic(fmt.Sprintf("%s module account has not been set", types.RewardPoolName))
 	}
 
 	keeper := Keeper{
 		storeKey:      key,
 		cdc:           cdc,
-		accountKeeper: accountKeeper,
-		bankKeeper:    bankKeeper,
+		accountKeeper: ak,
+		bankKeeper:    bk,
 		paramstore:    ps,
 	}
 	return keeper
@@ -46,7 +49,7 @@ func NewKeeper(cdc codec.Marshaler, key sdk.StoreKey, accountKeeper types.Accoun
 
 // Logger returns a module-specific logger.
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
-	return ctx.Logger().With("module", types.ModuleName)
+	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 
 func (k Keeper) validateVendorID(ctx sdk.Context, vendorID uint32) error {

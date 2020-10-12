@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package stakebird.user.v1beta1;
+
+option go_package = "github.com/public-awesome/stakebird/x/user/types";
+
+import "gogoproto/gogo.proto";
+import "stakebird/user/v1beta1/user.proto";
+
+message GenesisState { Params params = 1 [ (gogoproto.nullable) = false ]; }

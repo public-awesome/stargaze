@@ -1,22 +1,11 @@
 package types
 
-// Query endpoints supported by the curating querier
+// query endpoints
 const (
-	QueryParams  = "parameters"
-	QueryPost    = "post"
-	QueryUpvotes = "upvotes"
+	QueryPost   = "post"
+	QueryUpvote = "upvote"
 )
 
-/*
-How to set your own queries:
-
-
-// QueryResList Queries Result Payload for a query
-type QueryResList []string
-
-// implement fmt.Stringer
-func (n QueryResList) String() string {
-	return strings.Join(n[:], "\n")
+func NewQueryPostRequest(vendorID uint32, postID string) *QueryPostRequest {
+	return &QueryPostRequest{VendorId: vendorID, PostId: postID}
 }
-
-*/

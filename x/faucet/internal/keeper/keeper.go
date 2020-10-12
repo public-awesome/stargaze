@@ -1,0 +1,132 @@
+package keeper
+
+import (
+	"fmt"
+	"time"
+
+	"github.com/tendermint/tendermint/libs/log"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/public-awesome/stakebird/x/faucet/internal/types"
+)
+
+// Keeper maintains the link to storage and exposes getter/setter methods for the various parts of the state machine
+type Keeper struct {
+	bankKeeper    types.BankKeeper
+	stakingKeeper types.StakingKeeper
+	amount        int64         // set default amount for each mint.
+	limit         time.Duration // rate limiting for mint, etc 24 * time.Hours
+	storeKey      sdk.StoreKey  // Unexposed key to access store from sdk.Context
+
+	cdc codec.BinaryMarshaler
+}
+
+// NewKeeper creates a new staking Keeper instance
+func NewKeeper(
+	cdc codec.BinaryMarshaler,
+	key sdk.StoreKey,
+	bankKeeper types.BankKeeper,
+	stakingKeeper types.StakingKeeper,
+	amount int64,
+	limit time.Duration) Keeper {
+	return Keeper{
+		bankKeeper:    bankKeeper,
+		stakingKeeper: stakingKeeper,
+		amount:        amount,
+		limit:         limit,
+		storeKey:      key,
+		cdc:           cdc,
+	}
+}
+
+// Logger returns a module-specific logger.
+func (k Keeper) Logger(ctx sdk.Context) log.Logger {
+	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
+}
+
+// Limit returns the configured limit
+func (k Keeper) Limit() time.Duration {
+	return k.limit
+}
+
+// MintAndSend mint coins and send to minter.
+func (k Keeper) MintAndSend(ctx sdk.Context, minter sdk.AccAddress, mintTime int64, denom string) error {
+
+	mining := k.getMining(ctx, minter)
+
+	// refuse mint in 24 hours
+	if k.isPresent(ctx, minter) &&
+		time.Unix(mining.LastTime, 0).Add(k.limit).UTC().After(time.Unix(mintTime, 0)) {
+		return types.ErrWithdrawTooOften
+	}
+
+	newCoin := sdk.NewCoin(denom, sdk.NewInt(k.amount))
+	mining.Total = mining.Total.Add(newCoin)
+	mining.LastTime = mintTime
+	err := k.setMining(ctx, minter, mining)
+	if err != nil {
+		return err
+	}
+
+	k.Logger(ctx).Info("mint coin: %s", newCoin)
+
+	err = k.bankKeeper.MintCoins(ctx, types.ModuleName, sdk.NewCoins(newCoin))
+	if err != nil {
+		return err
+	}
+	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, minter, sdk.NewCoins(newCoin))
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (k Keeper) getMining(ctx sdk.Context, minter sdk.AccAddress) types.Mining {
+	store := ctx.KVStore(k.storeKey)
+	if !k.isPresent(ctx, minter) {
+		denom := k.stakingKeeper.BondDenom(ctx)
+		return types.NewMining(minter, sdk.NewCoin(denom, sdk.NewInt(0)))
+	}
+	bz := store.Get(minter.Bytes())
+	var mining types.Mining
+	k.cdc.MustUnmarshalBinaryBare(bz, &mining)
+	return mining
+}
+
+func (k Keeper) setMining(ctx sdk.Context, minter sdk.AccAddress, mining types.Mining) error {
+	if !mining.Total.IsPositive() {
+		return types.ErrInvalidCoinAmount
+	}
+	store := ctx.KVStore(k.storeKey)
+	store.Set(minter.Bytes(), k.cdc.MustMarshalBinaryBare(&mining))
+	return nil
+}
+
+// IsPresent check if the name is present in the store or not
+func (k Keeper) isPresent(ctx sdk.Context, minter sdk.AccAddress) bool {
+	store := ctx.KVStore(k.storeKey)
+	return store.Has(minter.Bytes())
+}
+
+// GetFaucetKey retrieves the faucet key from the store
+func (k Keeper) GetFaucetKey(ctx sdk.Context) types.FaucetKey {
+	store := ctx.KVStore(k.storeKey)
+	bz := store.Get(types.FaucetStoreKey)
+	var faucet types.FaucetKey
+	k.cdc.MustUnmarshalBinaryBare(bz, &faucet)
+	return faucet
+}
+
+// SetFaucetKey sets the faucet key
+func (k Keeper) SetFaucetKey(ctx sdk.Context, armor string) {
+	store := ctx.KVStore(k.storeKey)
+	faucet := types.NewFaucetKey(armor)
+	store.Set(types.FaucetStoreKey, k.cdc.MustMarshalBinaryBare(&faucet))
+}
+
+// HasFaucetKey checks if faucet key is already stored.
+func (k Keeper) HasFaucetKey(ctx sdk.Context) bool {
+	store := ctx.KVStore(k.storeKey)
+	return store.Has(types.FaucetStoreKey)
+}

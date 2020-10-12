@@ -1,44 +1,23 @@
 package cli
 
 import (
-	"bufio"
 	"fmt"
 	"strconv"
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-	authclient "github.com/cosmos/cosmos-sdk/x/auth/client"
 	"github.com/public-awesome/stakebird/x/curating/types"
 	"github.com/spf13/cobra"
 )
 
-// GetTxCmd returns the transaction commands for this module
-func GetTxCmd(cdc *codec.Codec) *cobra.Command {
-	stakeTxCmd := &cobra.Command{
-		Use:                        types.ModuleName,
-		Short:                      fmt.Sprintf("%s transactions subcommands", types.ModuleName),
-		DisableFlagParsing:         true,
-		SuggestionsMinimumDistance: 2,
-		RunE:                       client.ValidateCmd,
-	}
+// NewPostTxCmd returns the post command
+func NewPostTxCmd() *cobra.Command {
 
-	stakeTxCmd.AddCommand(flags.PostCommands(
-		GetCmdPost(cdc),
-		GetCmdUpvote(cdc),
-	)...)
-
-	return stakeTxCmd
-}
-
-// GetCmdPost implements the delegate command.
-func GetCmdPost(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "post [vendor-id] [post-id] [body] [reward_address]",
 		Args:  cobra.MinimumNArgs(3),
 		Short: "Register a post",
@@ -47,15 +26,17 @@ func GetCmdPost(cdc *codec.Codec) *cobra.Command {
 Example:
 $ %s tx curating post 1 "2" "body" --from mykey
 `,
-				version.ClientName,
+				version.AppName,
 			),
 		),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(auth.DefaultTxEncoder(cdc))
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
+			if err != nil {
+				return err
+			}
 
-			creator := cliCtx.GetFromAddress()
+			creator := clientCtx.GetFromAddress()
 
 			vendorID, err := strconv.ParseUint(args[0], 10, 32)
 			if err != nil {
@@ -76,17 +57,21 @@ $ %s tx curating post 1 "2" "body" --from mykey
 					return err
 				}
 			}
-
 			msg := types.NewMsgPost(uint32(vendorID), postID, creator, rewardAddr, body)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
 
-			return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
 }
 
-// GetCmdUpvote implements the upvote command.
-func GetCmdUpvote(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
+// NewUpvoteTxCmd returns the upvote command
+func NewUpvoteTxCmd() *cobra.Command {
+	cmd := &cobra.Command{
 		Use:   "upvote [vendor-id] [post-id] [voteNum] [reward-addr]",
 		Args:  cobra.MinimumNArgs(3),
 		Short: "Upvote a post",
@@ -95,15 +80,17 @@ func GetCmdUpvote(cdc *codec.Codec) *cobra.Command {
 Example:
 $ %s tx curating upvote 1 "2" 5 --from mykey
 `,
-				version.ClientName,
+				version.AppName,
 			),
 		),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(auth.DefaultTxEncoder(cdc))
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
+			if err != nil {
+				return err
+			}
 
-			curator := cliCtx.GetFromAddress()
+			curator := clientCtx.GetFromAddress()
 
 			vendorID, err := strconv.ParseUint(args[0], 10, 32)
 			if err != nil {
@@ -131,7 +118,10 @@ $ %s tx curating upvote 1 "2" 5 --from mykey
 
 			msg := types.NewMsgUpvote(
 				uint32(vendorID), postID, curator, rewardAddr, int32(voteNum))
-			return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
 }
