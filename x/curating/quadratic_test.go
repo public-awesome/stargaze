@@ -4,9 +4,11 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stakebird/testdata"
+	"github.com/public-awesome/stakebird/simapp"
 	"github.com/public-awesome/stakebird/x/curating"
+	curatingtypes "github.com/public-awesome/stakebird/x/curating/types"
 	"github.com/stretchr/testify/require"
+	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
 // 1 vote  = 1 vote credit
@@ -15,11 +17,12 @@ import (
 // 4 votes = 16 vote credits
 // 5 votes = 25 vote credits
 func TestQVF(t *testing.T) {
-	_, app, ctx := testdata.CreateTestInput()
+	app := simapp.Setup(false)
+	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
 	// add funds to reward pool
 	funds := sdk.NewInt64Coin("ustb", 10_000_000)
-	err := app.BankKeeper.MintCoins(ctx, curating.RewardPoolName, sdk.NewCoins(funds))
+	err := app.BankKeeper.MintCoins(ctx, curatingtypes.RewardPoolName, sdk.NewCoins(funds))
 	require.NoError(t, err)
 
 	q := curating.NewQVFData(ctx, app.CuratingKeeper)
@@ -38,11 +41,12 @@ func TestQVF(t *testing.T) {
 }
 
 func TestQVFZeroVotes(t *testing.T) {
-	_, app, ctx := testdata.CreateTestInput()
+	app := simapp.Setup(false)
+	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
 	// add funds to reward pool
 	funds := sdk.NewInt64Coin("ustb", 10_000_000)
-	err := app.BankKeeper.MintCoins(ctx, curating.RewardPoolName, sdk.NewCoins(funds))
+	err := app.BankKeeper.MintCoins(ctx, curatingtypes.RewardPoolName, sdk.NewCoins(funds))
 	require.NoError(t, err)
 
 	q := curating.NewQVFData(ctx, app.CuratingKeeper)

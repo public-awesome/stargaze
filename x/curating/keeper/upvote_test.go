@@ -4,17 +4,19 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stakebird/testdata"
+	"github.com/public-awesome/stakebird/simapp"
 	"github.com/public-awesome/stakebird/x/curating/types"
 	"github.com/stretchr/testify/require"
+	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
 func TestCreateUpvote(t *testing.T) {
-	_, app, ctx := testdata.CreateTestInput()
+	app := simapp.Setup(false)
+	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
 	postID := "500"
 	vendorID := uint32(1)
-	addrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(27_000_000))
+	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(27_000_000))
 
 	err := app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5)
 	require.NoError(t, err)
@@ -34,11 +36,12 @@ func TestCreateUpvote(t *testing.T) {
 }
 
 func TestCreateUpvote_ExistingPost(t *testing.T) {
-	_, app, ctx := testdata.CreateTestInput()
+	app := simapp.Setup(false)
+	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
 	postID := "501"
 	vendorID := uint32(1)
-	addrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(27_000_000))
+	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(27_000_000))
 
 	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[1], addrs[1])
 	require.NoError(t, err)
@@ -64,11 +67,12 @@ func TestCreateUpvote_ExistingPost(t *testing.T) {
 }
 
 func TestCreateUpvote_ExistingUpvote(t *testing.T) {
-	_, app, ctx := testdata.CreateTestInput()
+	app := simapp.Setup(false)
+	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
 	postID := "502"
 	vendorID := uint32(1)
-	addrs := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(27_000_000))
+	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(27_000_000))
 
 	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[1], addrs[1])
 	require.NoError(t, err)

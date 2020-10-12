@@ -11,7 +11,7 @@ import (
 
 // Default parameter namespace
 const (
-	DefaultParamspace        = ModuleName
+	DefaultParamspace string = ModuleName
 	DefaultVouchCount uint32 = 3
 )
 
@@ -22,15 +22,9 @@ var (
 
 // Parameter store keys
 var (
-	ThresholdAmount = []byte("ThresholdAmount")
-	VouchCount      = []byte("VouchCount")
+	KeyThresholdAmount = []byte("ThresholdAmount")
+	KeyVouchCount      = []byte("VouchCount")
 )
-
-// Params - used for initializing default parameter for stake at genesis
-type Params struct {
-	ThresholdAmount sdk.Coins `json:"threshold_amount" yaml:"threshold_amount"`
-	VouchCount      uint32    `json:"vouch_count" yaml:"vouch_count"`
-}
 
 // NewParams creates a new Params object
 func NewParams(thresholdAmount sdk.Coins, vouchCount uint32) Params {
@@ -53,8 +47,8 @@ func (p Params) String() string {
 // ParamSetPairs - Implements params.ParamSet
 func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
-		paramtypes.NewParamSetPair(ThresholdAmount, &p.ThresholdAmount, validateThresholdAmount),
-		paramtypes.NewParamSetPair(VouchCount, &p.VouchCount, validateVouchCount),
+		paramtypes.NewParamSetPair(KeyThresholdAmount, &p.ThresholdAmount, validateThresholdAmount),
+		paramtypes.NewParamSetPair(KeyVouchCount, &p.VouchCount, validateVouchCount),
 	}
 }
 

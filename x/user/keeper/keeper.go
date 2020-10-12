@@ -11,14 +11,14 @@ import (
 // Keeper of the x/user store
 type Keeper struct {
 	storeKey      sdk.StoreKey
-	cdc           codec.Marshaler
+	cdc           codec.BinaryMarshaler
 	accountKeeper types.AccountKeeper
 	bankKeeper    types.BankKeeper
 	paramstore    paramtypes.Subspace
 }
 
-// NewKeeper creates a x/stake keeper
-func NewKeeper(cdc codec.Marshaler, key sdk.StoreKey, accountKeeper types.AccountKeeper,
+// NewKeeper creates a x/user keeper
+func NewKeeper(cdc codec.BinaryMarshaler, key sdk.StoreKey, accountKeeper types.AccountKeeper,
 	bankKeeper types.BankKeeper, ps paramtypes.Subspace) Keeper {
 
 	// set KeyTable if it has not already been set

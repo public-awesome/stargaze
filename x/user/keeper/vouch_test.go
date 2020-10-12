@@ -4,14 +4,16 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stakebird/testdata"
+	"github.com/public-awesome/stakebird/simapp"
 	"github.com/stretchr/testify/require"
+	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
 func TestVouch(t *testing.T) {
-	_, app, ctx := testdata.CreateTestInput()
+	app := simapp.Setup(false)
+	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
-	addresses := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
+	addresses := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
 	voucher := addresses[0]
 	vouched := addresses[1]
 
@@ -28,9 +30,9 @@ func TestVouch(t *testing.T) {
 }
 
 func TestIsVouched(t *testing.T) {
-	_, app, ctx := testdata.CreateTestInput()
-
-	addresses := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
+	app := simapp.Setup(false)
+	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
+	addresses := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
 	voucher := addresses[0]
 	vouched := addresses[1]
 
@@ -45,10 +47,11 @@ func TestIsVouched(t *testing.T) {
 }
 
 func TestCanVouch_EnoughEarnings(t *testing.T) {
-	_, app, ctx := testdata.CreateTestInput()
+	app := simapp.Setup(false)
+	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
-	passingVoucher := testdata.AddTestAddrsIncremental(app, ctx, 1, sdk.NewInt(1000000))[0] // enough earnings
-	failingVoucher := testdata.AddTestAddrsIncremental(app, ctx, 2, sdk.NewInt(0))[1]       // not enough earnings
+	passingVoucher := simapp.AddTestAddrsIncremental(app, ctx, 1, sdk.NewInt(1000000))[0] // enough earnings
+	failingVoucher := simapp.AddTestAddrsIncremental(app, ctx, 2, sdk.NewInt(0))[1]       // not enough earnings
 
 	can := app.UserKeeper.CanVouch(ctx, passingVoucher)
 	require.True(t, can)
@@ -58,10 +61,11 @@ func TestCanVouch_EnoughEarnings(t *testing.T) {
 }
 
 func TestCanVouch_EnoughVouches(t *testing.T) {
-	_, app, ctx := testdata.CreateTestInput()
+	app := simapp.Setup(false)
+	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
-	vouched := testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
-	voucher := testdata.AddTestAddrsIncremental(app, ctx, 1, sdk.NewInt(1000000))[0]
+	vouched := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
+	voucher := simapp.AddTestAddrsIncremental(app, ctx, 1, sdk.NewInt(1000000))[0]
 
 	can := app.UserKeeper.CanVouch(ctx, voucher)
 	require.True(t, can)

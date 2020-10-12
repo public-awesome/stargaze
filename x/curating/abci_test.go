@@ -8,19 +8,21 @@ import (
 	"github.com/public-awesome/stakebird/x/curating/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stakebird/testdata"
+	"github.com/public-awesome/stakebird/simapp"
 	"github.com/stretchr/testify/require"
+	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
 var addrs = []sdk.AccAddress{}
 
-func setup(t *testing.T) (*testdata.SimApp, sdk.Context) {
-	_, app, ctx := testdata.CreateTestInput()
+func setup(t *testing.T) (*simapp.SimApp, sdk.Context) {
+	app := simapp.Setup(false)
+	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
 	postID := "500"
 	vendorID := uint32(1)
 
-	addrs = testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(10_000_000))
+	addrs = simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(10_000_000))
 
 	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], addrs[0])
 	require.NoError(t, err)
@@ -78,7 +80,7 @@ func TestEndBlockerExpiringPost(t *testing.T) {
 
 	// add funds to reward pool
 	funds := sdk.NewInt64Coin("ustb", 10_000_000_000)
-	err := app.BankKeeper.MintCoins(ctx, curating.RewardPoolName, sdk.NewCoins(funds))
+	err := app.BankKeeper.MintCoins(ctx, types.RewardPoolName, sdk.NewCoins(funds))
 	require.NoError(t, err)
 
 	curating.EndBlocker(ctx, app.CuratingKeeper)
@@ -106,12 +108,12 @@ func TestEndBlockerExpiringPostWithSmolRewardPool(t *testing.T) {
 
 	// burn existing funds from the reward pool to reset it
 	funds := app.CuratingKeeper.GetRewardPoolBalance(ctx)
-	err := app.BankKeeper.BurnCoins(ctx, curating.RewardPoolName, sdk.NewCoins(funds))
+	err := app.BankKeeper.BurnCoins(ctx, types.RewardPoolName, sdk.NewCoins(funds))
 	require.NoError(t, err)
 
 	// add funds to reward pool
 	funds = sdk.NewInt64Coin("ustb", 1_000_000)
-	err = app.BankKeeper.MintCoins(ctx, curating.RewardPoolName, sdk.NewCoins(funds))
+	err = app.BankKeeper.MintCoins(ctx, types.RewardPoolName, sdk.NewCoins(funds))
 	require.NoError(t, err)
 
 	curating.EndBlocker(ctx, app.CuratingKeeper)
@@ -135,9 +137,10 @@ func TestEndBlockerExpiringPostWithSmolRewardPool(t *testing.T) {
 }
 
 func TestEndBlocker_RemoveFromExpiredQueue(t *testing.T) {
-	_, app, ctx := testdata.CreateTestInput()
+	app := simapp.Setup(false)
+	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
-	addrs = testdata.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(10_000_000))
+	addrs = simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(10_000_000))
 
 	err := app.CuratingKeeper.CreatePost(ctx, uint32(1), "777", "body string", addrs[0], addrs[0])
 	require.NoError(t, err)

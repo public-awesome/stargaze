@@ -14,7 +14,7 @@ steps:
       - export GL_DEBUG=linters_output
       - export GOPACKAGESPRINTGOLISTERRORS=1
       - go mod download
-      - golangci-lint run -v --timeout 3m --tests=false
+      - golangci-lint run -v --timeout 5m --tests=false
     environment:
       GOPROXY: http://goproxy
   - name: test-and-build
@@ -22,6 +22,7 @@ steps:
     commands:
       - apt-get update && apt-get install -y cmake
       - ./contrib/go-test.sh
+      - FAUCET_ENABLED=true make build-linux
       - make build-linux
     environment:
       GOPROXY: http://goproxy
@@ -151,6 +152,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: d2a6627c061b33b20a88fd19cab5df8b5410b4571a0f1cb2d7df05b6498d8a09
+hmac: 83f8b4fe0100449c50b38bd78f57ecd14ad8163d6d1eb14d54080b73762cdb33
 
 ...

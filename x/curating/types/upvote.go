@@ -11,8 +11,8 @@ func NewUpvote(
 	curator, rewardAccount sdk.AccAddress, voteAmount sdk.Coin, curatedTime time.Time) Upvote {
 
 	return Upvote{
-		Curator:       curator,
-		RewardAccount: rewardAccount,
+		Curator:       curator.String(),
+		RewardAccount: rewardAccount.String(),
 		VoteAmount:    voteAmount,
 		CuratedTime:   curatedTime,
 	}

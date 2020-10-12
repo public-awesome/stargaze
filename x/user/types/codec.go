@@ -2,18 +2,20 @@ package types
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// RegisterCodec registers concrete types on codec
-func RegisterCodec(cdc *codec.Codec) {
-	cdc.RegisterConcrete(MsgVouch{}, "user/MsgVouch", nil)
+// RegisterInterfaces register the curating module interfaces to protobuf
+// Any.
+func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgVouch{},
+	)
 }
 
-var ModuleCdc *codec.Codec
-
-func init() {
-	ModuleCdc = codec.New()
-	RegisterCodec(ModuleCdc)
-	codec.RegisterCrypto(ModuleCdc)
-	ModuleCdc.Seal()
-}
+var (
+	// ModuleCdc references the global x/curating module codec. Note, the codec
+	// should ONLY be used in certain instances of tests and for JSON encoding.
+	ModuleCdc = codec.NewProtoCodec(codectypes.NewInterfaceRegistry())
+)
