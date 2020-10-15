@@ -17,34 +17,10 @@ builds:
       - 6
       - 7
     ldflags:
-      - -X "github.com/cosmos/cosmos-sdk/version.Name=StakeApp"
+      - -X "github.com/cosmos/cosmos-sdk/version.Name=Stakebird"
       - -X github.com/cosmos/cosmos-sdk/version.ServerName=staked
-      - -X github.com/cosmos/cosmos-sdk/version.ClientName=stakecli
       - -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}}
       - -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}
-
-  - main: ./cmd/stakecli/
-    id: 'stakecli'
-    binary: stakecli
-    goos:
-      - linux
-      - darwin
-    goarch:
-      - amd64
-      - arm
-      - arm64
-    goarm:
-      - 6
-      - 7
-    ldflags:
-      - -X "github.com/cosmos/cosmos-sdk/version.Name=StakeApp"
-      - -X github.com/cosmos/cosmos-sdk/version.ServerName=staked
-      - -X github.com/cosmos/cosmos-sdk/version.ClientName=stakecli
-      - -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}}
-      - -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}
-archives:
-  - replacements:
-      darwin: mac
 
 release:
   github:
