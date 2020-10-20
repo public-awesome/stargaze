@@ -53,10 +53,10 @@ func (k Keeper) Limit() time.Duration {
 // MintAndSend mint coins and send to minter.
 func (k Keeper) MintAndSend(ctx sdk.Context, minter sdk.AccAddress, mintTime int64, denom string) error {
 
-	mining := k.getMining(ctx, minter)
+	mining := k.getMining(ctx, minter, denom)
 
 	// refuse mint in 24 hours
-	if k.isPresent(ctx, minter) &&
+	if k.isPresent(ctx, minter, denom) &&
 		time.Unix(mining.LastTime, 0).Add(k.limit).UTC().After(time.Unix(mintTime, 0)) {
 		return types.ErrWithdrawTooOften
 	}
@@ -64,7 +64,7 @@ func (k Keeper) MintAndSend(ctx sdk.Context, minter sdk.AccAddress, mintTime int
 	newCoin := sdk.NewCoin(denom, sdk.NewInt(k.amount))
 	mining.Total = mining.Total.Add(newCoin)
 	mining.LastTime = mintTime
-	err := k.setMining(ctx, minter, mining)
+	err := k.setMining(ctx, minter, mining, denom)
 	if err != nil {
 		return err
 	}
@@ -82,31 +82,35 @@ func (k Keeper) MintAndSend(ctx sdk.Context, minter sdk.AccAddress, mintTime int
 	return nil
 }
 
-func (k Keeper) getMining(ctx sdk.Context, minter sdk.AccAddress) types.Mining {
+func (k Keeper) getMining(ctx sdk.Context, minter sdk.AccAddress, denom string) types.Mining {
 	store := ctx.KVStore(k.storeKey)
-	if !k.isPresent(ctx, minter) {
-		denom := k.stakingKeeper.BondDenom(ctx)
+	if !k.isPresent(ctx, minter, denom) {
 		return types.NewMining(minter, sdk.NewCoin(denom, sdk.NewInt(0)))
 	}
-	bz := store.Get(minter.Bytes())
+	bz := store.Get(minterKey(minter, denom))
 	var mining types.Mining
 	k.cdc.MustUnmarshalBinaryBare(bz, &mining)
 	return mining
 }
 
-func (k Keeper) setMining(ctx sdk.Context, minter sdk.AccAddress, mining types.Mining) error {
+func (k Keeper) setMining(ctx sdk.Context, minter sdk.AccAddress, mining types.Mining, denom string) error {
 	if !mining.Total.IsPositive() {
 		return types.ErrInvalidCoinAmount
 	}
 	store := ctx.KVStore(k.storeKey)
-	store.Set(minter.Bytes(), k.cdc.MustMarshalBinaryBare(&mining))
+	store.Set(minterKey(minter, denom), k.cdc.MustMarshalBinaryBare(&mining))
 	return nil
 }
 
+func minterKey(minter sdk.AccAddress, denom string) []byte {
+	mBytes := minter.Bytes()
+	return append(mBytes, []byte(denom)...)
+}
+
 // IsPresent check if the name is present in the store or not
-func (k Keeper) isPresent(ctx sdk.Context, minter sdk.AccAddress) bool {
+func (k Keeper) isPresent(ctx sdk.Context, minter sdk.AccAddress, denom string) bool {
 	store := ctx.KVStore(k.storeKey)
-	return store.Has(minter.Bytes())
+	return store.Has(minterKey(minter, denom))
 }
 
 // GetFaucetKey retrieves the faucet key from the store
