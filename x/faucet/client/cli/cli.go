@@ -33,6 +33,7 @@ func NewTxCmd() *cobra.Command {
 
 	txCmd.AddCommand(
 		NewMintCmd(),
+		NewMintForCmd(),
 		NewPublishCmd(),
 		NewLoadKeyCmd(),
 	)
