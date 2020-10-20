@@ -2,6 +2,7 @@ package faucet
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/public-awesome/stakebird/x/faucet/internal/keeper"
 	"github.com/public-awesome/stakebird/x/faucet/internal/types"
@@ -31,6 +32,10 @@ func handleMsgMint(ctx sdk.Context, keeper keeper.Keeper, msg *types.MsgMint) (*
 		return nil, err
 	}
 	keeper.Logger(ctx).Info("received mint message: %s", msg)
+
+	if strings.TrimSpace(msg.Denom) == "" {
+		return nil, sdkerrors.Wrap(err, "invalid denomination")
+	}
 	err = keeper.MintAndSend(ctx, minter, msg.Time, msg.Denom)
 	if err != nil {
 		return nil, sdkerrors.Wrap(err, fmt.Sprintf(",in [%v] hours", keeper.Limit().Hours()))
