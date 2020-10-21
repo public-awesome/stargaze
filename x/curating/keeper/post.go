@@ -9,6 +9,20 @@ import (
 	"github.com/public-awesome/stakebird/x/curating/types"
 )
 
+// GetPosts returns all posts for a vendor
+func (k Keeper) GetPosts(ctx sdk.Context, vendorID uint32) (posts []types.Post, err error) {
+	store := ctx.KVStore(k.storeKey)
+
+	key := types.PostsKey(vendorID)
+	value := store.Get(key)
+	if value == nil {
+		return posts, nil
+	}
+	k.MustUnmarshalPost(value, &posts)
+
+	return post, true, nil
+}
+
 // GetPost returns post if one exists
 func (k Keeper) GetPost(
 	ctx sdk.Context, vendorID uint32, postID string) (post types.Post, found bool, err error) {

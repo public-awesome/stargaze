@@ -44,6 +44,12 @@ var (
 	KeyPrefixCurationQueue = []byte{0x02}
 )
 
+// PostsKey is an index on all posts for a vendor
+func PostsKey(vendorID uint32) []byte {
+	vendorIDBz := uint32ToBigEndian(vendorID)
+	return append(KeyPrefixPost, vendorIDBz...)
+}
+
 // PostKey is the key used to store a post
 func PostKey(vendorID uint32, postIDHash []byte) []byte {
 	vendorIDBz := uint32ToBigEndian(vendorID)
