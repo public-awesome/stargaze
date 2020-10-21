@@ -19,6 +19,21 @@ func (k Keeper) Params(c context.Context, req *types.QueryParamsRequest) (*types
 	}, nil
 }
 
+// Posts returns all posts based on vendor
+func (k Keeper) Posts(c context.Context, req *types.QueryPostsRequest) (*types.QueryPostsResponse, error) {
+	ctx := sdk.UnwrapSDKContext(c)
+	post, found, err := k.GetPost(ctx, req.VendorId, req.PostId)
+	if err != nil {
+		return nil, err
+	}
+	if !found {
+		return nil, fmt.Errorf("post does not exist")
+	}
+	return &types.QueryPostResponse{
+		Post: &post,
+	}, nil
+}
+
 // Post returns a post based on vendor and post id
 func (k Keeper) Post(c context.Context, req *types.QueryPostRequest) (*types.QueryPostResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
