@@ -6,6 +6,18 @@ option go_package = "github.com/public-awesome/stakebird/x/curating/types";
 
 import "gogoproto/gogo.proto";
 
+// Msg defines the curating Msg service.
+service Msg {
+  // Post defines a method for sending a post
+  rpc Post(MsgPost) returns (MsgPostResponse);
+
+  // Upvote defines a method for upvoting a post
+  rpc Upvote(MsgUpvote) returns (MsgUpvoteResponse);
+}
+message MsgPostResponse{}
+message MsgUpvoteResponse{}
+
+
 message MsgPost {
   option (gogoproto.equal) = true;
 

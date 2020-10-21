@@ -11,6 +11,7 @@ for dir in $proto_dirs; do
 Mgoogle/protobuf/any.proto=github.com/cosmos/cosmos-sdk/codec/types:. \
   $(find "${dir}" -maxdepth 1 -name '*.proto')
 
+  # command to generate gRPC gateway (*.pb.gw.go in respective modules) files
   protoc \
   -I "proto" \
   -I "third_party/proto" \

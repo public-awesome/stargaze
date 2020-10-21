@@ -7,6 +7,19 @@ option go_package = "github.com/public-awesome/stakebird/x/faucet/internal/types
 
 import "gogoproto/gogo.proto";
 
+// Msg defines the faucet Msg service.
+service Msg {
+  // Mint defines a method for minting coins
+  rpc Mint(MsgMint) returns (MsgMintResponse);
+
+  // FaucetKey defines a method for publishing a faucet key
+  rpc FaucetKey(MsgFaucetKey) returns (MsgFaucetKeyResponse);
+}
+
+message MsgMintResponse{}
+message MsgFaucetKeyResponse{}
+
+
 message MsgMint {
   option (gogoproto.equal) = true;
 
