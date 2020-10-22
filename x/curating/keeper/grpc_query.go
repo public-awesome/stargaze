@@ -19,6 +19,14 @@ func (k Keeper) Params(c context.Context, req *types.QueryParamsRequest) (*types
 	}, nil
 }
 
+// Posts returns all posts based on vendor
+func (k Keeper) Posts(c context.Context, req *types.QueryPostsRequest) (*types.QueryPostsResponse, error) {
+	ctx := sdk.UnwrapSDKContext(c)
+	posts := k.GetPosts(ctx, req.VendorId)
+
+	return &types.QueryPostsResponse{Posts: posts}, nil
+}
+
 // Post returns a post based on vendor and post id
 func (k Keeper) Post(c context.Context, req *types.QueryPostRequest) (*types.QueryPostResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
