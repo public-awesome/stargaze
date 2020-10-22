@@ -9,18 +9,13 @@ import (
 	"github.com/public-awesome/stakebird/x/curating/types"
 )
 
-// GetPosts returns all posts for a vendor
-func (k Keeper) GetPosts(ctx sdk.Context, vendorID uint32) (posts []types.Post, err error) {
-	store := ctx.KVStore(k.storeKey)
-
-	key := types.PostsKey(vendorID)
-	value := store.Get(key)
-	if value == nil {
-		return posts, nil
-	}
-	k.MustUnmarshalPost(value, &posts)
-
-	return post, true, nil
+// GetPosts returns all posts on chain
+func (k Keeper) GetPosts(ctx sdk.Context) (posts []types.Post) {
+	k.IteratePosts(ctx, func(post types.Post) bool {
+		posts = append(posts, post)
+		return false
+	})
+	return
 }
 
 // GetPost returns post if one exists
@@ -207,11 +202,26 @@ func (k Keeper) IterateExpiredPosts(
 
 // CurationQueueIterator returns an sdk.Iterator for all the posts
 // in the queue that expire by endTime
-func (k Keeper) CurationQueueIterator(
-	ctx sdk.Context, endTime time.Time) sdk.Iterator {
-
+func (k Keeper) CurationQueueIterator(ctx sdk.Context, endTime time.Time) sdk.Iterator {
 	store := ctx.KVStore(k.storeKey)
 	return store.Iterator(
 		types.KeyPrefixCurationQueue,
 		sdk.PrefixEndBytes(types.CurationQueueByTimeKey(endTime)))
+}
+
+// IteratePosts iterates over the all the posts and performs a callback function
+func (k Keeper) IteratePosts(ctx sdk.Context, cb func(post types.Post) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+
+	iterator := sdk.KVStorePrefixIterator(store, types.KeyPrefixPost)
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var post types.Post
+		k.MustUnmarshalPost(iterator.Value(), &post)
+
+		if cb(post) {
+			break
+		}
+	}
 }
