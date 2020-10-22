@@ -10,8 +10,8 @@ import (
 )
 
 // GetPosts returns all posts on chain
-func (k Keeper) GetPosts(ctx sdk.Context) (posts []types.Post) {
-	k.IteratePosts(ctx, func(post types.Post) bool {
+func (k Keeper) GetPosts(ctx sdk.Context, vendorID uint32) (posts []types.Post) {
+	k.IteratePosts(ctx, vendorID, func(post types.Post) bool {
 		posts = append(posts, post)
 		return false
 	})
@@ -209,11 +209,11 @@ func (k Keeper) CurationQueueIterator(ctx sdk.Context, endTime time.Time) sdk.It
 		sdk.PrefixEndBytes(types.CurationQueueByTimeKey(endTime)))
 }
 
-// IteratePosts iterates over the all the posts and performs a callback function
-func (k Keeper) IteratePosts(ctx sdk.Context, cb func(post types.Post) (stop bool)) {
+// IteratePosts iterates over the all the posts by vendor_id and performs a callback function
+func (k Keeper) IteratePosts(ctx sdk.Context, vendorID uint32, cb func(post types.Post) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
-	iterator := sdk.KVStorePrefixIterator(store, types.KeyPrefixPost)
+	iterator := sdk.KVStorePrefixIterator(store, types.PostsKey(vendorID))
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
