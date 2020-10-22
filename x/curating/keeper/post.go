@@ -9,7 +9,7 @@ import (
 	"github.com/public-awesome/stakebird/x/curating/types"
 )
 
-// GetPosts returns all posts on chain
+// GetPosts returns all posts on chain based on vendor id
 func (k Keeper) GetPosts(ctx sdk.Context, vendorID uint32) (posts []types.Post) {
 	k.IteratePosts(ctx, vendorID, func(post types.Post) bool {
 		posts = append(posts, post)
