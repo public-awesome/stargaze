@@ -1,5 +1,3 @@
-//Package simapp ...
-//nolint
 package simapp
 
 import (
@@ -13,7 +11,6 @@ import (
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto"
-	"github.com/tendermint/tendermint/crypto/ed25519"
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	tmtypes "github.com/tendermint/tendermint/types"
@@ -21,7 +18,7 @@ import (
 
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
-
+	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -38,6 +35,7 @@ var DefaultConsensusParams = &abci.ConsensusParams{
 	Evidence: &tmproto.EvidenceParams{
 		MaxAgeNumBlocks: 302400,
 		MaxAgeDuration:  504 * time.Hour, // 3 weeks is the max duration
+		MaxBytes:        10000,
 	},
 	Validator: &tmproto.ValidatorParams{
 		PubKeyTypes: []string{
@@ -88,7 +86,8 @@ func SetupWithGenesisAccounts(genAccs []authtypes.GenesisAccount, balances ...ba
 		totalSupply = totalSupply.Add(b.Coins...)
 	}
 
-	bankGenesis := banktypes.NewGenesisState(banktypes.DefaultGenesisState().Params, balances, totalSupply, []banktypes.Metadata{})
+	bankGenesis := banktypes.NewGenesisState(banktypes.DefaultGenesisState().Params,
+		balances, totalSupply, []banktypes.Metadata{})
 	genesisState[banktypes.ModuleName] = app.AppCodec().MustMarshalJSON(bankGenesis)
 
 	stateBytes, err := json.MarshalIndent(genesisState, "", " ")
@@ -131,12 +130,20 @@ func createIncrementalAccounts(accNum int) []sdk.AccAddress {
 	// start at 100 so we can make up to 999 test addresses with valid test addresses
 	for i := 100; i < (accNum + 100); i++ {
 		numString := strconv.Itoa(i)
-		buffer.WriteString("A58856F0FD53BF058B4909A21AEC019107BA6") //base address string
+		buffer.WriteString("A58856F0FD53BF058B4909A21AEC019107BA6") // base address string
 
-		buffer.WriteString(numString) //adding on final two digits to make addresses unique
-		res, _ := sdk.AccAddressFromHex(buffer.String())
+		buffer.WriteString(numString) // adding on final two digits to make addresses unique
+		res, err := sdk.AccAddressFromHex(buffer.String())
+		if err != nil {
+			buffer.Reset()
+			continue
+		}
 		bech := res.String()
-		addr, _ := TestAddr(buffer.String(), bech)
+		addr, err := TestAddr(buffer.String(), bech)
+		if err != nil {
+			buffer.Reset()
+			continue
+		}
 
 		addresses = append(addresses, addr)
 		buffer.Reset()
@@ -166,18 +173,21 @@ func setTotalSupply(app *SimApp, ctx sdk.Context, accAmt sdk.Int, totalAccounts 
 
 // AddTestAddrs constructs and returns accNum amount of accounts with an
 // initial balance of accAmt in random order
-func AddTestAddrs(app *SimApp, ctx sdk.Context, accNum int, accAmt sdk.Int) []sdk.AccAddress {
+func AddTestAddrs(app *SimApp, ctx sdk.Context,
+	accNum int, accAmt sdk.Int) []sdk.AccAddress {
 	return addTestAddrs(app, ctx, accNum, accAmt, createRandomAccounts)
 }
 
-// AddTestAddrs constructs and returns accNum amount of accounts with an
+// AddTestAddrsIncremental constructs and returns accNum amount of accounts with an
 // initial balance of accAmt in random order
 func AddTestAddrsIncremental(app *SimApp, ctx sdk.Context, accNum int, accAmt sdk.Int) []sdk.AccAddress {
 	return addTestAddrs(app, ctx, accNum, accAmt, createIncrementalAccounts)
 }
 
-func addTestAddrs(app *SimApp, ctx sdk.Context, accNum int, accAmt sdk.Int, strategy GenerateAccountStrategy) []sdk.AccAddress {
+func addTestAddrs(app *SimApp, ctx sdk.Context, accNum int,
+	accAmt sdk.Int, strategy GenerateAccountStrategy) []sdk.AccAddress {
 	testAddrs := strategy(accNum)
+
 	stakeCoin := sdk.NewCoin("stake", accAmt)
 	stbCoin := sdk.NewCoin("ustb", accAmt)
 	atomCoin := sdk.NewCoin("uatom", accAmt)
@@ -246,12 +256,12 @@ func CheckBalance(t *testing.T, app *SimApp, addr sdk.AccAddress, balances sdk.C
 // the parameter 'expPass' against the result. A corresponding result is
 // returned.
 func SignCheckDeliver(
-	t *testing.T, txGen client.TxConfig, app *bam.BaseApp, header tmproto.Header, msgs []sdk.Msg,
+	t *testing.T, txCfg client.TxConfig, app *bam.BaseApp, header tmproto.Header, msgs []sdk.Msg,
 	chainID string, accNums, accSeqs []uint64, expSimPass, expPass bool, priv ...crypto.PrivKey,
 ) (sdk.GasInfo, *sdk.Result, error) {
 
 	tx, err := helpers.GenTx(
-		txGen,
+		txCfg,
 		msgs,
 		sdk.Coins{sdk.NewInt64Coin(sdk.DefaultBondDenom, 0)},
 		helpers.DefaultGenTxGas,
@@ -261,11 +271,11 @@ func SignCheckDeliver(
 		priv...,
 	)
 	require.NoError(t, err)
-	txBytes, err := txGen.TxEncoder()(tx)
+	txBytes, err := txCfg.TxEncoder()(tx)
 	require.Nil(t, err)
 
 	// Must simulate now as CheckTx doesn't run Msgs anymore
-	_, res, err := app.Simulate(txBytes, tx)
+	_, res, err := app.Simulate(txBytes)
 
 	if expSimPass {
 		require.NoError(t, err)
@@ -277,7 +287,7 @@ func SignCheckDeliver(
 
 	// Simulate a sending a transaction and committing a block
 	app.BeginBlock(abci.RequestBeginBlock{Header: header})
-	gInfo, res, err := app.Deliver(tx)
+	gInfo, res, err := app.Deliver(txCfg.TxEncoder(), tx)
 
 	if expPass {
 		require.NoError(t, err)
@@ -296,7 +306,9 @@ func SignCheckDeliver(
 // GenSequenceOfTxs generates a set of signed transactions of messages, such
 // that they differ only by having the sequence numbers incremented between
 // every transaction.
-func GenSequenceOfTxs(txGen client.TxConfig, msgs []sdk.Msg, accNums []uint64, initSeqNums []uint64, numToGenerate int, priv ...crypto.PrivKey) ([]sdk.Tx, error) {
+func GenSequenceOfTxs(txGen client.TxConfig, msgs []sdk.Msg,
+	accNums []uint64, initSeqNums []uint64,
+	numToGenerate int, priv ...crypto.PrivKey) ([]sdk.Tx, error) {
 	txs := make([]sdk.Tx, numToGenerate)
 	var err error
 	for i := 0; i < numToGenerate; i++ {

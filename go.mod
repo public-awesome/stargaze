@@ -3,20 +3,20 @@ module github.com/public-awesome/stakebird
 go 1.15
 
 require (
-	github.com/cosmos/cosmos-sdk v0.40.0-rc0
+	github.com/cosmos/cosmos-sdk v0.40.0-rc1
 	github.com/gogo/protobuf v1.3.1
 	github.com/golang/protobuf v1.4.2
 	github.com/gorilla/mux v1.8.0
-	github.com/grpc-ecosystem/grpc-gateway v1.15.0
+	github.com/grpc-ecosystem/grpc-gateway v1.15.2
 	github.com/rakyll/statik v0.1.7
 	github.com/spf13/cast v1.3.1
-	github.com/spf13/cobra v1.0.0
+	github.com/spf13/cobra v1.1.0
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.6.1
-	github.com/tendermint/tendermint v0.34.0-rc4.0.20201005135527-d7d0ffea13c6
+	github.com/tendermint/tendermint v0.34.0-rc5
 	github.com/tendermint/tm-db v0.6.2
-	google.golang.org/genproto v0.0.0-20200825200019-8632dd797987
-	google.golang.org/grpc v1.32.0
+	google.golang.org/genproto v0.0.0-20201014134559-03b6142f0dc9
+	google.golang.org/grpc v1.33.0
 	gopkg.in/yaml.v2 v2.3.0
 )
 
