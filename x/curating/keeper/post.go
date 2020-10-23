@@ -2,7 +2,9 @@ package keeper
 
 import (
 	"crypto/sha256"
+	"encoding/binary"
 	"fmt"
+	"strconv"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -67,8 +69,7 @@ func (k Keeper) CreatePost(
 		rewardAccount = creator
 	}
 
-	// hash postID to avoid non-determinism
-	postIDHash, err := hash(postID)
+	postIDBz, err := postIDBytes(postID)
 	if err != nil {
 		return err
 	}
@@ -80,15 +81,14 @@ func (k Keeper) CreatePost(
 
 	curationWindow := k.GetParams(ctx).CurationWindow
 	curationEndTime := ctx.BlockTime().Add(curationWindow)
-	post := types.NewPost(
-		vendorID, postIDHash, bodyHash, creator, rewardAccount, curationEndTime)
+	post := types.NewPost(vendorID, postIDBz, bodyHash, creator, rewardAccount, curationEndTime)
 
 	store := ctx.KVStore(k.storeKey)
-	key := types.PostKey(vendorID, postIDHash)
+	key := types.PostKey(vendorID, postIDBz)
 	value := k.MustMarshalPost(post)
 	store.Set(key, value)
 
-	k.InsertCurationQueue(ctx, vendorID, postIDHash, curationEndTime)
+	k.InsertCurationQueue(ctx, vendorID, postIDBz, curationEndTime)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
@@ -224,4 +224,17 @@ func (k Keeper) IteratePosts(ctx sdk.Context, vendorID uint32, cb func(post type
 			break
 		}
 	}
+}
+
+// postIDBytes returns the byte representation of a postID
+func postIDBytes(postID string) ([]byte, error) {
+	postIDInt64, err := strconv.ParseInt(postID, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	postIDBz := make([]byte, 8)
+	binary.BigEndian.PutUint64(postIDBz, uint64(postIDInt64))
+
+	return postIDBz, nil
 }
