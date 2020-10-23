@@ -85,7 +85,7 @@ func (k Keeper) GetUpvote(
 	curator sdk.AccAddress) (upvote types.Upvote, found bool, err error) {
 
 	store := ctx.KVStore(k.storeKey)
-	postIDBz, err := hash(postID)
+	postIDBz, err := postIDBytes(postID)
 	if err != nil {
 		return upvote, false, err
 	}
