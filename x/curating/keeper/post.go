@@ -24,21 +24,21 @@ func (k Keeper) GetPosts(ctx sdk.Context, vendorID uint32) (posts []types.Post) 
 func (k Keeper) GetPost(
 	ctx sdk.Context, vendorID uint32, postID string) (post types.Post, found bool, err error) {
 
-	postIDHash, err := hash(postID)
+	postIDBz, err := hash(postID)
 	if err != nil {
 		return post, false, err
 	}
 
-	return k.GetPostZ(ctx, vendorID, postIDHash)
+	return k.GetPostZ(ctx, vendorID, postIDBz)
 }
 
 // GetPostZ returns post if one exists
 func (k Keeper) GetPostZ(
-	ctx sdk.Context, vendorID uint32, postIDHash []byte) (post types.Post, found bool, err error) {
+	ctx sdk.Context, vendorID uint32, postIDBz []byte) (post types.Post, found bool, err error) {
 
 	store := ctx.KVStore(k.storeKey)
 
-	key := types.PostKey(vendorID, postIDHash)
+	key := types.PostKey(vendorID, postIDBz)
 	value := store.Get(key)
 	if value == nil {
 		return post, false, nil
@@ -107,14 +107,14 @@ func (k Keeper) CreatePost(
 }
 
 // DeletePost removes a post
-func (k Keeper) DeletePost(ctx sdk.Context, vendorID uint32, postIDHash []byte) error {
+func (k Keeper) DeletePost(ctx sdk.Context, vendorID uint32, postIDBz []byte) error {
 	err := k.validateVendorID(ctx, vendorID)
 	if err != nil {
 		return err
 	}
 
 	store := ctx.KVStore(k.storeKey)
-	key := types.PostKey(vendorID, postIDHash)
+	key := types.PostKey(vendorID, postIDBz)
 
 	store.Delete(key)
 	return nil
@@ -123,7 +123,7 @@ func (k Keeper) DeletePost(ctx sdk.Context, vendorID uint32, postIDHash []byte) 
 // InsertCurationQueue inserts a VPPair into the right timeslot in the curation queue
 func (k Keeper) InsertCurationQueue(
 	ctx sdk.Context, vendorID uint32, postID []byte, curationEndTime time.Time) {
-	vpPair := types.VPPair{VendorID: vendorID, PostIDHash: postID}
+	vpPair := types.VPPair{VendorID: vendorID, PostID: postID}
 
 	timeSlice := k.GetCurationQueueTimeSlice(ctx, curationEndTime)
 	if len(timeSlice) == 0 {
@@ -187,7 +187,7 @@ func (k Keeper) IterateExpiredPosts(
 		vps := types.VPPairs{}
 		k.cdc.MustUnmarshalBinaryBare(it.Value(), &vps)
 		for _, vp := range vps.Pairs {
-			post, found, err := k.GetPostZ(ctx, vp.VendorID, vp.PostIDHash)
+			post, found, err := k.GetPostZ(ctx, vp.VendorID, vp.PostID)
 			if err != nil {
 				// Do want to panic here because if a post doesn't exist for an upvote
 				// it means there's some kind of consensus failure, so halt the chain.

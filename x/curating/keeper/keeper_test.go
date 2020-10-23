@@ -120,9 +120,9 @@ func TestDeletePost(t *testing.T) {
 	require.NoError(t, err)
 	require.True(t, found, "post should be found")
 
-	postIDHash, err := hash(postID)
+	postIDBz, err := hash(postID)
 	require.NoError(t, err)
-	err = app.CuratingKeeper.DeletePost(ctx, vendorID, postIDHash)
+	err = app.CuratingKeeper.DeletePost(ctx, vendorID, postIDBz)
 	require.NoError(t, err)
 
 	_, found, err = app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -135,17 +135,17 @@ func TestInsertCurationQueue(t *testing.T) {
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
 	vendorID := uint32(1)
-	postIDHash, err := hash(postID)
+	postIDBz, err := hash(postID)
 	require.NoError(t, err)
 
 	curationWindow := app.CuratingKeeper.GetParams(ctx).CurationWindow
 	curationEndTime := ctx.BlockTime().Add(curationWindow)
-	app.CuratingKeeper.InsertCurationQueue(ctx, vendorID, postIDHash, curationEndTime)
+	app.CuratingKeeper.InsertCurationQueue(ctx, vendorID, postIDBz, curationEndTime)
 
 	timeSlice := app.CuratingKeeper.GetCurationQueueTimeSlice(ctx, curationEndTime)
 	require.Len(t, timeSlice, 1)
 
-	vpPair := types.VPPair{VendorID: vendorID, PostIDHash: postIDHash}
+	vpPair := types.VPPair{VendorID: vendorID, PostID: postIDBz}
 	require.Equal(t, vpPair, timeSlice[0])
 }
 
@@ -154,9 +154,9 @@ func TestCurationQueueTimeSlice(t *testing.T) {
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
 	vendorID := uint32(1)
-	postIDHash, err := hash(postID)
+	postIDBz, err := hash(postID)
 	require.NoError(t, err)
-	vpPair := types.VPPair{VendorID: vendorID, PostIDHash: postIDHash}
+	vpPair := types.VPPair{VendorID: vendorID, PostID: postIDBz}
 
 	curationWindow := app.CuratingKeeper.GetParams(ctx).CurationWindow
 	curationEndTime := ctx.BlockTime().Add(curationWindow)
