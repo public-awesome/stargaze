@@ -24,7 +24,7 @@ func (k Keeper) GetPosts(ctx sdk.Context, vendorID uint32) (posts []types.Post) 
 func (k Keeper) GetPost(
 	ctx sdk.Context, vendorID uint32, postID string) (post types.Post, found bool, err error) {
 
-	postIDBz, err := hash(postID)
+	postIDBz, err := postIDBytes(postID)
 	if err != nil {
 		return post, false, err
 	}
