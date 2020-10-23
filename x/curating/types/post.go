@@ -1,7 +1,6 @@
 package types
 
 import (
-	"strconv"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -22,18 +21,21 @@ func NewPost(
 	}
 }
 
-// CuratedPost is an application-specific wrapper around a `Post`
-type CuratedPost struct {
-	*Post
-}
+// func (cp CuratedPost) String() string {
+// 	postID, err := strconv.ParseInt(string(cp.PostID), 10, 64)
+// 	if err != nil {
+// 		panic(err)
+// 	}
 
-func (cp CuratedPost) String() string {
-	postID, err := strconv.ParseInt(string(cp.PostID), 10, 64)
-	if err != nil {
-		panic(err)
-	}
+// 	return strconv.FormatInt(postID, 10)
+// }
 
-	return strconv.FormatInt(postID, 10)
-
-	// return cp.String()
+// String implements the stringer interface for Post
+func (p *Post) String() string {
+	// out, err := yaml.Marshal(p)
+	// if err != nil {
+	// 	return ""
+	// }
+	// return string(out)
+	return "hello"
 }
