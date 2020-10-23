@@ -18,7 +18,7 @@ import (
 func NewPostTxCmd() *cobra.Command {
 
 	cmd := &cobra.Command{
-		Use:   "post [vendor-id] [post-id] [body] [reward_address]",
+		Use:   "post [vendor-id] [post-id] [body] [reward_address] --from [key]",
 		Args:  cobra.MinimumNArgs(3),
 		Short: "Register a post",
 		Long: strings.TrimSpace(
@@ -72,7 +72,7 @@ $ %s tx curating post 1 "2" "body" --from mykey
 // NewUpvoteTxCmd returns the upvote command
 func NewUpvoteTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "upvote [vendor-id] [post-id] [voteNum] [reward-addr]",
+		Use:   "upvote [vendor-id] [post-id] [voteNum] [reward-addr] --from [key]",
 		Args:  cobra.MinimumNArgs(3),
 		Short: "Upvote a post",
 		Long: strings.TrimSpace(
