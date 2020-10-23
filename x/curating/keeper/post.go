@@ -2,11 +2,10 @@ package keeper
 
 import (
 	"crypto/sha256"
-	"encoding/binary"
 	"fmt"
-	"strconv"
 	"time"
 
+	"github.com/bwmarrin/snowflake"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/public-awesome/stakebird/x/curating/types"
 )
@@ -226,15 +225,14 @@ func (k Keeper) IteratePosts(ctx sdk.Context, vendorID uint32, cb func(post type
 	}
 }
 
-// postIDBytes returns the byte representation of a postID
+// postIDBytes returns the byte representation of a postID int64
 func postIDBytes(postID string) ([]byte, error) {
-	postIDInt64, err := strconv.ParseInt(postID, 10, 64)
+	pID, err := snowflake.ParseString(postID)
 	if err != nil {
 		return nil, err
 	}
 
-	postIDBz := make([]byte, 8)
-	binary.BigEndian.PutUint64(postIDBz, uint64(postIDInt64))
+	temp := pID.IntBytes()
 
-	return postIDBz, nil
+	return temp[:], nil
 }

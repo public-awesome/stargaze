@@ -1,7 +1,6 @@
 package types
 
 import (
-	"encoding/json"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -42,20 +41,20 @@ func NewPost(
 // }
 
 // MarshalJSON defines custom encoding scheme
-func (p Post) MarshalJSON() ([]byte, error) {
-	// if i.i == nil { // Necessary since default Uint initialization has i.i as nil
-	// 	i.i = new(big.Int)
-	// }
-	// return marshalJSON(i.i)
-	// return []byte("hello"), nil
+// func (p Post) MarshalJSON() ([]byte, error) {
+// 	// if i.i == nil { // Necessary since default Uint initialization has i.i as nil
+// 	// 	i.i = new(big.Int)
+// 	// }
+// 	// return marshalJSON(i.i)
+// 	// return []byte("hello"), nil
 
-	out, err := json.Marshal(p)
-	if err != nil {
-		panic(err)
-	}
+// 	out, err := json.Marshal(p)
+// 	if err != nil {
+// 		panic(err)
+// 	}
 
-	return out, nil
-}
+// 	return out, nil
+// }
 
 // MarshalJSON returns the JSON representation of a ModuleAccount.
 // func (ma ModuleAccount) MarshalJSON() ([]byte, error) {
