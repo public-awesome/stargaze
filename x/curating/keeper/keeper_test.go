@@ -2,6 +2,8 @@ package keeper_test
 
 import (
 	"crypto/sha256"
+	"encoding/binary"
+	"strconv"
 	"testing"
 
 	"github.com/public-awesome/stakebird/x/curating/types"
@@ -120,7 +122,7 @@ func TestDeletePost(t *testing.T) {
 	require.NoError(t, err)
 	require.True(t, found, "post should be found")
 
-	postIDBz, err := hash(postID)
+	postIDBz, err := postIDBytes(postID)
 	require.NoError(t, err)
 	err = app.CuratingKeeper.DeletePost(ctx, vendorID, postIDBz)
 	require.NoError(t, err)
@@ -135,7 +137,7 @@ func TestInsertCurationQueue(t *testing.T) {
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
 	vendorID := uint32(1)
-	postIDBz, err := hash(postID)
+	postIDBz, err := postIDBytes(postID)
 	require.NoError(t, err)
 
 	curationWindow := app.CuratingKeeper.GetParams(ctx).CurationWindow
@@ -174,4 +176,17 @@ func hash(body string) ([]byte, error) {
 		return nil, err
 	}
 	return h.Sum(nil), nil
+}
+
+// postIDBytes returns the byte representation of a postID
+func postIDBytes(postID string) ([]byte, error) {
+	postIDInt64, err := strconv.ParseInt(postID, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	postIDBz := make([]byte, 8)
+	binary.BigEndian.PutUint64(postIDBz, uint64(postIDInt64))
+
+	return postIDBz, nil
 }
