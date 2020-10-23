@@ -1,6 +1,7 @@
 package types
 
 import (
+	"strconv"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -27,5 +28,12 @@ type CuratedPost struct {
 }
 
 func (cp CuratedPost) String() string {
-	return cp.String()
+	postID, err := strconv.ParseInt(string(cp.PostID), 10, 64)
+	if err != nil {
+		panic(err)
+	}
+
+	return strconv.FormatInt(postID, 10)
+
+	// return cp.String()
 }
