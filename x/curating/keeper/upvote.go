@@ -20,8 +20,7 @@ func (k Keeper) CreateUpvote(
 		rewardAccount = curator
 	}
 
-	// hash postID to avoid non-determinism
-	postIDHash, err := hash(postID)
+	postIDBz, err := postIDBytes(postID)
 	if err != nil {
 		return err
 	}
@@ -54,7 +53,7 @@ func (k Keeper) CreateUpvote(
 	upvote := types.NewUpvote(curator, rewardAccount, voteAmt, ctx.BlockTime())
 
 	store := ctx.KVStore(k.storeKey)
-	key := types.UpvoteKey(vendorID, postIDHash, curator)
+	key := types.UpvoteKey(vendorID, postIDBz, curator)
 	value := k.MustMarshalUpvote(upvote)
 	store.Set(key, value)
 
