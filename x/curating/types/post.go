@@ -20,3 +20,12 @@ func NewPost(
 		CuratingEndTime: curatingEndTime,
 	}
 }
+
+// CuratedPost is an application-specific wrapper around a `Post`
+type CuratedPost struct {
+	*Post
+}
+
+func (cp CuratedPost) String() string {
+	return cp.String()
+}
