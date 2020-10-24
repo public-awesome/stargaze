@@ -1,7 +1,11 @@
 package types
 
 import (
+	"encoding/hex"
+	"encoding/json"
 	"time"
+
+	"github.com/bwmarrin/snowflake"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -21,57 +25,36 @@ func NewPost(
 	}
 }
 
-// func (cp CuratedPost) String() string {
-// 	postID, err := strconv.ParseInt(string(cp.PostID), 10, 64)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	return strconv.FormatInt(postID, 10)
-// }
-
-// String implements the stringer interface for Post
-// func (p *Post) String() string {
-// 	// out, err := yaml.Marshal(p)
-// 	// if err != nil {
-// 	// 	return ""
-// 	// }
-// 	// return string(out)
-// 	return "hello"
-// }
+// postPretty is a representation of `Post` suitable for silly hoomans
+type postPretty struct {
+	VendorID        uint32 `json:"vendor_id" yaml:"vendor_id"`
+	PostID          string `json:"post_id" yaml:"post_id"`
+	Creator         string `json:"creator" yaml:"creator"`
+	RewardAccount   string `json:"reward_account" yaml:"reward_account"`
+	BodyHash        string `json:"body_hash" yaml:"body_hash"`
+	CuratingEndTime string `json:"curating_end_time" yaml:"curating_end_time"`
+}
 
 // MarshalJSON defines custom encoding scheme
-// func (p Post) MarshalJSON() ([]byte, error) {
-// 	// if i.i == nil { // Necessary since default Uint initialization has i.i as nil
-// 	// 	i.i = new(big.Int)
-// 	// }
-// 	// return marshalJSON(i.i)
-// 	// return []byte("hello"), nil
+func (p Post) MarshalJSON() ([]byte, error) {
+	var temp [8]byte
+	copy(temp[:], p.PostID) // convert a postID byte slice into a fixed 8 byte array
+	postID := snowflake.ParseIntBytes(temp)
 
-// 	out, err := json.Marshal(p)
-// 	if err != nil {
-// 		panic(err)
-// 	}
+	out, err := json.Marshal(postPretty{
+		VendorID:        p.VendorID,
+		PostID:          postID.String(),
+		Creator:         p.Creator,
+		RewardAccount:   p.RewardAccount,
+		BodyHash:        hex.EncodeToString(p.BodyHash),
+		CuratingEndTime: p.CuratingEndTime.Format(time.RFC3339),
+	})
+	if err != nil {
+		return out, err
+	}
 
-// 	return out, nil
-// }
-
-// MarshalJSON returns the JSON representation of a ModuleAccount.
-// func (ma ModuleAccount) MarshalJSON() ([]byte, error) {
-// 	accAddr, err := sdk.AccAddressFromBech32(ma.Address)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return json.Marshal(moduleAccountPretty{
-// 		Address:       accAddr,
-// 		PubKey:        "",
-// 		AccountNumber: ma.AccountNumber,
-// 		Sequence:      ma.Sequence,
-// 		Name:          ma.Name,
-// 		Permissions:   ma.Permissions,
-// 	})
-// }
+	return out, nil
+}
 
 // UnmarshalJSON defines custom decoding scheme
 // func (p *Post) UnmarshalJSON(bz []byte) error {
