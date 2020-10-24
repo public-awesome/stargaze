@@ -18,7 +18,7 @@ func TestHandlePost(t *testing.T) {
 	addrs = simapp.AddTestAddrsIncremental(app, ctx, 1, sdk.NewInt(10_000_000))
 
 	handler := curating.NewHandler(app.CuratingKeeper)
-	msgPost := types.NewMsgPost(1, "abcde", addrs[0], nil, "testbody")
+	msgPost := types.NewMsgPost(1, "123", addrs[0], nil, "testbody")
 	_, err := handler(ctx, msgPost)
 	assert.NoError(t, err)
 }
@@ -30,7 +30,7 @@ func TestHandleUpvote(t *testing.T) {
 	addrs = simapp.AddTestAddrsIncremental(app, ctx, 1, sdk.NewInt(10_000_000))
 
 	handler := curating.NewHandler(app.CuratingKeeper)
-	msgUpvote := types.NewMsgUpvote(1, "abcde", addrs[0], nil, 1)
+	msgUpvote := types.NewMsgUpvote(1, "123", addrs[0], nil, 1)
 	_, err := handler(ctx, msgUpvote)
 	assert.NoError(t, err)
 }

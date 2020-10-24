@@ -50,7 +50,7 @@ func (k Keeper) Upvotes(c context.Context, req *types.QueryUpvotesRequest) (*typ
 	if err != nil || !found {
 		return nil, types.ErrPostNotFound
 	}
-	k.IterateUpvotes(ctx, req.VendorId, post.PostIDHash, func(upvote types.Upvote) (stop bool) {
+	k.IterateUpvotes(ctx, req.VendorId, post.PostID, func(upvote types.Upvote) (stop bool) {
 		upvotes = append(upvotes, upvote)
 		return false
 	})
