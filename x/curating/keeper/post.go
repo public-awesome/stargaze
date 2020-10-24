@@ -171,7 +171,8 @@ func hash(body string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return h.Sum(nil), nil
+	digest := h.Sum(nil)
+	return digest[:20], nil
 }
 
 // IterateExpiredPosts iterates over posts that have finished their
