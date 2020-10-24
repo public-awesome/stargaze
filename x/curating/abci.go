@@ -83,12 +83,6 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 			})
 
 		endTimes[post.GetCuratingEndTime()] = true
-		// [NOTE]: not deleting posts until we store a historical record of them (SSV)
-		// https://github.com/public-awesome/stakebird/issues/194
-		// err = k.DeletePost(ctx, post.VendorID, post.PostID)
-		// if err != nil {
-		// panic(err)
-		// }
 
 		return false
 	})

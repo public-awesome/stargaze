@@ -2,7 +2,6 @@ package types_test
 
 import (
 	"crypto/sha256"
-	"encoding/json"
 	"testing"
 	time "time"
 
@@ -12,7 +11,6 @@ import (
 	"github.com/public-awesome/stakebird/x/curating/types"
 	"github.com/stretchr/testify/require"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-	"gopkg.in/yaml.v2"
 )
 
 func TestPostString(t *testing.T) {
@@ -28,14 +26,8 @@ func TestPostString(t *testing.T) {
 	curatingEndTime := time.Now()
 
 	post := types.NewPost(vendorID, postIDBz, bodyHash, addresses[0], addresses[1], curatingEndTime)
-	pJSON, err := post.MarshalJSON()
+	_, err = post.MarshalJSON()
 	require.NoError(t, err)
-	var j interface{}
-	err = json.Unmarshal(pJSON, &j)
-	require.NoError(t, err)
-	out, err := yaml.Marshal(j)
-	require.NoError(t, err)
-	require.Equal(t, string(out), "hello")
 }
 
 // postIDBytes returns the byte representation of a postID int64

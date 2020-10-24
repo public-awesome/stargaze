@@ -55,18 +55,3 @@ func (p Post) MarshalJSON() ([]byte, error) {
 
 	return out, nil
 }
-
-// UnmarshalJSON defines custom decoding scheme
-// func (p *Post) UnmarshalJSON(bz []byte) error {
-// 	// if i.i == nil { // Necessary since default Int initialization has i.i as nil
-// 	// 	i.i = new(big.Int)
-// 	// }
-// 	// return unmarshalJSON(i.i, bz)
-// 	return nil
-// }
-
-// MarshalYAML returns the YAML representation.
-// func (p *Post) MarshalYAML() (interface{}, error) {
-// 	// return i.String(), nil
-// 	return "hello", nil
-// }

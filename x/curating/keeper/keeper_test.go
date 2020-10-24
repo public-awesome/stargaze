@@ -2,10 +2,9 @@ package keeper_test
 
 import (
 	"crypto/sha256"
-	"encoding/binary"
-	"strconv"
 	"testing"
 
+	"github.com/bwmarrin/snowflake"
 	"github.com/public-awesome/stakebird/x/curating/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -169,6 +168,7 @@ func TestCurationQueueTimeSlice(t *testing.T) {
 	require.Equal(t, vpPair, timeSlice[0])
 }
 
+// NOTE: these unexported functions are duplicated to enable black-box testing
 func hash(body string) ([]byte, error) {
 	h := sha256.New()
 	_, err := h.Write([]byte(body))
@@ -178,15 +178,14 @@ func hash(body string) ([]byte, error) {
 	return h.Sum(nil), nil
 }
 
-// postIDBytes returns the byte representation of a postID
+// postIDBytes returns the byte representation of a postID int64
 func postIDBytes(postID string) ([]byte, error) {
-	postIDInt64, err := strconv.ParseInt(postID, 10, 64)
+	pID, err := snowflake.ParseString(postID)
 	if err != nil {
 		return nil, err
 	}
 
-	postIDBz := make([]byte, 8)
-	binary.BigEndian.PutUint64(postIDBz, uint64(postIDInt64))
+	temp := pID.IntBytes()
 
-	return postIDBz, nil
+	return temp[:], nil
 }

@@ -165,16 +165,6 @@ func (k Keeper) SetCurationQueueTimeSlice(
 	store.Set(types.CurationQueueByTimeKey(timestamp), bz)
 }
 
-func hash(body string) ([]byte, error) {
-	h := sha256.New()
-	_, err := h.Write([]byte(body))
-	if err != nil {
-		return nil, err
-	}
-	digest := h.Sum(nil)
-	return digest[:20], nil
-}
-
 // IterateExpiredPosts iterates over posts that have finished their
 // curation period, and performs a callback fuction.
 func (k Keeper) IterateExpiredPosts(
@@ -236,4 +226,15 @@ func postIDBytes(postID string) ([]byte, error) {
 	temp := pID.IntBytes()
 
 	return temp[:], nil
+}
+
+// hash performs a sha256 hash over body content and truncates to 160-bits
+func hash(body string) ([]byte, error) {
+	h := sha256.New()
+	_, err := h.Write([]byte(body))
+	if err != nil {
+		return nil, err
+	}
+	digest := h.Sum(nil)
+	return digest[:20], nil
 }
