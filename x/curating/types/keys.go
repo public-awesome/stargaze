@@ -51,20 +51,20 @@ func PostsKey(vendorID uint32) []byte {
 }
 
 // PostKey is the key used to store a post
-func PostKey(vendorID uint32, postIDHash []byte) []byte {
+func PostKey(vendorID uint32, postIDBz []byte) []byte {
 	vendorIDBz := uint32ToBigEndian(vendorID)
-	return append(KeyPrefixPost, append(vendorIDBz, postIDHash...)...)
+	return append(KeyPrefixPost, append(vendorIDBz, postIDBz...)...)
 }
 
 // UpvoteKey key is the key used to store an upvote
-func UpvoteKey(vendorID uint32, postIDHash []byte, curator sdk.AccAddress) []byte {
-	return append(UpvotePrefixKey(vendorID, postIDHash), curator.Bytes()...)
+func UpvoteKey(vendorID uint32, postIDBz []byte, curator sdk.AccAddress) []byte {
+	return append(UpvotePrefixKey(vendorID, postIDBz), curator.Bytes()...)
 }
 
 // UpvotePrefixKey 0x01|vendorID|postID|...
-func UpvotePrefixKey(vendorID uint32, postIDHash []byte) []byte {
+func UpvotePrefixKey(vendorID uint32, postIDBz []byte) []byte {
 	vendorIDBz := uint32ToBigEndian(vendorID)
-	return append(KeyPrefixUpvote, append(vendorIDBz, postIDHash...)...)
+	return append(KeyPrefixUpvote, append(vendorIDBz, postIDBz...)...)
 }
 
 // CurationQueueByTimeKey gets the curation queue key by curation end time
