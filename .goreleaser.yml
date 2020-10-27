@@ -11,16 +11,15 @@ builds:
       - darwin
     goarch:
       - amd64
-      - arm
       - arm64
-    goarm:
-      - 6
-      - 7
+    flags:
+      - -tags=netgo,faucet
     ldflags:
       - -X "github.com/cosmos/cosmos-sdk/version.Name=Stakebird"
-      - -X github.com/cosmos/cosmos-sdk/version.ServerName=staked
+      - -X github.com/cosmos/cosmos-sdk/version.AppName=staked
       - -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}}
       - -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}
+      - -X github.com/cosmos/cosmos-sdk/version.BuildTags=netgo,faucet
 
 release:
   github:
