@@ -95,9 +95,6 @@ init:
 install: go.sum
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/staked
 
-install-with-faucet: go.sum
-	go install -mod=readonly $(BUILD_FLAGS) -tags faucet ./cmd/staked
-
 start:
 	staked start --grpc.address 0.0.0.0:9091
 

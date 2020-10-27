@@ -91,13 +91,6 @@ steps:
     when:
       event:
         - tag
-  - name: slack
-    image: plugins/slack
-    settings:
-      webhook:
-        from_secret: slack_webhook
-    when:
-      status: [success, failure]
   - name: discord
     image: appleboy/drone-discord
     settings:
@@ -134,13 +127,6 @@ steps:
       - /bin/bash ./contrib/ci/setup-relayer.sh
     environment:
       GOPROXY: http://goproxy
-  - name: slack
-    image: plugins/slack
-    settings:
-      webhook:
-        from_secret: slack_webhook
-    when:
-      status: [success, failure]
 
 trigger:
   branch:
@@ -152,6 +138,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: 83f8b4fe0100449c50b38bd78f57ecd14ad8163d6d1eb14d54080b73762cdb33
+hmac: 7df18974e90d4a8ed31cda5592bafeb26b2d4ed8d7562969747fc973e8a66baa
 
 ...
