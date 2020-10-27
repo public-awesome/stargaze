@@ -32,8 +32,8 @@ rly cfg add-dir contrib/ibc/relayer/configs/stakebird-xfer/
 # NOTE: you may want to look at the config between these steps
 cat ~/.relayer/config/config.yaml
 
-rly keys restore ibc0 testkey "$(jq -r '.secret' data/ibc0/n0/gaiacli/key_seed.json)"
-rly keys restore ibc1 testkey "$(jq -r '.secret' data/ibc1/n0/stakecli/key_seed.json)"
+rly keys restore ibc0 testkey "$(jq -r '.secret' data/ibc0/n0/gaiad/key_seed.json)"
+rly keys restore ibc1 testkey "$(jq -r '.secret' data/ibc1/n0/staked/key_seed.json)"
 
 rly lite init ibc0 -f
 rly lite init ibc1 -f

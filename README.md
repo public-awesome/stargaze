@@ -47,6 +47,6 @@ To setup the relayer and do a token transfer between chains, run:
 The curating module can be accessed via CLI and REST API.
 
 ```sh
-stakecli tx curating post -h
-stakecli tx curating upvote -h
+staked tx curating post -h
+staked tx curating upvote -h
 ```
