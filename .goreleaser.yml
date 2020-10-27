@@ -12,6 +12,8 @@ builds:
     goarch:
       - amd64
       - arm64
+    flags:
+      - -tags=faucet
     ldflags:
       - -X "github.com/cosmos/cosmos-sdk/version.Name=Stakebird"
       - -X github.com/cosmos/cosmos-sdk/version.ServerName=staked
