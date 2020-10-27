@@ -130,7 +130,7 @@ steps:
 
 trigger:
   branch:
-    - master
+    - ibc
   event:
     - push
 
@@ -138,6 +138,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: 7df18974e90d4a8ed31cda5592bafeb26b2d4ed8d7562969747fc973e8a66baa
+hmac: c87b0a2a2debf5a8d04c454c477e22e4ffded0a35cc71c449c667466af243c65
 
 ...
