@@ -16,7 +16,7 @@ fi
 # Build genesis file incl account for passed address
 coins="10000000000stake,100000000000samoleans"
 staked init --chain-id $CHAINID $CHAINID
-stakecli keys add validator --keyring-backend="test"
+staked keys add validator --keyring-backend="test"
 staked add-genesis-account validator $coins --keyring-backend="test"
 staked add-genesis-account $GENACCT $coins --keyring-backend="test"
 staked gentx --name validator --keyring-backend="test"
