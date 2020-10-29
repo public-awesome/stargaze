@@ -79,7 +79,7 @@ endif
 all: install
 
 create-wallet:
-	staked keys add validator --keyring-backend test
+	staked keys add validator
 
 reset: clean init
 clean:
@@ -88,8 +88,8 @@ clean:
 
 init:
 	staked init stakebird --chain-id localnet-1
-	staked add-genesis-account $(shell staked keys show validator -a --keyring-backend test) 10000000000000000ustb,10000000000000000uatom
-	staked gentx validator --chain-id localnet-1 --amount 10000000000ustb --keyring-backend test
+	staked add-genesis-account $(shell staked keys show validator -a) 10000000000000000ustb,10000000000000000uatom
+	staked gentx validator --chain-id localnet-1 --amount 10000000000ustb
 	staked collect-gentxs 
 
 install: go.sum
@@ -151,4 +151,4 @@ ci-sign:
 	drone sign public-awesome/stakebird --save
 
 post: 
-	staked tx curating post 1 1 "test" --from validator --keyring-backend test --chain-id localnet-1
+	staked tx curating post 1 1 "test" --from validator --chain-id localnet-1
