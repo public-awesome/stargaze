@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -36,13 +37,15 @@ var (
 	KeyCreatorAllocation          = []byte("CreatorAllocation")
 	KeyRewardPoolCurationMaxAlloc = []byte("RewardPoolCurationMaxAlloc")
 	KeyInitialRewardPool          = []byte("InitialRewardPool")
+	KeyStakeDenom                 = []byte("StakeDenom")
 )
 
 // NewParams creates a new Params object
 func NewParams(
 	curationWindow time.Duration, voteAmount, initialRewardPool sdk.Coin,
 	maxNumVotes, maxVendors uint32, rewardPoolAllocation, creatorAllocation,
-	rewardPoolCurationMaxAllocation sdk.Dec) Params {
+	rewardPoolCurationMaxAllocation sdk.Dec,
+	stakeDenom string) Params {
 
 	return Params{
 		CurationWindow:             curationWindow,
@@ -53,6 +56,7 @@ func NewParams(
 		RewardPoolAllocation:       rewardPoolAllocation,
 		CreatorAllocation:          creatorAllocation,
 		RewardPoolCurationMaxAlloc: rewardPoolCurationMaxAllocation,
+		StakeDenom:                 stakeDenom,
 	}
 }
 
@@ -76,6 +80,7 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 		paramtypes.NewParamSetPair(KeyRewardPoolAllocation, &p.RewardPoolAllocation, validateRewardPoolAlloc),
 		paramtypes.NewParamSetPair(KeyCreatorAllocation, &p.CreatorAllocation, validateRewardPoolAlloc),
 		paramtypes.NewParamSetPair(KeyRewardPoolCurationMaxAlloc, &p.RewardPoolCurationMaxAlloc, validateRewardPoolAlloc),
+		paramtypes.NewParamSetPair(KeyStakeDenom, &p.StakeDenom, validateDenom),
 	}
 }
 
@@ -83,7 +88,7 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 func DefaultParams() Params {
 	return NewParams(
 		DefaultCurationWindow, DefaultVoteAmount, DefaultInitialRewardPool, DefaultMaxNumVotes, DefaultMaxVendors,
-		DefaultRewardPoolAllocation, DefaultCreatorAllocation, DefaultRewardPoolCurationMaxAllocation)
+		DefaultRewardPoolAllocation, DefaultCreatorAllocation, DefaultRewardPoolCurationMaxAllocation, DefaultStakeDenom)
 }
 
 // Validate validates all params
@@ -119,6 +124,18 @@ func (p Params) Validate() error {
 	return nil
 }
 
+func validateDenom(i interface{}) error {
+	v, ok := i.(string)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
+	if strings.TrimSpace(v) == "" {
+		return fmt.Errorf("invalid denom: %s", v)
+	}
+
+	return nil
+}
 func validateVoteAmount(i interface{}) error {
 	v, ok := i.(sdk.Coin)
 	if !ok {

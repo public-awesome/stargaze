@@ -72,7 +72,7 @@ func (k Keeper) RewardCreator(
 	k.Logger(ctx).Debug(fmt.Sprintf("creator match: %v", creatorMatch))
 
 	err := k.sendProtocolReward(ctx,
-		account, sdk.NewCoin(types.DefaultStakeDenom, creatorMatch))
+		account, sdk.NewCoin(k.GetParams(ctx).StakeDenom, creatorMatch))
 	if err != nil {
 		return err
 	}
@@ -105,7 +105,7 @@ func (k Keeper) SendMatchingReward(
 	k.Logger(ctx).Debug(fmt.Sprintf("curator match: %v", curatorMatch))
 
 	err := k.sendProtocolReward(ctx,
-		account, sdk.NewCoin(types.DefaultStakeDenom, curatorMatch))
+		account, sdk.NewCoin(k.GetParams(ctx).StakeDenom, curatorMatch))
 	if err != nil {
 		return err
 	}

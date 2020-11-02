@@ -18,6 +18,7 @@ import (
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	stakebird "github.com/public-awesome/stakebird/app"
+	curatingtypes "github.com/public-awesome/stakebird/x/curating/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	tmjson "github.com/tendermint/tendermint/libs/json"
@@ -134,6 +135,20 @@ func initGenesis(
 		}
 		mintGenState.Params.MintDenom = stakeDenom
 		appState[minttypes.ModuleName] = cdc.MustMarshalJSON(&mintGenState)
+	}
+
+	// migrate curating state
+	if appState[curatingtypes.ModuleName] != nil {
+		var curatingGenState curatingtypes.GenesisState
+		err := cdc.UnmarshalJSON(appState[curatingtypes.ModuleName], &curatingGenState)
+		if err != nil {
+			return nil, err
+		}
+
+		curatingGenState.Params.StakeDenom = stakeDenom
+		curatingGenState.Params.InitialRewardPool = sdk.NewCoin(stakeDenom, curatingGenState.Params.InitialRewardPool.Amount)
+
+		appState[curatingtypes.ModuleName] = cdc.MustMarshalJSON(&curatingGenState)
 	}
 
 	return tmjson.Marshal(appState)
