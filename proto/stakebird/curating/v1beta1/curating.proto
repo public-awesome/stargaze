@@ -110,4 +110,9 @@ message Params {
     (gogoproto.moretags) = "yaml:\"initial_reward_pool\"",
     (gogoproto.jsontag) = "initial_reward_pool"
   ];
+  
+  string stake_denom = 9 [
+    (gogoproto.moretags) = "yaml:\"stake_denom\"",
+    (gogoproto.jsontag) = "stake_denom"
+  ];
 }

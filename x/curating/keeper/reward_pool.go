@@ -13,18 +13,18 @@ func (k Keeper) GetRewardPool(ctx sdk.Context) (rewardPool authtypes.ModuleAccou
 
 // GetRewardPoolBalance returns the reward pool balance
 func (k Keeper) GetRewardPoolBalance(ctx sdk.Context) sdk.Coin {
-	return k.bankKeeper.GetBalance(ctx, k.GetRewardPool(ctx).GetAddress(), types.DefaultStakeDenom)
+	return k.bankKeeper.GetBalance(ctx, k.GetRewardPool(ctx).GetAddress(), k.GetParams(ctx).StakeDenom)
 }
 
 // InflateRewardPool process the designated inflation to the reward pool
 func (k Keeper) InflateRewardPool(ctx sdk.Context) error {
 	blockInflationAddr := k.accountKeeper.GetModuleAccount(ctx, authtypes.FeeCollectorName).GetAddress()
-	blockInflation := k.bankKeeper.GetBalance(ctx, blockInflationAddr, types.DefaultStakeDenom)
+	blockInflation := k.bankKeeper.GetBalance(ctx, blockInflationAddr, k.GetParams(ctx).StakeDenom)
 	rewardPoolAllocation := k.GetParams(ctx).RewardPoolAllocation
 
 	blockInflationDec := sdk.NewDecFromInt(blockInflation.Amount)
 	rewardAmount := blockInflationDec.Mul(rewardPoolAllocation)
-	rewardCoin := sdk.NewCoin(types.DefaultStakeDenom, rewardAmount.TruncateInt())
+	rewardCoin := sdk.NewCoin(k.GetParams(ctx).StakeDenom, rewardAmount.TruncateInt())
 
 	return k.bankKeeper.SendCoinsFromModuleToModule(
 		ctx, authtypes.FeeCollectorName, types.RewardPoolName, sdk.NewCoins(rewardCoin))
