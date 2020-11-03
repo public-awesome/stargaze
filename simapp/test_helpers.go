@@ -174,25 +174,29 @@ func setTotalSupply(app *SimApp, ctx sdk.Context, accAmt sdk.Int, totalAccounts 
 // AddTestAddrs constructs and returns accNum amount of accounts with an
 // initial balance of accAmt in random order
 func AddTestAddrs(app *SimApp, ctx sdk.Context,
-	accNum int, accAmt sdk.Int) []sdk.AccAddress {
-	return addTestAddrs(app, ctx, accNum, accAmt, createRandomAccounts)
+	accNum int, accAmt sdk.Int, denoms ...string) []sdk.AccAddress {
+	return addTestAddrs(app, ctx, accNum, accAmt, createRandomAccounts, denoms...)
 }
 
 // AddTestAddrsIncremental constructs and returns accNum amount of accounts with an
 // initial balance of accAmt in random order
-func AddTestAddrsIncremental(app *SimApp, ctx sdk.Context, accNum int, accAmt sdk.Int) []sdk.AccAddress {
-	return addTestAddrs(app, ctx, accNum, accAmt, createIncrementalAccounts)
+func AddTestAddrsIncremental(app *SimApp, ctx sdk.Context, accNum int,
+	accAmt sdk.Int, denoms ...string) []sdk.AccAddress {
+	return addTestAddrs(app, ctx, accNum, accAmt, createIncrementalAccounts, denoms...)
 }
 
 func addTestAddrs(app *SimApp, ctx sdk.Context, accNum int,
-	accAmt sdk.Int, strategy GenerateAccountStrategy) []sdk.AccAddress {
+	accAmt sdk.Int, strategy GenerateAccountStrategy,
+	denoms ...string) []sdk.AccAddress {
 	testAddrs := strategy(accNum)
+	defaultDenoms := []string{"stake", "ustb", "uatom"}
+	coinDenoms := append(defaultDenoms, denoms...)
+	initCoins := sdk.NewCoins()
+	for _, d := range coinDenoms {
+		c := sdk.NewCoin(d, accAmt)
+		initCoins = initCoins.Add(c)
+	}
 
-	stakeCoin := sdk.NewCoin("stake", accAmt)
-	stbCoin := sdk.NewCoin("ustb", accAmt)
-	atomCoin := sdk.NewCoin("uatom", accAmt)
-	ibcCoin := sdk.NewCoin("transfer/ibczeroxfer/stake", accAmt)
-	initCoins := sdk.NewCoins(stakeCoin, stbCoin, ibcCoin, atomCoin)
 	setTotalSupply(app, ctx, accAmt, accNum)
 
 	// fill all the addresses with some coins, set the loose pool tokens simultaneously

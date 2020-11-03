@@ -11,12 +11,13 @@ import (
 )
 
 func TestCreateUpvote(t *testing.T) {
-	app := simapp.Setup(false)
+	fakedenom := "fakedenom"
+	app := simapp.SetupWithStakeDenom(false, "fakedenom")
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
 	postID := "500"
 	vendorID := uint32(1)
-	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(27_000_000))
+	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(27_000_000), fakedenom)
 
 	err := app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5)
 	require.NoError(t, err)
@@ -36,12 +37,13 @@ func TestCreateUpvote(t *testing.T) {
 }
 
 func TestCreateUpvote_ExistingPost(t *testing.T) {
-	app := simapp.Setup(false)
+	fakedenom := "fakedenom"
+	app := simapp.SetupWithStakeDenom(false, "fakedenom")
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
 	postID := "501"
 	vendorID := uint32(1)
-	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(27_000_000))
+	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(27_000_000), fakedenom)
 
 	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[1], addrs[1])
 	require.NoError(t, err)
@@ -59,7 +61,7 @@ func TestCreateUpvote_ExistingPost(t *testing.T) {
 
 	require.Equal(t, "25000000uatom", upvote.VoteAmount.String())
 
-	creatorBalance := app.BankKeeper.GetBalance(ctx, addrs[1], "ustb")
+	creatorBalance := app.BankKeeper.GetBalance(ctx, addrs[1], fakedenom)
 	require.Equal(t, "27000000", creatorBalance.Amount.String())
 
 	curatorBalance := app.BankKeeper.GetBalance(ctx, addrs[0], "uatom")
