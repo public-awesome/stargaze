@@ -180,7 +180,8 @@ func AddTestAddrs(app *SimApp, ctx sdk.Context,
 
 // AddTestAddrsIncremental constructs and returns accNum amount of accounts with an
 // initial balance of accAmt in random order
-func AddTestAddrsIncremental(app *SimApp, ctx sdk.Context, accNum int, accAmt sdk.Int, denoms ...string) []sdk.AccAddress {
+func AddTestAddrsIncremental(app *SimApp, ctx sdk.Context, accNum int,
+	accAmt sdk.Int, denoms ...string) []sdk.AccAddress {
 	return addTestAddrs(app, ctx, accNum, accAmt, createIncrementalAccounts, denoms...)
 }
 
