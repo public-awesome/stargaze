@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"fmt"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -32,5 +33,32 @@ func TestInflateRewards(t *testing.T) {
 
 	rewardPoolAddr := app.AccountKeeper.GetModuleAccount(ctx, types.RewardPoolName).GetAddress()
 	rewardPool := app.BankKeeper.GetBalance(ctx, rewardPoolAddr, types.DefaultStakeDenom)
+	require.Equal(t, "21000000500000", rewardPool.Amount.String())
+}
+
+func TestInflateRewardsNonDefault(t *testing.T) {
+	fakedenom := "fakedenom"
+	app := simapp.SetupWithStakeDenom(false, "fakedenom")
+	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
+
+	blockInflationAcct := app.AccountKeeper.GetModuleAccount(ctx, authtypes.FeeCollectorName)
+	blockInflationAddr := blockInflationAcct.GetAddress()
+	blockInflation := app.BankKeeper.GetBalance(ctx, blockInflationAddr, fakedenom)
+	require.True(t, blockInflation.Amount.IsZero())
+
+	fakeInflationCoin := sdk.NewInt64Coin(fakedenom, 1000000)
+	err := app.BankKeeper.SetBalance(ctx, blockInflationAddr, fakeInflationCoin)
+	app.AccountKeeper.SetModuleAccount(ctx, blockInflationAcct)
+	require.NoError(t, err)
+	blockInflation = app.BankKeeper.GetBalance(ctx, blockInflationAddr, fakedenom)
+	require.Equal(t, fakeInflationCoin, blockInflation)
+
+	err = app.CuratingKeeper.InflateRewardPool(ctx)
+	require.NoError(t, err)
+
+	rewardPoolAddr := app.AccountKeeper.GetModuleAccount(ctx, types.RewardPoolName).GetAddress()
+
+	fmt.Println(app.BankKeeper.GetAllBalances(ctx, rewardPoolAddr))
+	rewardPool := app.BankKeeper.GetBalance(ctx, rewardPoolAddr, fakedenom)
 	require.Equal(t, "21000000500000", rewardPool.Amount.String())
 }

@@ -17,11 +17,12 @@ import (
 // 4 votes = 16 vote credits
 // 5 votes = 25 vote credits
 func TestQVF(t *testing.T) {
-	app := simapp.Setup(false)
+	fakedenom := "fakedenom"
+	app := simapp.SetupWithStakeDenom(false, fakedenom)
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
 	// add funds to reward pool
-	funds := sdk.NewInt64Coin("ustb", 10_000_000)
+	funds := sdk.NewInt64Coin(fakedenom, 10_000_000)
 	err := app.BankKeeper.MintCoins(ctx, curatingtypes.RewardPoolName, sdk.NewCoins(funds))
 	require.NoError(t, err)
 
@@ -41,11 +42,12 @@ func TestQVF(t *testing.T) {
 }
 
 func TestQVFZeroVotes(t *testing.T) {
-	app := simapp.Setup(false)
+	fakedenom := "fakedenom"
+	app := simapp.SetupWithStakeDenom(false, fakedenom)
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
 	// add funds to reward pool
-	funds := sdk.NewInt64Coin("ustb", 10_000_000)
+	funds := sdk.NewInt64Coin(fakedenom, 10_000_000)
 	err := app.BankKeeper.MintCoins(ctx, curatingtypes.RewardPoolName, sdk.NewCoins(funds))
 	require.NoError(t, err)
 
