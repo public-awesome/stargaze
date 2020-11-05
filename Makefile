@@ -96,7 +96,7 @@ install: go.sum
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/staked
 
 start:
-	staked start --grpc.address 0.0.0.0:9091
+	staked start --grpc.address 0.0.0.0:9091 --log_level "curating:info,user:info,main:info,state:info,*:error"
 
 build:
 	go build $(BUILD_FLAGS) -o bin/staked ./cmd/staked

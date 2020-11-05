@@ -73,9 +73,13 @@ func Execute(rootCmd *cobra.Command) error {
 	// and a Tendermint RPC. This requires the use of a pointer reference when
 	// getting and setting the client.Context. Ideally, we utilize
 	// https://github.com/spf13/cobra/pull/1118.
+
+	srvCtx := server.NewDefaultContext()
+	rootCmd.PersistentFlags().String("log_level", srvCtx.Config.LogLevel, "The logging level in the format of <module>:<level>,...")
+
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, client.ClientContextKey, &client.Context{})
-	ctx = context.WithValue(ctx, server.ServerContextKey, server.NewDefaultContext())
+	ctx = context.WithValue(ctx, server.ServerContextKey, srvCtx)
 
 	executor := tmcli.PrepareBaseCmd(rootCmd, "", stakebird.DefaultNodeHome)
 	return executor.ExecuteContext(ctx)
