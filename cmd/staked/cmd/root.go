@@ -76,7 +76,8 @@ func Execute(rootCmd *cobra.Command) error {
 	// https://github.com/spf13/cobra/pull/1118.
 
 	srvCtx := server.NewDefaultContext()
-	rootCmd.PersistentFlags().String("log_level", srvCtx.Config.LogLevel, "The logging level in the format of <module>:<level>,...")
+	rootCmd.PersistentFlags().String("log_level", srvCtx.Config.LogLevel,
+		"The logging level in the format of <module>:<level>,...")
 
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, client.ClientContextKey, &client.Context{})

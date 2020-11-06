@@ -163,9 +163,9 @@ func InitTestnet(
 	simappConfig.Telemetry.GlobalLabels = [][]string{{"chain_id", chainID}}
 
 	var (
-		genAccounts []authtypes.GenesisAccount
-		genBalances []banktypes.Balance
-		genFiles    []string
+		genAccounts = make([]authtypes.GenesisAccount, 0)
+		genBalances = make([]banktypes.Balance, 0)
+		genFiles    = make([]string, 0)
 	)
 
 	inBuf := bufio.NewReader(cmd.InOrStdin())
