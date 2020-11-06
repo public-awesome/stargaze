@@ -30,6 +30,7 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
 
+	"github.com/cosmos/cosmos-sdk/x/crisis"
 	stakebird "github.com/public-awesome/stakebird/app"
 	"github.com/public-awesome/stakebird/app/params"
 )
@@ -101,7 +102,7 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		debug.Cmd(),
 	)
 
-	server.AddCommands(rootCmd, stakebird.DefaultNodeHome, newApp, createSimappAndExport)
+	server.AddCommands(rootCmd, stakebird.DefaultNodeHome, newApp, createSimappAndExport, addModuleInitFlags)
 
 	// add keybase, auxiliary RPC, query, and tx child commands
 	rootCmd.AddCommand(
@@ -110,6 +111,10 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		txCommand(),
 		keys.Commands(stakebird.DefaultNodeHome),
 	)
+}
+
+func addModuleInitFlags(startCmd *cobra.Command) {
+	crisis.AddModuleInitFlags(startCmd)
 }
 
 func queryCommand() *cobra.Command {
@@ -197,12 +202,12 @@ func newApp(logger log.Logger, db dbm.DB,
 		cast.ToString(appOpts.Get(flags.FlagHome)),
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
 		stakebird.MakeEncodingConfig(), // Ideally, we would reuse the one created by NewRootCmd.
+		appOpts,
 		baseapp.SetPruning(pruningOpts),
 		baseapp.SetMinGasPrices(cast.ToString(appOpts.Get(server.FlagMinGasPrices))),
 		baseapp.SetMinRetainBlocks(cast.ToUint64(appOpts.Get(server.FlagMinRetainBlocks))),
 		baseapp.SetHaltHeight(cast.ToUint64(appOpts.Get(server.FlagHaltHeight))),
 		baseapp.SetHaltTime(cast.ToUint64(appOpts.Get(server.FlagHaltTime))),
-		baseapp.SetMinRetainBlocks(cast.ToUint64(appOpts.Get(server.FlagMinRetainBlocks))),
 		baseapp.SetInterBlockCache(cache),
 		baseapp.SetTrace(cast.ToBool(appOpts.Get(server.FlagTrace))),
 		baseapp.SetIndexEvents(cast.ToStringSlice(appOpts.Get(server.FlagIndexEvents))),
@@ -213,21 +218,27 @@ func newApp(logger log.Logger, db dbm.DB,
 }
 
 func createSimappAndExport(
-	logger log.Logger, db dbm.DB, traceStore io.Writer, height int64, forZeroHeight bool, jailWhiteList []string,
+	logger log.Logger, db dbm.DB, traceStore io.Writer, height int64,
+	forZeroHeight bool, jailAllowedAddrs []string,
+	appOpts servertypes.AppOptions,
 ) (servertypes.ExportedApp, error) {
 
 	encCfg := stakebird.MakeEncodingConfig() // Ideally, we would reuse the one created by NewRootCmd.
 	encCfg.Marshaler = codec.NewProtoCodec(encCfg.InterfaceRegistry)
 	var StakebirdApp *stakebird.StakebirdApp
 	if height != -1 {
-		StakebirdApp = stakebird.NewStakebirdApp(logger, db, traceStore, false, map[int64]bool{}, "", uint(1), encCfg)
+		StakebirdApp = stakebird.NewStakebirdApp(logger, db, traceStore,
+			false, map[int64]bool{}, "",
+			uint(1), encCfg, appOpts)
 
 		if err := StakebirdApp.LoadHeight(height); err != nil {
 			return servertypes.ExportedApp{}, err
 		}
 	} else {
-		StakebirdApp = stakebird.NewStakebirdApp(logger, db, traceStore, true, map[int64]bool{}, "", uint(1), encCfg)
+		StakebirdApp = stakebird.NewStakebirdApp(logger, db, traceStore,
+			true, map[int64]bool{}, "",
+			uint(1), encCfg, appOpts)
 	}
 
-	return StakebirdApp.ExportAppStateAndValidators(forZeroHeight, jailWhiteList)
+	return StakebirdApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)
 }
