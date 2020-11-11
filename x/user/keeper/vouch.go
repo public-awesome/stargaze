@@ -94,7 +94,7 @@ func (k Keeper) CreateVouch(
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypePost,
+			types.EventTypeVouch,
 		),
 	})
 
