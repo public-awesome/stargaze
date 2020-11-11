@@ -2,8 +2,10 @@ package keeper_test
 
 import (
 	"testing"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/public-awesome/stakebird/simapp"
 	"github.com/public-awesome/stakebird/x/curating/types"
 	"github.com/stretchr/testify/require"
@@ -66,6 +68,25 @@ func TestCreateUpvote_ExistingPost(t *testing.T) {
 
 	curatorBalance := app.BankKeeper.GetBalance(ctx, addrs[0], "uatom")
 	require.Equal(t, "2000000", curatorBalance.Amount.String())
+}
+func TestCreateUpvote_ExpiredPost(t *testing.T) {
+	fakedenom := "fakedenom"
+	app := simapp.SetupWithStakeDenom(false, "fakedenom")
+	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
+
+	postID := "501"
+	vendorID := uint32(1)
+	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(27_000_000), fakedenom)
+
+	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[1], addrs[1])
+	require.NoError(t, err)
+
+	ctx = ctx.WithBlockTime(ctx.BlockTime().Add(time.Hour*24*3 + 1))
+	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5)
+	require.Error(t, err)
+	serr, ok := err.(*sdkerrors.Error)
+	require.True(t, ok)
+	require.Equal(t, types.ErrPostExpired, serr)
 }
 
 func TestCreateUpvote_ExistingUpvote(t *testing.T) {
