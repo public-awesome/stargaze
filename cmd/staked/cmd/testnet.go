@@ -39,7 +39,6 @@ var (
 	flagNumValidators     = "v"
 	flagOutputDir         = "output-dir"
 	flagNodeDaemonHome    = "node-daemon-home"
-	flagNodeCLIHome       = "node-cli-home"
 	flagStartingIPAddress = "starting-ip-address"
 )
 
@@ -84,10 +83,6 @@ Example:
 			if err != nil {
 				return err
 			}
-			nodeCLIHome, err := cmd.Flags().GetString(flagNodeCLIHome)
-			if err != nil {
-				return err
-			}
 			startingIPAddress, err := cmd.Flags().GetString(flagStartingIPAddress)
 			if err != nil {
 				return err
@@ -103,7 +98,7 @@ Example:
 
 			return InitTestnet(
 				clientCtx, cmd, config, mbm, genBalIterator, outputDir, chainID, minGasPrices,
-				nodeDirPrefix, nodeDaemonHome, nodeCLIHome, startingIPAddress, keyringBackend, algo, numValidators,
+				nodeDirPrefix, nodeDaemonHome, startingIPAddress, keyringBackend, algo, numValidators,
 			)
 		},
 	}
@@ -113,7 +108,6 @@ Example:
 	cmd.Flags().String(flagNodeDirPrefix, "node",
 		"Prefix the directory name for each node with (node results in node0, node1, ...)")
 	cmd.Flags().String(flagNodeDaemonHome, "gaiad", "Home directory of the node's daemon configuration")
-	cmd.Flags().String(flagNodeCLIHome, "gaiad", "Home directory of the node's cli configuration")
 	cmd.Flags().String(
 		flagStartingIPAddress,
 		"192.168.0.1",
@@ -147,7 +141,6 @@ func InitTestnet(
 	minGasPrices,
 	nodeDirPrefix,
 	nodeDaemonHome,
-	nodeCLIHome,
 	startingIPAddress,
 	keyringBackend,
 	algoStr string,
@@ -170,9 +163,9 @@ func InitTestnet(
 	simappConfig.Telemetry.GlobalLabels = [][]string{{"chain_id", chainID}}
 
 	var (
-		genAccounts = []authtypes.GenesisAccount{}
-		genBalances = []banktypes.Balance{}
-		genFiles    = []string{}
+		genAccounts = make([]authtypes.GenesisAccount, 0)
+		genBalances = make([]banktypes.Balance, 0)
+		genFiles    = make([]string, 0)
 	)
 
 	inBuf := bufio.NewReader(cmd.InOrStdin())
@@ -180,18 +173,12 @@ func InitTestnet(
 	for i := 0; i < numValidators; i++ {
 		nodeDirName := fmt.Sprintf("%s%d", nodeDirPrefix, i)
 		nodeDir := filepath.Join(outputDir, nodeDirName, nodeDaemonHome)
-		clientDir := filepath.Join(outputDir, nodeDirName, nodeCLIHome)
 		gentxsDir := filepath.Join(outputDir, "gentxs")
 
 		nodeConfig.SetRoot(nodeDir)
 		nodeConfig.RPC.ListenAddress = "tcp://0.0.0.0:26657"
 
 		if err := os.MkdirAll(filepath.Join(nodeDir, "config"), nodeDirPerm); err != nil {
-			_ = os.RemoveAll(outputDir)
-			return err
-		}
-
-		if err := os.MkdirAll(clientDir, nodeDirPerm); err != nil {
 			_ = os.RemoveAll(outputDir)
 			return err
 		}
@@ -213,7 +200,7 @@ func InitTestnet(
 		memo := fmt.Sprintf("%s@%s:26656", nodeIDs[i], ip)
 		genFiles = append(genFiles, nodeConfig.GenesisFile())
 
-		kb, err := keyring.New(sdk.KeyringServiceName(), keyringBackend, clientDir, inBuf)
+		kb, err := keyring.New(sdk.KeyringServiceName(), keyringBackend, nodeDir, inBuf)
 		if err != nil {
 			return err
 		}
@@ -238,7 +225,7 @@ func InitTestnet(
 		}
 
 		// save private key seed words
-		err = writeFile(fmt.Sprintf("%v.json", "key_seed"), clientDir, cliPrint)
+		err = writeFile(fmt.Sprintf("%v.json", "key_seed"), nodeDir, cliPrint)
 		if err != nil {
 			return err
 		}
@@ -254,7 +241,7 @@ func InitTestnet(
 		genAccounts = append(genAccounts, authtypes.NewBaseAccount(addr, nil, 0, 0))
 
 		valTokens := sdk.TokensFromConsensusPower(100)
-		createValMsg := stakingtypes.NewMsgCreateValidator(
+		createValMsg, err := stakingtypes.NewMsgCreateValidator(
 			sdk.ValAddress(addr),
 			valPubKeys[i],
 			sdk.NewCoin(sdk.DefaultBondDenom, valTokens),
@@ -262,6 +249,9 @@ func InitTestnet(
 			stakingtypes.NewCommissionRates(sdk.OneDec(), sdk.OneDec(), sdk.OneDec()),
 			sdk.OneInt(),
 		)
+		if err != nil {
+			return err
+		}
 
 		txBuilder := clientCtx.TxConfig.NewTxBuilder()
 		err = txBuilder.SetMsgs(createValMsg)

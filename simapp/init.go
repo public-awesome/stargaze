@@ -21,7 +21,7 @@ import (
 func SetupWithStakeDenom(isCheckTx bool, stakeDenom string) *SimApp {
 	db := dbm.NewMemDB()
 	config := MakeEncodingConfig()
-	app := NewSimApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, DefaultNodeHome, 5, config)
+	app := NewSimApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, DefaultNodeHome, 5, config, EmptyAppOptions{})
 	if !isCheckTx {
 		// init chain must be called to stop deliverState from being nil
 		genesisState := NewDefaultGenesisState()

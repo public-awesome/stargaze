@@ -35,9 +35,12 @@ func (k Keeper) CreateUpvote(
 	}
 
 	// check if post exist, if not, create it and start the curation period
-	_, found, err = k.GetPost(ctx, vendorID, postID)
+	post, found, err := k.GetPost(ctx, vendorID, postID)
 	if err != nil {
 		return err
+	}
+	if found && ctx.BlockTime().After(post.CuratingEndTime) {
+		return types.ErrPostExpired
 	}
 
 	if !found {
