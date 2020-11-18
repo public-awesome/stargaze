@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"net"
 	"os"
 	"path/filepath"
 	"strings"
@@ -474,19 +473,6 @@ func collectGenFiles(
 	return nil
 }
 
-func calculateIP(ip string, i int) (string, error) {
-	ipv4 := net.ParseIP(ip).To4()
-	if ipv4 == nil {
-		return "", fmt.Errorf("%v: non ipv4 address", ip)
-	}
-
-	for j := 0; j < i; j++ {
-		ipv4[3]++
-	}
-
-	return ipv4.String(), nil
-}
-
 func writeFile(name string, dir string, contents []byte) error {
 	writePath := filepath.Join(dir)
 	file := filepath.Join(writePath, name)
@@ -529,13 +515,16 @@ services:{{range $node := .Nodes }}
 
 func docker(nodes []TestnetNode) (string, error) {
 	def := strings.ReplaceAll(dockerComposeDefinition, "\t", "  ")
-	t, _ := template.New("definition").Parse(def)
+	t, err := template.New("definition").Parse(def)
+	if err != nil {
+		return "", err
+	}
 	d := struct {
 		Nodes []TestnetNode
 	}{Nodes: nodes}
 
 	buf := bytes.NewBufferString("")
-	err := t.Execute(buf, d)
+	err = t.Execute(buf, d)
 	if err != nil {
 		return "", err
 	}
