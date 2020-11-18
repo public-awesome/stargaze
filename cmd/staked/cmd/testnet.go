@@ -4,12 +4,17 @@ package cmd
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"net"
 	"os"
 	"path/filepath"
+	"strings"
+	"time"
 
+	"github.com/public-awesome/stakebird/app"
 	"github.com/spf13/cobra"
 	tmconfig "github.com/tendermint/tendermint/config"
 	"github.com/tendermint/tendermint/crypto"
@@ -32,14 +37,19 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	curatingtypes "github.com/public-awesome/stakebird/x/curating/types"
 )
 
 var (
-	flagNodeDirPrefix     = "node-dir-prefix"
-	flagNumValidators     = "v"
-	flagOutputDir         = "output-dir"
-	flagNodeDaemonHome    = "node-daemon-home"
-	flagStartingIPAddress = "starting-ip-address"
+	flagNodeDirPrefix        = "node-dir-prefix"
+	flagNumValidators        = "v"
+	flagOutputDir            = "output-dir"
+	flagNodeDaemonHome       = "node-daemon-home"
+	flagStartingIPAddress    = "starting-ip-address"
+	flagInitialCoins         = "coins"
+	flagInitialStakingAmount = "initial-staking-amount"
+	flagCurationWindow       = "curation-window"
+	defaultKeyringBackend    = "test"
 )
 
 // get cmd to initialize all files for tendermint testnet and application
@@ -51,7 +61,7 @@ func testnetCmd(mbm module.BasicManager, genBalIterator banktypes.GenesisBalance
 necessary files (private validator, genesis, config, etc.).
 Note, strict routability for addresses is turned off in the config file.
 Example:
-	gaiad testnet --v 4 --output-dir ./output --starting-ip-address 192.168.10.2
+	staked testnet --v 4 --output-dir ./output --starting-ip-address 192.168.10.2
 	`,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
@@ -107,7 +117,7 @@ Example:
 	cmd.Flags().StringP(flagOutputDir, "o", "./mytestnet", "Directory to store initialization data for the testnet")
 	cmd.Flags().String(flagNodeDirPrefix, "node",
 		"Prefix the directory name for each node with (node results in node0, node1, ...)")
-	cmd.Flags().String(flagNodeDaemonHome, "gaiad", "Home directory of the node's daemon configuration")
+	cmd.Flags().String(flagNodeDaemonHome, "staked", "Home directory of the node's daemon configuration")
 	cmd.Flags().String(
 		flagStartingIPAddress,
 		"192.168.0.1",
@@ -121,8 +131,16 @@ Example:
 		"Minimum gas prices to accept for transactions; "+
 			"All fees in a tx must meet this minimum (e.g. 0.01photino,0.001stake)",
 	)
-	cmd.Flags().String(flags.FlagKeyringBackend, flags.DefaultKeyringBackend, "Select keyring's backend (os|file|test)")
+	cmd.Flags().String(flags.FlagKeyringBackend, defaultKeyringBackend, "Select keyring's backend (os|file|test)")
 	cmd.Flags().String(flags.FlagKeyAlgorithm, string(hd.Secp256k1Type), "Key signing algorithm to generate keys for")
+	cmd.Flags().String(flagInitialCoins, fmt.Sprintf("1000000000%s", app.DefaultStakeDenom),
+		"Validator genesis coins: 100000ustb,1000000uatom")
+	cmd.Flags().Int64(flagInitialStakingAmount, 100000000,
+		"Flag initial staking amount: 100000000")
+	cmd.Flags().String(flagStakeDenom, app.DefaultStakeDenom, "app's stake denom")
+	cmd.Flags().String(flagUnbondingPeriod, app.DefaultUnbondingPeriod, "app's unbonding period")
+	cmd.Flags().String(flagCurationWindow, "72h",
+		"Curation Window for post expiration: 72h, 3h, 90m")
 
 	return cmd
 }
@@ -154,13 +172,13 @@ func InitTestnet(
 	nodeIDs := make([]string, numValidators)
 	valPubKeys := make([]crypto.PubKey, numValidators)
 
-	simappConfig := srvconfig.DefaultConfig()
-	simappConfig.MinGasPrices = minGasPrices
-	simappConfig.API.Enable = true
-	simappConfig.Telemetry.Enabled = true
-	simappConfig.Telemetry.PrometheusRetentionTime = 60
-	simappConfig.Telemetry.EnableHostnameLabel = false
-	simappConfig.Telemetry.GlobalLabels = [][]string{{"chain_id", chainID}}
+	appConfig := srvconfig.DefaultConfig()
+	appConfig.MinGasPrices = minGasPrices
+	appConfig.API.Enable = true
+	appConfig.Telemetry.Enabled = true
+	appConfig.Telemetry.PrometheusRetentionTime = 60
+	appConfig.Telemetry.EnableHostnameLabel = false
+	appConfig.Telemetry.GlobalLabels = [][]string{{"chain_id", chainID}}
 
 	var (
 		genAccounts = make([]authtypes.GenesisAccount, 0)
@@ -169,11 +187,26 @@ func InitTestnet(
 	)
 
 	inBuf := bufio.NewReader(cmd.InOrStdin())
+
+	initialPort := 26656
+	allocatedPorts := 2
+
+	nodes := make([]TestnetNode, 0)
+
 	// generate private keys, node IDs, and initial transactions
 	for i := 0; i < numValidators; i++ {
 		nodeDirName := fmt.Sprintf("%s%d", nodeDirPrefix, i)
 		nodeDir := filepath.Join(outputDir, nodeDirName, nodeDaemonHome)
 		gentxsDir := filepath.Join(outputDir, "gentxs")
+
+		endPort := initialPort + allocatedPorts
+		testnetNode := TestnetNode{
+			Name:             nodeDirName,
+			OutsidePortRange: fmt.Sprintf("%d-%d", initialPort, endPort),
+			InsidePortRange:  fmt.Sprintf("%d-%d", 26656, 26656+allocatedPorts),
+		}
+		nodes = append(nodes, testnetNode)
+		initialPort = endPort + 1
 
 		nodeConfig.SetRoot(nodeDir)
 		nodeConfig.RPC.ListenAddress = "tcp://0.0.0.0:26657"
@@ -184,20 +217,14 @@ func InitTestnet(
 		}
 
 		nodeConfig.Moniker = nodeDirName
-
-		ip, err := getIP(i, startingIPAddress)
-		if err != nil {
-			_ = os.RemoveAll(outputDir)
-			return err
-		}
-
+		var err error
 		nodeIDs[i], valPubKeys[i], err = genutil.InitializeNodeValidatorFiles(nodeConfig)
 		if err != nil {
 			_ = os.RemoveAll(outputDir)
 			return err
 		}
 
-		memo := fmt.Sprintf("%s@%s:26656", nodeIDs[i], ip)
+		memo := fmt.Sprintf("%s@%s:26656", nodeIDs[i], testnetNode.Name)
 		genFiles = append(genFiles, nodeConfig.GenesisFile())
 
 		kb, err := keyring.New(sdk.KeyringServiceName(), keyringBackend, nodeDir, inBuf)
@@ -230,21 +257,30 @@ func InitTestnet(
 			return err
 		}
 
-		accTokens := sdk.TokensFromConsensusPower(1000)
-		accStakingTokens := sdk.TokensFromConsensusPower(500)
-		coins := sdk.Coins{
-			sdk.NewCoin(fmt.Sprintf("%stoken", nodeDirName), accTokens),
-			sdk.NewCoin(sdk.DefaultBondDenom, accStakingTokens),
+		stakeDenom, err := cmd.Flags().GetString(flagStakeDenom)
+		if err != nil {
+			return err
+		}
+		initialCoins, err := cmd.Flags().GetString(flagInitialCoins)
+		if err != nil {
+			return err
+		}
+		valCoins, err := sdk.ParseCoins(initialCoins)
+		if err != nil {
+			return err
 		}
 
-		genBalances = append(genBalances, banktypes.Balance{Address: addr.String(), Coins: coins.Sort()})
+		genBalances = append(genBalances, banktypes.Balance{Address: addr.String(), Coins: valCoins.Sort()})
 		genAccounts = append(genAccounts, authtypes.NewBaseAccount(addr, nil, 0, 0))
 
-		valTokens := sdk.TokensFromConsensusPower(100)
+		stakingAmount, err := cmd.Flags().GetInt64(flagInitialStakingAmount)
+		if err != nil {
+			return err
+		}
 		createValMsg, err := stakingtypes.NewMsgCreateValidator(
 			sdk.ValAddress(addr),
 			valPubKeys[i],
-			sdk.NewCoin(sdk.DefaultBondDenom, valTokens),
+			sdk.NewCoin(stakeDenom, sdk.NewInt(stakingAmount)),
 			stakingtypes.NewDescription(nodeDirName, "", "", "", ""),
 			stakingtypes.NewCommissionRates(sdk.OneDec(), sdk.OneDec(), sdk.OneDec()),
 			sdk.OneInt(),
@@ -283,17 +319,38 @@ func InitTestnet(
 		if err != nil {
 			return err
 		}
-		srvconfig.WriteConfigFile(filepath.Join(nodeDir, "config/app.toml"), simappConfig)
+		srvconfig.WriteConfigFile(filepath.Join(nodeDir, "config/app.toml"), appConfig)
 	}
-
-	if err := initGenFiles(clientCtx, mbm, chainID, genAccounts, genBalances, genFiles, numValidators); err != nil {
+	stakeDenom, err := cmd.Flags().GetString(flagStakeDenom)
+	if err != nil {
+		return err
+	}
+	unbondingPeriod, err := cmd.Flags().GetString(flagUnbondingPeriod)
+	if err != nil {
 		return err
 	}
 
-	err := collectGenFiles(
+	if err := initGenFiles(cmd, clientCtx, mbm,
+		chainID,
+		stakeDenom, unbondingPeriod,
+		genAccounts, genBalances, genFiles, numValidators); err != nil {
+		return err
+	}
+
+	err = collectGenFiles(
 		clientCtx, nodeConfig, chainID, nodeIDs, valPubKeys, numValidators,
 		outputDir, nodeDirPrefix, nodeDaemonHome, genBalIterator,
 	)
+	if err != nil {
+		return err
+	}
+	def, err := docker(nodes)
+	if err != nil {
+		return err
+	}
+
+	err = writeFile("docker-compose.yml", outputDir, []byte(def))
+
 	if err != nil {
 		return err
 	}
@@ -303,7 +360,8 @@ func InitTestnet(
 }
 
 func initGenFiles(
-	clientCtx client.Context, mbm module.BasicManager, chainID string,
+	cmd *cobra.Command,
+	clientCtx client.Context, mbm module.BasicManager, chainID, stakeDenom, unbondingPeriod string,
 	genAccounts []authtypes.GenesisAccount, genBalances []banktypes.Balance,
 	genFiles []string, numValidators int,
 ) error {
@@ -329,6 +387,18 @@ func initGenFiles(
 	bankGenState.Balances = genBalances
 	appGenState[banktypes.ModuleName] = clientCtx.JSONMarshaler.MustMarshalJSON(&bankGenState)
 
+	// curating module
+	curationWindow, err := cmd.Flags().GetString(flagCurationWindow)
+	curationWindowDuration, err := time.ParseDuration(curationWindow)
+	if err != nil {
+		return err
+	}
+
+	var curatingGenState curatingtypes.GenesisState
+	clientCtx.JSONMarshaler.MustUnmarshalJSON(appGenState[curatingtypes.ModuleName], &curatingGenState)
+	curatingGenState.Params.CurationWindow = curationWindowDuration
+	appGenState[curatingtypes.ModuleName] = clientCtx.JSONMarshaler.MustMarshalJSON(&curatingGenState)
+
 	appGenStateJSON, err := json.MarshalIndent(appGenState, "", "  ")
 	if err != nil {
 		return err
@@ -338,6 +408,10 @@ func initGenFiles(
 		ChainID:    chainID,
 		AppState:   appGenStateJSON,
 		Validators: nil,
+	}
+	genDoc.AppState, err = initGenesis(clientCtx.JSONMarshaler, &genDoc, stakeDenom, unbondingPeriod)
+	if err != nil {
+		return err
 	}
 
 	// generate empty genesis files for each validator and save
@@ -435,4 +509,38 @@ func writeFile(name string, dir string, contents []byte) error {
 	}
 
 	return nil
+}
+
+// TestnetNode holds configuration for nodes
+type TestnetNode struct {
+	Name             string
+	OutsidePortRange string
+	InsidePortRange  string
+}
+
+const dockerComposeDefinition = `# Stakebird Testnet
+version: '3.1'
+services:{{range $node := .Nodes }}
+	{{ $node.Name }}:
+		image: publicawesome/stakebird
+		ports:
+			- {{ $node.OutsidePortRange}}:{{ $node.InsidePortRange}}
+		volumes:
+			- ./{{$node.Name}}/staked:/data/.staked/
+{{end}}
+`
+
+func docker(nodes []TestnetNode) (string, error) {
+	def := strings.ReplaceAll(dockerComposeDefinition, "\t", "  ")
+	t, _ := template.New("definition").Parse(def)
+	d := struct {
+		Nodes []TestnetNode
+	}{Nodes: nodes}
+
+	buf := bytes.NewBufferString("")
+	err := t.Execute(buf, d)
+	if err != nil {
+		return "", err
+	}
+	return buf.String(), nil
 }
