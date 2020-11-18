@@ -7,11 +7,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"html/template"
 	"net"
 	"os"
 	"path/filepath"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/public-awesome/stakebird/app"
@@ -189,8 +189,7 @@ func InitTestnet(
 	inBuf := bufio.NewReader(cmd.InOrStdin())
 
 	initialPort := 26656
-	allocatedPorts := 2
-
+	allocatedPorts := 4
 	nodes := make([]TestnetNode, 0)
 
 	// generate private keys, node IDs, and initial transactions
@@ -202,8 +201,10 @@ func InitTestnet(
 		endPort := initialPort + allocatedPorts
 		testnetNode := TestnetNode{
 			Name:             nodeDirName,
-			OutsidePortRange: fmt.Sprintf("%d-%d", initialPort, endPort),
-			InsidePortRange:  fmt.Sprintf("%d-%d", 26656, 26656+allocatedPorts),
+			OutsidePortRange: fmt.Sprintf("%d-%d", initialPort, initialPort+2),
+			InsidePortRange:  fmt.Sprintf("%d-%d", 26656, 26656+2),
+			APIPort:          fmt.Sprintf("%d", initialPort+3),
+			GRPCPort:         fmt.Sprintf("%d", initialPort+4),
 		}
 		nodes = append(nodes, testnetNode)
 		initialPort = endPort + 1
@@ -330,10 +331,10 @@ func InitTestnet(
 		return err
 	}
 
-	if err := initGenFiles(cmd, clientCtx, mbm,
+	if initErr := initGenFiles(cmd, clientCtx, mbm,
 		chainID,
 		stakeDenom, unbondingPeriod,
-		genAccounts, genBalances, genFiles, numValidators); err != nil {
+		genAccounts, genBalances, genFiles, numValidators); initErr != nil {
 		return err
 	}
 
@@ -389,6 +390,9 @@ func initGenFiles(
 
 	// curating module
 	curationWindow, err := cmd.Flags().GetString(flagCurationWindow)
+	if err != nil {
+		return err
+	}
 	curationWindowDuration, err := time.ParseDuration(curationWindow)
 	if err != nil {
 		return err
@@ -470,17 +474,6 @@ func collectGenFiles(
 	return nil
 }
 
-func getIP(i int, startingIPAddr string) (ip string, err error) {
-	if len(startingIPAddr) == 0 {
-		ip, err = server.ExternalIP()
-		if err != nil {
-			return "", err
-		}
-		return ip, nil
-	}
-	return calculateIP(startingIPAddr, i)
-}
-
 func calculateIP(ip string, i int) (string, error) {
 	ipv4 := net.ParseIP(ip).To4()
 	if ipv4 == nil {
@@ -516,6 +509,8 @@ type TestnetNode struct {
 	Name             string
 	OutsidePortRange string
 	InsidePortRange  string
+	APIPort          string
+	GRPCPort         string
 }
 
 const dockerComposeDefinition = `# Stakebird Testnet
@@ -525,6 +520,8 @@ services:{{range $node := .Nodes }}
 		image: publicawesome/stakebird
 		ports:
 			- {{ $node.OutsidePortRange}}:{{ $node.InsidePortRange}}
+			- {{ $node.APIPort}}:1317
+			- {{ $node.GRPCPort}}:9090
 		volumes:
 			- ./{{$node.Name}}/staked:/data/.staked/
 {{end}}
