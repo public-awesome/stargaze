@@ -126,4 +126,10 @@ message Params {
     (gogoproto.moretags) = "yaml:\"initial_credit_pool\"",
     (gogoproto.jsontag) = "initial_credit_pool"
   ];
+  
+  cosmos.base.v1beta1.Coin starting_credits = 12 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"starting_credits\"",
+    (gogoproto.jsontag) = "starting_credits"
+  ];
 }
