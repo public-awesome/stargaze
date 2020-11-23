@@ -94,6 +94,7 @@ type AppModule struct {
 
 	accountKeeper types.AccountKeeper
 	bankKeeper    types.BankKeeper
+	mintKeeper    types.MintKeeper
 }
 
 // NewAppModule creates a new AppModule object

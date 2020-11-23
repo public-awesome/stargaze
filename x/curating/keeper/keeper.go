@@ -18,13 +18,14 @@ type Keeper struct {
 	cdc           codec.BinaryMarshaler
 	accountKeeper types.AccountKeeper
 	bankKeeper    types.BankKeeper
+	mintKeeper    types.MintKeeper
 	paramstore    paramtypes.Subspace
 }
 
 // NewKeeper creates a new staking Keeper instance
 func NewKeeper(
 	cdc codec.BinaryMarshaler, key sdk.StoreKey, ak types.AccountKeeper, bk types.BankKeeper,
-	ps paramtypes.Subspace,
+	mk types.MintKeeper, ps paramtypes.Subspace,
 ) Keeper {
 
 	// set KeyTable if it has not already been set
@@ -42,6 +43,7 @@ func NewKeeper(
 		cdc:           cdc,
 		accountKeeper: ak,
 		bankKeeper:    bk,
+		mintKeeper:    mk,
 		paramstore:    ps,
 	}
 	return keeper
