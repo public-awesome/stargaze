@@ -115,4 +115,15 @@ message Params {
     (gogoproto.moretags) = "yaml:\"stake_denom\"",
     (gogoproto.jsontag) = "stake_denom"
   ];
+
+  string credit_denom = 10 [
+    (gogoproto.moretags) = "yaml:\"credit_denom\"",
+    (gogoproto.jsontag) = "credit_denom"
+  ];
+
+  cosmos.base.v1beta1.Coin initial_credit_pool = 11 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"initial_credit_pool\"",
+    (gogoproto.jsontag) = "initial_credit_pool"
+  ];
 }
