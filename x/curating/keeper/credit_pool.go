@@ -32,5 +32,16 @@ func (k Keeper) DistributeCredits(ctx sdk.Context) error {
 	// return k.bankKeeper.SendCoinsFromModuleToModule(
 	// 	ctx, authtypes.FeeCollectorName, types.RewardPoolName, sdk.NewCoins(rewardCoin))
 
+	// get blocks per year
+	blocksPerYear := k.mintKeeper.GetParams(ctx).BlocksPerYear
+	blocksPerDay := int64(blocksPerYear / 365.0)
+	// week := blocksPerYear / 52
+	// if it has been 24 hours...
+	if (ctx.BlockHeight() % blocksPerDay) == 0 {
+		k.accountKeeper.IterateAccounts(ctx, func(a authtypes.AccountI) (stop bool) {
+			return true
+		})
+	}
+
 	return nil
 }
