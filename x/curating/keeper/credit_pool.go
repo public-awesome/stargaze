@@ -23,19 +23,9 @@ func (k Keeper) GetCreditPool(ctx sdk.Context) authtypes.ModuleAccountI {
 
 // DistributeCredits distributes credits to all accounts
 func (k Keeper) DistributeCredits(ctx sdk.Context) error {
-	// blockInflationAddr := k.accountKeeper.GetModuleAccount(ctx, authtypes.FeeCollectorName).GetAddress()
-	// blockInflation := k.bankKeeper.GetBalance(ctx, blockInflationAddr, k.GetParams(ctx).StakeDenom)
-	// rewardPoolAllocation := k.GetParams(ctx).RewardPoolAllocation
-	// blockInflationDec := sdk.NewDecFromInt(blockInflation.Amount)
-	// rewardAmount := blockInflationDec.Mul(rewardPoolAllocation)
-	// rewardCoin := sdk.NewCoin(k.GetParams(ctx).StakeDenom, rewardAmount.TruncateInt())
-	// return k.bankKeeper.SendCoinsFromModuleToModule(
-	// 	ctx, authtypes.FeeCollectorName, types.RewardPoolName, sdk.NewCoins(rewardCoin))
-
-	// get blocks per year
 	blocksPerYear := k.mintKeeper.GetParams(ctx).BlocksPerYear
 	blocksPerDay := int64(blocksPerYear / 365.0)
-	// week := blocksPerYear / 52
+	// week := blocksPerDay % 52
 	// if it has been 24 hours...
 	if (ctx.BlockHeight() % blocksPerDay) == 0 {
 		k.accountKeeper.IterateAccounts(ctx, func(a authtypes.AccountI) (stop bool) {

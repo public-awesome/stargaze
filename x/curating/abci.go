@@ -19,6 +19,10 @@ func BeginBlocker(ctx sdk.Context, k keeper.Keeper) {
 		panic(fmt.Sprintf("Error funding reward pool: %s", err.Error()))
 	}
 
+	if err := k.DistributeCredits(ctx); err != nil {
+		panic(fmt.Sprintf("Error distributing credits: %s", err.Error()))
+	}
+
 }
 
 // EndBlocker called every block, update validator set
