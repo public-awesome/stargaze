@@ -26,6 +26,9 @@ const (
 	// VotingPoolName is the name of the global voting pool module account
 	VotingPoolName = "voting_pool"
 
+	// CreditPoolName is the name of the global curation credit pool module account
+	CreditPoolName = "credit_pool"
+
 	// DefaultStakeDenom is the staking denom for the zone
 	DefaultStakeDenom = "ustb"
 

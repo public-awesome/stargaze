@@ -147,6 +147,7 @@ var (
 		curatingtypes.ModuleName:     nil,
 		curatingtypes.RewardPoolName: {authtypes.Minter, authtypes.Burner},
 		curatingtypes.VotingPoolName: {authtypes.Minter, authtypes.Burner},
+		curatingtypes.CreditPoolName: {authtypes.Minter, authtypes.Burner},
 		faucet.ModuleName:            {authtypes.Minter},
 	}
 
