@@ -30,7 +30,7 @@ const (
 	DefaultStakeDenom = "ustb"
 
 	// DefaultVoteDenom is the denom for quadratic voting
-	DefaultVoteDenom = "uatom"
+	DefaultVoteDenom = "ucredits"
 )
 
 var (

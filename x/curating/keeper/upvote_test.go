@@ -34,7 +34,7 @@ func TestCreateUpvote(t *testing.T) {
 
 	require.Equal(t, "25000000uatom", upvote.VoteAmount.String())
 
-	curatorBalance := app.BankKeeper.GetBalance(ctx, addrs[0], "uatom")
+	curatorBalance := app.BankKeeper.GetBalance(ctx, addrs[0], "ucredits")
 	require.Equal(t, "2000000", curatorBalance.Amount.String())
 }
 
@@ -66,7 +66,7 @@ func TestCreateUpvote_ExistingPost(t *testing.T) {
 	creatorBalance := app.BankKeeper.GetBalance(ctx, addrs[1], fakedenom)
 	require.Equal(t, "27000000", creatorBalance.Amount.String())
 
-	curatorBalance := app.BankKeeper.GetBalance(ctx, addrs[0], "uatom")
+	curatorBalance := app.BankKeeper.GetBalance(ctx, addrs[0], "ucredits")
 	require.Equal(t, "2000000", curatorBalance.Amount.String())
 }
 func TestCreateUpvote_ExpiredPost(t *testing.T) {

@@ -191,7 +191,7 @@ func addTestAddrs(app *SimApp, ctx sdk.Context, accNum int,
 	accAmt sdk.Int, strategy GenerateAccountStrategy,
 	denoms ...string) []sdk.AccAddress {
 	testAddrs := strategy(accNum)
-	defaultDenoms := []string{"stake", "ustb", "uatom"}
+	defaultDenoms := []string{"stake", "ustb", "ucredits"}
 	coinDenoms := append(defaultDenoms, denoms...)
 	initCoins := sdk.NewCoins()
 	for _, d := range coinDenoms {
