@@ -81,9 +81,12 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 		paramtypes.NewParamSetPair(KeyMaxNumVotes, &p.MaxNumVotes, validateMaxNumVotes),
 		paramtypes.NewParamSetPair(KeyMaxVendors, &p.MaxVendors, validateMaxVendors),
 		paramtypes.NewParamSetPair(KeyRewardPoolAllocation, &p.RewardPoolAllocation, validateRewardPoolAlloc),
-		paramtypes.NewParamSetPair(KeyCreatorProtocolRewardAllocation, &p.CreatorProtocolRewardAllocation, validateCreatorAllocation),
-		paramtypes.NewParamSetPair(KeyCreatorVotingRewardAllocation, &p.CreatorVotingRewardAllocation, validateCreatorAllocation),
-		paramtypes.NewParamSetPair(KeyRewardPoolCurationMaxAlloc, &p.RewardPoolCurationMaxAlloc, validateRewardPoolCurationMaxAllocation),
+		paramtypes.NewParamSetPair(KeyCreatorProtocolRewardAllocation, &p.CreatorProtocolRewardAllocation,
+			validateCreatorAllocation),
+		paramtypes.NewParamSetPair(KeyCreatorVotingRewardAllocation, &p.CreatorVotingRewardAllocation,
+			validateCreatorAllocation),
+		paramtypes.NewParamSetPair(KeyRewardPoolCurationMaxAlloc, &p.RewardPoolCurationMaxAlloc,
+			validateRewardPoolCurationMaxAllocation),
 		paramtypes.NewParamSetPair(KeyStakeDenom, &p.StakeDenom, validateDenom),
 	}
 }
