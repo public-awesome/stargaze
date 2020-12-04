@@ -61,8 +61,8 @@ func (k Keeper) validateVendorID(ctx sdk.Context, vendorID uint32) error {
 	return nil
 }
 
-// RewardCreator sends creator rewards from the protocol reward pool
-func (k Keeper) RewardCreator(
+// RewardCreatorFromProtocol sends creator rewards from the protocol reward pool
+func (k Keeper) RewardCreatorFromProtocol(
 	ctx sdk.Context, account sdk.AccAddress, matchPool sdk.Dec) error {
 
 	k.Logger(ctx).Debug(fmt.Sprintf("match pool: %v", matchPool))

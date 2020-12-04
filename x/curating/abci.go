@@ -47,7 +47,7 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 		if err != nil {
 			panic(err)
 		}
-		err = k.RewardCreator(ctx, rewardAccount, qv.MatchPool())
+		err = k.RewardCreatorFromProtocol(ctx, rewardAccount, qv.MatchPool())
 		if err != nil {
 			panic(err)
 		}
