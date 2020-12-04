@@ -67,7 +67,7 @@ func (k Keeper) RewardCreatorFromProtocol(
 
 	k.Logger(ctx).Debug(fmt.Sprintf("match pool: %v", matchPool))
 
-	creatorShare := k.GetParams(ctx).CreatorAllocation
+	creatorShare := k.GetParams(ctx).CreatorProtocolRewardAllocation
 	creatorMatch := creatorShare.Mul(matchPool).TruncateInt()
 	k.Logger(ctx).Debug(fmt.Sprintf("creator match: %v", creatorMatch))
 
@@ -100,7 +100,7 @@ func (k Keeper) SendVotingReward(
 func (k Keeper) SendMatchingReward(
 	ctx sdk.Context, account sdk.AccAddress, matchReward sdk.Dec) error {
 
-	curatorShare := sdk.OneDec().Sub(k.GetParams(ctx).CreatorAllocation)
+	curatorShare := sdk.OneDec().Sub(k.GetParams(ctx).CreatorProtocolRewardAllocation)
 	curatorMatch := curatorShare.Mul(matchReward).TruncateInt()
 	k.Logger(ctx).Debug(fmt.Sprintf("curator match: %v", curatorMatch))
 
