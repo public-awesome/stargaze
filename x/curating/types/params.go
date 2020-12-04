@@ -23,7 +23,7 @@ var (
 	DefaultVoteAmount                      = sdk.NewInt64Coin(DefaultVoteDenom, 1_000_000)
 	DefaultInitialRewardPool               = sdk.NewInt64Coin(DefaultStakeDenom, 21_000_000_000_000)
 	DefaultRewardPoolAllocation            = sdk.NewDecWithPrec(50, 2)
-	DefaultCreatorAllocation               = sdk.NewDecWithPrec(5, 2)
+	DefaultProtocolCreatorAllocation       = sdk.NewDecWithPrec(5, 2)
 	DefaultRewardPoolCurationMaxAllocation = sdk.NewDecWithPrec(1, 3)
 )
 
@@ -88,7 +88,7 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 func DefaultParams() Params {
 	return NewParams(
 		DefaultCurationWindow, DefaultVoteAmount, DefaultInitialRewardPool, DefaultMaxNumVotes, DefaultMaxVendors,
-		DefaultRewardPoolAllocation, DefaultCreatorAllocation, DefaultRewardPoolCurationMaxAllocation, DefaultStakeDenom)
+		DefaultRewardPoolAllocation, DefaultProtocolCreatorAllocation, DefaultRewardPoolCurationMaxAllocation, DefaultStakeDenom)
 }
 
 // Validate validates all params
