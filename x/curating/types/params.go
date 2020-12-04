@@ -23,9 +23,9 @@ var (
 	DefaultVoteAmount                      = sdk.NewInt64Coin(DefaultVoteDenom, 1_000_000)
 	DefaultInitialRewardPool               = sdk.NewInt64Coin(DefaultStakeDenom, 21_000_000_000_000)
 	DefaultRewardPoolAllocation            = sdk.NewDecWithPrec(50, 2) // from inflation
-	DefaultCreatorProtocolRewardAllocation = sdk.NewDecWithPrec(5, 2)  // 0.5
-	DefaultCreatorVotingRewardAllocation   = sdk.NewDecWithPrec(3, 2)  // 0.3
-	DefaultRewardPoolCurationMaxAllocation = sdk.NewDecWithPrec(1, 3)  // 0.01
+	DefaultCreatorProtocolRewardAllocation = sdk.NewDecWithPrec(5, 2)  // .05 (5%)
+	DefaultCreatorVotingRewardAllocation   = sdk.NewDecWithPrec(3, 3)  // .003 (0.3%)
+	DefaultRewardPoolCurationMaxAllocation = sdk.NewDecWithPrec(1, 3)  // .001 (0.1%)
 )
 
 // Parameter store keys

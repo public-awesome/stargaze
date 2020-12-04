@@ -47,12 +47,18 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 		if err != nil {
 			panic(err)
 		}
+		err = k.RewardCreatorFromVotingPool(ctx, rewardAccount, qv.VotingPool)
+		if err != nil {
+			panic(err)
+		}
 		err = k.RewardCreatorFromProtocol(ctx, rewardAccount, qv.MatchPool())
 		if err != nil {
 			panic(err)
 		}
 
-		curatorVotingReward := qv.VoterReward()
+		curatorAlloc := sdk.OneDec().Sub(k.GetParams(ctx).CreatorVotingRewardAllocation)
+		curatorVotingReward := curatorAlloc.MulInt(qv.VoterReward()).TruncateInt()
+
 		curatorMatchReward := qv.MatchReward()
 
 		k.IterateUpvotes(ctx, post.VendorID, post.PostID,
