@@ -33,10 +33,11 @@ func TestQVF(t *testing.T) {
 	require.NoError(t, err)
 
 	// for reference...
-	// require.Equal(t, int64(2), q.VoterCount)
-	// require.Equal(t, "10", q.VotingPool.String())
-	// require.Equal(t, "4.000000000000000000", q.RootSum.String())
+	require.Equal(t, int64(2), q.VoterCount)
+	require.Equal(t, "10", q.VotingPool.String())
+	require.Equal(t, "4.000000000000000000", q.RootSum.String())
 	require.Equal(t, "6.000000000000000000", q.MatchPool().String())
+	require.Equal(t, "1.500000000000000000", q.MatchPoolPerVote().String())
 	require.Equal(t, "5", q.VoterReward().String())
 	require.Equal(t, "3.000000000000000000", q.MatchReward().String())
 }
@@ -54,10 +55,11 @@ func TestQVFZeroVotes(t *testing.T) {
 	q := curating.NewQVFData(ctx, app.CuratingKeeper)
 
 	// for reference...
-	// require.Equal(t, int64(0), q.VoterCount)
-	// require.Equal(t, "0", q.VotingPool.String())
-	// require.Equal(t, "0.000000000000000000", q.RootSum.String())
+	require.Equal(t, int64(0), q.VoterCount)
+	require.Equal(t, "0", q.VotingPool.String())
+	require.Equal(t, "0.000000000000000000", q.RootSum.String())
 	require.Equal(t, "0.000000000000000000", q.MatchPool().String())
+	require.Equal(t, "0.000000000000000000", q.MatchPoolPerVote().String())
 	require.Equal(t, "0", q.VoterReward().String())
 	require.Equal(t, "0.000000000000000000", q.MatchReward().String())
 }
@@ -79,6 +81,7 @@ func TestQVFOneVote(t *testing.T) {
 	require.Equal(t, "1", q.VotingPool.String())
 	require.Equal(t, "1.000000000000000000", q.RootSum.String())
 	require.Equal(t, "0.000000000000000000", q.MatchPool().String())
+	require.Equal(t, "0.000000000000000000", q.MatchPoolPerVote().String())
 	require.Equal(t, "1", q.VoterReward().String())
 	require.Equal(t, "0.000000000000000000", q.MatchReward().String())
 }

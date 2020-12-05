@@ -75,4 +75,10 @@ func (q QVFData) MatchReward() sdk.Dec {
 	return q.MatchPool().QuoInt64(q.VoterCount)
 }
 
-// TODO: match pool per vote (match pool / rootsum?)
+// MatchPoolPerVote calculates the portion of the match pool per vote
+func (q QVFData) MatchPoolPerVote() sdk.Dec {
+	if q.VoterCount == 0 {
+		return sdk.ZeroDec()
+	}
+	return q.MatchPool().Quo(q.RootSum)
+}

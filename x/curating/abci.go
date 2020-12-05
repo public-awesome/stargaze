@@ -74,10 +74,10 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 				}
 
 				// distribute quadratic funding reward from protocol reward pool
-				// err = k.SendMatchingReward(ctx, rewardAccount, curatorMatchReward)
-				// if err != nil {
-				// 	panic(err)
-				// }
+				err = k.SendMatchingReward(ctx, rewardAccount, curatorMatchReward)
+				if err != nil {
+					panic(err)
+				}
 				// TODO: voteNum = sqrt(upvote.Amount)
 				// reward = match_pool_per_vote * voteNum
 
