@@ -9,9 +9,9 @@ import (
 type QVFData struct {
 	ctx        sdk.Context
 	keeper     keeper.Keeper
-	voterCount int64
+	VoterCount int64
 	VotingPool sdk.Int
-	rootSum    sdk.Dec
+	RootSum    sdk.Dec
 }
 
 // NewQVFData returns an instance of QVFData
@@ -20,13 +20,13 @@ func NewQVFData(ctx sdk.Context, k keeper.Keeper) QVFData {
 		ctx:        ctx,
 		keeper:     k,
 		VotingPool: sdk.ZeroInt(),
-		rootSum:    sdk.ZeroDec(),
+		RootSum:    sdk.ZeroDec(),
 	}
 }
 
 // TallyVote tallies a vote
 func (q QVFData) TallyVote(amount sdk.Int) (QVFData, error) {
-	q.voterCount++
+	q.VoterCount++
 	q.VotingPool = q.VotingPool.Add(amount)
 
 	sqrt, err := amount.
@@ -36,7 +36,7 @@ func (q QVFData) TallyVote(amount sdk.Int) (QVFData, error) {
 	if err != nil {
 		return q, err
 	}
-	q.rootSum = q.rootSum.Add(sqrt)
+	q.RootSum = q.RootSum.Add(sqrt)
 
 	return q, nil
 }
@@ -61,16 +61,18 @@ func (q QVFData) MatchPool() sdk.Dec {
 
 // VoterReward returns the distribution for a voter
 func (q QVFData) VoterReward() sdk.Int {
-	if q.voterCount == 0 {
+	if q.VoterCount == 0 {
 		return sdk.ZeroInt()
 	}
-	return q.VotingPool.QuoRaw(q.voterCount)
+	return q.VotingPool.QuoRaw(q.VoterCount)
 }
 
 // MatchReward returns the funding match for a voter
 func (q QVFData) MatchReward() sdk.Dec {
-	if q.voterCount == 0 {
+	if q.VoterCount == 0 {
 		return sdk.ZeroDec()
 	}
-	return q.MatchPool().QuoInt64(q.voterCount)
+	return q.MatchPool().QuoInt64(q.VoterCount)
 }
+
+// TODO: match pool per vote (match pool / rootsum?)

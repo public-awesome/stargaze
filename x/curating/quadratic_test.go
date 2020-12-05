@@ -61,3 +61,24 @@ func TestQVFZeroVotes(t *testing.T) {
 	require.Equal(t, "0", q.VoterReward().String())
 	require.Equal(t, "0.000000000000000000", q.MatchReward().String())
 }
+
+func TestQVFOneVote(t *testing.T) {
+	app := simapp.Setup(false)
+	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
+
+	// add funds to reward pool
+	funds := sdk.NewInt64Coin("ustb", 10_000_000)
+	err := app.BankKeeper.MintCoins(ctx, curatingtypes.RewardPoolName, sdk.NewCoins(funds))
+	require.NoError(t, err)
+
+	q := curating.NewQVFData(ctx, app.CuratingKeeper)
+	q, err = q.TallyVote(sdk.NewInt(1))
+	require.NoError(t, err)
+
+	require.Equal(t, int64(1), q.VoterCount)
+	require.Equal(t, "1", q.VotingPool.String())
+	require.Equal(t, "1.000000000000000000", q.RootSum.String())
+	require.Equal(t, "0.000000000000000000", q.MatchPool().String())
+	require.Equal(t, "1", q.VoterReward().String())
+	require.Equal(t, "0.000000000000000000", q.MatchReward().String())
+}
