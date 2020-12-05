@@ -59,7 +59,7 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 		curatorAlloc := sdk.OneDec().Sub(k.GetParams(ctx).CreatorVotingRewardAllocation)
 		curatorVotingReward := curatorAlloc.MulInt(qv.VoterReward()).TruncateInt()
 
-		curatorMatchReward := qv.MatchReward()
+		curatorMatchPerVote := qv.MatchPoolPerVote()
 
 		k.IterateUpvotes(ctx, post.VendorID, post.PostID,
 			func(upvote types.Upvote) (stop bool) {
@@ -73,13 +73,10 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 					panic(err)
 				}
 
-				// distribute quadratic funding reward from protocol reward pool
-				err = k.SendMatchingReward(ctx, rewardAccount, curatorMatchReward)
+				err = sendMatchingReward(ctx, k, upvote.VoteAmount.Amount, curatorMatchPerVote, rewardAccount)
 				if err != nil {
 					panic(err)
 				}
-				// TODO: voteNum = sqrt(upvote.Amount)
-				// reward = match_pool_per_vote * voteNum
 
 				// Remove upvote
 				err = k.DeleteUpvote(ctx, post.VendorID, post.PostID, upvote)
@@ -100,4 +97,23 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 		k.RemoveFromCurationQueue(ctx, t)
 	}
 	return []abci.ValidatorUpdate{}
+}
+
+// sends matching reward in proportion to upvote
+func sendMatchingReward(ctx sdk.Context, k keeper.Keeper, upvoteAmount sdk.Int,
+	matchPoolPerVote sdk.Dec, rewardAccount sdk.AccAddress) error {
+
+	voteNum, err := upvoteAmount.ToDec().ApproxSqrt()
+	if err != nil {
+		return err
+	}
+	matchReward := matchPoolPerVote.Mul(voteNum)
+
+	// distribute quadratic funding reward from protocol reward pool
+	err = k.SendMatchingReward(ctx, rewardAccount, matchReward)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
