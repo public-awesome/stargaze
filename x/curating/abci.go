@@ -103,11 +103,13 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 func sendMatchingReward(ctx sdk.Context, k keeper.Keeper, upvoteAmount sdk.Int,
 	matchPoolPerVote sdk.Dec, rewardAccount sdk.AccAddress) error {
 
-	voteNum, err := upvoteAmount.ToDec().ApproxSqrt()
+	voteNum, err := upvoteAmount.QuoRaw(1_000_000).ToDec().ApproxSqrt()
+	// fmt.Println(voteNum)
 	if err != nil {
 		return err
 	}
 	matchReward := matchPoolPerVote.Mul(voteNum)
+	fmt.Println(matchReward)
 
 	// distribute quadratic funding reward from protocol reward pool
 	err = k.SendMatchingReward(ctx, rewardAccount, matchReward)
