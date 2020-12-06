@@ -45,7 +45,7 @@ func (q QVFData) TallyVote(amount sdk.Int) (QVFData, error) {
 
 // MatchPool calculates and returns the quadratic match pool
 func (q QVFData) MatchPool() sdk.Dec {
-	idealPoolSize := q.rootSum.
+	idealPoolSize := q.RootSum.
 		Power(2).                 // increase quadratically
 		MulInt64(1_000_000).      // multiply by 10^6, the default denom unit
 		Sub(q.VotingPool.ToDec()) // subtract the voting pool
