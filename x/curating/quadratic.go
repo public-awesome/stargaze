@@ -1,8 +1,6 @@
 package curating
 
 import (
-	"fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/public-awesome/stakebird/x/curating/keeper"
 )
@@ -82,6 +80,6 @@ func (q QVFData) MatchPoolPerVote() sdk.Dec {
 	if q.VoterCount == 0 {
 		return sdk.ZeroDec()
 	}
-	fmt.Println(q.RootSum)
+
 	return q.MatchPool().Quo(q.RootSum)
 }

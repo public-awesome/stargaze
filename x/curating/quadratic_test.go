@@ -27,19 +27,19 @@ func TestQVF(t *testing.T) {
 	require.NoError(t, err)
 
 	q := curating.NewQVFData(ctx, app.CuratingKeeper)
-	q, err = q.TallyVote(sdk.NewInt(1))
+	q, err = q.TallyVote(sdk.NewInt(1_000_000))
 	require.NoError(t, err)
-	q, err = q.TallyVote(sdk.NewInt(9))
+	q, err = q.TallyVote(sdk.NewInt(9_000_000))
 	require.NoError(t, err)
 
 	// for reference...
 	require.Equal(t, int64(2), q.VoterCount)
-	require.Equal(t, "10", q.VotingPool.String())
+	require.Equal(t, "10000000", q.VotingPool.String())
 	require.Equal(t, "4.000000000000000000", q.RootSum.String())
-	require.Equal(t, "6.000000000000000000", q.MatchPool().String())
-	require.Equal(t, "1.500000000000000000", q.MatchPoolPerVote().String())
-	require.Equal(t, "5", q.VoterReward().String())
-	require.Equal(t, "3.000000000000000000", q.MatchReward().String())
+	require.Equal(t, "6000000.000000000000000000", q.MatchPool().String())
+	require.Equal(t, "1500000.000000000000000000", q.MatchPoolPerVote().String())
+	require.Equal(t, "5000000", q.VoterReward().String())
+	require.Equal(t, "3000000.000000000000000000", q.MatchReward().String())
 }
 
 func TestQVFZeroVotes(t *testing.T) {
@@ -74,14 +74,14 @@ func TestQVFOneVote(t *testing.T) {
 	require.NoError(t, err)
 
 	q := curating.NewQVFData(ctx, app.CuratingKeeper)
-	q, err = q.TallyVote(sdk.NewInt(1))
+	q, err = q.TallyVote(sdk.NewInt(1_000_000))
 	require.NoError(t, err)
 
 	require.Equal(t, int64(1), q.VoterCount)
-	require.Equal(t, "1", q.VotingPool.String())
+	require.Equal(t, "1000000", q.VotingPool.String())
 	require.Equal(t, "1.000000000000000000", q.RootSum.String())
 	require.Equal(t, "0.000000000000000000", q.MatchPool().String())
 	require.Equal(t, "0.000000000000000000", q.MatchPoolPerVote().String())
-	require.Equal(t, "1", q.VoterReward().String())
+	require.Equal(t, "1000000", q.VoterReward().String())
 	require.Equal(t, "0.000000000000000000", q.MatchReward().String())
 }
