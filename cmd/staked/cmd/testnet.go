@@ -133,7 +133,7 @@ Example:
 	cmd.Flags().String(flags.FlagKeyringBackend, defaultKeyringBackend, "Select keyring's backend (os|file|test)")
 	cmd.Flags().String(flags.FlagKeyAlgorithm, string(hd.Secp256k1Type), "Key signing algorithm to generate keys for")
 	cmd.Flags().String(flagInitialCoins, fmt.Sprintf("1000000000%s", app.DefaultStakeDenom),
-		"Validator genesis coins: 100000ustb,1000000uatom")
+		"Validator genesis coins: 100000ustb,1000000ucredits")
 	cmd.Flags().Int64(flagInitialStakingAmount, 100000000,
 		"Flag initial staking amount: 100000000")
 	cmd.Flags().String(flagStakeDenom, app.DefaultStakeDenom, "app's stake denom")

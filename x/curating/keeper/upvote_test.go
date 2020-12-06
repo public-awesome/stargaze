@@ -32,7 +32,7 @@ func TestCreateUpvote(t *testing.T) {
 	require.NoError(t, err)
 	require.True(t, found, "upvote should be found")
 
-	require.Equal(t, "25000000uatom", upvote.VoteAmount.String())
+	require.Equal(t, "25000000ucredits", upvote.VoteAmount.String())
 
 	curatorBalance := app.BankKeeper.GetBalance(ctx, addrs[0], "ucredits")
 	require.Equal(t, "2000000", curatorBalance.Amount.String())
@@ -61,7 +61,7 @@ func TestCreateUpvote_ExistingPost(t *testing.T) {
 	require.NoError(t, err)
 	require.True(t, found, "upvote should be found")
 
-	require.Equal(t, "25000000uatom", upvote.VoteAmount.String())
+	require.Equal(t, "25000000ucredits", upvote.VoteAmount.String())
 
 	creatorBalance := app.BankKeeper.GetBalance(ctx, addrs[1], fakedenom)
 	require.Equal(t, "27000000", creatorBalance.Amount.String())

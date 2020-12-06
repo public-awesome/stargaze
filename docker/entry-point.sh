@@ -14,7 +14,7 @@ if [ -z "$2" ]; then
 fi
 
 # Build genesis file incl account for passed address
-coins="100000000000ustb,100000000000uatom"
+coins="100000000000ustb,100000000000ucredits"
 staked init --chain-id $CHAINID $CHAINID
 staked keys add validator --keyring-backend="test"
 staked add-genesis-account validator $coins --keyring-backend="test"
