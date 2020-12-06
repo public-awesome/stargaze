@@ -88,7 +88,7 @@ clean:
 
 init:
 	staked init stakebird --chain-id localnet-1
-	staked add-genesis-account $(shell staked keys show validator -a --keyring-backend test) 10000000000000000ustb,10000000000000000uatom
+	staked add-genesis-account $(shell staked keys show validator -a --keyring-backend test) 10000000000000000ustb,10000000000000000ucredits
 	staked gentx validator --chain-id localnet-1 --amount 10000000000ustb --keyring-backend test
 	staked collect-gentxs 
 
