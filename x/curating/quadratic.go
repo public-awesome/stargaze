@@ -29,7 +29,10 @@ func (q QVFData) TallyVote(amount sdk.Int) (QVFData, error) {
 	q.voterCount++
 	q.VotingPool = q.VotingPool.Add(amount)
 
-	sqrt, err := amount.ToDec().ApproxSqrt()
+	sqrt, err := amount.
+		QuoRaw(1_000_000). // divide by 10^6, the default denom unit
+		ToDec().           // convert to decimal
+		ApproxSqrt()       // deterministic square root
 	if err != nil {
 		return q, err
 	}
@@ -40,7 +43,10 @@ func (q QVFData) TallyVote(amount sdk.Int) (QVFData, error) {
 
 // MatchPool calculates and returns the quadratic match pool
 func (q QVFData) MatchPool() sdk.Dec {
-	idealPoolSize := q.rootSum.Power(2).Sub(q.VotingPool.ToDec())
+	idealPoolSize := q.rootSum.
+		Power(2).                 // increase quadratically
+		MulInt64(1_000_000).      // multiply by 10^6, the default denom unit
+		Sub(q.VotingPool.ToDec()) // subtract the voting pool
 
 	rewardPool := q.keeper.GetRewardPoolBalance(q.ctx).Amount.ToDec()
 	maxPoolPercent := q.keeper.GetParams(q.ctx).RewardPoolCurationMaxAlloc
