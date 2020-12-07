@@ -80,7 +80,8 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 				emitRewardEvent(ctx, types.EventTypeProtocolReward, types.EventTypeVotingPoolReturn,
 					upvote.RewardAccount, postIDStr, votingPoolReward.String())
 
-				curatingProtocolReward, err := sendMatchingReward(ctx, k, upvote.VoteAmount.Amount, curatorMatchPerVote, rewardAccount)
+				curatingProtocolReward, err := sendMatchingReward(ctx, k, upvote.VoteAmount.Amount,
+					curatorMatchPerVote, rewardAccount)
 				if err != nil {
 					panic(err)
 				}
