@@ -26,6 +26,7 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyEndBlocker)
 	endTimes := make(map[time.Time]bool)
 	k.IterateExpiredPosts(ctx, func(post types.Post) bool {
+		postIDStr := post.PostIDStr()
 		k.Logger(ctx).Info(
 			fmt.Sprintf("Processing vendor %d post %v", post.VendorID, post.PostID))
 
@@ -47,14 +48,18 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 		if err != nil {
 			panic(err)
 		}
-		err = k.RewardCreatorFromVotingPool(ctx, rewardAccount, qv.VotingPool)
+		creatorVotinPoolReward, err := k.RewardCreatorFromVotingPool(ctx, rewardAccount, qv.VotingPool)
 		if err != nil {
 			panic(err)
 		}
-		err = k.RewardCreatorFromProtocol(ctx, rewardAccount, qv.MatchPool())
+		emitRewardEvent(ctx, types.EventTypeProtocolReward, types.EventTypeVotingPoolReturn,
+			post.RewardAccount, postIDStr, creatorVotinPoolReward.String())
+		creatorProtocolReward, err := k.RewardCreatorFromProtocol(ctx, rewardAccount, qv.MatchPool())
 		if err != nil {
 			panic(err)
 		}
+		emitRewardEvent(ctx, types.EventTypeProtocolReward, types.AttributeRewardTypeCreator,
+			post.RewardAccount, postIDStr, creatorProtocolReward.String())
 
 		curatorAlloc := sdk.OneDec().Sub(k.GetParams(ctx).CreatorVotingRewardAllocation)
 		curatorVotingReward := curatorAlloc.MulInt(qv.VoterReward()).TruncateInt()
@@ -68,15 +73,19 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 					panic(err)
 				}
 				// distribute quadratic voting per capita reward from voting pool
-				err = k.SendVotingReward(ctx, rewardAccount, curatorVotingReward)
+				votingPoolReward, err := k.SendVotingReward(ctx, rewardAccount, curatorVotingReward)
 				if err != nil {
 					panic(err)
 				}
+				emitRewardEvent(ctx, types.EventTypeProtocolReward, types.EventTypeVotingPoolReturn,
+					upvote.RewardAccount, postIDStr, votingPoolReward.String())
 
-				err = sendMatchingReward(ctx, k, upvote.VoteAmount.Amount, curatorMatchPerVote, rewardAccount)
+				curatingProtocolReward, err := sendMatchingReward(ctx, k, upvote.VoteAmount.Amount, curatorMatchPerVote, rewardAccount)
 				if err != nil {
 					panic(err)
 				}
+				emitRewardEvent(ctx, types.EventTypeProtocolReward, types.EventTypeProtocolReward,
+					upvote.RewardAccount, postIDStr, curatingProtocolReward.String())
 
 				// Remove upvote
 				err = k.DeleteUpvote(ctx, post.VendorID, post.PostID, upvote)
@@ -88,6 +97,12 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 			})
 
 		endTimes[post.GetCuratingEndTime()] = true
+		ctx.EventManager().EmitEvents(sdk.Events{
+			sdk.NewEvent(
+				types.EventTypeCurationComplete,
+				sdk.NewAttribute(types.AttributeKeyPostID, postIDStr),
+			),
+		})
 
 		return false
 	})
@@ -101,19 +116,30 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 
 // sends matching reward in proportion to upvote
 func sendMatchingReward(ctx sdk.Context, k keeper.Keeper, upvoteAmount sdk.Int,
-	matchPoolPerVote sdk.Dec, rewardAccount sdk.AccAddress) error {
+	matchPoolPerVote sdk.Dec, rewardAccount sdk.AccAddress) (sdk.Coin, error) {
 
 	voteNum, err := upvoteAmount.QuoRaw(1_000_000).ToDec().ApproxSqrt()
 	if err != nil {
-		return err
+		return sdk.Coin{}, err
 	}
 	matchReward := matchPoolPerVote.Mul(voteNum)
 
 	// distribute quadratic funding reward from protocol reward pool
-	err = k.SendMatchingReward(ctx, rewardAccount, matchReward)
+	reward, err := k.SendMatchingReward(ctx, rewardAccount, matchReward)
 	if err != nil {
-		return err
+		return sdk.Coin{}, err
 	}
 
-	return nil
+	return reward, nil
+}
+
+func emitRewardEvent(ctx sdk.Context, evtType, evtSubType, address, postID, amount string) {
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			evtType,
+			sdk.NewAttribute(types.AttributeKeyProtocolRewardType, evtSubType),
+			sdk.NewAttribute(types.AttributeKeyRewardAccount, address),
+			sdk.NewAttribute(types.AttributeKeyPostID, postID),
+		),
+	})
 }

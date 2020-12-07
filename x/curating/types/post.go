@@ -55,3 +55,11 @@ func (p Post) MarshalJSON() ([]byte, error) {
 
 	return out, nil
 }
+
+// PostIDStr returns a string representation of the underlying bytes that conforms an id.
+func (p Post) PostIDStr() string {
+	var temp [8]byte
+	copy(temp[:], p.PostID) // convert a postID byte slice into a fixed 8 byte array
+	postID := snowflake.ParseIntBytes(temp)
+	return postID.String()
+}
