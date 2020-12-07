@@ -63,7 +63,7 @@ func (k Keeper) validateVendorID(ctx sdk.Context, vendorID uint32) error {
 
 // RewardCreatorFromVotingPool sends creator rewards from the voting pool
 func (k Keeper) RewardCreatorFromVotingPool(
-	ctx sdk.Context, account sdk.AccAddress, votingPool sdk.Int) error {
+	ctx sdk.Context, account sdk.AccAddress, votingPool sdk.Int) (sdk.Coin, error) {
 
 	k.Logger(ctx).Debug(fmt.Sprintf("voting pool: %v", votingPool))
 
@@ -71,17 +71,17 @@ func (k Keeper) RewardCreatorFromVotingPool(
 	creatorAlloc := creatorShare.MulInt(votingPool).TruncateInt()
 	k.Logger(ctx).Debug(fmt.Sprintf("creator allocation: %v", creatorAlloc))
 
-	err := k.SendVotingReward(ctx, account, creatorAlloc)
+	reward, err := k.SendVotingReward(ctx, account, creatorAlloc)
 	if err != nil {
-		return err
+		return sdk.Coin{}, err
 	}
 
-	return nil
+	return reward, nil
 }
 
 // RewardCreatorFromProtocol sends creator rewards from the protocol reward pool
 func (k Keeper) RewardCreatorFromProtocol(
-	ctx sdk.Context, account sdk.AccAddress, matchPool sdk.Dec) error {
+	ctx sdk.Context, account sdk.AccAddress, matchPool sdk.Dec) (sdk.Coin, error) {
 
 	k.Logger(ctx).Debug(fmt.Sprintf("match pool: %v", matchPool))
 
@@ -89,18 +89,19 @@ func (k Keeper) RewardCreatorFromProtocol(
 	creatorMatch := creatorShare.Mul(matchPool).TruncateInt()
 	k.Logger(ctx).Debug(fmt.Sprintf("creator match: %v", creatorMatch))
 
+	reward := sdk.NewCoin(k.GetParams(ctx).StakeDenom, creatorMatch)
 	err := k.sendProtocolReward(ctx,
-		account, sdk.NewCoin(k.GetParams(ctx).StakeDenom, creatorMatch))
+		account, reward)
 	if err != nil {
-		return err
+		return sdk.Coin{}, err
 	}
 
-	return nil
+	return reward, nil
 }
 
 // SendVotingReward sends the reward from quadratic voting to the user
 func (k Keeper) SendVotingReward(
-	ctx sdk.Context, account sdk.AccAddress, reward sdk.Int) error {
+	ctx sdk.Context, account sdk.AccAddress, reward sdk.Int) (sdk.Coin, error) {
 
 	rewardCoin := sdk.NewCoin(types.DefaultVoteDenom, reward)
 	k.Logger(ctx).Debug(fmt.Sprintf("reward coin: %v", rewardCoin))
@@ -108,27 +109,28 @@ func (k Keeper) SendVotingReward(
 	err := k.bankKeeper.SendCoinsFromModuleToAccount(
 		ctx, types.VotingPoolName, account, sdk.NewCoins(rewardCoin))
 	if err != nil {
-		return err
+		return sdk.Coin{}, err
 	}
 
-	return nil
+	return rewardCoin, nil
 }
 
 // SendMatchingReward sends curator rewards from the protocol reward pool
 func (k Keeper) SendMatchingReward(
-	ctx sdk.Context, account sdk.AccAddress, matchReward sdk.Dec) error {
+	ctx sdk.Context, account sdk.AccAddress, matchReward sdk.Dec) (sdk.Coin, error) {
 
 	curatorShare := sdk.OneDec().Sub(k.GetParams(ctx).CreatorProtocolRewardAllocation)
 	curatorMatch := curatorShare.Mul(matchReward).TruncateInt()
 	k.Logger(ctx).Debug(fmt.Sprintf("curator match: %v", curatorMatch))
 
+	reward := sdk.NewCoin(k.GetParams(ctx).StakeDenom, curatorMatch)
 	err := k.sendProtocolReward(ctx,
-		account, sdk.NewCoin(k.GetParams(ctx).StakeDenom, curatorMatch))
+		account, reward)
 	if err != nil {
-		return err
+		return sdk.Coin{}, err
 	}
 
-	return nil
+	return reward, nil
 }
 
 // sendProtocolReward sends the quadratic finance matching reward to the user
