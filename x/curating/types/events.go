@@ -13,7 +13,6 @@ const (
 	AttributeKeyPostID             = "post_id"
 	AttributeKeyCreator            = "creator"
 	AttributeKeyCurator            = "curator"
-	AttributeKeyModerator          = "moderator"
 	AttributeKeyRewardAccount      = "reward_account"
 	AttributeKeyDeposit            = "deposit"
 	AttributeKeyBody               = "body"
@@ -25,6 +24,10 @@ const (
 
 	AttributeRewardTypeCreator = "creator"
 	AttributeRewardTypeCurator = "curator"
+
+	AttributeKeyDelegator   = "delegator"
+	AttributeKeyValidator   = "validator"
+	AttributeKeyStakeAmount = "stake_amount"
 
 	AttributeValueCategory = ModuleName
 )
