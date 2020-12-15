@@ -5,6 +5,7 @@ package stakebird.curating.v1beta1;
 option go_package = "github.com/public-awesome/stakebird/x/curating/types";
 
 import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
 
 // Msg defines the curating Msg service.
 service Msg {
@@ -55,3 +56,22 @@ message MsgUpvote {
       [ (gogoproto.moretags) = "yaml:\"reward_account\"" ];
   int32 vote_num = 5;
 }
+
+message MsgStake {
+    option (gogoproto.equal) = true;
+  
+    uint32 vendor_id = 1 [
+      (gogoproto.customname) = "VendorID",
+      (gogoproto.moretags) = "yaml:\"vendor_id\"",
+      (gogoproto.jsontag) = "vendor_id"
+    ];
+    string post_id = 2 [
+      (gogoproto.customname) = "PostID",
+      (gogoproto.moretags) = "yaml:\"post_id\"",
+      (gogoproto.jsontag) = "post_id"
+    ];
+    string delegator = 3 [ (gogoproto.moretags) = "yaml:\"delegator\"" ];
+    string validator = 4 [ (gogoproto.moretags) = "yaml:\"validator\"" ];
+    cosmos.base.v1beta1.Coin amount = 5 [ (gogoproto.nullable) = false ];
+  }
+  
