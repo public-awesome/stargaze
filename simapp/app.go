@@ -335,8 +335,8 @@ func NewSimApp(
 	app.EvidenceKeeper = *evidenceKeeper
 
 	// Stakebird Keepers
-	app.CuratingKeeper = curatingkeeper.NewKeeper(
-		appCodec, keys[curatingtypes.StoreKey], app.AccountKeeper, app.BankKeeper, app.GetSubspace(curatingtypes.ModuleName))
+	app.CuratingKeeper = curatingkeeper.NewKeeper(appCodec, keys[curatingtypes.StoreKey], app.AccountKeeper,
+		app.BankKeeper, app.StakingKeeper, app.GetSubspace(curatingtypes.ModuleName))
 
 	app.UserKeeper = userkeeper.NewKeeper(
 		appCodec, keys[curatingtypes.StoreKey], app.AccountKeeper, app.BankKeeper, app.GetSubspace(usertypes.ModuleName))
