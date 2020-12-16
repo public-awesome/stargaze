@@ -79,7 +79,7 @@ endif
 all: install
 
 create-wallet:
-	staked keys add validator --keyring-backend test
+	staked keys add validator
 
 reset: clean init
 clean:
@@ -88,15 +88,15 @@ clean:
 
 init:
 	staked init stakebird --chain-id localnet-1
-	staked add-genesis-account $(shell staked keys show validator -a --keyring-backend test) 10000000000000000ustb,10000000000000000ucredits
-	staked gentx validator --chain-id localnet-1 --amount 10000000000ustb --keyring-backend test
+	staked add-genesis-account $(shell staked keys show validator -a) 10000000000000000ustb,10000000000000000ucredits
+	staked gentx validator --chain-id localnet-1 --amount 10000000000ustb
 	staked collect-gentxs 
 
 install: go.sum
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/staked
 
 start:
-	staked start --grpc.address 0.0.0.0:9091 --log_level "curating:info,user:info,main:info,state:info,*:error"
+	staked start --grpc.address 0.0.0.0:9091
 
 build:
 	go build $(BUILD_FLAGS) -o bin/staked ./cmd/staked
