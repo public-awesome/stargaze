@@ -8,16 +8,16 @@ import (
 	"github.com/public-awesome/stakebird/x/curating/types"
 )
 
-// Stake delegates an amount to a validator and associates a post
-func (k Keeper) Stake(ctx sdk.Context, vendorID uint32, postID string, delAddr sdk.AccAddress, valAddr sdk.ValAddress,
-	amount sdk.Coin) error {
+// CreateStake delegates an amount to a validator and associates a post
+func (k Keeper) CreateStake(ctx sdk.Context, vendorID uint32, postID string, delAddr sdk.AccAddress, valAddr sdk.ValAddress,
+	amount sdk.Int) error {
 
 	validator, found := k.stakingKeeper.GetValidator(ctx, valAddr)
 	if !found {
 		return stakingtypes.ErrNoValidatorFound
 	}
 
-	_, err := k.stakingKeeper.Delegate(ctx, delAddr, amount.Amount, stakingtypes.Unbonded, validator, true)
+	_, err := k.stakingKeeper.Delegate(ctx, delAddr, amount, stakingtypes.Unbonded, validator, true)
 	if err != nil {
 		return err
 	}

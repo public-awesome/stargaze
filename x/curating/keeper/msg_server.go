@@ -81,3 +81,33 @@ func (k msgServer) Upvote(goCtx context.Context, msg *types.MsgUpvote) (*types.M
 	})
 	return &types.MsgUpvoteResponse{}, nil
 }
+
+func (k msgServer) Stake(goCtx context.Context, msg *types.MsgStake) (*types.MsgStakeResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	delegator, err := sdk.AccAddressFromBech32(msg.Delegator)
+	if err != nil {
+		return nil, err
+	}
+
+	validator, err := sdk.ValAddressFromBech32(msg.Validator)
+	if err != nil {
+		return nil, err
+	}
+
+	amount := sdk.NewInt(msg.Amount)
+
+	err = k.CreateStake(ctx, msg.VendorID, msg.PostID, delegator, validator, amount)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Delegator),
+		),
+	})
+	return &types.MsgStakeResponse{}, nil
+}

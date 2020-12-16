@@ -34,3 +34,29 @@ func TestHandleUpvote(t *testing.T) {
 	_, err := handler(ctx, msgUpvote)
 	assert.NoError(t, err)
 }
+
+// func TestHandleStake(t *testing.T) {
+// 	app := simapp.Setup(false)
+// 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
+
+// 	addrs = simapp.AddTestAddrsIncremental(app, ctx, 1, sdk.NewInt(10_000_000))
+// 	addrVals := simapp.ConvertAddrsToValAddrs(addrs)
+
+// 	initPower := int64(1000000)
+// 	tstaking := teststaking.NewHelper(t, ctx, app.StakingKeeper)
+
+// 	// // create validator
+// 	// PKs := simapp.CreateTestPubKeys(500)
+// 	// initBond := tstaking.CreateValidatorWithValPower(addrVals[0], PKs[0], initPower, true)
+
+// 	// // must end-block
+// 	// updates, err := app.StakingKeeper.ApplyAndReturnValidatorSetUpdates(ctx)
+// 	// require.NoError(t, err)
+// 	// require.Equal(t, 1, len(updates))
+
+// 	handler := curating.NewHandler(app.CuratingKeeper)
+// 	msgStake := types.NewMsgStake(1, "123", addrs[0], addrVals[0], sdk.NewInt(1_000_000))
+// 	_, err := handler(ctx, msgStake)
+
+// 	assert.NoError(t, err)
+// }

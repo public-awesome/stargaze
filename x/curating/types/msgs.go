@@ -11,11 +11,13 @@ import (
 // verify interface at compile time
 var _ sdk.Msg = &MsgPost{}
 var _ sdk.Msg = &MsgUpvote{}
+var _ sdk.Msg = &MsgStake{}
 
 // msg types
 const (
 	TypeMsgPost   = "curating_post"
 	TypeMsgUpvote = "curating_upvote"
+	TypeMsgStake  = "curating_stake"
 )
 
 // NewMsgPost creates a new MsgPost instance
@@ -117,6 +119,58 @@ func (msg MsgUpvote) ValidateBasic() error {
 	}
 	if msg.VoteNum < 1 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid vote_num")
+	}
+
+	return nil
+}
+
+// NewMsgStake creates a new MsgStake instance
+func NewMsgStake(vendorID uint32, postID string, delegator sdk.AccAddress, validator sdk.ValAddress, amount sdk.Int) *MsgStake {
+	return &MsgStake{
+		VendorID:  vendorID,
+		PostID:    postID,
+		Delegator: delegator.String(),
+		Validator: validator.String(),
+		Amount:    amount.Int64(),
+	}
+}
+
+// Route implements sdk.Msg
+func (msg MsgStake) Route() string { return RouterKey }
+
+// Type implements sdk.Msg
+func (msg MsgStake) Type() string { return TypeMsgUpvote }
+
+// GetSigners implements sdk.Msg
+func (msg MsgStake) GetSigners() []sdk.AccAddress {
+	delegator, err := sdk.AccAddressFromBech32(msg.Delegator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{delegator}
+}
+
+// GetSignBytes gets the bytes for the message signer to sign on
+func (msg MsgStake) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+}
+
+// ValidateBasic validity check for the AnteHandler
+func (msg MsgStake) ValidateBasic() error {
+	if strings.TrimSpace(msg.Delegator) == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty delegator")
+	}
+	if strings.TrimSpace(msg.Validator) == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty validator")
+	}
+	if strings.TrimSpace(msg.PostID) == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty post_id")
+	}
+	if msg.VendorID < 1 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid vendor_id")
+	}
+	if msg.Amount < 1 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount")
 	}
 
 	return nil

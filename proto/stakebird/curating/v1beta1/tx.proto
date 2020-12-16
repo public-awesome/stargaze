@@ -14,10 +14,13 @@ service Msg {
 
   // Upvote defines a method for upvoting a post
   rpc Upvote(MsgUpvote) returns (MsgUpvoteResponse);
+
+  // Stake defines a method for staking on a post
+  rpc Stake(MsgStake) returns (MsgStakeResponse);
 }
 message MsgPostResponse{}
 message MsgUpvoteResponse{}
-
+message MsgStakeResponse{}
 
 message MsgPost {
   option (gogoproto.equal) = true;
@@ -72,6 +75,6 @@ message MsgStake {
     ];
     string delegator = 3 [ (gogoproto.moretags) = "yaml:\"delegator\"" ];
     string validator = 4 [ (gogoproto.moretags) = "yaml:\"validator\"" ];
-    cosmos.base.v1beta1.Coin amount = 5 [ (gogoproto.nullable) = false ];
+    int64 amount = 5;
   }
   
