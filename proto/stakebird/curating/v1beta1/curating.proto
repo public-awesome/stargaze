@@ -41,6 +41,11 @@ message Upvote {
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"curated_time\""
   ];
+  google.protobuf.Timestamp updated_time = 6 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"updated_time\""
+  ];
 }
 
 // VPPair is struct that just has a vendor_id, post_id pair with no other data.
