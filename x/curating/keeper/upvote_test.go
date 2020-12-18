@@ -95,7 +95,7 @@ func TestCreateUpvote_ExistingUpvote(t *testing.T) {
 
 	postID := "502"
 	vendorID := uint32(1)
-	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(27_000_000))
+	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(77_000_000))
 
 	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[1], addrs[1])
 	require.NoError(t, err)
@@ -103,6 +103,6 @@ func TestCreateUpvote_ExistingUpvote(t *testing.T) {
 	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5)
 	require.NoError(t, err)
 
-	// err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5)
-	// require.Error(t, types.ErrAlreadyVoted, err)
+	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5)
+	require.NoError(t, err)
 }
