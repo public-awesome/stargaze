@@ -19,6 +19,8 @@ func (k Keeper) CreateUpvote(ctx sdk.Context, vendorID uint32, postID string,
 		rewardAccount = curator
 	}
 
+	voteAmt := k.voteAmount(ctx, int64(voteNum))
+
 	postIDBz, err := postIDBytes(postID)
 	if err != nil {
 		return err
@@ -49,16 +51,15 @@ func (k Keeper) CreateUpvote(ctx sdk.Context, vendorID uint32, postID string,
 	if found {
 		voteNumNew := voteNum + upvote.VoteNum
 		voteAmtNew := k.voteAmount(ctx, int64(voteNumNew))
-		// every additional upvote reward goes to the same reward account
+		// every additional upvote reward goes to the original reward account
 		rewardAccount, err = sdk.AccAddressFromBech32(upvote.RewardAccount)
 		if err != nil {
 			return err
 		}
 		upvote = types.NewUpvote(curator, rewardAccount, voteNumNew, voteAmtNew, upvote.CuratedTime, ctx.BlockTime())
+	} else {
+		upvote = types.NewUpvote(curator, rewardAccount, voteNum, voteAmt, ctx.BlockTime(), ctx.BlockTime())
 	}
-
-	voteAmt := k.voteAmount(ctx, int64(voteNum))
-	upvote = types.NewUpvote(curator, rewardAccount, voteNum, voteAmt, ctx.BlockTime(), ctx.BlockTime())
 
 	store := ctx.KVStore(k.storeKey)
 	key := types.UpvoteKey(vendorID, postIDBz, curator)
