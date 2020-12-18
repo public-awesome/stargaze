@@ -95,7 +95,7 @@ func TestCreateUpvote_ExistingUpvote(t *testing.T) {
 
 	postID := "502"
 	vendorID := uint32(1)
-	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(200_000_000))
+	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(9_000_000))
 
 	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[1], addrs[1])
 	require.NoError(t, err)
