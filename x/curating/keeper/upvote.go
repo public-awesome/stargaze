@@ -8,9 +8,8 @@ import (
 )
 
 // CreateUpvote performs an upvote operation
-func (k Keeper) CreateUpvote(
-	ctx sdk.Context, vendorID uint32, postID string, curator,
-	rewardAccount sdk.AccAddress, voteNum int32) error {
+func (k Keeper) CreateUpvote(ctx sdk.Context, vendorID uint32, postID string,
+	curator, rewardAccount sdk.AccAddress, voteNum int32) error {
 
 	err := k.validateVendorID(ctx, vendorID)
 	if err != nil {
@@ -25,15 +24,6 @@ func (k Keeper) CreateUpvote(
 		return err
 	}
 
-	// check if there is already an upvote
-	_, found, err := k.GetUpvote(ctx, vendorID, postID, curator)
-	if err != nil {
-		return err
-	}
-	if found {
-		// TODO: add to the vote
-	}
-
 	// check if post exist, if not, create it and start the curation period
 	post, found, err := k.GetPost(ctx, vendorID, postID)
 	if err != nil {
@@ -44,7 +34,6 @@ func (k Keeper) CreateUpvote(
 	}
 
 	if !found {
-		// no deposit is locked
 		// this curator gets both creator + curator rewards (sent to reward_account)
 		err = k.CreatePost(ctx, vendorID, postID, "", nil, rewardAccount)
 		if err != nil {
@@ -52,8 +41,18 @@ func (k Keeper) CreateUpvote(
 		}
 	}
 
+	// check if there is already an upvote
+	upvote, found, err := k.GetUpvote(ctx, vendorID, postID, curator)
+	if err != nil {
+		return err
+	}
+	if found {
+		// TODO: add to the vote
+		// voteNum = voteNum + upvote.
+	}
+
 	voteAmt := k.voteAmount(ctx, int64(voteNum))
-	upvote := types.NewUpvote(curator, rewardAccount, voteAmt, ctx.BlockTime())
+	upvote = types.NewUpvote(curator, rewardAccount, voteAmt, ctx.BlockTime())
 
 	store := ctx.KVStore(k.storeKey)
 	key := types.UpvoteKey(vendorID, postIDBz, curator)

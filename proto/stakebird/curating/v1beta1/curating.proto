@@ -35,7 +35,12 @@ message Upvote {
   string curator = 1 [ (gogoproto.moretags) = "yaml:\"curator\"" ];
   string reward_account = 2
       [ (gogoproto.moretags) = "yaml:\"reward_account\"" ];
-  cosmos.base.v1beta1.Coin vote_amount = 3 [ (gogoproto.nullable) = false ];
+  uint32 vote_num = 3 [
+    (gogoproto.customname) = "VoteNum",
+    (gogoproto.moretags) = "yaml:\"vote_num\"",
+    (gogoproto.jsontag) = "vote_num"
+  ];
+  cosmos.base.v1beta1.Coin vote_amount = 4 [ (gogoproto.nullable) = false ];
   google.protobuf.Timestamp curated_time = 5 [
     (gogoproto.stdtime) = true,
     (gogoproto.nullable) = false,
