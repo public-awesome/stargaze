@@ -41,18 +41,24 @@ func (k Keeper) CreateUpvote(ctx sdk.Context, vendorID uint32, postID string,
 		}
 	}
 
-	// check if there is already an upvote
+	// check if there is already an upvote, and append vote num
 	upvote, found, err := k.GetUpvote(ctx, vendorID, postID, curator)
 	if err != nil {
 		return err
 	}
 	if found {
-		// TODO: add to the vote
-		// voteNum = voteNum + upvote.
+		voteNumNew := voteNum + upvote.VoteNum
+		voteAmtNew := k.voteAmount(ctx, int64(voteNumNew))
+		// every additional upvote reward goes to the same reward account
+		rewardAccount, err = sdk.AccAddressFromBech32(upvote.RewardAccount)
+		if err != nil {
+			return err
+		}
+		upvote = types.NewUpvote(curator, rewardAccount, voteNumNew, voteAmtNew, upvote.CuratedTime, ctx.BlockTime())
 	}
 
 	voteAmt := k.voteAmount(ctx, int64(voteNum))
-	upvote = types.NewUpvote(curator, rewardAccount, voteAmt, ctx.BlockTime())
+	upvote = types.NewUpvote(curator, rewardAccount, voteNum, voteAmt, ctx.BlockTime(), ctx.BlockTime())
 
 	store := ctx.KVStore(k.storeKey)
 	key := types.UpvoteKey(vendorID, postIDBz, curator)
@@ -120,17 +126,6 @@ func (k Keeper) DeleteUpvote(ctx sdk.Context, vendorID uint32, postIDBz []byte, 
 	return nil
 }
 
-// voteAmount does the quadratic voting calculation
-func (k Keeper) voteAmount(ctx sdk.Context, voteNum int64) sdk.Coin {
-	amtPerVote := k.GetParams(ctx).VoteAmount
-
-	amt := amtPerVote.Amount.
-		MulRaw(voteNum).
-		MulRaw(voteNum)
-
-	return sdk.NewCoin(amtPerVote.Denom, amt)
-}
-
 // IterateUpvotes performs a callback function for each upvoter on a post
 func (k Keeper) IterateUpvotes(
 	ctx sdk.Context, vendorID uint32, postIDBz []byte, cb func(upvote types.Upvote) (stop bool)) {
@@ -148,4 +143,15 @@ func (k Keeper) IterateUpvotes(
 			break
 		}
 	}
+}
+
+// voteAmount does the quadratic voting calculation
+func (k Keeper) voteAmount(ctx sdk.Context, voteNum int64) sdk.Coin {
+	amtPerVote := k.GetParams(ctx).VoteAmount
+
+	amt := amtPerVote.Amount.
+		MulRaw(voteNum).
+		MulRaw(voteNum)
+
+	return sdk.NewCoin(amtPerVote.Denom, amt)
 }
