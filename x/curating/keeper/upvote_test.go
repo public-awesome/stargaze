@@ -95,14 +95,20 @@ func TestCreateUpvote_ExistingUpvote(t *testing.T) {
 
 	postID := "502"
 	vendorID := uint32(1)
-	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(77_000_000))
+	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(200_000_000))
 
 	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[1], addrs[1])
 	require.NoError(t, err)
 
-	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5)
+	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 1)
 	require.NoError(t, err)
 
-	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5)
+	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 2)
 	require.NoError(t, err)
+
+	upvote, found, err := app.CuratingKeeper.GetUpvote(ctx, vendorID, postID, addrs[0])
+	require.NoError(t, err)
+	require.True(t, found, "upvote should be found")
+	require.Equal(t, int32(3), upvote.VoteNum)
+	require.Equal(t, "9000000ucredits", upvote.VoteAmount.String())
 }
