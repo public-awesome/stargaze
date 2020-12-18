@@ -31,7 +31,7 @@ func (k Keeper) CreateUpvote(
 		return err
 	}
 	if found {
-		return types.ErrAlreadyVoted
+		// TODO: add to the vote
 	}
 
 	// check if post exist, if not, create it and start the curation period

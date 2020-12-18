@@ -7,7 +7,6 @@ import (
 // x/curating module sentinel errors
 var (
 	ErrPostNotFound  = sdkerrors.Register(ModuleName, 1, "Post not found")
-	ErrAlreadyVoted  = sdkerrors.Register(ModuleName, 2, "Already voted")
-	ErrDuplicatePost = sdkerrors.Register(ModuleName, 3, "Post already exists")
-	ErrPostExpired   = sdkerrors.Register(ModuleName, 4, "Post already expired")
+	ErrDuplicatePost = sdkerrors.Register(ModuleName, 2, "Post already exists")
+	ErrPostExpired   = sdkerrors.Register(ModuleName, 3, "Post already expired")
 )
