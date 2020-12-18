@@ -111,4 +111,8 @@ func TestCreateUpvote_ExistingUpvote(t *testing.T) {
 	require.True(t, found, "upvote should be found")
 	require.Equal(t, int32(3), upvote.VoteNum)
 	require.Equal(t, "9000000ucredits", upvote.VoteAmount.String())
+
+	votingPoolAddr := app.AccountKeeper.GetModuleAddress(types.VotingPoolName)
+	votingPoolBalance := app.BankKeeper.GetBalance(ctx, votingPoolAddr, "ucredits")
+	require.Equal(t, "9000000", votingPoolBalance.Amount.String())
 }
