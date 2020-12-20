@@ -159,9 +159,3 @@ proto-check-breaking:
 	@buf check breaking --against-input '.git#branch=master'
 
 .PHONY: proto-all proto-gen proto-lint proto-check-breaking
-
-ci-sign: 
-	drone sign public-awesome/stakebird --save
-
-post: 
-	staked tx curating post 1 1 "test" --from validator --keyring-backend test --chain-id localnet-1
