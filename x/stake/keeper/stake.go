@@ -36,6 +36,8 @@ func (k Keeper) PerformStake(ctx sdk.Context, vendorID uint32, postID []byte, de
 		return err
 	}
 
+	// TODO: check if post has expired
+
 	validator, found := k.stakingKeeper.GetValidator(ctx, valAddr)
 	if !found {
 		return stakingtypes.ErrNoValidatorFound
