@@ -6,6 +6,7 @@ package types
 import (
 	context "context"
 	fmt "fmt"
+	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
 	_ "github.com/gogo/protobuf/gogoproto"
 	grpc1 "github.com/gogo/protobuf/grpc"
 	proto "github.com/gogo/protobuf/proto"
@@ -64,17 +65,54 @@ func (m *MsgStakeResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgStakeResponse proto.InternalMessageInfo
 
+type MsgUnstakeResponse struct {
+}
+
+func (m *MsgUnstakeResponse) Reset()         { *m = MsgUnstakeResponse{} }
+func (m *MsgUnstakeResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgUnstakeResponse) ProtoMessage()    {}
+func (*MsgUnstakeResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_7cbb877f750e7643, []int{1}
+}
+func (m *MsgUnstakeResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUnstakeResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUnstakeResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUnstakeResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUnstakeResponse.Merge(m, src)
+}
+func (m *MsgUnstakeResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUnstakeResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUnstakeResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUnstakeResponse proto.InternalMessageInfo
+
 type MsgStake struct {
-	VendorID  uint32 `protobuf:"varint,1,opt,name=vendor_id,json=vendorId,proto3" json:"vendor_id" yaml:"vendor_id"`
-	PostID    string `protobuf:"bytes,2,opt,name=post_id,json=postId,proto3" json:"post_id" yaml:"post_id"`
-	Delegator string `protobuf:"bytes,3,opt,name=delegator,proto3" json:"delegator,omitempty" yaml:"delegator"`
+	VendorID  uint32                                 `protobuf:"varint,1,opt,name=vendor_id,json=vendorId,proto3" json:"vendor_id" yaml:"vendor_id"`
+	PostID    string                                 `protobuf:"bytes,2,opt,name=post_id,json=postId,proto3" json:"post_id" yaml:"post_id"`
+	Delegator string                                 `protobuf:"bytes,3,opt,name=delegator,proto3" json:"delegator,omitempty" yaml:"delegator"`
+	Amount    github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,4,opt,name=amount,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"amount"`
 }
 
 func (m *MsgStake) Reset()         { *m = MsgStake{} }
 func (m *MsgStake) String() string { return proto.CompactTextString(m) }
 func (*MsgStake) ProtoMessage()    {}
 func (*MsgStake) Descriptor() ([]byte, []int) {
-	return fileDescriptor_7cbb877f750e7643, []int{1}
+	return fileDescriptor_7cbb877f750e7643, []int{2}
 }
 func (m *MsgStake) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -124,36 +162,105 @@ func (m *MsgStake) GetDelegator() string {
 	return ""
 }
 
+type MsgUnstake struct {
+	VendorID  uint32                                 `protobuf:"varint,1,opt,name=vendor_id,json=vendorId,proto3" json:"vendor_id" yaml:"vendor_id"`
+	PostID    string                                 `protobuf:"bytes,2,opt,name=post_id,json=postId,proto3" json:"post_id" yaml:"post_id"`
+	Delegator string                                 `protobuf:"bytes,3,opt,name=delegator,proto3" json:"delegator,omitempty" yaml:"delegator"`
+	Amount    github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,4,opt,name=amount,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"amount"`
+}
+
+func (m *MsgUnstake) Reset()         { *m = MsgUnstake{} }
+func (m *MsgUnstake) String() string { return proto.CompactTextString(m) }
+func (*MsgUnstake) ProtoMessage()    {}
+func (*MsgUnstake) Descriptor() ([]byte, []int) {
+	return fileDescriptor_7cbb877f750e7643, []int{3}
+}
+func (m *MsgUnstake) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUnstake) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUnstake.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUnstake) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUnstake.Merge(m, src)
+}
+func (m *MsgUnstake) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUnstake) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUnstake.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUnstake proto.InternalMessageInfo
+
+func (m *MsgUnstake) GetVendorID() uint32 {
+	if m != nil {
+		return m.VendorID
+	}
+	return 0
+}
+
+func (m *MsgUnstake) GetPostID() string {
+	if m != nil {
+		return m.PostID
+	}
+	return ""
+}
+
+func (m *MsgUnstake) GetDelegator() string {
+	if m != nil {
+		return m.Delegator
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*MsgStakeResponse)(nil), "stakebird.stake.v1beta1.MsgStakeResponse")
+	proto.RegisterType((*MsgUnstakeResponse)(nil), "stakebird.stake.v1beta1.MsgUnstakeResponse")
 	proto.RegisterType((*MsgStake)(nil), "stakebird.stake.v1beta1.MsgStake")
+	proto.RegisterType((*MsgUnstake)(nil), "stakebird.stake.v1beta1.MsgUnstake")
 }
 
 func init() { proto.RegisterFile("stakebird/stake/v1beta1/tx.proto", fileDescriptor_7cbb877f750e7643) }
 
 var fileDescriptor_7cbb877f750e7643 = []byte{
-	// 333 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x52, 0x28, 0x2e, 0x49, 0xcc,
-	0x4e, 0x4d, 0xca, 0x2c, 0x4a, 0xd1, 0x07, 0xb3, 0xf4, 0xcb, 0x0c, 0x93, 0x52, 0x4b, 0x12, 0x0d,
-	0xf5, 0x4b, 0x2a, 0xf4, 0x0a, 0x8a, 0xf2, 0x4b, 0xf2, 0x85, 0xc4, 0xe1, 0x2a, 0xf4, 0xc0, 0x2c,
-	0x3d, 0xa8, 0x0a, 0x29, 0x91, 0xf4, 0xfc, 0xf4, 0x7c, 0xb0, 0x1a, 0x7d, 0x10, 0x0b, 0xa2, 0x5c,
-	0x49, 0x88, 0x4b, 0xc0, 0xb7, 0x38, 0x3d, 0x18, 0xa4, 0x32, 0x28, 0xb5, 0xb8, 0x20, 0x3f, 0xaf,
-	0x38, 0x55, 0xe9, 0x12, 0x23, 0x17, 0x07, 0x4c, 0x50, 0xc8, 0x8b, 0x8b, 0xb3, 0x2c, 0x35, 0x2f,
-	0x25, 0xbf, 0x28, 0x3e, 0x33, 0x45, 0x82, 0x51, 0x81, 0x51, 0x83, 0xd7, 0x49, 0xf7, 0xd1, 0x3d,
-	0x79, 0x8e, 0x30, 0xb0, 0xa0, 0xa7, 0xcb, 0xab, 0x7b, 0xf2, 0x08, 0x05, 0x9f, 0xee, 0xc9, 0x0b,
-	0x54, 0x26, 0xe6, 0xe6, 0x58, 0x29, 0xc1, 0x85, 0x94, 0x82, 0x38, 0x20, 0x6c, 0xcf, 0x14, 0x21,
-	0x07, 0x2e, 0xf6, 0x82, 0xfc, 0xe2, 0x12, 0x90, 0x49, 0x4c, 0x0a, 0x8c, 0x1a, 0x9c, 0x4e, 0xea,
-	0x8f, 0xee, 0xc9, 0xb3, 0x05, 0xe4, 0x17, 0x97, 0x80, 0xcd, 0x81, 0x49, 0x7e, 0xba, 0x27, 0xcf,
-	0x07, 0x31, 0x05, 0x2a, 0xa0, 0x14, 0xc4, 0x06, 0x62, 0x79, 0xa6, 0x08, 0x19, 0x71, 0x71, 0xa6,
-	0xa4, 0xe6, 0xa4, 0xa6, 0x27, 0x96, 0xe4, 0x17, 0x49, 0x30, 0x83, 0xcd, 0x10, 0x41, 0x58, 0x0a,
-	0x97, 0x52, 0x0a, 0x42, 0x28, 0xb3, 0x62, 0x79, 0xb1, 0x40, 0x9e, 0xd1, 0x28, 0x86, 0x8b, 0xd9,
-	0xb7, 0x38, 0x5d, 0x28, 0x94, 0x8b, 0x15, 0xe2, 0x2f, 0x45, 0x3d, 0x1c, 0x01, 0xa5, 0x07, 0xf3,
-	0xba, 0x94, 0x26, 0x41, 0x25, 0xb0, 0x20, 0x73, 0xf2, 0x3e, 0xf1, 0x48, 0x8e, 0xf1, 0xc2, 0x23,
-	0x39, 0xc6, 0x07, 0x8f, 0xe4, 0x18, 0x27, 0x3c, 0x96, 0x63, 0xb8, 0xf0, 0x58, 0x8e, 0xe1, 0xc6,
-	0x63, 0x39, 0x86, 0x28, 0xc3, 0xf4, 0xcc, 0x92, 0x8c, 0xd2, 0x24, 0xbd, 0xe4, 0xfc, 0x5c, 0xfd,
-	0x82, 0xd2, 0xa4, 0x9c, 0xcc, 0x64, 0xdd, 0xc4, 0xf2, 0xd4, 0xe2, 0xfc, 0xdc, 0x54, 0x7d, 0x44,
-	0x5c, 0x56, 0x40, 0x63, 0xb3, 0xa4, 0xb2, 0x20, 0xb5, 0x38, 0x89, 0x0d, 0x1c, 0x35, 0xc6, 0x80,
-	0x00, 0x00, 0x00, 0xff, 0xff, 0x82, 0x65, 0x44, 0x8d, 0xed, 0x01, 0x00, 0x00,
+	// 422 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x93, 0xcf, 0xca, 0xd3, 0x40,
+	0x14, 0xc5, 0x33, 0xfd, 0x6a, 0xda, 0x0e, 0x28, 0x65, 0x28, 0x58, 0xba, 0xc8, 0xd4, 0x08, 0x5a,
+	0x91, 0x4e, 0x68, 0xdd, 0x75, 0x25, 0x45, 0x84, 0x28, 0x05, 0x89, 0xd4, 0x85, 0x2e, 0x24, 0x69,
+	0x86, 0x18, 0xda, 0x64, 0x42, 0x66, 0x5a, 0xdb, 0xb7, 0x70, 0x2d, 0x2e, 0x7c, 0x0d, 0xdf, 0xa0,
+	0xcb, 0x2e, 0xc5, 0x45, 0x90, 0x74, 0x23, 0x2e, 0xfb, 0x04, 0x92, 0x49, 0xd2, 0xd8, 0x85, 0x7f,
+	0x1e, 0xe0, 0x5b, 0xe5, 0x70, 0xe7, 0x77, 0x4f, 0xe0, 0x70, 0x2e, 0xec, 0x73, 0x61, 0x2f, 0xa9,
+	0xe3, 0xc7, 0xae, 0x21, 0x95, 0xb1, 0x19, 0x39, 0x54, 0xd8, 0x23, 0x43, 0x6c, 0x49, 0x14, 0x33,
+	0xc1, 0xd0, 0xed, 0x33, 0x41, 0xa4, 0x22, 0x05, 0xd1, 0xeb, 0x78, 0xcc, 0x63, 0x92, 0x31, 0x32,
+	0x95, 0xe3, 0x3a, 0x82, 0xed, 0x19, 0xf7, 0x5e, 0x66, 0xa4, 0x45, 0x79, 0xc4, 0x42, 0x4e, 0xf5,
+	0x0e, 0x44, 0x33, 0xee, 0xcd, 0x43, 0x7e, 0x31, 0xfd, 0x58, 0x83, 0xcd, 0x12, 0x45, 0xcf, 0x60,
+	0x6b, 0x43, 0x43, 0x97, 0xc5, 0x6f, 0x7d, 0xb7, 0x0b, 0xfa, 0x60, 0x70, 0x73, 0x3a, 0x4c, 0x13,
+	0xdc, 0x7c, 0x25, 0x87, 0xe6, 0x93, 0x9f, 0x09, 0xae, 0x80, 0x53, 0x82, 0xdb, 0x3b, 0x3b, 0x58,
+	0x4d, 0xf4, 0xf3, 0x48, 0xb7, 0x9a, 0xb9, 0x36, 0x5d, 0xf4, 0x18, 0x36, 0x22, 0xc6, 0x45, 0xe6,
+	0x54, 0xeb, 0x83, 0x41, 0x6b, 0x7a, 0x3f, 0x4d, 0xb0, 0xfa, 0x82, 0x71, 0x21, 0x7d, 0xca, 0xc7,
+	0x53, 0x82, 0x6f, 0xe5, 0x2e, 0xc5, 0x40, 0xb7, 0xd4, 0x4c, 0x99, 0x2e, 0x1a, 0xc3, 0x96, 0x4b,
+	0x57, 0xd4, 0xb3, 0x05, 0x8b, 0xbb, 0x57, 0xd2, 0xa3, 0x53, 0xfd, 0xf4, 0xfc, 0xa4, 0x5b, 0x15,
+	0x86, 0x9e, 0x42, 0xd5, 0x0e, 0xd8, 0x3a, 0x14, 0xdd, 0xba, 0x5c, 0x20, 0xfb, 0x04, 0x2b, 0xdf,
+	0x12, 0x7c, 0xcf, 0xf3, 0xc5, 0xbb, 0xb5, 0x43, 0x16, 0x2c, 0x30, 0x16, 0x8c, 0x07, 0x8c, 0x17,
+	0x9f, 0x21, 0x77, 0x97, 0x86, 0xd8, 0x45, 0x94, 0x13, 0x33, 0x14, 0x56, 0xb1, 0x3d, 0xa9, 0xff,
+	0xf8, 0x8c, 0x81, 0xfe, 0xa9, 0x06, 0x61, 0x95, 0xd9, 0x75, 0x3c, 0x97, 0xf1, 0x8c, 0xbf, 0x00,
+	0x78, 0x35, 0xe3, 0x1e, 0x9a, 0xc3, 0x1b, 0x79, 0x7f, 0xee, 0x90, 0x3f, 0xd4, 0x94, 0x94, 0x15,
+	0xeb, 0x3d, 0xf8, 0x27, 0x52, 0x56, 0x13, 0xbd, 0x81, 0x8d, 0x32, 0xf9, 0xbb, 0x7f, 0xdb, 0x2a,
+	0xa0, 0xde, 0xc3, 0xff, 0x80, 0x4a, 0xf3, 0xe9, 0xf3, 0x7d, 0xaa, 0x81, 0x43, 0xaa, 0x81, 0xef,
+	0xa9, 0x06, 0x3e, 0x1c, 0x35, 0xe5, 0x70, 0xd4, 0x94, 0xaf, 0x47, 0x4d, 0x79, 0x3d, 0xfa, 0x2d,
+	0x8b, 0x68, 0xed, 0xac, 0xfc, 0xc5, 0xd0, 0x7e, 0x4f, 0x39, 0x0b, 0xa8, 0x51, 0x9d, 0xe9, 0xb6,
+	0x38, 0x54, 0x19, 0x8d, 0xa3, 0xca, 0xab, 0x7b, 0xf4, 0x2b, 0x00, 0x00, 0xff, 0xff, 0x91, 0x6e,
+	0xcd, 0x2f, 0xc8, 0x03, 0x00, 0x00,
 }
 
 func (this *MsgStake) Equal(that interface{}) bool {
@@ -184,6 +291,42 @@ func (this *MsgStake) Equal(that interface{}) bool {
 	if this.Delegator != that1.Delegator {
 		return false
 	}
+	if !this.Amount.Equal(that1.Amount) {
+		return false
+	}
+	return true
+}
+func (this *MsgUnstake) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*MsgUnstake)
+	if !ok {
+		that2, ok := that.(MsgUnstake)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.VendorID != that1.VendorID {
+		return false
+	}
+	if this.PostID != that1.PostID {
+		return false
+	}
+	if this.Delegator != that1.Delegator {
+		return false
+	}
+	if !this.Amount.Equal(that1.Amount) {
+		return false
+	}
 	return true
 }
 
@@ -199,8 +342,8 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
-	// Stake defines a method for sending a stake
 	Stake(ctx context.Context, in *MsgStake, opts ...grpc.CallOption) (*MsgStakeResponse, error)
+	Unstake(ctx context.Context, in *MsgUnstake, opts ...grpc.CallOption) (*MsgUnstakeResponse, error)
 }
 
 type msgClient struct {
@@ -220,10 +363,19 @@ func (c *msgClient) Stake(ctx context.Context, in *MsgStake, opts ...grpc.CallOp
 	return out, nil
 }
 
+func (c *msgClient) Unstake(ctx context.Context, in *MsgUnstake, opts ...grpc.CallOption) (*MsgUnstakeResponse, error) {
+	out := new(MsgUnstakeResponse)
+	err := c.cc.Invoke(ctx, "/stakebird.stake.v1beta1.Msg/Unstake", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
-	// Stake defines a method for sending a stake
 	Stake(context.Context, *MsgStake) (*MsgStakeResponse, error)
+	Unstake(context.Context, *MsgUnstake) (*MsgUnstakeResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -232,6 +384,9 @@ type UnimplementedMsgServer struct {
 
 func (*UnimplementedMsgServer) Stake(ctx context.Context, req *MsgStake) (*MsgStakeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Stake not implemented")
+}
+func (*UnimplementedMsgServer) Unstake(ctx context.Context, req *MsgUnstake) (*MsgUnstakeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Unstake not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -256,6 +411,24 @@ func _Msg_Stake_Handler(srv interface{}, ctx context.Context, dec func(interface
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_Unstake_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgUnstake)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).Unstake(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/stakebird.stake.v1beta1.Msg/Unstake",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).Unstake(ctx, req.(*MsgUnstake))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "stakebird.stake.v1beta1.Msg",
 	HandlerType: (*MsgServer)(nil),
@@ -263,6 +436,10 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Stake",
 			Handler:    _Msg_Stake_Handler,
+		},
+		{
+			MethodName: "Unstake",
+			Handler:    _Msg_Unstake_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -292,6 +469,29 @@ func (m *MsgStakeResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgUnstakeResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUnstakeResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUnstakeResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func (m *MsgStake) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -312,6 +512,68 @@ func (m *MsgStake) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	{
+		size := m.Amount.Size()
+		i -= size
+		if _, err := m.Amount.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintTx(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x22
+	if len(m.Delegator) > 0 {
+		i -= len(m.Delegator)
+		copy(dAtA[i:], m.Delegator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Delegator)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.PostID) > 0 {
+		i -= len(m.PostID)
+		copy(dAtA[i:], m.PostID)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.PostID)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.VendorID != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.VendorID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgUnstake) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUnstake) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUnstake) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size := m.Amount.Size()
+		i -= size
+		if _, err := m.Amount.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintTx(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x22
 	if len(m.Delegator) > 0 {
 		i -= len(m.Delegator)
 		copy(dAtA[i:], m.Delegator)
@@ -354,6 +616,15 @@ func (m *MsgStakeResponse) Size() (n int) {
 	return n
 }
 
+func (m *MsgUnstakeResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
 func (m *MsgStake) Size() (n int) {
 	if m == nil {
 		return 0
@@ -371,6 +642,30 @@ func (m *MsgStake) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
+	l = m.Amount.Size()
+	n += 1 + l + sovTx(uint64(l))
+	return n
+}
+
+func (m *MsgUnstake) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.VendorID != 0 {
+		n += 1 + sovTx(uint64(m.VendorID))
+	}
+	l = len(m.PostID)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Delegator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = m.Amount.Size()
+	n += 1 + l + sovTx(uint64(l))
 	return n
 }
 
@@ -407,6 +702,59 @@ func (m *MsgStakeResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgStakeResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUnstakeResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUnstakeResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUnstakeResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
@@ -544,6 +892,210 @@ func (m *MsgStake) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Delegator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Amount", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.Amount.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUnstake) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUnstake: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUnstake: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field VendorID", wireType)
+			}
+			m.VendorID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.VendorID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PostID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PostID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Delegator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Delegator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Amount", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.Amount.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

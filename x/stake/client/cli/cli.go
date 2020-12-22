@@ -9,15 +9,15 @@ import (
 // GetQueryCmd returns the query commands for posts and upvotes
 func GetQueryCmd() *cobra.Command {
 	queryCmd := &cobra.Command{
-		Use:                        "curating",
-		Short:                      "Curating query subcommands",
+		Use:                        "stake",
+		Short:                      "Stake query subcommands",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 	}
 
 	queryCmd.AddCommand(
-		NewPostsQueryCmd(),
-		NewPostQueryCmd(),
+	// NewPostsQueryCmd(),
+	// NewPostQueryCmd(),
 	)
 
 	return queryCmd
@@ -26,15 +26,15 @@ func GetQueryCmd() *cobra.Command {
 // NewTxCmd returns the transaction commands for the curation module
 func NewTxCmd() *cobra.Command {
 	txCmd := &cobra.Command{
-		Use:                        "curating",
-		Short:                      "Curating transaction subcommands",
+		Use:                        "stake",
+		Short:                      "Stake transaction subcommands",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
 
 	txCmd.AddCommand(
-		NewPostTxCmd(),
+	// NewPostTxCmd(),
 	)
 
 	return txCmd

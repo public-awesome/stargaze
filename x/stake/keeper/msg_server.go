@@ -39,3 +39,7 @@ func (k msgServer) Stake(goCtx context.Context, msg *types.MsgStake) (*types.Msg
 	})
 	return &types.MsgStakeResponse{}, nil
 }
+
+func (k msgServer) Unstake(goCtx context.Context, msg *types.MsgUnstake) (*types.MsgUnstakeResponse, error) {
+	return &types.MsgUnstakeResponse{}, nil
+}

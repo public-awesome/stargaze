@@ -6,7 +6,6 @@ import (
 
 // x/curating module sentinel errors
 var (
-	ErrPostNotFound  = sdkerrors.Register(ModuleName, 1, "Post not found")
-	ErrDuplicatePost = sdkerrors.Register(ModuleName, 3, "Post already exists")
-	ErrPostExpired   = sdkerrors.Register(ModuleName, 4, "Post already expired")
+	ErrStaketNotFound = sdkerrors.Register(ModuleName, 1, "Stake not found")
+	ErrAmountTooLarge = sdkerrors.Register(ModuleName, 1, "Unstake amount too large")
 )
