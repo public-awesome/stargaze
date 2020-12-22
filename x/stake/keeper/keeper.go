@@ -24,11 +24,6 @@ type Keeper struct {
 func NewKeeper(cdc codec.BinaryMarshaler, key sdk.StoreKey, ck types.CurationKeeper, sk types.StakingKeeper,
 	ps paramtypes.Subspace) Keeper {
 
-	// set KeyTable if it has not already been set
-	if !ps.HasKeyTable() {
-		ps = ps.WithKeyTable(ParamKeyTable())
-	}
-
 	keeper := Keeper{
 		storeKey:       key,
 		cdc:            cdc,

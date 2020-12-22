@@ -95,19 +95,20 @@ func (k Keeper) PerformUnstake(ctx sdk.Context, vendorID uint32, postID []byte, 
 	if amount.GT(stake.Amount) {
 		return types.ErrAmountTooLarge
 	}
-	if amount.Equal(stake.Amount) {
-		k.deleteStake(ctx, vendorID, postID, delAddr)
-	}
 
 	_, err = k.stakingKeeper.Undelegate(ctx, delAddr, valAddr, amount.ToDec())
 	if err != nil {
 		return err
 	}
 
-	store := ctx.KVStore(k.storeKey)
-	key := types.StakeKey(vendorID, postID, delAddr)
-	value := k.MustMarshalStake(types.NewStake(valAddr, stake.Amount.Sub(amount)))
-	store.Set(key, value)
+	if amount.Equal(stake.Amount) {
+		k.deleteStake(ctx, vendorID, postID, delAddr)
+	} else {
+		store := ctx.KVStore(k.storeKey)
+		key := types.StakeKey(vendorID, postID, delAddr)
+		value := k.MustMarshalStake(types.NewStake(valAddr, stake.Amount.Sub(amount)))
+		store.Set(key, value)
+	}
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(

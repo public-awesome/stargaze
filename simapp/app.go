@@ -92,6 +92,10 @@ import (
 	"github.com/public-awesome/stakebird/x/user"
 	userkeeper "github.com/public-awesome/stakebird/x/user/keeper"
 	usertypes "github.com/public-awesome/stakebird/x/user/types"
+
+	"github.com/public-awesome/stakebird/x/stake"
+	stakekeeper "github.com/public-awesome/stakebird/x/stake/keeper"
+	staketypes "github.com/public-awesome/stakebird/x/stake/types"
 )
 
 const appName = "SimApp"
@@ -129,6 +133,7 @@ var (
 		// Stakebird Modules
 		curating.AppModuleBasic{},
 		user.AppModuleBasic{},
+		stake.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -192,6 +197,7 @@ type SimApp struct {
 	// Stakebird Keepers
 	CuratingKeeper curatingkeeper.Keeper
 	UserKeeper     userkeeper.Keeper
+	StakeKeeper    stakekeeper.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
@@ -239,6 +245,7 @@ func NewSimApp(
 		// Stakebird Stores
 		curatingtypes.StoreKey,
 		usertypes.StoreKey,
+		staketypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -341,6 +348,9 @@ func NewSimApp(
 	app.UserKeeper = userkeeper.NewKeeper(
 		appCodec, keys[curatingtypes.StoreKey], app.AccountKeeper, app.BankKeeper, app.GetSubspace(usertypes.ModuleName))
 
+	app.StakeKeeper = stakekeeper.NewKeeper(
+		appCodec, keys[staketypes.StoreKey], app.CuratingKeeper, app.StakingKeeper, app.GetSubspace(staketypes.ModuleName))
+
 	/****  Module Options ****/
 
 	// NOTE: we may consider parsing `appOpts` inside module constructors. For the moment
@@ -373,6 +383,7 @@ func NewSimApp(
 		// StakebirdModules
 		curating.NewAppModule(appCodec, app.CuratingKeeper, app.AccountKeeper, app.BankKeeper),
 		user.NewAppModule(appCodec, app.UserKeeper),
+		stake.NewAppModule(appCodec, app.StakeKeeper, app.CuratingKeeper, app.StakingKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -637,6 +648,7 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler,
 	// Stakebird Modules
 	paramsKeeper.Subspace(curatingtypes.ModuleName)
 	paramsKeeper.Subspace(usertypes.ModuleName)
+	paramsKeeper.Subspace(staketypes.ModuleName)
 
 	return paramsKeeper
 }

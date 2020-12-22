@@ -1,25 +1,36 @@
 package stake_test
 
-// func TestHandleMsgStake(t *testing.T) {
-// 	app := simapp.Setup(false)
-// 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
+import (
+	"testing"
 
-// 	addrs := simapp.AddTestAddrsIncremental(app, ctx, 1, sdk.NewInt(10_000_000))
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/public-awesome/stakebird/simapp"
+	"github.com/public-awesome/stakebird/x/stake"
+	"github.com/public-awesome/stakebird/x/stake/types"
+	"github.com/stretchr/testify/assert"
+	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+)
 
-// 	handler := stake.NewHandler(app.StakeKeeper)
-// 	msg := types.NewMsgStake(1, "123", addrs[0], sdk.NewInt(1_000_000))
-// 	_, err := handler(ctx, msg)
-// 	assert.NoError(t, err)
-// }
+func TestHandleMsgStake(t *testing.T) {
+	app := simapp.Setup(false)
+	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
-// func TestHandleMsgUnstake(t *testing.T) {
-// 	app := simapp.Setup(false)
-// 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
+	addrs := simapp.AddTestAddrsIncremental(app, ctx, 1, sdk.NewInt(10_000_000))
 
-// 	addrs = simapp.AddTestAddrsIncremental(app, ctx, 1, sdk.NewInt(10_000_000))
+	handler := stake.NewHandler(app.StakeKeeper)
+	msg := types.NewMsgStake(1, "123", addrs[0], sdk.NewInt(1_000_000))
+	_, err := handler(ctx, msg)
+	assert.NoError(t, err)
+}
 
-// 	handler := curating.NewHandler(app.CuratingKeeper)
-// 	msgUpvote := types.NewMsgUpvote(1, "123", addrs[0], nil, 1)
-// 	_, err := handler(ctx, msgUpvote)
-// 	assert.NoError(t, err)
-// }
+func TestHandleMsgUnstake(t *testing.T) {
+	app := simapp.Setup(false)
+	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
+
+	addrs := simapp.AddTestAddrsIncremental(app, ctx, 1, sdk.NewInt(10_000_000))
+
+	handler := stake.NewHandler(app.StakeKeeper)
+	msg := types.NewMsgUnstake(1, "123", addrs[0], sdk.NewInt(1_000_000))
+	_, err := handler(ctx, msg)
+	assert.NoError(t, err)
+}
