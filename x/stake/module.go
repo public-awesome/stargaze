@@ -93,17 +93,19 @@ type AppModule struct {
 
 	keeper keeper.Keeper
 
-	accountKeeper types.AccountKeeper
-	bankKeeper    types.BankKeeper
+	curatingKeeper types.CurationKeeper
+	stakingKeeper  types.StakingKeeper
 }
 
 // NewAppModule creates a new AppModule object
-func NewAppModule(cdc codec.Marshaler, keeper keeper.Keeper, ak types.AccountKeeper, bk types.BankKeeper) AppModule {
+func NewAppModule(cdc codec.Marshaler, keeper keeper.Keeper, ck types.CurationKeeper,
+	sk types.StakingKeeper) AppModule {
+
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{cdc: cdc},
 		keeper:         keeper,
-		accountKeeper:  ak,
-		bankKeeper:     bk,
+		curatingKeeper: ck,
+		stakingKeeper:  sk,
 	}
 }
 
