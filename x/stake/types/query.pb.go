@@ -29,102 +29,22 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-type QueryParamsRequest struct {
-}
-
-func (m *QueryParamsRequest) Reset()         { *m = QueryParamsRequest{} }
-func (m *QueryParamsRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryParamsRequest) ProtoMessage()    {}
-func (*QueryParamsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_73aa3fbf99f6d05f, []int{0}
-}
-func (m *QueryParamsRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryParamsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryParamsRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryParamsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryParamsRequest.Merge(m, src)
-}
-func (m *QueryParamsRequest) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryParamsRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryParamsRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryParamsRequest proto.InternalMessageInfo
-
-type QueryParamsResponse struct {
-	Params Params `protobuf:"bytes,1,opt,name=params,proto3" json:"params"`
-}
-
-func (m *QueryParamsResponse) Reset()         { *m = QueryParamsResponse{} }
-func (m *QueryParamsResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryParamsResponse) ProtoMessage()    {}
-func (*QueryParamsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_73aa3fbf99f6d05f, []int{1}
-}
-func (m *QueryParamsResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryParamsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryParamsResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryParamsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryParamsResponse.Merge(m, src)
-}
-func (m *QueryParamsResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryParamsResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryParamsResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryParamsResponse proto.InternalMessageInfo
-
-func (m *QueryParamsResponse) GetParams() Params {
-	if m != nil {
-		return m.Params
-	}
-	return Params{}
-}
-
-type QueryPostsRequest struct {
+type QueryStakesRequest struct {
 	VendorId uint32 `protobuf:"varint,1,opt,name=vendor_id,json=vendorId,proto3" json:"vendor_id,omitempty"`
 }
 
-func (m *QueryPostsRequest) Reset()         { *m = QueryPostsRequest{} }
-func (m *QueryPostsRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryPostsRequest) ProtoMessage()    {}
-func (*QueryPostsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_73aa3fbf99f6d05f, []int{2}
+func (m *QueryStakesRequest) Reset()         { *m = QueryStakesRequest{} }
+func (m *QueryStakesRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryStakesRequest) ProtoMessage()    {}
+func (*QueryStakesRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_73aa3fbf99f6d05f, []int{0}
 }
-func (m *QueryPostsRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryStakesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryPostsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryStakesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryPostsRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryStakesRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -134,35 +54,35 @@ func (m *QueryPostsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return b[:n], nil
 	}
 }
-func (m *QueryPostsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryPostsRequest.Merge(m, src)
+func (m *QueryStakesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryStakesRequest.Merge(m, src)
 }
-func (m *QueryPostsRequest) XXX_Size() int {
+func (m *QueryStakesRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryPostsRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryPostsRequest.DiscardUnknown(m)
+func (m *QueryStakesRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryStakesRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryPostsRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryStakesRequest proto.InternalMessageInfo
 
-type QueryPostRequest struct {
+type QueryStakeRequest struct {
 	VendorId uint32 `protobuf:"varint,1,opt,name=vendor_id,json=vendorId,proto3" json:"vendor_id,omitempty"`
 	PostId   string `protobuf:"bytes,2,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
 }
 
-func (m *QueryPostRequest) Reset()         { *m = QueryPostRequest{} }
-func (m *QueryPostRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryPostRequest) ProtoMessage()    {}
-func (*QueryPostRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_73aa3fbf99f6d05f, []int{3}
+func (m *QueryStakeRequest) Reset()         { *m = QueryStakeRequest{} }
+func (m *QueryStakeRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryStakeRequest) ProtoMessage()    {}
+func (*QueryStakeRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_73aa3fbf99f6d05f, []int{1}
 }
-func (m *QueryPostRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryStakeRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryPostRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryStakeRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryPostRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryStakeRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -172,34 +92,34 @@ func (m *QueryPostRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, er
 		return b[:n], nil
 	}
 }
-func (m *QueryPostRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryPostRequest.Merge(m, src)
+func (m *QueryStakeRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryStakeRequest.Merge(m, src)
 }
-func (m *QueryPostRequest) XXX_Size() int {
+func (m *QueryStakeRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryPostRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryPostRequest.DiscardUnknown(m)
+func (m *QueryStakeRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryStakeRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryPostRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryStakeRequest proto.InternalMessageInfo
 
-type QueryPostsResponse struct {
-	Posts []Post `protobuf:"bytes,1,rep,name=posts,proto3" json:"posts"`
+type QueryStakesResponse struct {
+	Stakes []Stake `protobuf:"bytes,1,rep,name=stakes,proto3" json:"stakes"`
 }
 
-func (m *QueryPostsResponse) Reset()         { *m = QueryPostsResponse{} }
-func (m *QueryPostsResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryPostsResponse) ProtoMessage()    {}
-func (*QueryPostsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_73aa3fbf99f6d05f, []int{4}
+func (m *QueryStakesResponse) Reset()         { *m = QueryStakesResponse{} }
+func (m *QueryStakesResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryStakesResponse) ProtoMessage()    {}
+func (*QueryStakesResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_73aa3fbf99f6d05f, []int{2}
 }
-func (m *QueryPostsResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryStakesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryPostsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryStakesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryPostsResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryStakesResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -209,41 +129,41 @@ func (m *QueryPostsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, 
 		return b[:n], nil
 	}
 }
-func (m *QueryPostsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryPostsResponse.Merge(m, src)
+func (m *QueryStakesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryStakesResponse.Merge(m, src)
 }
-func (m *QueryPostsResponse) XXX_Size() int {
+func (m *QueryStakesResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryPostsResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryPostsResponse.DiscardUnknown(m)
+func (m *QueryStakesResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryStakesResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryPostsResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryStakesResponse proto.InternalMessageInfo
 
-func (m *QueryPostsResponse) GetPosts() []Post {
+func (m *QueryStakesResponse) GetStakes() []Stake {
 	if m != nil {
-		return m.Posts
+		return m.Stakes
 	}
 	return nil
 }
 
-type QueryPostResponse struct {
-	Post *Post `protobuf:"bytes,1,opt,name=post,proto3" json:"post,omitempty"`
+type QueryStakeResponse struct {
+	Stake *Stake `protobuf:"bytes,1,opt,name=stake,proto3" json:"stake,omitempty"`
 }
 
-func (m *QueryPostResponse) Reset()         { *m = QueryPostResponse{} }
-func (m *QueryPostResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryPostResponse) ProtoMessage()    {}
-func (*QueryPostResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_73aa3fbf99f6d05f, []int{5}
+func (m *QueryStakeResponse) Reset()         { *m = QueryStakeResponse{} }
+func (m *QueryStakeResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryStakeResponse) ProtoMessage()    {}
+func (*QueryStakeResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_73aa3fbf99f6d05f, []int{3}
 }
-func (m *QueryPostResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryStakeResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryPostResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryStakeResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryPostResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryStakeResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -253,32 +173,30 @@ func (m *QueryPostResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return b[:n], nil
 	}
 }
-func (m *QueryPostResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryPostResponse.Merge(m, src)
+func (m *QueryStakeResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryStakeResponse.Merge(m, src)
 }
-func (m *QueryPostResponse) XXX_Size() int {
+func (m *QueryStakeResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryPostResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryPostResponse.DiscardUnknown(m)
+func (m *QueryStakeResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryStakeResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryPostResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryStakeResponse proto.InternalMessageInfo
 
-func (m *QueryPostResponse) GetPost() *Post {
+func (m *QueryStakeResponse) GetStake() *Stake {
 	if m != nil {
-		return m.Post
+		return m.Stake
 	}
 	return nil
 }
 
 func init() {
-	proto.RegisterType((*QueryParamsRequest)(nil), "stakebird.stake.v1beta1.QueryParamsRequest")
-	proto.RegisterType((*QueryParamsResponse)(nil), "stakebird.stake.v1beta1.QueryParamsResponse")
-	proto.RegisterType((*QueryPostsRequest)(nil), "stakebird.stake.v1beta1.QueryPostsRequest")
-	proto.RegisterType((*QueryPostRequest)(nil), "stakebird.stake.v1beta1.QueryPostRequest")
-	proto.RegisterType((*QueryPostsResponse)(nil), "stakebird.stake.v1beta1.QueryPostsResponse")
-	proto.RegisterType((*QueryPostResponse)(nil), "stakebird.stake.v1beta1.QueryPostResponse")
+	proto.RegisterType((*QueryStakesRequest)(nil), "stakebird.stake.v1beta1.QueryStakesRequest")
+	proto.RegisterType((*QueryStakeRequest)(nil), "stakebird.stake.v1beta1.QueryStakeRequest")
+	proto.RegisterType((*QueryStakesResponse)(nil), "stakebird.stake.v1beta1.QueryStakesResponse")
+	proto.RegisterType((*QueryStakeResponse)(nil), "stakebird.stake.v1beta1.QueryStakeResponse")
 }
 
 func init() {
@@ -286,37 +204,31 @@ func init() {
 }
 
 var fileDescriptor_73aa3fbf99f6d05f = []byte{
-	// 480 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x53, 0xcf, 0x6b, 0xd4, 0x40,
-	0x18, 0xcd, 0xb4, 0xbb, 0xb1, 0x9d, 0x22, 0xe8, 0x58, 0xa8, 0x44, 0x4d, 0x6a, 0x3c, 0xb8, 0x6e,
-	0x6b, 0x86, 0x44, 0x11, 0x2c, 0x7a, 0xe9, 0x41, 0x10, 0x0f, 0x6a, 0xf0, 0xe4, 0x45, 0x26, 0xcd,
-	0x10, 0x83, 0xdd, 0x4c, 0x9a, 0x99, 0x54, 0x4b, 0xe9, 0xc5, 0x93, 0x07, 0x0f, 0x82, 0xde, 0xbc,
-	0xf4, 0xcf, 0x29, 0x78, 0x29, 0x78, 0xf1, 0x24, 0xb2, 0xeb, 0xc1, 0x3f, 0x43, 0xe6, 0xc7, 0x86,
-	0x2d, 0x12, 0x37, 0xb7, 0xc9, 0x7c, 0xef, 0xbd, 0xef, 0xbd, 0xef, 0x9b, 0xc0, 0x1b, 0x5c, 0x90,
-	0x37, 0x34, 0xc9, 0xab, 0x14, 0xab, 0x13, 0xde, 0x0f, 0x13, 0x2a, 0x48, 0x88, 0xf7, 0x6a, 0x5a,
-	0x1d, 0x04, 0x65, 0xc5, 0x04, 0x43, 0x6b, 0x0d, 0x28, 0x50, 0xa7, 0xc0, 0x80, 0x9c, 0xd5, 0x8c,
-	0x65, 0x4c, 0x61, 0xb0, 0x3c, 0x69, 0xb8, 0xd3, 0xaa, 0xa9, 0xc9, 0x1a, 0x74, 0x35, 0x63, 0x2c,
-	0xdb, 0xa5, 0x98, 0x94, 0x39, 0x26, 0x45, 0xc1, 0x04, 0x11, 0x39, 0x2b, 0xb8, 0xae, 0xfa, 0xab,
-	0x10, 0x3d, 0x97, 0x06, 0x9e, 0x91, 0x8a, 0x8c, 0x78, 0x4c, 0xf7, 0x6a, 0xca, 0x85, 0xff, 0x02,
-	0x5e, 0x3a, 0x73, 0xcb, 0x4b, 0x56, 0x70, 0x8a, 0x1e, 0x42, 0xbb, 0x54, 0x37, 0x97, 0xc1, 0x3a,
-	0x18, 0xac, 0x44, 0x5e, 0xd0, 0xe2, 0x37, 0xd0, 0xc4, 0xed, 0xde, 0xc9, 0x4f, 0xcf, 0x8a, 0x0d,
-	0xc9, 0xdf, 0x82, 0x17, 0xb5, 0x2a, 0xe3, 0x62, 0xda, 0x0a, 0x5d, 0x81, 0xcb, 0xfb, 0xb4, 0x48,
-	0x59, 0xf5, 0x2a, 0x4f, 0x95, 0xec, 0xf9, 0x78, 0x49, 0x5f, 0x3c, 0x4e, 0xb7, 0x96, 0x3e, 0x1c,
-	0x7b, 0xd6, 0x9f, 0x63, 0xcf, 0xf2, 0x63, 0x78, 0xa1, 0xe1, 0x76, 0xa1, 0xa2, 0x35, 0x78, 0xae,
-	0x64, 0x5c, 0xc8, 0xd2, 0xc2, 0x3a, 0x18, 0x2c, 0xc7, 0xb6, 0xfc, 0x3c, 0xa3, 0xf9, 0x74, 0x9a,
-	0x5d, 0xfb, 0x31, 0x21, 0xef, 0xc3, 0xbe, 0x44, 0xca, 0x8c, 0x8b, 0x83, 0x95, 0xe8, 0x5a, 0x7b,
-	0x46, 0xc6, 0x85, 0x49, 0xa8, 0x19, 0xfe, 0xa3, 0x99, 0x80, 0x8d, 0x5e, 0x08, 0x7b, 0xb2, 0x6a,
-	0x46, 0xf6, 0x7f, 0xb9, 0x58, 0x41, 0xa3, 0x6f, 0x8b, 0xb0, 0xaf, 0x84, 0xd0, 0x47, 0x00, 0x6d,
-	0x3d, 0x4b, 0xb4, 0xd1, 0xca, 0xfc, 0x77, 0x81, 0xce, 0x66, 0x37, 0xb0, 0xb6, 0xe8, 0xdf, 0x7c,
-	0xff, 0xfd, 0xf7, 0xe7, 0x85, 0xeb, 0xc8, 0xc3, 0x6d, 0x0f, 0x4a, 0x6f, 0x10, 0x7d, 0x01, 0xb0,
-	0xaf, 0xa6, 0x85, 0x86, 0x73, 0x1a, 0xcc, 0xac, 0xd8, 0xd9, 0xe8, 0x84, 0x35, 0x5e, 0x22, 0xe5,
-	0x65, 0x13, 0x0d, 0xdb, 0xbd, 0x48, 0x3c, 0x3e, 0x6c, 0x56, 0x7f, 0x84, 0xbe, 0x02, 0xd8, 0x93,
-	0x2a, 0xe8, 0xd6, 0xfc, 0x4e, 0x53, 0x53, 0xc3, 0x2e, 0x50, 0xe3, 0xe9, 0x81, 0xf2, 0x74, 0x0f,
-	0xdd, 0xed, 0xee, 0x09, 0x1f, 0x9a, 0xd7, 0x77, 0xb4, 0xfd, 0xe4, 0x64, 0xec, 0x82, 0xd3, 0xb1,
-	0x0b, 0x7e, 0x8d, 0x5d, 0xf0, 0x69, 0xe2, 0x5a, 0xa7, 0x13, 0xd7, 0xfa, 0x31, 0x71, 0xad, 0x97,
-	0x61, 0x96, 0x8b, 0xd7, 0x75, 0x12, 0xec, 0xb0, 0x11, 0x2e, 0xeb, 0x64, 0x37, 0xdf, 0xb9, 0x4d,
-	0xde, 0x52, 0xce, 0x46, 0x74, 0xa6, 0xd1, 0x3b, 0xd3, 0x4a, 0x1c, 0x94, 0x94, 0x27, 0xb6, 0xfa,
-	0x6d, 0xef, 0xfc, 0x0d, 0x00, 0x00, 0xff, 0xff, 0xe9, 0x5c, 0x9f, 0x0a, 0x4f, 0x04, 0x00, 0x00,
+	// 379 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x52, 0x2e, 0x2e, 0x49, 0xcc,
+	0x4e, 0x4d, 0xca, 0x2c, 0x4a, 0xd1, 0x07, 0xb3, 0xf4, 0xcb, 0x0c, 0x93, 0x52, 0x4b, 0x12, 0x0d,
+	0xf5, 0x0b, 0x4b, 0x53, 0x8b, 0x2a, 0xf5, 0x0a, 0x8a, 0xf2, 0x4b, 0xf2, 0x85, 0xc4, 0xe1, 0x8a,
+	0xf4, 0xc0, 0x2c, 0x3d, 0xa8, 0x22, 0x29, 0x91, 0xf4, 0xfc, 0xf4, 0x7c, 0xb0, 0x1a, 0x7d, 0x10,
+	0x0b, 0xa2, 0x5c, 0x0a, 0xa7, 0x99, 0x10, 0xcd, 0x10, 0x45, 0x32, 0xe9, 0xf9, 0xf9, 0xe9, 0x39,
+	0xa9, 0xfa, 0x89, 0x05, 0x99, 0xfa, 0x89, 0x79, 0x79, 0xf9, 0x25, 0x89, 0x25, 0x99, 0xf9, 0x79,
+	0xc5, 0x10, 0x59, 0x25, 0x6b, 0x2e, 0xa1, 0x40, 0x90, 0x03, 0x82, 0x41, 0x3a, 0x8a, 0x83, 0x52,
+	0x0b, 0x4b, 0x53, 0x8b, 0x4b, 0x84, 0xa4, 0xb9, 0x38, 0xcb, 0x52, 0xf3, 0x52, 0xf2, 0x8b, 0xe2,
+	0x33, 0x53, 0x24, 0x18, 0x15, 0x18, 0x35, 0x78, 0x83, 0x38, 0x20, 0x02, 0x9e, 0x29, 0x56, 0x1c,
+	0x1d, 0x0b, 0xe4, 0x19, 0x5e, 0x2c, 0x90, 0x67, 0x50, 0x0a, 0xe6, 0x12, 0x44, 0x68, 0x26, 0x46,
+	0xaf, 0x90, 0x38, 0x17, 0x7b, 0x41, 0x7e, 0x71, 0x09, 0x48, 0x8a, 0x49, 0x81, 0x51, 0x83, 0x33,
+	0x88, 0x0d, 0xc4, 0x45, 0x33, 0x54, 0x18, 0xc5, 0x45, 0xc5, 0x05, 0xf9, 0x79, 0xc5, 0xa9, 0x42,
+	0x36, 0x5c, 0x6c, 0x60, 0x5f, 0x15, 0x4b, 0x30, 0x2a, 0x30, 0x6b, 0x70, 0x1b, 0xc9, 0xe9, 0xe1,
+	0x08, 0x2b, 0x3d, 0xb0, 0x46, 0x27, 0x96, 0x13, 0xf7, 0xe4, 0x19, 0x82, 0xa0, 0x7a, 0x94, 0xbc,
+	0x90, 0xbd, 0x09, 0x37, 0xd3, 0x84, 0x8b, 0x15, 0x2c, 0x0f, 0x76, 0x26, 0x41, 0x23, 0x83, 0x20,
+	0x8a, 0x8d, 0x56, 0x32, 0x72, 0xb1, 0x82, 0x0d, 0x13, 0x9a, 0xcf, 0xc8, 0xc5, 0x0a, 0x96, 0x12,
+	0xd2, 0xc2, 0xa9, 0x15, 0x23, 0x80, 0xa4, 0xb4, 0x89, 0x52, 0x0b, 0x71, 0xa2, 0x92, 0x6d, 0xd3,
+	0xe5, 0x27, 0x93, 0x99, 0xcc, 0x85, 0x4c, 0xf5, 0xf1, 0xc6, 0x75, 0xb1, 0x7e, 0x35, 0x3c, 0xd0,
+	0x6b, 0xf5, 0xab, 0xa1, 0x61, 0x5c, 0xeb, 0xe4, 0x7d, 0xe2, 0x91, 0x1c, 0xe3, 0x85, 0x47, 0x72,
+	0x8c, 0x0f, 0x1e, 0xc9, 0x31, 0x4e, 0x78, 0x2c, 0xc7, 0x70, 0xe1, 0xb1, 0x1c, 0xc3, 0x8d, 0xc7,
+	0x72, 0x0c, 0x51, 0x86, 0xe9, 0x99, 0x25, 0x19, 0xa5, 0x49, 0x7a, 0xc9, 0xf9, 0xb9, 0xfa, 0x05,
+	0xa5, 0x49, 0x39, 0x99, 0xc9, 0xba, 0x89, 0xe5, 0xa9, 0xc5, 0xf9, 0xb9, 0xa9, 0x48, 0x36, 0x55,
+	0x40, 0xed, 0x2a, 0xa9, 0x2c, 0x48, 0x2d, 0x4e, 0x62, 0x03, 0x27, 0x19, 0x63, 0x40, 0x00, 0x00,
+	0x00, 0xff, 0xff, 0xc2, 0x19, 0x06, 0xb4, 0xcb, 0x02, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -331,9 +243,7 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type QueryClient interface {
-	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
-	Posts(ctx context.Context, in *QueryPostsRequest, opts ...grpc.CallOption) (*QueryPostsResponse, error)
-	Post(ctx context.Context, in *QueryPostRequest, opts ...grpc.CallOption) (*QueryPostResponse, error)
+	Stake(ctx context.Context, in *QueryStakeRequest, opts ...grpc.CallOption) (*QueryStakeResponse, error)
 }
 
 type queryClient struct {
@@ -344,27 +254,9 @@ func NewQueryClient(cc grpc1.ClientConn) QueryClient {
 	return &queryClient{cc}
 }
 
-func (c *queryClient) Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error) {
-	out := new(QueryParamsResponse)
-	err := c.cc.Invoke(ctx, "/stakebird.stake.v1beta1.Query/Params", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *queryClient) Posts(ctx context.Context, in *QueryPostsRequest, opts ...grpc.CallOption) (*QueryPostsResponse, error) {
-	out := new(QueryPostsResponse)
-	err := c.cc.Invoke(ctx, "/stakebird.stake.v1beta1.Query/Posts", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *queryClient) Post(ctx context.Context, in *QueryPostRequest, opts ...grpc.CallOption) (*QueryPostResponse, error) {
-	out := new(QueryPostResponse)
-	err := c.cc.Invoke(ctx, "/stakebird.stake.v1beta1.Query/Post", in, out, opts...)
+func (c *queryClient) Stake(ctx context.Context, in *QueryStakeRequest, opts ...grpc.CallOption) (*QueryStakeResponse, error) {
+	out := new(QueryStakeResponse)
+	err := c.cc.Invoke(ctx, "/stakebird.stake.v1beta1.Query/Stake", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -373,79 +265,35 @@ func (c *queryClient) Post(ctx context.Context, in *QueryPostRequest, opts ...gr
 
 // QueryServer is the server API for Query service.
 type QueryServer interface {
-	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
-	Posts(context.Context, *QueryPostsRequest) (*QueryPostsResponse, error)
-	Post(context.Context, *QueryPostRequest) (*QueryPostResponse, error)
+	Stake(context.Context, *QueryStakeRequest) (*QueryStakeResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
 type UnimplementedQueryServer struct {
 }
 
-func (*UnimplementedQueryServer) Params(ctx context.Context, req *QueryParamsRequest) (*QueryParamsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Params not implemented")
-}
-func (*UnimplementedQueryServer) Posts(ctx context.Context, req *QueryPostsRequest) (*QueryPostsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Posts not implemented")
-}
-func (*UnimplementedQueryServer) Post(ctx context.Context, req *QueryPostRequest) (*QueryPostResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Post not implemented")
+func (*UnimplementedQueryServer) Stake(ctx context.Context, req *QueryStakeRequest) (*QueryStakeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Stake not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
 	s.RegisterService(&_Query_serviceDesc, srv)
 }
 
-func _Query_Params_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryParamsRequest)
+func _Query_Stake_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryStakeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).Params(ctx, in)
+		return srv.(QueryServer).Stake(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/stakebird.stake.v1beta1.Query/Params",
+		FullMethod: "/stakebird.stake.v1beta1.Query/Stake",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).Params(ctx, req.(*QueryParamsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Query_Posts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryPostsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QueryServer).Posts(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/stakebird.stake.v1beta1.Query/Posts",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).Posts(ctx, req.(*QueryPostsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Query_Post_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryPostRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QueryServer).Post(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/stakebird.stake.v1beta1.Query/Post",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).Post(ctx, req.(*QueryPostRequest))
+		return srv.(QueryServer).Stake(ctx, req.(*QueryStakeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -455,23 +303,15 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*QueryServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Params",
-			Handler:    _Query_Params_Handler,
-		},
-		{
-			MethodName: "Posts",
-			Handler:    _Query_Posts_Handler,
-		},
-		{
-			MethodName: "Post",
-			Handler:    _Query_Post_Handler,
+			MethodName: "Stake",
+			Handler:    _Query_Stake_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "stakebird/stake/v1beta1/query.proto",
 }
 
-func (m *QueryParamsRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryStakesRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -481,68 +321,12 @@ func (m *QueryParamsRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryParamsRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryStakesRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryParamsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryParamsResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryParamsResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryParamsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	{
-		size, err := m.Params.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
-		}
-		i -= size
-		i = encodeVarintQuery(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0xa
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryPostsRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryPostsRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryPostsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryStakesRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -555,7 +339,7 @@ func (m *QueryPostsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryPostRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryStakeRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -565,12 +349,12 @@ func (m *QueryPostRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryPostRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryStakeRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryPostRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryStakeRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -590,7 +374,7 @@ func (m *QueryPostRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryPostsResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryStakesResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -600,20 +384,20 @@ func (m *QueryPostsResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryPostsResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryStakesResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryPostsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryStakesResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Posts) > 0 {
-		for iNdEx := len(m.Posts) - 1; iNdEx >= 0; iNdEx-- {
+	if len(m.Stakes) > 0 {
+		for iNdEx := len(m.Stakes) - 1; iNdEx >= 0; iNdEx-- {
 			{
-				size, err := m.Posts[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				size, err := m.Stakes[iNdEx].MarshalToSizedBuffer(dAtA[:i])
 				if err != nil {
 					return 0, err
 				}
@@ -627,7 +411,7 @@ func (m *QueryPostsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryPostResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryStakeResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -637,19 +421,19 @@ func (m *QueryPostResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryPostResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryStakeResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryPostResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryStakeResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Post != nil {
+	if m.Stake != nil {
 		{
-			size, err := m.Post.MarshalToSizedBuffer(dAtA[:i])
+			size, err := m.Stake.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
@@ -673,27 +457,7 @@ func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *QueryParamsRequest) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	return n
-}
-
-func (m *QueryParamsResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = m.Params.Size()
-	n += 1 + l + sovQuery(uint64(l))
-	return n
-}
-
-func (m *QueryPostsRequest) Size() (n int) {
+func (m *QueryStakesRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -705,7 +469,7 @@ func (m *QueryPostsRequest) Size() (n int) {
 	return n
 }
 
-func (m *QueryPostRequest) Size() (n int) {
+func (m *QueryStakeRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -721,14 +485,14 @@ func (m *QueryPostRequest) Size() (n int) {
 	return n
 }
 
-func (m *QueryPostsResponse) Size() (n int) {
+func (m *QueryStakesResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if len(m.Posts) > 0 {
-		for _, e := range m.Posts {
+	if len(m.Stakes) > 0 {
+		for _, e := range m.Stakes {
 			l = e.Size()
 			n += 1 + l + sovQuery(uint64(l))
 		}
@@ -736,14 +500,14 @@ func (m *QueryPostsResponse) Size() (n int) {
 	return n
 }
 
-func (m *QueryPostResponse) Size() (n int) {
+func (m *QueryStakeResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if m.Post != nil {
-		l = m.Post.Size()
+	if m.Stake != nil {
+		l = m.Stake.Size()
 		n += 1 + l + sovQuery(uint64(l))
 	}
 	return n
@@ -755,7 +519,7 @@ func sovQuery(x uint64) (n int) {
 func sozQuery(x uint64) (n int) {
 	return sovQuery(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *QueryParamsRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryStakesRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -778,149 +542,10 @@ func (m *QueryParamsRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryParamsRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryStakesRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryParamsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryParamsResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryParamsResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryParamsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Params", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.Params.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryPostsRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryPostsRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryPostsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryStakesRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -966,7 +591,7 @@ func (m *QueryPostsRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryPostRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryStakeRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -989,10 +614,10 @@ func (m *QueryPostRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryPostRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryStakeRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryPostRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryStakeRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1070,7 +695,7 @@ func (m *QueryPostRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryPostsResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryStakesResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1093,15 +718,15 @@ func (m *QueryPostsResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryPostsResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryStakesResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryPostsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryStakesResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Posts", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Stakes", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -1128,8 +753,8 @@ func (m *QueryPostsResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Posts = append(m.Posts, Post{})
-			if err := m.Posts[len(m.Posts)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			m.Stakes = append(m.Stakes, Stake{})
+			if err := m.Stakes[len(m.Stakes)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -1157,7 +782,7 @@ func (m *QueryPostsResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryPostResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryStakeResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1180,15 +805,15 @@ func (m *QueryPostResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryPostResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryStakeResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryPostResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryStakeResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Post", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Stake", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -1215,10 +840,10 @@ func (m *QueryPostResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.Post == nil {
-				m.Post = &Post{}
+			if m.Stake == nil {
+				m.Stake = &Stake{}
 			}
-			if err := m.Post.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.Stake.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

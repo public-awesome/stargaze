@@ -9,36 +9,21 @@ option go_package = "github.com/public-awesome/stakebird/x/stake/types";
 
 // Query defines the gRPC querier service.
 service Query {
-  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/stakebird/stake/v1beta1/params";
-  }
-
-  rpc Posts(QueryPostsRequest) returns (QueryPostsResponse) {
+  rpc Stake(QueryStakeRequest) returns (QueryStakeResponse) {
     option (google.api.http).get =
-        "/stakebird/stake/v1beta1/posts/{vendor_id}";
-  }
-
-  rpc Post(QueryPostRequest) returns (QueryPostResponse) {
-    option (google.api.http).get =
-        "/stakebird/stake/v1beta1/posts/{vendor_id}/{post_id}";
+        "/stakebird/stake/v1beta1/stakes/{vendor_id}/{post_id}";
   }
 
 }
 
-message QueryParamsRequest {}
-
-message QueryParamsResponse {
-  Params params = 1 [ (gogoproto.nullable) = false ];
-}
-
-message QueryPostsRequest {
+message QueryStakesRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
   uint32 vendor_id = 1;
 }
 
-message QueryPostRequest {
+message QueryStakeRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
@@ -46,8 +31,8 @@ message QueryPostRequest {
   string post_id = 2;
 }
 
-message QueryPostsResponse { 
-  repeated stakebird.stake.v1beta1.Post posts = 1 [(gogoproto.nullable) = false]; 
+message QueryStakesResponse { 
+  repeated stakebird.stake.v1beta1.Stake stakes = 1 [(gogoproto.nullable) = false]; 
 }
 
-message QueryPostResponse { stakebird.stake.v1beta1.Post post = 1; }
+message QueryStakeResponse { stakebird.stake.v1beta1.Stake stake = 1; }
