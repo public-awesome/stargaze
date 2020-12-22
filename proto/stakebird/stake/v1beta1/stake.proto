@@ -7,26 +7,8 @@ option go_package = "github.com/public-awesome/stakebird/x/stake/types";
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 
-message Post {
-  uint32 vendor_id = 1 [
-    (gogoproto.customname) = "VendorID",
-    (gogoproto.moretags) = "yaml:\"vendor_id\"",
-    (gogoproto.jsontag) = "vendor_id"
-  ];
-  bytes post_id = 2 [
-    (gogoproto.customname) = "PostID",
-    (gogoproto.moretags) = "yaml:\"post_id\"",
-    (gogoproto.jsontag) = "post_id"
-  ];
-  string creator = 3 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
-  string reward_account = 4
-      [ (gogoproto.moretags) = "yaml:\"reward_account\"" ];
-  bytes body_hash = 5 [ (gogoproto.moretags) = "yaml:\"body_hash\"" ];
-  google.protobuf.Timestamp stake_end_time = 7 [
-    (gogoproto.stdtime) = true,
-    (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"stake_end_time\""
-  ];
+message Stake {
+  string validator = 1 [ (gogoproto.moretags) = "yaml:\"validator\"" ];
 }
 
 message Params {

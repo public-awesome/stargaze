@@ -3,6 +3,7 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	curatingtypes "github.com/public-awesome/stakebird/x/curating/types"
 )
 
 /*
@@ -35,4 +36,9 @@ type BankKeeper interface {
 	SendCoinsFromModuleToModule(ctx sdk.Context, senderModule string, recipientModule string, amt sdk.Coins) error
 	SendCoinsFromModuleToAccount(ctx sdk.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error
 	SendCoinsFromAccountToModule(ctx sdk.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error
+}
+
+// CurationKeeper defines the expected interface for the curation module
+type CurationKeeper interface {
+	GetPost(ctx sdk.Context, vendorID uint32, postID string) (post curatingtypes.Post, found bool, err error)
 }
