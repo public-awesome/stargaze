@@ -19,23 +19,23 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 
 func (k msgServer) Stake(goCtx context.Context, msg *types.MsgStake) (*types.MsgStakeResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return nil, err
-	}
+	// creator, err := sdk.AccAddressFromBech32(msg.Delegator)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	err = k.CreatePost(
-		ctx, msg.VendorID, msg.PostID, msg.Body, creator, rewardAccount)
-	if err != nil {
-		return nil, err
-	}
+	// err = k.CreatePost(
+	// 	ctx, msg.VendorID, msg.PostID, msg.Body, creator, rewardAccount)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Delegator),
 		),
 	})
-	return &types.MsgPostResponse{}, nil
+	return &types.MsgStakeResponse{}, nil
 }

@@ -28,21 +28,21 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-type MsgPostResponse struct {
+type MsgStakeResponse struct {
 }
 
-func (m *MsgPostResponse) Reset()         { *m = MsgPostResponse{} }
-func (m *MsgPostResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgPostResponse) ProtoMessage()    {}
-func (*MsgPostResponse) Descriptor() ([]byte, []int) {
+func (m *MsgStakeResponse) Reset()         { *m = MsgStakeResponse{} }
+func (m *MsgStakeResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgStakeResponse) ProtoMessage()    {}
+func (*MsgStakeResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_7cbb877f750e7643, []int{0}
 }
-func (m *MsgPostResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgStakeResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgPostResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgStakeResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgPostResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgStakeResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -52,38 +52,36 @@ func (m *MsgPostResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, err
 		return b[:n], nil
 	}
 }
-func (m *MsgPostResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgPostResponse.Merge(m, src)
+func (m *MsgStakeResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgStakeResponse.Merge(m, src)
 }
-func (m *MsgPostResponse) XXX_Size() int {
+func (m *MsgStakeResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgPostResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgPostResponse.DiscardUnknown(m)
+func (m *MsgStakeResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgStakeResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgPostResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgStakeResponse proto.InternalMessageInfo
 
-type MsgPost struct {
-	VendorID      uint32 `protobuf:"varint,1,opt,name=vendor_id,json=vendorId,proto3" json:"vendor_id" yaml:"vendor_id"`
-	PostID        string `protobuf:"bytes,2,opt,name=post_id,json=postId,proto3" json:"post_id" yaml:"post_id"`
-	Creator       string `protobuf:"bytes,3,opt,name=creator,proto3" json:"creator,omitempty" yaml:"creator"`
-	RewardAccount string `protobuf:"bytes,4,opt,name=reward_account,json=rewardAccount,proto3" json:"reward_account,omitempty" yaml:"reward_account"`
-	Body          string `protobuf:"bytes,5,opt,name=body,proto3" json:"body,omitempty" yaml:"body"`
+type MsgStake struct {
+	VendorID  uint32 `protobuf:"varint,1,opt,name=vendor_id,json=vendorId,proto3" json:"vendor_id" yaml:"vendor_id"`
+	PostID    string `protobuf:"bytes,2,opt,name=post_id,json=postId,proto3" json:"post_id" yaml:"post_id"`
+	Delegator string `protobuf:"bytes,3,opt,name=delegator,proto3" json:"delegator,omitempty" yaml:"delegator"`
 }
 
-func (m *MsgPost) Reset()         { *m = MsgPost{} }
-func (m *MsgPost) String() string { return proto.CompactTextString(m) }
-func (*MsgPost) ProtoMessage()    {}
-func (*MsgPost) Descriptor() ([]byte, []int) {
+func (m *MsgStake) Reset()         { *m = MsgStake{} }
+func (m *MsgStake) String() string { return proto.CompactTextString(m) }
+func (*MsgStake) ProtoMessage()    {}
+func (*MsgStake) Descriptor() ([]byte, []int) {
 	return fileDescriptor_7cbb877f750e7643, []int{1}
 }
-func (m *MsgPost) XXX_Unmarshal(b []byte) error {
+func (m *MsgStake) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgPost) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgStake) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgPost.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgStake.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -93,97 +91,79 @@ func (m *MsgPost) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return b[:n], nil
 	}
 }
-func (m *MsgPost) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgPost.Merge(m, src)
+func (m *MsgStake) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgStake.Merge(m, src)
 }
-func (m *MsgPost) XXX_Size() int {
+func (m *MsgStake) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgPost) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgPost.DiscardUnknown(m)
+func (m *MsgStake) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgStake.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgPost proto.InternalMessageInfo
+var xxx_messageInfo_MsgStake proto.InternalMessageInfo
 
-func (m *MsgPost) GetVendorID() uint32 {
+func (m *MsgStake) GetVendorID() uint32 {
 	if m != nil {
 		return m.VendorID
 	}
 	return 0
 }
 
-func (m *MsgPost) GetPostID() string {
+func (m *MsgStake) GetPostID() string {
 	if m != nil {
 		return m.PostID
 	}
 	return ""
 }
 
-func (m *MsgPost) GetCreator() string {
+func (m *MsgStake) GetDelegator() string {
 	if m != nil {
-		return m.Creator
-	}
-	return ""
-}
-
-func (m *MsgPost) GetRewardAccount() string {
-	if m != nil {
-		return m.RewardAccount
-	}
-	return ""
-}
-
-func (m *MsgPost) GetBody() string {
-	if m != nil {
-		return m.Body
+		return m.Delegator
 	}
 	return ""
 }
 
 func init() {
-	proto.RegisterType((*MsgPostResponse)(nil), "stakebird.stake.v1beta1.MsgPostResponse")
-	proto.RegisterType((*MsgPost)(nil), "stakebird.stake.v1beta1.MsgPost")
+	proto.RegisterType((*MsgStakeResponse)(nil), "stakebird.stake.v1beta1.MsgStakeResponse")
+	proto.RegisterType((*MsgStake)(nil), "stakebird.stake.v1beta1.MsgStake")
 }
 
 func init() { proto.RegisterFile("stakebird/stake/v1beta1/tx.proto", fileDescriptor_7cbb877f750e7643) }
 
 var fileDescriptor_7cbb877f750e7643 = []byte{
-	// 392 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x92, 0xbb, 0x6e, 0xe2, 0x40,
-	0x18, 0x85, 0x31, 0x78, 0xb9, 0xcc, 0x0a, 0xd8, 0x1d, 0xed, 0x6a, 0xbd, 0x14, 0x1e, 0x6b, 0xb6,
-	0x58, 0x8a, 0x60, 0x8b, 0xa4, 0xa3, 0x22, 0x28, 0x0d, 0x89, 0x90, 0x22, 0x17, 0x91, 0x92, 0x06,
-	0xf9, 0x32, 0x72, 0xac, 0x00, 0x63, 0x79, 0x86, 0xdb, 0x5b, 0xe4, 0x11, 0xf2, 0x0c, 0x79, 0x8a,
-	0x94, 0x94, 0xa9, 0xac, 0xc8, 0x34, 0x51, 0x4a, 0x3f, 0x41, 0xe4, 0xb1, 0x01, 0xa5, 0x88, 0xd2,
-	0x1d, 0x9f, 0xff, 0x3b, 0xc7, 0xd2, 0xfc, 0x3f, 0xd0, 0x18, 0xb7, 0xee, 0x88, 0xed, 0x87, 0xae,
-	0x21, 0x94, 0xb1, 0xe8, 0xda, 0x84, 0x5b, 0x5d, 0x83, 0xaf, 0xf4, 0x20, 0xa4, 0x9c, 0xc2, 0x3f,
-	0x7b, 0x42, 0x17, 0x4a, 0xcf, 0x89, 0xd6, 0x2f, 0x8f, 0x7a, 0x54, 0x30, 0x46, 0xaa, 0x32, 0x1c,
-	0xff, 0x04, 0xcd, 0x11, 0xf3, 0x2e, 0x29, 0xe3, 0x26, 0x61, 0x01, 0x9d, 0x31, 0x82, 0x1f, 0x8b,
-	0xa0, 0x92, 0x7b, 0xf0, 0x1c, 0xd4, 0x16, 0x64, 0xe6, 0xd2, 0x70, 0xec, 0xbb, 0x8a, 0xa4, 0x49,
-	0xed, 0xfa, 0xa0, 0x13, 0x47, 0xa8, 0x7a, 0x25, 0xcc, 0xe1, 0xd9, 0x5b, 0x84, 0x0e, 0x40, 0x12,
-	0xa1, 0x1f, 0x6b, 0x6b, 0x3a, 0xe9, 0xe1, 0xbd, 0x85, 0xcd, 0x6a, 0xa6, 0x87, 0x2e, 0xec, 0x83,
-	0x4a, 0x40, 0x19, 0x4f, 0x9b, 0x8a, 0x9a, 0xd4, 0xae, 0x0d, 0xfe, 0xc7, 0x11, 0x2a, 0xa7, 0xbf,
-	0x11, 0x3d, 0xbb, 0x61, 0x12, 0xa1, 0x46, 0xd6, 0x92, 0x1b, 0xd8, 0x2c, 0xa7, 0x6a, 0xe8, 0xc2,
-	0x23, 0x50, 0x71, 0x42, 0x62, 0x71, 0x1a, 0x2a, 0x25, 0xd1, 0x00, 0x0f, 0x70, 0x3e, 0xc0, 0xe6,
-	0x0e, 0x81, 0x7d, 0xd0, 0x08, 0xc9, 0xd2, 0x0a, 0xdd, 0xb1, 0xe5, 0x38, 0x74, 0x3e, 0xe3, 0x8a,
-	0x2c, 0x42, 0x7f, 0x93, 0x08, 0xfd, 0xce, 0x42, 0x1f, 0xe7, 0xd8, 0xac, 0x67, 0xc6, 0x69, 0xf6,
-	0x0d, 0xff, 0x01, 0xd9, 0xa6, 0xee, 0x5a, 0xf9, 0x26, 0x72, 0xcd, 0x24, 0x42, 0xdf, 0xb3, 0x5c,
-	0xea, 0x62, 0x53, 0x0c, 0x7b, 0xf2, 0xeb, 0x03, 0x92, 0x8e, 0xaf, 0x41, 0x69, 0xc4, 0x3c, 0x68,
-	0x02, 0x59, 0xbc, 0x9b, 0xa6, 0x7f, 0xb2, 0x06, 0x3d, 0x7f, 0xd9, 0x56, 0xfb, 0x2b, 0x62, 0xb7,
-	0x8f, 0xc1, 0xc5, 0x53, 0xac, 0x4a, 0x9b, 0x58, 0x95, 0x5e, 0x62, 0x55, 0xba, 0xdf, 0xaa, 0x85,
-	0xcd, 0x56, 0x2d, 0x3c, 0x6f, 0xd5, 0xc2, 0x4d, 0xd7, 0xf3, 0xf9, 0xed, 0xdc, 0xd6, 0x1d, 0x3a,
-	0x35, 0x82, 0xb9, 0x3d, 0xf1, 0x9d, 0x8e, 0xb5, 0x24, 0x8c, 0x4e, 0x89, 0x71, 0xb8, 0x93, 0x55,
-	0x7e, 0x29, 0x7c, 0x1d, 0x10, 0x66, 0x97, 0xc5, 0xda, 0x4f, 0xde, 0x03, 0x00, 0x00, 0xff, 0xff,
-	0x7b, 0xab, 0xc3, 0x82, 0x49, 0x02, 0x00, 0x00,
+	// 333 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x52, 0x28, 0x2e, 0x49, 0xcc,
+	0x4e, 0x4d, 0xca, 0x2c, 0x4a, 0xd1, 0x07, 0xb3, 0xf4, 0xcb, 0x0c, 0x93, 0x52, 0x4b, 0x12, 0x0d,
+	0xf5, 0x4b, 0x2a, 0xf4, 0x0a, 0x8a, 0xf2, 0x4b, 0xf2, 0x85, 0xc4, 0xe1, 0x2a, 0xf4, 0xc0, 0x2c,
+	0x3d, 0xa8, 0x0a, 0x29, 0x91, 0xf4, 0xfc, 0xf4, 0x7c, 0xb0, 0x1a, 0x7d, 0x10, 0x0b, 0xa2, 0x5c,
+	0x49, 0x88, 0x4b, 0xc0, 0xb7, 0x38, 0x3d, 0x18, 0xa4, 0x32, 0x28, 0xb5, 0xb8, 0x20, 0x3f, 0xaf,
+	0x38, 0x55, 0xe9, 0x12, 0x23, 0x17, 0x07, 0x4c, 0x50, 0xc8, 0x8b, 0x8b, 0xb3, 0x2c, 0x35, 0x2f,
+	0x25, 0xbf, 0x28, 0x3e, 0x33, 0x45, 0x82, 0x51, 0x81, 0x51, 0x83, 0xd7, 0x49, 0xf7, 0xd1, 0x3d,
+	0x79, 0x8e, 0x30, 0xb0, 0xa0, 0xa7, 0xcb, 0xab, 0x7b, 0xf2, 0x08, 0x05, 0x9f, 0xee, 0xc9, 0x0b,
+	0x54, 0x26, 0xe6, 0xe6, 0x58, 0x29, 0xc1, 0x85, 0x94, 0x82, 0x38, 0x20, 0x6c, 0xcf, 0x14, 0x21,
+	0x07, 0x2e, 0xf6, 0x82, 0xfc, 0xe2, 0x12, 0x90, 0x49, 0x4c, 0x0a, 0x8c, 0x1a, 0x9c, 0x4e, 0xea,
+	0x8f, 0xee, 0xc9, 0xb3, 0x05, 0xe4, 0x17, 0x97, 0x80, 0xcd, 0x81, 0x49, 0x7e, 0xba, 0x27, 0xcf,
+	0x07, 0x31, 0x05, 0x2a, 0xa0, 0x14, 0xc4, 0x06, 0x62, 0x79, 0xa6, 0x08, 0x19, 0x71, 0x71, 0xa6,
+	0xa4, 0xe6, 0xa4, 0xa6, 0x27, 0x96, 0xe4, 0x17, 0x49, 0x30, 0x83, 0xcd, 0x10, 0x41, 0x58, 0x0a,
+	0x97, 0x52, 0x0a, 0x42, 0x28, 0xb3, 0x62, 0x79, 0xb1, 0x40, 0x9e, 0xd1, 0x28, 0x86, 0x8b, 0xd9,
+	0xb7, 0x38, 0x5d, 0x28, 0x94, 0x8b, 0x15, 0xe2, 0x2f, 0x45, 0x3d, 0x1c, 0x01, 0xa5, 0x07, 0xf3,
+	0xba, 0x94, 0x26, 0x41, 0x25, 0xb0, 0x20, 0x73, 0xf2, 0x3e, 0xf1, 0x48, 0x8e, 0xf1, 0xc2, 0x23,
+	0x39, 0xc6, 0x07, 0x8f, 0xe4, 0x18, 0x27, 0x3c, 0x96, 0x63, 0xb8, 0xf0, 0x58, 0x8e, 0xe1, 0xc6,
+	0x63, 0x39, 0x86, 0x28, 0xc3, 0xf4, 0xcc, 0x92, 0x8c, 0xd2, 0x24, 0xbd, 0xe4, 0xfc, 0x5c, 0xfd,
+	0x82, 0xd2, 0xa4, 0x9c, 0xcc, 0x64, 0xdd, 0xc4, 0xf2, 0xd4, 0xe2, 0xfc, 0xdc, 0x54, 0x7d, 0x44,
+	0x5c, 0x56, 0x40, 0x63, 0xb3, 0xa4, 0xb2, 0x20, 0xb5, 0x38, 0x89, 0x0d, 0x1c, 0x35, 0xc6, 0x80,
+	0x00, 0x00, 0x00, 0xff, 0xff, 0x82, 0x65, 0x44, 0x8d, 0xed, 0x01, 0x00, 0x00,
 }
 
-func (this *MsgPost) Equal(that interface{}) bool {
+func (this *MsgStake) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
 	}
 
-	that1, ok := that.(*MsgPost)
+	that1, ok := that.(*MsgStake)
 	if !ok {
-		that2, ok := that.(MsgPost)
+		that2, ok := that.(MsgStake)
 		if ok {
 			that1 = &that2
 		} else {
@@ -201,13 +181,7 @@ func (this *MsgPost) Equal(that interface{}) bool {
 	if this.PostID != that1.PostID {
 		return false
 	}
-	if this.Creator != that1.Creator {
-		return false
-	}
-	if this.RewardAccount != that1.RewardAccount {
-		return false
-	}
-	if this.Body != that1.Body {
+	if this.Delegator != that1.Delegator {
 		return false
 	}
 	return true
@@ -225,8 +199,8 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
-	// Post defines a method for sending a post
-	Post(ctx context.Context, in *MsgPost, opts ...grpc.CallOption) (*MsgPostResponse, error)
+	// Stake defines a method for sending a stake
+	Stake(ctx context.Context, in *MsgStake, opts ...grpc.CallOption) (*MsgStakeResponse, error)
 }
 
 type msgClient struct {
@@ -237,9 +211,9 @@ func NewMsgClient(cc grpc1.ClientConn) MsgClient {
 	return &msgClient{cc}
 }
 
-func (c *msgClient) Post(ctx context.Context, in *MsgPost, opts ...grpc.CallOption) (*MsgPostResponse, error) {
-	out := new(MsgPostResponse)
-	err := c.cc.Invoke(ctx, "/stakebird.stake.v1beta1.Msg/Post", in, out, opts...)
+func (c *msgClient) Stake(ctx context.Context, in *MsgStake, opts ...grpc.CallOption) (*MsgStakeResponse, error) {
+	out := new(MsgStakeResponse)
+	err := c.cc.Invoke(ctx, "/stakebird.stake.v1beta1.Msg/Stake", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -248,36 +222,36 @@ func (c *msgClient) Post(ctx context.Context, in *MsgPost, opts ...grpc.CallOpti
 
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
-	// Post defines a method for sending a post
-	Post(context.Context, *MsgPost) (*MsgPostResponse, error)
+	// Stake defines a method for sending a stake
+	Stake(context.Context, *MsgStake) (*MsgStakeResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
 type UnimplementedMsgServer struct {
 }
 
-func (*UnimplementedMsgServer) Post(ctx context.Context, req *MsgPost) (*MsgPostResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Post not implemented")
+func (*UnimplementedMsgServer) Stake(ctx context.Context, req *MsgStake) (*MsgStakeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Stake not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
 	s.RegisterService(&_Msg_serviceDesc, srv)
 }
 
-func _Msg_Post_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgPost)
+func _Msg_Stake_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgStake)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).Post(ctx, in)
+		return srv.(MsgServer).Stake(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/stakebird.stake.v1beta1.Msg/Post",
+		FullMethod: "/stakebird.stake.v1beta1.Msg/Stake",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).Post(ctx, req.(*MsgPost))
+		return srv.(MsgServer).Stake(ctx, req.(*MsgStake))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -287,15 +261,15 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*MsgServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Post",
-			Handler:    _Msg_Post_Handler,
+			MethodName: "Stake",
+			Handler:    _Msg_Stake_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "stakebird/stake/v1beta1/tx.proto",
 }
 
-func (m *MsgPostResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgStakeResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -305,12 +279,12 @@ func (m *MsgPostResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgPostResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgStakeResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgPostResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgStakeResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -318,7 +292,7 @@ func (m *MsgPostResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgPost) Marshal() (dAtA []byte, err error) {
+func (m *MsgStake) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -328,34 +302,20 @@ func (m *MsgPost) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgPost) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgStake) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgPost) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgStake) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Body) > 0 {
-		i -= len(m.Body)
-		copy(dAtA[i:], m.Body)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Body)))
-		i--
-		dAtA[i] = 0x2a
-	}
-	if len(m.RewardAccount) > 0 {
-		i -= len(m.RewardAccount)
-		copy(dAtA[i:], m.RewardAccount)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.RewardAccount)))
-		i--
-		dAtA[i] = 0x22
-	}
-	if len(m.Creator) > 0 {
-		i -= len(m.Creator)
-		copy(dAtA[i:], m.Creator)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+	if len(m.Delegator) > 0 {
+		i -= len(m.Delegator)
+		copy(dAtA[i:], m.Delegator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Delegator)))
 		i--
 		dAtA[i] = 0x1a
 	}
@@ -385,7 +345,7 @@ func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *MsgPostResponse) Size() (n int) {
+func (m *MsgStakeResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -394,7 +354,7 @@ func (m *MsgPostResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgPost) Size() (n int) {
+func (m *MsgStake) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -407,15 +367,7 @@ func (m *MsgPost) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
-	l = len(m.Creator)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	l = len(m.RewardAccount)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	l = len(m.Body)
+	l = len(m.Delegator)
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
@@ -428,7 +380,7 @@ func sovTx(x uint64) (n int) {
 func sozTx(x uint64) (n int) {
 	return sovTx(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *MsgPostResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgStakeResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -451,10 +403,10 @@ func (m *MsgPostResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgPostResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgStakeResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgPostResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgStakeResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
@@ -481,7 +433,7 @@ func (m *MsgPostResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgPost) Unmarshal(dAtA []byte) error {
+func (m *MsgStake) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -504,10 +456,10 @@ func (m *MsgPost) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgPost: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgStake: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgPost: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgStake: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -563,7 +515,7 @@ func (m *MsgPost) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Delegator", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -591,71 +543,7 @@ func (m *MsgPost) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Creator = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field RewardAccount", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.RewardAccount = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Body", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Body = string(dAtA[iNdEx:postIndex])
+			m.Delegator = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

@@ -2,6 +2,8 @@ package types
 
 import (
 	"encoding/binary"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 const (
@@ -24,9 +26,9 @@ var (
 )
 
 // StakeKey is the key used to store a stake
-func StakeKey(vendorID uint32, postIDBz []byte) []byte {
+func StakeKey(vendorID uint32, postID []byte, delegator sdk.AccAddress) []byte {
 	vendorIDBz := uint32ToBigEndian(vendorID)
-	return append(KeyPrefixStake, append(vendorIDBz, postIDBz...)...)
+	return append(KeyPrefixStake, append(append(vendorIDBz, postID...), delegator.Bytes()...)...)
 }
 
 // Uint32ToBigEndian - marshals uint32 to a bigendian byte slice so it can be sorted

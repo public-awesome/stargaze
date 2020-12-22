@@ -8,11 +8,24 @@ import (
 	"github.com/public-awesome/stakebird/x/stake/types"
 )
 
+// GetStake returns an existing stake from storage
+func (k Keeper) GetStake(ctx sdk.Context, vendorID uint32, postID []byte, delAddr sdk.AccAddress) (stake types.Stake, found bool, err error) {
+	store := ctx.KVStore(k.storeKey)
+	key := types.StakeKey(vendorID, postID, delAddr)
+	value := store.Get(key)
+	if value == nil {
+		return stake, false, nil
+	}
+	k.MustUnmarshalStake(value, &stake)
+
+	return stake, true, nil
+}
+
 // CreateStake delegates an amount to a validator and associates a post
-func (k Keeper) CreateStake(ctx sdk.Context, vendorID uint32, postID string, delAddr sdk.AccAddress,
+func (k Keeper) CreateStake(ctx sdk.Context, vendorID uint32, postID []byte, delAddr sdk.AccAddress,
 	valAddr sdk.ValAddress, amount sdk.Int) error {
 
-	_, found, err := k.curationKeeper.GetPost(ctx, vendorID, postID)
+	_, found, err := k.curatingKeeper.GetPostZ(ctx, vendorID, postID)
 	if !found {
 		return types.ErrPostNotFound
 	}
@@ -25,41 +38,31 @@ func (k Keeper) CreateStake(ctx sdk.Context, vendorID uint32, postID string, del
 		return stakingtypes.ErrNoValidatorFound
 	}
 
-	_, err := k.stakingKeeper.Delegate(ctx, delAddr, amount, stakingtypes.Unbonded, validator, true)
+	_, err = k.stakingKeeper.Delegate(ctx, delAddr, amount, stakingtypes.Unbonded, validator, true)
 	if err != nil {
 		return err
 	}
 
-	// Stake := types.NewStake(vendorID, StakeIDBz, bodyHash, creator, rewardAccount, curationEndTime)
-	// store := ctx.KVStore(k.storeKey)
-	// key := types.StakeKey(vendorID, StakeIDBz)
-	// value := k.MustMarshalStake(Stake)
-	// store.Set(key, value)
+	store := ctx.KVStore(k.storeKey)
+	stake, found, err := k.GetStake(ctx, vendorID, postID, delAddr)
+	key := types.StakeKey(vendorID, postID, delAddr)
+	amt := amount
+	if found {
+		amt = stake.Amount.Add(amount)
+	}
+	value := k.MustMarshalStake(types.NewStake(valAddr, amt))
+	store.Set(key, value)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypePost,
+			types.EventTypeStake,
 			sdk.NewAttribute(types.AttributeKeyVendorID, fmt.Sprintf("%d", vendorID)),
-			sdk.NewAttribute(types.AttributeKeyPostID, postID),
+			// sdk.NewAttribute(types.AttributeKeyPostID, postID),
 			sdk.NewAttribute(types.AttributeKeyDelegator, delAddr.String()),
 			sdk.NewAttribute(types.AttributeKeyValidator, valAddr.String()),
-			sdk.NewAttribute(types.AttributeKeyStakeAmount, amount.String()),
+			sdk.NewAttribute(types.AttributeKeyAmount, amount.String()),
 		),
 	})
 
 	return nil
 }
-
-// DeleteStake removes a Stake
-// func (k Keeper) DeleteStake(ctx sdk.Context, vendorID uint32, StakeIDBz []byte) error {
-// 	err := k.validateVendorID(ctx, vendorID)
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	store := ctx.KVStore(k.storeKey)
-// 	key := types.StakeKey(vendorID, StakeIDBz)
-
-// 	store.Delete(key)
-// 	return nil
-// }

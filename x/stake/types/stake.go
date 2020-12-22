@@ -5,7 +5,7 @@ import (
 )
 
 // NewStake allocates and returns a new `Stake` struct
-func NewStake(validator sdk.ValAddress, amount sdk.Coin) Stake {
+func NewStake(validator sdk.ValAddress, amount sdk.Int) Stake {
 
 	return Stake{
 		Validator: validator.String(),

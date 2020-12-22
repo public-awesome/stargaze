@@ -1,8 +1,11 @@
 package types
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	curatingtypes "github.com/public-awesome/stakebird/x/curating/types"
 )
 
@@ -41,4 +44,13 @@ type BankKeeper interface {
 // CurationKeeper defines the expected interface for the curation module
 type CurationKeeper interface {
 	GetPost(ctx sdk.Context, vendorID uint32, postID string) (post curatingtypes.Post, found bool, err error)
+	GetPostZ(ctx sdk.Context, vendorID uint32, postIDBz []byte) (post curatingtypes.Post, found bool, err error)
+}
+
+// StakingKeeper expected staking keeper
+type StakingKeeper interface {
+	GetValidator(ctx sdk.Context, addr sdk.ValAddress) (validator stakingtypes.Validator, found bool)
+	Delegate(ctx sdk.Context, delAddr sdk.AccAddress, bondAmt sdk.Int, tokenSrc stakingtypes.BondStatus,
+		validator stakingtypes.Validator, subtractAccount bool) (newShares sdk.Dec, err error)
+	Undelegate(ctx sdk.Context, delAddr sdk.AccAddress, valAddr sdk.ValAddress, sharesAmount sdk.Dec) (time.Time, error)
 }

@@ -2,10 +2,9 @@ package types
 
 // query endpoints
 const (
-	QueryPost   = "post"
-	QueryUpvote = "upvote"
+	QueryStake = "stake"
 )
 
-func NewQueryPostRequest(vendorID uint32, postID string) *QueryPostRequest {
-	return &QueryPostRequest{VendorId: vendorID, PostId: postID}
+func NewQueryStakeRequest(vendorID uint32, postID string) *QueryStakeRequest {
+	return &QueryStakeRequest{VendorId: vendorID, PostId: postID}
 }

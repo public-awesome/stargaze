@@ -8,13 +8,13 @@ import "gogoproto/gogo.proto";
 
 // Msg defines the stake Msg service.
 service Msg {
-  // Post defines a method for sending a post
-  rpc Post(MsgPost) returns (MsgPostResponse);
+  // Stake defines a method for sending a stake
+  rpc Stake(MsgStake) returns (MsgStakeResponse);
 }
-message MsgPostResponse{}
+message MsgStakeResponse{}
 
 
-message MsgPost {
+message MsgStake {
   option (gogoproto.equal) = true;
 
   uint32 vendor_id = 1 [
@@ -27,8 +27,5 @@ message MsgPost {
     (gogoproto.moretags) = "yaml:\"post_id\"",
     (gogoproto.jsontag) = "post_id"
   ];
-  string creator = 3 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
-  string reward_account = 4
-      [ (gogoproto.moretags) = "yaml:\"reward_account\"" ];
-  string body = 5 [ (gogoproto.moretags) = "yaml:\"body\"" ];
+  string delegator = 3 [ (gogoproto.moretags) = "yaml:\"delegator\"" ];
 }

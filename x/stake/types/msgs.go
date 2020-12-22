@@ -9,40 +9,38 @@ import (
 
 // Implements the interface of `sdk.Msg`
 // verify interface at compile time
-var _ sdk.Msg = &MsgPost{}
+var _ sdk.Msg = &MsgStake{}
 
 // msg types
 const (
-	TypeMsgPost   = "curating_post"
+	TypeMsgStake  = "curating_post"
 	TypeMsgUpvote = "curating_upvote"
 )
 
-// NewMsgPost creates a new MsgPost instance
-func NewMsgPost(
+// NewMsgStake creates a new MsgStake instance
+func NewMsgStake(
 	vendorID uint32,
 	postID string,
 	creator,
 	rewardAccount sdk.AccAddress,
 	body string,
-) *MsgPost {
-	return &MsgPost{
-		VendorID:      vendorID,
-		PostID:        postID,
-		Creator:       creator.String(),
-		RewardAccount: rewardAccount.String(),
-		Body:          body,
+) *MsgStake {
+	return &MsgStake{
+		VendorID:  vendorID,
+		PostID:    postID,
+		Delegator: creator.String(),
 	}
 }
 
 // Route implements sdk.Msg
-func (msg MsgPost) Route() string { return RouterKey }
+func (msg MsgStake) Route() string { return RouterKey }
 
 // Type implements sdk.Msg
-func (msg MsgPost) Type() string { return TypeMsgPost }
+func (msg MsgStake) Type() string { return TypeMsgStake }
 
 // GetSigners implements sdk.Msg
-func (msg MsgPost) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+func (msg MsgStake) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Delegator)
 	if err != nil {
 		panic(err)
 	}
@@ -50,17 +48,14 @@ func (msg MsgPost) GetSigners() []sdk.AccAddress {
 }
 
 // GetSignBytes gets the bytes for the message signer to sign on
-func (msg MsgPost) GetSignBytes() []byte {
+func (msg MsgStake) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
 }
 
 // ValidateBasic validity check for the AnteHandler
-func (msg MsgPost) ValidateBasic() error {
-	if msg.Body == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty body")
-	}
-	if strings.TrimSpace(msg.Creator) == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty creator")
+func (msg MsgStake) ValidateBasic() error {
+	if strings.TrimSpace(msg.Delegator) == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty delegator")
 	}
 	if strings.TrimSpace(msg.PostID) == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty post_id")
