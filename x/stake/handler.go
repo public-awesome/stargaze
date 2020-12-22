@@ -9,7 +9,7 @@ import (
 	"github.com/public-awesome/stakebird/x/stake/types"
 )
 
-// NewHandler creates an sdk.Handler for all the x/curating type messages
+// NewHandler creates an sdk.Handler for all the x/stake type messages
 func NewHandler(k keeper.Keeper) sdk.Handler {
 	msgServer := keeper.NewMsgServerImpl(k)
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {

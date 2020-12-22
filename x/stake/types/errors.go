@@ -7,5 +7,5 @@ import (
 // x/curating module sentinel errors
 var (
 	ErrStaketNotFound = sdkerrors.Register(ModuleName, 1, "Stake not found")
-	ErrAmountTooLarge = sdkerrors.Register(ModuleName, 1, "Unstake amount too large")
+	ErrAmountTooLarge = sdkerrors.Register(ModuleName, 2, "Unstake amount too large")
 )
