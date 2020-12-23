@@ -17,7 +17,7 @@ var (
 	PKs = simapp.CreateTestPubKeys(500)
 )
 
-func TestPerformStake(t *testing.T) {
+func TestPerformStakeAndUnstake(t *testing.T) {
 	app := simapp.Setup(false)
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
@@ -49,6 +49,25 @@ func TestPerformStake(t *testing.T) {
 
 	err = app.StakeKeeper.PerformStake(ctx, vendorID, postIDBz, delAddr, valAddr, amount)
 	require.NoError(t, err)
+	s, found, err := app.StakeKeeper.GetStake(ctx, vendorID, postIDBz, delAddr)
+	require.NoError(t, err)
+	require.True(t, found)
+	require.Equal(t, sdk.NewInt(2), s.Amount)
+
+	// withdraw half of the stake
+	err = app.StakeKeeper.PerformUnstake(ctx, vendorID, postIDBz, delAddr, valAddr, amount.QuoRaw(2))
+	require.NoError(t, err)
+	s, found, err = app.StakeKeeper.GetStake(ctx, vendorID, postIDBz, delAddr)
+	require.NoError(t, err)
+	require.True(t, found)
+	require.Equal(t, sdk.NewInt(1), s.Amount)
+
+	// withdraw the other half, stake should be gone
+	err = app.StakeKeeper.PerformUnstake(ctx, vendorID, postIDBz, delAddr, valAddr, amount.QuoRaw(2))
+	require.NoError(t, err)
+	s, found, err = app.StakeKeeper.GetStake(ctx, vendorID, postIDBz, delAddr)
+	require.NoError(t, err)
+	require.False(t, found)
 }
 
 // postIDBytes returns the byte representation of a postID int64
