@@ -25,10 +25,15 @@ var (
 	KeyPrefixStake = []byte{0x00}
 )
 
+// PostKey is the key used to store stakes for a post
+func PostKey(vendorID uint32, postID []byte) []byte {
+	vendorIDBz := uint32ToBigEndian(vendorID)
+	return append(KeyPrefixStake, append(vendorIDBz, postID...)...)
+}
+
 // StakeKey is the key used to store a stake
 func StakeKey(vendorID uint32, postID []byte, delegator sdk.AccAddress) []byte {
-	vendorIDBz := uint32ToBigEndian(vendorID)
-	return append(KeyPrefixStake, append(append(vendorIDBz, postID...), delegator.Bytes()...)...)
+	return append(PostKey(vendorID, postID), delegator.Bytes()...)
 }
 
 // Uint32ToBigEndian - marshals uint32 to a bigendian byte slice so it can be sorted
