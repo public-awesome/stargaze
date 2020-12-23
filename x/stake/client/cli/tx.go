@@ -45,17 +45,17 @@ $ %s tx stake post 1 "2" 500 --from mykey
 			postID := args[1]
 			amount, ok := sdk.NewIntFromString(args[2])
 			if !ok {
+				panic("invalid amount")
+			}
+
+			valAddrStr := args[3]
+			validator, err := sdk.ValAddressFromBech32(valAddrStr)
+			if err != nil {
 				return err
 			}
 
-			// valAddrStr := args[3]
-			// valAddr, err := sdk.ValAddressFromBech32(valAddrStr)
-			// if err != nil {
-			// 	return err
-			// }
-
 			msg := types.NewMsgStake(
-				uint32(vendorID), postID, delegator, amount)
+				uint32(vendorID), postID, delegator, validator, amount)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
