@@ -1,56 +1,68 @@
 package cli
 
-// // NewPostTxCmd returns the post command
-// func NewPostTxCmd() *cobra.Command {
+import (
+	"fmt"
+	"strconv"
+	"strings"
 
-// 	cmd := &cobra.Command{
-// 		Use:   "post [vendor-id] [post-id] [body] [reward_address] --from [key]",
-// 		Args:  cobra.MinimumNArgs(3),
-// 		Short: "Register a post",
-// 		Long: strings.TrimSpace(
-// 			fmt.Sprintf(`Create a post.
-// Example:
-// $ %s tx curating post 1 "2" "body" --from mykey
-// `,
-// 				version.AppName,
-// 			),
-// 		),
-// 		RunE: func(cmd *cobra.Command, args []string) error {
-// 			clientCtx := client.GetClientContextFromCmd(cmd)
-// 			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
-// 			if err != nil {
-// 				return err
-// 			}
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/cosmos/cosmos-sdk/client/tx"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/version"
+	"github.com/public-awesome/stakebird/x/stake/types"
+	"github.com/spf13/cobra"
+)
 
-// 			creator := clientCtx.GetFromAddress()
+// NewStakeTxCmd returns the post command
+func NewStakeTxCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "stake [vendor-id] [post-id] [amount] [validator-address] --from [key]",
+		Args:  cobra.MinimumNArgs(3),
+		Short: "Stake on a post",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Stake on a post.
+Example:
+$ %s tx stake post 1 "2" 500 --from mykey
+`,
+				version.AppName,
+			),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
+			if err != nil {
+				return err
+			}
 
-// 			vendorID, err := strconv.ParseUint(args[0], 10, 32)
-// 			if err != nil {
-// 				return err
-// 			}
+			delegator := clientCtx.GetFromAddress()
 
-// 			postID := args[1]
-// 			body := args[2]
+			vendorID, err := strconv.ParseUint(args[0], 10, 32)
+			if err != nil {
+				return err
+			}
 
-// 			var rewardAddrStr string
-// 			var rewardAddr sdk.AccAddress
-// 			if len(args) > 3 {
-// 				rewardAddrStr = args[3]
-// 			}
-// 			if rewardAddrStr != "" {
-// 				rewardAddr, err = sdk.AccAddressFromBech32(rewardAddrStr)
-// 				if err != nil {
-// 					return err
-// 				}
-// 			}
-// 			msg := types.NewMsgPost(uint32(vendorID), postID, creator, rewardAddr, body)
-// 			if err := msg.ValidateBasic(); err != nil {
-// 				return err
-// 			}
+			postID := args[1]
+			amount, ok := sdk.NewIntFromString(args[2])
+			if !ok {
+				return err
+			}
 
-// 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-// 		},
-// 	}
-// 	flags.AddTxFlagsToCmd(cmd)
-// 	return cmd
-// }
+			// valAddrStr := args[3]
+			// valAddr, err := sdk.ValAddressFromBech32(valAddrStr)
+			// if err != nil {
+			// 	return err
+			// }
+
+			msg := types.NewMsgStake(
+				uint32(vendorID), postID, delegator, amount)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
