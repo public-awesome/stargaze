@@ -1,9 +1,8 @@
 package cli
 
 import (
-	"github.com/spf13/cobra"
-
 	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/spf13/cobra"
 )
 
 // GetQueryCmd returns the query commands for posts and upvotes
@@ -23,7 +22,7 @@ func GetQueryCmd() *cobra.Command {
 	return queryCmd
 }
 
-// NewTxCmd returns the transaction commands for the curation module
+// NewTxCmd returns the transaction commands for the stake module
 func NewTxCmd() *cobra.Command {
 	txCmd := &cobra.Command{
 		Use:                        "stake",
@@ -34,7 +33,8 @@ func NewTxCmd() *cobra.Command {
 	}
 
 	txCmd.AddCommand(
-	// NewPostTxCmd(),
+		NewStakeTxCmd(),
+		NewUnstakeTxCmd(),
 	)
 
 	return txCmd
