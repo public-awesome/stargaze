@@ -28,7 +28,8 @@ message MsgStake {
     (gogoproto.jsontag) = "post_id"
   ];
   string delegator = 3 [ (gogoproto.moretags) = "yaml:\"delegator\"" ];
-  string amount = 4 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int", (gogoproto.nullable) = false];
+  string validator = 4 [ (gogoproto.moretags) = "yaml:\"validator\"" ];
+  string amount = 5 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int", (gogoproto.nullable) = false];
 }
 
 message MsgUnstake {

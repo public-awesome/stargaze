@@ -23,12 +23,14 @@ func NewMsgStake(
 	vendorID uint32,
 	postID string,
 	delegator sdk.AccAddress,
+	validator sdk.ValAddress,
 	amount sdk.Int,
 ) *MsgStake {
 	return &MsgStake{
 		VendorID:  vendorID,
 		PostID:    postID,
 		Delegator: delegator.String(),
+		Validator: validator.String(),
 		Amount:    amount,
 	}
 }
@@ -55,14 +57,17 @@ func (msg MsgStake) GetSignBytes() []byte {
 
 // ValidateBasic validity check for the AnteHandler
 func (msg MsgStake) ValidateBasic() error {
-	if strings.TrimSpace(msg.Delegator) == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty delegator")
+	if msg.VendorID < 1 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid vendor_id")
 	}
 	if strings.TrimSpace(msg.PostID) == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty post_id")
 	}
-	if msg.VendorID < 1 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid vendor_id")
+	if strings.TrimSpace(msg.Delegator) == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty delegator")
+	}
+	if strings.TrimSpace(msg.Validator) == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty validator")
 	}
 	if !msg.Amount.IsPositive() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount")
@@ -108,14 +113,14 @@ func (msg MsgUnstake) GetSignBytes() []byte {
 
 // ValidateBasic validity check for the AnteHandler
 func (msg MsgUnstake) ValidateBasic() error {
-	if strings.TrimSpace(msg.Delegator) == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty delegator")
+	if msg.VendorID < 1 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid vendor_id")
 	}
 	if strings.TrimSpace(msg.PostID) == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty post_id")
 	}
-	if msg.VendorID < 1 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid vendor_id")
+	if strings.TrimSpace(msg.Delegator) == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty delegator")
 	}
 	if !msg.Amount.IsPositive() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount")
