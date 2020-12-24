@@ -38,7 +38,7 @@ func (k Keeper) GetStake(ctx sdk.Context, vendorID uint32, postID []byte,
 func (k Keeper) PerformStake(ctx sdk.Context, vendorID uint32, postID []byte, delAddr sdk.AccAddress,
 	valAddr sdk.ValAddress, amount sdk.Int) error {
 
-	_, found, err := k.curatingKeeper.GetPostZ(ctx, vendorID, postID)
+	p, found, err := k.curatingKeeper.GetPostZ(ctx, vendorID, postID)
 	if !found {
 		return curatingtypes.ErrPostNotFound
 	}
@@ -46,7 +46,9 @@ func (k Keeper) PerformStake(ctx sdk.Context, vendorID uint32, postID []byte, de
 		return err
 	}
 
-	// TODO: check if post has expired
+	if p.CuratingEndTime.Before(ctx.BlockTime()) {
+		return types.ErrCurationNotExpired
+	}
 
 	validator, found := k.stakingKeeper.GetValidator(ctx, valAddr)
 	if !found {
