@@ -85,7 +85,7 @@ func (k Keeper) PerformStake(ctx sdk.Context, vendorID uint32, postID []byte, de
 			sdk.NewAttribute(types.AttributeKeyPostID, postIDStr(postID)),
 			sdk.NewAttribute(types.AttributeKeyDelegator, delAddr.String()),
 			sdk.NewAttribute(types.AttributeKeyValidator, valAddr.String()),
-			sdk.NewAttribute(types.AttributeKeyAmount, amount.String()),
+			sdk.NewAttribute(types.AttributeKeyAmount, amt.String()),
 		),
 	})
 
