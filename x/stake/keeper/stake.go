@@ -3,6 +3,7 @@ package keeper
 import (
 	"fmt"
 
+	"github.com/bwmarrin/snowflake"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	curatingtypes "github.com/public-awesome/stakebird/x/curating/types"
@@ -79,7 +80,7 @@ func (k Keeper) PerformStake(ctx sdk.Context, vendorID uint32, postID []byte, de
 		sdk.NewEvent(
 			types.EventTypeStake,
 			sdk.NewAttribute(types.AttributeKeyVendorID, fmt.Sprintf("%d", vendorID)),
-			// sdk.NewAttribute(types.AttributeKeyPostID, postID),
+			sdk.NewAttribute(types.AttributeKeyPostID, postIDStr(postID)),
 			sdk.NewAttribute(types.AttributeKeyDelegator, delAddr.String()),
 			sdk.NewAttribute(types.AttributeKeyValidator, valAddr.String()),
 			sdk.NewAttribute(types.AttributeKeyAmount, amount.String()),
@@ -134,7 +135,7 @@ func (k Keeper) PerformUnstake(ctx sdk.Context, vendorID uint32, postID []byte,
 		sdk.NewEvent(
 			types.EventTypeUnstake,
 			sdk.NewAttribute(types.AttributeKeyVendorID, fmt.Sprintf("%d", vendorID)),
-			// sdk.NewAttribute(types.AttributeKeyPostID, postID),
+			sdk.NewAttribute(types.AttributeKeyPostID, postIDStr(postID)),
 			sdk.NewAttribute(types.AttributeKeyDelegator, delAddr.String()),
 			sdk.NewAttribute(types.AttributeKeyValidator, valAddr.String()),
 			sdk.NewAttribute(types.AttributeKeyAmount, amount.String()),
@@ -164,4 +165,12 @@ func (k Keeper) deleteStake(ctx sdk.Context, vendorID uint32, postID []byte, del
 	store := ctx.KVStore(k.storeKey)
 	key := types.StakeKey(vendorID, postID, delAddr)
 	store.Delete(key)
+}
+
+// postIDStr returns a string representation of the underlying bytes that conforms an id.
+func postIDStr(postIDBz []byte) string {
+	var temp [8]byte
+	copy(temp[:], postIDBz) // convert a postID byte slice into a fixed 8 byte array
+	postID := snowflake.ParseIntBytes(temp)
+	return postID.String()
 }
