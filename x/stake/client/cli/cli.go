@@ -15,8 +15,8 @@ func GetQueryCmd() *cobra.Command {
 	}
 
 	queryCmd.AddCommand(
-	// NewPostsQueryCmd(),
-	// NewPostQueryCmd(),
+		NewStakesQueryCmd(),
+		NewStakeQueryCmd(),
 	)
 
 	return queryCmd

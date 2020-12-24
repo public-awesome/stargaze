@@ -67,7 +67,7 @@ $ %s query stake stakes 1 123
 func NewStakeQueryCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "stake [vendor-id] [post-id] [delegator]",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(3),
 		Short: "Query for a specific stake",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Query for a specific stake.
