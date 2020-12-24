@@ -19,16 +19,26 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 
 func (k msgServer) Stake(goCtx context.Context, msg *types.MsgStake) (*types.MsgStakeResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	// creator, err := sdk.AccAddressFromBech32(msg.Delegator)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	postID, err := postIDBytes(msg.PostID)
+	if err != nil {
+		return nil, err
+	}
 
-	// err = k.CreatePost(
-	// 	ctx, msg.VendorID, msg.PostID, msg.Body, creator, rewardAccount)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	delegator, err := sdk.AccAddressFromBech32(msg.Delegator)
+	if err != nil {
+		return nil, err
+	}
+
+	validator, err := sdk.ValAddressFromBech32(msg.Validator)
+	if err != nil {
+		return nil, err
+	}
+
+	err = k.PerformStake(
+		ctx, msg.VendorID, postID, delegator, validator, msg.Amount)
+	if err != nil {
+		return nil, err
+	}
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
@@ -37,9 +47,26 @@ func (k msgServer) Stake(goCtx context.Context, msg *types.MsgStake) (*types.Msg
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Delegator),
 		),
 	})
+
 	return &types.MsgStakeResponse{}, nil
 }
 
 func (k msgServer) Unstake(goCtx context.Context, msg *types.MsgUnstake) (*types.MsgUnstakeResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	postID, err := postIDBytes(msg.PostID)
+	if err != nil {
+		return nil, err
+	}
+
+	delegator, err := sdk.AccAddressFromBech32(msg.Delegator)
+	if err != nil {
+		return nil, err
+	}
+
+	err = k.PerformUnstake(ctx, msg.VendorID, postID, delegator, msg.Amount)
+	if err != nil {
+		return nil, err
+	}
+
 	return &types.MsgUnstakeResponse{}, nil
 }

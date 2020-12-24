@@ -363,7 +363,8 @@ func CreateTestPubKeys(numPubKeys int) []cryptotypes.PubKey {
 	for i := 100; i < (numPubKeys + 100); i++ {
 		numString := strconv.Itoa(i)
 		buffer.WriteString("0B485CFC0EECC619440448436F8FC9DF40566F2369E72400281454CB552AF") // base pubkey string
-		buffer.WriteString(numString)                                                       // adding on final two digits to make pubkeys unique
+		// adding on final two digits to make pubkeys unique
+		buffer.WriteString(numString)
 		publicKeys = append(publicKeys, NewPubKeyFromHex(buffer.String()))
 		buffer.Reset()
 	}

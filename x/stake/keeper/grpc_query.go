@@ -41,7 +41,7 @@ func (k Keeper) Stake(c context.Context, req *types.QueryStakeRequest) (*types.Q
 		return nil, err
 	}
 	if !found {
-		return nil, fmt.Errorf("Stake does not exist")
+		return nil, fmt.Errorf("stake does not exist")
 	}
 	return &types.QueryStakeResponse{
 		Stake: &stake,

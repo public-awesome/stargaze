@@ -90,8 +90,8 @@ func (k Keeper) PerformStake(ctx sdk.Context, vendorID uint32, postID []byte, de
 }
 
 // PerformUnstake delegates an amount to a validator and associates a post
-func (k Keeper) PerformUnstake(ctx sdk.Context, vendorID uint32, postID []byte, delAddr sdk.AccAddress,
-	valAddr sdk.ValAddress, amount sdk.Int) error {
+func (k Keeper) PerformUnstake(ctx sdk.Context, vendorID uint32, postID []byte,
+	delAddr sdk.AccAddress, amount sdk.Int) error {
 
 	_, found, err := k.curatingKeeper.GetPostZ(ctx, vendorID, postID)
 	if err != nil {
@@ -110,6 +110,10 @@ func (k Keeper) PerformUnstake(ctx sdk.Context, vendorID uint32, postID []byte, 
 	}
 	if amount.GT(stake.Amount) {
 		return types.ErrAmountTooLarge
+	}
+	valAddr, err := sdk.ValAddressFromBech32(stake.Validator)
+	if err != nil {
+		return err
 	}
 
 	_, err = k.stakingKeeper.Undelegate(ctx, delAddr, valAddr, amount.ToDec())
