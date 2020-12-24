@@ -14,7 +14,7 @@ steps:
       - export GL_DEBUG=linters_output
       - export GOPACKAGESPRINTGOLISTERRORS=1
       - go mod download
-      - golangci-lint run -v --timeout 5m --tests=false
+      - golangci-lint run -v --timeout 5m --tests=false --skip-dirs="simapp"
     environment:
       GOPROXY: http://goproxy
   - name: test-and-build
@@ -138,6 +138,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: c87b0a2a2debf5a8d04c454c477e22e4ffded0a35cc71c449c667466af243c65
+hmac: e9440363dcc793d3b9dd174e68a8b15ba4855ff034e6b9646489b14b86dcdfa0
 
 ...
