@@ -46,7 +46,7 @@ func (k Keeper) PerformStake(ctx sdk.Context, vendorID uint32, postID []byte, de
 		return err
 	}
 
-	if p.CuratingEndTime.Before(ctx.BlockTime()) {
+	if ctx.BlockTime().Before(p.CuratingEndTime) {
 		return types.ErrCurationNotExpired
 	}
 
