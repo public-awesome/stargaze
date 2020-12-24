@@ -124,12 +124,13 @@ func (k Keeper) PerformUnstake(ctx sdk.Context, vendorID uint32, postID []byte,
 		return err
 	}
 
-	if amount.Equal(stake.Amount) {
+	amt := stake.Amount.Sub(amount)
+	if amt.Equal(sdk.ZeroInt()) {
 		k.deleteStake(ctx, vendorID, postID, delAddr)
 	} else {
 		store := ctx.KVStore(k.storeKey)
 		key := types.StakeKey(vendorID, postID, delAddr)
-		value := k.MustMarshalStake(types.NewStake(valAddr, stake.Amount.Sub(amount)))
+		value := k.MustMarshalStake(types.NewStake(valAddr, amt))
 		store.Set(key, value)
 	}
 
@@ -140,7 +141,7 @@ func (k Keeper) PerformUnstake(ctx sdk.Context, vendorID uint32, postID []byte,
 			sdk.NewAttribute(types.AttributeKeyPostID, postIDStr(postID)),
 			sdk.NewAttribute(types.AttributeKeyDelegator, delAddr.String()),
 			sdk.NewAttribute(types.AttributeKeyValidator, valAddr.String()),
-			sdk.NewAttribute(types.AttributeKeyAmount, amount.String()),
+			sdk.NewAttribute(types.AttributeKeyAmount, amt.String()),
 		),
 	})
 
