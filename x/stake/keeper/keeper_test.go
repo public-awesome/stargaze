@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/bwmarrin/snowflake"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -47,8 +48,16 @@ func TestPerformStakeAndUnstake(t *testing.T) {
 	staking.EndBlocker(ctx, app.StakingKeeper)
 	ctx = ctx.WithBlockHeight(ctx.BlockHeight() + 1)
 
+	// fails because the post hasn't expired yet
+	err = app.StakeKeeper.PerformStake(ctx, vendorID, postIDBz, delAddr, valAddr, amount)
+	require.Error(t, err)
+
+	// simulate a future block time where the post has expired
+	ctx = ctx.WithBlockTime(ctx.BlockTime().Add(60 * time.Hour))
+
 	err = app.StakeKeeper.PerformStake(ctx, vendorID, postIDBz, delAddr, valAddr, amount)
 	require.NoError(t, err)
+
 	s, found, err := app.StakeKeeper.GetStake(ctx, vendorID, postIDBz, delAddr)
 	require.NoError(t, err)
 	require.True(t, found)
