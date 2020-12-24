@@ -3,6 +3,7 @@ package stake
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"math/rand"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
@@ -59,12 +60,11 @@ func (AppModuleBasic) DefaultGenesis(cdc codec.JSONMarshaler) json.RawMessage {
 // ValidateGenesis performs genesis state validation for the staking module.
 func (AppModuleBasic) ValidateGenesis(cdc codec.JSONMarshaler,
 	config client.TxEncodingConfig, bz json.RawMessage) error {
-	// var gs types.GenesisState
-	// if err := cdc.UnmarshalJSON(bz, &gs); err != nil {
-	// 	return fmt.Errorf("failed to unmarshal %s genesis state: %w", types.ModuleName, err)
-	// }
-	// return gs.Validate()
-	return nil
+	var gs types.GenesisState
+	if err := cdc.UnmarshalJSON(bz, &gs); err != nil {
+		return fmt.Errorf("failed to unmarshal %s genesis state: %w", types.ModuleName, err)
+	}
+	return gs.Validate()
 }
 
 // RegisterRESTRoutes registers the REST routes for the staking module.
