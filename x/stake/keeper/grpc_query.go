@@ -14,11 +14,17 @@ var _ types.QueryServer = Keeper{}
 // Stakes returns stakes for a post
 func (k Keeper) Stakes(c context.Context, req *types.QueryStakesRequest) (*types.QueryStakesResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
+	k.Logger(ctx).Info("in here")
+	fmt.Println("in here yo")
+
 	postID, err := postIDBytes(req.PostId)
 	if err != nil {
 		return nil, err
 	}
 	stakes := k.GetStakes(ctx, req.VendorId, postID)
+	// fmt.Println(req.VendorId)
+	// fmt.Println(postID)
+	fmt.Println(stakes)
 
 	return &types.QueryStakesResponse{Stakes: stakes}, nil
 }

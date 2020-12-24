@@ -11,7 +11,9 @@ import (
 
 // GetStakes returns all stakes for a post
 func (k Keeper) GetStakes(ctx sdk.Context, vendorID uint32, postID []byte) (stakes []types.Stake) {
+	fmt.Println("in here 2")
 	k.iterateStakes(ctx, vendorID, postID, func(stake types.Stake) bool {
+		fmt.Println("in here 3")
 		stakes = append(stakes, stake)
 		return false
 	})
@@ -24,6 +26,7 @@ func (k Keeper) GetStake(ctx sdk.Context, vendorID uint32, postID []byte,
 
 	store := ctx.KVStore(k.storeKey)
 	key := types.StakeKey(vendorID, postID, delAddr)
+	fmt.Println(key)
 	value := store.Get(key)
 	if value == nil {
 		return stake, false, nil
@@ -63,6 +66,7 @@ func (k Keeper) PerformStake(ctx sdk.Context, vendorID uint32, postID []byte, de
 		return err
 	}
 	key := types.StakeKey(vendorID, postID, delAddr)
+	fmt.Println(key)
 	amt := amount
 	if found {
 		amt = stake.Amount.Add(amount)
@@ -148,6 +152,7 @@ func (k Keeper) PerformUnstake(ctx sdk.Context, vendorID uint32, postID []byte,
 func (k Keeper) iterateStakes(ctx sdk.Context, vendorID uint32, postID []byte, cb func(post types.Stake) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.PostKey(vendorID, postID))
+	fmt.Println(types.PostKey(vendorID, postID))
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
