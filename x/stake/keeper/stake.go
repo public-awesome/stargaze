@@ -28,6 +28,7 @@ func (k Keeper) GetStake(ctx sdk.Context, vendorID uint32, postID []byte,
 	key := types.StakeKey(vendorID, postID, delAddr)
 	fmt.Println(key)
 	value := store.Get(key)
+	fmt.Println(value)
 	if value == nil {
 		return stake, false, nil
 	}

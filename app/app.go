@@ -430,6 +430,7 @@ func NewStakebirdApp(
 		// stakebird init genesis
 		curatingtypes.ModuleName,
 		usertypes.ModuleName,
+		staketypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
