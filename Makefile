@@ -87,9 +87,9 @@ clean:
 	rm -rf ~/.staked/data
 
 init:
-	./bin/staked init stakebird --chain-id localnet-1
-	./bin/staked add-genesis-account $(shell ./bin/staked keys show validator -a --keyring-backend test) 10000000000000000ustb,10000000000000000ucredits
-	./bin/staked gentx validator --chain-id localnet-1 --amount 10000000000ustb --keyring-backend test
+	./bin/staked init stakebird --stake-denom uegg --chain-id localnet-1
+	./bin/staked add-genesis-account $(shell ./bin/staked keys show validator -a --keyring-backend test) 10000000000000000uegg,10000000000000000ucredits
+	./bin/staked gentx validator --chain-id localnet-1 --amount 10000000000uegg --keyring-backend test
 	./bin/staked collect-gentxs 
 
 install: go.sum
