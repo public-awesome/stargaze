@@ -58,7 +58,8 @@ ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=stakebird \
 		  -X github.com/cosmos/cosmos-sdk/version.AppName=staked \
 		  -X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
 		  -X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) \
-		  -X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep)"
+		  -X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep)" \
+		  -X github.com/tendermint/tendermint/version.TMCoreSemVer=0.34.0-rc6
 
 ifeq (cleveldb,$(findstring cleveldb,$(GAIA_BUILD_OPTIONS)))
   ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=cleveldb
