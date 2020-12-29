@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package stakebird.stake.v1beta1;
+
+option go_package = "github.com/public-awesome/stakebird/x/stake/types";
+
+import "gogoproto/gogo.proto";
+import "stakebird/stake/v1beta1/stake.proto";
+
+message GenesisState {  }

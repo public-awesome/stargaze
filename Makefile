@@ -58,7 +58,8 @@ ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=stakebird \
 		  -X github.com/cosmos/cosmos-sdk/version.AppName=staked \
 		  -X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
 		  -X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) \
-		  -X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep)"
+		  -X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep)" \
+		  -X github.com/tendermint/tendermint/version.TMCoreSemVer=0.34.0-rc6
 
 ifeq (cleveldb,$(findstring cleveldb,$(GAIA_BUILD_OPTIONS)))
   ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=cleveldb
@@ -79,7 +80,7 @@ endif
 all: install
 
 create-wallet:
-	staked keys add validator --keyring-backend test
+	./bin/staked keys add validator --keyring-backend test
 
 reset: clean init
 clean:
@@ -87,16 +88,16 @@ clean:
 	rm -rf ~/.staked/data
 
 init:
-	staked init stakebird --chain-id localnet-1
-	staked add-genesis-account $(shell staked keys show validator -a --keyring-backend test) 10000000000000000ustb,10000000000000000ucredits
-	staked gentx validator --chain-id localnet-1 --amount 10000000000ustb --keyring-backend test
-	staked collect-gentxs 
+	./bin/staked init stakebird --stake-denom uegg --chain-id localnet-1
+	./bin/staked add-genesis-account $(shell ./bin/staked keys show validator -a --keyring-backend test) 10000000000000000uegg,10000000000000000ucredits
+	./bin/staked gentx validator --chain-id localnet-1 --amount 10000000000uegg --keyring-backend test
+	./bin/staked collect-gentxs 
 
 install: go.sum
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/staked
 
 start:
-	staked start --grpc.address 0.0.0.0:9091 --log_level "curating:info,user:info,main:info,state:info,*:error"
+	./bin/staked start --grpc.address 0.0.0.0:9091
 
 build:
 	go build $(BUILD_FLAGS) -o bin/staked ./cmd/staked
@@ -112,7 +113,7 @@ go.sum: go.mod
 # look into .golangci.yml for enabling / disabling linters
 lint:
 	@echo "--> Running linter"
-	@golangci-lint run --tests=false
+	@golangci-lint run --tests=false --skip-dirs="simapp"
 	@go mod verify
 
 
@@ -128,6 +129,18 @@ docker-test: build-linux
 
 test:
 	go test github.com/public-awesome/stakebird/x/...
+
+fake-post:
+	./bin/staked tx curating post  1 $(POST_ID) "post body"  --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq '.node_info.network') -b block -y
+
+fake-upvote:
+	./bin/staked tx curating upvote 1 $(POST_ID) 1  --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq '.node_info.network') -b block -y
+
+fake-stake:
+	./bin/staked tx stake stake 1 $(POST_ID) 100 $(VAL) --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq '.node_info.network') -b block -y
+
+fake-unstake:
+	./bin/staked tx stake unstake 1 $(POST_ID) 10  --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq '.node_info.network') -b block -y
 
 .PHONY: test build-linux docker-test lint  build init install
 

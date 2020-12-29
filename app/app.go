@@ -94,6 +94,9 @@ import (
 	usertypes "github.com/public-awesome/stakebird/x/user/types"
 
 	"github.com/public-awesome/stakebird/x/faucet"
+	"github.com/public-awesome/stakebird/x/stake"
+	stakekeeper "github.com/public-awesome/stakebird/x/stake/keeper"
+	staketypes "github.com/public-awesome/stakebird/x/stake/types"
 )
 
 const appName = "StakebirdApp"
@@ -132,6 +135,7 @@ var (
 		curating.AppModuleBasic{},
 		user.AppModuleBasic{},
 		faucet.AppModuleBasic{},
+		stake.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -197,6 +201,7 @@ type StakebirdApp struct {
 	CuratingKeeper curatingkeeper.Keeper
 	UserKeeper     userkeeper.Keeper
 	FaucetKeeper   faucet.Keeper
+	StakeKeeper    stakekeeper.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
@@ -245,6 +250,7 @@ func NewStakebirdApp(
 		curatingtypes.StoreKey,
 		usertypes.StoreKey,
 		faucet.StoreKey,
+		staketypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -356,6 +362,9 @@ func NewStakebirdApp(
 		24*time.Hour, // rate limit by time
 	)
 
+	app.StakeKeeper = stakekeeper.NewKeeper(
+		appCodec, keys[staketypes.StoreKey], app.CuratingKeeper, app.StakingKeeper, app.GetSubspace(staketypes.ModuleName))
+
 	/****  Module Options ****/
 
 	// NOTE: we may consider parsing `appOpts` inside module constructors. For the moment
@@ -389,6 +398,7 @@ func NewStakebirdApp(
 		curating.NewAppModule(appCodec, app.CuratingKeeper, app.AccountKeeper, app.BankKeeper),
 		user.NewAppModule(appCodec, app.UserKeeper),
 		faucet.NewAppModule(app.FaucetKeeper),
+		stake.NewAppModule(appCodec, app.StakeKeeper, app.CuratingKeeper, app.StakingKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -420,6 +430,7 @@ func NewStakebirdApp(
 		// stakebird init genesis
 		curatingtypes.ModuleName,
 		usertypes.ModuleName,
+		staketypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -656,6 +667,7 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler,
 	// Stakebird Modules
 	paramsKeeper.Subspace(curatingtypes.ModuleName)
 	paramsKeeper.Subspace(usertypes.ModuleName)
+	paramsKeeper.Subspace(staketypes.ModuleName)
 
 	return paramsKeeper
 }
