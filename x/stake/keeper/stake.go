@@ -50,16 +50,6 @@ func (k Keeper) PerformStake(ctx sdk.Context, vendorID uint32, postID []byte, de
 		return types.ErrCurationNotExpired
 	}
 
-	validator, found := k.stakingKeeper.GetValidator(ctx, valAddr)
-	if !found {
-		return stakingtypes.ErrNoValidatorFound
-	}
-
-	_, err = k.stakingKeeper.Delegate(ctx, delAddr, amount, stakingtypes.Unbonded, validator, true)
-	if err != nil {
-		return err
-	}
-
 	store := ctx.KVStore(k.storeKey)
 	stake, found, err := k.GetStake(ctx, vendorID, postID, delAddr)
 	if err != nil {
@@ -75,8 +65,19 @@ func (k Keeper) PerformStake(ctx sdk.Context, vendorID uint32, postID []byte, de
 			return err
 		}
 	}
+
+	validator, found := k.stakingKeeper.GetValidator(ctx, valAddr)
+	if !found {
+		return stakingtypes.ErrNoValidatorFound
+	}
+
 	value := k.MustMarshalStake(types.NewStake(valAddr, amt))
 	store.Set(key, value)
+
+	_, err = k.stakingKeeper.Delegate(ctx, delAddr, amount, stakingtypes.Unbonded, validator, true)
+	if err != nil {
+		return err
+	}
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
