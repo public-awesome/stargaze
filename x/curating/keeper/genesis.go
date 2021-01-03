@@ -15,15 +15,16 @@ func (k Keeper) InitGenesis(ctx sdk.Context, state types.GenesisState) {
 		}
 	}
 
-	// [TODO]
-	// set posts
-	// set curation queue
-	// set upvotes
-
 	for _, post := range state.Posts {
 		k.SetPost(ctx, post)
-		// if post is before block time, insert into queue
+		if ctx.BlockTime().Before(post.CuratingEndTime) {
+			k.InsertCurationQueue(ctx, post.VendorID, post.PostID, post.CuratingEndTime)
+		}
 	}
+
+	// for _, upvote := range state.Upvotes {
+	// 	// k.Set
+	// }
 }
 
 // ExportGenesis exports the curating module state

@@ -53,7 +53,7 @@ func (k Keeper) CreateUpvote(
 	}
 
 	voteAmt := k.voteAmount(ctx, int64(voteNum))
-	upvote := types.NewUpvote(curator, rewardAccount, voteAmt, ctx.BlockTime())
+	upvote := types.NewUpvote(vendorID, postIDBz, curator, rewardAccount, voteAmt, ctx.BlockTime())
 
 	store := ctx.KVStore(k.storeKey)
 	key := types.UpvoteKey(vendorID, postIDBz, curator)
@@ -81,6 +81,14 @@ func (k Keeper) CreateUpvote(
 
 	return nil
 }
+
+// SetUpvote sets a upvote in the store
+// func (k Keeper) SetUpvote(ctx sdk.Context, upvote types.Upvote) {
+// 	store := ctx.KVStore(k.storeKey)
+// 	// key := types.UpvoteKey(upvote.V, postIDBz, curator)
+// 	value := k.MustMarshalUpvote(upvote)
+// 	store.Set(key, value)
+// }
 
 // GetUpvote returns an upvote if one exists
 func (k Keeper) GetUpvote(
