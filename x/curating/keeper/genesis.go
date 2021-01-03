@@ -14,11 +14,21 @@ func (k Keeper) InitGenesis(ctx sdk.Context, state types.GenesisState) {
 			panic(err)
 		}
 	}
+
+	// [TODO]
+	// set posts
+	// set upvotes
+	// set curation queue
 }
 
 // ExportGenesis exports the curating module state
 func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 	return &types.GenesisState{
 		Params: k.GetParams(ctx),
+		// TODO: add reward pool
 	}
+
+	// TODO: append posts
+	// TODO: append upvotes
+	// TODO: append curation queue
 }
