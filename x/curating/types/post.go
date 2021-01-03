@@ -63,3 +63,9 @@ func (p Post) PostIDStr() string {
 	postID := snowflake.ParseIntBytes(temp)
 	return postID.String()
 }
+
+// Posts is a collection of Post objects
+type Posts []Post
+
+// CuratingQueue is a collection of VPPairs objects
+type CuratingQueue []VPPairs

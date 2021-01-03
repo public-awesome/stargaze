@@ -17,3 +17,6 @@ func NewUpvote(
 		CuratedTime:   curatedTime,
 	}
 }
+
+// Upvotes is a collection of Upvote objects
+type Upvotes []Upvote

@@ -82,11 +82,7 @@ func (k Keeper) CreatePost(
 	curationEndTime := ctx.BlockTime().Add(curationWindow)
 	post := types.NewPost(vendorID, postIDBz, bodyHash, creator, rewardAccount, curationEndTime)
 
-	store := ctx.KVStore(k.storeKey)
-	key := types.PostKey(vendorID, postIDBz)
-	value := k.MustMarshalPost(post)
-	store.Set(key, value)
-
+	k.SetPost(ctx, post)
 	k.InsertCurationQueue(ctx, vendorID, postIDBz, curationEndTime)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
@@ -103,6 +99,14 @@ func (k Keeper) CreatePost(
 	})
 
 	return nil
+}
+
+// SetPost sets a post in the store
+func (k Keeper) SetPost(ctx sdk.Context, post types.Post) {
+	store := ctx.KVStore(k.storeKey)
+	key := types.PostKey(post.VendorID, post.PostID)
+	value := k.MustMarshalPost(post)
+	store.Set(key, value)
 }
 
 // DeletePost removes a post
