@@ -54,11 +54,7 @@ func (k Keeper) CreateUpvote(
 
 	voteAmt := k.voteAmount(ctx, int64(voteNum))
 	upvote := types.NewUpvote(vendorID, postIDBz, curator, rewardAccount, voteAmt, ctx.BlockTime())
-
-	store := ctx.KVStore(k.storeKey)
-	key := types.UpvoteKey(vendorID, postIDBz, curator)
-	value := k.MustMarshalUpvote(upvote)
-	store.Set(key, value)
+	k.SetUpvote(ctx, upvote, curator)
 
 	// add vote amount to the voting pool
 	err = k.bankKeeper.SendCoinsFromAccountToModule(
@@ -83,12 +79,12 @@ func (k Keeper) CreateUpvote(
 }
 
 // SetUpvote sets a upvote in the store
-// func (k Keeper) SetUpvote(ctx sdk.Context, upvote types.Upvote) {
-// 	store := ctx.KVStore(k.storeKey)
-// 	// key := types.UpvoteKey(upvote.V, postIDBz, curator)
-// 	value := k.MustMarshalUpvote(upvote)
-// 	store.Set(key, value)
-// }
+func (k Keeper) SetUpvote(ctx sdk.Context, upvote types.Upvote, curator sdk.AccAddress) {
+	store := ctx.KVStore(k.storeKey)
+	key := types.UpvoteKey(upvote.VendorID, upvote.PostID, curator)
+	value := k.MustMarshalUpvote(upvote)
+	store.Set(key, value)
+}
 
 // GetUpvote returns an upvote if one exists
 func (k Keeper) GetUpvote(

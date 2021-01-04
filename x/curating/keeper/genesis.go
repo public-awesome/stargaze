@@ -9,6 +9,9 @@ import (
 func (k Keeper) InitGenesis(ctx sdk.Context, state types.GenesisState) {
 	k.SetParams(ctx, state.Params)
 
+	// NOTE: since the reward pool is a module account, the auth module should
+	// take care of importing the amount into the account except for the
+	// genesis block
 	if k.GetRewardPoolBalance(ctx).IsZero() {
 		err := k.InitializeRewardPool(ctx, k.GetParams(ctx).InitialRewardPool)
 		if err != nil {
@@ -23,16 +26,19 @@ func (k Keeper) InitGenesis(ctx sdk.Context, state types.GenesisState) {
 		}
 	}
 
-	// for _, upvote := range state.Upvotes {
-	// 	// k.Set
-	// }
+	for _, upvote := range state.Upvotes {
+		curator, err := sdk.AccAddressFromBech32(upvote.Curator)
+		if err != nil {
+			panic(err)
+		}
+		k.SetUpvote(ctx, upvote, curator)
+	}
 }
 
 // ExportGenesis exports the curating module state
 func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 	return &types.GenesisState{
 		Params: k.GetParams(ctx),
-		// TODO: add reward pool
 	}
 
 	// TODO: append posts
