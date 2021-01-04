@@ -69,7 +69,8 @@ func (k Keeper) PerformStake(ctx sdk.Context, vendorID uint32, postID []byte, de
 		return stakingtypes.ErrNoValidatorFound
 	}
 
-	k.SetStake(ctx, vendorID, postID, types.NewStake(valAddr, amt))
+	stake = types.NewStake(vendorID, postID, delAddr, valAddr, amt)
+	k.SetStake(ctx, delAddr, stake)
 
 	_, err = k.stakingKeeper.Delegate(ctx, delAddr, amount, stakingtypes.Unbonded, validator, true)
 	if err != nil {
@@ -88,16 +89,6 @@ func (k Keeper) PerformStake(ctx sdk.Context, vendorID uint32, postID []byte, de
 	})
 
 	return nil
-}
-
-// SetStake sets the stake in the store
-func (k Keeper) SetStake(ctx sdk.Context,
-	vendorID uint32, postID []byte, stake types.Stake) {
-
-	store := ctx.KVStore(k.storeKey)
-	key := types.StakeKey(vendorID, postID, delAddr)
-	value := k.MustMarshalStake(types.NewStake(valAddr, amt))
-	store.Set(key, value)
 }
 
 // PerformUnstake delegates an amount to a validator and associates a post
@@ -136,10 +127,8 @@ func (k Keeper) PerformUnstake(ctx sdk.Context, vendorID uint32, postID []byte,
 	if amt.Equal(sdk.ZeroInt()) {
 		k.deleteStake(ctx, vendorID, postID, delAddr)
 	} else {
-		store := ctx.KVStore(k.storeKey)
-		key := types.StakeKey(vendorID, postID, delAddr)
-		value := k.MustMarshalStake(types.NewStake(valAddr, amt))
-		store.Set(key, value)
+		stake = types.NewStake(vendorID, postID, delAddr, valAddr, amt)
+		k.SetStake(ctx, delAddr, stake)
 	}
 
 	ctx.EventManager().EmitEvents(sdk.Events{
@@ -154,6 +143,14 @@ func (k Keeper) PerformUnstake(ctx sdk.Context, vendorID uint32, postID []byte,
 	})
 
 	return nil
+}
+
+// SetStake sets the stake in the store
+func (k Keeper) SetStake(ctx sdk.Context, delAddr sdk.AccAddress, s types.Stake) {
+	store := ctx.KVStore(k.storeKey)
+	key := types.StakeKey(s.VendorID, s.PostID, delAddr)
+	value := k.MustMarshalStake(s)
+	store.Set(key, value)
 }
 
 // iterateStakes iterates over the stakes and performs a callback function

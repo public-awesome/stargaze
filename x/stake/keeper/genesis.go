@@ -7,11 +7,14 @@ import (
 
 // InitGenesis initializes the curating module state
 func (k Keeper) InitGenesis(ctx sdk.Context, state types.GenesisState) {
-	// TODO
-	// set stakes
-	// for _, stake := range state.Stakes {
-	// 	k.Se
-	// }
+	for _, stake := range state.Stakes {
+		delAddr, err := sdk.AccAddressFromBech32(stake.Delegator)
+		if err != nil {
+			panic(err)
+		}
+
+		k.SetStake(ctx, delAddr, stake)
+	}
 }
 
 // ExportGenesis exports the curating module state
