@@ -50,12 +50,10 @@ func (k Keeper) PerformStake(ctx sdk.Context, vendorID uint32, postID []byte, de
 		return types.ErrCurationNotExpired
 	}
 
-	store := ctx.KVStore(k.storeKey)
 	stake, found, err := k.GetStake(ctx, vendorID, postID, delAddr)
 	if err != nil {
 		return err
 	}
-	key := types.StakeKey(vendorID, postID, delAddr)
 	amt := amount
 	if found {
 		amt = stake.Amount.Add(amount)
@@ -71,8 +69,7 @@ func (k Keeper) PerformStake(ctx sdk.Context, vendorID uint32, postID []byte, de
 		return stakingtypes.ErrNoValidatorFound
 	}
 
-	value := k.MustMarshalStake(types.NewStake(valAddr, amt))
-	store.Set(key, value)
+	k.SetStake(ctx, vendorID, postID, types.NewStake(valAddr, amt))
 
 	_, err = k.stakingKeeper.Delegate(ctx, delAddr, amount, stakingtypes.Unbonded, validator, true)
 	if err != nil {
@@ -91,6 +88,16 @@ func (k Keeper) PerformStake(ctx sdk.Context, vendorID uint32, postID []byte, de
 	})
 
 	return nil
+}
+
+// SetStake sets the stake in the store
+func (k Keeper) SetStake(ctx sdk.Context,
+	vendorID uint32, postID []byte, stake types.Stake) {
+
+	store := ctx.KVStore(k.storeKey)
+	key := types.StakeKey(vendorID, postID, delAddr)
+	value := k.MustMarshalStake(types.NewStake(valAddr, amt))
+	store.Set(key, value)
 }
 
 // PerformUnstake delegates an amount to a validator and associates a post
