@@ -16,6 +16,7 @@ message Post {
     (gogoproto.jsontag) = "vendor_id"
   ];
   bytes post_id = 2 [
+    (gogoproto.customtype) = "PostID",
     (gogoproto.customname) = "PostID",
     (gogoproto.moretags) = "yaml:\"post_id\"",
     (gogoproto.jsontag) = "post_id"
