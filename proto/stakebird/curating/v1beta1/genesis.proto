@@ -3,13 +3,23 @@ syntax = "proto3";
 package stakebird.curating.v1beta1;
 
 import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
 import "stakebird/curating/v1beta1/curating.proto";
 
 option go_package = "github.com/public-awesome/stakebird/x/curating/types";
 
 message GenesisState {
     Params params = 1 [ (gogoproto.nullable) = false ];
-    repeated Post posts = 2 [(gogoproto.castrepeated) = "Posts", (gogoproto.nullable) = false];
-    repeated Upvote upvotes = 3 [(gogoproto.castrepeated) = "Upvotes", (gogoproto.nullable) = false];
-    repeated VPPairs curating_queue = 4 [(gogoproto.castrepeated) = "CuratingQueue", (gogoproto.nullable) = false];
+
+    repeated cosmos.base.v1beta1.Coin reward_pool = 2
+        [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"];
+
+    repeated Post posts = 3 
+        [(gogoproto.castrepeated) = "Posts", (gogoproto.nullable) = false];
+
+    repeated Upvote upvotes = 4 
+        [(gogoproto.castrepeated) = "Upvotes", (gogoproto.nullable) = false];
+
+    repeated VPPairs curating_queue = 5 
+        [(gogoproto.castrepeated) = "CuratingQueue", (gogoproto.nullable) = false];
 }

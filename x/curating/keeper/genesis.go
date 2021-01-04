@@ -8,6 +8,7 @@ import (
 // InitGenesis initializes the curating module state
 func (k Keeper) InitGenesis(ctx sdk.Context, state types.GenesisState) {
 	k.SetParams(ctx, state.Params)
+
 	if k.GetRewardPoolBalance(ctx).IsZero() {
 		err := k.InitializeRewardPool(ctx, k.GetParams(ctx).InitialRewardPool)
 		if err != nil {
