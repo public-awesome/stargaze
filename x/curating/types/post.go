@@ -56,6 +56,28 @@ func (p Post) MarshalJSON() ([]byte, error) {
 	return out, nil
 }
 
+// func (vo *VoteOption) UnmarshalJSON(data []byte) error {
+// 	var s string
+// 	err := json.Unmarshal(data, &s)
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	bz2, err := VoteOptionFromString(s)
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	*vo = bz2
+// 	return nil
+// }
+
+// UnmarshalJSON decodes JSON bytes into a Post
+func (p *Post) UnmarshalJSON(data []byte) error {
+	// TODO: do a custom unmarshaller for PostID only?
+	return nil
+}
+
 // PostIDStr returns a string representation of the underlying bytes that conforms an id.
 func (p Post) PostIDStr() string {
 	var temp [8]byte
