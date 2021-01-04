@@ -68,4 +68,4 @@ func (p Post) PostIDStr() string {
 type Posts []Post
 
 // CuratingQueue is a collection of VPPairs objects
-type CuratingQueue []VPPairs
+type CuratingQueue []VPPair

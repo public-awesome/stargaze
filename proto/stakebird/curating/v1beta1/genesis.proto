@@ -16,6 +16,6 @@ message GenesisState {
     repeated Upvote upvotes = 4 
         [(gogoproto.castrepeated) = "Upvotes", (gogoproto.nullable) = false];
 
-    repeated VPPairs curating_queue = 5 
+    repeated VPPair curating_queue = 5 
         [(gogoproto.castrepeated) = "CuratingQueue", (gogoproto.nullable) = false];
 }
