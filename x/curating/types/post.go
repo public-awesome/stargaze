@@ -69,3 +69,25 @@ type Posts []Post
 
 // CuratingQueue is a collection of VPPairs objects
 type CuratingQueue []VPPair
+
+type vpPairPretty struct {
+	VendorID uint32 `json:"vendor_id" yaml:"vendor_id"`
+	PostID   string `json:"post_id" yaml:"post_id"`
+}
+
+// MarshalJSON defines custom encoding scheme
+func (vp VPPair) MarshalJSON() ([]byte, error) {
+	var temp [8]byte
+	copy(temp[:], vp.PostID) // convert a postID byte slice into a fixed 8 byte array
+	postID := snowflake.ParseIntBytes(temp)
+
+	out, err := json.Marshal(vpPairPretty{
+		VendorID: vp.VendorID,
+		PostID:   postID.String(),
+	})
+	if err != nil {
+		return out, err
+	}
+
+	return out, nil
+}
