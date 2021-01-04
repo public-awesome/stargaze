@@ -37,11 +37,32 @@ func (k Keeper) InitGenesis(ctx sdk.Context, state types.GenesisState) {
 
 // ExportGenesis exports the curating module state
 func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
-	return &types.GenesisState{
-		Params: k.GetParams(ctx),
-	}
+	var posts types.Posts
+	var upvotes types.Upvotes
+	var curationQueue types.CuratingQueue
 
-	// TODO: append posts
-	// TODO: append upvotes
-	// TODO: append curation queue
+	// since 1 = twitter, for now
+	vendorID := uint32(1)
+
+	k.IteratePosts(ctx, vendorID, func(post types.Post) bool {
+		posts = append(posts, post)
+
+		k.IterateUpvotes(ctx, vendorID, post.PostID, func(upvote types.Upvote) bool {
+			upvotes = append(upvotes, upvote)
+			return false
+		})
+
+		if ctx.BlockTime().Before(post.CuratingEndTime) {
+			vpPair := types.VPPair{VendorID: post.VendorID, PostID: post.PostID}
+			curationQueue = append(curationQueue, vpPair)
+		}
+		return false
+	})
+
+	return &types.GenesisState{
+		Params:        k.GetParams(ctx),
+		Posts:         posts,
+		Upvotes:       upvotes,
+		CuratingQueue: curationQueue,
+	}
 }
