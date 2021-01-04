@@ -2,6 +2,7 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	curatingtypes "github.com/public-awesome/stakebird/x/curating/types"
 	"github.com/public-awesome/stakebird/x/stake/types"
 )
 
@@ -19,8 +20,17 @@ func (k Keeper) InitGenesis(ctx sdk.Context, state types.GenesisState) {
 
 // ExportGenesis exports the curating module state
 func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
-	return &types.GenesisState{}
+	var stakes types.Stakes
 
-	// TODO
-	// append stakes
+	// since we only have twitter = 1 for now
+	vendorID := uint32(1)
+	k.curatingKeeper.IteratePosts(ctx, vendorID, func(post curatingtypes.Post) bool {
+		stakes = append(stakes, k.GetStakes(ctx, vendorID, post.PostID)...)
+
+		return false
+	})
+
+	return &types.GenesisState{
+		Stakes: stakes,
+	}
 }

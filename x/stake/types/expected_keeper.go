@@ -16,6 +16,7 @@ as an interface so the module cannot use things that are not permitted.
 // CurationKeeper defines the expected interface for the curation module
 type CurationKeeper interface {
 	GetPostZ(ctx sdk.Context, vendorID uint32, postIDBz []byte) (post curatingtypes.Post, found bool, err error)
+	IteratePosts(ctx sdk.Context, vendorID uint32, cb func(post curatingtypes.Post) (stop bool))
 }
 
 // StakingKeeper expected staking keeper
