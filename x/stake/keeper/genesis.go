@@ -9,6 +9,9 @@ import (
 func (k Keeper) InitGenesis(ctx sdk.Context, state types.GenesisState) {
 	// TODO
 	// set stakes
+	// for _, stake := range state.Stakes {
+	// 	k.Se
+	// }
 }
 
 // ExportGenesis exports the curating module state
