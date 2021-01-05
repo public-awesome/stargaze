@@ -6,6 +6,61 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+// // Marshal implements the gogo proto custom type interface.
+// func (i Int) Marshal() ([]byte, error) {
+// 	if i.i == nil {
+// 		i.i = new(big.Int)
+// 	}
+// 	return i.i.MarshalText()
+// }
+
+// // MarshalTo implements the gogo proto custom type interface.
+// func (i *Int) MarshalTo(data []byte) (n int, err error) {
+// 	if i.i == nil {
+// 		i.i = new(big.Int)
+// 	}
+// 	if len(i.i.Bytes()) == 0 {
+// 		copy(data, []byte{0x30})
+// 		return 1, nil
+// 	}
+
+// 	bz, err := i.Marshal()
+// 	if err != nil {
+// 		return 0, err
+// 	}
+
+// 	copy(data, bz)
+// 	return len(bz), nil
+// }
+
+// // Unmarshal implements the gogo proto custom type interface.
+// func (i *Int) Unmarshal(data []byte) error {
+// 	if len(data) == 0 {
+// 		i = nil
+// 		return nil
+// 	}
+
+// 	if i.i == nil {
+// 		i.i = new(big.Int)
+// 	}
+
+// 	if err := i.i.UnmarshalText(data); err != nil {
+// 		return err
+// 	}
+
+// 	if i.i.BitLen() > maxBitLen {
+// 		return fmt.Errorf("integer out of range; got: %d, max: %d", i.i.BitLen(), maxBitLen)
+// 	}
+
+// 	return nil
+// }
+
+// // Size implements the gogo proto custom type interface.
+// func (i *Int) Size() int {
+// 	bz, _ := i.Marshal()
+// 	return len(bz)
+// }
+
 // type PostID []byte
 
 // PostID is a byte array
