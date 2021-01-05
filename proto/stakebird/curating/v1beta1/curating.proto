@@ -39,11 +39,13 @@ message Upvote {
     (gogoproto.moretags) = "yaml:\"vendor_id\"",
     (gogoproto.jsontag) = "vendor_id"
   ];
-  bytes post_id = 2 [
+  string post_id = 2 [
+    (gogoproto.customtype) = "PostID",
     (gogoproto.customname) = "PostID",
     (gogoproto.moretags) = "yaml:\"post_id\"",
-    (gogoproto.jsontag) = "post_id"
-  ];    
+    (gogoproto.jsontag) = "post_id",
+    (gogoproto.nullable) = false
+  ];
   string curator = 3 [ (gogoproto.moretags) = "yaml:\"curator\"" ];
   string reward_account = 4
       [ (gogoproto.moretags) = "yaml:\"reward_account\"" ];
@@ -67,10 +69,12 @@ message VPPair {
     (gogoproto.moretags) = "yaml:\"vendor_id\"",
     (gogoproto.jsontag) = "vendor_id"
   ];
-  bytes post_id = 2 [
+  string post_id = 2 [
+    (gogoproto.customtype) = "PostID",
     (gogoproto.customname) = "PostID",
     (gogoproto.moretags) = "yaml:\"post_id\"",
-    (gogoproto.jsontag) = "post_id"
+    (gogoproto.jsontag) = "post_id",
+    (gogoproto.nullable) = false
   ];
 }
 
