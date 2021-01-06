@@ -29,12 +29,17 @@ func (k msgServer) Post(goCtx context.Context, msg *types.MsgPost) (*types.MsgPo
 	if strings.TrimSpace(msg.RewardAccount) != "" {
 		rewardAccount, err = sdk.AccAddressFromBech32(msg.RewardAccount)
 	}
-
 	if err != nil {
 		return nil, err
 	}
+
+	postID, err := types.PostIDFromString(msg.PostID)
+	if err != nil {
+		return nil, err
+	}
+
 	err = k.CreatePost(
-		ctx, msg.VendorID, msg.PostID, msg.Body, creator, rewardAccount)
+		ctx, msg.VendorID, postID, msg.Body, creator, rewardAccount)
 	if err != nil {
 		return nil, err
 	}
@@ -61,13 +66,17 @@ func (k msgServer) Upvote(goCtx context.Context, msg *types.MsgUpvote) (*types.M
 	if strings.TrimSpace(msg.RewardAccount) != "" {
 		rewardAccount, err = sdk.AccAddressFromBech32(msg.RewardAccount)
 	}
+	if err != nil {
+		return nil, err
+	}
 
+	postID, err := types.PostIDFromString(msg.PostID)
 	if err != nil {
 		return nil, err
 	}
 
 	err = k.CreateUpvote(
-		ctx, msg.VendorID, msg.PostID, curator, rewardAccount, msg.VoteNum)
+		ctx, msg.VendorID, postID, curator, rewardAccount, msg.VoteNum)
 	if err != nil {
 		return nil, err
 	}

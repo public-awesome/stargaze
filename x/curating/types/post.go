@@ -28,6 +28,22 @@ type PostID struct {
 	id snowflake.ID
 }
 
+func PostIDFromString(id string) (PostID, error) {
+	postID, err := snowflake.ParseString(id)
+	if err != nil {
+		return PostID{}, err
+	}
+	return PostID{id: postID}, nil
+}
+
+func (p PostID) String() string {
+	return p.id.String()
+}
+
+func (p PostID) Bytes() []byte {
+	return p.Bytes()
+}
+
 // Marshal implements the gogo proto custom type interface.
 func (p PostID) Marshal() ([]byte, error) {
 	return p.id.Bytes(), nil
@@ -53,6 +69,10 @@ func (p PostID) MarshalJSON() ([]byte, error) {
 
 func (p PostID) UnmarshalJSON(data []byte) error {
 	return p.UnmarshalJSON(data)
+}
+
+func (p PostID) Equal(p2 PostID) bool {
+	return p.id == p2.id
 }
 
 // Posts is a collection of Post objects

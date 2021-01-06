@@ -2,11 +2,12 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	curatingtypes "github.com/public-awesome/stakebird/x/curating/types"
 )
 
 // NewStake allocates and returns a new `Stake` struct
 func NewStake(
-	vendorID uint32, postID PostID,
+	vendorID uint32, postID curatingtypes.PostID,
 	delegator sdk.AccAddress, validator sdk.ValAddress, amount sdk.Int) Stake {
 
 	return Stake{

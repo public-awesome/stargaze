@@ -92,12 +92,12 @@ func (k Keeper) GetUpvote(
 	curator sdk.AccAddress) (upvote types.Upvote, found bool, err error) {
 
 	store := ctx.KVStore(k.storeKey)
-	postIDBz, err := postIDBytes(postID)
+	// postIDBz, err := postIDBytes(postID)
 	if err != nil {
 		return upvote, false, err
 	}
 
-	key := types.UpvoteKey(vendorID, postIDBz, curator)
+	key := types.UpvoteKey(vendorID, postID, curator)
 	value := store.Get(key)
 	if value == nil {
 		return upvote, false, nil
@@ -108,7 +108,7 @@ func (k Keeper) GetUpvote(
 }
 
 // DeleteUpvote removes an upvote
-func (k Keeper) DeleteUpvote(ctx sdk.Context, vendorID uint32, postIDBz []byte, upvote types.Upvote) error {
+func (k Keeper) DeleteUpvote(ctx sdk.Context, vendorID uint32, postID types.PostID, upvote types.Upvote) error {
 	err := k.validateVendorID(ctx, vendorID)
 	if err != nil {
 		return err
@@ -119,7 +119,7 @@ func (k Keeper) DeleteUpvote(ctx sdk.Context, vendorID uint32, postIDBz []byte, 
 	if err != nil {
 		return err
 	}
-	key := types.UpvoteKey(vendorID, postIDBz, curator)
+	key := types.UpvoteKey(vendorID, postID, curator)
 
 	store.Delete(key)
 	return nil
@@ -138,12 +138,12 @@ func (k Keeper) voteAmount(ctx sdk.Context, voteNum int64) sdk.Coin {
 
 // IterateUpvotes performs a callback function for each upvoter on a post
 func (k Keeper) IterateUpvotes(
-	ctx sdk.Context, vendorID uint32, postIDBz []byte, cb func(upvote types.Upvote) (stop bool)) {
+	ctx sdk.Context, vendorID uint32, postID types.PostID, cb func(upvote types.Upvote) (stop bool)) {
 
 	store := ctx.KVStore(k.storeKey)
 
 	// iterator over upvoters on a post
-	it := sdk.KVStorePrefixIterator(store, types.UpvotePrefixKey(vendorID, postIDBz))
+	it := sdk.KVStorePrefixIterator(store, types.UpvotePrefixKey(vendorID, postID))
 	defer it.Close()
 
 	for ; it.Valid(); it.Next() {
