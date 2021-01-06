@@ -1,6 +1,7 @@
 package types
 
 import (
+	fmt "fmt"
 	"time"
 
 	"github.com/bwmarrin/snowflake"
@@ -41,7 +42,7 @@ func (p PostID) String() string {
 }
 
 func (p PostID) Bytes() []byte {
-	return p.Bytes()
+	return p.id.Bytes()
 }
 
 // Marshal implements the gogo proto custom type interface.
@@ -59,16 +60,19 @@ func (p PostID) Unmarshal(data []byte) error {
 
 // Size implements the gogo proto custom type interface.
 func (p *PostID) Size() int {
-	bz, _ := p.Marshal()
+	bz, err := p.Marshal()
+	if err != nil {
+		fmt.Println(err)
+	}
 	return len(bz)
 }
 
 func (p PostID) MarshalJSON() ([]byte, error) {
-	return p.MarshalJSON()
+	return p.id.MarshalJSON()
 }
 
 func (p PostID) UnmarshalJSON(data []byte) error {
-	return p.UnmarshalJSON(data)
+	return p.id.UnmarshalJSON(data)
 }
 
 func (p PostID) Equal(p2 PostID) bool {

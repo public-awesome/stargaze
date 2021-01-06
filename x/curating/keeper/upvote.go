@@ -9,7 +9,7 @@ import (
 
 // CreateUpvote performs an upvote operation
 func (k Keeper) CreateUpvote(
-	ctx sdk.Context, vendorID uint32, postID string, curator,
+	ctx sdk.Context, vendorID uint32, postID types.PostID, curator,
 	rewardAccount sdk.AccAddress, voteNum int32) error {
 
 	err := k.validateVendorID(ctx, vendorID)
@@ -18,11 +18,6 @@ func (k Keeper) CreateUpvote(
 	}
 	if rewardAccount.Empty() {
 		rewardAccount = curator
-	}
-
-	postIDBz, err := postIDBytes(postID)
-	if err != nil {
-		return err
 	}
 
 	// check if there is already an upvote
@@ -53,7 +48,7 @@ func (k Keeper) CreateUpvote(
 	}
 
 	voteAmt := k.voteAmount(ctx, int64(voteNum))
-	upvote := types.NewUpvote(vendorID, postIDBz, curator, rewardAccount, voteAmt, ctx.BlockTime())
+	upvote := types.NewUpvote(vendorID, postID, curator, rewardAccount, voteAmt, ctx.BlockTime())
 	k.SetUpvote(ctx, upvote, curator)
 
 	// add vote amount to the voting pool
@@ -67,7 +62,7 @@ func (k Keeper) CreateUpvote(
 		sdk.NewEvent(
 			types.EventTypeUpvote,
 			sdk.NewAttribute(types.AttributeKeyVendorID, fmt.Sprintf("%d", vendorID)),
-			sdk.NewAttribute(types.AttributeKeyPostID, postID),
+			sdk.NewAttribute(types.AttributeKeyPostID, postID.String()),
 			sdk.NewAttribute(types.AttributeKeyCurator, curator.String()),
 			sdk.NewAttribute(types.AttributeKeyRewardAccount, rewardAccount.String()),
 			sdk.NewAttribute(types.AttributeKeyVoteNumber, fmt.Sprintf("%d", voteNum)),
@@ -88,7 +83,7 @@ func (k Keeper) SetUpvote(ctx sdk.Context, upvote types.Upvote, curator sdk.AccA
 
 // GetUpvote returns an upvote if one exists
 func (k Keeper) GetUpvote(
-	ctx sdk.Context, vendorID uint32, postID string,
+	ctx sdk.Context, vendorID uint32, postID types.PostID,
 	curator sdk.AccAddress) (upvote types.Upvote, found bool, err error) {
 
 	store := ctx.KVStore(k.storeKey)

@@ -26,7 +26,7 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyEndBlocker)
 	endTimes := make(map[time.Time]bool)
 	k.IterateExpiredPosts(ctx, func(post types.Post) bool {
-		postIDStr := post.PostIDStr()
+		postIDStr := post.String()
 		k.Logger(ctx).Info(
 			fmt.Sprintf("Processing vendor %d post %v", post.VendorID, post.PostID))
 
