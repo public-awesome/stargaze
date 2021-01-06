@@ -19,12 +19,14 @@ func setup(t *testing.T) (*simapp.SimApp, sdk.Context) {
 	app := simapp.Setup(false)
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
-	postID := "500"
+	postID, err := types.PostIDFromString("500")
+	require.NoError(t, err)
+
 	vendorID := uint32(1)
 
 	addrs = simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(10_000_000))
 
-	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], addrs[0])
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], addrs[0])
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -149,17 +151,23 @@ func TestEndBlocker_RemoveFromExpiredQueue(t *testing.T) {
 
 	addrs = simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(10_000_000))
 
-	err := app.CuratingKeeper.CreatePost(ctx, uint32(1), "777", "body string", addrs[0], addrs[0])
+	postID, err := types.PostIDFromString("777")
+	require.NoError(t, err)
+	err = app.CuratingKeeper.CreatePost(ctx, uint32(1), postID, "body string", addrs[0], addrs[0])
 	require.NoError(t, err)
 
-	err = app.CuratingKeeper.CreatePost(ctx, uint32(1), "888", "body string", addrs[0], addrs[0])
+	postID, err = types.PostIDFromString("888")
+	require.NoError(t, err)
+	err = app.CuratingKeeper.CreatePost(ctx, uint32(1), postID, "body string", addrs[0], addrs[0])
 	require.NoError(t, err)
 
 	// force 2 different keys in the iterator underlying store
 	b := ctx.BlockHeader()
 	b.Time = ctx.BlockHeader().Time.Add(time.Second)
 
-	err = app.CuratingKeeper.CreatePost(ctx.WithBlockHeader(b), uint32(1), "999", "body string", addrs[0], addrs[0])
+	postID, err = types.PostIDFromString("999")
+	require.NoError(t, err)
+	err = app.CuratingKeeper.CreatePost(ctx.WithBlockHeader(b), uint32(1), postID, "body string", addrs[0], addrs[0])
 	require.NoError(t, err)
 
 	// fast-forward blocktime to simulate end of curation window

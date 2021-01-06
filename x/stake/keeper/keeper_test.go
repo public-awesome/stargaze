@@ -4,12 +4,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/bwmarrin/snowflake"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/staking/teststaking"
 	"github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/public-awesome/stakebird/simapp"
+	curatingtypes "github.com/public-awesome/stakebird/x/curating/types"
 	"github.com/stretchr/testify/require"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
@@ -34,8 +34,7 @@ func TestPerformStakeAndUnstake(t *testing.T) {
 	addrDels := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(3))
 
 	vendorID := uint32(1)
-	postID := "500"
-	postIDBz, err := postIDBytes(postID)
+	postID, err := curatingtypes.PostIDFromString("500")
 	require.NoError(t, err)
 
 	delAddr := addrDels[1]
@@ -49,44 +48,32 @@ func TestPerformStakeAndUnstake(t *testing.T) {
 	ctx = ctx.WithBlockHeight(ctx.BlockHeight() + 1)
 
 	// fails because the post hasn't expired yet
-	err = app.StakeKeeper.PerformStake(ctx, vendorID, postIDBz, delAddr, valAddr, amount)
+	err = app.StakeKeeper.PerformStake(ctx, vendorID, postID, delAddr, valAddr, amount)
 	require.Error(t, err)
 
 	// simulate a future block time where the post has expired
 	ctx = ctx.WithBlockTime(ctx.BlockTime().Add(60 * time.Hour))
 
-	err = app.StakeKeeper.PerformStake(ctx, vendorID, postIDBz, delAddr, valAddr, amount)
+	err = app.StakeKeeper.PerformStake(ctx, vendorID, postID, delAddr, valAddr, amount)
 	require.NoError(t, err)
 
-	s, found, err := app.StakeKeeper.GetStake(ctx, vendorID, postIDBz, delAddr)
+	s, found, err := app.StakeKeeper.GetStake(ctx, vendorID, postID, delAddr)
 	require.NoError(t, err)
 	require.True(t, found)
 	require.Equal(t, sdk.NewInt(2), s.Amount)
 
 	// withdraw half of the stake
-	err = app.StakeKeeper.PerformUnstake(ctx, vendorID, postIDBz, delAddr, amount.QuoRaw(2))
+	err = app.StakeKeeper.PerformUnstake(ctx, vendorID, postID, delAddr, amount.QuoRaw(2))
 	require.NoError(t, err)
-	s, found, err = app.StakeKeeper.GetStake(ctx, vendorID, postIDBz, delAddr)
+	s, found, err = app.StakeKeeper.GetStake(ctx, vendorID, postID, delAddr)
 	require.NoError(t, err)
 	require.True(t, found)
 	require.Equal(t, sdk.NewInt(1), s.Amount)
 
 	// withdraw the other half, stake should be gone
-	err = app.StakeKeeper.PerformUnstake(ctx, vendorID, postIDBz, delAddr, amount.QuoRaw(2))
+	err = app.StakeKeeper.PerformUnstake(ctx, vendorID, postID, delAddr, amount.QuoRaw(2))
 	require.NoError(t, err)
-	s, found, err = app.StakeKeeper.GetStake(ctx, vendorID, postIDBz, delAddr)
+	s, found, err = app.StakeKeeper.GetStake(ctx, vendorID, postID, delAddr)
 	require.NoError(t, err)
 	require.False(t, found)
-}
-
-// postIDBytes returns the byte representation of a postID int64
-func postIDBytes(postID string) ([]byte, error) {
-	pID, err := snowflake.ParseString(postID)
-	if err != nil {
-		return nil, err
-	}
-
-	temp := pID.IntBytes()
-
-	return temp[:], nil
 }

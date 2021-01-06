@@ -17,11 +17,12 @@ func TestCreateUpvote(t *testing.T) {
 	app := simapp.SetupWithStakeDenom(false, "fakedenom")
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
-	postID := "500"
+	postID, err := types.PostIDFromString("500")
+	require.NoError(t, err)
 	vendorID := uint32(1)
 	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(27_000_000), fakedenom)
 
-	err := app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5)
+	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5)
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -43,11 +44,12 @@ func TestCreateUpvote_ExistingPost(t *testing.T) {
 	app := simapp.SetupWithStakeDenom(false, "fakedenom")
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
-	postID := "501"
+	postID, err := types.PostIDFromString("501")
+	require.NoError(t, err)
 	vendorID := uint32(1)
 	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(27_000_000), fakedenom)
 
-	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[1], addrs[1])
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[1], addrs[1])
 	require.NoError(t, err)
 
 	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5)
@@ -74,11 +76,12 @@ func TestCreateUpvote_ExpiredPost(t *testing.T) {
 	app := simapp.SetupWithStakeDenom(false, "fakedenom")
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
-	postID := "501"
+	postID, err := types.PostIDFromString("501")
+	require.NoError(t, err)
 	vendorID := uint32(1)
 	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(27_000_000), fakedenom)
 
-	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[1], addrs[1])
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[1], addrs[1])
 	require.NoError(t, err)
 
 	ctx = ctx.WithBlockTime(ctx.BlockTime().Add(time.Hour*24*3 + 1))
@@ -93,11 +96,12 @@ func TestCreateUpvote_ExistingUpvote(t *testing.T) {
 	app := simapp.Setup(false)
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
-	postID := "502"
+	postID, err := types.PostIDFromString("502")
+	require.NoError(t, err)
 	vendorID := uint32(1)
 	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(27_000_000))
 
-	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[1], addrs[1])
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[1], addrs[1])
 	require.NoError(t, err)
 
 	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5)

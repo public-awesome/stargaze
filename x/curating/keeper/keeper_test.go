@@ -4,7 +4,6 @@ import (
 	"crypto/sha256"
 	"testing"
 
-	"github.com/bwmarrin/snowflake"
 	"github.com/public-awesome/stakebird/x/curating/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -13,8 +12,6 @@ import (
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
-var postID = "500"
-
 func TestPost(t *testing.T) {
 	app := simapp.Setup(false)
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
@@ -22,7 +19,10 @@ func TestPost(t *testing.T) {
 	vendorID := uint32(1)
 	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
 
-	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], addrs[0])
+	postID, err := types.PostIDFromString("500")
+	require.NoError(t, err)
+
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], addrs[0])
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -44,8 +44,12 @@ func TestPost_EmptyCreator(t *testing.T) {
 
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 	vendorID := uint32(1)
+
+	postID, err := types.PostIDFromString("500")
+	require.NoError(t, err)
+
 	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
-	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", nil, addrs[1])
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", nil, addrs[1])
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -69,7 +73,10 @@ func TestPost_EmptyRewardAccount(t *testing.T) {
 	vendorID := uint32(1)
 	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
 
-	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], nil)
+	postID, err := types.PostIDFromString("500")
+	require.NoError(t, err)
+
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], nil)
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -90,7 +97,10 @@ func TestPost_WithRewardAccount(t *testing.T) {
 	vendorID := uint32(1)
 	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
 
-	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], addrs[1])
+	postID, err := types.PostIDFromString("500")
+	require.NoError(t, err)
+
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], addrs[1])
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -114,16 +124,17 @@ func TestDeletePost(t *testing.T) {
 	vendorID := uint32(1)
 	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
 
-	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], addrs[1])
+	postID, err := types.PostIDFromString("500")
+	require.NoError(t, err)
+
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], addrs[1])
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
 	require.NoError(t, err)
 	require.True(t, found, "post should be found")
 
-	postIDBz, err := postIDBytes(postID)
-	require.NoError(t, err)
-	err = app.CuratingKeeper.DeletePost(ctx, vendorID, postIDBz)
+	err = app.CuratingKeeper.DeletePost(ctx, vendorID, postID.Bytes())
 	require.NoError(t, err)
 
 	_, found, err = app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -136,17 +147,17 @@ func TestInsertCurationQueue(t *testing.T) {
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
 	vendorID := uint32(1)
-	postIDBz, err := postIDBytes(postID)
+	postID, err := types.PostIDFromString("500")
 	require.NoError(t, err)
 
 	curationWindow := app.CuratingKeeper.GetParams(ctx).CurationWindow
 	curationEndTime := ctx.BlockTime().Add(curationWindow)
-	app.CuratingKeeper.InsertCurationQueue(ctx, vendorID, postIDBz, curationEndTime)
+	app.CuratingKeeper.InsertCurationQueue(ctx, vendorID, postID, curationEndTime)
 
 	timeSlice := app.CuratingKeeper.GetCurationQueueTimeSlice(ctx, curationEndTime)
 	require.Len(t, timeSlice, 1)
 
-	vpPair := types.VPPair{VendorID: vendorID, PostID: postIDBz}
+	vpPair := types.VPPair{VendorID: vendorID, PostID: postID}
 	require.Equal(t, vpPair, timeSlice[0])
 }
 
@@ -155,9 +166,9 @@ func TestCurationQueueTimeSlice(t *testing.T) {
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
 	vendorID := uint32(1)
-	postIDBz, err := hash(postID)
+	postID, err := types.PostIDFromString("500")
 	require.NoError(t, err)
-	vpPair := types.VPPair{VendorID: vendorID, PostID: postIDBz}
+	vpPair := types.VPPair{VendorID: vendorID, PostID: postID}
 
 	curationWindow := app.CuratingKeeper.GetParams(ctx).CurationWindow
 	curationEndTime := ctx.BlockTime().Add(curationWindow)
@@ -176,16 +187,4 @@ func hash(body string) ([]byte, error) {
 		return nil, err
 	}
 	return h.Sum(nil), nil
-}
-
-// postIDBytes returns the byte representation of a postID int64
-func postIDBytes(postID string) ([]byte, error) {
-	pID, err := snowflake.ParseString(postID)
-	if err != nil {
-		return nil, err
-	}
-
-	temp := pID.IntBytes()
-
-	return temp[:], nil
 }
