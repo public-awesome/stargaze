@@ -134,7 +134,7 @@ func TestDeletePost(t *testing.T) {
 	require.NoError(t, err)
 	require.True(t, found, "post should be found")
 
-	err = app.CuratingKeeper.DeletePost(ctx, vendorID, postID.Bytes())
+	err = app.CuratingKeeper.DeletePost(ctx, vendorID, postID)
 	require.NoError(t, err)
 
 	_, found, err = app.CuratingKeeper.GetPost(ctx, vendorID, postID)

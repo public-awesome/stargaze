@@ -22,7 +22,6 @@ func (k Keeper) GetPosts(ctx sdk.Context, vendorID uint32) (posts []types.Post) 
 func (k Keeper) GetPost(
 	ctx sdk.Context, vendorID uint32, postID types.PostID) (post types.Post, found bool, err error) {
 
-	fmt.Println(postID.String())
 	store := ctx.KVStore(k.storeKey)
 
 	key := types.PostKey(vendorID, postID)

@@ -29,6 +29,7 @@ type PostID struct {
 	id snowflake.ID
 }
 
+// PostIDFromString does exactly whats on the label
 func PostIDFromString(id string) (PostID, error) {
 	postID, err := snowflake.ParseString(id)
 	if err != nil {
@@ -37,29 +38,45 @@ func PostIDFromString(id string) (PostID, error) {
 	return PostID{id: postID}, nil
 }
 
+// String like the array of chars, not the theory
 func (p PostID) String() string {
 	return p.id.String()
 }
 
+// Bytes returns bytes in big endian
 func (p PostID) Bytes() []byte {
 	temp := p.id.IntBytes()
 	return temp[:]
 }
 
-// Marshal implements the gogo proto custom type interface.
+// Marshal implements the gogo proto custom type interface
 func (p PostID) Marshal() ([]byte, error) {
 	return p.id.Bytes(), nil
 }
 
-func (p PostID) MarshalTo(data []byte) (n int, err error) {
-	return 8, nil
+// MarshalTo implements the gogo proto custom type interface
+func (p *PostID) MarshalTo(data []byte) (n int, err error) {
+	bz, err := p.Marshal()
+	if err != nil {
+		return 0, err
+	}
+
+	copy(data, bz)
+	return len(bz), nil
 }
 
-func (p PostID) Unmarshal(data []byte) error {
+// Unmarshal implements the gogo proto custom type interface
+func (p *PostID) Unmarshal(data []byte) error {
+	id, err := snowflake.ParseBytes(data)
+	if err != nil {
+		return err
+	}
+	p.id = id
+
 	return nil
 }
 
-// Size implements the gogo proto custom type interface.
+// Size implements the gogo proto custom type interface
 func (p *PostID) Size() int {
 	bz, err := p.Marshal()
 	if err != nil {
@@ -68,10 +85,12 @@ func (p *PostID) Size() int {
 	return len(bz)
 }
 
+// MarshalJSON implements the gogo proto custom type interface
 func (p PostID) MarshalJSON() ([]byte, error) {
 	return p.id.MarshalJSON()
 }
 
+// UnmarshalJSON implements the gogo proto custom type interface
 func (p PostID) UnmarshalJSON(data []byte) error {
 	return p.id.UnmarshalJSON(data)
 }
@@ -88,12 +107,12 @@ type CuratingQueue []VPPair
 
 // NewPost allocates and returns a new `Post` struct
 func NewPost(
-	vendorID uint32, postIDBz PostID, bodyHash []byte, creator,
+	vendorID uint32, postID PostID, bodyHash []byte, creator,
 	rewardAccount sdk.AccAddress, curatingEndTime time.Time) Post {
 
 	return Post{
 		VendorID:        vendorID,
-		PostID:          postIDBz,
+		PostID:          postID,
 		Creator:         creator.String(),
 		RewardAccount:   rewardAccount.String(),
 		BodyHash:        bodyHash,
