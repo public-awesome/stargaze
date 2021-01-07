@@ -5,8 +5,6 @@ package stakebird.stake.v1beta1;
 option go_package = "github.com/public-awesome/stakebird/x/stake/types";
 
 import "gogoproto/gogo.proto";
-// import "stakebird/curating/v1beta1/curating.proto";
-
 
 message Stake {
     uint32 vendor_id = 1 [
