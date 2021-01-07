@@ -52,6 +52,7 @@ func (k Keeper) Post(c context.Context, req *types.QueryPostRequest) (*types.Que
 func (k Keeper) Upvotes(c context.Context, req *types.QueryUpvotesRequest) (*types.QueryUpvotesResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
 	var upvotes []types.Upvote
+	fmt.Println("HELLO................")
 
 	postID, err := types.PostIDFromString(req.PostId)
 	if err != nil {
@@ -62,7 +63,9 @@ func (k Keeper) Upvotes(c context.Context, req *types.QueryUpvotesRequest) (*typ
 	if err != nil || !found {
 		return nil, types.ErrPostNotFound
 	}
+	fmt.Println("HELLO................")
 	k.IterateUpvotes(ctx, req.VendorId, post.PostID, func(upvote types.Upvote) (stop bool) {
+		fmt.Println("in here...")
 		upvotes = append(upvotes, upvote)
 		return false
 	})

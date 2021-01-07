@@ -37,6 +37,12 @@ func TestCreateUpvote(t *testing.T) {
 
 	curatorBalance := app.BankKeeper.GetBalance(ctx, addrs[0], "ucredits")
 	require.Equal(t, "2000000", curatorBalance.Amount.String())
+
+	// test iterate
+	app.CuratingKeeper.IterateUpvotes(ctx, vendorID, postID, func(u types.Upvote) (stop bool) {
+		require.Equal(t, "500", u.PostID.String())
+		return false
+	})
 }
 
 func TestCreateUpvote_ExistingPost(t *testing.T) {
