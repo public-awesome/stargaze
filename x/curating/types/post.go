@@ -1,7 +1,6 @@
 package types
 
 import (
-	fmt "fmt"
 	"time"
 
 	"github.com/bwmarrin/snowflake"
@@ -80,7 +79,7 @@ func (p *PostID) Unmarshal(data []byte) error {
 func (p *PostID) Size() int {
 	bz, err := p.Marshal()
 	if err != nil {
-		fmt.Println(err)
+		return 0
 	}
 	return len(bz)
 }

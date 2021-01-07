@@ -1,7 +1,6 @@
 package keeper_test
 
 import (
-	"fmt"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -58,7 +57,6 @@ func TestInflateRewardsNonDefault(t *testing.T) {
 
 	rewardPoolAddr := app.AccountKeeper.GetModuleAccount(ctx, types.RewardPoolName).GetAddress()
 
-	fmt.Println(app.BankKeeper.GetAllBalances(ctx, rewardPoolAddr))
 	rewardPool := app.BankKeeper.GetBalance(ctx, rewardPoolAddr, fakedenom)
 	require.Equal(t, "21000000500000", rewardPool.Amount.String())
 }

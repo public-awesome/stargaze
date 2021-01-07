@@ -38,13 +38,6 @@ func TestCreatePost(t *testing.T) {
 	}
 	require.Equal(t, "\"500\"", string(obj))
 
-	// obj, err = json.MarshalIndent(post, "", " ")
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// require.Equal(t, "\"500\"", string(obj))
-	// fmt.Println(string(obj))
-
 	curatingQueue := app.CuratingKeeper.GetCurationQueueTimeSlice(ctx, ctx.BlockTime().Add(10*time.Minute))
 	fmt.Println(curatingQueue)
 	require.Equal(t, curatingQueue[0].PostID.String(), "500")
@@ -60,8 +53,7 @@ func TestCreatePost(t *testing.T) {
 
 	// test expired post iterator
 	app.CuratingKeeper.IterateExpiredPosts(ctx, func(post types.Post) (stop bool) {
-		fmt.Println("post ", post)
-		// require.Equal(t, post.PostID.String(), "500")
+		require.NotNil(t, post)
 		return false
 	})
 }
