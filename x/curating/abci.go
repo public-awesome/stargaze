@@ -25,6 +25,7 @@ func BeginBlocker(ctx sdk.Context, k keeper.Keeper) {
 func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyEndBlocker)
 	endTimes := make(map[time.Time]bool)
+	fmt.Println("in here..............")
 	k.IterateExpiredPosts(ctx, func(post types.Post) bool {
 		postIDStr := post.String()
 		k.Logger(ctx).Info(
@@ -48,12 +49,14 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 		if err != nil {
 			panic(err)
 		}
-		creatorVotinPoolReward, err := k.RewardCreatorFromVotingPool(ctx, rewardAccount, qv.VotingPool)
+		creatorVotingPoolReward, err := k.RewardCreatorFromVotingPool(ctx, rewardAccount, qv.VotingPool)
+		fmt.Println("hello.............................")
+		fmt.Println(creatorVotingPoolReward)
 		if err != nil {
 			panic(err)
 		}
 		emitRewardEvent(ctx, types.EventTypeProtocolReward, types.EventTypeVotingPoolReturn,
-			post.RewardAccount, postIDStr, creatorVotinPoolReward.String())
+			post.RewardAccount, postIDStr, creatorVotingPoolReward.String())
 		creatorProtocolReward, err := k.RewardCreatorFromProtocol(ctx, rewardAccount, qv.MatchPool())
 		if err != nil {
 			panic(err)

@@ -42,7 +42,8 @@ func (p PostID) String() string {
 }
 
 func (p PostID) Bytes() []byte {
-	return p.id.Bytes()
+	temp := p.id.IntBytes()
+	return temp[:]
 }
 
 // Marshal implements the gogo proto custom type interface.
