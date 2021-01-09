@@ -3,6 +3,7 @@ module github.com/public-awesome/stakebird
 go 1.15
 
 require (
+	github.com/CosmWasm/wasmd v0.12.1 // indirect
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/cosmos/cosmos-sdk v0.40.0-rc3
 	github.com/gogo/protobuf v1.3.1
