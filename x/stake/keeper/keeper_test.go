@@ -30,7 +30,7 @@ func TestPerformStakeAndUnstake(t *testing.T) {
 
 	// create validator with 50% commission
 	tstaking.Commission = types.NewCommissionRates(sdk.NewDecWithPrec(5, 1), sdk.NewDecWithPrec(5, 1), sdk.NewDec(0))
-	tstaking.CreateValidator(valAddrs[0], valConsPk1, 100, true)
+	tstaking.CreateValidator(valAddrs[0], valConsPk1, sdk.NewInt(100), true)
 	addrDels := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(3))
 
 	vendorID := uint32(1)
