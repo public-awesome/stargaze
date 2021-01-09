@@ -20,6 +20,7 @@ github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d h1:nalkkPQ
 github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d/go.mod h1:URdX5+vg25ts3aCh8H5IFZybJYKWhJHYMTnf+ULtoC4=
 github.com/CosmWasm/wasmd v0.12.1 h1:W9Ra6watkRdSCxBatSFhkXT82dwOEIYm60/S6n1Pni0=
 github.com/CosmWasm/wasmd v0.12.1/go.mod h1:RWK2e5dIVadTxPJ/LjFM5zJP5sSXZesF4GKxxIKcJgI=
+github.com/CosmWasm/wasmvm v0.12.0 h1:L9ez6fCg2Co1SgCm0YHjbnewZ8myemu2cm/QL0qR1OE=
 github.com/CosmWasm/wasmvm v0.12.0/go.mod h1:tbXGE9Jz6sYpiJroGr71OQ5TFOufq/P5LWsruA2u6JE=
 github.com/DataDog/datadog-go v3.2.0+incompatible/go.mod h1:LButxg5PwREeZtORoXG3tL4fMGNddJ+vMq1mwgfaqoQ=
 github.com/DataDog/zstd v1.4.1 h1:3oxKN3wbHibqx897utPC2LTQU4J+IHWWJO+glkAkpFM=
