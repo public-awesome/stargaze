@@ -4,6 +4,7 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	curatingtypes "github.com/public-awesome/stakebird/x/curating/types"
 	"github.com/public-awesome/stakebird/x/stake/types"
 )
 
@@ -19,17 +20,17 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 
 func (k msgServer) Stake(goCtx context.Context, msg *types.MsgStake) (*types.MsgStakeResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	postID, err := postIDBytes(msg.PostID)
-	if err != nil {
-		return nil, err
-	}
-
 	delegator, err := sdk.AccAddressFromBech32(msg.Delegator)
 	if err != nil {
 		return nil, err
 	}
 
 	validator, err := sdk.ValAddressFromBech32(msg.Validator)
+	if err != nil {
+		return nil, err
+	}
+
+	postID, err := curatingtypes.PostIDFromString(msg.PostID)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +54,8 @@ func (k msgServer) Stake(goCtx context.Context, msg *types.MsgStake) (*types.Msg
 
 func (k msgServer) Unstake(goCtx context.Context, msg *types.MsgUnstake) (*types.MsgUnstakeResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	postID, err := postIDBytes(msg.PostID)
+
+	postID, err := curatingtypes.PostIDFromString(msg.PostID)
 	if err != nil {
 		return nil, err
 	}

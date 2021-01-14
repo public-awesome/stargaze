@@ -2,9 +2,20 @@ syntax = "proto3";
 
 package stakebird.curating.v1beta1;
 
-option go_package = "github.com/public-awesome/stakebird/x/curating/types";
-
 import "gogoproto/gogo.proto";
 import "stakebird/curating/v1beta1/curating.proto";
 
-message GenesisState { Params params = 1 [ (gogoproto.nullable) = false ]; }
+option go_package = "github.com/public-awesome/stakebird/x/curating/types";
+
+message GenesisState {
+    Params params = 1 [ (gogoproto.nullable) = false ];
+
+    repeated Post posts = 3 
+        [(gogoproto.castrepeated) = "Posts", (gogoproto.nullable) = false];
+
+    repeated Upvote upvotes = 4 
+        [(gogoproto.castrepeated) = "Upvotes", (gogoproto.nullable) = false];
+
+    repeated VPPair curating_queue = 5 
+        [(gogoproto.castrepeated) = "CuratingQueue", (gogoproto.nullable) = false];
+}

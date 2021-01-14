@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/bwmarrin/snowflake"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	curatingtypes "github.com/public-awesome/stakebird/x/curating/types"
 	"github.com/public-awesome/stakebird/x/stake/types"
 )
 
@@ -14,10 +14,12 @@ var _ types.QueryServer = Keeper{}
 // Stakes returns stakes for a post
 func (k Keeper) Stakes(c context.Context, req *types.QueryStakesRequest) (*types.QueryStakesResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
-	postID, err := postIDBytes(req.PostId)
+
+	postID, err := curatingtypes.PostIDFromString(req.PostId)
 	if err != nil {
 		return nil, err
 	}
+
 	stakes := k.GetStakes(ctx, req.VendorId, postID)
 
 	return &types.QueryStakesResponse{Stakes: stakes}, nil
@@ -26,12 +28,13 @@ func (k Keeper) Stakes(c context.Context, req *types.QueryStakesRequest) (*types
 // Stake returns a Stake
 func (k Keeper) Stake(c context.Context, req *types.QueryStakeRequest) (*types.QueryStakeResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
-	postID, err := postIDBytes(req.PostId)
+
+	delegator, err := sdk.AccAddressFromBech32(req.Delegator)
 	if err != nil {
 		return nil, err
 	}
 
-	delegator, err := sdk.AccAddressFromBech32(req.Delegator)
+	postID, err := curatingtypes.PostIDFromString(req.PostId)
 	if err != nil {
 		return nil, err
 	}
@@ -46,16 +49,4 @@ func (k Keeper) Stake(c context.Context, req *types.QueryStakeRequest) (*types.Q
 	return &types.QueryStakeResponse{
 		Stake: &stake,
 	}, nil
-}
-
-// postIDBytes returns the byte representation of a postID int64
-func postIDBytes(postID string) ([]byte, error) {
-	pID, err := snowflake.ParseString(postID)
-	if err != nil {
-		return nil, err
-	}
-
-	temp := pID.IntBytes()
-
-	return temp[:], nil
 }

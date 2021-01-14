@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/bwmarrin/snowflake"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/public-awesome/stakebird/x/curating/types"
 )
@@ -21,23 +20,11 @@ func (k Keeper) GetPosts(ctx sdk.Context, vendorID uint32) (posts []types.Post) 
 
 // GetPost returns post if one exists
 func (k Keeper) GetPost(
-	ctx sdk.Context, vendorID uint32, postID string) (post types.Post, found bool, err error) {
-
-	postIDBz, err := postIDBytes(postID)
-	if err != nil {
-		return post, false, err
-	}
-
-	return k.GetPostZ(ctx, vendorID, postIDBz)
-}
-
-// GetPostZ returns post if one exists
-func (k Keeper) GetPostZ(
-	ctx sdk.Context, vendorID uint32, postIDBz []byte) (post types.Post, found bool, err error) {
+	ctx sdk.Context, vendorID uint32, postID types.PostID) (post types.Post, found bool, err error) {
 
 	store := ctx.KVStore(k.storeKey)
 
-	key := types.PostKey(vendorID, postIDBz)
+	key := types.PostKey(vendorID, postID)
 	value := store.Get(key)
 	if value == nil {
 		return post, false, nil
@@ -50,7 +37,7 @@ func (k Keeper) GetPostZ(
 // CreatePost registers a post on-chain and starts the curation period.
 // It can be called from CreateUpvote() when a post doesn't exist yet.
 func (k Keeper) CreatePost(
-	ctx sdk.Context, vendorID uint32, postID, body string, creator, rewardAccount sdk.AccAddress) error {
+	ctx sdk.Context, vendorID uint32, postID types.PostID, body string, creator, rewardAccount sdk.AccAddress) error {
 
 	_, found, err := k.GetPost(ctx, vendorID, postID)
 	if err != nil {
@@ -68,11 +55,6 @@ func (k Keeper) CreatePost(
 		rewardAccount = creator
 	}
 
-	postIDBz, err := postIDBytes(postID)
-	if err != nil {
-		return err
-	}
-
 	bodyHash, err := hash(body)
 	if err != nil {
 		return err
@@ -80,20 +62,16 @@ func (k Keeper) CreatePost(
 
 	curationWindow := k.GetParams(ctx).CurationWindow
 	curationEndTime := ctx.BlockTime().Add(curationWindow)
-	post := types.NewPost(vendorID, postIDBz, bodyHash, creator, rewardAccount, curationEndTime)
+	post := types.NewPost(vendorID, postID, bodyHash, creator, rewardAccount, curationEndTime)
 
-	store := ctx.KVStore(k.storeKey)
-	key := types.PostKey(vendorID, postIDBz)
-	value := k.MustMarshalPost(post)
-	store.Set(key, value)
-
-	k.InsertCurationQueue(ctx, vendorID, postIDBz, curationEndTime)
+	k.SetPost(ctx, post)
+	k.InsertCurationQueue(ctx, vendorID, postID, curationEndTime)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypePost,
 			sdk.NewAttribute(types.AttributeKeyVendorID, fmt.Sprintf("%d", vendorID)),
-			sdk.NewAttribute(types.AttributeKeyPostID, postID),
+			sdk.NewAttribute(types.AttributeKeyPostID, postID.String()),
 			sdk.NewAttribute(types.AttributeKeyCreator, creator.String()),
 			sdk.NewAttribute(types.AttributeKeyRewardAccount, rewardAccount.String()),
 			sdk.NewAttribute(types.AttributeKeyBody, body),
@@ -105,15 +83,23 @@ func (k Keeper) CreatePost(
 	return nil
 }
 
+// SetPost sets a post in the store
+func (k Keeper) SetPost(ctx sdk.Context, post types.Post) {
+	store := ctx.KVStore(k.storeKey)
+	key := types.PostKey(post.VendorID, post.PostID)
+	value := k.MustMarshalPost(post)
+	store.Set(key, value)
+}
+
 // DeletePost removes a post
-func (k Keeper) DeletePost(ctx sdk.Context, vendorID uint32, postIDBz []byte) error {
+func (k Keeper) DeletePost(ctx sdk.Context, vendorID uint32, postID types.PostID) error {
 	err := k.validateVendorID(ctx, vendorID)
 	if err != nil {
 		return err
 	}
 
 	store := ctx.KVStore(k.storeKey)
-	key := types.PostKey(vendorID, postIDBz)
+	key := types.PostKey(vendorID, postID)
 
 	store.Delete(key)
 	return nil
@@ -121,7 +107,7 @@ func (k Keeper) DeletePost(ctx sdk.Context, vendorID uint32, postIDBz []byte) er
 
 // InsertCurationQueue inserts a VPPair into the right timeslot in the curation queue
 func (k Keeper) InsertCurationQueue(
-	ctx sdk.Context, vendorID uint32, postID []byte, curationEndTime time.Time) {
+	ctx sdk.Context, vendorID uint32, postID types.PostID, curationEndTime time.Time) {
 	vpPair := types.VPPair{VendorID: vendorID, PostID: postID}
 
 	timeSlice := k.GetCurationQueueTimeSlice(ctx, curationEndTime)
@@ -177,7 +163,7 @@ func (k Keeper) IterateExpiredPosts(
 		vps := types.VPPairs{}
 		k.cdc.MustUnmarshalBinaryBare(it.Value(), &vps)
 		for _, vp := range vps.Pairs {
-			post, found, err := k.GetPostZ(ctx, vp.VendorID, vp.PostID)
+			post, found, err := k.GetPost(ctx, vp.VendorID, vp.PostID)
 			if err != nil {
 				// Do want to panic here because if a post doesn't exist for an upvote
 				// it means there's some kind of consensus failure, so halt the chain.
@@ -214,18 +200,6 @@ func (k Keeper) IteratePosts(ctx sdk.Context, vendorID uint32, cb func(post type
 			break
 		}
 	}
-}
-
-// postIDBytes returns the byte representation of a postID int64
-func postIDBytes(postID string) ([]byte, error) {
-	pID, err := snowflake.ParseString(postID)
-	if err != nil {
-		return nil, err
-	}
-
-	temp := pID.IntBytes()
-
-	return temp[:], nil
 }
 
 // hash performs a sha256 hash over body content and truncates to 160-bits

@@ -15,10 +15,12 @@ message Post {
     (gogoproto.moretags) = "yaml:\"vendor_id\"",
     (gogoproto.jsontag) = "vendor_id"
   ];
-  bytes post_id = 2 [
+  string post_id = 2 [
+    (gogoproto.customtype) = "PostID",
     (gogoproto.customname) = "PostID",
     (gogoproto.moretags) = "yaml:\"post_id\"",
-    (gogoproto.jsontag) = "post_id"
+    (gogoproto.jsontag) = "post_id",
+    (gogoproto.nullable) = false
   ];
   string creator = 3 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
   string reward_account = 4
@@ -32,11 +34,23 @@ message Post {
 }
 
 message Upvote {
-  string curator = 1 [ (gogoproto.moretags) = "yaml:\"curator\"" ];
-  string reward_account = 2
+  uint32 vendor_id = 1 [
+    (gogoproto.customname) = "VendorID",
+    (gogoproto.moretags) = "yaml:\"vendor_id\"",
+    (gogoproto.jsontag) = "vendor_id"
+  ];
+  string post_id = 2 [
+    (gogoproto.customtype) = "PostID",
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\"",
+    (gogoproto.jsontag) = "post_id",
+    (gogoproto.nullable) = false
+  ];
+  string curator = 3 [ (gogoproto.moretags) = "yaml:\"curator\"" ];
+  string reward_account = 4
       [ (gogoproto.moretags) = "yaml:\"reward_account\"" ];
-  cosmos.base.v1beta1.Coin vote_amount = 3 [ (gogoproto.nullable) = false ];
-  google.protobuf.Timestamp curated_time = 5 [
+  cosmos.base.v1beta1.Coin vote_amount = 5 [ (gogoproto.nullable) = false ];
+  google.protobuf.Timestamp curated_time = 6 [
     (gogoproto.stdtime) = true,
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"curated_time\""
@@ -55,10 +69,12 @@ message VPPair {
     (gogoproto.moretags) = "yaml:\"vendor_id\"",
     (gogoproto.jsontag) = "vendor_id"
   ];
-  bytes post_id = 2 [
+  string post_id = 2 [
+    (gogoproto.customtype) = "PostID",
     (gogoproto.customname) = "PostID",
     (gogoproto.moretags) = "yaml:\"post_id\"",
-    (gogoproto.jsontag) = "post_id"
+    (gogoproto.jsontag) = "post_id",
+    (gogoproto.nullable) = false
   ];
 }
 
