@@ -99,14 +99,14 @@ func TestEndBlockerExpiringPost(t *testing.T) {
 	curator1Bal := app.BankKeeper.GetAllBalances(ctx, addrs[1])
 	require.Equal(t, "9000000", curator1Bal.AmountOf("ucredits").String(),
 		"9 (bal)")
-	require.Equal(t, "11425000", curator1Bal.AmountOf("ustb").String(),
-		"9 (bal) + 1 (deposit) + 1.425 (match reward)")
+	require.Equal(t, "11500000", curator1Bal.AmountOf("ustb").String(),
+		"9 (bal) + 1 (deposit) + 1.5 (match reward)")
 
 	curator2Bal := app.BankKeeper.GetAllBalances(ctx, addrs[2])
 	require.Equal(t, "1000000", curator2Bal.AmountOf("ucredits").String(),
 		"1 (bal)")
-	require.Equal(t, "14275000", curator2Bal.AmountOf("ustb").String(),
-		"9 (bal) + 1 (deposit) + 4.275 (match reward)")
+	require.Equal(t, "14500000", curator2Bal.AmountOf("ustb").String(),
+		"9 (bal) + 1 (deposit) + 4.5 (match reward)")
 }
 
 func TestEndBlockerExpiringPostWithSmolRewardPool(t *testing.T) {
@@ -132,14 +132,14 @@ func TestEndBlockerExpiringPostWithSmolRewardPool(t *testing.T) {
 	curator1Bal := app.BankKeeper.GetAllBalances(ctx, addrs[1])
 	require.Equal(t, "9000000", curator1Bal.AmountOf("ucredits").String(),
 		"9 (bal)")
-	require.Equal(t, "10000237", curator1Bal.AmountOf("ustb").String(),
-		"9 (bal) + 1 (deposit) + 237u (match reward)")
+	require.Equal(t, "10000250", curator1Bal.AmountOf("ustb").String(),
+		"9 (bal) + 1 (deposit) + 250u (match reward)")
 
 	curator2Bal := app.BankKeeper.GetAllBalances(ctx, addrs[2])
 	require.Equal(t, "1000000", curator2Bal.AmountOf("ucredits").String(),
 		"1 (bal)")
-	require.Equal(t, "10000712", curator2Bal.AmountOf("ustb").String(),
-		"9 (bal) + 1 (deposit) + 712u (match reward)")
+	require.Equal(t, "10000750", curator2Bal.AmountOf("ustb").String(),
+		"9 (bal) + 1 (deposit) + 750u (match reward)")
 }
 
 func TestEndBlocker_RemoveFromExpiredQueue(t *testing.T) {
