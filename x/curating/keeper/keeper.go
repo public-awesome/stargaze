@@ -65,11 +65,7 @@ func (k Keeper) validateVendorID(ctx sdk.Context, vendorID uint32) error {
 func (k Keeper) SendMatchingReward(
 	ctx sdk.Context, account sdk.AccAddress, matchReward sdk.Dec) (sdk.Coin, error) {
 
-	curatorShare := sdk.OneDec().Sub(k.GetParams(ctx).CreatorProtocolRewardAllocation)
-	curatorMatch := curatorShare.Mul(matchReward).TruncateInt()
-	k.Logger(ctx).Debug(fmt.Sprintf("curator match: %v", curatorMatch))
-
-	reward := sdk.NewCoin(k.GetParams(ctx).StakeDenom, curatorMatch)
+	reward := sdk.NewCoin(k.GetParams(ctx).StakeDenom, matchReward.TruncateInt())
 	err := k.sendProtocolReward(ctx,
 		account, reward)
 	if err != nil {

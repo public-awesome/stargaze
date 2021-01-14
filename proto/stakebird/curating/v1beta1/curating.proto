@@ -83,6 +83,7 @@ message VPPairs { repeated VPPair pairs = 1 [ (gogoproto.nullable) = false ]; }
 
 message Params {
   option (gogoproto.goproto_stringer) = false;
+
   google.protobuf.Duration curation_window = 1 [
     (gogoproto.nullable) = false,
     (gogoproto.stdduration) = true,
@@ -94,10 +95,12 @@ message Params {
     (gogoproto.moretags) = "yaml:\"vote_amount\"",
     (gogoproto.jsontag) = "vote_amount"
   ];
+
   uint32 max_num_votes = 3 [
     (gogoproto.moretags) = "yaml:\"max_num_votes\"",
     (gogoproto.jsontag) = "max_num_votes"
   ];
+
   uint32 max_vendors = 4 [
     (gogoproto.moretags) = "yaml:\"max_vendors\"",
     (gogoproto.jsontag) = "max_vendors"
@@ -107,19 +110,6 @@ message Params {
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"reward_pool_allocation\""
-  ];
-  string creator_protocol_reward_allocation = 6 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
-    (gogoproto.nullable) = false,
-    (gogoproto.jsontag) = "creator_protocol_reward_allocation,omitempty",
-    (gogoproto.moretags) = "yaml:\"creator_protocol_reward_allocation\""
-  ];
-
-  string creator_voting_reward_allocation = 7 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
-    (gogoproto.nullable) = false,
-    (gogoproto.jsontag) = "creator_voting_reward_allocation,omitempty",
-    (gogoproto.moretags) = "yaml:\"creator_voting_reward_allocation\""
   ];
 
   string reward_pool_curation_max_alloc = 8 [
