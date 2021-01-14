@@ -24,6 +24,7 @@ func BeginBlocker(ctx sdk.Context, k keeper.Keeper) {
 // EndBlocker called every block, update validator set
 func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyEndBlocker)
+
 	endTimes := make(map[time.Time]bool)
 	k.IterateExpiredPosts(ctx, func(post types.Post) bool {
 		postIDStr := post.String()
@@ -31,6 +32,11 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 			fmt.Sprintf("Processing vendor %d post %v", post.VendorID, post.PostID))
 
 		qv := NewQVFData(ctx, k)
+
+		err := k.BurnFromVotingPool(ctx, qv.VotingPool)
+		if err != nil {
+			panic(err)
+		}
 
 		// iterate upvoters, returning deposits, and tallying upvotes
 		k.IterateUpvotes(ctx, post.VendorID, post.PostID,

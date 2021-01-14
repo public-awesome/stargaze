@@ -79,6 +79,17 @@ func (k Keeper) SendMatchingReward(
 	return reward, nil
 }
 
+// BurnFromVotingPool burns an amount of CREDITS from the voting pool
+func (k Keeper) BurnFromVotingPool(ctx sdk.Context, amount sdk.Int) error {
+	votingCoin := sdk.NewCoin(types.DefaultVoteDenom, amount)
+	err := k.bankKeeper.BurnCoins(ctx, types.VotingPoolName, sdk.NewCoins(votingCoin))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // sendProtocolReward sends the quadratic finance matching reward to the user
 func (k Keeper) sendProtocolReward(ctx sdk.Context, account sdk.AccAddress, amt sdk.Coin) error {
 	err := k.bankKeeper.SendCoinsFromModuleToAccount(
