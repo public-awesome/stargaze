@@ -24,6 +24,7 @@ func BeginBlocker(ctx sdk.Context, k keeper.Keeper) {
 // EndBlocker called every block, update validator set
 func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyEndBlocker)
+
 	endTimes := make(map[time.Time]bool)
 	k.IterateExpiredPosts(ctx, func(post types.Post) bool {
 		postIDStr := post.String()
@@ -31,6 +32,11 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 			fmt.Sprintf("Processing vendor %d post %v", post.VendorID, post.PostID))
 
 		qv := NewQVFData(ctx, k)
+
+		err := k.BurnFromVotingPool(ctx, qv.VotingPool)
+		if err != nil {
+			panic(err)
+		}
 
 		// iterate upvoters, returning deposits, and tallying upvotes
 		k.IterateUpvotes(ctx, post.VendorID, post.PostID,
@@ -44,26 +50,6 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 				return false
 			})
 
-		rewardAccount, err := sdk.AccAddressFromBech32(post.RewardAccount)
-		if err != nil {
-			panic(err)
-		}
-		creatorVotingPoolReward, err := k.RewardCreatorFromVotingPool(ctx, rewardAccount, qv.VotingPool)
-		if err != nil {
-			panic(err)
-		}
-		emitRewardEvent(ctx, types.EventTypeProtocolReward, types.EventTypeVotingPoolReturn,
-			post.RewardAccount, postIDStr, creatorVotingPoolReward.String())
-		creatorProtocolReward, err := k.RewardCreatorFromProtocol(ctx, rewardAccount, qv.MatchPool())
-		if err != nil {
-			panic(err)
-		}
-		emitRewardEvent(ctx, types.EventTypeProtocolReward, types.AttributeRewardTypeCreator,
-			post.RewardAccount, postIDStr, creatorProtocolReward.String())
-
-		curatorAlloc := sdk.OneDec().Sub(k.GetParams(ctx).CreatorVotingRewardAllocation)
-		curatorVotingReward := curatorAlloc.MulInt(qv.VoterReward()).TruncateInt()
-
 		curatorMatchPerVote := qv.MatchPoolPerVote()
 
 		k.IterateUpvotes(ctx, post.VendorID, post.PostID,
@@ -72,14 +58,6 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 				if err != nil {
 					panic(err)
 				}
-				// distribute quadratic voting per capita reward from voting pool
-				votingPoolReward, err := k.SendVotingReward(ctx, rewardAccount, curatorVotingReward)
-				if err != nil {
-					panic(err)
-				}
-				emitRewardEvent(ctx, types.EventTypeProtocolReward, types.EventTypeVotingPoolReturn,
-					upvote.RewardAccount, postIDStr, votingPoolReward.String())
-
 				curatingProtocolReward, err := sendMatchingReward(ctx, k, upvote.VoteAmount.Amount,
 					curatorMatchPerVote, rewardAccount)
 				if err != nil {
