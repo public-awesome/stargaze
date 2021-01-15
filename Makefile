@@ -90,7 +90,7 @@ clean:
 init:
 	./bin/staked init stakebird --stake-denom uegg --chain-id localnet-1
 	./bin/staked add-genesis-account $(shell ./bin/staked keys show validator -a --keyring-backend test) 10000000000000000uegg,10000000000000000ucredits
-	./bin/staked gentx validator --chain-id localnet-1 --amount 10000000000uegg --keyring-backend test
+	./bin/staked gentx validator 10000000000uegg --chain-id localnet-1  --keyring-backend test
 	./bin/staked collect-gentxs 
 
 install: go.sum
