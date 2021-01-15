@@ -128,13 +128,13 @@ message Params {
     (gogoproto.jsontag) = "reward_pool_curation_max_alloc,omitempty",
     (gogoproto.moretags) = "yaml:\"reward_pool_curation_max_alloc\""
   ];
-  
+
   cosmos.base.v1beta1.Coin initial_reward_pool = 9 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"initial_reward_pool\"",
     (gogoproto.jsontag) = "initial_reward_pool"
   ];
-  
+
   string stake_denom = 10 [
     (gogoproto.moretags) = "yaml:\"stake_denom\"",
     (gogoproto.jsontag) = "stake_denom"

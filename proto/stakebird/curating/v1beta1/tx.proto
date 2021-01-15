@@ -14,9 +14,8 @@ service Msg {
   // Upvote defines a method for upvoting a post
   rpc Upvote(MsgUpvote) returns (MsgUpvoteResponse);
 }
-message MsgPostResponse{}
-message MsgUpvoteResponse{}
-
+message MsgPostResponse {}
+message MsgUpvoteResponse {}
 
 message MsgPost {
   option (gogoproto.equal) = true;

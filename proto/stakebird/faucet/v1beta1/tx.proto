@@ -16,9 +16,8 @@ service Msg {
   rpc FaucetKey(MsgFaucetKey) returns (MsgFaucetKeyResponse);
 }
 
-message MsgMintResponse{}
-message MsgFaucetKeyResponse{}
-
+message MsgMintResponse {}
+message MsgFaucetKeyResponse {}
 
 message MsgMint {
   option (gogoproto.equal) = true;
