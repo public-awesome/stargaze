@@ -67,9 +67,9 @@ func setup(t *testing.T) (*simapp.SimApp, sdk.Context) {
 }
 
 // initial state
-// creator  = 10 credits, 10 stb
-// curator1 = 10 credits, 10 stb, upvote 1 credits
-// curator2 = 10 credits, 10 stb, upvote 9 credits
+// creator  = 10 credits, 10 stars
+// curator1 = 10 credits, 10 stars, upvote 1 credits
+// curator2 = 10 credits, 10 stars, upvote 9 credits
 //
 // qvf
 // voting_pool  = 10 credits
