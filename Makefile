@@ -8,6 +8,7 @@ LEDGER_ENABLED ?= false
 SDK_PACK := $(shell go list -m github.com/cosmos/cosmos-sdk | sed  's/ /\@/g')
 BUILDDIR ?= $(CURDIR)/build
 FAUCET_ENABLED ?= false
+DOCKER := $(shell which docker)
 
 export GO111MODULE = on
 
@@ -149,8 +150,17 @@ fake-unstake:
 ###############################################################################
 proto-all: proto-gen proto-lint proto-check-breaking
 
+
 proto-gen:
-	@./contrib/protocgen.sh
+	@echo "Generating Protobuf files"
+	$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace tendermintdev/sdk-proto-gen sh ./contrib/protocgen.sh
+
+proto-format:
+	@echo "Formatting Protobuf files"
+	$(DOCKER) run --rm -v $(CURDIR):/workspace \
+	--workdir /workspace tendermintdev/docker-build-proto \
+	find ./ -not -path "./third_party/*" -name *.proto -exec clang-format -i {} \;
+
 
 proto-lint:
 	@buf check lint --error-format=json
