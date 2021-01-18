@@ -67,18 +67,18 @@ func setup(t *testing.T) (*simapp.SimApp, sdk.Context) {
 }
 
 // initial state
-// creator  = 10 credits, 10 stb
-// curator1 = 10 credits, 10 stb, upvote 1 credits
-// curator2 = 10 credits, 10 stb, upvote 9 credits
+// creator  = 10 credits, 10 stars
+// curator1 = 10 credits, 10 stars, upvote 1 credits
+// curator2 = 10 credits, 10 stars, upvote 9 credits
 //
 // qvf
 // voting_pool  = 10 credits
 // root_sum     = 4
 // match_pool   = 4^2 - 10 = 6
 //
-// match_reward_per_vote = match_pool / 4 = 1.5 stb
-// curator 1 match reward = 1.5 stb
-// curator 2 match reward = 4.5 stb
+// match_reward_per_vote = match_pool / 4 = 1.5 stars
+// curator 1 match reward = 1.5 stars
+// curator 2 match reward = 4.5 stars
 func TestEndBlockerExpiringPost(t *testing.T) {
 	app, ctx := setup(t)
 
