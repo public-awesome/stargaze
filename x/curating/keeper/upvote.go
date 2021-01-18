@@ -48,8 +48,13 @@ func (k Keeper) CreateUpvote(
 	}
 
 	voteAmt := k.voteAmount(ctx, int64(voteNum))
-	post.TotalVotes = post.TotalVotes + uint64(voteNum)
+	post.TotalVotes += uint64(voteNum)
+	if post.TotalAmount.Amount.IsZero() {
+		post.TotalAmount = sdk.NewInt64Coin(voteAmt.Denom, 0)
+	}
 	post.TotalAmount = post.TotalAmount.Add(voteAmt)
+
+	k.SetPost(ctx, post)
 	upvote := types.NewUpvote(vendorID, postID, curator, rewardAccount, voteAmt, ctx.BlockTime())
 	k.SetUpvote(ctx, upvote, curator)
 
