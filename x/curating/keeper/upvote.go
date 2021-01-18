@@ -48,6 +48,8 @@ func (k Keeper) CreateUpvote(
 	}
 
 	voteAmt := k.voteAmount(ctx, int64(voteNum))
+	post.TotalVotes = post.TotalVotes + uint64(voteNum)
+	post.TotalAmount = post.TotalAmount.Add(voteAmt)
 	upvote := types.NewUpvote(vendorID, postID, curator, rewardAccount, voteAmt, ctx.BlockTime())
 	k.SetUpvote(ctx, upvote, curator)
 
@@ -87,7 +89,6 @@ func (k Keeper) GetUpvote(
 	curator sdk.AccAddress) (upvote types.Upvote, found bool, err error) {
 
 	store := ctx.KVStore(k.storeKey)
-	// postIDBz, err := postIDBytes(postID)
 	if err != nil {
 		return upvote, false, err
 	}
