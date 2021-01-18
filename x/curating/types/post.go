@@ -116,5 +116,7 @@ func NewPost(
 		RewardAccount:   rewardAccount.String(),
 		BodyHash:        bodyHash,
 		CuratingEndTime: curatingEndTime,
+		TotalVotes:      0,
+		TotalAmount:     sdk.Coin{},
 	}
 }

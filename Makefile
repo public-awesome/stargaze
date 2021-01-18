@@ -132,16 +132,16 @@ test:
 	go test github.com/public-awesome/stakebird/x/...
 
 fake-post:
-	./bin/staked tx curating post  1 $(POST_ID) "post body"  --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq '.node_info.network') -b block -y
+	./bin/staked tx curating post  1 $(POST_ID) "post body"  --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq -r '.NodeInfo.network') -b block -y
 
 fake-upvote:
-	./bin/staked tx curating upvote 1 $(POST_ID) 1  --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq '.node_info.network') -b block -y
+	./bin/staked tx curating upvote 1 $(POST_ID) 1  --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq -r '.NodeInfo.network') -b block -y
 
 fake-stake:
-	./bin/staked tx stake stake 1 $(POST_ID) 100 $(VAL) --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq '.node_info.network') -b block -y
+	./bin/staked tx stake stake 1 $(POST_ID) 100 $(VAL) --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq -r '.NodeInfo.network') -b block -y
 
 fake-unstake:
-	./bin/staked tx stake unstake 1 $(POST_ID) 10  --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq '.node_info.network') -b block -y
+	./bin/staked tx stake unstake 1 $(POST_ID) 10  --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq -r '.NodeInfo.network') -b block -y
 
 .PHONY: test build-linux docker-test lint  build init install
 

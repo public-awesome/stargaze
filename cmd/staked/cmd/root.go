@@ -46,7 +46,8 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 		WithInput(os.Stdin).
 		WithAccountRetriever(types.AccountRetriever{}).
 		WithBroadcastMode(flags.BroadcastBlock).
-		WithHomeDir(stakebird.DefaultNodeHome)
+		WithHomeDir(stakebird.DefaultNodeHome).
+		WithOutput(os.Stdout)
 
 	rootCmd := &cobra.Command{
 		Use:   "staked",
@@ -59,6 +60,8 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 			return server.InterceptConfigsPreRunHandler(cmd)
 		},
 	}
+	rootCmd.SetOut(rootCmd.OutOrStdout())
+	rootCmd.SetErr(rootCmd.ErrOrStderr())
 
 	initRootCmd(rootCmd, encodingConfig)
 
