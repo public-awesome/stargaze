@@ -233,7 +233,9 @@ func TestEndblocker_BurnCoinsFromVotingPool(t *testing.T) {
 	require.Equal(t, sdk.NewInt64Coin("ucredits", 30_000_000), post.TotalAmount)
 	supply := app.BankKeeper.GetSupply(ctx)
 
+	// 5 initial accounts funded with 27CREDITS
 	require.Equal(t, sdk.NewInt(27_000_000*5).String(), supply.GetTotal().AmountOf("ucredits").String())
+
 	// pool should have 30CREDITS
 	require.Equal(t,
 		sdk.NewInt64Coin("ucredits", 30_000_000),
@@ -246,9 +248,18 @@ func TestEndblocker_BurnCoinsFromVotingPool(t *testing.T) {
 		app.CuratingKeeper.GetParams(ctx).CurationWindow)
 	ctx = ctx.WithBlockHeader(h)
 
+	// run endblocker
 	curating.EndBlocker(ctx, app.CuratingKeeper)
+
+	poolBalance := app.BankKeeper.GetBalance(ctx, authtypes.NewModuleAddress(types.VotingPoolName), "ucredits")
 	require.Equal(t,
-		sdk.ZeroInt().String(),
-		app.BankKeeper.GetAllBalances(ctx, authtypes.NewModuleAddress(types.VotingPoolName)).AmountOf("ucredits").String(),
+		"0ucredits",
+		poolBalance.String(),
 	)
+
+	// supply should decrease
+	supply = app.BankKeeper.GetSupply(ctx)
+	// initial funded amount - 30CREDITS
+	require.Equal(t, sdk.NewInt(27_000_000*5-30_000_000).String(), supply.GetTotal().AmountOf("ucredits").String())
+
 }
