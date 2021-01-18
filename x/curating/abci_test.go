@@ -231,7 +231,22 @@ func TestEndblocker_BurnCoinsFromVotingPool(t *testing.T) {
 	require.Equal(t, uint64(4), post.TotalVoters)
 	// 1 + 4 + 9 + 16
 	require.Equal(t, sdk.NewInt64Coin("ucredits", 30_000_000), post.TotalAmount)
+	supply := app.BankKeeper.GetSupply(ctx)
 
+	require.Equal(t, sdk.NewInt(27_000_000*5).String(), supply.GetTotal().AmountOf("ucredits").String())
+	// pool should have 30CREDITS
+	require.Equal(t,
+		sdk.NewInt64Coin("ucredits", 30_000_000),
+		app.BankKeeper.GetBalance(ctx, authtypes.NewModuleAddress(types.VotingPoolName), "ucredits"),
+	)
+
+	// fast-forward blocktime to simulate end of curation window
+	h := ctx.BlockHeader()
+	h.Time = ctx.BlockHeader().Time.Add(
+		app.CuratingKeeper.GetParams(ctx).CurationWindow)
+	ctx = ctx.WithBlockHeader(h)
+
+	curating.EndBlocker(ctx, app.CuratingKeeper)
 	require.Equal(t,
 		sdk.ZeroInt().String(),
 		app.BankKeeper.GetAllBalances(ctx, authtypes.NewModuleAddress(types.VotingPoolName)).AmountOf("ucredits").String(),
