@@ -94,6 +94,7 @@ func (p PostID) UnmarshalJSON(data []byte) error {
 	return p.id.UnmarshalJSON(data)
 }
 
+// Equal compares post id is the same
 func (p PostID) Equal(p2 PostID) bool {
 	return p.id == p2.id
 }

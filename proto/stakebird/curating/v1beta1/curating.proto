@@ -36,7 +36,12 @@ message Post {
     (gogoproto.moretags) = "yaml:\"total_votes\"",
     (gogoproto.jsontag) = "total_votes"
   ];
-  cosmos.base.v1beta1.Coin total_amount = 9 [
+  uint64 total_voters = 9 [
+    (gogoproto.customname) = "TotalVoters",
+    (gogoproto.moretags) = "yaml:\"total_voters\"",
+    (gogoproto.jsontag) = "total_voters"
+  ];
+  cosmos.base.v1beta1.Coin total_amount = 10 [
     (gogoproto.nullable) = false,
     (gogoproto.customname) = "TotalAmount",
     (gogoproto.moretags) = "yaml:\"total_amount\"",

@@ -48,7 +48,10 @@ func (k Keeper) CreateUpvote(
 	}
 
 	voteAmt := k.voteAmount(ctx, int64(voteNum))
+
+	// update post totals
 	post.TotalVotes += uint64(voteNum)
+	post.TotalVoters++
 	if !post.TotalAmount.IsValid() {
 		post.TotalAmount = sdk.NewInt64Coin(voteAmt.Denom, 0)
 	}
