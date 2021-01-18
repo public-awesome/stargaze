@@ -7,4 +7,4 @@ COPY ./bin/staked /usr/bin/staked
 COPY ./docker/entry-point.sh ./entry-point.sh
 EXPOSE 26657
 
-CMD ["staked", "start", "--pruning", "nothing"]
+CMD ["staked", "start", "--pruning", "nothing", "--log_format", "json"]
