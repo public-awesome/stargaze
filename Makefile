@@ -9,6 +9,7 @@ SDK_PACK := $(shell go list -m github.com/cosmos/cosmos-sdk | sed  's/ /\@/g')
 BUILDDIR ?= $(CURDIR)/build
 FAUCET_ENABLED ?= false
 DOCKER := $(shell which docker)
+POST_ID?="1"
 
 export GO111MODULE = on
 
