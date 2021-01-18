@@ -33,11 +33,6 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 
 		qv := NewQVFData(ctx, k)
 
-		err := k.BurnFromVotingPool(ctx, qv.VotingPool)
-		if err != nil {
-			panic(err)
-		}
-
 		// iterate upvoters, returning deposits, and tallying upvotes
 		k.IterateUpvotes(ctx, post.VendorID, post.PostID,
 			func(upvote types.Upvote) (stop bool) {
@@ -49,7 +44,10 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 
 				return false
 			})
-
+		err := k.BurnFromVotingPool(ctx, qv.VotingPool)
+		if err != nil {
+			panic(err)
+		}
 		curatorMatchPerVote := qv.MatchPoolPerVote()
 
 		k.IterateUpvotes(ctx, post.VendorID, post.PostID,
