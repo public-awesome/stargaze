@@ -8,6 +8,7 @@ import (
 	"github.com/public-awesome/stakebird/x/curating/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/public-awesome/stakebird/simapp"
 	"github.com/stretchr/testify/require"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -192,4 +193,47 @@ func TestEndBlocker_RemoveFromExpiredQueue(t *testing.T) {
 	})
 
 	require.Len(t, posts, 0, "posts should have been removed from queue")
+}
+
+func TestEndblocker_BurnCoinsFromVotingPool(t *testing.T) {
+	fakedenom := "fakedenom"
+	app := simapp.SetupWithStakeDenom(false, "fakedenom")
+	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
+
+	postID, err := types.PostIDFromString("501")
+	require.NoError(t, err)
+	vendorID := uint32(1)
+	addrs := simapp.AddTestAddrsIncremental(app, ctx, 5, sdk.NewInt(27_000_000), fakedenom)
+
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[1], addrs[1])
+	require.NoError(t, err)
+
+	// amt = 1
+	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 1)
+	require.NoError(t, err)
+
+	// amt = 4
+	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[1], addrs[1], 2)
+	require.NoError(t, err)
+
+	// amt = 9
+	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[2], addrs[2], 3)
+	require.NoError(t, err)
+
+	// amt = 16
+	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[3], addrs[3], 4)
+	require.NoError(t, err)
+
+	post, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
+	require.NoError(t, err)
+	require.True(t, found, "post should be found")
+	require.Equal(t, uint64(10), post.TotalVotes)
+	require.Equal(t, uint64(4), post.TotalVoters)
+	// 1 + 4 + 9 + 16
+	require.Equal(t, sdk.NewInt64Coin("ucredits", 30_000_000), post.TotalAmount)
+
+	require.Equal(t,
+		sdk.ZeroInt().String(),
+		app.BankKeeper.GetAllBalances(ctx, authtypes.NewModuleAddress(types.VotingPoolName)).AmountOf("ucredits").String(),
+	)
 }
