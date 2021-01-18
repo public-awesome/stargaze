@@ -49,6 +49,7 @@ var (
 	flagInitialStakingAmount = "initial-staking-amount"
 	flagCurationWindow       = "curation-window"
 	defaultKeyringBackend    = "test"
+	flagDockerTag            = "docker-tag"
 )
 
 // get cmd to initialize all files for tendermint testnet and application
@@ -140,7 +141,7 @@ Example:
 	cmd.Flags().String(flagUnbondingPeriod, app.DefaultUnbondingPeriod, "app's unbonding period")
 	cmd.Flags().String(flagCurationWindow, "72h",
 		"Curation Window for post expiration: 72h, 3h, 90m")
-
+	cmd.Flags().String(flagDockerTag, "latest", "docker tag for testnet command")
 	return cmd
 }
 
@@ -344,7 +345,11 @@ func InitTestnet(
 	if err != nil {
 		return err
 	}
-	def, err := docker(nodes)
+	dockerTag, err := cmd.Flags().GetString(flagDockerTag)
+	if err != nil {
+		return err
+	}
+	def, err := docker(nodes, dockerTag)
 	if err != nil {
 		return err
 	}
@@ -503,7 +508,7 @@ const dockerComposeDefinition = `# Stakebird Testnet
 version: '3.1'
 services:{{range $node := .Nodes }}
 	{{ $node.Name }}:
-		image: publicawesome/stakebird
+		image: publicawesome/stakebird:{{ $.Tag }}
 		ports:
 			- {{ $node.OutsidePortRange}}:{{ $node.InsidePortRange}}
 			- {{ $node.APIPort}}:1317
@@ -513,7 +518,7 @@ services:{{range $node := .Nodes }}
 {{end}}
 `
 
-func docker(nodes []TestnetNode) (string, error) {
+func docker(nodes []TestnetNode, tag string) (string, error) {
 	def := strings.ReplaceAll(dockerComposeDefinition, "\t", "  ")
 	t, err := template.New("definition").Parse(def)
 	if err != nil {
@@ -521,7 +526,8 @@ func docker(nodes []TestnetNode) (string, error) {
 	}
 	d := struct {
 		Nodes []TestnetNode
-	}{Nodes: nodes}
+		Tag   string
+	}{Nodes: nodes, Tag: tag}
 
 	buf := bytes.NewBufferString("")
 	err = t.Execute(buf, d)

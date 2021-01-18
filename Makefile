@@ -8,6 +8,8 @@ LEDGER_ENABLED ?= false
 SDK_PACK := $(shell go list -m github.com/cosmos/cosmos-sdk | sed  's/ /\@/g')
 BUILDDIR ?= $(CURDIR)/build
 FAUCET_ENABLED ?= false
+DOCKER := $(shell which docker)
+POST_ID?="1"
 
 export GO111MODULE = on
 
@@ -131,16 +133,16 @@ test:
 	go test github.com/public-awesome/stakebird/x/...
 
 fake-post:
-	./bin/staked tx curating post  1 $(POST_ID) "post body"  --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq '.node_info.network') -b block -y
+	./bin/staked tx curating post  1 $(POST_ID) "post body"  --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq -r '.NodeInfo.network') -b block -y
 
 fake-upvote:
-	./bin/staked tx curating upvote 1 $(POST_ID) 1  --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq '.node_info.network') -b block -y
+	./bin/staked tx curating upvote 1 $(POST_ID) 1  --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq -r '.NodeInfo.network') -b block -y
 
 fake-stake:
-	./bin/staked tx stake stake 1 $(POST_ID) 100 $(VAL) --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq '.node_info.network') -b block -y
+	./bin/staked tx stake stake 1 $(POST_ID) 100 $(VAL) --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq -r '.NodeInfo.network') -b block -y
 
 fake-unstake:
-	./bin/staked tx stake unstake 1 $(POST_ID) 10  --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq '.node_info.network') -b block -y
+	./bin/staked tx stake unstake 1 $(POST_ID) 10  --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq -r '.NodeInfo.network') -b block -y
 
 .PHONY: test build-linux docker-test lint  build init install
 
@@ -149,8 +151,17 @@ fake-unstake:
 ###############################################################################
 proto-all: proto-gen proto-lint proto-check-breaking
 
+
 proto-gen:
-	@./contrib/protocgen.sh
+	@echo "Generating Protobuf files"
+	$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace tendermintdev/sdk-proto-gen sh ./contrib/protocgen.sh
+
+proto-format:
+	@echo "Formatting Protobuf files"
+	$(DOCKER) run --rm -v $(CURDIR):/workspace \
+	--workdir /workspace tendermintdev/docker-build-proto \
+	find ./ -not -path "./third_party/*" -name *.proto -exec clang-format -i {} \;
+
 
 proto-lint:
 	@buf check lint --error-format=json

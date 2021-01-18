@@ -11,8 +11,8 @@ service Msg {
   rpc Stake(MsgStake) returns (MsgStakeResponse);
   rpc Unstake(MsgUnstake) returns (MsgUnstakeResponse);
 }
-message MsgStakeResponse{}
-message MsgUnstakeResponse{}
+message MsgStakeResponse {}
+message MsgUnstakeResponse {}
 
 message MsgStake {
   option (gogoproto.equal) = true;
@@ -29,23 +29,28 @@ message MsgStake {
   ];
   string delegator = 3 [ (gogoproto.moretags) = "yaml:\"delegator\"" ];
   string validator = 4 [ (gogoproto.moretags) = "yaml:\"validator\"" ];
-  string amount = 5 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int", (gogoproto.nullable) = false];
+  string amount = 5 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
 }
 
 message MsgUnstake {
-    option (gogoproto.equal) = true;
-  
-    uint32 vendor_id = 1 [
-      (gogoproto.customname) = "VendorID",
-      (gogoproto.moretags) = "yaml:\"vendor_id\"",
-      (gogoproto.jsontag) = "vendor_id"
-    ];
-    string post_id = 2 [
-      (gogoproto.customname) = "PostID",
-      (gogoproto.moretags) = "yaml:\"post_id\"",
-      (gogoproto.jsontag) = "post_id"
-    ];
-    string delegator = 3 [ (gogoproto.moretags) = "yaml:\"delegator\"" ];
-    string amount = 4 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int", (gogoproto.nullable) = false];
+  option (gogoproto.equal) = true;
+
+  uint32 vendor_id = 1 [
+    (gogoproto.customname) = "VendorID",
+    (gogoproto.moretags) = "yaml:\"vendor_id\"",
+    (gogoproto.jsontag) = "vendor_id"
+  ];
+  string post_id = 2 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\"",
+    (gogoproto.jsontag) = "post_id"
+  ];
+  string delegator = 3 [ (gogoproto.moretags) = "yaml:\"delegator\"" ];
+  string amount = 4 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
 }
-  

@@ -10,9 +10,7 @@ import "gogoproto/gogo.proto";
 service Msg {
   // Vouch defines a method for vouching for a user.
   rpc Vouch(MsgVouch) returns (MsgVouchResponse);
-
 }
-
 
 message MsgVouch {
   option (gogoproto.equal) = false;
@@ -30,4 +28,4 @@ message MsgVouch {
   string comment = 3 [ (gogoproto.moretags) = "yaml:\"comment\"" ];
 }
 
-message MsgVouchResponse{}
+message MsgVouchResponse {}

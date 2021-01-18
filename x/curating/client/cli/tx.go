@@ -30,13 +30,11 @@ $ %s tx curating post 1 "2" "body" --from mykey
 			),
 		),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientQueryContext(cmd)
+			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
-
 			creator := clientCtx.GetFromAddress()
-
 			vendorID, err := strconv.ParseUint(args[0], 10, 32)
 			if err != nil {
 				return err
@@ -83,7 +81,7 @@ $ %s tx curating upvote 1 "2" 5 --from mykey
 			),
 		),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientQueryContext(cmd)
+			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}

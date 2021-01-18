@@ -173,6 +173,13 @@ func setTotalSupply(app *SimApp, ctx sdk.Context, accAmt sdk.Int, totalAccounts 
 	app.BankKeeper.SetSupply(ctx, banktypes.NewSupply(prevSupply.GetTotal().Add(totalSupply...)))
 }
 
+// setTotalSupply provides the total supply based on accAmt * totalAccounts.
+func setTotalSupplyDenom(app *SimApp, ctx sdk.Context, denom string, accAmt sdk.Int, totalAccounts int) {
+	totalSupply := sdk.NewCoins(sdk.NewCoin(denom, accAmt.MulRaw(int64(totalAccounts))))
+	prevSupply := app.BankKeeper.GetSupply(ctx)
+	app.BankKeeper.SetSupply(ctx, banktypes.NewSupply(prevSupply.GetTotal().Add(totalSupply...)))
+}
+
 // AddTestAddrs constructs and returns accNum amount of accounts with an
 // initial balance of accAmt in random order
 func AddTestAddrs(app *SimApp, ctx sdk.Context,
@@ -197,9 +204,8 @@ func addTestAddrs(app *SimApp, ctx sdk.Context, accNum int,
 	for _, d := range coinDenoms {
 		c := sdk.NewCoin(d, accAmt)
 		initCoins = initCoins.Add(c)
+		setTotalSupplyDenom(app, ctx, d, accAmt, accNum)
 	}
-
-	setTotalSupply(app, ctx, accAmt, accNum)
 
 	// fill all the addresses with some coins, set the loose pool tokens simultaneously
 	for _, addr := range testAddrs {

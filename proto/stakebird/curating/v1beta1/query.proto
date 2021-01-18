@@ -50,8 +50,9 @@ message QueryPostRequest {
   string post_id = 2;
 }
 
-message QueryPostsResponse { 
-  repeated stakebird.curating.v1beta1.Post posts = 1 [(gogoproto.nullable) = false]; 
+message QueryPostsResponse {
+  repeated stakebird.curating.v1beta1.Post posts = 1
+      [ (gogoproto.nullable) = false ];
 }
 
 message QueryPostResponse { stakebird.curating.v1beta1.Post post = 1; }
