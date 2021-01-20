@@ -143,6 +143,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: a5f45b999cce3a0055841897214bd1de4c2c5cb3d0ece33360f3462f81257181
+hmac: b3df86bd993293b3d11751f86aab5256df3777c98d1cfd4149bd6ab973299eb0
 
 ...
