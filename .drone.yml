@@ -9,7 +9,7 @@ steps:
     commands:
       - git fetch --tags
   - name: lint
-    image: golangci/golangci-lint:v1.31
+    image: golangci/golangci-lint:v1.35.2
     commands:
       - export GL_DEBUG=linters_output
       - export GOPACKAGESPRINTGOLISTERRORS=1
@@ -18,7 +18,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: test-and-build
-    image: golang:1.15.2
+    image: golang:1.15.7
     commands:
       - apt-get update && apt-get install -y cmake
       - ./contrib/go-test.sh
@@ -74,15 +74,18 @@ steps:
         from_secret: ci_server
       token:
         from_secret: ci_token
+      deploy: deploy-devnet
+      last_successful: true
       fork: true
       repositories:
         from_secret: downstream_repositories
     when:
-      branch: master
+      branch: 
+        - develop
       event:
         - push
   - name: release
-    image: golang:1.15.2
+    image: golang:1.15.7
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -110,21 +113,21 @@ name: ibc-integration-test
 
 steps:
   - name: gaiad
-    image: golang:1.15.2
+    image: golang:1.15.7
     detach: true
     commands:
       - ./contrib/ci/setup-gaia.sh
     environment:
       GOPROXY: http://goproxy
   - name: stakebird
-    image: golang:1.15.2
+    image: golang:1.15.7
     commands:
       - ./contrib/ci/setup-stakebird.sh
     environment:
       GOPROXY: http://goproxy
     detach: true
   - name: relayer
-    image: golang:1.15.2
+    image: golang:1.15.7
     commands:
       - /bin/bash ./contrib/ci/setup-relayer.sh
     environment:
