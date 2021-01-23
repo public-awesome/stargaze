@@ -10,6 +10,7 @@ BUILDDIR ?= $(CURDIR)/build
 FAUCET_ENABLED ?= false
 DOCKER := $(shell which docker)
 POST_ID?="1"
+STAKE_DENOM = "ustarx"
 
 export GO111MODULE = on
 
@@ -90,9 +91,9 @@ clean:
 	rm -rf ~/.staked/data
 
 init:
-	./bin/staked init stakebird --stake-denom uegg --chain-id localnet-1
-	./bin/staked add-genesis-account $(shell ./bin/staked keys show validator -a --keyring-backend test) 10000000000000000uegg,10000000000000000ucredits
-	./bin/staked gentx validator 10000000000uegg --chain-id localnet-1  --keyring-backend test
+	./bin/staked init stakebird --stake-denom $(STAKE_DENOM) --chain-id localnet-1
+	./bin/staked add-genesis-account $(shell ./bin/staked keys show validator -a --keyring-backend test) 10000000000000000$(STAKE_DENOM),10000000000000000ucredits
+	./bin/staked gentx validator 10000000000$(STAKE_DENOM) --chain-id localnet-1  --keyring-backend test
 	./bin/staked collect-gentxs 
 
 install: go.sum
