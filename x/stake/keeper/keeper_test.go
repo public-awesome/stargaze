@@ -8,8 +8,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/staking/teststaking"
 	"github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/public-awesome/stakebird/simapp"
-	curatingtypes "github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stargaze/simapp"
+	curatingtypes "github.com/public-awesome/stargaze/x/curating/types"
 	"github.com/stretchr/testify/require"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )

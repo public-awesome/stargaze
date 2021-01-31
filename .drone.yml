@@ -55,7 +55,7 @@ steps:
     image: plugins/docker:18
     settings:
       dockerfile: docker/Dockerfile
-      repo: publicawesome/stakebird
+      repo: publicawesome/stargaze
       username:
         from_secret: docker_username
       password:
@@ -119,10 +119,10 @@ steps:
       - ./contrib/ci/setup-gaia.sh
     environment:
       GOPROXY: http://goproxy
-  - name: stakebird
+  - name: stargaze
     image: golang:1.15.7
     commands:
-      - ./contrib/ci/setup-stakebird.sh
+      - ./contrib/ci/setup-stargaze.sh
     environment:
       GOPROXY: http://goproxy
     detach: true

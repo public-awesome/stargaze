@@ -17,8 +17,8 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	stakebird "github.com/public-awesome/stakebird/app"
-	curatingtypes "github.com/public-awesome/stakebird/x/curating/types"
+	stargaze "github.com/public-awesome/stargaze/app"
+	curatingtypes "github.com/public-awesome/stargaze/x/curating/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	tmjson "github.com/tendermint/tendermint/libs/json"
@@ -30,7 +30,7 @@ const (
 	flagUnbondingPeriod = "unbonding-period"
 )
 
-// InitCmd wraps the genutil.InitCmd to inject specific settings for stakebird chain
+// InitCmd wraps the genutil.InitCmd to inject specific settings for stargaze chain
 func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 
 	init := genutilcli.InitCmd(mbm, defaultNodeHome)
@@ -70,8 +70,8 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 		return nil
 	}
 
-	init.Flags().String(flagStakeDenom, stakebird.DefaultStakeDenom, "app's stake denom")
-	init.Flags().String(flagUnbondingPeriod, stakebird.DefaultUnbondingPeriod, "app's unbonding period")
+	init.Flags().String(flagStakeDenom, stargaze.DefaultStakeDenom, "app's stake denom")
+	init.Flags().String(flagUnbondingPeriod, stargaze.DefaultUnbondingPeriod, "app's unbonding period")
 	return init
 }
 

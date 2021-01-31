@@ -5,8 +5,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	curatingtypes "github.com/public-awesome/stakebird/x/curating/types"
-	"github.com/public-awesome/stakebird/x/stake/types"
+	curatingtypes "github.com/public-awesome/stargaze/x/curating/types"
+	"github.com/public-awesome/stargaze/x/stake/types"
 )
 
 // GetStakes returns all stakes for a post

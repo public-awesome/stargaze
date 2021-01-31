@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/public-awesome/stakebird/x/user/types"
+	"github.com/public-awesome/stargaze/x/user/types"
 )
 
 // GetVouchesByVoucher returns the vouch if one exists

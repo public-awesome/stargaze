@@ -1,8 +1,8 @@
 package faucet
 
 import (
-	"github.com/public-awesome/stakebird/x/faucet/internal/keeper"
-	"github.com/public-awesome/stakebird/x/faucet/internal/types"
+	"github.com/public-awesome/stargaze/x/faucet/internal/keeper"
+	"github.com/public-awesome/stargaze/x/faucet/internal/types"
 )
 
 // exported consts

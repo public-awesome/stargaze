@@ -18,10 +18,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	"github.com/public-awesome/stakebird/x/user/client/cli"
-	"github.com/public-awesome/stakebird/x/user/keeper"
-	"github.com/public-awesome/stakebird/x/user/simulation"
-	"github.com/public-awesome/stakebird/x/user/types"
+	"github.com/public-awesome/stargaze/x/user/client/cli"
+	"github.com/public-awesome/stargaze/x/user/keeper"
+	"github.com/public-awesome/stargaze/x/user/simulation"
+	"github.com/public-awesome/stargaze/x/user/types"
 )
 
 var (
@@ -108,7 +108,7 @@ func (AppModule) Name() string {
 
 // RegisterInvariants registers the staking module invariants.
 func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
-	// TODO: https://github.com/public-awesome/stakebird/issues/108
+	// TODO: https://github.com/public-awesome/stargaze/issues/108
 }
 
 // Route returns the message routing key for the staking module.

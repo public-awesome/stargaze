@@ -24,7 +24,7 @@ unzip -o $GAIA_TAG.zip &> /dev/null; \
 cd gaia-$GAIA_TAG; \
 make install &> /dev/null)
 
-echo "Installing stakebird..."
+echo "Installing stargaze..."
 make install &> /dev/null
 
 chainid0=ibc0

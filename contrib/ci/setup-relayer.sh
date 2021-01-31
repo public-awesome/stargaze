@@ -1,7 +1,7 @@
 set -ex
 RELAYER_TAG="goz-phase-3"
 GAIA_CHAINID=gaia
-STAKEBIRD_CHAINID=stakebird
+STAKEBIRD_CHAINID=stargaze
 
 git clone https://github.com/iqlusioninc/relayer /tmp/relayer
 pushd /tmp/relayer

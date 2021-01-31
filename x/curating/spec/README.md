@@ -159,7 +159,7 @@ deposit: `MsgModerate.Deposit`
 
 Governance will have to match the hash of the post with the actual post, and moderate the content.
 
-[TODO] Figure out how to handle the result of moderation (i.e: re-start curation or delete/flag post). See https://github.com/public-awesome/stakebird/issues/51.
+[TODO] Figure out how to handle the result of moderation (i.e: re-start curation or delete/flag post). See https://github.com/public-awesome/stargaze/issues/51.
 
 ```go
 type MsgModerate struct {

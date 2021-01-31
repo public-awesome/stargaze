@@ -57,7 +57,7 @@ build_tags_comma_sep := $(subst $(whitespace),$(comma),$(build_tags))
 
 # process linker flags
 
-ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=stakebird \
+ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=stargaze \
 		  -X github.com/cosmos/cosmos-sdk/version.AppName=staked \
 		  -X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
 		  -X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) \
@@ -92,7 +92,7 @@ clean:
 	rm -rf ~/.staked/data
 
 init:
-	./bin/staked init stakebird --stake-denom $(STAKE_DENOM) --chain-id localnet-1
+	./bin/staked init stargaze --stake-denom $(STAKE_DENOM) --chain-id localnet-1
 	./bin/staked add-genesis-account $(shell ./bin/staked keys show validator -a --keyring-backend test) 10000000000000000$(STAKE_DENOM),10000000000000000ucredits
 	./bin/staked add-genesis-account $(shell ./bin/staked keys show user1 -a --keyring-backend test) 10000000000000$(STAKE_DENOM),10000000000000ucredits
 	./bin/staked gentx validator 10000000000$(STAKE_DENOM) --chain-id localnet-1  --keyring-backend test
@@ -123,17 +123,17 @@ lint:
 
 
 build-linux: 
-	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build $(BUILD_FLAGS) -o bin/staked github.com/public-awesome/stakebird/cmd/staked
+	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build $(BUILD_FLAGS) -o bin/staked github.com/public-awesome/stargaze/cmd/staked
 
 build-docker: build-linux
-	docker build -f docker/Dockerfile -t publicawesome/stakebird .
+	docker build -f docker/Dockerfile -t publicawesome/stargaze .
 
 docker-test: build-linux
-	docker build -f docker/Dockerfile.test -t rocketprotocol/stakebird-relayer-test:latest .
+	docker build -f docker/Dockerfile.test -t rocketprotocol/stargaze-relayer-test:latest .
 
 
 test:
-	go test github.com/public-awesome/stakebird/x/...
+	go test github.com/public-awesome/stargaze/x/...
 
 fake-post:
 	./bin/staked tx curating post  1 $(POST_ID) "post body"  --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq -r '.NodeInfo.network') -b block -y
@@ -178,7 +178,7 @@ proto-check-breaking:
 .PHONY: proto-all proto-gen proto-lint proto-check-breaking
 
 ci-sign: 
-	drone sign public-awesome/stakebird --save
+	drone sign public-awesome/stargaze --save
 
 post: 
 	staked tx curating post 1 1 "test" --from validator --keyring-backend test --chain-id localnet-1

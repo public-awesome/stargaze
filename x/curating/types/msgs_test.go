@@ -6,8 +6,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/public-awesome/stakebird/simapp"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stargaze/simapp"
+	"github.com/public-awesome/stargaze/x/curating/types"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 

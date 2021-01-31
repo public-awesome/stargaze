@@ -24,7 +24,7 @@ builds:
 release:
   github:
     owner: public-awesome
-    name: stakebird
+    name: stargaze
   draft: true
   prerelease: auto
 

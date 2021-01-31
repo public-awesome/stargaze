@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package stakebird.curating.v1beta1;
+package stargaze.curating.v1beta1;
 
-option go_package = "github.com/public-awesome/stakebird/x/curating/types";
+option go_package = "github.com/public-awesome/stargaze/x/curating/types";
 
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";

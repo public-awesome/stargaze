@@ -85,19 +85,19 @@ import (
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
-	stakebirdappparams "github.com/public-awesome/stakebird/app/params"
-	"github.com/public-awesome/stakebird/x/curating"
-	curatingkeeper "github.com/public-awesome/stakebird/x/curating/keeper"
-	curatingtypes "github.com/public-awesome/stakebird/x/curating/types"
+	stakebirdappparams "github.com/public-awesome/stargaze/app/params"
+	"github.com/public-awesome/stargaze/x/curating"
+	curatingkeeper "github.com/public-awesome/stargaze/x/curating/keeper"
+	curatingtypes "github.com/public-awesome/stargaze/x/curating/types"
 
-	"github.com/public-awesome/stakebird/x/user"
-	userkeeper "github.com/public-awesome/stakebird/x/user/keeper"
-	usertypes "github.com/public-awesome/stakebird/x/user/types"
+	"github.com/public-awesome/stargaze/x/user"
+	userkeeper "github.com/public-awesome/stargaze/x/user/keeper"
+	usertypes "github.com/public-awesome/stargaze/x/user/types"
 
-	"github.com/public-awesome/stakebird/x/faucet"
-	"github.com/public-awesome/stakebird/x/stake"
-	stakekeeper "github.com/public-awesome/stakebird/x/stake/keeper"
-	staketypes "github.com/public-awesome/stakebird/x/stake/types"
+	"github.com/public-awesome/stargaze/x/faucet"
+	"github.com/public-awesome/stargaze/x/stake"
+	stakekeeper "github.com/public-awesome/stargaze/x/stake/keeper"
+	staketypes "github.com/public-awesome/stargaze/x/stake/types"
 )
 
 const appName = "StakebirdApp"
@@ -428,7 +428,7 @@ func NewStakebirdApp(
 		minttypes.ModuleName, crisistypes.ModuleName,
 		ibchost.ModuleName, genutiltypes.ModuleName,
 		evidencetypes.ModuleName, ibctransfertypes.ModuleName,
-		// stakebird init genesis
+		// stargaze init genesis
 		curatingtypes.ModuleName,
 		usertypes.ModuleName,
 		staketypes.ModuleName,

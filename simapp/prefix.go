@@ -43,7 +43,7 @@ const (
 	Bech32PrefixConsPub = Bech32MainPrefix + PrefixValidator + PrefixConsensus + PrefixPublic
 )
 
-// ConfigureAccountPrefixes sets stakebird account prefixes
+// ConfigureAccountPrefixes sets stargaze account prefixes
 func ConfigureAccountPrefixes() {
 	config := sdk.GetConfig()
 	config.SetBech32PrefixForAccount(Bech32PrefixAccAddr, Bech32PrefixAccPub)

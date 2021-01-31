@@ -5,8 +5,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/public-awesome/stakebird/x/stake/keeper"
-	"github.com/public-awesome/stakebird/x/stake/types"
+	"github.com/public-awesome/stargaze/x/stake/keeper"
+	"github.com/public-awesome/stargaze/x/stake/types"
 )
 
 // NewHandler creates an sdk.Handler for all the x/stake type messages

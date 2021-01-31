@@ -1,7 +1,7 @@
 {
   "key": "integration-test",
-  "chain-id": "stakebird",
-  "rpc-addr": "http://stakebird:26657",
+  "chain-id": "stargaze",
+  "rpc-addr": "http://stargaze:26657",
   "account-prefix": "stars",
   "gas": 200000,
   "gas-prices": "0.025ustb,0.025uatom",

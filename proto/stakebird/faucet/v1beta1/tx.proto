@@ -1,9 +1,9 @@
 
 syntax = "proto3";
 
-package stakebird.faucet.v1beta1;
+package stargaze.faucet.v1beta1;
 
-option go_package = "github.com/public-awesome/stakebird/x/faucet/internal/types";
+option go_package = "github.com/public-awesome/stargaze/x/faucet/internal/types";
 
 import "gogoproto/gogo.proto";
 

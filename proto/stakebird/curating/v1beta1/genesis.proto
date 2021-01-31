@@ -1,11 +1,11 @@
 syntax = "proto3";
 
-package stakebird.curating.v1beta1;
+package stargaze.curating.v1beta1;
 
 import "gogoproto/gogo.proto";
-import "stakebird/curating/v1beta1/curating.proto";
+import "stargaze/curating/v1beta1/curating.proto";
 
-option go_package = "github.com/public-awesome/stakebird/x/curating/types";
+option go_package = "github.com/public-awesome/stargaze/x/curating/types";
 
 message GenesisState {
   Params params = 1 [ (gogoproto.nullable) = false ];

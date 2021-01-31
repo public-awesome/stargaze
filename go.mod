@@ -1,4 +1,4 @@
-module github.com/public-awesome/stakebird
+module github.com/public-awesome/stargaze
 
 go 1.15
 

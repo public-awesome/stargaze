@@ -13,7 +13,7 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/public-awesome/stakebird/app"
+	"github.com/public-awesome/stargaze/app"
 	"github.com/spf13/cobra"
 	tmconfig "github.com/tendermint/tendermint/config"
 	tmos "github.com/tendermint/tendermint/libs/os"
@@ -36,7 +36,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	curatingtypes "github.com/public-awesome/stakebird/x/curating/types"
+	curatingtypes "github.com/public-awesome/stargaze/x/curating/types"
 )
 
 var (
@@ -508,7 +508,7 @@ const dockerComposeDefinition = `# Stakebird Testnet
 version: '3.1'
 services:{{range $node := .Nodes }}
 	{{ $node.Name }}:
-		image: publicawesome/stakebird:{{ $.Tag }}
+		image: publicawesome/stargaze:{{ $.Tag }}
 		ports:
 			- {{ $node.OutsidePortRange}}:{{ $node.InsidePortRange}}
 			- {{ $node.APIPort}}:1317

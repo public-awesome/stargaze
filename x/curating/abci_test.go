@@ -4,12 +4,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/public-awesome/stakebird/x/curating"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stargaze/x/curating"
+	"github.com/public-awesome/stargaze/x/curating/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/public-awesome/stakebird/simapp"
+	"github.com/public-awesome/stargaze/simapp"
 	"github.com/stretchr/testify/require"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
