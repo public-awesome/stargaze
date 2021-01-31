@@ -221,7 +221,7 @@ func init() {
 		panic(err)
 	}
 
-	DefaultNodeHome = filepath.Join(userHomeDir, ".staked")
+	DefaultNodeHome = filepath.Join(userHomeDir, ".starsd")
 }
 
 // NewStargazeApp returns a reference to an initialized Gaia.

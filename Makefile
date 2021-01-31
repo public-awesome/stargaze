@@ -58,7 +58,7 @@ build_tags_comma_sep := $(subst $(whitespace),$(comma),$(build_tags))
 # process linker flags
 
 ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=stargaze \
-		  -X github.com/cosmos/cosmos-sdk/version.AppName=staked \
+		  -X github.com/cosmos/cosmos-sdk/version.AppName=starsd \
 		  -X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
 		  -X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) \
 		  -X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep)" \
@@ -88,8 +88,8 @@ create-wallet:
 
 reset: clean init
 clean:
-	rm -rf ~/.staked/config
-	rm -rf ~/.staked/data
+	rm -rf ~/.starsd/config
+	rm -rf ~/.starsd/data
 
 init:
 	./bin/staked init stargaze --stake-denom $(STAKE_DENOM) --chain-id localnet-1
@@ -99,13 +99,13 @@ init:
 	./bin/staked collect-gentxs 
 
 install: go.sum
-	go install -mod=readonly $(BUILD_FLAGS) ./cmd/staked
+	go install -mod=readonly $(BUILD_FLAGS) ./cmd/starsd
 
 start:
-	./bin/staked start --grpc.address 0.0.0.0:9091
+	./bin/starsd start --grpc.address 0.0.0.0:9091
 
 build:
-	go build $(BUILD_FLAGS) -o bin/staked ./cmd/staked
+	go build $(BUILD_FLAGS) -o bin/starsd ./cmd/starsd
 
 go.sum: go.mod
 	@echo "--> Ensure dependencies have not been modified"
@@ -123,7 +123,7 @@ lint:
 
 
 build-linux: 
-	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build $(BUILD_FLAGS) -o bin/staked github.com/public-awesome/stargaze/cmd/staked
+	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build $(BUILD_FLAGS) -o bin/starsd github.com/public-awesome/stargaze/cmd/starsd
 
 build-docker: build-linux
 	docker build -f docker/Dockerfile -t publicawesome/stargaze .
@@ -136,7 +136,7 @@ test:
 	go test github.com/public-awesome/stargaze/x/...
 
 fake-post:
-	./bin/staked tx curating post  1 $(POST_ID) "post body"  --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq -r '.NodeInfo.network') -b block -y
+	./bin/starsd tx curating post  1 $(POST_ID) "post body"  --from validator --keyring-backend test --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') -b block -y
 
 fake-upvote:
 	./bin/staked tx curating upvote 1 $(POST_ID) 10  --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq -r '.NodeInfo.network') -b block -y
@@ -145,10 +145,10 @@ fake-upvote-user:
 	./bin/staked tx curating upvote 1 $(POST_ID) 10  --from user1 --keyring-backend test --chain-id $(shell ./bin/staked status | jq -r '.NodeInfo.network') -b block -y
 
 fake-stake:
-	./bin/staked tx stake stake 1 $(POST_ID) 100 $(VAL) --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq -r '.NodeInfo.network') -b block -y
+	./bin/starsd tx stake stake 1 $(POST_ID) 100 $(VAL) --from validator --keyring-backend test --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') -b block -y
 
 fake-unstake:
-	./bin/staked tx stake unstake 1 $(POST_ID) 10  --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq -r '.NodeInfo.network') -b block -y
+	./bin/starsd tx stake unstake 1 $(POST_ID) 10  --from validator --keyring-backend test --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') -b block -y
 
 .PHONY: test build-linux docker-test lint  build init install
 
@@ -181,4 +181,4 @@ ci-sign:
 	drone sign public-awesome/stargaze --save
 
 post: 
-	staked tx curating post 1 1 "test" --from validator --keyring-backend test --chain-id localnet-1
+	starsd tx curating post 1 1 "test" --from validator --keyring-backend test --chain-id localnet-1

@@ -50,7 +50,7 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 		WithOutput(os.Stdout)
 
 	rootCmd := &cobra.Command{
-		Use:   "staked",
+		Use:   "starsd",
 		Short: "Stargate CosmosHub App",
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			if err := client.SetCmdClientContextHandler(initClientCtx, cmd); err != nil {

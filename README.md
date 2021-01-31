@@ -22,7 +22,7 @@ make create-wallet
 make init
 
 # run
-staked start
+starsd start
 ```
 
 ## CLI
@@ -30,6 +30,6 @@ staked start
 The curating module can be accessed via CLI and REST API.
 
 ```sh
-staked tx curating post -h
-staked tx curating upvote -h
+starsd tx curating post -h
+starsd tx curating upvote -h
 ```

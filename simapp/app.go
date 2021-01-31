@@ -217,7 +217,7 @@ func init() {
 		panic(err)
 	}
 
-	DefaultNodeHome = filepath.Join(userHomeDir, ".staked")
+	DefaultNodeHome = filepath.Join(userHomeDir, ".starsd")
 }
 
 // NewSimApp returns a reference to an initialized Gaia.
