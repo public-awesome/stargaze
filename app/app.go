@@ -94,6 +94,9 @@ import (
 	userkeeper "github.com/public-awesome/stakebird/x/user/keeper"
 	usertypes "github.com/public-awesome/stakebird/x/user/types"
 
+	"github.com/althea-net/peggy/module/x/peggy"
+	"github.com/althea-net/peggy/module/x/peggy/keeper"
+	peggytypes "github.com/althea-net/peggy/module/x/peggy/types"
 	"github.com/public-awesome/stakebird/x/faucet"
 	"github.com/public-awesome/stakebird/x/stake"
 	stakekeeper "github.com/public-awesome/stakebird/x/stake/keeper"
@@ -137,6 +140,7 @@ var (
 		user.AppModuleBasic{},
 		faucet.AppModuleBasic{},
 		stake.AppModuleBasic{},
+		peggy.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -153,6 +157,7 @@ var (
 		curatingtypes.RewardPoolName: {authtypes.Minter, authtypes.Burner},
 		curatingtypes.VotingPoolName: {authtypes.Minter, authtypes.Burner},
 		faucet.ModuleName:            {authtypes.Minter},
+		peggytypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
 	}
 
 	// module accounts that are allowed to receive tokens
@@ -203,6 +208,7 @@ type StakebirdApp struct {
 	UserKeeper     userkeeper.Keeper
 	FaucetKeeper   faucet.Keeper
 	StakeKeeper    stakekeeper.Keeper
+	peggyKeeper    keeper.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
@@ -252,6 +258,7 @@ func NewStakebirdApp(
 		usertypes.StoreKey,
 		faucet.StoreKey,
 		staketypes.StoreKey,
+		peggytypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -366,6 +373,14 @@ func NewStakebirdApp(
 	app.StakeKeeper = stakekeeper.NewKeeper(
 		appCodec, keys[staketypes.StoreKey], app.CuratingKeeper, app.StakingKeeper, app.GetSubspace(staketypes.ModuleName))
 
+	app.peggyKeeper = keeper.NewKeeper(
+		appCodec,
+		keys[peggytypes.StoreKey],
+		app.GetSubspace(peggytypes.ModuleName),
+		stakingKeeper,
+		app.bankKeeper,
+	)
+
 	/****  Module Options ****/
 
 	// NOTE: we may consider parsing `appOpts` inside module constructors. For the moment
@@ -400,6 +415,10 @@ func NewStakebirdApp(
 		user.NewAppModule(appCodec, app.UserKeeper),
 		faucet.NewAppModule(app.FaucetKeeper),
 		stake.NewAppModule(appCodec, app.StakeKeeper, app.CuratingKeeper, app.StakingKeeper),
+		peggy.NewAppModule(
+			app.peggyKeeper,
+			app.bankKeeper,
+		),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -414,7 +433,7 @@ func NewStakebirdApp(
 		evidencetypes.ModuleName, stakingtypes.ModuleName, ibchost.ModuleName,
 	)
 	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName,
-		stakingtypes.ModuleName, curatingtypes.ModuleName)
+		stakingtypes.ModuleName, curatingtypes.ModuleName, peggytypes.ModuleName)
 
 	// NOTE: The genutils moodule must occur after staking so that pools are
 	// properly initialized with tokens from genesis accounts.
@@ -432,6 +451,7 @@ func NewStakebirdApp(
 		curatingtypes.ModuleName,
 		usertypes.ModuleName,
 		staketypes.ModuleName,
+		peggytypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -682,6 +702,7 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler,
 	paramsKeeper.Subspace(curatingtypes.ModuleName)
 	paramsKeeper.Subspace(usertypes.ModuleName)
 	paramsKeeper.Subspace(staketypes.ModuleName)
+	paramsKeeper.Subspace(peggytypes.ModuleName)
 
 	return paramsKeeper
 }
