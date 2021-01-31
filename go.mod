@@ -3,9 +3,9 @@ module github.com/public-awesome/stakebird
 go 1.15
 
 require (
-	github.com/althea-net/peggy/module v0.0.0-20210129234358-df4f1fb4f38d
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/cosmos/cosmos-sdk v0.40.1
+	github.com/ethereum/go-ethereum v1.9.21
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.4.3
 	github.com/gorilla/mux v1.8.0

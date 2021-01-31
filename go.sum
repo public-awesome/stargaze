@@ -56,8 +56,8 @@ github.com/alecthomas/units v0.0.0-20190717042225-c3de453c63f4/go.mod h1:ybxpYRF
 github.com/alecthomas/units v0.0.0-20190924025748-f65c72e2690d/go.mod h1:rBZYJk541a8SKzHPHnH3zbiI+7dagKZ0cgpgrD7Fyho=
 github.com/allegro/bigcache v1.2.1-0.20190218064605-e24eb225f156/go.mod h1:Cb/ax3seSYIx7SuZdm2G2xzfwmv3TPSk2ucNfQESPXM=
 github.com/althea-net/peggy v0.0.0-20210129234358-df4f1fb4f38d h1:ib6lKFbUlVpogO2kUKVLriBa+EjaBLKiUmSbwuoOOwM=
-github.com/althea-net/peggy/module v0.0.0-20210129234358-df4f1fb4f38d h1:EsXHqQKtLIvs0MpTbOrWHkY7xbef51ZMBVoupDVD81w=
-github.com/althea-net/peggy/module v0.0.0-20210129234358-df4f1fb4f38d/go.mod h1:0oHvbNpHaBFZfeU1gLfD51/m7ZPtn+JNJLLpnrKsR0c=
+github.com/public-awesome/stakebird v0.0.0-20210129234358-df4f1fb4f38d h1:EsXHqQKtLIvs0MpTbOrWHkY7xbef51ZMBVoupDVD81w=
+github.com/public-awesome/stakebird v0.0.0-20210129234358-df4f1fb4f38d/go.mod h1:0oHvbNpHaBFZfeU1gLfD51/m7ZPtn+JNJLLpnrKsR0c=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
 github.com/apache/thrift v0.12.0/go.mod h1:cp2SuWMxlEZw2r+iP2GNCdIi4C1qmUzdZFSVb+bacwQ=
 github.com/apache/thrift v0.13.0/go.mod h1:cp2SuWMxlEZw2r+iP2GNCdIi4C1qmUzdZFSVb+bacwQ=

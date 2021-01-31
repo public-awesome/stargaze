@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/althea-net/peggy/module/x/peggy/keeper"
-	"github.com/althea-net/peggy/module/x/peggy/types"
+	"github.com/public-awesome/stakebird/x/peggy/keeper"
+	"github.com/public-awesome/stakebird/x/peggy/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

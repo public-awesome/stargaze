@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/althea-net/peggy/module/x/peggy/keeper"
-	"github.com/althea-net/peggy/module/x/peggy/types"
+	"github.com/public-awesome/stakebird/x/peggy/keeper"
+	"github.com/public-awesome/stakebird/x/peggy/types"
 )
 
 func TestValsetSlashing(t *testing.T) {

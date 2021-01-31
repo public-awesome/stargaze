@@ -3,7 +3,7 @@ package peggy.v1;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/althea-net/peggy/module/x/peggy/types";
+option go_package = "github.com/public-awesome/stakebird/x/peggy/types";
 
 // ClaimType is the cosmos type of an event from the counterpart chain that can
 // be handled

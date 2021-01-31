@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/althea-net/peggy/module/x/peggy/types"
+	"github.com/public-awesome/stakebird/x/peggy/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/cobra"
 )

@@ -94,9 +94,9 @@ import (
 	userkeeper "github.com/public-awesome/stakebird/x/user/keeper"
 	usertypes "github.com/public-awesome/stakebird/x/user/types"
 
-	"github.com/althea-net/peggy/module/x/peggy"
-	"github.com/althea-net/peggy/module/x/peggy/keeper"
-	peggytypes "github.com/althea-net/peggy/module/x/peggy/types"
+	"github.com/public-awesome/stakebird/x/peggy"
+	"github.com/public-awesome/stakebird/x/peggy/keeper"
+	peggytypes "github.com/public-awesome/stakebird/x/peggy/types"
 	"github.com/public-awesome/stakebird/x/faucet"
 	"github.com/public-awesome/stakebird/x/stake"
 	stakekeeper "github.com/public-awesome/stakebird/x/stake/keeper"
