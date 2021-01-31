@@ -15,7 +15,7 @@ builds:
     flags:
       - -tags=netgo,faucet
     ldflags:
-      - -X "github.com/cosmos/cosmos-sdk/version.Name=Stakebird"
+      - -X "github.com/cosmos/cosmos-sdk/version.Name=Stargaze"
       - -X github.com/cosmos/cosmos-sdk/version.AppName=staked
       - -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}}
       - -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}

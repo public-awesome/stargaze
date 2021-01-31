@@ -179,7 +179,7 @@ func newApp(logger log.Logger, db dbm.DB,
 		panic(err)
 	}
 
-	return stargaze.NewStakebirdApp(
+	return stargaze.NewStargazeApp(
 		logger, db, traceStore, true, skipUpgradeHeights,
 		cast.ToString(appOpts.Get(flags.FlagHome)),
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
@@ -207,20 +207,20 @@ func createSimappAndExport(
 
 	encCfg := stargaze.MakeEncodingConfig() // Ideally, we would reuse the one created by NewRootCmd.
 	encCfg.Marshaler = codec.NewProtoCodec(encCfg.InterfaceRegistry)
-	var StakebirdApp *stargaze.StakebirdApp
+	var StargazeApp *stargaze.StargazeApp
 	if height != -1 {
-		StakebirdApp = stargaze.NewStakebirdApp(logger, db, traceStore,
+		StargazeApp = stargaze.NewStargazeApp(logger, db, traceStore,
 			false, map[int64]bool{}, "",
 			uint(1), encCfg, appOpts)
 
-		if err := StakebirdApp.LoadHeight(height); err != nil {
+		if err := StargazeApp.LoadHeight(height); err != nil {
 			return servertypes.ExportedApp{}, err
 		}
 	} else {
-		StakebirdApp = stargaze.NewStakebirdApp(logger, db, traceStore,
+		StargazeApp = stargaze.NewStargazeApp(logger, db, traceStore,
 			true, map[int64]bool{}, "",
 			uint(1), encCfg, appOpts)
 	}
 
-	return StakebirdApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)
+	return StargazeApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)
 }

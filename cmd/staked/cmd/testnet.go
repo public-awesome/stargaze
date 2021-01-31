@@ -504,7 +504,7 @@ type TestnetNode struct {
 	GRPCPort         string
 }
 
-const dockerComposeDefinition = `# Stakebird Testnet
+const dockerComposeDefinition = `# Stargaze Testnet
 version: '3.1'
 services:{{range $node := .Nodes }}
 	{{ $node.Name }}:

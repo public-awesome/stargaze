@@ -119,7 +119,7 @@ Validate the post, calculate the curation end time, and insert the vendor/post_i
 
 ### MsgUpvote
 
-Every transaction on Stakebird includes a deposit which could be slashed by governance for bad behavior. This helps keep the network honest.
+Every transaction on Stargaze includes a deposit which could be slashed by governance for bad behavior. This helps keep the network honest.
 
 The amount of vote credits (`VoteAmount`) is quadratically associated to `VoteNum`, and is used for the upvote amount.
 

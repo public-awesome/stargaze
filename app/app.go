@@ -85,7 +85,7 @@ import (
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
-	stakebirdappparams "github.com/public-awesome/stargaze/app/params"
+	stargazeappparams "github.com/public-awesome/stargaze/app/params"
 	"github.com/public-awesome/stargaze/x/curating"
 	curatingkeeper "github.com/public-awesome/stargaze/x/curating/keeper"
 	curatingtypes "github.com/public-awesome/stargaze/x/curating/types"
@@ -100,7 +100,7 @@ import (
 	staketypes "github.com/public-awesome/stargaze/x/stake/types"
 )
 
-const appName = "StakebirdApp"
+const appName = "StargazeApp"
 
 var (
 	// DefaultNodeHome default home directories for the application daemon
@@ -132,7 +132,7 @@ var (
 		transfer.AppModuleBasic{},
 		vesting.AppModuleBasic{},
 
-		// Stakebird Modules
+		// Stargaze Modules
 		curating.AppModuleBasic{},
 		user.AppModuleBasic{},
 		faucet.AppModuleBasic{},
@@ -162,14 +162,14 @@ var (
 )
 
 var (
-	_ App                     = (*StakebirdApp)(nil)
-	_ servertypes.Application = (*StakebirdApp)(nil)
+	_ App                     = (*StargazeApp)(nil)
+	_ servertypes.Application = (*StargazeApp)(nil)
 )
 
-// StakebirdApp extends an ABCI application, but with most of its parameters exported.
+// StargazeApp extends an ABCI application, but with most of its parameters exported.
 // They are exported for convenience in creating helper functions, as object
 // capabilities aren't needed for testing.
-type StakebirdApp struct {
+type StargazeApp struct {
 	*baseapp.BaseApp
 	legacyAmino       *codec.LegacyAmino
 	appCodec          codec.Marshaler
@@ -198,7 +198,7 @@ type StakebirdApp struct {
 	EvidenceKeeper   evidencekeeper.Keeper
 	TransferKeeper   ibctransferkeeper.Keeper
 
-	// Stakebird Keepers
+	// Stargaze Keepers
 	CuratingKeeper curatingkeeper.Keeper
 	UserKeeper     userkeeper.Keeper
 	FaucetKeeper   faucet.Keeper
@@ -224,14 +224,14 @@ func init() {
 	DefaultNodeHome = filepath.Join(userHomeDir, ".staked")
 }
 
-// NewStakebirdApp returns a reference to an initialized Gaia.
-func NewStakebirdApp(
+// NewStargazeApp returns a reference to an initialized Gaia.
+func NewStargazeApp(
 	logger log.Logger, db dbm.DB, traceStore io.Writer,
 	loadLatest bool, skipUpgradeHeights map[int64]bool,
-	homePath string, invCheckPeriod uint, encodingConfig stakebirdappparams.EncodingConfig,
+	homePath string, invCheckPeriod uint, encodingConfig stargazeappparams.EncodingConfig,
 	appOpts servertypes.AppOptions,
 	baseAppOptions ...func(*baseapp.BaseApp),
-) *StakebirdApp {
+) *StargazeApp {
 
 	appCodec := encodingConfig.Marshaler
 	legacyAmino := encodingConfig.Amino
@@ -247,7 +247,7 @@ func NewStakebirdApp(
 		minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
-		// Stakebird Stores
+		// Stargaze Stores
 		curatingtypes.StoreKey,
 		usertypes.StoreKey,
 		faucet.StoreKey,
@@ -256,7 +256,7 @@ func NewStakebirdApp(
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
-	app := &StakebirdApp{
+	app := &StargazeApp{
 		BaseApp:           bApp,
 		legacyAmino:       legacyAmino,
 		appCodec:          appCodec,
@@ -349,7 +349,7 @@ func NewStakebirdApp(
 	// If evidence needs to be handled for the app, set routes in router here and seal
 	app.EvidenceKeeper = *evidenceKeeper
 
-	// Stakebird Keepers
+	// Stargaze Keepers
 	app.CuratingKeeper = curatingkeeper.NewKeeper(
 		appCodec, keys[curatingtypes.StoreKey], app.AccountKeeper, app.BankKeeper, app.GetSubspace(curatingtypes.ModuleName))
 
@@ -395,7 +395,7 @@ func NewStakebirdApp(
 		ibc.NewAppModule(app.IBCKeeper),
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
-		// StakebirdModules
+		// StargazeModules
 		curating.NewAppModule(appCodec, app.CuratingKeeper, app.AccountKeeper, app.BankKeeper),
 		user.NewAppModule(appCodec, app.UserKeeper),
 		faucet.NewAppModule(app.FaucetKeeper),
@@ -507,20 +507,20 @@ func MakeCodecs() (codec.Marshaler, *codec.LegacyAmino) {
 }
 
 // Name returns the name of the App
-func (app *StakebirdApp) Name() string { return app.BaseApp.Name() }
+func (app *StargazeApp) Name() string { return app.BaseApp.Name() }
 
 // BeginBlocker application updates every begin block
-func (app *StakebirdApp) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
+func (app *StargazeApp) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
 	return app.mm.BeginBlock(ctx, req)
 }
 
 // EndBlocker application updates every end block
-func (app *StakebirdApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
+func (app *StargazeApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
 	return app.mm.EndBlock(ctx, req)
 }
 
 // InitChainer application update at chain initialization
-func (app *StakebirdApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
+func (app *StargazeApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
 	var genesisState GenesisState
 	if err := tmjson.Unmarshal(req.AppStateBytes, &genesisState); err != nil {
 		panic(err)
@@ -529,12 +529,12 @@ func (app *StakebirdApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain)
 }
 
 // LoadHeight loads a particular height
-func (app *StakebirdApp) LoadHeight(height int64) error {
+func (app *StargazeApp) LoadHeight(height int64) error {
 	return app.LoadVersion(height)
 }
 
 // ModuleAccountAddrs returns all the app's module account addresses.
-func (app *StakebirdApp) ModuleAccountAddrs() map[string]bool {
+func (app *StargazeApp) ModuleAccountAddrs() map[string]bool {
 	modAccAddrs := make(map[string]bool)
 	for acc := range maccPerms {
 		modAccAddrs[authtypes.NewModuleAddress(acc).String()] = true
@@ -545,7 +545,7 @@ func (app *StakebirdApp) ModuleAccountAddrs() map[string]bool {
 
 // BlockedAddrs returns all the app's module account addresses that are not
 // allowed to receive external tokens.
-func (app *StakebirdApp) BlockedAddrs() map[string]bool {
+func (app *StargazeApp) BlockedAddrs() map[string]bool {
 	blockedAddrs := make(map[string]bool)
 	for acc := range maccPerms {
 		blockedAddrs[authtypes.NewModuleAddress(acc).String()] = !allowedReceivingModAcc[acc]
@@ -558,7 +558,7 @@ func (app *StakebirdApp) BlockedAddrs() map[string]bool {
 //
 // NOTE: This is solely to be used for testing purposes as it may be desirable
 // for modules to register their own custom testing types.
-func (app *StakebirdApp) LegacyAmino() *codec.LegacyAmino {
+func (app *StargazeApp) LegacyAmino() *codec.LegacyAmino {
 	return app.legacyAmino
 }
 
@@ -566,52 +566,52 @@ func (app *StakebirdApp) LegacyAmino() *codec.LegacyAmino {
 //
 // NOTE: This is solely to be used for testing purposes as it may be desirable
 // for modules to register their own custom testing types.
-func (app *StakebirdApp) AppCodec() codec.Marshaler {
+func (app *StargazeApp) AppCodec() codec.Marshaler {
 	return app.appCodec
 }
 
 // InterfaceRegistry returns Gaia's InterfaceRegistry
-func (app *StakebirdApp) InterfaceRegistry() types.InterfaceRegistry {
+func (app *StargazeApp) InterfaceRegistry() types.InterfaceRegistry {
 	return app.interfaceRegistry
 }
 
 // GetKey returns the KVStoreKey for the provided store key.
 //
 // NOTE: This is solely to be used for testing purposes.
-func (app *StakebirdApp) GetKey(storeKey string) *sdk.KVStoreKey {
+func (app *StargazeApp) GetKey(storeKey string) *sdk.KVStoreKey {
 	return app.keys[storeKey]
 }
 
 // GetTKey returns the TransientStoreKey for the provided store key.
 //
 // NOTE: This is solely to be used for testing purposes.
-func (app *StakebirdApp) GetTKey(storeKey string) *sdk.TransientStoreKey {
+func (app *StargazeApp) GetTKey(storeKey string) *sdk.TransientStoreKey {
 	return app.tkeys[storeKey]
 }
 
 // GetMemKey returns the MemStoreKey for the provided mem key.
 //
 // NOTE: This is solely used for testing purposes.
-func (app *StakebirdApp) GetMemKey(storeKey string) *sdk.MemoryStoreKey {
+func (app *StargazeApp) GetMemKey(storeKey string) *sdk.MemoryStoreKey {
 	return app.memKeys[storeKey]
 }
 
 // GetSubspace returns a param subspace for a given module name.
 //
 // NOTE: This is solely to be used for testing purposes.
-func (app *StakebirdApp) GetSubspace(moduleName string) paramstypes.Subspace {
+func (app *StargazeApp) GetSubspace(moduleName string) paramstypes.Subspace {
 	subspace, _ := app.ParamsKeeper.GetSubspace(moduleName)
 	return subspace
 }
 
 // SimulationManager implements the SimulationApp interface
-func (app *StakebirdApp) SimulationManager() *module.SimulationManager {
+func (app *StargazeApp) SimulationManager() *module.SimulationManager {
 	return app.sm
 }
 
 // RegisterAPIRoutes registers all application module routes with the provided
 // API server.
-func (app *StakebirdApp) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig) {
+func (app *StargazeApp) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig) {
 	clientCtx := apiSvr.ClientCtx
 	rpc.RegisterRoutes(clientCtx, apiSvr.Router)
 	authrest.RegisterTxRoutes(clientCtx, apiSvr.Router)
@@ -632,12 +632,12 @@ func (app *StakebirdApp) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.
 }
 
 // RegisterTxService implements the Application.RegisterTxService method.
-func (app *StakebirdApp) RegisterTxService(clientCtx client.Context) {
+func (app *StargazeApp) RegisterTxService(clientCtx client.Context) {
 	authtx.RegisterTxService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.BaseApp.Simulate, app.interfaceRegistry)
 }
 
 // RegisterTendermintService implements the Application.RegisterTendermintService method.
-func (app *StakebirdApp) RegisterTendermintService(clientCtx client.Context) {
+func (app *StargazeApp) RegisterTendermintService(clientCtx client.Context) {
 	tmservice.RegisterTendermintService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.interfaceRegistry)
 }
 
@@ -678,7 +678,7 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler,
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
 
-	// Stakebird Modules
+	// Stargaze Modules
 	paramsKeeper.Subspace(curatingtypes.ModuleName)
 	paramsKeeper.Subspace(usertypes.ModuleName)
 	paramsKeeper.Subspace(staketypes.ModuleName)

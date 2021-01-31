@@ -8,7 +8,7 @@ import (
 	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
-	github_com_public_awesome_stakebird_x_curating_types "github.com/public-awesome/stargaze/x/curating/types"
+	github_com_public_awesome_stargaze_x_curating_types "github.com/public-awesome/stargaze/x/curating/types"
 	io "io"
 	math "math"
 	math_bits "math/bits"
@@ -27,7 +27,7 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type Stake struct {
 	VendorID  uint32                                                      `protobuf:"varint,1,opt,name=vendor_id,json=vendorId,proto3" json:"vendor_id" yaml:"vendor_id"`
-	PostID    github_com_public_awesome_stakebird_x_curating_types.PostID `protobuf:"bytes,2,opt,name=post_id,json=postId,proto3,customtype=github.com/public-awesome/stargaze/x/curating/types.PostID" json:"post_id" yaml:"post_id"`
+	PostID    github_com_public_awesome_stargaze_x_curating_types.PostID `protobuf:"bytes,2,opt,name=post_id,json=postId,proto3,customtype=github.com/public-awesome/stargaze/x/curating/types.PostID" json:"post_id" yaml:"post_id"`
 	Delegator string                                                      `protobuf:"bytes,3,opt,name=delegator,proto3" json:"delegator,omitempty" yaml:"delegator"`
 	Validator string                                                      `protobuf:"bytes,4,opt,name=validator,proto3" json:"validator,omitempty" yaml:"validator"`
 	Amount    github_com_cosmos_cosmos_sdk_types.Int                      `protobuf:"bytes,5,opt,name=amount,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"amount"`
