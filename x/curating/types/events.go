@@ -18,6 +18,7 @@ const (
 	AttributeKeyVoteAmount         = "vote_amount"
 	AttributeKeyVoteDenom          = "vote_denom"
 	AttributeKeyProtocolRewardType = "reward_type"
+	AttributeKeyRewardAmount       = "reward_amount"
 
 	AttributeValueCategory = ModuleName
 )

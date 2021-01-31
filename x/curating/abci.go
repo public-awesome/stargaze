@@ -78,6 +78,7 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 			sdk.NewEvent(
 				types.EventTypeCurationComplete,
 				sdk.NewAttribute(types.AttributeKeyPostID, postIDStr),
+				sdk.NewAttribute(types.AttributeKeyRewardAmount, qv.MatchPool().TruncateInt().String()),
 			),
 		})
 
@@ -117,6 +118,7 @@ func emitRewardEvent(ctx sdk.Context, evtType, evtSubType, address, postID, amou
 			sdk.NewAttribute(types.AttributeKeyProtocolRewardType, evtSubType),
 			sdk.NewAttribute(types.AttributeKeyRewardAccount, address),
 			sdk.NewAttribute(types.AttributeKeyPostID, postID),
+			sdk.NewAttribute(types.AttributeKeyRewardAmount, amount),
 		),
 	})
 }
