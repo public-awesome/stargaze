@@ -84,6 +84,7 @@ all: install
 
 create-wallet:
 	./bin/staked keys add validator --keyring-backend test
+	./bin/staked keys add user1 --keyring-backend test
 
 reset: clean init
 clean:
@@ -93,6 +94,7 @@ clean:
 init:
 	./bin/staked init stakebird --stake-denom $(STAKE_DENOM) --chain-id localnet-1
 	./bin/staked add-genesis-account $(shell ./bin/staked keys show validator -a --keyring-backend test) 10000000000000000$(STAKE_DENOM),10000000000000000ucredits
+	./bin/staked add-genesis-account $(shell ./bin/staked keys show user1 -a --keyring-backend test) 10000000000000$(STAKE_DENOM),10000000000000ucredits
 	./bin/staked gentx validator 10000000000$(STAKE_DENOM) --chain-id localnet-1  --keyring-backend test
 	./bin/staked collect-gentxs 
 
@@ -137,7 +139,10 @@ fake-post:
 	./bin/staked tx curating post  1 $(POST_ID) "post body"  --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq -r '.NodeInfo.network') -b block -y
 
 fake-upvote:
-	./bin/staked tx curating upvote 1 $(POST_ID) 1  --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq -r '.NodeInfo.network') -b block -y
+	./bin/staked tx curating upvote 1 $(POST_ID) 10  --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq -r '.NodeInfo.network') -b block -y
+
+fake-upvote-user:
+	./bin/staked tx curating upvote 1 $(POST_ID) 10  --from user1 --keyring-backend test --chain-id $(shell ./bin/staked status | jq -r '.NodeInfo.network') -b block -y
 
 fake-stake:
 	./bin/staked tx stake stake 1 $(POST_ID) 100 $(VAL) --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq -r '.NodeInfo.network') -b block -y
