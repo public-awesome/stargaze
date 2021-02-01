@@ -74,12 +74,13 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 			})
 
 		endTimes[post.GetCuratingEndTime()] = true
+		reward := sdk.NewCoin(types.DefaultStakeDenom, qv.MatchPool().TruncateInt())
 		ctx.EventManager().EmitEvents(sdk.Events{
 			sdk.NewEvent(
 				types.EventTypeCurationComplete,
 				sdk.NewAttribute(types.AttributeKeyVendorID, fmt.Sprintf("%d", post.VendorID)),
 				sdk.NewAttribute(types.AttributeKeyPostID, postIDStr),
-				sdk.NewAttribute(types.AttributeKeyRewardAmount, qv.MatchPool().TruncateInt().String()),
+				sdk.NewAttribute(types.AttributeKeyRewardAmount, reward.String()),
 			),
 		})
 
