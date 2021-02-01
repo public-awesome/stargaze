@@ -27,7 +27,7 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 
 	endTimes := make(map[time.Time]bool)
 	k.IterateExpiredPosts(ctx, func(post types.Post) bool {
-		postIDStr := post.String()
+		postIDStr := post.PostID.String()
 		k.Logger(ctx).Info(
 			fmt.Sprintf("Processing vendor %d post %v", post.VendorID, post.PostID))
 
@@ -62,7 +62,7 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 					panic(err)
 				}
 				emitRewardEvent(ctx, types.EventTypeProtocolReward, types.EventTypeProtocolReward,
-					upvote.RewardAccount, postIDStr, curatingProtocolReward.String())
+					upvote.RewardAccount, postIDStr, curatingProtocolReward.String(), post.VendorID)
 
 				// Remove upvote
 				err = k.DeleteUpvote(ctx, post.VendorID, post.PostID, upvote)
@@ -74,10 +74,13 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 			})
 
 		endTimes[post.GetCuratingEndTime()] = true
+		reward := sdk.NewCoin(types.DefaultStakeDenom, qv.MatchPool().TruncateInt())
 		ctx.EventManager().EmitEvents(sdk.Events{
 			sdk.NewEvent(
 				types.EventTypeCurationComplete,
+				sdk.NewAttribute(types.AttributeKeyVendorID, fmt.Sprintf("%d", post.VendorID)),
 				sdk.NewAttribute(types.AttributeKeyPostID, postIDStr),
+				sdk.NewAttribute(types.AttributeKeyRewardAmount, reward.String()),
 			),
 		})
 
@@ -110,13 +113,15 @@ func sendMatchingReward(ctx sdk.Context, k keeper.Keeper, upvoteAmount sdk.Int,
 	return reward, nil
 }
 
-func emitRewardEvent(ctx sdk.Context, evtType, evtSubType, address, postID, amount string) {
+func emitRewardEvent(ctx sdk.Context, evtType, evtSubType, address, postID, amount string, vendorID uint32) {
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			evtType,
+			sdk.NewAttribute(types.AttributeKeyVendorID, fmt.Sprintf("%d", vendorID)),
 			sdk.NewAttribute(types.AttributeKeyProtocolRewardType, evtSubType),
 			sdk.NewAttribute(types.AttributeKeyRewardAccount, address),
 			sdk.NewAttribute(types.AttributeKeyPostID, postID),
+			sdk.NewAttribute(types.AttributeKeyRewardAmount, amount),
 		),
 	})
 }
