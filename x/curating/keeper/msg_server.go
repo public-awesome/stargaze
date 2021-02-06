@@ -38,8 +38,13 @@ func (k msgServer) Post(goCtx context.Context, msg *types.MsgPost) (*types.MsgPo
 		return nil, err
 	}
 
+	bodyHash, err := types.BodyHashFromString(msg.Body)
+	if err != nil {
+		return nil, err
+	}
+
 	err = k.CreatePost(
-		ctx, msg.VendorID, postID, msg.Body, creator, rewardAccount)
+		ctx, msg.VendorID, postID, bodyHash, creator, rewardAccount)
 	if err != nil {
 		return nil, err
 	}

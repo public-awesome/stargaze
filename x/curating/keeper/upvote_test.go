@@ -55,7 +55,10 @@ func TestCreateUpvote_ExistingPost(t *testing.T) {
 	vendorID := uint32(1)
 	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(27_000_000), fakedenom)
 
-	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[1], addrs[1])
+	bodyHash, err := types.BodyHashFromString("body string")
+	require.NoError(t, err)
+
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, bodyHash, addrs[1], addrs[1])
 	require.NoError(t, err)
 
 	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5)
@@ -90,7 +93,10 @@ func TestCreateUpvote_ExpiredPost(t *testing.T) {
 	vendorID := uint32(1)
 	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(27_000_000), fakedenom)
 
-	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[1], addrs[1])
+	bodyHash, err := types.BodyHashFromString("body string")
+	require.NoError(t, err)
+
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, bodyHash, addrs[1], addrs[1])
 	require.NoError(t, err)
 
 	ctx = ctx.WithBlockTime(ctx.BlockTime().Add(time.Hour*24*3 + 1))
@@ -111,7 +117,10 @@ func TestMultipleUpvotes(t *testing.T) {
 	vendorID := uint32(1)
 	addrs := simapp.AddTestAddrsIncremental(app, ctx, 5, sdk.NewInt(27_000_000), fakedenom)
 
-	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[1], addrs[1])
+	bodyHash, err := types.BodyHashFromString("body string")
+	require.NoError(t, err)
+
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, bodyHash, addrs[1], addrs[1])
 	require.NoError(t, err)
 
 	// amt = 1
@@ -148,7 +157,10 @@ func TestCreateUpvote_ExistingUpvote(t *testing.T) {
 	vendorID := uint32(1)
 	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(27_000_000))
 
-	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[1], addrs[1])
+	bodyHash, err := types.BodyHashFromString("body string")
+	require.NoError(t, err)
+
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, bodyHash, addrs[1], addrs[1])
 	require.NoError(t, err)
 
 	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5)

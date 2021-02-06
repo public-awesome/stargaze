@@ -1,6 +1,9 @@
 package types
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
 	"time"
 
 	"github.com/bwmarrin/snowflake"
@@ -22,6 +25,7 @@ type CustomProtobufType interface {
 }
 
 var _ CustomProtobufType = (*PostID)(nil)
+var _ CustomProtobufType = (*BodyHash)(nil)
 
 // PostID represents a Twitter post ID (for now)
 type PostID struct {
@@ -107,7 +111,7 @@ type CuratingQueue []VPPair
 
 // NewPost allocates and returns a new `Post` struct
 func NewPost(
-	vendorID uint32, postID PostID, bodyHash []byte, creator,
+	vendorID uint32, postID PostID, bodyHash BodyHash, creator,
 	rewardAccount sdk.AccAddress, curatingEndTime time.Time) Post {
 
 	return Post{
@@ -120,4 +124,63 @@ func NewPost(
 		TotalVotes:      0,
 		TotalAmount:     sdk.Coin{},
 	}
+}
+
+type BodyHash []byte
+
+// BodyHashFromString does exactly whats on the label
+func BodyHashFromString(body string) (BodyHash, error) {
+	h := sha256.New()
+	_, err := h.Write([]byte(body))
+	if err != nil {
+		return nil, err
+	}
+	digest := h.Sum(nil)
+	return digest[:20], nil
+}
+
+// String returns the hex string of the body hash
+func (b BodyHash) String() string {
+	return hex.EncodeToString(b)
+}
+
+// Marshal implements the gogo proto custom type interface
+func (b BodyHash) Marshal() ([]byte, error) {
+	return b, nil
+}
+
+// MarshalJSON implements the gogo proto custom type interface
+func (b BodyHash) MarshalJSON() ([]byte, error) {
+	return json.Marshal(b)
+}
+
+// MarshalTo implements the gogo proto custom type interface
+func (b *BodyHash) MarshalTo(data []byte) (n int, err error) {
+	bz, err := b.Marshal()
+	if err != nil {
+		return 0, err
+	}
+
+	copy(data, bz)
+	return len(bz), nil
+}
+
+// Size implements the gogo proto custom type interface
+func (b *BodyHash) Size() int {
+	bz, err := b.Marshal()
+	if err != nil {
+		return 0
+	}
+	return len(bz)
+}
+
+// Unmarshal implements the gogo proto custom type interface
+func (b *BodyHash) Unmarshal(data []byte) error {
+	*b = data
+	return nil
+}
+
+// UnmarshalJSON implements the gogo proto custom type interface
+func (b BodyHash) UnmarshalJSON(data []byte) error {
+	return json.Unmarshal(data, &b)
 }

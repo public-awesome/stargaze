@@ -41,7 +41,10 @@ func TestPerformStakeAndUnstake(t *testing.T) {
 	valAddr := valAddrs[0]
 	amount := sdk.NewInt(2)
 
-	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", delAddr, delAddr)
+	bodyHash, err := curatingtypes.BodyHashFromString("body string")
+	require.NoError(t, err)
+
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, bodyHash, delAddr, delAddr)
 	require.NoError(t, err)
 
 	staking.EndBlocker(ctx, app.StakingKeeper)
