@@ -83,8 +83,8 @@ endif
 all: install
 
 create-wallet:
-	./bin/staked keys add validator --keyring-backend test
-	./bin/staked keys add user1 --keyring-backend test
+	./bin/starsd keys add validator --keyring-backend test
+	./bin/starsd keys add user1 --keyring-backend test
 
 reset: clean init
 clean:
@@ -92,11 +92,11 @@ clean:
 	rm -rf ~/.starsd/data
 
 init:
-	./bin/staked init stargaze --stake-denom $(STAKE_DENOM) --chain-id localnet-1
-	./bin/staked add-genesis-account $(shell ./bin/staked keys show validator -a --keyring-backend test) 10000000000000000$(STAKE_DENOM),10000000000000000ucredits
-	./bin/staked add-genesis-account $(shell ./bin/staked keys show user1 -a --keyring-backend test) 10000000000000$(STAKE_DENOM),10000000000000ucredits
-	./bin/staked gentx validator 10000000000$(STAKE_DENOM) --chain-id localnet-1  --keyring-backend test
-	./bin/staked collect-gentxs 
+	./bin/starsd init stargaze --stake-denom $(STAKE_DENOM) --chain-id localnet-1
+	./bin/starsd add-genesis-account $(shell ./bin/starsd keys show validator -a --keyring-backend test) 10000000000000000$(STAKE_DENOM),10000000000000000ucredits
+	./bin/starsd add-genesis-account $(shell ./bin/starsd keys show user1 -a --keyring-backend test) 10000000000000$(STAKE_DENOM),10000000000000ucredits
+	./bin/starsd gentx validator 10000000000$(STAKE_DENOM) --chain-id localnet-1  --keyring-backend test
+	./bin/starsd collect-gentxs 
 
 install: go.sum
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/starsd
@@ -139,10 +139,10 @@ fake-post:
 	./bin/starsd tx curating post  1 $(POST_ID) "post body"  --from validator --keyring-backend test --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') -b block -y
 
 fake-upvote:
-	./bin/staked tx curating upvote 1 $(POST_ID) 10  --from validator --keyring-backend test --chain-id $(shell ./bin/staked status | jq -r '.NodeInfo.network') -b block -y
+	./bin/starsd tx curating upvote 1 $(POST_ID) 10  --from validator --keyring-backend test --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') -b block -y
 
 fake-upvote-user:
-	./bin/staked tx curating upvote 1 $(POST_ID) 10  --from user1 --keyring-backend test --chain-id $(shell ./bin/staked status | jq -r '.NodeInfo.network') -b block -y
+	./bin/starsd tx curating upvote 1 $(POST_ID) 10  --from user1 --keyring-backend test --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') -b block -y
 
 fake-stake:
 	./bin/starsd tx stake stake 1 $(POST_ID) 100 $(VAL) --from validator --keyring-backend test --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') -b block -y
