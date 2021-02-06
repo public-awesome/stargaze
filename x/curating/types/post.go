@@ -127,7 +127,7 @@ func NewPost(
 }
 
 type BodyHash struct {
-	data []byte
+	Data []byte `json:"data,omitempty"`
 }
 
 // BodyHashFromString does exactly whats on the label
@@ -143,12 +143,12 @@ func BodyHashFromString(body string) (BodyHash, error) {
 
 // String returns the hex string of the body hash
 func (b BodyHash) String() string {
-	return hex.EncodeToString(b.data)
+	return hex.EncodeToString(b.Data)
 }
 
 // Marshal implements the gogo proto custom type interface
 func (b BodyHash) Marshal() ([]byte, error) {
-	return b.data, nil
+	return b.Data, nil
 }
 
 // MarshalJSON implements the gogo proto custom type interface
@@ -178,7 +178,7 @@ func (b *BodyHash) Size() int {
 
 // Unmarshal implements the gogo proto custom type interface
 func (b *BodyHash) Unmarshal(data []byte) error {
-	b.data = data
+	b.Data = data
 	return nil
 }
 
