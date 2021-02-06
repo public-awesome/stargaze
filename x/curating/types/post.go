@@ -126,27 +126,29 @@ func NewPost(
 	}
 }
 
-type BodyHash []byte
+type BodyHash struct {
+	data []byte
+}
 
 // BodyHashFromString does exactly whats on the label
 func BodyHashFromString(body string) (BodyHash, error) {
 	h := sha256.New()
 	_, err := h.Write([]byte(body))
 	if err != nil {
-		return nil, err
+		return BodyHash{}, err
 	}
 	digest := h.Sum(nil)
-	return digest[:20], nil
+	return BodyHash{digest[:20]}, nil
 }
 
 // String returns the hex string of the body hash
 func (b BodyHash) String() string {
-	return hex.EncodeToString(b)
+	return hex.EncodeToString(b.data)
 }
 
 // Marshal implements the gogo proto custom type interface
 func (b BodyHash) Marshal() ([]byte, error) {
-	return b, nil
+	return b.data, nil
 }
 
 // MarshalJSON implements the gogo proto custom type interface
@@ -176,7 +178,7 @@ func (b *BodyHash) Size() int {
 
 // Unmarshal implements the gogo proto custom type interface
 func (b *BodyHash) Unmarshal(data []byte) error {
-	*b = data
+	b.data = data
 	return nil
 }
 
