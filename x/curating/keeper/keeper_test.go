@@ -1,7 +1,6 @@
 package keeper_test
 
 import (
-	"crypto/sha256"
 	"testing"
 
 	"github.com/public-awesome/stargaze/x/curating/types"
@@ -192,14 +191,4 @@ func TestCurationQueueTimeSlice(t *testing.T) {
 	timeSlice := app.CuratingKeeper.GetCurationQueueTimeSlice(ctx, curationEndTime)
 	require.Len(t, timeSlice, 1)
 	require.Equal(t, vpPair, timeSlice[0])
-}
-
-// NOTE: these unexported functions are duplicated to enable black-box testing
-func hash(body string) ([]byte, error) {
-	h := sha256.New()
-	_, err := h.Write([]byte(body))
-	if err != nil {
-		return nil, err
-	}
-	return h.Sum(nil), nil
 }
