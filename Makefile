@@ -94,7 +94,7 @@ clean:
 init:
 	./bin/starsd init stargaze --stake-denom $(STAKE_DENOM) --chain-id localnet-1
 	./bin/starsd add-genesis-account $(shell ./bin/starsd keys show validator -a --keyring-backend test) 10000000000000000$(STAKE_DENOM),10000000000000000ucredits
-	./bin/starsd add-genesis-account $(shell ./bin/starsd keys show user1 -a --keyring-backend test) 10000000000000$(STAKE_DENOM),10000000000000ucredits
+	./bin/starsd add-genesis-account $(shell ./bin/starsd keys show user1 -a --keyring-backend test) 10000000000000$(STAKE_DENOM),10000000000000ucredits,10000000000000uatom
 	./bin/starsd gentx validator 10000000000$(STAKE_DENOM) --chain-id localnet-1  --keyring-backend test
 	./bin/starsd collect-gentxs 
 
@@ -150,8 +150,11 @@ fake-stake:
 fake-unstake:
 	./bin/starsd tx stake unstake 1 $(POST_ID) 10  --from validator --keyring-backend test --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') -b block -y
 
-fake-create-pool:
+fake-create-pool1:
 	./bin/starsd tx liquidity create-pool 1 100000000$(STAKE_DENOM),100000000ucredits --from validator --keyring-backend test --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') -b block -y
+
+fake-create-pool2:
+	./bin/starsd tx liquidity create-pool 1 100000000$(STAKE_DENOM),100000000uatom --from user1 --keyring-backend test --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') -y
 
 .PHONY: test build-linux docker-test lint  build init install
 
