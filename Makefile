@@ -10,7 +10,7 @@ BUILDDIR ?= $(CURDIR)/build
 FAUCET_ENABLED ?= false
 DOCKER := $(shell which docker)
 POST_ID ?= "1"
-STAKE_DENOM ?= "ustarx"
+STAKE_DENOM ?= ustarx
 
 export GO111MODULE = on
 
