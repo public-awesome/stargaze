@@ -98,6 +98,10 @@ import (
 	"github.com/public-awesome/stargaze/x/stake"
 	stakekeeper "github.com/public-awesome/stargaze/x/stake/keeper"
 	staketypes "github.com/public-awesome/stargaze/x/stake/types"
+
+	"github.com/tendermint/liquidity/x/liquidity"
+	liquiditykeeper "github.com/tendermint/liquidity/x/liquidity/keeper"
+	liquiditytypes "github.com/tendermint/liquidity/x/liquidity/types"
 )
 
 const appName = "StargazeApp"
@@ -137,6 +141,7 @@ var (
 		user.AppModuleBasic{},
 		faucet.AppModuleBasic{},
 		stake.AppModuleBasic{},
+		liquidity.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -153,6 +158,7 @@ var (
 		curatingtypes.RewardPoolName: {authtypes.Minter, authtypes.Burner},
 		curatingtypes.VotingPoolName: {authtypes.Minter, authtypes.Burner},
 		faucet.ModuleName:            {authtypes.Minter},
+		liquiditytypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 	}
 
 	// module accounts that are allowed to receive tokens
@@ -208,6 +214,8 @@ type StargazeApp struct {
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
 
+	LiquidityKeeper liquiditykeeper.Keeper
+
 	// the module manager
 	mm *module.Manager
 
@@ -252,6 +260,7 @@ func NewStargazeApp(
 		usertypes.StoreKey,
 		faucet.StoreKey,
 		staketypes.StoreKey,
+		liquiditytypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -366,6 +375,11 @@ func NewStargazeApp(
 	app.StakeKeeper = stakekeeper.NewKeeper(
 		appCodec, keys[staketypes.StoreKey], app.CuratingKeeper, app.StakingKeeper, app.GetSubspace(staketypes.ModuleName))
 
+	app.LiquidityKeeper = liquiditykeeper.NewKeeper(
+		appCodec, keys[liquiditytypes.StoreKey], app.GetSubspace(liquiditytypes.ModuleName),
+		app.BankKeeper, app.AccountKeeper,
+	)
+
 	/****  Module Options ****/
 
 	// NOTE: we may consider parsing `appOpts` inside module constructors. For the moment
@@ -400,6 +414,7 @@ func NewStargazeApp(
 		user.NewAppModule(appCodec, app.UserKeeper),
 		faucet.NewAppModule(app.FaucetKeeper),
 		stake.NewAppModule(appCodec, app.StakeKeeper, app.CuratingKeeper, app.StakingKeeper),
+		liquidity.NewAppModule(appCodec, app.LiquidityKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -412,9 +427,11 @@ func NewStargazeApp(
 		curatingtypes.ModuleName,
 		distrtypes.ModuleName, slashingtypes.ModuleName,
 		evidencetypes.ModuleName, stakingtypes.ModuleName, ibchost.ModuleName,
+		liquiditytypes.ModuleName,
 	)
 	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName,
-		stakingtypes.ModuleName, curatingtypes.ModuleName)
+		stakingtypes.ModuleName, curatingtypes.ModuleName, liquiditytypes.ModuleName,
+	)
 
 	// NOTE: The genutils moodule must occur after staking so that pools are
 	// properly initialized with tokens from genesis accounts.
@@ -432,6 +449,7 @@ func NewStargazeApp(
 		curatingtypes.ModuleName,
 		usertypes.ModuleName,
 		staketypes.ModuleName,
+		liquiditytypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -458,6 +476,7 @@ func NewStargazeApp(
 		evidence.NewAppModule(app.EvidenceKeeper),
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
+		liquidity.NewAppModule(appCodec, app.LiquidityKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()
@@ -682,6 +701,7 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler,
 	paramsKeeper.Subspace(curatingtypes.ModuleName)
 	paramsKeeper.Subspace(usertypes.ModuleName)
 	paramsKeeper.Subspace(staketypes.ModuleName)
+	paramsKeeper.Subspace(liquiditytypes.ModuleName)
 
 	return paramsKeeper
 }
