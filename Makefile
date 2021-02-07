@@ -156,6 +156,9 @@ fake-create-pool1:
 fake-create-pool2:
 	./bin/starsd tx liquidity create-pool 1 100000000$(STAKE_DENOM),100000000uatom --from user1 --keyring-backend test --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') -y
 
+fake-swap:
+	./bin/starsd tx liquidity swap 2 1 1000ustarx uatom 1.15 0.003 --from validator --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') --keyring-backend test -y
+
 .PHONY: test build-linux docker-test lint  build init install
 
 ###############################################################################
