@@ -150,6 +150,9 @@ fake-stake:
 fake-unstake:
 	./bin/starsd tx stake unstake 1 $(POST_ID) 10  --from validator --keyring-backend test --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') -b block -y
 
+fake-create-pool:
+	./bin/starsd tx liquidity create-pool 1 100000000$(STAKE_DENOM),100000000ucredits --from validator --keyring-backend test --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') -b block -y
+
 .PHONY: test build-linux docker-test lint  build init install
 
 ###############################################################################
