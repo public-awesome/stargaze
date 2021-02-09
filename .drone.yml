@@ -9,12 +9,12 @@ steps:
     commands:
       - git fetch --tags
   - name: lint
-    image: golangci/golangci-lint:v1.35.2
+    image: golangci/golangci-lint:v1.36.0
     commands:
       - export GL_DEBUG=linters_output
       - export GOPACKAGESPRINTGOLISTERRORS=1
       - go mod download
-      - golangci-lint run -v --timeout 5m --tests=false --skip-dirs="simapp"
+      - golangci-lint run -v --timeout 10m --tests=false --skip-dirs="simapp"
     environment:
       GOPROXY: http://goproxy
   - name: test-and-build
@@ -143,6 +143,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: e92d6900c40f48c199e0d4d7ec33324df605a6a0da2b0dc55a9ce3546f0a36ae
+hmac: fc8729440a4334cac2507e184e7b732505aa854db30ec64ff2d2052b033e5c9c
 
 ...

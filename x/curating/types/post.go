@@ -89,13 +89,14 @@ func (p *PostID) Size() int {
 }
 
 // MarshalJSON implements the gogo proto custom type interface
-func (p PostID) MarshalJSON() ([]byte, error) {
+func (p *PostID) MarshalJSON() ([]byte, error) {
 	return p.id.MarshalJSON()
 }
 
 // UnmarshalJSON implements the gogo proto custom type interface
-func (p PostID) UnmarshalJSON(data []byte) error {
-	return p.id.UnmarshalJSON(data)
+func (p *PostID) UnmarshalJSON(data []byte) error {
+	err := p.id.UnmarshalJSON(data)
+	return err
 }
 
 // Equal compares post id is the same
@@ -142,17 +143,17 @@ func BodyHashFromString(body string) (BodyHash, error) {
 }
 
 // String returns the hex string of the body hash
-func (b BodyHash) String() string {
+func (b *BodyHash) String() string {
 	return hex.EncodeToString(b.data)
 }
 
 // Marshal implements the gogo proto custom type interface
-func (b BodyHash) Marshal() ([]byte, error) {
+func (b *BodyHash) Marshal() ([]byte, error) {
 	return b.data, nil
 }
 
 // MarshalJSON implements the gogo proto custom type interface
-func (b BodyHash) MarshalJSON() ([]byte, error) {
+func (b *BodyHash) MarshalJSON() ([]byte, error) {
 	return json.Marshal(b.data)
 }
 
@@ -183,7 +184,7 @@ func (b *BodyHash) Unmarshal(data []byte) error {
 }
 
 // UnmarshalJSON implements the gogo proto custom type interface
-func (b BodyHash) UnmarshalJSON(data []byte) error {
+func (b *BodyHash) UnmarshalJSON(data []byte) error {
 	var d []byte
 	err := json.Unmarshal(data, &d)
 	if err != nil {
