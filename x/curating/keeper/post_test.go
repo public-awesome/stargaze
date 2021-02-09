@@ -2,7 +2,6 @@ package keeper_test
 
 import (
 	"encoding/json"
-	"fmt"
 	"testing"
 	"time"
 
@@ -42,7 +41,6 @@ func TestCreatePost(t *testing.T) {
 	require.Equal(t, "\"500\"", string(obj))
 
 	curatingQueue := app.CuratingKeeper.GetCurationQueueTimeSlice(ctx, ctx.BlockTime().Add(10*time.Minute))
-	fmt.Println(curatingQueue)
 	require.Equal(t, curatingQueue[0].PostID.String(), "500")
 	require.Equal(t, curatingQueue[0].VendorID, uint32(1))
 

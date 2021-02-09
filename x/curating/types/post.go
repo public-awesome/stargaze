@@ -58,7 +58,7 @@ func (p PostID) Marshal() ([]byte, error) {
 }
 
 // MarshalTo implements the gogo proto custom type interface
-func (p *PostID) MarshalTo(data []byte) (n int, err error) {
+func (p PostID) MarshalTo(data []byte) (n int, err error) {
 	bz, err := p.Marshal()
 	if err != nil {
 		return 0, err
@@ -80,7 +80,7 @@ func (p *PostID) Unmarshal(data []byte) error {
 }
 
 // Size implements the gogo proto custom type interface
-func (p *PostID) Size() int {
+func (p PostID) Size() int {
 	bz, err := p.Marshal()
 	if err != nil {
 		return 0
@@ -89,7 +89,7 @@ func (p *PostID) Size() int {
 }
 
 // MarshalJSON implements the gogo proto custom type interface
-func (p *PostID) MarshalJSON() ([]byte, error) {
+func (p PostID) MarshalJSON() ([]byte, error) {
 	return p.id.MarshalJSON()
 }
 
@@ -148,17 +148,17 @@ func (b *BodyHash) String() string {
 }
 
 // Marshal implements the gogo proto custom type interface
-func (b *BodyHash) Marshal() ([]byte, error) {
+func (b BodyHash) Marshal() ([]byte, error) {
 	return b.data, nil
 }
 
 // MarshalJSON implements the gogo proto custom type interface
-func (b *BodyHash) MarshalJSON() ([]byte, error) {
+func (b BodyHash) MarshalJSON() ([]byte, error) {
 	return json.Marshal(b.data)
 }
 
 // MarshalTo implements the gogo proto custom type interface
-func (b *BodyHash) MarshalTo(data []byte) (n int, err error) {
+func (b BodyHash) MarshalTo(data []byte) (n int, err error) {
 	bz, err := b.Marshal()
 	if err != nil {
 		return 0, err
@@ -169,7 +169,7 @@ func (b *BodyHash) MarshalTo(data []byte) (n int, err error) {
 }
 
 // Size implements the gogo proto custom type interface
-func (b *BodyHash) Size() int {
+func (b BodyHash) Size() int {
 	bz, err := b.Marshal()
 	if err != nil {
 		return 0
