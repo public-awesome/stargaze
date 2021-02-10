@@ -31,7 +31,6 @@ import (
 	dbm "github.com/tendermint/tm-db"
 
 	"github.com/cosmos/cosmos-sdk/x/crisis"
-	"github.com/public-awesome/stargaze/app"
 	stargaze "github.com/public-awesome/stargaze/app"
 	"github.com/public-awesome/stargaze/app/params"
 )
@@ -187,7 +186,7 @@ func newApp(logger log.Logger, db dbm.DB,
 		logger, db, traceStore, true, skipUpgradeHeights,
 		cast.ToString(appOpts.Get(flags.FlagHome)),
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
-		app.GetEnabledProposals(),
+		stargaze.GetEnabledProposals(),
 		stargaze.MakeEncodingConfig(), // Ideally, we would reuse the one created by NewRootCmd.
 		appOpts,
 		emptyWasmOpts,
@@ -218,7 +217,7 @@ func createSimappAndExport(
 	if height != -1 {
 		StargazeApp = stargaze.NewStargazeApp(logger, db, traceStore,
 			false, map[int64]bool{}, "",
-			uint(1), app.GetEnabledProposals(), encCfg, appOpts, emptyWasmOpts)
+			uint(1), stargaze.GetEnabledProposals(), encCfg, appOpts, emptyWasmOpts)
 
 		if err := StargazeApp.LoadHeight(height); err != nil {
 			return servertypes.ExportedApp{}, err
@@ -226,7 +225,7 @@ func createSimappAndExport(
 	} else {
 		StargazeApp = stargaze.NewStargazeApp(logger, db, traceStore,
 			true, map[int64]bool{}, "",
-			uint(1), app.GetEnabledProposals(), encCfg, appOpts, emptyWasmOpts)
+			uint(1), stargaze.GetEnabledProposals(), encCfg, appOpts, emptyWasmOpts)
 	}
 
 	return StargazeApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)
