@@ -271,8 +271,10 @@ func init() {
 func NewStargazeApp(
 	logger log.Logger, db dbm.DB, traceStore io.Writer,
 	loadLatest bool, skipUpgradeHeights map[int64]bool,
-	homePath string, invCheckPeriod uint, encodingConfig stargazeappparams.EncodingConfig,
+	homePath string, invCheckPeriod uint, enabledProposals []wasm.ProposalType,
+	encodingConfig stargazeappparams.EncodingConfig,
 	appOpts servertypes.AppOptions,
+	wasmOpts []wasm.Option,
 	baseAppOptions ...func(*baseapp.BaseApp),
 ) *StargazeApp {
 
@@ -325,7 +327,7 @@ func NewStargazeApp(
 	)
 	scopedIBCKeeper := app.CapabilityKeeper.ScopeToModule(ibchost.ModuleName)
 	scopedTransferKeeper := app.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
-	scopedWasmKeeper := app.capabilityKeeper.ScopeToModule(wasm.ModuleName)
+	scopedWasmKeeper := app.CapabilityKeeper.ScopeToModule(wasm.ModuleName)
 
 	// add keepers
 	app.AccountKeeper = authkeeper.NewAccountKeeper(
@@ -430,13 +432,13 @@ func NewStargazeApp(
 	app.wasmKeeper = wasm.NewKeeper(
 		appCodec,
 		keys[wasm.StoreKey],
-		app.getSubspace(wasm.ModuleName),
-		app.accountKeeper,
-		app.bankKeeper,
-		app.stakingKeeper,
-		app.distrKeeper,
-		app.ibcKeeper.ChannelKeeper,
-		&app.ibcKeeper.PortKeeper,
+		app.GetSubspace(wasm.ModuleName),
+		app.AccountKeeper,
+		app.BankKeeper,
+		app.StakingKeeper,
+		app.DistrKeeper,
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
 		scopedWasmKeeper,
 		wasmRouter,
 		wasmDir,
@@ -452,7 +454,7 @@ func NewStargazeApp(
 		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(app.wasmKeeper, enabledProposals))
 	}
 	ibcRouter.AddRoute(wasm.ModuleName, wasm.NewIBCHandler(app.wasmKeeper))
-	app.ibcKeeper.SetRouter(ibcRouter)
+	app.IBCKeeper.SetRouter(ibcRouter)
 	app.IBCKeeper.SetRouter(ibcRouter)
 
 	/****  Module Options ****/
@@ -490,7 +492,7 @@ func NewStargazeApp(
 		faucet.NewAppModule(app.FaucetKeeper),
 		stake.NewAppModule(appCodec, app.StakeKeeper, app.CuratingKeeper, app.StakingKeeper),
 		liquidity.NewAppModule(appCodec, app.LiquidityKeeper, app.AccountKeeper, app.BankKeeper),
-		wasm.NewAppModule(appCodec, &app.wasmKeeper, app.stakingKeeper),
+		wasm.NewAppModule(appCodec, &app.wasmKeeper, app.StakingKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -554,7 +556,7 @@ func NewStargazeApp(
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
 		liquidity.NewAppModule(appCodec, app.LiquidityKeeper, app.AccountKeeper, app.BankKeeper),
-		wasm.NewAppModule(appCodec, &app.wasmKeeper, app.stakingKeeper),
+		wasm.NewAppModule(appCodec, &app.wasmKeeper, app.StakingKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()
