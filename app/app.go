@@ -454,7 +454,6 @@ func NewStargazeApp(
 	}
 	ibcRouter.AddRoute(wasm.ModuleName, wasm.NewIBCHandler(app.wasmKeeper))
 	app.IBCKeeper.SetRouter(ibcRouter)
-	app.IBCKeeper.SetRouter(ibcRouter)
 
 	/****  Module Options ****/
 
