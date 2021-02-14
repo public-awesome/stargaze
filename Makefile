@@ -88,8 +88,8 @@ create-wallet:
 
 reset: clean init
 clean:
-	rm -rf ~/.starsd/config
-	rm -rf ~/.starsd/data
+	rm -rf $(HOME)/.starsd/config
+	rm -rf $(HOME)/.starsd/data
 
 init:
 	./bin/starsd init stargaze --stake-denom $(STAKE_DENOM) --chain-id localnet-1
