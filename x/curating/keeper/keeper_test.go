@@ -1,13 +1,12 @@
 package keeper_test
 
 import (
-	"crypto/sha256"
 	"testing"
 
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stargaze/x/curating/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stakebird/simapp"
+	"github.com/public-awesome/stargaze/simapp"
 	"github.com/stretchr/testify/require"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
@@ -22,7 +21,10 @@ func TestPost(t *testing.T) {
 	postID, err := types.PostIDFromString("500")
 	require.NoError(t, err)
 
-	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], addrs[0])
+	bodyHash, err := types.BodyHashFromString("body string")
+	require.NoError(t, err)
+
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, bodyHash, addrs[0], addrs[0])
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -35,7 +37,7 @@ func TestPost(t *testing.T) {
 	vps := app.CuratingKeeper.GetCurationQueueTimeSlice(ctx, ctx.BlockTime())
 	require.NotNil(t, vps)
 
-	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], addrs[0])
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, bodyHash, addrs[0], addrs[0])
 	require.Equal(t, types.ErrDuplicatePost, err)
 }
 
@@ -48,8 +50,11 @@ func TestPost_EmptyCreator(t *testing.T) {
 	postID, err := types.PostIDFromString("500")
 	require.NoError(t, err)
 
+	bodyHash, err := types.BodyHashFromString("body string")
+	require.NoError(t, err)
+
 	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
-	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", nil, addrs[1])
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, bodyHash, nil, addrs[1])
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -76,7 +81,10 @@ func TestPost_EmptyRewardAccount(t *testing.T) {
 	postID, err := types.PostIDFromString("500")
 	require.NoError(t, err)
 
-	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], nil)
+	bodyHash, err := types.BodyHashFromString("body string")
+	require.NoError(t, err)
+
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, bodyHash, addrs[0], nil)
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -100,7 +108,10 @@ func TestPost_WithRewardAccount(t *testing.T) {
 	postID, err := types.PostIDFromString("500")
 	require.NoError(t, err)
 
-	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], addrs[1])
+	bodyHash, err := types.BodyHashFromString("body string")
+	require.NoError(t, err)
+
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, bodyHash, addrs[0], addrs[1])
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -127,7 +138,10 @@ func TestDeletePost(t *testing.T) {
 	postID, err := types.PostIDFromString("500")
 	require.NoError(t, err)
 
-	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], addrs[1])
+	bodyHash, err := types.BodyHashFromString("body string")
+	require.NoError(t, err)
+
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, bodyHash, addrs[0], addrs[1])
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -177,14 +191,4 @@ func TestCurationQueueTimeSlice(t *testing.T) {
 	timeSlice := app.CuratingKeeper.GetCurationQueueTimeSlice(ctx, curationEndTime)
 	require.Len(t, timeSlice, 1)
 	require.Equal(t, vpPair, timeSlice[0])
-}
-
-// NOTE: these unexported functions are duplicated to enable black-box testing
-func hash(body string) ([]byte, error) {
-	h := sha256.New()
-	_, err := h.Write([]byte(body))
-	if err != nil {
-		return nil, err
-	}
-	return h.Sum(nil), nil
 }

@@ -13,7 +13,7 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/public-awesome/stakebird/app"
+	"github.com/public-awesome/stargaze/app"
 	"github.com/spf13/cobra"
 	tmconfig "github.com/tendermint/tendermint/config"
 	tmos "github.com/tendermint/tendermint/libs/os"
@@ -36,7 +36,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	curatingtypes "github.com/public-awesome/stakebird/x/curating/types"
+	curatingtypes "github.com/public-awesome/stargaze/x/curating/types"
 )
 
 var (
@@ -61,7 +61,7 @@ func testnetCmd(mbm module.BasicManager, genBalIterator banktypes.GenesisBalance
 necessary files (private validator, genesis, config, etc.).
 Note, strict routability for addresses is turned off in the config file.
 Example:
-	staked testnet --v 4 --output-dir ./output --starting-ip-address 192.168.10.2
+	starsd testnet --v 4 --output-dir ./output --starting-ip-address 192.168.10.2
 	`,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
@@ -117,7 +117,7 @@ Example:
 	cmd.Flags().StringP(flagOutputDir, "o", "./mytestnet", "Directory to store initialization data for the testnet")
 	cmd.Flags().String(flagNodeDirPrefix, "node",
 		"Prefix the directory name for each node with (node results in node0, node1, ...)")
-	cmd.Flags().String(flagNodeDaemonHome, "staked", "Home directory of the node's daemon configuration")
+	cmd.Flags().String(flagNodeDaemonHome, "starsd", "Home directory of the node's daemon configuration")
 	cmd.Flags().String(
 		flagStartingIPAddress,
 		"192.168.0.1",
@@ -504,17 +504,17 @@ type TestnetNode struct {
 	GRPCPort         string
 }
 
-const dockerComposeDefinition = `# Stakebird Testnet
+const dockerComposeDefinition = `# Stargaze Testnet
 version: '3.1'
 services:{{range $node := .Nodes }}
 	{{ $node.Name }}:
-		image: publicawesome/stakebird:{{ $.Tag }}
+		image: publicawesome/stargaze:{{ $.Tag }}
 		ports:
 			- {{ $node.OutsidePortRange}}:{{ $node.InsidePortRange}}
 			- {{ $node.APIPort}}:1317
 			- {{ $node.GRPCPort}}:9090
 		volumes:
-			- ./{{$node.Name}}/staked:/data/.staked/
+			- ./{{$node.Name}}/starsd:/data/.starsd/
 {{end}}
 `
 

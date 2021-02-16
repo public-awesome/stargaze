@@ -3,9 +3,9 @@ before:
     - go mod download
 
 builds:
-  - main: ./cmd/staked/
-    id: 'staked'
-    binary: staked
+  - main: ./cmd/starsd/
+    id: 'starsd'
+    binary: starsd
     goos:
       - linux
       - darwin
@@ -15,8 +15,8 @@ builds:
     flags:
       - -tags=netgo,faucet
     ldflags:
-      - -X "github.com/cosmos/cosmos-sdk/version.Name=Stakebird"
-      - -X github.com/cosmos/cosmos-sdk/version.AppName=staked
+      - -X "github.com/cosmos/cosmos-sdk/version.Name=Stargaze"
+      - -X github.com/cosmos/cosmos-sdk/version.AppName=starsd
       - -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}}
       - -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}
       - -X github.com/cosmos/cosmos-sdk/version.BuildTags=netgo,faucet
@@ -24,7 +24,7 @@ builds:
 release:
   github:
     owner: public-awesome
-    name: stakebird
+    name: stargaze
   draft: true
   prerelease: auto
 

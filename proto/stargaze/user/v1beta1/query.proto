@@ -1,16 +1,16 @@
 syntax = "proto3";
-package stakebird.user.v1beta1;
+package stargaze.user.v1beta1;
 
-option go_package = "github.com/public-awesome/stakebird/x/user/types";
+option go_package = "github.com/public-awesome/stargaze/x/user/types";
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
-import "stakebird/user/v1beta1/user.proto";
+import "stargaze/user/v1beta1/user.proto";
 
 // Query defines the gRPC querier service.
 service Query {
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/stakebird/user/v1beta1/params";
+    option (google.api.http).get = "/stargaze/user/v1beta1/params";
   }
 }
 

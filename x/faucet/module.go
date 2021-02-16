@@ -11,9 +11,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/public-awesome/stakebird/x/faucet/client/cli"
-	"github.com/public-awesome/stakebird/x/faucet/internal/keeper"
-	"github.com/public-awesome/stakebird/x/faucet/internal/types"
+	"github.com/public-awesome/stargaze/x/faucet/client/cli"
+	"github.com/public-awesome/stargaze/x/faucet/internal/keeper"
+	"github.com/public-awesome/stargaze/x/faucet/internal/types"
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
 )

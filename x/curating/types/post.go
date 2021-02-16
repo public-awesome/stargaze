@@ -1,6 +1,9 @@
 package types
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
 	"time"
 
 	"github.com/bwmarrin/snowflake"
@@ -22,6 +25,7 @@ type CustomProtobufType interface {
 }
 
 var _ CustomProtobufType = (*PostID)(nil)
+var _ CustomProtobufType = (*BodyHash)(nil)
 
 // PostID represents a Twitter post ID (for now)
 type PostID struct {
@@ -54,7 +58,7 @@ func (p PostID) Marshal() ([]byte, error) {
 }
 
 // MarshalTo implements the gogo proto custom type interface
-func (p *PostID) MarshalTo(data []byte) (n int, err error) {
+func (p PostID) MarshalTo(data []byte) (n int, err error) {
 	bz, err := p.Marshal()
 	if err != nil {
 		return 0, err
@@ -76,7 +80,7 @@ func (p *PostID) Unmarshal(data []byte) error {
 }
 
 // Size implements the gogo proto custom type interface
-func (p *PostID) Size() int {
+func (p PostID) Size() int {
 	bz, err := p.Marshal()
 	if err != nil {
 		return 0
@@ -90,8 +94,9 @@ func (p PostID) MarshalJSON() ([]byte, error) {
 }
 
 // UnmarshalJSON implements the gogo proto custom type interface
-func (p PostID) UnmarshalJSON(data []byte) error {
-	return p.id.UnmarshalJSON(data)
+func (p *PostID) UnmarshalJSON(data []byte) error {
+	err := p.id.UnmarshalJSON(data)
+	return err
 }
 
 // Equal compares post id is the same
@@ -107,7 +112,7 @@ type CuratingQueue []VPPair
 
 // NewPost allocates and returns a new `Post` struct
 func NewPost(
-	vendorID uint32, postID PostID, bodyHash []byte, creator,
+	vendorID uint32, postID PostID, bodyHash BodyHash, creator,
 	rewardAccount sdk.AccAddress, curatingEndTime time.Time) Post {
 
 	return Post{
@@ -120,4 +125,72 @@ func NewPost(
 		TotalVotes:      0,
 		TotalAmount:     sdk.Coin{},
 	}
+}
+
+type BodyHash struct {
+	data []byte
+}
+
+// BodyHashFromString does exactly whats on the label
+func BodyHashFromString(body string) (BodyHash, error) {
+	h := sha256.New()
+	_, err := h.Write([]byte(body))
+	if err != nil {
+		return BodyHash{}, err
+	}
+	digest := h.Sum(nil)
+	return BodyHash{digest[:20]}, nil
+}
+
+// String returns the hex string of the body hash
+func (b *BodyHash) String() string {
+	return hex.EncodeToString(b.data)
+}
+
+// Marshal implements the gogo proto custom type interface
+func (b BodyHash) Marshal() ([]byte, error) {
+	return b.data, nil
+}
+
+// MarshalJSON implements the gogo proto custom type interface
+func (b BodyHash) MarshalJSON() ([]byte, error) {
+	return json.Marshal(b.data)
+}
+
+// MarshalTo implements the gogo proto custom type interface
+func (b BodyHash) MarshalTo(data []byte) (n int, err error) {
+	bz, err := b.Marshal()
+	if err != nil {
+		return 0, err
+	}
+
+	copy(data, bz)
+	return len(bz), nil
+}
+
+// Size implements the gogo proto custom type interface
+func (b BodyHash) Size() int {
+	bz, err := b.Marshal()
+	if err != nil {
+		return 0
+	}
+	return len(bz)
+}
+
+// Unmarshal implements the gogo proto custom type interface
+func (b *BodyHash) Unmarshal(data []byte) error {
+	b.data = data
+	return nil
+}
+
+// UnmarshalJSON implements the gogo proto custom type interface
+func (b *BodyHash) UnmarshalJSON(data []byte) error {
+	var d []byte
+	err := json.Unmarshal(data, &d)
+	if err != nil {
+		return err
+	}
+	b.data = d
+
+	return nil
 }

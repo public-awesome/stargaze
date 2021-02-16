@@ -3,7 +3,7 @@ package types_test
 import (
 	"testing"
 
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stargaze/x/curating/types"
 
 	"github.com/stretchr/testify/require"
 )

@@ -83,20 +83,20 @@ import (
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	SimAppparams "github.com/public-awesome/stakebird/simapp/params"
+	SimAppparams "github.com/public-awesome/stargaze/simapp/params"
 
-	"github.com/public-awesome/stakebird/x/curating"
-	curatingkeeper "github.com/public-awesome/stakebird/x/curating/keeper"
-	curatingtypes "github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stargaze/x/curating"
+	curatingkeeper "github.com/public-awesome/stargaze/x/curating/keeper"
+	curatingtypes "github.com/public-awesome/stargaze/x/curating/types"
 
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
-	"github.com/public-awesome/stakebird/x/user"
-	userkeeper "github.com/public-awesome/stakebird/x/user/keeper"
-	usertypes "github.com/public-awesome/stakebird/x/user/types"
+	"github.com/public-awesome/stargaze/x/user"
+	userkeeper "github.com/public-awesome/stargaze/x/user/keeper"
+	usertypes "github.com/public-awesome/stargaze/x/user/types"
 
-	"github.com/public-awesome/stakebird/x/stake"
-	stakekeeper "github.com/public-awesome/stakebird/x/stake/keeper"
-	staketypes "github.com/public-awesome/stakebird/x/stake/types"
+	"github.com/public-awesome/stargaze/x/stake"
+	stakekeeper "github.com/public-awesome/stargaze/x/stake/keeper"
+	staketypes "github.com/public-awesome/stargaze/x/stake/types"
 )
 
 const appName = "SimApp"
@@ -131,7 +131,7 @@ var (
 		transfer.AppModuleBasic{},
 		vesting.AppModuleBasic{},
 
-		// Stakebird Modules
+		// Stargaze Modules
 		curating.AppModuleBasic{},
 		user.AppModuleBasic{},
 		stake.AppModuleBasic{},
@@ -195,7 +195,7 @@ type SimApp struct {
 	EvidenceKeeper   evidencekeeper.Keeper
 	TransferKeeper   ibctransferkeeper.Keeper
 
-	// Stakebird Keepers
+	// Stargaze Keepers
 	CuratingKeeper curatingkeeper.Keeper
 	UserKeeper     userkeeper.Keeper
 	StakeKeeper    stakekeeper.Keeper
@@ -217,7 +217,7 @@ func init() {
 		panic(err)
 	}
 
-	DefaultNodeHome = filepath.Join(userHomeDir, ".staked")
+	DefaultNodeHome = filepath.Join(userHomeDir, ".starsd")
 }
 
 // NewSimApp returns a reference to an initialized Gaia.
@@ -243,7 +243,7 @@ func NewSimApp(
 		minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
-		// Stakebird Stores
+		// Stargaze Stores
 		curatingtypes.StoreKey,
 		usertypes.StoreKey,
 		staketypes.StoreKey,
@@ -342,7 +342,7 @@ func NewSimApp(
 	// If evidence needs to be handled for the app, set routes in router here and seal
 	app.EvidenceKeeper = *evidenceKeeper
 
-	// Stakebird Keepers
+	// Stargaze Keepers
 	app.CuratingKeeper = curatingkeeper.NewKeeper(
 		appCodec, keys[curatingtypes.StoreKey], app.AccountKeeper, app.BankKeeper, app.GetSubspace(curatingtypes.ModuleName))
 
@@ -381,7 +381,7 @@ func NewSimApp(
 		ibc.NewAppModule(app.IBCKeeper),
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
-		// StakebirdModules
+		// StargazeModules
 		curating.NewAppModule(appCodec, app.CuratingKeeper, app.AccountKeeper, app.BankKeeper),
 		user.NewAppModule(appCodec, app.UserKeeper),
 		stake.NewAppModule(appCodec, app.StakeKeeper, app.CuratingKeeper, app.StakingKeeper),
@@ -412,7 +412,7 @@ func NewSimApp(
 		distrtypes.ModuleName, stakingtypes.ModuleName,
 		slashingtypes.ModuleName, govtypes.ModuleName, minttypes.ModuleName, crisistypes.ModuleName,
 		ibchost.ModuleName, genutiltypes.ModuleName, evidencetypes.ModuleName, ibctransfertypes.ModuleName,
-		// stakebird init genesis
+		// stargaze init genesis
 		curatingtypes.ModuleName,
 		usertypes.ModuleName,
 	)
@@ -659,7 +659,7 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler,
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
 
-	// Stakebird Modules
+	// Stargaze Modules
 	paramsKeeper.Subspace(curatingtypes.ModuleName)
 	paramsKeeper.Subspace(usertypes.ModuleName)
 	paramsKeeper.Subspace(staketypes.ModuleName)

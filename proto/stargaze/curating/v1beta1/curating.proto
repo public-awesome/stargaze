@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package stakebird.curating.v1beta1;
+package stargaze.curating.v1beta1;
 
-option go_package = "github.com/public-awesome/stakebird/x/curating/types";
+option go_package = "github.com/public-awesome/stargaze/x/curating/types";
 
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
@@ -25,7 +25,13 @@ message Post {
   string creator = 3 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
   string reward_account = 4
       [ (gogoproto.moretags) = "yaml:\"reward_account\"" ];
-  bytes body_hash = 5 [ (gogoproto.moretags) = "yaml:\"body_hash\"" ];
+  string body_hash = 5 [
+    (gogoproto.customtype) = "BodyHash",
+    (gogoproto.customname) = "BodyHash",
+    (gogoproto.moretags) = "yaml:\"body_hash\"",
+    (gogoproto.jsontag) = "body_hash",
+    (gogoproto.nullable) = false
+  ];
   google.protobuf.Timestamp curating_end_time = 7 [
     (gogoproto.stdtime) = true,
     (gogoproto.nullable) = false,

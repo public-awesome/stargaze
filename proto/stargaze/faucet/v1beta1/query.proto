@@ -1,16 +1,16 @@
 syntax = "proto3";
-package stakebird.faucet.v1beta1;
+package stargaze.faucet.v1beta1;
 
 import "gogoproto/gogo.proto";
-import "stakebird/faucet/v1beta1/faucet.proto";
+import "stargaze/faucet/v1beta1/faucet.proto";
 import "google/api/annotations.proto";
 
-option go_package = "github.com/public-awesome/stakebird/x/faucet/internal/types";
+option go_package = "github.com/public-awesome/stargaze/x/faucet/internal/types";
 
 // Query defines the gRPC querier service.
 service Query {
   rpc FaucetKey(QueryFaucetKeyRequest) returns (QueryFaucetKeyResponse) {
-    option (google.api.http).get = "/stakebird/faucet/v1beta1/key";
+    option (google.api.http).get = "/stargaze/faucet/v1beta1/key";
   }
 }
 

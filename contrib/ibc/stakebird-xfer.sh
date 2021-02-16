@@ -7,8 +7,8 @@ fi
 
 RELAYER_TAG="goz-phase-3"
 
-# start gaia + stakebird
-./contrib/ibc/gaia-stakebird.sh
+# start gaia + stargaze
+./contrib/ibc/gaia-stargaze.sh
 sleep 20
 
 set -e
@@ -27,13 +27,13 @@ rly cfg init
 # what is added in each step. The config is located at ~/.relayer/config/config.yaml
 cat ~/.relayer/config/config.yaml
 
-rly cfg add-dir contrib/ibc/relayer/configs/stakebird-xfer/
+rly cfg add-dir contrib/ibc/relayer/configs/stargaze-xfer/
 
 # NOTE: you may want to look at the config between these steps
 cat ~/.relayer/config/config.yaml
 
 rly keys restore ibc0 testkey "$(jq -r '.secret' data/ibc0/n0/gaiad/key_seed.json)"
-rly keys restore ibc1 testkey "$(jq -r '.secret' data/ibc1/n0/staked/key_seed.json)"
+rly keys restore ibc1 testkey "$(jq -r '.secret' data/ibc1/n0/starsd/key_seed.json)"
 
 rly lite init ibc0 -f
 rly lite init ibc1 -f

@@ -1,31 +1,31 @@
 syntax = "proto3";
-package stakebird.curating.v1beta1;
+package stargaze.curating.v1beta1;
 
 import "gogoproto/gogo.proto";
-import "stakebird/curating/v1beta1/curating.proto";
+import "stargaze/curating/v1beta1/curating.proto";
 import "google/api/annotations.proto";
 
-option go_package = "github.com/public-awesome/stakebird/x/curating/types";
+option go_package = "github.com/public-awesome/stargaze/x/curating/types";
 
 // Query defines the gRPC querier service.
 service Query {
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/stakebird/curating/v1beta1/params";
+    option (google.api.http).get = "/stargaze/curating/v1beta1/params";
   }
 
   rpc Posts(QueryPostsRequest) returns (QueryPostsResponse) {
     option (google.api.http).get =
-        "/stakebird/curating/v1beta1/posts/{vendor_id}";
+        "/stargaze/curating/v1beta1/posts/{vendor_id}";
   }
 
   rpc Post(QueryPostRequest) returns (QueryPostResponse) {
     option (google.api.http).get =
-        "/stakebird/curating/v1beta1/posts/{vendor_id}/{post_id}";
+        "/stargaze/curating/v1beta1/posts/{vendor_id}/{post_id}";
   }
 
   rpc Upvotes(QueryUpvotesRequest) returns (QueryUpvotesResponse) {
     option (google.api.http).get =
-        "/stakebird/curating/v1beta1/posts/{vendor_id}/{post_id}/upvotes";
+        "/stargaze/curating/v1beta1/posts/{vendor_id}/{post_id}/upvotes";
   }
 }
 
@@ -51,11 +51,11 @@ message QueryPostRequest {
 }
 
 message QueryPostsResponse {
-  repeated stakebird.curating.v1beta1.Post posts = 1
+  repeated stargaze.curating.v1beta1.Post posts = 1
       [ (gogoproto.nullable) = false ];
 }
 
-message QueryPostResponse { stakebird.curating.v1beta1.Post post = 1; }
+message QueryPostResponse { stargaze.curating.v1beta1.Post post = 1; }
 
 message QueryUpvotesRequest {
   option (gogoproto.equal) = false;
@@ -66,6 +66,6 @@ message QueryUpvotesRequest {
 }
 
 message QueryUpvotesResponse {
-  repeated stakebird.curating.v1beta1.Upvote upvotes = 1
+  repeated stargaze.curating.v1beta1.Upvote upvotes = 1
       [ (gogoproto.nullable) = false ];
 }

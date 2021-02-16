@@ -2,8 +2,8 @@ package curating
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stakebird/x/curating/keeper"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stargaze/x/curating/keeper"
+	"github.com/public-awesome/stargaze/x/curating/types"
 )
 
 // QVFData holds vars for quadratic voting+funding calculations

@@ -13,7 +13,7 @@ CHAIN_DATA="$(pwd)/data"
 
 rm -rf $CHAIN_DATA &> /dev/null
 killall gaiad &> /dev/null
-killall staked &> /dev/null
+killall starsd &> /dev/null
 
 set -e
 
@@ -24,7 +24,7 @@ unzip -o $GAIA_TAG.zip &> /dev/null; \
 cd gaia-$GAIA_TAG; \
 make install &> /dev/null)
 
-echo "Installing stakebird..."
+echo "Installing stargaze..."
 make install &> /dev/null
 
 chainid0=ibc0
@@ -33,7 +33,7 @@ chainid1=ibc1
 echo "Generating configurations..."
 mkdir -p $CHAIN_DATA && cd $CHAIN_DATA
 echo -e "\n" | gaiad testnet -o $chainid0 --v 1 --chain-id $chainid0 --node-dir-prefix n --keyring-backend test &> /dev/null
-echo -e "\n" | staked testnet -o $chainid1 --v 1 --chain-id $chainid1 --node-dir-prefix n --keyring-backend test
+echo -e "\n" | starsd testnet -o $chainid1 --v 1 --chain-id $chainid1 --node-dir-prefix n --keyring-backend test
 
 cfgpth="n0/gaiad/config/config.toml"
 if [ "$(uname)" = "Linux" ]; then
@@ -58,7 +58,7 @@ else
   sed -i '' 's/timeout_propose = "3s"/timeout_propose = "1s"/g' $chainid0/$cfgpth
 fi
 
-cfgpth="n0/staked/config/config.toml"
+cfgpth="n0/starsd/config/config.toml"
 if [ "$(uname)" = "Linux" ]; then
   # TODO: Just index *some* specified tags, not all
   sed -i 's/index_all_keys = false/index_all_keys = true/g' $chainid1/$cfgpth
@@ -91,4 +91,4 @@ fi
 
 echo "Starting chain instances..."
 gaiad --home $CHAIN_DATA/$chainid0/n0/gaiad start --pruning=nothing --chain-id $chainid0 --output json --node http://localhost:26657 > $chainid0.log 2>&1 &
-staked --home $CHAIN_DATA/$chainid1/n0/staked start --pruning=nothing --chain-id $chainid1 --output json --node http://localhost:26557 > $chainid1.log 2>&1 & 
+starsd --home $CHAIN_DATA/$chainid1/n0/starsd start --pruning=nothing --chain-id $chainid1 --output json --node http://localhost:26557 > $chainid1.log 2>&1 & 

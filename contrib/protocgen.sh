@@ -31,5 +31,5 @@ done
 
 
 # move proto files to the right places
-cp -r github.com/public-awesome/stakebird/* ./
+cp -r github.com/public-awesome/stargaze/* ./
 rm -rf github.com

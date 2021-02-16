@@ -2,13 +2,12 @@ package keeper_test
 
 import (
 	"encoding/json"
-	"fmt"
 	"testing"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stakebird/simapp"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stargaze/simapp"
+	"github.com/public-awesome/stargaze/x/curating/types"
 	"github.com/stretchr/testify/require"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
@@ -25,7 +24,10 @@ func TestCreatePost(t *testing.T) {
 
 	ctx = ctx.WithBlockTime(time.Now())
 
-	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], addrs[0])
+	bodyHash, err := types.BodyHashFromString("body string")
+	require.NoError(t, err)
+
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, bodyHash, addrs[0], addrs[0])
 	require.NoError(t, err)
 
 	post, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -39,13 +41,12 @@ func TestCreatePost(t *testing.T) {
 	require.Equal(t, "\"500\"", string(obj))
 
 	curatingQueue := app.CuratingKeeper.GetCurationQueueTimeSlice(ctx, ctx.BlockTime().Add(10*time.Minute))
-	fmt.Println(curatingQueue)
 	require.Equal(t, curatingQueue[0].PostID.String(), "500")
 	require.Equal(t, curatingQueue[0].VendorID, uint32(1))
 
 	// add another post
 	postID, err = types.PostIDFromString("501")
-	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string1", addrs[0], addrs[0])
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, bodyHash, addrs[0], addrs[0])
 	require.NoError(t, err)
 
 	// fast forward block time

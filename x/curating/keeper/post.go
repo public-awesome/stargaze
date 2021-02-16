@@ -1,12 +1,11 @@
 package keeper
 
 import (
-	"crypto/sha256"
 	"fmt"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stargaze/x/curating/types"
 )
 
 // GetPosts returns all posts on chain based on vendor id
@@ -36,8 +35,8 @@ func (k Keeper) GetPost(
 
 // CreatePost registers a post on-chain and starts the curation period.
 // It can be called from CreateUpvote() when a post doesn't exist yet.
-func (k Keeper) CreatePost(
-	ctx sdk.Context, vendorID uint32, postID types.PostID, body string, creator, rewardAccount sdk.AccAddress) error {
+func (k Keeper) CreatePost(ctx sdk.Context, vendorID uint32, postID types.PostID,
+	bodyHash types.BodyHash, creator, rewardAccount sdk.AccAddress) error {
 
 	_, found, err := k.GetPost(ctx, vendorID, postID)
 	if err != nil {
@@ -55,11 +54,6 @@ func (k Keeper) CreatePost(
 		rewardAccount = creator
 	}
 
-	bodyHash, err := hash(body)
-	if err != nil {
-		return err
-	}
-
 	curationWindow := k.GetParams(ctx).CurationWindow
 	curationEndTime := ctx.BlockTime().Add(curationWindow)
 	post := types.NewPost(vendorID, postID, bodyHash, creator, rewardAccount, curationEndTime)
@@ -74,7 +68,7 @@ func (k Keeper) CreatePost(
 			sdk.NewAttribute(types.AttributeKeyPostID, postID.String()),
 			sdk.NewAttribute(types.AttributeKeyCreator, creator.String()),
 			sdk.NewAttribute(types.AttributeKeyRewardAccount, rewardAccount.String()),
-			sdk.NewAttribute(types.AttributeKeyBody, body),
+			sdk.NewAttribute(types.AttributeKeyBody, bodyHash.String()),
 			sdk.NewAttribute(types.AttributeCurationEndTime, curationEndTime.Format(time.RFC3339)),
 			sdk.NewAttribute(types.AttributeKeyVoteDenom, types.DefaultVoteDenom),
 		),
@@ -200,15 +194,4 @@ func (k Keeper) IteratePosts(ctx sdk.Context, vendorID uint32, cb func(post type
 			break
 		}
 	}
-}
-
-// hash performs a sha256 hash over body content and truncates to 160-bits
-func hash(body string) ([]byte, error) {
-	h := sha256.New()
-	_, err := h.Write([]byte(body))
-	if err != nil {
-		return nil, err
-	}
-	digest := h.Sum(nil)
-	return digest[:20], nil
 }

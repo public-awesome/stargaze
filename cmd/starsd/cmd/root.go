@@ -30,14 +30,14 @@ import (
 	dbm "github.com/tendermint/tm-db"
 
 	"github.com/cosmos/cosmos-sdk/x/crisis"
-	stakebird "github.com/public-awesome/stakebird/app"
-	"github.com/public-awesome/stakebird/app/params"
+	stargaze "github.com/public-awesome/stargaze/app"
+	"github.com/public-awesome/stargaze/app/params"
 )
 
 // NewRootCmd creates a new root command for simd. It is called once in the
 // main function.
 func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
-	encodingConfig := stakebird.MakeEncodingConfig()
+	encodingConfig := stargaze.MakeEncodingConfig()
 	initClientCtx := client.Context{}.
 		WithJSONMarshaler(encodingConfig.Marshaler).
 		WithInterfaceRegistry(encodingConfig.InterfaceRegistry).
@@ -46,11 +46,11 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 		WithInput(os.Stdin).
 		WithAccountRetriever(types.AccountRetriever{}).
 		WithBroadcastMode(flags.BroadcastBlock).
-		WithHomeDir(stakebird.DefaultNodeHome).
+		WithHomeDir(stargaze.DefaultNodeHome).
 		WithOutput(os.Stdout)
 
 	rootCmd := &cobra.Command{
-		Use:   "staked",
+		Use:   "starsd",
 		Short: "Stargate CosmosHub App",
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			if err := client.SetCmdClientContextHandler(initClientCtx, cmd); err != nil {
@@ -72,26 +72,26 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 	authclient.Codec = encodingConfig.Marshaler
 
 	rootCmd.AddCommand(
-		InitCmd(stakebird.ModuleBasics, stakebird.DefaultNodeHome),
-		genutilcli.CollectGenTxsCmd(banktypes.GenesisBalancesIterator{}, stakebird.DefaultNodeHome),
+		InitCmd(stargaze.ModuleBasics, stargaze.DefaultNodeHome),
+		genutilcli.CollectGenTxsCmd(banktypes.GenesisBalancesIterator{}, stargaze.DefaultNodeHome),
 		genutilcli.MigrateGenesisCmd(),
-		genutilcli.GenTxCmd(stakebird.ModuleBasics, encodingConfig.TxConfig,
-			banktypes.GenesisBalancesIterator{}, stakebird.DefaultNodeHome),
-		genutilcli.ValidateGenesisCmd(stakebird.ModuleBasics),
-		AddGenesisAccountCmd(stakebird.DefaultNodeHome),
+		genutilcli.GenTxCmd(stargaze.ModuleBasics, encodingConfig.TxConfig,
+			banktypes.GenesisBalancesIterator{}, stargaze.DefaultNodeHome),
+		genutilcli.ValidateGenesisCmd(stargaze.ModuleBasics),
+		AddGenesisAccountCmd(stargaze.DefaultNodeHome),
 		tmcli.NewCompletionCmd(rootCmd, true),
-		testnetCmd(stakebird.ModuleBasics, banktypes.GenesisBalancesIterator{}),
+		testnetCmd(stargaze.ModuleBasics, banktypes.GenesisBalancesIterator{}),
 		debug.Cmd(),
 	)
 
-	server.AddCommands(rootCmd, stakebird.DefaultNodeHome, newApp, createSimappAndExport, addModuleInitFlags)
+	server.AddCommands(rootCmd, stargaze.DefaultNodeHome, newApp, createSimappAndExport, addModuleInitFlags)
 
 	// add keybase, auxiliary RPC, query, and tx child commands
 	rootCmd.AddCommand(
 		rpc.StatusCommand(),
 		queryCommand(),
 		txCommand(),
-		keys.Commands(stakebird.DefaultNodeHome),
+		keys.Commands(stargaze.DefaultNodeHome),
 	)
 }
 
@@ -117,7 +117,7 @@ func queryCommand() *cobra.Command {
 		authcmd.QueryTxCmd(),
 	)
 
-	stakebird.ModuleBasics.AddQueryCommands(cmd)
+	stargaze.ModuleBasics.AddQueryCommands(cmd)
 	cmd.PersistentFlags().String(flags.FlagChainID, "", "The network chain ID")
 
 	return cmd
@@ -145,7 +145,7 @@ func txCommand() *cobra.Command {
 		vestingcli.GetTxCmd(),
 	)
 
-	stakebird.ModuleBasics.AddTxCommands(cmd)
+	stargaze.ModuleBasics.AddTxCommands(cmd)
 	cmd.PersistentFlags().String(flags.FlagChainID, "", "The network chain ID")
 
 	return cmd
@@ -179,11 +179,12 @@ func newApp(logger log.Logger, db dbm.DB,
 		panic(err)
 	}
 
-	return stakebird.NewStakebirdApp(
+	return stargaze.NewStargazeApp(
 		logger, db, traceStore, true, skipUpgradeHeights,
 		cast.ToString(appOpts.Get(flags.FlagHome)),
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
-		stakebird.MakeEncodingConfig(), // Ideally, we would reuse the one created by NewRootCmd.
+		stargaze.GetEnabledProposals(),
+		stargaze.MakeEncodingConfig(), // Ideally, we would reuse the one created by NewRootCmd.
 		appOpts,
 		baseapp.SetPruning(pruningOpts),
 		baseapp.SetMinGasPrices(cast.ToString(appOpts.Get(server.FlagMinGasPrices))),
@@ -205,22 +206,22 @@ func createSimappAndExport(
 	appOpts servertypes.AppOptions,
 ) (servertypes.ExportedApp, error) {
 
-	encCfg := stakebird.MakeEncodingConfig() // Ideally, we would reuse the one created by NewRootCmd.
+	encCfg := stargaze.MakeEncodingConfig() // Ideally, we would reuse the one created by NewRootCmd.
 	encCfg.Marshaler = codec.NewProtoCodec(encCfg.InterfaceRegistry)
-	var StakebirdApp *stakebird.StakebirdApp
+	var StargazeApp *stargaze.StargazeApp
 	if height != -1 {
-		StakebirdApp = stakebird.NewStakebirdApp(logger, db, traceStore,
+		StargazeApp = stargaze.NewStargazeApp(logger, db, traceStore,
 			false, map[int64]bool{}, "",
-			uint(1), encCfg, appOpts)
+			uint(1), stargaze.GetEnabledProposals(), encCfg, appOpts)
 
-		if err := StakebirdApp.LoadHeight(height); err != nil {
+		if err := StargazeApp.LoadHeight(height); err != nil {
 			return servertypes.ExportedApp{}, err
 		}
 	} else {
-		StakebirdApp = stakebird.NewStakebirdApp(logger, db, traceStore,
+		StargazeApp = stargaze.NewStargazeApp(logger, db, traceStore,
 			true, map[int64]bool{}, "",
-			uint(1), encCfg, appOpts)
+			uint(1), stargaze.GetEnabledProposals(), encCfg, appOpts)
 	}
 
-	return StakebirdApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)
+	return StargazeApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)
 }

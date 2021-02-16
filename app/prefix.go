@@ -6,10 +6,10 @@ import (
 
 const (
 
-	// DefaultStakeDenom for Stakebird
+	// DefaultStakeDenom for Stargaze
 	DefaultStakeDenom = "ustb"
 
-	// DefaultUnbondingPeriod for Stakebird
+	// DefaultUnbondingPeriod for Stargaze
 	DefaultUnbondingPeriod = "504h"
 
 	// Bech32MainPrefix defines the Bech32 prefix of an account's address
@@ -43,7 +43,7 @@ const (
 	Bech32PrefixConsPub = Bech32MainPrefix + PrefixValidator + PrefixConsensus + PrefixPublic
 )
 
-// ConfigureAccountPrefixes sets stakebird account prefixes
+// ConfigureAccountPrefixes sets stargaze account prefixes
 func ConfigureAccountPrefixes() {
 	config := sdk.GetConfig()
 	config.SetBech32PrefixForAccount(Bech32PrefixAccAddr, Bech32PrefixAccPub)

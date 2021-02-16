@@ -5,8 +5,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/public-awesome/stakebird/x/curating/keeper"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stargaze/x/curating/keeper"
+	"github.com/public-awesome/stargaze/x/curating/types"
 )
 
 // NewHandler creates an sdk.Handler for all the x/curating type messages

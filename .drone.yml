@@ -9,23 +9,30 @@ steps:
     commands:
       - git fetch --tags
   - name: lint
-    image: golangci/golangci-lint:v1.35.2
+    image: golangci/golangci-lint:v1.36.0
     commands:
       - export GL_DEBUG=linters_output
       - export GOPACKAGESPRINTGOLISTERRORS=1
       - go mod download
-      - golangci-lint run -v --timeout 5m --tests=false --skip-dirs="simapp"
+      - golangci-lint run -v --timeout 10m --tests=false --skip-dirs="simapp"
     environment:
       GOPROXY: http://goproxy
-  - name: test-and-build
+  - name: test
     image: golang:1.15.7
     commands:
       - apt-get update && apt-get install -y cmake
       - ./contrib/go-test.sh
-      - FAUCET_ENABLED=true make build-linux
-      - make build-linux
     environment:
       GOPROXY: http://goproxy
+  - name: build
+    image: golang:1.15-alpine3.12
+    commands:
+      - apk add --no-cache ca-certificates build-base
+      - wget https://github.com/CosmWasm/wasmvm/releases/download/v0.13.0/libwasmvm_muslc.a -O /lib/libwasmvm_muslc.a
+      - sha256sum /lib/libwasmvm_muslc.a | grep 39dc389cc6b556280cbeaebeda2b62cf884993137b83f90d1398ac47d09d3900
+      - FAUCET_ENABLED=true LEDGER_ENABLED=false BUILD_TAGS=muslc make build
+    environment:
+      GOPROXY: http://goproxy   
   - name: coverage
     image: plugins/codecov
     settings:
@@ -55,7 +62,7 @@ steps:
     image: plugins/docker:18
     settings:
       dockerfile: docker/Dockerfile
-      repo: publicawesome/stakebird
+      repo: publicawesome/stargaze
       username:
         from_secret: docker_username
       password:
@@ -119,10 +126,10 @@ steps:
       - ./contrib/ci/setup-gaia.sh
     environment:
       GOPROXY: http://goproxy
-  - name: stakebird
+  - name: stargaze
     image: golang:1.15.7
     commands:
-      - ./contrib/ci/setup-stakebird.sh
+      - ./contrib/ci/setup-stargaze.sh
     environment:
       GOPROXY: http://goproxy
     detach: true
@@ -143,6 +150,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: b3df86bd993293b3d11751f86aab5256df3777c98d1cfd4149bd6ab973299eb0
+hmac: 720e130befeb3512b111c710e7183ad243469a2d694c4cc5f18b1dc4518270ba
 
 ...

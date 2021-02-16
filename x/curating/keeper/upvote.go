@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stargaze/x/curating/types"
 )
 
 // CreateUpvote performs an upvote operation
@@ -41,7 +41,7 @@ func (k Keeper) CreateUpvote(
 	if !found {
 		// no deposit is locked
 		// this curator gets both creator + curator rewards (sent to reward_account)
-		err = k.CreatePost(ctx, vendorID, postID, "", nil, rewardAccount)
+		err = k.CreatePost(ctx, vendorID, postID, types.BodyHash{}, nil, rewardAccount)
 		if err != nil {
 			return err
 		}

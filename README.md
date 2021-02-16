@@ -1,11 +1,11 @@
-# Stakebird
+# Stargaze
 
-[![Build Status](https://ci.publicawesome.com/api/badges/public-awesome/stakebird/status.svg)](https://ci.publicawesome.com/public-awesome/stakebird)
-[![Go Report Card](https://goreportcard.com/badge/github.com/public-awesome/stakebird)](https://goreportcard.com/report/github.com/public-awesome/stakebird)
-[![LOC](https://tokei.rs/b1/github/public-awesome/stakebird)](https://github.com/public-awesome/stakebird)
-[![codecov](https://codecov.io/gh/public-awesome/stakebird/branch/master/graph/badge.svg)](https://codecov.io/gh/public-awesome/stakebird)
+[![Build Status](https://ci.publicawesome.com/api/badges/public-awesome/stargaze/status.svg)](https://ci.publicawesome.com/public-awesome/stargaze)
+[![Go Report Card](https://goreportcard.com/badge/github.com/public-awesome/stargaze)](https://goreportcard.com/report/github.com/public-awesome/stargaze)
+[![LOC](https://tokei.rs/b1/github/public-awesome/stargaze)](https://github.com/public-awesome/stargaze)
+[![codecov](https://codecov.io/gh/public-awesome/stargaze/branch/master/graph/badge.svg)](https://codecov.io/gh/public-awesome/stargaze)
 
-Stakebird is a protocol for incentivized content creation and curation. It creates attestations of content from social networks (currently Twitter), and enables their curation via quadratic voting. It is built as a sovereign proof-of-stake blockchain with it's own governance, that can interoperate with other blockchains such as Ethereum and Bitcoin via [IBC](https://cosmos.network/ibc).
+Stargaze is a protocol for incentivized content creation and curation. It creates attestations of content from social networks (currently Twitter), and enables their curation via quadratic voting. It is built as a sovereign proof-of-stake blockchain with it's own governance, that can interoperate with other blockchains such as Ethereum and Bitcoin via [IBC](https://cosmos.network/ibc).
 
 ## Install
 
@@ -22,7 +22,7 @@ make create-wallet
 make init
 
 # run
-staked start
+starsd start
 ```
 
 ## CLI
@@ -30,6 +30,6 @@ staked start
 The curating module can be accessed via CLI and REST API.
 
 ```sh
-staked tx curating post -h
-staked tx curating upvote -h
+starsd tx curating post -h
+starsd tx curating upvote -h
 ```

@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	curatingtypes "github.com/public-awesome/stakebird/x/curating/types"
+	curatingtypes "github.com/public-awesome/stargaze/x/curating/types"
 )
 
 /*
