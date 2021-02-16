@@ -3,7 +3,7 @@ module github.com/public-awesome/stargaze
 go 1.15
 
 require (
-	github.com/CosmWasm/wasmd v0.15.1-0.20210205121914-d0befd973db1
+	github.com/CosmWasm/wasmd v0.15.0
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/cosmos/cosmos-sdk v0.41.0
 	github.com/gogo/protobuf v1.3.3
