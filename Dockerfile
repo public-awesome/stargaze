@@ -19,19 +19,16 @@ ADD https://github.com/CosmWasm/wasmvm/releases/download/v0.13.0/libwasmvm_muslc
 RUN sha256sum /lib/libwasmvm_muslc.a | grep 39dc389cc6b556280cbeaebeda2b62cf884993137b83f90d1398ac47d09d3900
 
 # force it to use static lib (from above) not standard libgo_cosmwasm.so file
-RUN CGO_ENABLED=1 LEDGER_ENABLED=false BUILD_TAGS=muslc make build
+RUN FAUCET_ENABLED=true LEDGER_ENABLED=false BUILD_TAGS=muslc make build
 
 
 # --------------------------------------------------------
 FROM alpine:3.12
 
-COPY --from=go-builder /code/build/starsd /usr/bin/starsd
-FROM alpine:3.12
+COPY --from=go-builder /code/bin/starsd /usr/bin/starsd
 RUN apk add -U --no-cache ca-certificates
-
 WORKDIR /data
 ENV HOME=/data
-COPY ./bin/starsd /usr/bin/starsd
 COPY ./docker/entry-point.sh ./entry-point.sh
 # rest server
 EXPOSE 1317

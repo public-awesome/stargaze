@@ -74,7 +74,6 @@ steps:
         - push
       branch:
         - develop
-        - shanev/rename-to-stargaze-build
   - name: trigger
     image: plugins/downstream
     settings:
@@ -151,6 +150,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: b4f39b8e51379526b49fda5be920173191ba41a0b33b82010348ce19acdd54d4
+hmac: 720e130befeb3512b111c710e7183ad243469a2d694c4cc5f18b1dc4518270ba
 
 ...
