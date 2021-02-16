@@ -126,8 +126,8 @@ lint:
 build-linux: 
 	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build $(BUILD_FLAGS) -o bin/starsd github.com/public-awesome/stargaze/cmd/starsd
 
-build-docker: build-linux
-	docker build -f docker/Dockerfile -t publicawesome/stargaze .
+build-docker:
+	docker build -t publicawesome/stargaze .
 
 docker-test: build-linux
 	docker build -f docker/Dockerfile.test -t rocketprotocol/stargaze-relayer-test:latest .
