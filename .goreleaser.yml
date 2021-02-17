@@ -8,10 +8,8 @@ builds:
     binary: starsd
     goos:
       - linux
-      - darwin
     goarch:
       - amd64
-      - arm64
     flags:
       - -tags=netgo,faucet
     ldflags:
