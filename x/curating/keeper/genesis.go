@@ -19,9 +19,13 @@ func (k Keeper) InitGenesis(ctx sdk.Context, state types.GenesisState) {
 		}
 	}
 
+	pendingPosts := make(map[types.VPPair]bool)
+	for _, q := range state.CuratingQueue {
+		pendingPosts[q] = true
+	}
 	for _, post := range state.Posts {
 		k.SetPost(ctx, post)
-		if ctx.BlockTime().Before(post.CuratingEndTime) {
+		if _, ok := pendingPosts[types.VPPair{VendorID: post.VendorID, PostID: post.PostID}]; ok {
 			k.InsertCurationQueue(ctx, post.VendorID, post.PostID, post.CuratingEndTime)
 		}
 	}
