@@ -86,14 +86,14 @@ create-wallet:
 	./bin/starsd keys add validator --keyring-backend test
 	./bin/starsd keys add user1 --keyring-backend test
 
-reset: clean init
+reset: clean create-wallet init
 clean:
 	rm -rf $(HOME)/.starsd/config
 	rm -rf $(HOME)/.starsd/data
+	rm -rf $(HOME)/.starsd/keyring-test
 
 init:
 	./bin/starsd init stargaze --stake-denom $(STAKE_DENOM) --chain-id localnet-1
-	sed -i'' -e 's/"denom": "stake"/"denom": "$(STAKE_DENOM)"/g' $(HOME)/.starsd/config/genesis.json
 	./bin/starsd add-genesis-account $(shell ./bin/starsd keys show validator -a --keyring-backend test) 10000000000000000$(STAKE_DENOM),10000000000000000ucredits
 	./bin/starsd add-genesis-account $(shell ./bin/starsd keys show user1 -a --keyring-backend test) 10000000000000$(STAKE_DENOM),10000000000000ucredits,10000000000000uatom
 	./bin/starsd gentx validator 10000000000$(STAKE_DENOM) --chain-id localnet-1  --keyring-backend test
