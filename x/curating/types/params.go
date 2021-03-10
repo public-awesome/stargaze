@@ -12,10 +12,11 @@ import (
 
 // Default parameter namespace
 const (
-	DefaultParamspace     string        = ModuleName
-	DefaultCurationWindow time.Duration = time.Minute * 10
-	DefaultMaxNumVotes    uint32        = 5
-	DefaultMaxVendors     uint32        = 1
+	DefaultParamspace        string        = ModuleName
+	DefaultCurationWindow    time.Duration = time.Minute * 10
+	DefaultMaxNumVotes       uint32        = 5
+	DefaultMaxVendors        uint32        = 1
+	DefaultMaxPostBodyLength uint32        = 280
 )
 
 // Default vars
@@ -32,6 +33,7 @@ var (
 	KeyVoteAmount                 = []byte("VoteAmount")
 	KeyMaxNumVotes                = []byte("MaxNumVotes")
 	KeyMaxVendors                 = []byte("MaxVendors")
+	KeyMaxPostBodyLength          = []byte("MaxPostBodyLength")
 	KeyRewardPoolAllocation       = []byte("RewardPoolAllocation")
 	KeyRewardPoolCurationMaxAlloc = []byte("RewardPoolCurationMaxAlloc")
 	KeyInitialRewardPool          = []byte("InitialRewardPool")
@@ -40,16 +42,23 @@ var (
 
 // NewParams creates a new Params object
 func NewParams(
-	curationWindow time.Duration, voteAmount, initialRewardPool sdk.Coin,
-	maxNumVotes, maxVendors uint32, rewardPoolAllocation, rewardPoolCurationMaxAllocation sdk.Dec,
-	stakeDenom string) Params {
-
+	curationWindow time.Duration,
+	voteAmount,
+	initialRewardPool sdk.Coin,
+	maxNumVotes,
+	maxVendors uint32,
+	maxPostBodyLength uint32,
+	rewardPoolAllocation,
+	rewardPoolCurationMaxAllocation sdk.Dec,
+	stakeDenom string,
+) Params {
 	return Params{
 		CurationWindow:             curationWindow,
 		VoteAmount:                 voteAmount,
 		InitialRewardPool:          initialRewardPool,
 		MaxNumVotes:                maxNumVotes,
 		MaxVendors:                 maxVendors,
+		MaxPostBodyLength:          maxPostBodyLength,
 		RewardPoolAllocation:       rewardPoolAllocation,
 		RewardPoolCurationMaxAlloc: rewardPoolCurationMaxAllocation,
 		StakeDenom:                 stakeDenom,
@@ -73,6 +82,7 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 		paramtypes.NewParamSetPair(KeyInitialRewardPool, &p.InitialRewardPool, validateRewardPoolAmount),
 		paramtypes.NewParamSetPair(KeyMaxNumVotes, &p.MaxNumVotes, validateMaxNumVotes),
 		paramtypes.NewParamSetPair(KeyMaxVendors, &p.MaxVendors, validateMaxVendors),
+		paramtypes.NewParamSetPair(KeyMaxPostBodyLength, &p.MaxPostBodyLength, validateMaxPostBodyLength),
 		paramtypes.NewParamSetPair(KeyRewardPoolAllocation, &p.RewardPoolAllocation, validateRewardPoolAlloc),
 		paramtypes.NewParamSetPair(KeyRewardPoolCurationMaxAlloc, &p.RewardPoolCurationMaxAlloc,
 			validateRewardPoolCurationMaxAllocation),
@@ -83,8 +93,16 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 // DefaultParams defines the parameters for this module
 func DefaultParams() Params {
 	return NewParams(
-		DefaultCurationWindow, DefaultVoteAmount, DefaultInitialRewardPool, DefaultMaxNumVotes, DefaultMaxVendors,
-		DefaultRewardPoolAllocation, DefaultRewardPoolCurationMaxAllocation, DefaultStakeDenom)
+		DefaultCurationWindow,
+		DefaultVoteAmount,
+		DefaultInitialRewardPool,
+		DefaultMaxNumVotes,
+		DefaultMaxVendors,
+		DefaultMaxPostBodyLength,
+		DefaultRewardPoolAllocation,
+		DefaultRewardPoolCurationMaxAllocation,
+		DefaultStakeDenom,
+	)
 }
 
 // Validate validates all params
@@ -102,6 +120,9 @@ func (p Params) Validate() error {
 		return err
 	}
 	if err := validateMaxVendors(p.MaxVendors); err != nil {
+		return err
+	}
+	if err := validateMaxPostBodyLength(p.MaxPostBodyLength); err != nil {
 		return err
 	}
 	if err := validateCurationWindow(p.CurationWindow); err != nil {
@@ -176,6 +197,19 @@ func validateMaxVendors(i interface{}) error {
 
 	if v == 0 {
 		return fmt.Errorf("max vendors must be greater than or equal to 1: %d", v)
+	}
+
+	return nil
+}
+
+func validateMaxPostBodyLength(i interface{}) error {
+	v, ok := i.(uint32)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
+	if v == 0 {
+		return fmt.Errorf("max post body length must be greater than or equal to 1: %d", v)
 	}
 
 	return nil

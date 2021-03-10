@@ -61,6 +61,15 @@ func (k Keeper) validateVendorID(ctx sdk.Context, vendorID uint32) error {
 	return nil
 }
 
+func (k Keeper) validatePostBodyLength(ctx sdk.Context, body string) error {
+	if uint32(len(body)) > k.GetParams(ctx).MaxPostBodyLength {
+		return sdkerrors.Wrap(
+			sdkerrors.ErrInvalidRequest, fmt.Sprintf("post body contains too many characters: %s", body))
+	}
+
+	return nil
+}
+
 // SendMatchingReward sends curator rewards from the protocol reward pool
 func (k Keeper) SendMatchingReward(
 	ctx sdk.Context, account sdk.AccAddress, matchReward sdk.Dec) (sdk.Coin, error) {

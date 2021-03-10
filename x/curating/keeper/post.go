@@ -50,6 +50,10 @@ func (k Keeper) CreatePost(ctx sdk.Context, vendorID uint32, postID types.PostID
 	if err != nil {
 		return err
 	}
+	err = k.validatePostBodyLength(ctx, body)
+	if err != nil {
+		return err
+	}
 	if rewardAccount.Empty() {
 		rewardAccount = creator
 	}

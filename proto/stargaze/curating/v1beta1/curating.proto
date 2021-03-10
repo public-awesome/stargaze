@@ -135,6 +135,11 @@ message Params {
     (gogoproto.moretags) = "yaml:\"reward_pool_allocation\""
   ];
 
+  uint32 max_post_body_length = 6 [
+    (gogoproto.moretags) = "yaml:\"max_post_body_length\"",
+    (gogoproto.jsontag) = "max_post_body_length"
+  ];
+
   string reward_pool_curation_max_alloc = 8 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
     (gogoproto.nullable) = false,
