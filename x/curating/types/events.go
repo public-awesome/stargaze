@@ -12,6 +12,7 @@ const (
 	AttributeKeyCreator            = "creator"
 	AttributeKeyCurator            = "curator"
 	AttributeKeyRewardAccount      = "reward_account"
+	AttributeKeyBodyHash           = "body_hash"
 	AttributeKeyBody               = "body"
 	AttributeCurationEndTime       = "curation_end_time"
 	AttributeKeyVoteNumber         = "vote_number"

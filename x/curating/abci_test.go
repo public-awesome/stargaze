@@ -27,10 +27,11 @@ func setup(t *testing.T) (*simapp.SimApp, sdk.Context) {
 
 	addrs = simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(10_000_000))
 
-	bodyHash, err := types.BodyHashFromString("body string")
+	body := "body string"
+	bodyHash, err := types.BodyHashFromString(body)
 	require.NoError(t, err)
 
-	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, bodyHash, addrs[0], addrs[0])
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, bodyHash, body, addrs[0], addrs[0])
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -152,17 +153,18 @@ func TestEndBlocker_RemoveFromExpiredQueue(t *testing.T) {
 
 	addrs = simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(10_000_000))
 
-	bodyHash, err := types.BodyHashFromString("body string")
+	body := "body string"
+	bodyHash, err := types.BodyHashFromString(body)
 	require.NoError(t, err)
 
 	postID, err := types.PostIDFromString("777")
 	require.NoError(t, err)
-	err = app.CuratingKeeper.CreatePost(ctx, uint32(1), postID, bodyHash, addrs[0], addrs[0])
+	err = app.CuratingKeeper.CreatePost(ctx, uint32(1), postID, bodyHash, body, addrs[0], addrs[0])
 	require.NoError(t, err)
 
 	postID, err = types.PostIDFromString("888")
 	require.NoError(t, err)
-	err = app.CuratingKeeper.CreatePost(ctx, uint32(1), postID, bodyHash, addrs[0], addrs[0])
+	err = app.CuratingKeeper.CreatePost(ctx, uint32(1), postID, bodyHash, body, addrs[0], addrs[0])
 	require.NoError(t, err)
 
 	// force 2 different keys in the iterator underlying store
@@ -171,7 +173,7 @@ func TestEndBlocker_RemoveFromExpiredQueue(t *testing.T) {
 
 	postID, err = types.PostIDFromString("999")
 	require.NoError(t, err)
-	err = app.CuratingKeeper.CreatePost(ctx.WithBlockHeader(b), uint32(1), postID, bodyHash, addrs[0], addrs[0])
+	err = app.CuratingKeeper.CreatePost(ctx.WithBlockHeader(b), uint32(1), postID, bodyHash, body, addrs[0], addrs[0])
 	require.NoError(t, err)
 
 	// fast-forward blocktime to simulate end of curation window
@@ -211,10 +213,11 @@ func TestEndblocker_BurnCoinsFromVotingPool(t *testing.T) {
 	vendorID := uint32(1)
 	addrs := simapp.AddTestAddrsIncremental(app, ctx, 5, sdk.NewInt(27_000_000), fakedenom)
 
-	bodyHash, err := types.BodyHashFromString("body string")
+	body := "body string"
+	bodyHash, err := types.BodyHashFromString(body)
 	require.NoError(t, err)
 
-	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, bodyHash, addrs[1], addrs[1])
+	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, bodyHash, body, addrs[1], addrs[1])
 	require.NoError(t, err)
 
 	// amt = 1

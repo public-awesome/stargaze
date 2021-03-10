@@ -32,6 +32,7 @@ message Post {
     (gogoproto.jsontag) = "body_hash",
     (gogoproto.nullable) = false
   ];
+  string body = 6 [ (gogoproto.moretags) = "yaml:\"body\"" ];
   google.protobuf.Timestamp curating_end_time = 7 [
     (gogoproto.stdtime) = true,
     (gogoproto.nullable) = false,

@@ -44,7 +44,7 @@ func (k msgServer) Post(goCtx context.Context, msg *types.MsgPost) (*types.MsgPo
 	}
 
 	err = k.CreatePost(
-		ctx, msg.VendorID, postID, bodyHash, creator, rewardAccount)
+		ctx, msg.VendorID, postID, bodyHash, msg.Body, creator, rewardAccount)
 	if err != nil {
 		return nil, err
 	}
