@@ -60,6 +60,10 @@ func (msg MsgPost) ValidateBasic() error {
 	if msg.Body == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty body")
 	}
+	// TODO add param
+	if len(msg.Body) > 280 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post body is too long")
+	}
 	if strings.TrimSpace(msg.Creator) == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty creator")
 	}

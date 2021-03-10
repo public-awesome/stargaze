@@ -73,7 +73,6 @@ func (k Keeper) CreatePost(ctx sdk.Context, vendorID uint32, postID *types.PostI
 	}
 
 	post = types.NewPost(vendorID, *postID, bodyHash, body, creator, rewardAccount, curationEndTime)
-
 	k.SetPost(ctx, post)
 	k.InsertCurationQueue(ctx, vendorID, *postID, curationEndTime)
 
