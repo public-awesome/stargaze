@@ -25,7 +25,16 @@ func TestPost(t *testing.T) {
 	bodyHash, err := types.BodyHashFromString(body)
 	require.NoError(t, err)
 
-	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, addrs[0], addrs[0])
+	_, err = app.CuratingKeeper.CreatePost(
+		ctx,
+		vendorID,
+		&postID,
+		bodyHash,
+		body,
+		addrs[0],
+		addrs[0],
+		"chain_id", nil, "metadata", nil,
+	)
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -38,7 +47,7 @@ func TestPost(t *testing.T) {
 	vps := app.CuratingKeeper.GetCurationQueueTimeSlice(ctx, ctx.BlockTime())
 	require.NotNil(t, vps)
 
-	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, addrs[0], addrs[0])
+	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, addrs[0], addrs[0], "", nil, "", nil)
 	require.Equal(t, types.ErrDuplicatePost, err)
 }
 
@@ -56,7 +65,7 @@ func TestPost_EmptyCreator(t *testing.T) {
 	require.NoError(t, err)
 
 	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
-	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, nil, addrs[1])
+	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, nil, addrs[1], "", nil, "", nil)
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -87,7 +96,7 @@ func TestPost_EmptyRewardAccount(t *testing.T) {
 	bodyHash, err := types.BodyHashFromString(body)
 	require.NoError(t, err)
 
-	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, addrs[0], nil)
+	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, addrs[0], nil, "", nil, "", nil)
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -115,7 +124,7 @@ func TestPost_WithRewardAccount(t *testing.T) {
 	bodyHash, err := types.BodyHashFromString(body)
 	require.NoError(t, err)
 
-	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, addrs[0], addrs[1])
+	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, addrs[0], addrs[1], "", nil, "", nil)
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -146,7 +155,7 @@ func TestDeletePost(t *testing.T) {
 	bodyHash, err := types.BodyHashFromString(body)
 	require.NoError(t, err)
 
-	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, addrs[0], addrs[1])
+	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, addrs[0], addrs[1], "", nil, "", nil)
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)

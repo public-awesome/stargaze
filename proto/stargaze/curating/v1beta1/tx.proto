@@ -43,6 +43,22 @@ message MsgPost {
   string reward_account = 4
       [ (gogoproto.moretags) = "yaml:\"reward_account\"" ];
   string body = 5 [ (gogoproto.moretags) = "yaml:\"body\"" ];
+  string chain_id = 6 [
+    (gogoproto.customname) = "ChainID",
+    (gogoproto.moretags) = "yaml:\"chain_id\"",
+    (gogoproto.jsontag) = "chain_id",
+    (gogoproto.nullable) = true
+  ];
+  string contract_address = 7
+      [ (gogoproto.moretags) = "yaml:\"contract_address\"" ];
+  string metadata = 8 [ (gogoproto.moretags) = "yaml:\"metadata\"" ];
+  string parent_id = 9 [
+    (gogoproto.customname) = "ParentID",
+    (gogoproto.customtype) = "PostID",
+    (gogoproto.moretags) = "yaml:\"parent_id\"",
+    (gogoproto.jsontag) = "parent_id",
+    (gogoproto.nullable) = true
+  ];
 }
 
 message MsgUpvote {

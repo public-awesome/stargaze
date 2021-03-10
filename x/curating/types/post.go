@@ -119,7 +119,9 @@ type CuratingQueue []VPPair
 // NewPost allocates and returns a new `Post` struct
 func NewPost(
 	vendorID uint32, postID PostID, bodyHash BodyHash, body string, creator,
-	rewardAccount sdk.AccAddress, curatingEndTime time.Time) Post {
+	rewardAccount sdk.AccAddress, curatingEndTime time.Time,
+	chainID string, owner sdk.AccAddress, contractAddress sdk.AccAddress,
+	metaData string, locked bool, parentID *PostID) Post {
 
 	return Post{
 		VendorID:        vendorID,
@@ -131,6 +133,12 @@ func NewPost(
 		CuratingEndTime: curatingEndTime,
 		TotalVotes:      0,
 		TotalAmount:     sdk.Coin{},
+		ChainID:         chainID,
+		Owner:           owner.String(),
+		ContractAddress: contractAddress.String(),
+		Metadata:        metaData,
+		Locked:          locked,
+		ParentID:        parentID,
 	}
 }
 
