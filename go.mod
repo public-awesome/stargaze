@@ -5,7 +5,7 @@ go 1.15
 require (
 	github.com/CosmWasm/wasmd v0.15.1
 	github.com/bwmarrin/snowflake v0.3.0
-	github.com/cosmos/cosmos-sdk v0.42.0
+	github.com/cosmos/cosmos-sdk v0.42.1
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.4.3
 	github.com/gorilla/mux v1.8.0
