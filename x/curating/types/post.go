@@ -132,7 +132,7 @@ func NewPost(
 		ContractAddress: contractAddress.String(),
 		Metadata:        metaData,
 		Locked:          locked,
-		ParentID:        parentID,
+		ParentID:        &parentID,
 	}
 }
 

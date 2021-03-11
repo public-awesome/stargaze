@@ -43,8 +43,20 @@ func (k msgServer) Post(goCtx context.Context, msg *types.MsgPost) (*types.MsgPo
 		return nil, err
 	}
 
+	// TODO: update
 	err = k.CreatePost(
-		ctx, msg.VendorID, postID, bodyHash, msg.Body, creator, rewardAccount)
+		ctx,
+		msg.VendorID,
+		postID,
+		bodyHash,
+		msg.Body,
+		creator,
+		rewardAccount,
+		msg.ChainID,
+		creator, // owner = creator intially
+		msg.Metadata,
+		msg.ParentID,
+	)
 	if err != nil {
 		return nil, err
 	}

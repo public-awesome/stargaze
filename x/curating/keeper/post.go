@@ -35,8 +35,18 @@ func (k Keeper) GetPost(
 
 // CreatePost registers a post on-chain and starts the curation period.
 // It can be called from CreateUpvote() when a post doesn't exist yet.
-func (k Keeper) CreatePost(ctx sdk.Context, vendorID uint32, postID types.PostID,
-	bodyHash types.BodyHash, body string, creator, rewardAccount sdk.AccAddress) error {
+func (k Keeper) CreatePost(
+	ctx sdk.Context,
+	vendorID uint32,
+	postID types.PostID,
+	bodyHash types.BodyHash,
+	body string,
+	creator, rewardAccount sdk.AccAddress,
+	chainID string,
+	contractAddress sdk.AccAddress,
+	metadata string,
+	parentID *types.PostID,
+) error {
 
 	_, found, err := k.GetPost(ctx, vendorID, postID)
 	if err != nil {
@@ -60,7 +70,21 @@ func (k Keeper) CreatePost(ctx sdk.Context, vendorID uint32, postID types.PostID
 
 	curationWindow := k.GetParams(ctx).CurationWindow
 	curationEndTime := ctx.BlockTime().Add(curationWindow)
-	post := types.NewPost(vendorID, postID, bodyHash, body, creator, rewardAccount, curationEndTime)
+	post := types.NewPost(
+		vendorID,
+		postID,
+		bodyHash,
+		body,
+		creator,
+		rewardAccount,
+		curationEndTime,
+		chainID,
+		creator,
+		contractAddress,
+		metadata,
+		false,
+		*parentID,
+	)
 
 	k.SetPost(ctx, post)
 	k.InsertCurationQueue(ctx, vendorID, postID, curationEndTime)
@@ -76,6 +100,10 @@ func (k Keeper) CreatePost(ctx sdk.Context, vendorID uint32, postID types.PostID
 			sdk.NewAttribute(types.AttributeKeyBody, body),
 			sdk.NewAttribute(types.AttributeCurationEndTime, curationEndTime.Format(time.RFC3339)),
 			sdk.NewAttribute(types.AttributeKeyVoteDenom, types.DefaultVoteDenom),
+			sdk.NewAttribute(types.AttributeKeyChainID, chainID),
+			sdk.NewAttribute(types.AttributeKeyContractAddress, contractAddress.String()),
+			sdk.NewAttribute(types.AttributeKeyMetadata, metadata),
+			sdk.NewAttribute(types.AttributeKeyParentID, parentID.String()),
 		),
 	})
 
