@@ -83,7 +83,7 @@ func (k Keeper) CreatePost(
 		contractAddress,
 		metadata,
 		false,
-		*parentID,
+		parentID,
 	)
 
 	k.SetPost(ctx, post)
@@ -103,9 +103,19 @@ func (k Keeper) CreatePost(
 			sdk.NewAttribute(types.AttributeKeyChainID, chainID),
 			sdk.NewAttribute(types.AttributeKeyContractAddress, contractAddress.String()),
 			sdk.NewAttribute(types.AttributeKeyMetadata, metadata),
-			sdk.NewAttribute(types.AttributeKeyParentID, parentID.String()),
 		),
 	})
+
+	if parentID != nil {
+		ctx.EventManager().EmitEvents(sdk.Events{
+			sdk.NewEvent(
+				types.EventTypePost,
+				sdk.NewAttribute(types.AttributeKeyVendorID, fmt.Sprintf("%d", vendorID)),
+				sdk.NewAttribute(types.AttributeKeyPostID, postID.String()),
+				sdk.NewAttribute(types.AttributeKeyParentID, parentID.String()),
+			),
+		})
+	}
 
 	return nil
 }

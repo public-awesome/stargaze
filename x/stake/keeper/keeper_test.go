@@ -45,7 +45,19 @@ func TestPerformStakeAndUnstake(t *testing.T) {
 	bodyHash, err := curatingtypes.BodyHashFromString(body)
 	require.NoError(t, err)
 
-	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, bodyHash, body, delAddr, delAddr)
+	err = app.CuratingKeeper.CreatePost(
+		ctx,
+		vendorID,
+		postID,
+		bodyHash,
+		body,
+		delAddr,
+		delAddr,
+		"",
+		nil,
+		"",
+		nil,
+	)
 	require.NoError(t, err)
 
 	staking.EndBlocker(ctx, app.StakingKeeper)

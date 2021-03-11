@@ -115,7 +115,7 @@ func NewPost(
 	vendorID uint32, postID PostID, bodyHash BodyHash, body string, creator,
 	rewardAccount sdk.AccAddress, curatingEndTime time.Time,
 	chainID string, owner sdk.AccAddress, contractAddress sdk.AccAddress,
-	metaData string, locked bool, parentID PostID) Post {
+	metaData string, locked bool, parentID *PostID) Post {
 
 	return Post{
 		VendorID:        vendorID,
@@ -132,7 +132,7 @@ func NewPost(
 		ContractAddress: contractAddress.String(),
 		Metadata:        metaData,
 		Locked:          locked,
-		ParentID:        &parentID,
+		ParentID:        parentID,
 	}
 }
 
