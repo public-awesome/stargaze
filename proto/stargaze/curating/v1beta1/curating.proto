@@ -67,6 +67,7 @@ message Post {
   bool locked = 15 [ (gogoproto.moretags) = "yaml:\"locked\"" ];
   string parent_id = 16 [
     (gogoproto.customname) = "ParentID",
+    (gogoproto.customtype) = "PostID",
     (gogoproto.moretags) = "yaml:\"parent_id\"",
     (gogoproto.jsontag) = "parent_id",
     (gogoproto.nullable) = true
