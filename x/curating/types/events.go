@@ -24,6 +24,7 @@ const (
 	AttributeKeyContractAddress    = "contract_address"
 	AttributeKeyMetadata           = "metadata"
 	AttributeKeyParentID           = "parent_id"
+	AttributeKeyLocked             = "locked"
 
 	AttributeValueCategory = ModuleName
 )

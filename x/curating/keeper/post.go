@@ -103,6 +103,7 @@ func (k Keeper) CreatePost(
 			sdk.NewAttribute(types.AttributeKeyChainID, chainID),
 			sdk.NewAttribute(types.AttributeKeyContractAddress, contractAddress.String()),
 			sdk.NewAttribute(types.AttributeKeyMetadata, metadata),
+			sdk.NewAttribute(types.AttributeKeyLocked, "false"),
 		),
 	})
 
