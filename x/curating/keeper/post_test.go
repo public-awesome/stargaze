@@ -28,7 +28,7 @@ func TestCreatePost(t *testing.T) {
 	bodyHash, err := types.BodyHashFromString(body)
 	require.NoError(t, err)
 
-	err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, addrs[0], addrs[0])
+	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, addrs[0], addrs[0])
 	require.NoError(t, err)
 
 	post, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -47,7 +47,7 @@ func TestCreatePost(t *testing.T) {
 
 	// add another post
 	postID, err = types.PostIDFromString("501")
-	err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, addrs[0], addrs[0])
+	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, addrs[0], addrs[0])
 	require.NoError(t, err)
 
 	// fast forward block time
@@ -76,7 +76,7 @@ func TestCreateVendor0Post(t *testing.T) {
 	bodyHash, err := types.BodyHashFromString(body)
 	require.NoError(t, err)
 
-	err = app.CuratingKeeper.CreatePost(ctx, vendorID, nil, bodyHash, body, addrs[0], addrs[0])
+	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, nil, bodyHash, body, addrs[0], addrs[0])
 	require.NoError(t, err)
 
 	post, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -95,7 +95,7 @@ func TestCreateVendor0Post(t *testing.T) {
 
 	// add another post
 	postID, err = types.PostIDFromString("2")
-	err = app.CuratingKeeper.CreatePost(ctx, vendorID, nil, bodyHash, body, addrs[0], addrs[0])
+	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, nil, bodyHash, body, addrs[0], addrs[0])
 	require.NoError(t, err)
 
 	// fast forward block time

@@ -14,7 +14,15 @@ service Msg {
   // Upvote defines a method for upvoting a post
   rpc Upvote(MsgUpvote) returns (MsgUpvoteResponse);
 }
-message MsgPostResponse {}
+
+message MsgPostResponse {
+    string post_id = 1 [
+        (gogoproto.customname) = "PostID",
+        (gogoproto.jsontag) = "post_id", 
+        (gogoproto.moretags) = "yaml:\"post_id\""
+    ];
+}
+
 message MsgUpvoteResponse {}
 
 message MsgPost {

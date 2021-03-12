@@ -36,15 +36,15 @@ func (k Keeper) GetPost(
 // CreatePost registers a post on-chain and starts the curation period.
 // It can be called from CreateUpvote() when a post doesn't exist yet.
 func (k Keeper) CreatePost(ctx sdk.Context, vendorID uint32, postID *types.PostID,
-	bodyHash types.BodyHash, body string, creator, rewardAccount sdk.AccAddress) error {
+	bodyHash types.BodyHash, body string, creator, rewardAccount sdk.AccAddress) (post types.Post, err error) {
 
-	err := k.validateVendorID(ctx, vendorID)
+	err = k.validateVendorID(ctx, vendorID)
 	if err != nil {
-		return err
+		return post, err
 	}
 	err = k.validatePostBodyLength(ctx, body)
 	if err != nil {
-		return err
+		return post, err
 	}
 	if rewardAccount.Empty() {
 		rewardAccount = creator
@@ -56,10 +56,10 @@ func (k Keeper) CreatePost(ctx sdk.Context, vendorID uint32, postID *types.PostI
 	if vendorID != 0 && postID != nil {
 		_, found, err := k.GetPost(ctx, vendorID, *postID)
 		if err != nil {
-			return err
+			return post, err
 		}
 		if found {
-			return types.ErrDuplicatePost
+			return post, types.ErrDuplicatePost
 		}
 	}
 	if vendorID == 0 {
@@ -69,10 +69,10 @@ func (k Keeper) CreatePost(ctx sdk.Context, vendorID uint32, postID *types.PostI
 		postID = &id
 	}
 	if postID == nil {
-		return types.ErrInvalidPostID
+		return post, types.ErrInvalidPostID
 	}
 
-	post := types.NewPost(vendorID, *postID, bodyHash, body, creator, rewardAccount, curationEndTime)
+	post = types.NewPost(vendorID, *postID, bodyHash, body, creator, rewardAccount, curationEndTime)
 
 	k.SetPost(ctx, post)
 	k.InsertCurationQueue(ctx, vendorID, *postID, curationEndTime)
@@ -91,7 +91,7 @@ func (k Keeper) CreatePost(ctx sdk.Context, vendorID uint32, postID *types.PostI
 		),
 	})
 
-	return nil
+	return post, nil
 }
 
 // SetPost sets a post in the store
