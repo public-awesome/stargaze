@@ -28,7 +28,8 @@ message MsgPost {
   string post_id = 2 [
     (gogoproto.customname) = "PostID",
     (gogoproto.moretags) = "yaml:\"post_id\"",
-    (gogoproto.jsontag) = "post_id"
+    (gogoproto.jsontag) = "post_id",
+    (gogoproto.nullable) = true
   ];
   string creator = 3 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
   string reward_account = 4

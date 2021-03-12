@@ -35,18 +35,10 @@ func (k Keeper) GetPost(
 
 // CreatePost registers a post on-chain and starts the curation period.
 // It can be called from CreateUpvote() when a post doesn't exist yet.
-func (k Keeper) CreatePost(ctx sdk.Context, vendorID uint32, postID types.PostID,
+func (k Keeper) CreatePost(ctx sdk.Context, vendorID uint32, postID *types.PostID,
 	bodyHash types.BodyHash, body string, creator, rewardAccount sdk.AccAddress) error {
 
-	_, found, err := k.GetPost(ctx, vendorID, postID)
-	if err != nil {
-		return err
-	}
-	if found {
-		return types.ErrDuplicatePost
-	}
-
-	err = k.validateVendorID(ctx, vendorID)
+	err := k.validateVendorID(ctx, vendorID)
 	if err != nil {
 		return err
 	}
@@ -60,10 +52,30 @@ func (k Keeper) CreatePost(ctx sdk.Context, vendorID uint32, postID types.PostID
 
 	curationWindow := k.GetParams(ctx).CurationWindow
 	curationEndTime := ctx.BlockTime().Add(curationWindow)
-	post := types.NewPost(vendorID, postID, bodyHash, body, creator, rewardAccount, curationEndTime)
+
+	if vendorID != 0 && postID != nil {
+		_, found, err := k.GetPost(ctx, vendorID, *postID)
+		if err != nil {
+			return err
+		}
+		if found {
+			return types.ErrDuplicatePost
+		}
+	}
+	if vendorID == 0 {
+		rawPostID := k.GetPostID(ctx) + 1
+		k.SetPostID(ctx, rawPostID)
+		id := types.PostIDFromInt64(int64(rawPostID))
+		postID = &id
+	}
+	if postID == nil {
+		return types.ErrInvalidPostID
+	}
+
+	post := types.NewPost(vendorID, *postID, bodyHash, body, creator, rewardAccount, curationEndTime)
 
 	k.SetPost(ctx, post)
-	k.InsertCurationQueue(ctx, vendorID, postID, curationEndTime)
+	k.InsertCurationQueue(ctx, vendorID, *postID, curationEndTime)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
@@ -199,4 +211,25 @@ func (k Keeper) IteratePosts(ctx sdk.Context, vendorID uint32, cb func(post type
 			break
 		}
 	}
+}
+
+// ----- The PostID for native posts (vendor = 0)
+
+// GetPostID gets the highest postl ID
+func (k Keeper) GetPostID(ctx sdk.Context) (postID uint64) {
+	store := ctx.KVStore(k.storeKey)
+	bz := store.Get(types.PostIDKey)
+	if bz == nil {
+		k.SetPostID(ctx, 0)
+		return 0
+	}
+
+	postID = types.GetPostIDFromBytes(bz)
+	return postID
+}
+
+// SetPostID sets the new post ID to the store
+func (k Keeper) SetPostID(ctx sdk.Context, postID uint64) {
+	store := ctx.KVStore(k.storeKey)
+	store.Set(types.PostIDKey, types.GetPostIDBytes(postID))
 }

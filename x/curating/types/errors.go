@@ -10,4 +10,5 @@ var (
 	ErrAlreadyVoted  = sdkerrors.Register(ModuleName, 2, "Already voted")
 	ErrDuplicatePost = sdkerrors.Register(ModuleName, 3, "Post already exists")
 	ErrPostExpired   = sdkerrors.Register(ModuleName, 4, "Post already expired")
+	ErrInvalidPostID = sdkerrors.Register(ModuleName, 5, "PostID cannot be nil")
 )
