@@ -53,7 +53,7 @@ func (k Keeper) CreatePost(ctx sdk.Context, vendorID uint32, postID *types.PostI
 	curationWindow := k.GetParams(ctx).CurationWindow
 	curationEndTime := ctx.BlockTime().Add(curationWindow)
 
-	if vendorID != 0 && postID != nil {
+	if postID != nil {
 		_, found, err := k.GetPost(ctx, vendorID, *postID)
 		if err != nil {
 			return post, err
