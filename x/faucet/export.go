@@ -21,3 +21,8 @@ var (
 type (
 	Keeper = keeper.Keeper
 )
+
+// exported types
+type (
+	DenomConfig = types.DenomConfig
+)
