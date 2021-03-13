@@ -52,7 +52,7 @@ func (k msgServer) Post(goCtx context.Context, msg *types.MsgPost) (*types.MsgPo
 		creator,
 		rewardAccount,
 		msg.ChainID,
-		creator, // owner = creator intially
+		creator, // owner = creator initially
 		msg.Metadata,
 		msg.ParentID,
 	)
