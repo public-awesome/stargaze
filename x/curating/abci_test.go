@@ -31,7 +31,7 @@ func setup(t *testing.T) (*simapp.SimApp, sdk.Context) {
 	bodyHash, err := types.BodyHashFromString(body)
 	require.NoError(t, err)
 
-	err = app.CuratingKeeper.CreatePost(
+	_, err = app.CuratingKeeper.CreatePost(
 		ctx,
 		vendorID,
 		&postID,
@@ -171,7 +171,7 @@ func TestEndBlocker_RemoveFromExpiredQueue(t *testing.T) {
 
 	postID, err := types.PostIDFromString("777")
 	require.NoError(t, err)
-	_, err = app.CuratingKeeper.CreatePost(ctx, uint32(1), postID, bodyHash, body, addrs[0], addrs[0], "", nil, "", nil)
+	_, err = app.CuratingKeeper.CreatePost(ctx, uint32(1), &postID, bodyHash, body, addrs[0], addrs[0], "", nil, "", nil)
 	require.NoError(t, err)
 
 	postID, err = types.PostIDFromString("888")

@@ -47,7 +47,7 @@ func TestCreatePost(t *testing.T) {
 
 	// add another post
 	postID, err = types.PostIDFromString("501")
-	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, addrs[0], addrs[0])
+	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, addrs[0], addrs[0], "", nil, "", nil)
 	require.NoError(t, err)
 
 	// fast forward block time
@@ -95,8 +95,7 @@ func TestCreateVendor0Post(t *testing.T) {
 
 	// add another post
 	postID, err = types.PostIDFromString("2")
-	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, nil, bodyHash, body, addrs[0], addrs[0])
-	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, bodyHash, body, addrs[0], addrs[0], "", nil, "", nil)
+	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, nil, bodyHash, body, addrs[0], addrs[0], "", nil, "", nil)
 	require.NoError(t, err)
 
 	// fast forward block time

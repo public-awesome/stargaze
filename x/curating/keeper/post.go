@@ -58,29 +58,11 @@ func (k Keeper) CreatePost(
 	}
 	err = k.validatePostBodyLength(ctx, body)
 	if err != nil {
-		return err
+		return post, err
 	}
 	if rewardAccount.Empty() {
 		rewardAccount = creator
 	}
-
-	curationWindow := k.GetParams(ctx).CurationWindow
-	curationEndTime := ctx.BlockTime().Add(curationWindow)
-	post := types.NewPost(
-		vendorID,
-		postID,
-		bodyHash,
-		body,
-		creator,
-		rewardAccount,
-		curationEndTime,
-		chainID,
-		creator,
-		contractAddress,
-		metadata,
-		false,
-		parentID,
-	)
 
 	if postID != nil {
 		_, found, err := k.GetPost(ctx, vendorID, *postID)
@@ -101,7 +83,23 @@ func (k Keeper) CreatePost(
 		return post, types.ErrInvalidPostID
 	}
 
-	post = types.NewPost(vendorID, *postID, bodyHash, body, creator, rewardAccount, curationEndTime)
+	curationWindow := k.GetParams(ctx).CurationWindow
+	curationEndTime := ctx.BlockTime().Add(curationWindow)
+	post = types.NewPost(
+		vendorID,
+		*postID,
+		bodyHash,
+		body,
+		creator,
+		rewardAccount,
+		curationEndTime,
+		chainID,
+		creator,
+		contractAddress,
+		metadata,
+		false,
+		parentID,
+	)
 	k.SetPost(ctx, post)
 	k.InsertCurationQueue(ctx, vendorID, *postID, curationEndTime)
 

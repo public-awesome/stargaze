@@ -59,11 +59,7 @@ func TestCreateUpvote_ExistingPost(t *testing.T) {
 	bodyHash, err := types.BodyHashFromString(body)
 	require.NoError(t, err)
 
-<<<<<<< HEAD
-	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, addrs[1], addrs[1])
-=======
-	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, bodyHash, body, addrs[1], addrs[1], "", nil, "", nil)
->>>>>>> a3cf992 (Added ERC721 fields to post)
+	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, addrs[1], addrs[1], "", nil, "", nil)
 	require.NoError(t, err)
 
 	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5)
@@ -127,7 +123,7 @@ func TestMultipleUpvotes(t *testing.T) {
 	bodyHash, err := types.BodyHashFromString(body)
 	require.NoError(t, err)
 
-	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, bodyHash, body, addrs[1], addrs[1], "", nil, "", nil)
+	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, addrs[1], addrs[1], "", nil, "", nil)
 	require.NoError(t, err)
 
 	// amt = 1
@@ -168,7 +164,7 @@ func TestCreateUpvote_ExistingUpvote(t *testing.T) {
 	bodyHash, err := types.BodyHashFromString(body)
 	require.NoError(t, err)
 
-	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, bodyHash, body, addrs[1], addrs[1], "", nil, "", nil)
+	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, addrs[1], addrs[1], "", nil, "", nil)
 	require.NoError(t, err)
 
 	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5)

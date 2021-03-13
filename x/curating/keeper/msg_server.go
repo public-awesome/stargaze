@@ -43,7 +43,7 @@ func (k msgServer) Post(goCtx context.Context, msg *types.MsgPost) (*types.MsgPo
 		return nil, err
 	}
 
-	post, err = k.CreatePost(
+	post, err := k.CreatePost(
 		ctx,
 		msg.VendorID,
 		&postID,
