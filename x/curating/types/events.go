@@ -20,6 +20,11 @@ const (
 	AttributeKeyVoteDenom          = "vote_denom"
 	AttributeKeyProtocolRewardType = "reward_type"
 	AttributeKeyRewardAmount       = "reward_amount"
+	AttributeKeyChainID            = "chain_id"
+	AttributeKeyContractAddress    = "contract_address"
+	AttributeKeyMetadata           = "metadata"
+	AttributeKeyParentID           = "parent_id"
+	AttributeKeyLocked             = "locked"
 
 	AttributeValueCategory = ModuleName
 )

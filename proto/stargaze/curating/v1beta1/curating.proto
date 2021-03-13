@@ -54,6 +54,24 @@ message Post {
     (gogoproto.moretags) = "yaml:\"total_amount\"",
     (gogoproto.jsontag) = "total_amount"
   ];
+  string chain_id = 11 [
+    (gogoproto.customname) = "ChainID",
+    (gogoproto.moretags) = "yaml:\"chain_id\"",
+    (gogoproto.jsontag) = "chain_id",
+    (gogoproto.nullable) = true
+  ];
+  string owner = 12 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
+  string contract_address = 13
+      [ (gogoproto.moretags) = "yaml:\"contract_address\"" ];
+  string metadata = 14 [ (gogoproto.moretags) = "yaml:\"metadata\"" ];
+  bool locked = 15 [ (gogoproto.moretags) = "yaml:\"locked\"" ];
+  string parent_id = 16 [
+    (gogoproto.customname) = "ParentID",
+    (gogoproto.customtype) = "PostID",
+    (gogoproto.moretags) = "yaml:\"parent_id\"",
+    (gogoproto.jsontag) = "parent_id",
+    (gogoproto.nullable) = true
+  ];
 }
 
 message Upvote {

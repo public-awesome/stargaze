@@ -35,10 +35,24 @@ func (k Keeper) GetPost(
 
 // CreatePost registers a post on-chain and starts the curation period.
 // It can be called from CreateUpvote() when a post doesn't exist yet.
-func (k Keeper) CreatePost(ctx sdk.Context, vendorID uint32, postID *types.PostID,
-	bodyHash types.BodyHash, body string, creator, rewardAccount sdk.AccAddress) (post types.Post, err error) {
+func (k Keeper) CreatePost(
+	ctx sdk.Context,
+	vendorID uint32,
+	postID *types.PostID,
+	bodyHash types.BodyHash,
+	body string,
+	creator, rewardAccount sdk.AccAddress,
+	chainID string,
+	contractAddress sdk.AccAddress,
+	metadata string,
+	parentID *types.PostID,
+) (post types.Post, err error) {
 
 	err = k.validateVendorID(ctx, vendorID)
+	if err != nil {
+		return post, err
+	}
+	err = k.validatePostBodyLength(ctx, body)
 	if err != nil {
 		return post, err
 	}
@@ -49,9 +63,6 @@ func (k Keeper) CreatePost(ctx sdk.Context, vendorID uint32, postID *types.PostI
 	if rewardAccount.Empty() {
 		rewardAccount = creator
 	}
-
-	curationWindow := k.GetParams(ctx).CurationWindow
-	curationEndTime := ctx.BlockTime().Add(curationWindow)
 
 	if postID != nil {
 		_, found, err := k.GetPost(ctx, vendorID, *postID)
@@ -72,8 +83,23 @@ func (k Keeper) CreatePost(ctx sdk.Context, vendorID uint32, postID *types.PostI
 		return post, types.ErrInvalidPostID
 	}
 
-	post = types.NewPost(vendorID, *postID, bodyHash, body, creator, rewardAccount, curationEndTime)
-
+	curationWindow := k.GetParams(ctx).CurationWindow
+	curationEndTime := ctx.BlockTime().Add(curationWindow)
+	post = types.NewPost(
+		vendorID,
+		*postID,
+		bodyHash,
+		body,
+		creator,
+		rewardAccount,
+		curationEndTime,
+		chainID,
+		creator,
+		contractAddress,
+		metadata,
+		false,
+		parentID,
+	)
 	k.SetPost(ctx, post)
 	k.InsertCurationQueue(ctx, vendorID, *postID, curationEndTime)
 
@@ -88,8 +114,23 @@ func (k Keeper) CreatePost(ctx sdk.Context, vendorID uint32, postID *types.PostI
 			sdk.NewAttribute(types.AttributeKeyBody, body),
 			sdk.NewAttribute(types.AttributeCurationEndTime, curationEndTime.Format(time.RFC3339)),
 			sdk.NewAttribute(types.AttributeKeyVoteDenom, types.DefaultVoteDenom),
+			sdk.NewAttribute(types.AttributeKeyChainID, chainID),
+			sdk.NewAttribute(types.AttributeKeyContractAddress, contractAddress.String()),
+			sdk.NewAttribute(types.AttributeKeyMetadata, metadata),
+			sdk.NewAttribute(types.AttributeKeyLocked, "false"),
 		),
 	})
+
+	if parentID != nil {
+		ctx.EventManager().EmitEvents(sdk.Events{
+			sdk.NewEvent(
+				types.EventTypePost,
+				sdk.NewAttribute(types.AttributeKeyVendorID, fmt.Sprintf("%d", vendorID)),
+				sdk.NewAttribute(types.AttributeKeyPostID, postID.String()),
+				sdk.NewAttribute(types.AttributeKeyParentID, parentID.String()),
+			),
+		})
+	}
 
 	return post, nil
 }
