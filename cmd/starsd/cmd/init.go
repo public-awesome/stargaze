@@ -21,6 +21,7 @@ import (
 	curatingtypes "github.com/public-awesome/stargaze/x/curating/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	liquiditytypes "github.com/tendermint/liquidity/x/liquidity/types"
 	tmjson "github.com/tendermint/tendermint/libs/json"
 	"github.com/tendermint/tendermint/types"
 )
@@ -149,6 +150,18 @@ func initGenesis(
 		curatingGenState.Params.InitialRewardPool = sdk.NewCoin(stakeDenom, curatingGenState.Params.InitialRewardPool.Amount)
 
 		appState[curatingtypes.ModuleName] = cdc.MustMarshalJSON(&curatingGenState)
+	}
+
+	// migrate liquidity state
+	if appState[liquiditytypes.ModuleName] != nil {
+		var liquidityGenState liquiditytypes.GenesisState
+		err := cdc.UnmarshalJSON(appState[liquiditytypes.ModuleName], &liquidityGenState)
+		if err != nil {
+			return nil, err
+		}
+
+		liquidityGenState.Params.LiquidityPoolCreationFee = sdk.NewCoins(sdk.NewCoin(stakeDenom, sdk.NewInt(100_000_000)))
+		appState[liquiditytypes.ModuleName] = cdc.MustMarshalJSON(&liquidityGenState)
 	}
 
 	return tmjson.Marshal(appState)

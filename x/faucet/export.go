@@ -14,10 +14,16 @@ const (
 
 // exported vars
 var (
-	NewKeeper = keeper.NewKeeper
+	NewKeeper  = keeper.NewKeeper
+	NewMsgMint = types.NewMsgMint
 )
 
 // Keeper exports internal keeper for wiring
 type (
 	Keeper = keeper.Keeper
+)
+
+// exported types
+type (
+	DenomConfig = types.DenomConfig
 )

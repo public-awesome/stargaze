@@ -188,7 +188,7 @@ var (
 		curatingtypes.ModuleName:     nil,
 		curatingtypes.RewardPoolName: {authtypes.Minter, authtypes.Burner},
 		curatingtypes.VotingPoolName: {authtypes.Minter, authtypes.Burner},
-		faucet.ModuleName:            {authtypes.Minter},
+		faucet.ModuleName:            {authtypes.Minter, authtypes.Burner},
 		liquiditytypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 	}
 )
@@ -397,10 +397,16 @@ func NewStargazeApp(
 	app.UserKeeper = userkeeper.NewKeeper(
 		appCodec, keys[curatingtypes.StoreKey], app.AccountKeeper, app.BankKeeper, app.GetSubspace(usertypes.ModuleName))
 
+	config := make(map[string]faucet.DenomConfig)
+	config[curatingtypes.DefaultVoteDenom] = faucet.DenomConfig{
+		Amount:         50 * 1_000_000,
+		BurnBeforeMint: true,
+	}
 	app.FaucetKeeper = faucet.NewKeeper(appCodec, keys[faucet.StoreKey],
 		app.BankKeeper,
 		app.StakingKeeper,
-		10*1000000,   // amount for mint
+		10*1_000_000, // amount for mint
+		config,
 		24*time.Hour, // rate limit by time
 	)
 
