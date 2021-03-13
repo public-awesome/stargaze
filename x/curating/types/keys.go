@@ -42,6 +42,9 @@ var (
 
 	// KeyPrefixCurationQueue 0x02 | format(curation_end_time) -> []VPPair
 	KeyPrefixCurationQueue = []byte{0x02}
+
+	// PostIDKey for native posts (vendor = 0)
+	PostIDKey = []byte{0x03}
 )
 
 // PostsKey is an index on all posts for a vendor
@@ -70,6 +73,18 @@ func UpvotePrefixKey(vendorID uint32, postID PostID) []byte {
 // CurationQueueByTimeKey gets the curation queue key by curation end time
 func CurationQueueByTimeKey(curationEndTime time.Time) []byte {
 	return append(KeyPrefixCurationQueue, sdk.FormatTimeBytes(curationEndTime)...)
+}
+
+// GetPostIDBytes returns the byte representation of the postlID
+func GetPostIDBytes(postID uint64) (postIDBz []byte) {
+	postIDBz = make([]byte, 8)
+	binary.BigEndian.PutUint64(postIDBz, postID)
+	return
+}
+
+// GetPostIDFromBytes returns postID in uint64 format from a byte array
+func GetPostIDFromBytes(bz []byte) (postID uint64) {
+	return binary.BigEndian.Uint64(bz)
 }
 
 // Uint32ToBigEndian - marshals uint32 to a bigendian byte slice so it can be sorted

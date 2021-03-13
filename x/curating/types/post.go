@@ -41,6 +41,12 @@ func PostIDFromString(id string) (PostID, error) {
 	return PostID{id: postID}, nil
 }
 
+// PostIDFromInt64 does exactly whats on the label
+func PostIDFromInt64(id int64) PostID {
+	postID := snowflake.ParseInt64(id)
+	return PostID{id: postID}
+}
+
 // String like the array of chars, not the theory
 func (p PostID) String() string {
 	return p.id.String()
