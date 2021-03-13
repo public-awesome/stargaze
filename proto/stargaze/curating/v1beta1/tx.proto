@@ -14,7 +14,15 @@ service Msg {
   // Upvote defines a method for upvoting a post
   rpc Upvote(MsgUpvote) returns (MsgUpvoteResponse);
 }
-message MsgPostResponse {}
+
+message MsgPostResponse {
+    string post_id = 1 [
+        (gogoproto.customname) = "PostID",
+        (gogoproto.jsontag) = "post_id", 
+        (gogoproto.moretags) = "yaml:\"post_id\""
+    ];
+}
+
 message MsgUpvoteResponse {}
 
 message MsgPost {
@@ -28,7 +36,8 @@ message MsgPost {
   string post_id = 2 [
     (gogoproto.customname) = "PostID",
     (gogoproto.moretags) = "yaml:\"post_id\"",
-    (gogoproto.jsontag) = "post_id"
+    (gogoproto.jsontag) = "post_id",
+    (gogoproto.nullable) = true
   ];
   string creator = 3 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
   string reward_account = 4

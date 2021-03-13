@@ -57,9 +57,6 @@ func (msg MsgStake) GetSignBytes() []byte {
 
 // ValidateBasic validity check for the AnteHandler
 func (msg MsgStake) ValidateBasic() error {
-	if msg.VendorID < 1 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid vendor_id")
-	}
 	if strings.TrimSpace(msg.PostID) == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty post_id")
 	}
@@ -72,7 +69,6 @@ func (msg MsgStake) ValidateBasic() error {
 	if !msg.Amount.IsPositive() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount")
 	}
-
 	return nil
 }
 
@@ -113,9 +109,6 @@ func (msg MsgUnstake) GetSignBytes() []byte {
 
 // ValidateBasic validity check for the AnteHandler
 func (msg MsgUnstake) ValidateBasic() error {
-	if msg.VendorID < 1 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid vendor_id")
-	}
 	if strings.TrimSpace(msg.PostID) == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty post_id")
 	}
@@ -125,6 +118,5 @@ func (msg MsgUnstake) ValidateBasic() error {
 	if !msg.Amount.IsPositive() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount")
 	}
-
 	return nil
 }

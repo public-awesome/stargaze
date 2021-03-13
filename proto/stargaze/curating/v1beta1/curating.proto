@@ -32,6 +32,7 @@ message Post {
     (gogoproto.jsontag) = "body_hash",
     (gogoproto.nullable) = false
   ];
+  string body = 6 [ (gogoproto.moretags) = "yaml:\"body\"" ];
   google.protobuf.Timestamp curating_end_time = 7 [
     (gogoproto.stdtime) = true,
     (gogoproto.nullable) = false,
@@ -132,6 +133,11 @@ message Params {
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"reward_pool_allocation\""
+  ];
+
+  uint32 max_post_body_length = 6 [
+    (gogoproto.moretags) = "yaml:\"max_post_body_length\"",
+    (gogoproto.jsontag) = "max_post_body_length"
   ];
 
   string reward_pool_curation_max_alloc = 8 [

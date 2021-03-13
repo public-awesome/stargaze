@@ -41,6 +41,12 @@ func PostIDFromString(id string) (PostID, error) {
 	return PostID{id: postID}, nil
 }
 
+// PostIDFromInt64 does exactly whats on the label
+func PostIDFromInt64(id int64) PostID {
+	postID := snowflake.ParseInt64(id)
+	return PostID{id: postID}
+}
+
 // String like the array of chars, not the theory
 func (p PostID) String() string {
 	return p.id.String()
@@ -112,7 +118,7 @@ type CuratingQueue []VPPair
 
 // NewPost allocates and returns a new `Post` struct
 func NewPost(
-	vendorID uint32, postID PostID, bodyHash BodyHash, creator,
+	vendorID uint32, postID PostID, bodyHash BodyHash, body string, creator,
 	rewardAccount sdk.AccAddress, curatingEndTime time.Time) Post {
 
 	return Post{
@@ -121,6 +127,7 @@ func NewPost(
 		Creator:         creator.String(),
 		RewardAccount:   rewardAccount.String(),
 		BodyHash:        bodyHash,
+		Body:            body,
 		CuratingEndTime: curatingEndTime,
 		TotalVotes:      0,
 		TotalAmount:     sdk.Coin{},

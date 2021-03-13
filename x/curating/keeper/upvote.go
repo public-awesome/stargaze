@@ -41,7 +41,7 @@ func (k Keeper) CreateUpvote(
 	if !found {
 		// no deposit is locked
 		// this curator gets both creator + curator rewards (sent to reward_account)
-		err = k.CreatePost(ctx, vendorID, postID, types.BodyHash{}, nil, rewardAccount)
+		_, err = k.CreatePost(ctx, vendorID, &postID, types.BodyHash{}, "", nil, rewardAccount)
 		if err != nil {
 			return err
 		}

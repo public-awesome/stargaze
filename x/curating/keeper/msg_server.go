@@ -43,8 +43,8 @@ func (k msgServer) Post(goCtx context.Context, msg *types.MsgPost) (*types.MsgPo
 		return nil, err
 	}
 
-	err = k.CreatePost(
-		ctx, msg.VendorID, postID, bodyHash, creator, rewardAccount)
+	post, err := k.CreatePost(
+		ctx, msg.VendorID, &postID, bodyHash, msg.Body, creator, rewardAccount)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,9 @@ func (k msgServer) Post(goCtx context.Context, msg *types.MsgPost) (*types.MsgPo
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
 		),
 	})
-	return &types.MsgPostResponse{}, nil
+	return &types.MsgPostResponse{
+		PostID: post.PostID.String(),
+	}, nil
 }
 
 func (k msgServer) Upvote(goCtx context.Context, msg *types.MsgUpvote) (*types.MsgUpvoteResponse, error) {
