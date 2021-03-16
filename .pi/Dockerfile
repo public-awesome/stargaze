@@ -1,6 +1,7 @@
 FROM faddat/sos-lite
 
-COPY motd /etc/motd
+# TODO: motd with logo & banner text
+# COPY motd /etc/motd
 
 RUN sed -i -e "s/^CheckSpace/#!!!CheckSpace/g" /etc/pacman.conf && \
                 pacman -Syyu rust && \
