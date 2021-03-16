@@ -35,7 +35,6 @@ jobs:
       - name: Compress
         run: xz -T $(nproc) ./pi/images/stargaze.img
     
-
       - name: Upload image
         uses: actions/upload-artifact@v2
         with:
