@@ -18,7 +18,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: test
-    image: golang:1.15.7
+    image: golang:1.16
     commands:
       - apt-get update && apt-get install -y cmake
       - ./contrib/go-test.sh
@@ -92,7 +92,7 @@ steps:
       event:
         - push
   - name: release
-    image: golang:1.15.7
+    image: golang:1.16
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -120,21 +120,21 @@ name: ibc-integration-test
 
 steps:
   - name: gaiad
-    image: golang:1.15.7
+    image: golang:1.16
     detach: true
     commands:
       - ./contrib/ci/setup-gaia.sh
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: golang:1.15.7
+    image: golang:1.16
     commands:
       - ./contrib/ci/setup-stargaze.sh
     environment:
       GOPROXY: http://goproxy
     detach: true
   - name: relayer
-    image: golang:1.15.7
+    image: golang:1.16
     commands:
       - /bin/bash ./contrib/ci/setup-relayer.sh
     environment:
