@@ -91,6 +91,20 @@ steps:
         - develop
       event:
         - push
+  - name: docker_release
+    image: plugins/docker:18
+    settings:
+      dockerfile: docker/Dockerfile
+      repo: publicawesome/stargaze
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      auto_tag: true
+    when:
+      event:
+        - tag
+
   - name: release
     image: golang:1.15.7
     environment:
@@ -103,6 +117,7 @@ steps:
     when:
       event:
         - tag
+
   - name: discord
     image: appleboy/drone-discord
     settings:
@@ -150,6 +165,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: 720e130befeb3512b111c710e7183ad243469a2d694c4cc5f18b1dc4518270ba
+hmac: d20b8faef6e4dca14f76621963d487aacfeea4277fb3045818585430e8bf4dab
 
 ...
