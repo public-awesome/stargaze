@@ -103,7 +103,7 @@ steps:
     when:
       event:
         - tag
-  - name: publish-docker
+  - name: publish-docker-tag
     image: plugins/docker:18
     settings:
       dockerfile: docker/Dockerfile
@@ -163,6 +163,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: bf4655fc8d326197aba69b412178ad8595fbedcab9c160acbe89976d97134a8d
+hmac: c906c22741e802dd47cf4f1180faacc436a2fcfc6f66c228c464ccc5b0f33b1b
 
 ...
