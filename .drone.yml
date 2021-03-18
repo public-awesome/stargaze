@@ -91,19 +91,7 @@ steps:
         - develop
       event:
         - push
-  - name: release
-    image: golang:1.15.7
-    environment:
-      GITHUB_TOKEN:
-        from_secret: github_token
-    commands:
-      - curl -sL https://git.io/goreleaser | bash
-    environment:
-      GOPROXY: http://goproxy
-    when:
-      event:
-        - tag
-  - name: publish-docker-tag
+  - name: docker_release
     image: plugins/docker:18
     settings:
       dockerfile: docker/Dockerfile
@@ -116,6 +104,20 @@ steps:
     when:
       event:
         - tag
+
+  - name: release
+    image: golang:1.15.7
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    commands:
+      - curl -sL https://git.io/goreleaser | bash
+    environment:
+      GOPROXY: http://goproxy
+    when:
+      event:
+        - tag
+
   - name: discord
     image: appleboy/drone-discord
     settings:
@@ -163,6 +165,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: c906c22741e802dd47cf4f1180faacc436a2fcfc6f66c228c464ccc5b0f33b1b
+hmac: d20b8faef6e4dca14f76621963d487aacfeea4277fb3045818585430e8bf4dab
 
 ...
