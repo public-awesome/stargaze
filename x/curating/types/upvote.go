@@ -8,16 +8,18 @@ import (
 
 // NewUpvote fills and Upvote struct
 func NewUpvote(
-	vendorID uint32, postID PostID, curator, rewardAccount sdk.AccAddress,
-	voteAmount sdk.Coin, curatedTime time.Time) Upvote {
+	vendorID uint32, postID PostID, curator, rewardAccount sdk.AccAddress, voteNum int32,
+	voteAmount sdk.Coin, curatedTime time.Time, updatedTime time.Time) Upvote {
 
 	return Upvote{
 		VendorID:      vendorID,
 		PostID:        postID,
 		Curator:       curator.String(),
 		RewardAccount: rewardAccount.String(),
+		VoteNum:       voteNum,
 		VoteAmount:    voteAmount,
 		CuratedTime:   curatedTime,
+		UpdatedTime:   updatedTime,
 	}
 }
 
