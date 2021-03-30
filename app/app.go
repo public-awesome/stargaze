@@ -348,6 +348,7 @@ func NewStargazeApp(
 		app.GetSubspace(crisistypes.ModuleName), invCheckPeriod, app.BankKeeper, authtypes.FeeCollectorName,
 	)
 	app.UpgradeKeeper = upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec, homePath)
+	app.registerUpgradeHandlers()
 
 	// register the proposal types
 	govRouter := govtypes.NewRouter()
@@ -405,7 +406,7 @@ func NewStargazeApp(
 	app.FaucetKeeper = faucet.NewKeeper(appCodec, keys[faucet.StoreKey],
 		app.BankKeeper,
 		app.StakingKeeper,
-		10*1_000_000, // amount for mint
+		20*1_000_000, // amount for mint
 		config,
 		24*time.Hour, // rate limit by time
 	)
@@ -723,6 +724,12 @@ func (app *StargazeApp) RegisterTxService(clientCtx client.Context) {
 // RegisterTendermintService implements the Application.RegisterTendermintService method.
 func (app *StargazeApp) RegisterTendermintService(clientCtx client.Context) {
 	tmservice.RegisterTendermintService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.interfaceRegistry)
+}
+
+func (app *StargazeApp) registerUpgradeHandlers() {
+	app.UpgradeKeeper.SetUpgradeHandler("nebula", func(ctx sdk.Context, plan upgradetypes.Plan) {
+		// no-op
+	})
 }
 
 // RegisterSwaggerAPI registers swagger route with API Server
