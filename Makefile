@@ -10,7 +10,7 @@ TM_VERSION := $(shell go list -m github.com/tendermint/tendermint | sed 's:.* ::
 BUILDDIR ?= $(CURDIR)/build
 FAUCET_ENABLED ?= false
 DOCKER := $(shell which docker)
-POST_ID ?= "1"
+POST_ID ?= 1
 STAKE_DENOM ?= ustarx
 
 export GO111MODULE = on
@@ -147,7 +147,7 @@ fake-upvote-user:
 	./bin/starsd tx curating upvote 1 $(POST_ID) 10  --from user1 --keyring-backend test --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') -b block -y
 
 fake-stake:
-	./bin/starsd tx stake stake 1 $(POST_ID) 100 $(VAL) --from validator --keyring-backend test --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') -b block -y
+	./bin/starsd tx stake stake 1 $(POST_ID) 100 $(shell ./bin/starsd keys show validator --keyring-backend test --bech val --output json | jq -r '.address') --from validator --keyring-backend test --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') -b block -y
 
 fake-unstake:
 	./bin/starsd tx stake unstake 1 $(POST_ID) 10  --from validator --keyring-backend test --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') -b block -y
