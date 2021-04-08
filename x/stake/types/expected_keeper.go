@@ -26,3 +26,12 @@ type StakingKeeper interface {
 		validator stakingtypes.Validator, subtractAccount bool) (newShares sdk.Dec, err error)
 	Undelegate(ctx sdk.Context, delAddr sdk.AccAddress, valAddr sdk.ValAddress, sharesAmount sdk.Dec) (time.Time, error)
 }
+
+// BankKeeper defines the expected interface needed to retrieve account balances.
+type BankKeeper interface {
+	MintCoins(ctx sdk.Context, moduleName string, amt sdk.Coins) error
+	BurnCoins(ctx sdk.Context, moduleName string, amt sdk.Coins) error
+
+	SendCoinsFromModuleToAccount(ctx sdk.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error
+	SendCoinsFromAccountToModule(ctx sdk.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error
+}

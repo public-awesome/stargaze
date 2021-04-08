@@ -33,6 +33,59 @@ func (k Keeper) GetStake(ctx sdk.Context, vendorID uint32, postID curatingtypes.
 	return stake, true, nil
 }
 
+// BuyCreatorCoin delegates an amount to a validator and associates a post
+func (k Keeper) BuyCreatorCoin(ctx sdk.Context, username string, delAddr sdk.AccAddress, valAddr sdk.ValAddress, amount sdk.Int) error {
+	coin := sdk.NewCoin(fmt.Sprintf("@%s/%s", username, delAddr.String()), amount)
+
+	stake, found, err := k.GetStake(ctx, 0, curatingtypes.PostID{}, delAddr)
+	if err != nil {
+		return err
+	}
+	amt := amount
+	if found {
+		amt = stake.Amount.Add(amount)
+		// shadow valAddr so we don't mix validators when adding stake
+		valAddr, err = sdk.ValAddressFromBech32(stake.Validator)
+		if err != nil {
+			return err
+		}
+	}
+
+	validator, found := k.stakingKeeper.GetValidator(ctx, valAddr)
+	if !found {
+		return stakingtypes.ErrNoValidatorFound
+	}
+
+	stake = types.NewStake(0, curatingtypes.PostID{}, delAddr, valAddr, amt)
+	k.SetStake(ctx, delAddr, stake)
+
+	_, err = k.stakingKeeper.Delegate(ctx, delAddr, amount, stakingtypes.Unbonded, validator, true)
+	if err != nil {
+		return err
+	}
+
+	if err := k.bankKeeper.MintCoins(
+		ctx, types.ModuleName, sdk.NewCoins(coin),
+	); err != nil {
+		return err
+	}
+
+	if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, delAddr, sdk.NewCoins(coin)); err != nil {
+		panic(fmt.Sprintf("unable to send coins from module to account despite previously minting coins to module account: %v", err))
+	}
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypeBuyCreatorCoin,
+			sdk.NewAttribute(types.AttributeKeyDelegator, delAddr.String()),
+			sdk.NewAttribute(types.AttributeKeyValidator, valAddr.String()),
+			sdk.NewAttribute(types.AttributeKeyAmount, amount.String()),
+		),
+	})
+
+	return nil
+}
+
 // PerformStake delegates an amount to a validator and associates a post
 func (k Keeper) PerformStake(ctx sdk.Context, vendorID uint32, postID curatingtypes.PostID, delAddr sdk.AccAddress,
 	valAddr sdk.ValAddress, amount sdk.Int) error {
