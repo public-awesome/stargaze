@@ -72,3 +72,31 @@ func (k msgServer) Unstake(goCtx context.Context, msg *types.MsgUnstake) (*types
 
 	return &types.MsgUnstakeResponse{}, nil
 }
+
+func (k msgServer) BuyCreatorCoin(goCtx context.Context, msg *types.MsgBuyCreatorCoin) (*types.MsgBuyCreatorCoinResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	delegator, err := sdk.AccAddressFromBech32(msg.Delegator)
+	if err != nil {
+		return nil, err
+	}
+
+	validator, err := sdk.ValAddressFromBech32(msg.Validator)
+	if err != nil {
+		return nil, err
+	}
+
+	err = k.PerformBuyCreatorCoin(ctx, msg.Username, delegator, validator, msg.Amount)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Delegator),
+		),
+	})
+
+	return &types.MsgBuyCreatorCoinResponse{}, nil
+}

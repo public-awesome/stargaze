@@ -34,7 +34,7 @@ func (k Keeper) GetStake(ctx sdk.Context, vendorID uint32, postID curatingtypes.
 }
 
 // BuyCreatorCoin delegates an amount to a validator and associates a post
-func (k Keeper) BuyCreatorCoin(ctx sdk.Context, username string, delAddr sdk.AccAddress, valAddr sdk.ValAddress, amount sdk.Int) error {
+func (k Keeper) PerformBuyCreatorCoin(ctx sdk.Context, username string, delAddr sdk.AccAddress, valAddr sdk.ValAddress, amount sdk.Int) error {
 	coin := sdk.NewCoin(fmt.Sprintf("@%s/%s", username, delAddr.String()), amount)
 
 	stake, found, err := k.GetStake(ctx, 0, curatingtypes.PostID{}, delAddr)
