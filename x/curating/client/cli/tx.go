@@ -25,6 +25,7 @@ func NewPostTxCmd() *cobra.Command {
 			fmt.Sprintf(`Create a post.
 Example:
 $ %s tx curating post 1 "2" "body" --from mykey
+(post-id is ignored when vendor-id is 0)
 `,
 				version.AppName,
 			),
