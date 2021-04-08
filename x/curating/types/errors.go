@@ -6,6 +6,7 @@ import (
 
 // x/curating module sentinel errors
 var (
+	// error code 1 is reserved for internal ABCI error code
 	ErrPostNotFound  = sdkerrors.Register(ModuleName, 2, "Post not found")
 	ErrAlreadyVoted  = sdkerrors.Register(ModuleName, 3, "Already voted")
 	ErrDuplicatePost = sdkerrors.Register(ModuleName, 4, "Post already exists")
