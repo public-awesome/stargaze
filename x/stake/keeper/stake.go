@@ -34,10 +34,17 @@ func (k Keeper) GetStake(ctx sdk.Context, vendorID uint32, postID curatingtypes.
 }
 
 // BuyCreatorCoin delegates an amount to a validator and associates a post
-func (k Keeper) PerformBuyCreatorCoin(ctx sdk.Context, username string, delAddr sdk.AccAddress, valAddr sdk.ValAddress, amount sdk.Int) error {
-	coin := sdk.NewCoin(fmt.Sprintf("@%s/%s", username, delAddr.String()), amount)
+func (k Keeper) PerformBuyCreatorCoin(
+	ctx sdk.Context,
+	username string,
+	creator sdk.AccAddress,
+	buyer sdk.AccAddress,
+	valAddr sdk.ValAddress,
+	amount sdk.Int) error {
 
-	stake, found, err := k.GetStake(ctx, 0, curatingtypes.PostID{}, delAddr)
+	coin := sdk.NewCoin(fmt.Sprintf("@%s/%s", username, creator.String()), amount)
+
+	stake, found, err := k.GetStake(ctx, 0, curatingtypes.PostID{}, buyer)
 	if err != nil {
 		return err
 	}
@@ -56,10 +63,10 @@ func (k Keeper) PerformBuyCreatorCoin(ctx sdk.Context, username string, delAddr 
 		return stakingtypes.ErrNoValidatorFound
 	}
 
-	stake = types.NewStake(0, curatingtypes.PostID{}, delAddr, valAddr, amt)
-	k.SetStake(ctx, delAddr, stake)
+	stake = types.NewStake(0, curatingtypes.PostID{}, buyer, valAddr, amt)
+	k.SetStake(ctx, buyer, stake)
 
-	_, err = k.stakingKeeper.Delegate(ctx, delAddr, amount, stakingtypes.Unbonded, validator, true)
+	_, err = k.stakingKeeper.Delegate(ctx, buyer, amount, stakingtypes.Unbonded, validator, true)
 	if err != nil {
 		return err
 	}
@@ -70,14 +77,16 @@ func (k Keeper) PerformBuyCreatorCoin(ctx sdk.Context, username string, delAddr 
 		return err
 	}
 
-	if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, delAddr, sdk.NewCoins(coin)); err != nil {
+	if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, buyer, sdk.NewCoins(coin)); err != nil {
 		panic(fmt.Sprintf("unable to send coins from module to account despite previously minting coins to module account: %v", err))
 	}
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeBuyCreatorCoin,
-			sdk.NewAttribute(types.AttributeKeyDelegator, delAddr.String()),
+			sdk.NewAttribute(types.AttributeKeyUsername, username),
+			sdk.NewAttribute(types.AttributeKeyCreator, creator.String()),
+			sdk.NewAttribute(types.AttributeKeyBuyer, buyer.String()),
 			sdk.NewAttribute(types.AttributeKeyValidator, valAddr.String()),
 			sdk.NewAttribute(types.AttributeKeyAmount, amount.String()),
 		),

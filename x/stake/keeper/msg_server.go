@@ -75,7 +75,12 @@ func (k msgServer) Unstake(goCtx context.Context, msg *types.MsgUnstake) (*types
 
 func (k msgServer) BuyCreatorCoin(goCtx context.Context, msg *types.MsgBuyCreatorCoin) (*types.MsgBuyCreatorCoinResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	delegator, err := sdk.AccAddressFromBech32(msg.Delegator)
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, err
+	}
+
+	buyer, err := sdk.AccAddressFromBech32(msg.Buyer)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +90,7 @@ func (k msgServer) BuyCreatorCoin(goCtx context.Context, msg *types.MsgBuyCreato
 		return nil, err
 	}
 
-	err = k.PerformBuyCreatorCoin(ctx, msg.Username, delegator, validator, msg.Amount)
+	err = k.PerformBuyCreatorCoin(ctx, msg.Username, creator, buyer, validator, msg.Amount)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +99,7 @@ func (k msgServer) BuyCreatorCoin(goCtx context.Context, msg *types.MsgBuyCreato
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Delegator),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Buyer),
 		),
 	})
 

@@ -61,9 +61,10 @@ message MsgBuyCreatorCoin {
     option (gogoproto.equal) = true;
   
     string username = 1 [ (gogoproto.moretags) = "yaml:\"username\"" ];
-    string delegator = 2 [ (gogoproto.moretags) = "yaml:\"delegator\"" ];
-    string validator = 3 [ (gogoproto.moretags) = "yaml:\"validator\"" ];
-    string amount = 4 [
+    string creator = 2 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+    string buyer = 3 [ (gogoproto.moretags) = "yaml:\"buyer\"" ];
+    string validator = 4 [ (gogoproto.moretags) = "yaml:\"validator\"" ];
+    string amount = 5 [
       (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
       (gogoproto.nullable) = false
     ];

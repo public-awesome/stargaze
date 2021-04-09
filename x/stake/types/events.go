@@ -8,6 +8,9 @@ const (
 
 	AttributeKeyVendorID  = "vendor_id"
 	AttributeKeyPostID    = "post_id"
+	AttributeKeyUsername  = "username"
+	AttributeKeyCreator   = "creator"
+	AttributeKeyBuyer     = "buyer"
 	AttributeKeyDelegator = "delegator"
 	AttributeKeyValidator = "validator"
 	AttributeKeyAmount    = "amount"

@@ -115,13 +115,13 @@ $ %s tx stake unstake 1 "2" 500 --from mykey
 // NewBuyCreatorCoinTxCmd returns the stake command
 func NewBuyCreatorCoinTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "buy [username] [amount] [validator-address] --from [key]",
+		Use:   "buy [username] [creatorAddr] [amount] [validator-address] --from [key]",
 		Args:  cobra.MinimumNArgs(4),
 		Short: "Buy a creator's coin",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Buy a creator's coin with the native token.
 Example:
-$ %s tx stake buy "satoshi" 21000000 starsvaloper1deadbeef --from mykey
+$ %s tx stake buy "satoshi" stars1deadbeef 21000000 starsvaloper1deadbeef --from mykey
 `,
 				version.AppName,
 			),
@@ -132,26 +132,32 @@ $ %s tx stake buy "satoshi" 21000000 starsvaloper1deadbeef --from mykey
 				return err
 			}
 
-			delegator := clientCtx.GetFromAddress()
+			buyer := clientCtx.GetFromAddress()
 
 			username := args[1]
 			if len(username) <= 3 {
 				return errors.New("username too short")
 			}
 
-			amount, ok := sdk.NewIntFromString(args[2])
+			creatorAddrStr := args[2]
+			creator, err := sdk.AccAddressFromBech32(creatorAddrStr)
+			if err != nil {
+				return err
+			}
+
+			amount, ok := sdk.NewIntFromString(args[3])
 			if !ok {
 				panic("invalid amount")
 			}
 
-			valAddrStr := args[3]
+			valAddrStr := args[4]
 			validator, err := sdk.ValAddressFromBech32(valAddrStr)
 			if err != nil {
 				return err
 			}
 
 			msg := types.NewMsgBuyCreatorCoin(
-				username, delegator, validator, amount)
+				username, creator, buyer, validator, amount)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

@@ -126,13 +126,15 @@ func (msg MsgUnstake) ValidateBasic() error {
 // NewMsgBuyCreatorCoin creates a new NewMsgBuyCreatorCoin instance
 func NewMsgBuyCreatorCoin(
 	username string,
-	delegator sdk.AccAddress,
+	creator sdk.AccAddress,
+	buyer sdk.AccAddress,
 	validator sdk.ValAddress,
 	amount sdk.Int,
 ) *MsgBuyCreatorCoin {
 	return &MsgBuyCreatorCoin{
 		Username:  username,
-		Delegator: delegator.String(),
+		Creator:   creator.String(),
+		Buyer:     buyer.String(),
 		Validator: validator.String(),
 		Amount:    amount,
 	}
@@ -146,11 +148,11 @@ func (msg MsgBuyCreatorCoin) Type() string { return TypeMsgStake }
 
 // GetSigners implements sdk.Msg
 func (msg MsgBuyCreatorCoin) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Delegator)
+	buyer, err := sdk.AccAddressFromBech32(msg.Buyer)
 	if err != nil {
 		panic(err)
 	}
-	return []sdk.AccAddress{creator}
+	return []sdk.AccAddress{buyer}
 }
 
 // GetSignBytes gets the bytes for the message signer to sign on
@@ -163,8 +165,11 @@ func (msg MsgBuyCreatorCoin) ValidateBasic() error {
 	if len(strings.TrimSpace(msg.Username)) <= 3 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "username too short")
 	}
-	if strings.TrimSpace(msg.Delegator) == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty delegator")
+	if strings.TrimSpace(msg.Creator) == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty creator")
+	}
+	if strings.TrimSpace(msg.Buyer) == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty buyer")
 	}
 	if strings.TrimSpace(msg.Validator) == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty validator")
