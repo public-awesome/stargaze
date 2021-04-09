@@ -190,6 +190,7 @@ var (
 		curatingtypes.VotingPoolName: {authtypes.Minter, authtypes.Burner},
 		faucet.ModuleName:            {authtypes.Minter, authtypes.Burner},
 		liquiditytypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
+		staketypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
 	}
 )
 
