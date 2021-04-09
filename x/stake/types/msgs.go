@@ -125,15 +125,13 @@ func (msg MsgUnstake) ValidateBasic() error {
 
 // NewMsgBuyCreatorCoin creates a new NewMsgBuyCreatorCoin instance
 func NewMsgBuyCreatorCoin(
-	vendorID uint32,
-	postID string,
+	username string,
 	delegator sdk.AccAddress,
 	validator sdk.ValAddress,
 	amount sdk.Int,
-) *MsgStake {
-	return &MsgStake{
-		VendorID:  vendorID,
-		PostID:    postID,
+) *MsgBuyCreatorCoin {
+	return &MsgBuyCreatorCoin{
+		Username:  username,
 		Delegator: delegator.String(),
 		Validator: validator.String(),
 		Amount:    amount,
@@ -162,6 +160,9 @@ func (msg MsgBuyCreatorCoin) GetSignBytes() []byte {
 
 // ValidateBasic validity check for the AnteHandler
 func (msg MsgBuyCreatorCoin) ValidateBasic() error {
+	if len(strings.TrimSpace(msg.Username)) <= 3 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "username too short")
+	}
 	if strings.TrimSpace(msg.Delegator) == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty delegator")
 	}

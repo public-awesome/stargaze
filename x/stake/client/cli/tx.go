@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -23,7 +24,7 @@ func NewStakeTxCmd() *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Stake on a post.
 Example:
-$ %s tx stake stake 1 "2" 500 --from mykey
+$ %s tx stake stake 1 "2" 500 starsvaloper1deadbeef --from mykey
 `,
 				version.AppName,
 			),
@@ -100,6 +101,57 @@ $ %s tx stake unstake 1 "2" 500 --from mykey
 			}
 
 			msg := types.NewMsgUnstake(uint32(vendorID), postID, delegator, amount)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
+
+// NewBuyCreatorCoinTxCmd returns the stake command
+func NewBuyCreatorCoinTxCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "buy [username] [amount] [validator-address] --from [key]",
+		Args:  cobra.MinimumNArgs(4),
+		Short: "Buy a creator's coin",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Buy a creator's coin with the native token.
+Example:
+$ %s tx stake buy "satoshi" 21000000 starsvaloper1deadbeef --from mykey
+`,
+				version.AppName,
+			),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			delegator := clientCtx.GetFromAddress()
+
+			username := args[1]
+			if len(username) <= 3 {
+				return errors.New("username too short")
+			}
+
+			amount, ok := sdk.NewIntFromString(args[2])
+			if !ok {
+				panic("invalid amount")
+			}
+
+			valAddrStr := args[3]
+			validator, err := sdk.ValAddressFromBech32(valAddrStr)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgBuyCreatorCoin(
+				username, delegator, validator, amount)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
