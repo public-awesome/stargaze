@@ -78,7 +78,11 @@ func (k Keeper) PerformBuyCreatorCoin(
 	}
 
 	if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, buyer, sdk.NewCoins(coin)); err != nil {
-		panic(fmt.Sprintf("unable to send coins from module to account despite previously minting coins to module account: %v", err))
+		panic(
+			fmt.Sprintf(
+				"unable to send coins from module to account despite previously minting coins to module account: %v",
+				err),
+		)
 	}
 
 	ctx.EventManager().EmitEvents(sdk.Events{
