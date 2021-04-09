@@ -11,11 +11,13 @@ import (
 // verify interface at compile time
 var _ sdk.Msg = &MsgStake{}
 var _ sdk.Msg = &MsgUnstake{}
+var _ sdk.Msg = &MsgBuyCreatorCoin{}
 
 // msg types
 const (
-	TypeMsgStake   = "stake_stake"
-	TypeMsgUnstake = "stake_unstake"
+	TypeMsgStake          = "stake_stake"
+	TypeMsgUnstake        = "stake_unstake"
+	TypeMsgBuyCreatorCoin = "buy_creator_coin"
 )
 
 // NewMsgStake creates a new MsgStake instance
@@ -114,6 +116,57 @@ func (msg MsgUnstake) ValidateBasic() error {
 	}
 	if strings.TrimSpace(msg.Delegator) == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty delegator")
+	}
+	if !msg.Amount.IsPositive() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount")
+	}
+	return nil
+}
+
+// NewMsgBuyCreatorCoin creates a new NewMsgBuyCreatorCoin instance
+func NewMsgBuyCreatorCoin(
+	vendorID uint32,
+	postID string,
+	delegator sdk.AccAddress,
+	validator sdk.ValAddress,
+	amount sdk.Int,
+) *MsgStake {
+	return &MsgStake{
+		VendorID:  vendorID,
+		PostID:    postID,
+		Delegator: delegator.String(),
+		Validator: validator.String(),
+		Amount:    amount,
+	}
+}
+
+// Route implements sdk.Msg
+func (msg MsgBuyCreatorCoin) Route() string { return RouterKey }
+
+// Type implements sdk.Msg
+func (msg MsgBuyCreatorCoin) Type() string { return TypeMsgStake }
+
+// GetSigners implements sdk.Msg
+func (msg MsgBuyCreatorCoin) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Delegator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+// GetSignBytes gets the bytes for the message signer to sign on
+func (msg MsgBuyCreatorCoin) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+}
+
+// ValidateBasic validity check for the AnteHandler
+func (msg MsgBuyCreatorCoin) ValidateBasic() error {
+	if strings.TrimSpace(msg.Delegator) == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty delegator")
+	}
+	if strings.TrimSpace(msg.Validator) == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty validator")
 	}
 	if !msg.Amount.IsPositive() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount")
