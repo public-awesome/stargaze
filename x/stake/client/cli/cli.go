@@ -35,6 +35,7 @@ func NewTxCmd() *cobra.Command {
 	txCmd.AddCommand(
 		NewStakeTxCmd(),
 		NewUnstakeTxCmd(),
+		NewBuyCreatorCoinTxCmd(),
 	)
 
 	return txCmd
