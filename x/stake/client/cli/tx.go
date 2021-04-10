@@ -147,7 +147,7 @@ $ %s tx stake buy "satoshi" stars1deadbeef 21000000 starsvaloper1deadbeef --from
 
 			amount, ok := sdk.NewIntFromString(args[3])
 			if !ok {
-				panic("invalid amount")
+				return fmt.Errorf("invalid amount, must be an int value")
 			}
 
 			valAddrStr := args[4]
