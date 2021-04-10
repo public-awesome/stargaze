@@ -42,7 +42,7 @@ func (k Keeper) PerformBuyCreatorCoin(
 	valAddr sdk.ValAddress,
 	amount sdk.Int) error {
 
-	coin := sdk.NewCoin(fmt.Sprintf("@%s/%s", username, creator.String()), amount)
+	coin := sdk.NewCoin(fmt.Sprintf("%s/%s", username, creator.String()), amount)
 
 	stake, found, err := k.GetStake(ctx, 0, curatingtypes.PostID{}, buyer)
 	if err != nil {
