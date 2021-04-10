@@ -73,7 +73,10 @@ func (k msgServer) Unstake(goCtx context.Context, msg *types.MsgUnstake) (*types
 	return &types.MsgUnstakeResponse{}, nil
 }
 
-func (k msgServer) BuyCreatorCoin(goCtx context.Context, msg *types.MsgBuyCreatorCoin) (*types.MsgBuyCreatorCoinResponse, error) {
+func (k msgServer) BuyCreatorCoin(
+	goCtx context.Context,
+	msg *types.MsgBuyCreatorCoin) (*types.MsgBuyCreatorCoinResponse, error) {
+
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	creator, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
