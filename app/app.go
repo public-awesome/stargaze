@@ -190,6 +190,7 @@ var (
 		curatingtypes.VotingPoolName: {authtypes.Minter, authtypes.Burner},
 		faucet.ModuleName:            {authtypes.Minter, authtypes.Burner},
 		liquiditytypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
+		staketypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
 	}
 )
 
@@ -411,7 +412,13 @@ func NewStargazeApp(
 	)
 
 	app.StakeKeeper = stakekeeper.NewKeeper(
-		appCodec, keys[staketypes.StoreKey], app.CuratingKeeper, app.StakingKeeper, app.GetSubspace(staketypes.ModuleName))
+		appCodec,
+		keys[staketypes.StoreKey],
+		app.CuratingKeeper,
+		app.StakingKeeper,
+		app.BankKeeper,
+		app.GetSubspace(staketypes.ModuleName),
+	)
 
 	app.LiquidityKeeper = liquiditykeeper.NewKeeper(
 		appCodec, keys[liquiditytypes.StoreKey], app.GetSubspace(liquiditytypes.ModuleName),

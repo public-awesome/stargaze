@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -23,7 +24,7 @@ func NewStakeTxCmd() *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Stake on a post.
 Example:
-$ %s tx stake stake 1 "2" 500 --from mykey
+$ %s tx stake stake 1 "2" 500 starsvaloper1deadbeef --from mykey
 `,
 				version.AppName,
 			),
@@ -100,6 +101,63 @@ $ %s tx stake unstake 1 "2" 500 --from mykey
 			}
 
 			msg := types.NewMsgUnstake(uint32(vendorID), postID, delegator, amount)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
+
+// NewBuyCreatorCoinTxCmd returns the stake command
+func NewBuyCreatorCoinTxCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "buy [username] [creatorAddr] [amount] [validator-address] --from [key]",
+		Args:  cobra.MinimumNArgs(4),
+		Short: "Buy a creator's coin",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Buy a creator's coin with the native token.
+Example:
+$ %s tx stake buy "satoshi" stars1deadbeef 21000000 starsvaloper1deadbeef --from mykey
+`,
+				version.AppName,
+			),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			buyer := clientCtx.GetFromAddress()
+
+			username := args[1]
+			if len(username) <= 3 {
+				return errors.New("username too short")
+			}
+
+			creatorAddrStr := args[2]
+			creator, err := sdk.AccAddressFromBech32(creatorAddrStr)
+			if err != nil {
+				return err
+			}
+
+			amount, ok := sdk.NewIntFromString(args[3])
+			if !ok {
+				return fmt.Errorf("invalid amount, must be an int value")
+			}
+
+			valAddrStr := args[4]
+			validator, err := sdk.ValAddressFromBech32(valAddrStr)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgBuyCreatorCoin(
+				username, creator, buyer, validator, amount)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
