@@ -134,23 +134,23 @@ $ %s tx stake buy "satoshi" stars1deadbeef 21000000 starsvaloper1deadbeef --from
 
 			buyer := clientCtx.GetFromAddress()
 
-			username := args[1]
+			username := args[0]
 			if len(username) <= 3 {
 				return errors.New("username too short")
 			}
 
-			creatorAddrStr := args[2]
+			creatorAddrStr := args[1]
 			creator, err := sdk.AccAddressFromBech32(creatorAddrStr)
 			if err != nil {
 				return err
 			}
 
-			amount, ok := sdk.NewIntFromString(args[3])
+			amount, ok := sdk.NewIntFromString(args[2])
 			if !ok {
 				return fmt.Errorf("invalid amount, must be an int value")
 			}
 
-			valAddrStr := args[4]
+			valAddrStr := args[3]
 			validator, err := sdk.ValAddressFromBech32(valAddrStr)
 			if err != nil {
 				return err
