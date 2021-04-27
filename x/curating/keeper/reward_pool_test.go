@@ -21,7 +21,7 @@ func TestInflateRewards(t *testing.T) {
 	require.True(t, blockInflation.Amount.IsZero())
 
 	fakeInflationCoin := sdk.NewInt64Coin("ustb", 1000000)
-	err := app.BankKeeper.SetBalance(ctx, blockInflationAddr, fakeInflationCoin)
+	err := simapp.FundAccount(app, ctx, blockInflationAddr, sdk.NewCoins(fakeInflationCoin))
 	app.AccountKeeper.SetModuleAccount(ctx, blockInflationAcct)
 	require.NoError(t, err)
 	blockInflation = app.BankKeeper.GetBalance(ctx, blockInflationAddr, types.DefaultStakeDenom)
@@ -46,7 +46,7 @@ func TestInflateRewardsNonDefault(t *testing.T) {
 	require.True(t, blockInflation.Amount.IsZero())
 
 	fakeInflationCoin := sdk.NewInt64Coin(fakedenom, 1000000)
-	err := app.BankKeeper.SetBalance(ctx, blockInflationAddr, fakeInflationCoin)
+	err := simapp.FundAccount(app, ctx, blockInflationAddr, sdk.NewCoins(fakeInflationCoin))
 	app.AccountKeeper.SetModuleAccount(ctx, blockInflationAcct)
 	require.NoError(t, err)
 	blockInflation = app.BankKeeper.GetBalance(ctx, blockInflationAddr, fakedenom)
