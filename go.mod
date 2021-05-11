@@ -6,6 +6,8 @@ require (
 	github.com/CosmWasm/wasmd v0.15.1
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/cosmos/cosmos-sdk v0.42.4
+	github.com/cosmos/gravity-bridge/module v0.0.0-20210510233403-032484dfedca // indirect
+	github.com/ethereum/go-ethereum v1.9.21 // indirect
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.5.2
 	github.com/gorilla/mux v1.8.0
