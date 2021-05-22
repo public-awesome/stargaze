@@ -131,3 +131,41 @@ func TestPerformBuyCreatorCoin(t *testing.T) {
 	require.Equal(t, sdk.NewInt(2), s.Amount)
 
 }
+
+func TestPerformSellCreatorCoin(t *testing.T) {
+	app := simapp.Setup(false)
+	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
+
+	tstaking := teststaking.NewHelper(t, ctx, app.StakingKeeper)
+	valConsPk1 := PKs[0]
+
+	addr := simapp.AddTestAddrs(app, ctx, 2, sdk.NewInt(1000))
+	valAddrs := simapp.ConvertAddrsToValAddrs(addr)
+
+	// create validator with 50% commission
+	tstaking.Commission = types.NewCommissionRates(sdk.NewDecWithPrec(5, 1), sdk.NewDecWithPrec(5, 1), sdk.NewDec(0))
+	tstaking.CreateValidator(valAddrs[0], valConsPk1, sdk.NewInt(100), true)
+	addrDels := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(3))
+
+	creator := addrDels[1]
+	seller := addrDels[2]
+	valAddr := valAddrs[0]
+	amount := sdk.NewInt(1)
+
+	err := app.StakeKeeper.PerformSellCreatorCoin(ctx, "username", creator, seller, valAddr, amount)
+	require.NoError(t, err)
+
+	s, found, err := app.StakeKeeper.GetStake(ctx, 0, curatingtypes.PostID{}, seller)
+	require.NoError(t, err)
+	require.True(t, found)
+	require.Equal(t, sdk.NewInt(1), s.Amount)
+
+	err = app.StakeKeeper.PerformSellCreatorCoin(ctx, "username", creator, seller, valAddr, amount)
+	require.NoError(t, err)
+
+	s, found, err = app.StakeKeeper.GetStake(ctx, 0, curatingtypes.PostID{}, seller)
+	require.NoError(t, err)
+	require.True(t, found)
+	require.Equal(t, sdk.NewInt(2), s.Amount)
+
+}

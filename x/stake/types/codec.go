@@ -14,6 +14,7 @@ func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 		&MsgStake{},
 		&MsgUnstake{},
 		&MsgBuyCreatorCoin{},
+		&MsgSellCreatorCoin{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
