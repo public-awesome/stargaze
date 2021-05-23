@@ -114,39 +114,30 @@ func (k Keeper) PerformSellCreatorCoin(
 	if err != nil {
 		return err
 	}
-	amt := amount
-	if found {
-		amt = stake.Amount.Add(amount)
-		// shadow valAddr so we don't mix validators when adding stake
-		valAddr, err = sdk.ValAddressFromBech32(stake.Validator)
-		if err != nil {
-			return err
-		}
-	}
-
-	validator, found := k.stakingKeeper.GetValidator(ctx, valAddr)
 	if !found {
-		return stakingtypes.ErrNoValidatorFound
+		return types.ErrStaketNotFound
+	}
+	if amount.GT(stake.Amount) {
+		return types.ErrAmountTooLarge
 	}
 
-	stake = types.NewStake(0, curatingtypes.PostID{}, seller, valAddr, amt)
-	k.SetStake(ctx, seller, stake)
-
-	_, err = k.stakingKeeper.Delegate(ctx, seller, amount, stakingtypes.Unbonded, validator, true)
+	_, err = k.stakingKeeper.Undelegate(ctx, seller, valAddr, amount.ToDec())
 	if err != nil {
 		return err
 	}
 
-	if err := k.bankKeeper.MintCoins(
-		ctx, types.ModuleName, sdk.NewCoins(coin),
-	); err != nil {
-		return err
+	amt := stake.Amount.Sub(amount)
+	if amt.Equal(sdk.ZeroInt()) {
+		k.deleteStake(ctx, 0, curatingtypes.PostID{}, seller)
+	} else {
+		stake = types.NewStake(0, curatingtypes.PostID{}, seller, valAddr, amt)
+		k.SetStake(ctx, seller, stake)
 	}
 
-	if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, seller, sdk.NewCoins(coin)); err != nil {
+	if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, seller, types.ModuleName, sdk.NewCoins(coin)); err != nil {
 		panic(
 			fmt.Sprintf(
-				"unable to send coins from module to account despite previously minting coins to module account: %v",
+				"unable to send coins from account to module  despite previously burning coins from account: %v",
 				err),
 		)
 	}
