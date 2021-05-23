@@ -8,7 +8,7 @@ import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
 
 message Params {
-    option (gogoproto.goproto_stringer) = false;
+    // option (gogoproto.goproto_stringer) = false;
   
     cosmos.base.v1beta1.Coin genesis_allocation = 1 [
       (gogoproto.nullable) = false,
