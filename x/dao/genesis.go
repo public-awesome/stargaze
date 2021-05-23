@@ -6,7 +6,7 @@ import (
 	"github.com/public-awesome/stargaze/x/dao/types"
 )
 
-// InitGenesis initializes the capability module's state from a provided genesis
+// InitGenesis initializes the dao module's state from a provided genesis
 // state.
 func InitGenesis(ctx sdk.Context, k keeper.Keeper, dk types.DistKeeper, genState types.GenesisState) {
 	amount := sdk.NewCoins(sdk.NewInt64Coin("ustarx", 5_000_000_000))
@@ -22,7 +22,7 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, dk types.DistKeeper, genState
 	// this line is used by starport scaffolding # ibc/genesis/init
 }
 
-// ExportGenesis returns the capability module's exported genesis.
+// ExportGenesis returns the dao module's exported genesis.
 func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis := types.DefaultGenesis()
 
