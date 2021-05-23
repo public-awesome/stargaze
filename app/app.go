@@ -543,6 +543,7 @@ func NewStargazeApp(
 		staketypes.ModuleName,
 		liquiditytypes.ModuleName,
 		wasm.ModuleName,
+		daotypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
