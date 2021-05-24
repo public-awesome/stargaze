@@ -108,3 +108,39 @@ func (k msgServer) BuyCreatorCoin(
 
 	return &types.MsgBuyCreatorCoinResponse{}, nil
 }
+
+func (k msgServer) SellCreatorCoin(
+	goCtx context.Context,
+	msg *types.MsgSellCreatorCoin) (*types.MsgSellCreatorCoinResponse, error) {
+
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, err
+	}
+
+	seller, err := sdk.AccAddressFromBech32(msg.Seller)
+	if err != nil {
+		return nil, err
+	}
+
+	validator, err := sdk.ValAddressFromBech32(msg.Validator)
+	if err != nil {
+		return nil, err
+	}
+
+	err = k.PerformSellCreatorCoin(ctx, msg.Username, creator, seller, validator, msg.Amount)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Seller),
+		),
+	})
+
+	return &types.MsgSellCreatorCoinResponse{}, nil
+}
