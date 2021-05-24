@@ -506,7 +506,7 @@ func NewStargazeApp(
 		stake.NewAppModule(appCodec, app.StakeKeeper, app.CuratingKeeper, app.StakingKeeper),
 		liquidity.NewAppModule(appCodec, app.LiquidityKeeper, app.AccountKeeper, app.BankKeeper),
 		wasm.NewAppModule(&app.wasmKeeper, app.StakingKeeper),
-		dao.NewAppModule(appCodec, app.daoKeeper, app.DistrKeeper),
+		dao.NewAppModule(appCodec, app.daoKeeper, app.DistrKeeper, app.BankKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
