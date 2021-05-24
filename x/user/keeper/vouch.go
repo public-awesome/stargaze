@@ -20,7 +20,7 @@ func (k Keeper) GetVouchesByVoucher(
 
 	for ; it.Valid(); it.Next() {
 		var vouch types.Vouch
-		k.cdc.MustUnmarshalBinaryBare(it.Value(), &vouch)
+		k.cdc.MustUnmarshal(it.Value(), &vouch)
 		vouches = append(vouches, vouch)
 	}
 
@@ -38,7 +38,7 @@ func (k Keeper) GetVouchByVouched(
 	if value == nil {
 		return vouch, false, nil
 	}
-	k.cdc.MustUnmarshalBinaryBare(value, &vouch)
+	k.cdc.MustUnmarshal(value, &vouch)
 
 	return vouch, true, nil
 }
@@ -88,7 +88,7 @@ func (k Keeper) CreateVouch(
 	store := ctx.KVStore(k.storeKey)
 	vouchedKey := types.VouchedKey(vouched)
 	voucherKey := types.VoucherKey(voucher, vouched)
-	value := k.cdc.MustMarshalBinaryBare(&vouch)
+	value := k.cdc.MustMarshal(&vouch)
 	store.Set(vouchedKey, value)
 	store.Set(voucherKey, value)
 

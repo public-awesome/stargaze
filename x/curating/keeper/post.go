@@ -189,7 +189,7 @@ func (k Keeper) GetCurationQueueTimeSlice(
 	}
 
 	vps := types.VPPairs{}
-	k.cdc.MustUnmarshalBinaryBare(bz, &vps)
+	k.cdc.MustUnmarshal(bz, &vps)
 
 	return vps.Pairs
 }
@@ -199,7 +199,7 @@ func (k Keeper) SetCurationQueueTimeSlice(
 	ctx sdk.Context, timestamp time.Time, vps []types.VPPair) {
 
 	store := ctx.KVStore(k.storeKey)
-	bz := k.cdc.MustMarshalBinaryBare(&types.VPPairs{Pairs: vps})
+	bz := k.cdc.MustMarshal(&types.VPPairs{Pairs: vps})
 	store.Set(types.CurationQueueByTimeKey(timestamp), bz)
 }
 
@@ -213,7 +213,7 @@ func (k Keeper) IterateExpiredPosts(
 
 	for ; it.Valid(); it.Next() {
 		vps := types.VPPairs{}
-		k.cdc.MustUnmarshalBinaryBare(it.Value(), &vps)
+		k.cdc.MustUnmarshal(it.Value(), &vps)
 		for _, vp := range vps.Pairs {
 			post, found, err := k.GetPost(ctx, vp.VendorID, vp.PostID)
 			if err != nil {

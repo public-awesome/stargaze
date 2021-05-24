@@ -17,7 +17,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/snapshots"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authclient "github.com/cosmos/cosmos-sdk/x/auth/client"
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	vestingcli "github.com/cosmos/cosmos-sdk/x/auth/vesting/client/cli"
@@ -39,7 +38,7 @@ import (
 func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 	encodingConfig := stargaze.MakeEncodingConfig()
 	initClientCtx := client.Context{}.
-		WithJSONMarshaler(encodingConfig.Marshaler).
+		WithJSONCodec(encodingConfig.Marshaler).
 		WithInterfaceRegistry(encodingConfig.InterfaceRegistry).
 		WithTxConfig(encodingConfig.TxConfig).
 		WithLegacyAmino(encodingConfig.Amino).
@@ -69,7 +68,6 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 }
 
 func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
-	authclient.Codec = encodingConfig.Marshaler
 
 	rootCmd.AddCommand(
 		InitCmd(stargaze.ModuleBasics, stargaze.DefaultNodeHome),
@@ -183,7 +181,7 @@ func newApp(logger log.Logger, db dbm.DB,
 		logger, db, traceStore, true, skipUpgradeHeights,
 		cast.ToString(appOpts.Get(flags.FlagHome)),
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
-		stargaze.GetEnabledProposals(),
+		//stargaze.GetEnabledProposals(),
 		stargaze.MakeEncodingConfig(), // Ideally, we would reuse the one created by NewRootCmd.
 		appOpts,
 		baseapp.SetPruning(pruningOpts),
@@ -212,7 +210,9 @@ func createSimappAndExport(
 	if height != -1 {
 		StargazeApp = stargaze.NewStargazeApp(logger, db, traceStore,
 			false, map[int64]bool{}, "",
-			uint(1), stargaze.GetEnabledProposals(), encCfg, appOpts)
+			uint(1),
+			// stargaze.GetEnabledProposals(),
+			encCfg, appOpts)
 
 		if err := StargazeApp.LoadHeight(height); err != nil {
 			return servertypes.ExportedApp{}, err
@@ -220,7 +220,9 @@ func createSimappAndExport(
 	} else {
 		StargazeApp = stargaze.NewStargazeApp(logger, db, traceStore,
 			true, map[int64]bool{}, "",
-			uint(1), stargaze.GetEnabledProposals(), encCfg, appOpts)
+			uint(1),
+			//stargaze.GetEnabledProposals(),
+			encCfg, appOpts)
 	}
 
 	return StargazeApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)

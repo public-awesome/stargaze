@@ -20,12 +20,12 @@ type Keeper struct {
 	limit         time.Duration // rate limiting for mint, etc 24 * time.Hours
 	storeKey      sdk.StoreKey  // Unexposed key to access store from sdk.Context
 
-	cdc codec.BinaryMarshaler
+	cdc codec.BinaryCodec
 }
 
 // NewKeeper creates a new staking Keeper instance
 func NewKeeper(
-	cdc codec.BinaryMarshaler,
+	cdc codec.BinaryCodec,
 	key sdk.StoreKey,
 	bankKeeper types.BankKeeper,
 	stakingKeeper types.StakingKeeper,
@@ -115,7 +115,7 @@ func (k Keeper) getMining(ctx sdk.Context, minter sdk.AccAddress, denom string) 
 	}
 	bz := store.Get(minterKey(minter, denom))
 	var mining types.Mining
-	k.cdc.MustUnmarshalBinaryBare(bz, &mining)
+	k.cdc.MustUnmarshal(bz, &mining)
 	return mining
 }
 
@@ -124,7 +124,7 @@ func (k Keeper) setMining(ctx sdk.Context, minter sdk.AccAddress, mining types.M
 		return types.ErrInvalidCoinAmount
 	}
 	store := ctx.KVStore(k.storeKey)
-	store.Set(minterKey(minter, denom), k.cdc.MustMarshalBinaryBare(&mining))
+	store.Set(minterKey(minter, denom), k.cdc.MustMarshal(&mining))
 	return nil
 }
 
@@ -144,7 +144,7 @@ func (k Keeper) GetFaucetKey(ctx sdk.Context) types.FaucetKey {
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.FaucetStoreKey)
 	var faucet types.FaucetKey
-	k.cdc.MustUnmarshalBinaryBare(bz, &faucet)
+	k.cdc.MustUnmarshal(bz, &faucet)
 	return faucet
 }
 
@@ -152,7 +152,7 @@ func (k Keeper) GetFaucetKey(ctx sdk.Context) types.FaucetKey {
 func (k Keeper) SetFaucetKey(ctx sdk.Context, armor string) {
 	store := ctx.KVStore(k.storeKey)
 	faucet := types.NewFaucetKey(armor)
-	store.Set(types.FaucetStoreKey, k.cdc.MustMarshalBinaryBare(&faucet))
+	store.Set(types.FaucetStoreKey, k.cdc.MustMarshal(&faucet))
 }
 
 // HasFaucetKey checks if faucet key is already stored.

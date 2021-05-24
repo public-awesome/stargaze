@@ -22,7 +22,7 @@ import (
 // StateFn returns the initial application state using a genesis or the simulation parameters.
 // It panics if the user provides files for both of them.
 // If a file is not given for the genesis or the sim params, it creates a randomized one.
-func StateFn(cdc codec.JSONMarshaler, simManager *module.SimulationManager) simtypes.AppStateFn {
+func StateFn(cdc codec.JSONCodec, simManager *module.SimulationManager) simtypes.AppStateFn {
 	return func(r *rand.Rand, accs []simtypes.Account, config simtypes.Config,
 	) (appState json.RawMessage, simAccs []simtypes.Account, chainID string, genesisTimestamp time.Time) {
 
@@ -75,7 +75,7 @@ func StateFn(cdc codec.JSONMarshaler, simManager *module.SimulationManager) simt
 // StateRandomizedFn creates calls each module's GenesisState generator function
 // and creates the simulation params
 func StateRandomizedFn(
-	simManager *module.SimulationManager, r *rand.Rand, cdc codec.JSONMarshaler,
+	simManager *module.SimulationManager, r *rand.Rand, cdc codec.JSONCodec,
 	accs []simtypes.Account, genesisTimestamp time.Time, appParams simtypes.AppParams,
 ) (json.RawMessage, []simtypes.Account) {
 	numAccs := int64(len(accs))
@@ -129,7 +129,7 @@ func StateRandomizedFn(
 
 // appStateFromGenesisFileFn util function to generate the genesis AppState
 // from a genesis.json file.
-func appStateFromGenesisFileFn(r io.Reader, cdc codec.JSONMarshaler,
+func appStateFromGenesisFileFn(r io.Reader, cdc codec.JSONCodec,
 	genesisFile string) (tmtypes.GenesisDoc, []simtypes.Account) {
 	bytes, err := ioutil.ReadFile(genesisFile)
 	if err != nil {

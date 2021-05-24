@@ -7,7 +7,7 @@ import (
 
 // NewDecodeStore returns a decoder function closure that umarshals the KVPair's
 // Value to the corresponding types.
-func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
+func NewDecodeStore(cdc codec.Codec) func(kvA, kvB kv.Pair) string {
 	return func(kvA, kvB kv.Pair) string {
 		return ""
 	}

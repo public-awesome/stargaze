@@ -118,7 +118,7 @@ func (k Keeper) GetUpvote(
 	if value == nil {
 		return upvote, false, nil
 	}
-	k.cdc.MustUnmarshalBinaryBare(value, &upvote)
+	k.cdc.MustUnmarshal(value, &upvote)
 
 	return upvote, true, nil
 }
@@ -164,7 +164,7 @@ func (k Keeper) IterateUpvotes(
 
 	for ; it.Valid(); it.Next() {
 		var upvote types.Upvote
-		k.cdc.MustUnmarshalBinaryBare(it.Value(), &upvote)
+		k.cdc.MustUnmarshal(it.Value(), &upvote)
 		if cb(upvote) {
 			break
 		}

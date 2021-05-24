@@ -21,7 +21,6 @@ import (
 	curatingtypes "github.com/public-awesome/stargaze/x/curating/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	liquiditytypes "github.com/tendermint/liquidity/x/liquidity/types"
 	tmjson "github.com/tendermint/tendermint/libs/json"
 	"github.com/tendermint/tendermint/types"
 )
@@ -38,7 +37,7 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 
 	init.PostRunE = func(cmd *cobra.Command, args []string) error {
 		clientCtx := client.GetClientContextFromCmd(cmd)
-		cdc := clientCtx.JSONMarshaler
+		cdc := clientCtx.JSONCodec
 
 		serverCtx := server.GetServerContextFromCmd(cmd)
 		config := serverCtx.Config
@@ -77,7 +76,7 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 }
 
 func initGenesis(
-	cdc codec.JSONMarshaler,
+	cdc codec.JSONCodec,
 	genDoc *types.GenesisDoc,
 	stakeDenom,
 	unbondingPeriod string,
@@ -153,16 +152,16 @@ func initGenesis(
 	}
 
 	// migrate liquidity state
-	if appState[liquiditytypes.ModuleName] != nil {
-		var liquidityGenState liquiditytypes.GenesisState
-		err := cdc.UnmarshalJSON(appState[liquiditytypes.ModuleName], &liquidityGenState)
-		if err != nil {
-			return nil, err
-		}
+	// if appState[liquiditytypes.ModuleName] != nil {
+	// 	var liquidityGenState liquiditytypes.GenesisState
+	// 	err := cdc.UnmarshalJSON(appState[liquiditytypes.ModuleName], &liquidityGenState)
+	// 	if err != nil {
+	// 		return nil, err
+	// 	}
 
-		liquidityGenState.Params.LiquidityPoolCreationFee = sdk.NewCoins(sdk.NewCoin(stakeDenom, sdk.NewInt(100_000_000)))
-		appState[liquiditytypes.ModuleName] = cdc.MustMarshalJSON(&liquidityGenState)
-	}
+	// 	liquidityGenState.Params.LiquidityPoolCreationFee = sdk.NewCoins(sdk.NewCoin(stakeDenom, sdk.NewInt(100_000_000)))
+	// 	appState[liquiditytypes.ModuleName] = cdc.MustMarshalJSON(&liquidityGenState)
+	// }
 
 	return tmjson.Marshal(appState)
 }
