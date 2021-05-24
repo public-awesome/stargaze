@@ -58,3 +58,5 @@ linters-settings:
     simple: false
     range-loops: true # Report preallocation suggestions on range loops, true by default
     for-loops: true # Report preallocation suggestions on for loops, false by default
+  dupl:
+    threshold: 200

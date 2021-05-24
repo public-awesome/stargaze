@@ -84,6 +84,7 @@ func TestCreateUpvote_ExistingPost(t *testing.T) {
 	curatorBalance := app.BankKeeper.GetBalance(ctx, addrs[0], "ucredits")
 	require.Equal(t, "2000000", curatorBalance.Amount.String())
 }
+
 func TestCreateUpvote_ExpiredPost(t *testing.T) {
 	fakedenom := "fakedenom"
 	app := simapp.SetupWithStakeDenom(false, "fakedenom")
@@ -158,7 +159,7 @@ func TestCreateUpvote_ExistingUpvote(t *testing.T) {
 	postID, err := types.PostIDFromString("502")
 	require.NoError(t, err)
 	vendorID := uint32(1)
-	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(27_000_000))
+	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(9_000_000))
 
 	body := "body string"
 	bodyHash, err := types.BodyHashFromString(body)
@@ -167,9 +168,19 @@ func TestCreateUpvote_ExistingUpvote(t *testing.T) {
 	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, addrs[1], addrs[1], "", nil, "", nil)
 	require.NoError(t, err)
 
-	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5)
+	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 1)
 	require.NoError(t, err)
 
-	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 5)
-	require.Error(t, types.ErrAlreadyVoted, err)
+	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[0], addrs[0], 2)
+	require.NoError(t, err)
+
+	upvote, found, err := app.CuratingKeeper.GetUpvote(ctx, vendorID, postID, addrs[0])
+	require.NoError(t, err)
+	require.True(t, found, "upvote should be found")
+	require.Equal(t, int32(3), upvote.VoteNum)
+	require.Equal(t, "9000000ucredits", upvote.VoteAmount.String())
+
+	votingPoolAddr := app.AccountKeeper.GetModuleAddress(types.VotingPoolName)
+	votingPoolBalance := app.BankKeeper.GetBalance(ctx, votingPoolAddr, "ucredits")
+	require.Equal(t, "9000000", votingPoolBalance.Amount.String())
 }

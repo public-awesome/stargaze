@@ -17,11 +17,17 @@ type Keeper struct {
 	cdc            codec.BinaryCodec
 	stakingKeeper  types.StakingKeeper
 	curatingKeeper types.CurationKeeper
+	bankKeeper     types.BankKeeper
 	paramstore     paramtypes.Subspace
 }
 
 // NewKeeper creates a new staking Keeper instance
-func NewKeeper(cdc codec.BinaryCodec, key sdk.StoreKey, ck types.CurationKeeper, sk types.StakingKeeper,
+func NewKeeper(
+	cdc codec.BinaryCodec,
+	key sdk.StoreKey,
+	ck types.CurationKeeper,
+	sk types.StakingKeeper,
+	bk types.BankKeeper,
 	ps paramtypes.Subspace) Keeper {
 
 	keeper := Keeper{
@@ -29,6 +35,7 @@ func NewKeeper(cdc codec.BinaryCodec, key sdk.StoreKey, ck types.CurationKeeper,
 		cdc:            cdc,
 		stakingKeeper:  sk,
 		curatingKeeper: ck,
+		bankKeeper:     bk,
 		paramstore:     ps,
 	}
 	return keeper

@@ -20,13 +20,36 @@ func (k Keeper) CreateUpvote(
 		rewardAccount = curator
 	}
 
+	voteAmt := k.voteAmount(ctx, int64(voteNum))
+
 	// check if there is already an upvote
-	_, found, err := k.GetUpvote(ctx, vendorID, postID, curator)
+	upvote, found, err := k.GetUpvote(ctx, vendorID, postID, curator)
 	if err != nil {
 		return err
 	}
 	if found {
-		return types.ErrAlreadyVoted
+		voteNumNew := voteNum + upvote.VoteNum
+		voteAmtNew := k.voteAmount(ctx, int64(voteNumNew))
+
+		// shadow voteAmt with the delta
+		voteAmt = voteAmtNew.Sub(upvote.VoteAmount)
+		// every additional upvote reward goes to the original reward account
+		rewardAccount, err = sdk.AccAddressFromBech32(upvote.RewardAccount)
+		if err != nil {
+			return err
+		}
+		upvote = types.NewUpvote(
+			vendorID,
+			postID,
+			curator,
+			rewardAccount,
+			voteNumNew,
+			voteAmtNew,
+			upvote.CuratedTime,
+			ctx.BlockTime(),
+		)
+	} else {
+		upvote = types.NewUpvote(vendorID, postID, curator, rewardAccount, voteNum, voteAmt, ctx.BlockTime(), ctx.BlockTime())
 	}
 
 	// check if post exist, if not, create it and start the curation period
@@ -59,8 +82,6 @@ func (k Keeper) CreateUpvote(
 		}
 	}
 
-	voteAmt := k.voteAmount(ctx, int64(voteNum))
-
 	// update post totals
 	post.TotalVotes += uint64(voteNum)
 	post.TotalVoters++
@@ -70,7 +91,7 @@ func (k Keeper) CreateUpvote(
 	post.TotalAmount = post.TotalAmount.Add(voteAmt)
 
 	k.SetPost(ctx, post)
-	upvote := types.NewUpvote(vendorID, postID, curator, rewardAccount, voteAmt, ctx.BlockTime())
+
 	k.SetUpvote(ctx, upvote, curator)
 
 	// add vote amount to the voting pool

@@ -153,6 +153,7 @@ var (
 		curatingtypes.ModuleName:     nil,
 		curatingtypes.RewardPoolName: {authtypes.Minter, authtypes.Burner},
 		curatingtypes.VotingPoolName: {authtypes.Minter, authtypes.Burner},
+		staketypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
 	}
 )
 
@@ -354,7 +355,13 @@ func NewSimApp(
 		appCodec, keys[curatingtypes.StoreKey], app.AccountKeeper, app.BankKeeper, app.GetSubspace(usertypes.ModuleName))
 
 	app.StakeKeeper = stakekeeper.NewKeeper(
-		appCodec, keys[staketypes.StoreKey], app.CuratingKeeper, app.StakingKeeper, app.GetSubspace(staketypes.ModuleName))
+		appCodec,
+		keys[staketypes.StoreKey],
+		app.CuratingKeeper,
+		app.StakingKeeper,
+		app.BankKeeper,
+		app.GetSubspace(staketypes.ModuleName),
+	)
 
 	/****  Module Options ****/
 
