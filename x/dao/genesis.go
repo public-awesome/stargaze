@@ -8,7 +8,13 @@ import (
 
 // InitGenesis initializes the dao module's state from a provided genesis
 // state.
-func InitGenesis(ctx sdk.Context, k keeper.Keeper, dk types.DistKeeper, bk types.BankKeeper, genState types.GenesisState) {
+func InitGenesis(
+	ctx sdk.Context,
+	k keeper.Keeper,
+	dk types.DistKeeper,
+	bk types.BankKeeper,
+	genState types.GenesisState) {
+
 	funder, err := sdk.AccAddressFromBech32(genState.Params.Funder)
 	if err != nil {
 		panic(err)
