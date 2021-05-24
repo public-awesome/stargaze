@@ -1,42 +1,28 @@
 package types
 
-import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
-)
-
 // Default parameter namespace
 const (
-	DefaultParamspace    string = ModuleName
-	DefaultGenesisSender string = "stars1czlu4tvr3dg3ksuf8zak87eafztr2u004zyh5a"
-	DefaultStakeDenom    string = "ustarx"
-)
-
-// Default vars
-var (
-	DefaultGenesisAllocation = sdk.NewInt64Coin(DefaultStakeDenom, 300_000_000_000_000)
+	DefaultParamspace string = ModuleName
+	DefaultFunder     string = "stars1czlu4tvr3dg3ksuf8zak87eafztr2u004zyh5a"
 )
 
 // Parameter store keys
 var (
-	KeyGenesisAllocation = []byte("GenesisAllocation")
-	KeyGenesisSender     = []byte("GenesisSender")
+	KeyFunder = []byte("Funder")
 )
 
 // NewParams creates a new Params object
 func NewParams(
-	genesisAllocation sdk.Coin,
-	genesisSender string,
+	funder string,
 ) Params {
 	return Params{
-		GenesisAllocation: genesisAllocation,
-		GenesisSender:     genesisSender,
+		Funder: funder,
 	}
 }
 
 // DefaultParams defines the parameters for this module
 func DefaultParams() Params {
 	return NewParams(
-		DefaultGenesisAllocation,
-		DefaultGenesisSender,
+		DefaultFunder,
 	)
 }
