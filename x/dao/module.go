@@ -107,17 +107,20 @@ type AppModule struct {
 
 	keeper     keeper.Keeper
 	distKeeper types.DistKeeper
+	bankKeeper types.BankKeeper
 }
 
 func NewAppModule(
 	cdc codec.Marshaler,
 	keeper keeper.Keeper,
-	dk types.DistKeeper) AppModule {
+	dk types.DistKeeper,
+	bk types.BankKeeper) AppModule {
 
 	return AppModule{
 		AppModuleBasic: NewAppModuleBasic(cdc),
 		keeper:         keeper,
 		distKeeper:     dk,
+		bankKeeper:     bk,
 	}
 }
 
@@ -155,7 +158,7 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONMarshaler, gs jso
 	// Initialize global index to index in genesis state
 	cdc.MustUnmarshalJSON(gs, &genState)
 
-	InitGenesis(ctx, am.keeper, am.distKeeper, genState)
+	InitGenesis(ctx, am.keeper, am.distKeeper, am.bankKeeper, genState)
 
 	return []abci.ValidatorUpdate{}
 }
