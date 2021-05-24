@@ -15,7 +15,10 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, dk types.DistKeeper, genState
 		panic(err)
 	}
 
-	dk.FundCommunityPool(ctx, amount, sender)
+	err = dk.FundCommunityPool(ctx, amount, sender)
+	if err != nil {
+		panic(err)
+	}
 
 	// this line is used by starport scaffolding # genesis/module/init
 
