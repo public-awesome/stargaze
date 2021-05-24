@@ -15,9 +15,11 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, dk types.DistKeeper, bk types
 	}
 	daoFund := bk.GetAllBalances(ctx, funder)
 
-	err = dk.FundCommunityPool(ctx, daoFund, funder)
-	if err != nil {
-		panic(err)
+	if !daoFund.Empty() {
+		err = dk.FundCommunityPool(ctx, daoFund, funder)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	// this line is used by starport scaffolding # genesis/module/init
