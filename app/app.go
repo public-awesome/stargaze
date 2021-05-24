@@ -291,7 +291,7 @@ func NewStargazeApp(
 		minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
-		// Stargaze Stores`
+		// Stargaze Stores
 		curatingtypes.StoreKey,
 		usertypes.StoreKey,
 		faucet.StoreKey,
