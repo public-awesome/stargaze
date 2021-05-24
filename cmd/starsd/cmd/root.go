@@ -181,7 +181,7 @@ func newApp(logger log.Logger, db dbm.DB,
 		logger, db, traceStore, true, skipUpgradeHeights,
 		cast.ToString(appOpts.Get(flags.FlagHome)),
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
-		//stargaze.GetEnabledProposals(),
+		// stargaze.GetEnabledProposals(),
 		stargaze.MakeEncodingConfig(), // Ideally, we would reuse the one created by NewRootCmd.
 		appOpts,
 		baseapp.SetPruning(pruningOpts),
@@ -221,7 +221,7 @@ func createSimappAndExport(
 		StargazeApp = stargaze.NewStargazeApp(logger, db, traceStore,
 			true, map[int64]bool{}, "",
 			uint(1),
-			//stargaze.GetEnabledProposals(),
+			// stargaze.GetEnabledProposals(),
 			encCfg, appOpts)
 	}
 

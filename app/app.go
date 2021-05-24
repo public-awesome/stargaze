@@ -349,7 +349,8 @@ func NewStargazeApp(
 		app.GetSubspace(crisistypes.ModuleName), invCheckPeriod, app.BankKeeper, authtypes.FeeCollectorName,
 	)
 	app.FeeGrantKeeper = feegrantkeeper.NewKeeper(appCodec, keys[feegranttypes.StoreKey], app.AccountKeeper)
-	app.UpgradeKeeper = upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec, homePath, app.BaseApp)
+	app.UpgradeKeeper = upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey],
+		appCodec, homePath, app.BaseApp)
 
 	// register the proposal types
 	govRouter := govtypes.NewRouter()
@@ -370,7 +371,8 @@ func NewStargazeApp(
 
 	// Create IBC Keeper
 	app.IBCKeeper = ibckeeper.NewKeeper(
-		appCodec, keys[ibchost.StoreKey], app.GetSubspace(ibchost.ModuleName), app.StakingKeeper, app.UpgradeKeeper, scopedIBCKeeper,
+		appCodec, keys[ibchost.StoreKey], app.GetSubspace(ibchost.ModuleName),
+		app.StakingKeeper, app.UpgradeKeeper, scopedIBCKeeper,
 	)
 
 	// Create Transfer Keepers
@@ -495,7 +497,7 @@ func NewStargazeApp(
 		user.NewAppModule(appCodec, app.UserKeeper),
 		faucet.NewAppModule(app.FaucetKeeper),
 		stake.NewAppModule(appCodec, app.StakeKeeper, app.CuratingKeeper, app.StakingKeeper),
-		//liquidity.NewAppModule(appCodec, app.LiquidityKeeper, app.AccountKeeper, app.BankKeeper),
+		// liquidity.NewAppModule(appCodec, app.LiquidityKeeper, app.AccountKeeper, app.BankKeeper),
 		// wasm.NewAppModule(&app.wasmKeeper, app.StakingKeeper),
 	)
 
@@ -509,7 +511,7 @@ func NewStargazeApp(
 		curatingtypes.ModuleName,
 		distrtypes.ModuleName, slashingtypes.ModuleName,
 		evidencetypes.ModuleName, stakingtypes.ModuleName, ibchost.ModuleName,
-		//liquiditytypes.ModuleName,
+		// liquiditytypes.ModuleName,
 	)
 	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName,
 		stakingtypes.ModuleName, curatingtypes.ModuleName,
@@ -534,7 +536,7 @@ func NewStargazeApp(
 		usertypes.ModuleName,
 		staketypes.ModuleName,
 		// liquiditytypes.ModuleName,
-		//wasm.ModuleName,
+		// wasm.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -562,8 +564,8 @@ func NewStargazeApp(
 		evidence.NewAppModule(app.EvidenceKeeper),
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
-		//liquidity.NewAppModule(appCodec, app.LiquidityKeeper, app.AccountKeeper, app.BankKeeper),
-		//wasm.NewAppModule(&app.wasmKeeper, app.StakingKeeper),
+		// liquidity.NewAppModule(appCodec, app.LiquidityKeeper, app.AccountKeeper, app.BankKeeper),
+		// wasm.NewAppModule(&app.wasmKeeper, app.StakingKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()
@@ -610,7 +612,7 @@ func NewStargazeApp(
 
 	app.ScopedIBCKeeper = scopedIBCKeeper
 	app.ScopedTransferKeeper = scopedTransferKeeper
-	//app.scopedWasmKeeper = scopedWasmKeeper
+	// app.scopedWasmKeeper = scopedWasmKeeper
 
 	return app
 }
@@ -788,8 +790,8 @@ func initParamsKeeper(appCodec codec.BinaryCodec,
 	paramsKeeper.Subspace(curatingtypes.ModuleName)
 	paramsKeeper.Subspace(usertypes.ModuleName)
 	paramsKeeper.Subspace(staketypes.ModuleName)
-	//paramsKeeper.Subspace(liquiditytypes.ModuleName)
-	//paramsKeeper.Subspace(wasm.ModuleName)
+	// paramsKeeper.Subspace(liquiditytypes.ModuleName)
+	// paramsKeeper.Subspace(wasm.ModuleName)
 
 	return paramsKeeper
 }
