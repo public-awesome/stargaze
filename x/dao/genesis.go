@@ -28,6 +28,7 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, dk types.DistKeeper, genState
 // ExportGenesis returns the dao module's exported genesis.
 func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis := types.DefaultGenesis()
+	genesis.Params.GenesisAllocation = sdk.NewCoin(types.DefaultStakeDenom, sdk.ZeroInt())
 
 	// this line is used by starport scaffolding # genesis/module/export
 
