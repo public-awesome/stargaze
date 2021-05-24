@@ -90,6 +90,7 @@ import (
 	"github.com/public-awesome/stargaze/x/curating"
 	curatingkeeper "github.com/public-awesome/stargaze/x/curating/keeper"
 	curatingtypes "github.com/public-awesome/stargaze/x/curating/types"
+	"github.com/public-awesome/stargaze/x/dao"
 
 	"github.com/public-awesome/stargaze/x/user"
 	userkeeper "github.com/public-awesome/stargaze/x/user/keeper"
@@ -102,6 +103,8 @@ import (
 
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
 	feegrantkeeper "github.com/cosmos/cosmos-sdk/x/feegrant/keeper"
+	daokeeper "github.com/public-awesome/stargaze/x/dao/keeper"
+	daotypes "github.com/public-awesome/stargaze/x/dao/types"
 )
 
 const appName = "StargazeApp"
@@ -168,8 +171,7 @@ var (
 		user.AppModuleBasic{},
 		faucet.AppModuleBasic{},
 		stake.AppModuleBasic{},
-		// liquidity.AppModuleBasic{},
-		// wasm.AppModuleBasic{},
+		dao.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -233,6 +235,7 @@ type StargazeApp struct {
 	UserKeeper     userkeeper.Keeper
 	FaucetKeeper   faucet.Keeper
 	StakeKeeper    stakekeeper.Keeper
+	daoKeeper      daokeeper.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
@@ -291,8 +294,7 @@ func NewStargazeApp(
 		usertypes.StoreKey,
 		faucet.StoreKey,
 		staketypes.StoreKey,
-		// liquiditytypes.StoreKey,
-		// wasm.StoreKey,
+		daotypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -427,6 +429,11 @@ func NewStargazeApp(
 	// 	appCodec, keys[liquiditytypes.StoreKey], app.GetSubspace(liquiditytypes.ModuleName),
 	// 	app.BankKeeper, app.AccountKeeper,
 	// )
+	app.daoKeeper = daokeeper.NewKeeper(
+		appCodec,
+		keys[daotypes.StoreKey],
+		memKeys[daotypes.StoreKey],
+	)
 
 	app.IBCKeeper.SetRouter(ibcRouter)
 
@@ -497,8 +504,7 @@ func NewStargazeApp(
 		user.NewAppModule(appCodec, app.UserKeeper),
 		faucet.NewAppModule(app.FaucetKeeper),
 		stake.NewAppModule(appCodec, app.StakeKeeper, app.CuratingKeeper, app.StakingKeeper),
-		// liquidity.NewAppModule(appCodec, app.LiquidityKeeper, app.AccountKeeper, app.BankKeeper),
-		// wasm.NewAppModule(&app.wasmKeeper, app.StakingKeeper),
+		dao.NewAppModule(appCodec, app.daoKeeper, app.DistrKeeper, app.BankKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -535,8 +541,7 @@ func NewStargazeApp(
 		curatingtypes.ModuleName,
 		usertypes.ModuleName,
 		staketypes.ModuleName,
-		// liquiditytypes.ModuleName,
-		// wasm.ModuleName,
+		daotypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -790,6 +795,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec,
 	paramsKeeper.Subspace(curatingtypes.ModuleName)
 	paramsKeeper.Subspace(usertypes.ModuleName)
 	paramsKeeper.Subspace(staketypes.ModuleName)
+	paramsKeeper.Subspace(daotypes.ModuleName)
 	// paramsKeeper.Subspace(liquiditytypes.ModuleName)
 	// paramsKeeper.Subspace(wasm.ModuleName)
 

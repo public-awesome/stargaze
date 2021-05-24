@@ -179,3 +179,60 @@ func (msg MsgBuyCreatorCoin) ValidateBasic() error {
 	}
 	return nil
 }
+
+// NewMsgSellCreatorCoin creates a new NewMsgSellCreatorCoin instance
+func NewMsgSellCreatorCoin(
+	username string,
+	creator sdk.AccAddress,
+	seller sdk.AccAddress,
+	validator sdk.ValAddress,
+	amount sdk.Int,
+) *MsgSellCreatorCoin {
+	return &MsgSellCreatorCoin{
+		Username:  username,
+		Creator:   creator.String(),
+		Seller:    seller.String(),
+		Validator: validator.String(),
+		Amount:    amount,
+	}
+}
+
+// Route implements sdk.Msg
+func (msg MsgSellCreatorCoin) Route() string { return RouterKey }
+
+// Type implements sdk.Msg
+func (msg MsgSellCreatorCoin) Type() string { return TypeMsgStake }
+
+// GetSigners implements sdk.Msg
+func (msg MsgSellCreatorCoin) GetSigners() []sdk.AccAddress {
+	seller, err := sdk.AccAddressFromBech32(msg.Seller)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{seller}
+}
+
+// GetSignBytes gets the bytes for the message signer to sign on
+func (msg MsgSellCreatorCoin) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+}
+
+// ValidateBasic validity check for the AnteHandler
+func (msg MsgSellCreatorCoin) ValidateBasic() error {
+	if len(strings.TrimSpace(msg.Username)) <= 3 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "username too short")
+	}
+	if strings.TrimSpace(msg.Creator) == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty creator")
+	}
+	if strings.TrimSpace(msg.Seller) == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty seller")
+	}
+	if strings.TrimSpace(msg.Validator) == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "empty validator")
+	}
+	if !msg.Amount.IsPositive() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount")
+	}
+	return nil
+}

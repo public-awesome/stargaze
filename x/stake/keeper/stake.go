@@ -99,6 +99,63 @@ func (k Keeper) PerformBuyCreatorCoin(
 	return nil
 }
 
+// SellCreatorCoin undelegates an amount from a validator and disassociates a post
+func (k Keeper) PerformSellCreatorCoin(
+	ctx sdk.Context,
+	username string,
+	creator sdk.AccAddress,
+	seller sdk.AccAddress,
+	valAddr sdk.ValAddress,
+	amount sdk.Int) error {
+
+	coin := sdk.NewCoin(fmt.Sprintf("cc/%s/%s", username, creator.String()), amount)
+
+	stake, found, err := k.GetStake(ctx, 0, curatingtypes.PostID{}, seller)
+	if err != nil {
+		return err
+	}
+	if !found {
+		return types.ErrStaketNotFound
+	}
+	if amount.GT(stake.Amount) {
+		return types.ErrAmountTooLarge
+	}
+
+	_, err = k.stakingKeeper.Undelegate(ctx, seller, valAddr, amount.ToDec())
+	if err != nil {
+		return err
+	}
+
+	amt := stake.Amount.Sub(amount)
+	if amt.Equal(sdk.ZeroInt()) {
+		k.deleteStake(ctx, 0, curatingtypes.PostID{}, seller)
+	} else {
+		stake = types.NewStake(0, curatingtypes.PostID{}, seller, valAddr, amt)
+		k.SetStake(ctx, seller, stake)
+	}
+
+	if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, seller, types.ModuleName, sdk.NewCoins(coin)); err != nil {
+		panic(
+			fmt.Sprintf(
+				"unable to send coins from account to module  despite previously burning coins from account: %v",
+				err),
+		)
+	}
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypeSellCreatorCoin,
+			sdk.NewAttribute(types.AttributeKeyUsername, username),
+			sdk.NewAttribute(types.AttributeKeyCreator, creator.String()),
+			sdk.NewAttribute(types.AttributeKeySeller, seller.String()),
+			sdk.NewAttribute(types.AttributeKeyValidator, valAddr.String()),
+			sdk.NewAttribute(types.AttributeKeyAmount, amount.String()),
+		),
+	})
+
+	return nil
+}
+
 // PerformStake delegates an amount to a validator and associates a post
 func (k Keeper) PerformStake(ctx sdk.Context, vendorID uint32, postID curatingtypes.PostID, delAddr sdk.AccAddress,
 	valAddr sdk.ValAddress, amount sdk.Int) error {
