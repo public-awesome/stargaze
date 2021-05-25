@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package stargaze.curating.v1beta1;
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/public-awesome/stargaze/x/curating/types";
+
+// UpvoteAuthorization allows the grantee to spend up to spend_limit coins from
+// the granter's account.
+message UpvoteAuthorization {
+  option (cosmos_proto.implements_interface) = "Authorization";
+
+  uint32  DailyUpvoteLimit = 1;
+}

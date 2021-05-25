@@ -101,6 +101,9 @@ import (
 	stakekeeper "github.com/public-awesome/stargaze/x/stake/keeper"
 	staketypes "github.com/public-awesome/stargaze/x/stake/types"
 
+	"github.com/cosmos/cosmos-sdk/x/authz"
+	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
+	authzmodule "github.com/cosmos/cosmos-sdk/x/authz/module"
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
 	feegrantkeeper "github.com/cosmos/cosmos-sdk/x/feegrant/keeper"
 	daokeeper "github.com/public-awesome/stargaze/x/dao/keeper"
@@ -163,6 +166,7 @@ var (
 		ibc.AppModuleBasic{},
 		upgrade.AppModuleBasic{},
 		evidence.AppModuleBasic{},
+		authzmodule.AppModuleBasic{},
 		transfer.AppModuleBasic{},
 		vesting.AppModuleBasic{},
 
@@ -229,6 +233,7 @@ type StargazeApp struct {
 	EvidenceKeeper   evidencekeeper.Keeper
 	TransferKeeper   ibctransferkeeper.Keeper
 	FeeGrantKeeper   feegrantkeeper.Keeper
+	AuthzKeeper      authzkeeper.Keeper
 
 	// Stargaze Keepers
 	CuratingKeeper curatingkeeper.Keeper
@@ -289,6 +294,7 @@ func NewStargazeApp(
 		minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey, feegranttypes.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
+		authzkeeper.StoreKey,
 		// Stargaze Stores
 		curatingtypes.StoreKey,
 		usertypes.StoreKey,
@@ -371,6 +377,7 @@ func NewStargazeApp(
 		stakingtypes.NewMultiStakingHooks(app.DistrKeeper.Hooks(), app.SlashingKeeper.Hooks()),
 	)
 
+	app.AuthzKeeper = authzkeeper.NewKeeper(keys[authzkeeper.StoreKey], appCodec, app.BaseApp.MsgServiceRouter())
 	// Create IBC Keeper
 	app.IBCKeeper = ibckeeper.NewKeeper(
 		appCodec, keys[ibchost.StoreKey], app.GetSubspace(ibchost.ModuleName),
@@ -498,6 +505,7 @@ func NewStargazeApp(
 		evidence.NewAppModule(app.EvidenceKeeper),
 		ibc.NewAppModule(app.IBCKeeper),
 		params.NewAppModule(app.ParamsKeeper),
+		authzmodule.NewAppModule(appCodec, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 		transferModule,
 		// StargazeModules
 		curating.NewAppModule(appCodec, app.CuratingKeeper, app.AccountKeeper, app.BankKeeper),
@@ -536,7 +544,7 @@ func NewStargazeApp(
 		minttypes.ModuleName, crisistypes.ModuleName,
 		ibchost.ModuleName, genutiltypes.ModuleName,
 		evidencetypes.ModuleName, ibctransfertypes.ModuleName,
-		feegranttypes.ModuleName,
+		authz.ModuleName, feegranttypes.ModuleName,
 		// stargaze init genesis
 		curatingtypes.ModuleName,
 		usertypes.ModuleName,
@@ -567,6 +575,7 @@ func NewStargazeApp(
 		slashing.NewAppModule(appCodec, app.SlashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 		params.NewAppModule(app.ParamsKeeper),
 		evidence.NewAppModule(app.EvidenceKeeper),
+		authzmodule.NewAppModule(appCodec, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
 		// liquidity.NewAppModule(appCodec, app.LiquidityKeeper, app.AccountKeeper, app.BankKeeper),

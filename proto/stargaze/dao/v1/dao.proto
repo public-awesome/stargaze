@@ -7,10 +7,9 @@ option go_package = "github.com/public-awesome/stargaze/x/dao/types";
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
 
-message Params {  
-    string funder = 1 [
-        (gogoproto.moretags) = "yaml:\"funder\"",
-        (gogoproto.jsontag) = "funder"
-    ];  
+message Params {
+  string funder = 1 [
+    (gogoproto.moretags) = "yaml:\"funder\"",
+    (gogoproto.jsontag) = "funder"
+  ];
 }
-  

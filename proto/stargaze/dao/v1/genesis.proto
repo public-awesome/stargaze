@@ -11,8 +11,8 @@ import "stargaze/dao/v1/dao.proto";
 
 // GenesisState defines the dao module's genesis state.
 message GenesisState {
-    Params params = 1 [ (gogoproto.nullable) = false ];
+  Params params = 1 [ (gogoproto.nullable) = false ];
 
-    // this line is used by starport scaffolding # genesis/proto/state
-    // this line is used by starport scaffolding # ibc/genesis/proto
+  // this line is used by starport scaffolding # genesis/proto/state
+  // this line is used by starport scaffolding # ibc/genesis/proto
 }
