@@ -40,6 +40,15 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	}
 }
 
+// Validate validates all params
+func (p Params) Validate() error {
+	if err := validateFunder(p.Funder); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func validateFunder(i interface{}) error {
 	v, ok := i.(string)
 	if !ok {
