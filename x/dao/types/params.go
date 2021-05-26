@@ -1,5 +1,11 @@
 package types
 
+import (
+	fmt "fmt"
+
+	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
+)
+
 // Default parameter namespace
 const (
 	DefaultParamspace string = ModuleName
@@ -25,4 +31,24 @@ func DefaultParams() Params {
 	return NewParams(
 		DefaultFunder,
 	)
+}
+
+// ParamSetPairs - Implements params.ParamSet
+func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
+	return paramtypes.ParamSetPairs{
+		paramtypes.NewParamSetPair(KeyFunder, &p.Funder, validateFunder),
+	}
+}
+
+func validateFunder(i interface{}) error {
+	v, ok := i.(string)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
+	if len(v) == 0 {
+		return fmt.Errorf("funder can't be empty")
+	}
+
+	return nil
 }

@@ -7,6 +7,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/public-awesome/stargaze/x/dao/types"
 	// this line is used by starport scaffolding # ibc/keeper/import
 )
@@ -18,6 +19,7 @@ type (
 		memKey     sdk.StoreKey
 		bankKeeper types.BankKeeper
 		distKeeper types.DistKeeper
+		paramstore paramtypes.Subspace
 		// this line is used by starport scaffolding # ibc/keeper/attribute
 	}
 )
@@ -28,6 +30,7 @@ func NewKeeper(
 	memKey sdk.StoreKey,
 	bankKeeper types.BankKeeper,
 	distKeeper types.DistKeeper,
+	ps paramtypes.Subspace,
 	// this line is used by starport scaffolding # ibc/keeper/parameter
 ) Keeper {
 	return Keeper{
@@ -36,6 +39,7 @@ func NewKeeper(
 		memKey:     memKey,
 		bankKeeper: bankKeeper,
 		distKeeper: distKeeper,
+		paramstore: ps,
 		// this line is used by starport scaffolding # ibc/keeper/return
 	}
 }

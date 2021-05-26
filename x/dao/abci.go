@@ -15,11 +15,11 @@ import (
 func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyEndBlocker)
 
-	// funder, err := sdk.AccAddressFromBech32(genState.Params.Funder)
+	// funder, err := sdk.AccAddressFromBech32(k.GetParams(ctx).Funder)
 	// if err != nil {
 	// 	panic(err)
 	// }
-	// daoFund := bk.GetAllBalances(ctx, funder)
+	// availableFunds := bk.GetAllBalances(ctx, funder)
 
 	// if !daoFund.Empty() {
 	// 	err = dk.FundCommunityPool(ctx, daoFund, funder)
