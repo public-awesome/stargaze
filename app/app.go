@@ -435,6 +435,9 @@ func NewStargazeApp(
 		appCodec,
 		keys[daotypes.StoreKey],
 		memKeys[daotypes.StoreKey],
+		app.BankKeeper,
+		app.DistrKeeper,
+		app.GetSubspace(daotypes.ModuleName),
 	)
 
 	// just re-use the full router - do we want to limit this more?
