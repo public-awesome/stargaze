@@ -15,18 +15,7 @@ func InitGenesis(
 	bk types.BankKeeper,
 	genState types.GenesisState) {
 
-	funder, err := sdk.AccAddressFromBech32(genState.Params.Funder)
-	if err != nil {
-		panic(err)
-	}
-	daoFund := bk.GetAllBalances(ctx, funder)
-
-	if !daoFund.Empty() {
-		err = dk.FundCommunityPool(ctx, daoFund, funder)
-		if err != nil {
-			panic(err)
-		}
-	}
+	k.SetParams(ctx, genState.Params)
 
 	// this line is used by starport scaffolding # genesis/module/init
 

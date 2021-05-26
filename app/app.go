@@ -435,6 +435,9 @@ func NewStargazeApp(
 		appCodec,
 		keys[daotypes.StoreKey],
 		memKeys[daotypes.StoreKey],
+		app.BankKeeper,
+		app.DistrKeeper,
+		app.GetSubspace(daotypes.ModuleName),
 	)
 
 	// just re-use the full router - do we want to limit this more?
@@ -521,8 +524,13 @@ func NewStargazeApp(
 		evidencetypes.ModuleName, stakingtypes.ModuleName, ibchost.ModuleName,
 		liquiditytypes.ModuleName,
 	)
-	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName,
-		stakingtypes.ModuleName, curatingtypes.ModuleName, liquiditytypes.ModuleName,
+	app.mm.SetOrderEndBlockers(
+		crisistypes.ModuleName,
+		govtypes.ModuleName,
+		stakingtypes.ModuleName,
+		curatingtypes.ModuleName,
+		liquiditytypes.ModuleName,
+		daotypes.ModuleName,
 	)
 
 	// NOTE: The genutils moodule must occur after staking so that pools are
@@ -789,6 +797,7 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler,
 	paramsKeeper.Subspace(staketypes.ModuleName)
 	paramsKeeper.Subspace(liquiditytypes.ModuleName)
 	paramsKeeper.Subspace(wasm.ModuleName)
+	paramsKeeper.Subspace(daotypes.ModuleName)
 
 	return paramsKeeper
 }
