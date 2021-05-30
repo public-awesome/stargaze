@@ -108,6 +108,10 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	daokeeper "github.com/public-awesome/stargaze/x/dao/keeper"
 	daotypes "github.com/public-awesome/stargaze/x/dao/types"
+
+	"github.com/cosmos/gravity-bridge/module/x/gravity"
+	gravitykeeper "github.com/cosmos/gravity-bridge/module/x/gravity/keeper"
+	gravitytypes "github.com/cosmos/gravity-bridge/module/x/gravity/types"
 )
 
 const appName = "StargazeApp"
@@ -177,6 +181,7 @@ var (
 		liquidity.AppModuleBasic{},
 		wasm.AppModuleBasic{},
 		dao.AppModuleBasic{},
+		gravity.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -195,6 +200,7 @@ var (
 		faucet.ModuleName:            {authtypes.Minter, authtypes.Burner},
 		liquiditytypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		staketypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
+		gravitytypes.ModuleName:      {authtypes.Minter, authtypes.Burner},
 	}
 )
 
@@ -234,6 +240,7 @@ type StargazeApp struct {
 	IBCKeeper        *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
 	EvidenceKeeper   evidencekeeper.Keeper
 	TransferKeeper   ibctransferkeeper.Keeper
+	gravityKeeper    gravitykeeper.Keeper
 
 	// Stargaze Keepers
 	CuratingKeeper curatingkeeper.Keeper
@@ -299,6 +306,7 @@ func NewStargazeApp(
 		liquiditytypes.StoreKey,
 		wasm.StoreKey,
 		daotypes.StoreKey,
+		gravitytypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -470,6 +478,15 @@ func NewStargazeApp(
 	}
 	app.IBCKeeper.SetRouter(ibcRouter)
 
+	app.gravityKeeper = gravitykeeper.NewKeeper(
+		appCodec,
+		keys[gravitytypes.StoreKey],
+		app.GetSubspace(gravitytypes.ModuleName),
+		stakingKeeper,
+		app.BankKeeper,
+		app.SlashingKeeper,
+	)
+
 	/****  Module Options ****/
 
 	// NOTE: we may consider parsing `appOpts` inside module constructors. For the moment
@@ -507,6 +524,10 @@ func NewStargazeApp(
 		liquidity.NewAppModule(appCodec, app.LiquidityKeeper, app.AccountKeeper, app.BankKeeper),
 		wasm.NewAppModule(&app.wasmKeeper, app.StakingKeeper),
 		dao.NewAppModule(appCodec, app.daoKeeper, app.DistrKeeper, app.BankKeeper),
+		gravity.NewAppModule(
+			app.gravityKeeper,
+			app.BankKeeper,
+		),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -521,8 +542,13 @@ func NewStargazeApp(
 		evidencetypes.ModuleName, stakingtypes.ModuleName, ibchost.ModuleName,
 		liquiditytypes.ModuleName,
 	)
-	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName,
-		stakingtypes.ModuleName, curatingtypes.ModuleName, liquiditytypes.ModuleName,
+	app.mm.SetOrderEndBlockers(
+		crisistypes.ModuleName,
+		govtypes.ModuleName,
+		stakingtypes.ModuleName,
+		curatingtypes.ModuleName,
+		liquiditytypes.ModuleName,
+		gravitytypes.ModuleName,
 	)
 
 	// NOTE: The genutils moodule must occur after staking so that pools are
@@ -531,12 +557,19 @@ func NewStargazeApp(
 	// so that other modules that want to create or claim capabilities afterwards in InitChain
 	// can do so safely.
 	app.mm.SetOrderInitGenesis(
-		capabilitytypes.ModuleName, authtypes.ModuleName, banktypes.ModuleName,
-		distrtypes.ModuleName, stakingtypes.ModuleName,
-		slashingtypes.ModuleName, govtypes.ModuleName,
-		minttypes.ModuleName, crisistypes.ModuleName,
-		ibchost.ModuleName, genutiltypes.ModuleName,
-		evidencetypes.ModuleName, ibctransfertypes.ModuleName,
+		capabilitytypes.ModuleName,
+		authtypes.ModuleName,
+		banktypes.ModuleName,
+		distrtypes.ModuleName,
+		stakingtypes.ModuleName,
+		slashingtypes.ModuleName,
+		govtypes.ModuleName,
+		minttypes.ModuleName,
+		crisistypes.ModuleName,
+		ibchost.ModuleName,
+		genutiltypes.ModuleName,
+		evidencetypes.ModuleName,
+		ibctransfertypes.ModuleName,
 		// stargaze init genesis
 		curatingtypes.ModuleName,
 		usertypes.ModuleName,
@@ -544,6 +577,7 @@ func NewStargazeApp(
 		liquiditytypes.ModuleName,
 		wasm.ModuleName,
 		daotypes.ModuleName,
+		gravitytypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -789,6 +823,7 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler,
 	paramsKeeper.Subspace(staketypes.ModuleName)
 	paramsKeeper.Subspace(liquiditytypes.ModuleName)
 	paramsKeeper.Subspace(wasm.ModuleName)
+	paramsKeeper.Subspace(gravitytypes.ModuleName)
 
 	return paramsKeeper
 }
