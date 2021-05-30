@@ -32,6 +32,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	stargaze "github.com/public-awesome/stargaze/app"
 	"github.com/public-awesome/stargaze/app/params"
+
+	gravitycmd "github.com/cosmos/gravity-bridge/module/cmd/gravity/cmd"
 )
 
 // NewRootCmd creates a new root command for simd. It is called once in the
@@ -75,8 +77,13 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		InitCmd(stargaze.ModuleBasics, stargaze.DefaultNodeHome),
 		genutilcli.CollectGenTxsCmd(banktypes.GenesisBalancesIterator{}, stargaze.DefaultNodeHome),
 		genutilcli.MigrateGenesisCmd(),
-		genutilcli.GenTxCmd(stargaze.ModuleBasics, encodingConfig.TxConfig,
-			banktypes.GenesisBalancesIterator{}, stargaze.DefaultNodeHome),
+		// genutilcli.GenTxCmd(stargaze.ModuleBasics, encodingConfig.TxConfig,
+		// 	banktypes.GenesisBalancesIterator{}, stargaze.DefaultNodeHome),
+		gravitycmd.GenTxCmd(
+			stargaze.ModuleBasics,
+			encodingConfig.TxConfig,
+			banktypes.GenesisBalancesIterator{},
+			stargaze.DefaultNodeHome),
 		genutilcli.ValidateGenesisCmd(stargaze.ModuleBasics),
 		AddGenesisAccountCmd(stargaze.DefaultNodeHome),
 		tmcli.NewCompletionCmd(rootCmd, true),
