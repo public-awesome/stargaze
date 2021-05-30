@@ -77,8 +77,6 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		InitCmd(stargaze.ModuleBasics, stargaze.DefaultNodeHome),
 		genutilcli.CollectGenTxsCmd(banktypes.GenesisBalancesIterator{}, stargaze.DefaultNodeHome),
 		genutilcli.MigrateGenesisCmd(),
-		// genutilcli.GenTxCmd(stargaze.ModuleBasics, encodingConfig.TxConfig,
-		// 	banktypes.GenesisBalancesIterator{}, stargaze.DefaultNodeHome),
 		gravitycmd.GenTxCmd(
 			stargaze.ModuleBasics,
 			encodingConfig.TxConfig,
@@ -99,6 +97,7 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		queryCommand(),
 		txCommand(),
 		keys.Commands(stargaze.DefaultNodeHome),
+		gravitycmd.Commands(stargaze.DefaultNodeHome),
 	)
 }
 
