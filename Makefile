@@ -84,15 +84,13 @@ endif
 all: install
 
 create-wallet:
-	./bin/starsd keys add validator --keyring-backend test
+	./bin/starsd keys add validator --keyring-backend test 2>> val-phrase
 	./bin/starsd keys add user1 --keyring-backend test
 	./bin/starsd keys add dao --keyring-backend test --pubkey starspub1addwnpepqfqzrt4mzg8e6w0ltk557ysys3dl6vf40lfkqrlpmz0m83xs5fgjy42tt8y
 
 reset: clean create-wallet init
 clean:
-	rm -rf $(HOME)/.starsd/config
-	rm -rf $(HOME)/.starsd/data
-	rm -rf $(HOME)/.starsd/keyring-test
+	rm -rf $(HOME)/.starsd
 
 init:
 	./bin/starsd init stargaze --stake-denom $(STAKE_DENOM) --chain-id localnet-1
