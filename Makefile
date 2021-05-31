@@ -84,7 +84,7 @@ endif
 all: install
 
 create-wallet:
-	./bin/starsd keys add validator --keyring-backend test 2>> val-phrase
+	./bin/starsd keys add validator --keyring-backend test 2> val-phrase
 	./bin/starsd keys add user1 --keyring-backend test
 	./bin/starsd keys add dao --keyring-backend test --pubkey starspub1addwnpepqfqzrt4mzg8e6w0ltk557ysys3dl6vf40lfkqrlpmz0m83xs5fgjy42tt8y
 
@@ -108,6 +108,9 @@ start:
 
 build:
 	go build $(BUILD_FLAGS) -o bin/starsd ./cmd/starsd
+
+setup-gravity:
+	RUST_LOG=trace gbt -a stars keys register-orchestrator-address --validator-phrase "$(shell sed '6!d' val-phrase)" --fees=125000$(STAKE_DENOM)
 
 go.sum: go.mod
 	@echo "--> Ensure dependencies have not been modified"
