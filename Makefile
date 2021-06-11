@@ -110,7 +110,7 @@ build:
 	go build $(BUILD_FLAGS) -o bin/starsd ./cmd/starsd
 
 setup-gravity:
-	RUST_LOG=trace gbt -a stars keys register-orchestrator-address --validator-phrase "$(shell sed '6!d' val-phrase)" --fees=125000$(STAKE_DENOM)
+	gbt -a stars keys register-orchestrator-address --validator-phrase "$(shell sed '6!d' val-phrase)" --fees=125000$(STAKE_DENOM)
 
 go.sum: go.mod
 	@echo "--> Ensure dependencies have not been modified"
