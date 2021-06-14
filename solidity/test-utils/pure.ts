@@ -1,23 +1,27 @@
 import { ethers } from "hardhat";
 import { BigNumberish } from "ethers";
 import { Signer } from "ethers";
+import {ContractTransaction, utils} from 'ethers';
+
+export const ZeroAddress: string = "0x0000000000000000000000000000000000000000"
 
 export async function getSignerAddresses(signers: Signer[]) {
   return await Promise.all(signers.map(signer => signer.getAddress()));
 }
 
-
 export function makeCheckpoint(
   validators: string[],
   powers: BigNumberish[],
   valsetNonce: BigNumberish,
+  rewardAmount: BigNumberish,
+  rewardToken: string,
   gravityId: string
 ) {
   const methodName = ethers.utils.formatBytes32String("checkpoint");
 
   let abiEncoded = ethers.utils.defaultAbiCoder.encode(
-    ["bytes32", "bytes32", "uint256", "address[]", "uint256[]"],
-    [gravityId, methodName, valsetNonce, validators, powers]
+    ["bytes32", "bytes32", "uint256", "address[]", "uint256[]", "uint256", "address"],
+    [gravityId, methodName, valsetNonce, validators, powers, rewardAmount, rewardToken]
   );
 
   let checkpoint = ethers.utils.keccak256(abiEncoded);
@@ -62,6 +66,23 @@ export function makeTxBatchHash(
   let txHash = ethers.utils.keccak256(abiEncoded);
 
   return txHash;
+}
+
+export async function parseEvent(contract: any, txPromise: Promise<ContractTransaction>, eventOrder: number) {
+  const tx = await txPromise
+  const receipt = await contract.provider.getTransactionReceipt(tx.hash!)
+  let args = (contract.interface as utils.Interface).parseLog(receipt.logs![eventOrder]).args
+
+  // Get rid of weird quasi-array keys
+  const acc: any = {}
+  args = Object.keys(args).reduce((acc, key) => {
+    if (Number.isNaN(parseInt(key, 10)) && key !== 'length') {
+      acc[key] = args[key]
+    }
+    return acc
+  }, acc)
+
+  return args
 }
 
 export function examplePowers(): number[] {

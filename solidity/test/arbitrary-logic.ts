@@ -8,7 +8,8 @@ import { deployContracts } from "../test-utils";
 import {
   getSignerAddresses,
   signHash,
-  examplePowers
+  examplePowers,
+  ZeroAddress
 } from "../test-utils/pure";
 
 chai.use(solidity);
@@ -44,7 +45,7 @@ async function runTest(opts: {
     gravity,
     testERC20,
     checkpoint: deployCheckpoint
-  } = await deployContracts(gravityId, validators, powers, powerThreshold);
+  } = await deployContracts(gravityId,  powerThreshold, validators, powers);
 
   // First we deploy the logic batch middleware contract. This makes it easy to call a logic 
   // contract a bunch of times in a batch.
@@ -120,6 +121,7 @@ async function runTest(opts: {
     invalidationId: ethers.utils.hexZeroPad(testERC20.address, 32), // invalidationId
     invalidationNonce: invalidationNonce // invalidationNonce
   }
+
 
   const digest = ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(
     [
@@ -199,16 +201,30 @@ async function runTest(opts: {
     sigs.v[11] = 0;
   }
 
-  await gravity.submitLogicCall(
-    await getSignerAddresses(validators),
+  let valset = {
+    validators: await getSignerAddresses(validators),
     powers,
-    currentValsetNonce,
+    valsetNonce: currentValsetNonce,
+    rewardAmount: 0,
+    rewardToken: ZeroAddress
+  }
+
+  let logicCallSubmitResult = await gravity.submitLogicCall(
+    valset,
 
     sigs.v,
     sigs.r,
     sigs.s,
     logicCallArgs
   );
+
+
+    // check that the relayer was paid
+    expect(
+      await (
+        await testERC20.functions.balanceOf(await logicCallSubmitResult.from)
+      )[0].toNumber()
+    ).to.equal(9010);
 
   expect(
       (await testERC20.functions.balanceOf(await signers[20].getAddress()))[0].toNumber()
@@ -294,7 +310,7 @@ describe("logicCall Go test hash", function () {
       gravity,
       testERC20,
       checkpoint: deployCheckpoint
-    } = await deployContracts(gravityId, validators, powers, powerThreshold);
+    } = await deployContracts(gravityId, powerThreshold, validators, powers);
 
 
 
@@ -371,11 +387,16 @@ describe("logicCall Go test hash", function () {
     // actually execute, existing ones are too large to bother with for basic
     // signature testing
 
+    let valset = {
+      validators: await getSignerAddresses(validators),
+      powers,
+      valsetNonce: currentValsetNonce,
+      rewardAmount: 0,
+      rewardToken: ZeroAddress
+    }
 
     var res = await gravity.populateTransaction.submitLogicCall(
-      await getSignerAddresses(validators),
-      powers,
-      currentValsetNonce,
+      valset,
 
       sigs.v,
       sigs.r,

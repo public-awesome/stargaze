@@ -5,32 +5,15 @@ import { solidity } from "ethereum-waffle";
 import { deployContracts } from "../test-utils";
 import {
   getSignerAddresses,
-  makeCheckpoint,
   signHash,
-  makeTxBatchHash,
-  examplePowers
+  examplePowers,
+  ZeroAddress,
+  parseEvent,
 } from "../test-utils/pure";
-import {ContractTransaction, utils} from 'ethers';
 import { BigNumber } from "ethers";
 chai.use(solidity);
 const { expect } = chai;
 
-async function parseEvent(contract: any, txPromise: Promise<ContractTransaction>, eventOrder: number) {
-  const tx = await txPromise
-  const receipt = await contract.provider.getTransactionReceipt(tx.hash!)
-  let args = (contract.interface as utils.Interface).parseLog(receipt.logs![eventOrder]).args
-
-  // Get rid of weird quasi-array keys
-  const acc: any = {}
-  args = Object.keys(args).reduce((acc, key) => {
-    if (Number.isNaN(parseInt(key, 10)) && key !== 'length') {
-      acc[key] = args[key]
-    }
-    return acc
-  }, acc)
-
-  return args
-}
 
 async function runTest(opts: {}) {
 
@@ -48,7 +31,7 @@ async function runTest(opts: {}) {
     gravity,
     testERC20,
     checkpoint: deployCheckpoint
-  } = await deployContracts(gravityId, validators, powers, powerThreshold);
+  } = await deployContracts(gravityId, powerThreshold, validators, powers);
 
 
 
@@ -132,10 +115,16 @@ async function runTest(opts: {}) {
   let sigs = await signHash(validators, digest);
   let currentValsetNonce = 0;
 
-  await gravity.submitBatch(
-    await getSignerAddresses(validators),
+  let valset = {
+    validators: await getSignerAddresses(validators),
     powers,
-    currentValsetNonce,
+    valsetNonce: currentValsetNonce,
+    rewardAmount: 0,
+    rewardToken: ZeroAddress
+  }
+
+  await gravity.submitBatch(
+    valset,
 
     sigs.v,
     sigs.r,
