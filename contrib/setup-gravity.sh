@@ -11,7 +11,9 @@ sleep 5
 
 echo "Setting up Gravity Bridge.."
 [ ! -d "$HOME/.gbt" ] && gbt init
-make setup-gravity
+
+echo "Register orchestrator address.."
+gbt -a stars keys register-orchestrator-address --validator-phrase "$(sed '6!d' val-phrase)" --fees=125000ustarx
 
 sleep 5
 
@@ -22,7 +24,7 @@ orch_key=$(gbt -a stars keys show 2>&1 | head -n 1 | awk '{print $7}')
 echo "orchestrator delegate key: $orch_key"
 
 eth_key=$(gbt -a stars keys show 2>&1 | sed -n '2p' | awk '{print $7}')
-echo "Ethereum key: $eth_key"
+echo "Ethereum key: $eth_key, PLEASE FUND THIS ACCOUNT"
 
 echo "Funding orchestrator account.."
 starsd tx bank send validator $orch_key 25000000000ucredits --chain-id=localnet-1 --keyring-backend=test -y
