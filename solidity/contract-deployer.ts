@@ -230,11 +230,7 @@ async function deploy() {
     gravityId,
     vote_power,
     eth_addresses,
-    powers,
-    {
-      gasPrice: 32000000,
-     // gasLimit: 2000000
-    }
+    powers
   )) as Gravity;
 
   //console.log(gravity.estimateGas);
