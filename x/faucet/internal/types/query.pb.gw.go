@@ -140,7 +140,7 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_FaucetKey_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"stargaze", "faucet", "v1beta1", "key"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_FaucetKey_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"stargaze", "faucet", "v1beta1", "key"}, "", runtime.AssumeColonVerbOpt(false)))
 )
 
 var (

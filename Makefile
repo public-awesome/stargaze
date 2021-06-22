@@ -171,9 +171,6 @@ fake-swap:
 proto-all: proto-gen proto-lint proto-check-breaking
 
 
-proto-gen:
-	@echo "Generating Protobuf files"
-	$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace tendermintdev/sdk-proto-gen sh ./contrib/protocgen.sh
 
 proto-format:
 	@echo "Formatting Protobuf files"
@@ -195,3 +192,15 @@ ci-sign:
 
 post: 
 	starsd tx curating post 1 1 "test" --from validator --keyring-backend test --chain-id localnet-1
+
+containerProtoVer=v0.2
+containerProtoImage=tendermintdev/sdk-proto-gen:$(containerProtoVer)
+containerProtoGen=cosmos-sdk-proto-gen-$(containerProtoVer)
+containerProtoGenSwagger=cosmos-sdk-proto-gen-swagger-$(containerProtoVer)
+containerProtoFmt=cosmos-sdk-proto-fmt-$(containerProtoVer)
+
+
+proto-gen:
+	@echo "Generating Protobuf files"
+	@if docker ps -a --format '{{.Names}}' | grep -Eq "^${containerProtoGen}$$"; then docker start -a $(containerProtoGen); else docker run --name $(containerProtoGen) -v $(CURDIR):/workspace --workdir /workspace $(containerProtoImage) \
+		sh ./contrib/protocgen.sh; fi
