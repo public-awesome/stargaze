@@ -32,6 +32,7 @@ func (AppModuleBasic) Name() string {
 }
 
 // RegisterLegacyAminoCodec registers the upgrade types on the LegacyAmino codec
+//nolint:staticcheck
 func (AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 }
 
@@ -97,6 +98,7 @@ func (am AppModule) Route() sdk.Route {
 func (AppModule) QuerierRoute() string { return types.QuerierKey }
 
 // LegacyQuerierHandler registers a query handler to respond to the module-specific queries
+//nolint:staticcheck
 func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
 	return nil
 }

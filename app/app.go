@@ -179,6 +179,7 @@ var (
 // capabilities aren't needed for testing.
 type StargazeApp struct {
 	*baseapp.BaseApp
+	//nolint:staticcheck
 	legacyAmino       *codec.LegacyAmino
 	appCodec          codec.Marshaler
 	interfaceRegistry types.InterfaceRegistry
@@ -535,6 +536,7 @@ func NewStargazeApp(
 // MakeCodecs constructs the *std.Codec and *codec.LegacyAmino instances used by
 // simapp. It is useful for tests and clients who do not want to construct the
 // full simapp
+//nolint:staticcheck
 func MakeCodecs() (codec.Marshaler, *codec.LegacyAmino) {
 	config := MakeEncodingConfig()
 	return config.Marshaler, config.Amino
@@ -581,6 +583,7 @@ func (app *StargazeApp) ModuleAccountAddrs() map[string]bool {
 //
 // NOTE: This is solely to be used for testing purposes as it may be desirable
 // for modules to register their own custom testing types.
+//nolint:staticcheck
 func (app *StargazeApp) LegacyAmino() *codec.LegacyAmino {
 	return app.legacyAmino
 }
@@ -686,6 +689,7 @@ func GetMaccPerms() map[string][]string {
 
 // initParamsKeeper init params keeper and its subspaces
 func initParamsKeeper(appCodec codec.BinaryMarshaler,
+	//nolint:staticcheck
 	legacyAmino *codec.LegacyAmino,
 	key, tkey sdk.StoreKey) paramskeeper.Keeper {
 	paramsKeeper := paramskeeper.NewKeeper(appCodec, legacyAmino, key, tkey)

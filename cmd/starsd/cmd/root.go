@@ -55,6 +55,7 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			initClientCtx = client.ReadHomeFlag(initClientCtx, cmd)
 
+			//nolint:govet
 			initClientCtx, err := config.ReadFromClientConfig(initClientCtx)
 			if err != nil {
 				return err
