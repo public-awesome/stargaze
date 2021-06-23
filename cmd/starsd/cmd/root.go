@@ -46,9 +46,8 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 		WithLegacyAmino(encodingConfig.Amino).
 		WithInput(os.Stdin).
 		WithAccountRetriever(types.AccountRetriever{}).
-		WithBroadcastMode(flags.BroadcastBlock).
 		WithHomeDir(stargaze.DefaultNodeHome).
-		WithOutput(os.Stdout)
+		WithViper("STARGAZE")
 
 	rootCmd := &cobra.Command{
 		Use:   "starsd",
