@@ -106,7 +106,10 @@ Example:
 			}
 			defer genesisJSON.Close()
 
-			byteValue, _ := ioutil.ReadAll(genesisJSON)
+			byteValue, err := ioutil.ReadAll(genesisJSON)
+			if err != nil {
+				return err
+			}
 
 			var genStateV036 GenesisStateV036
 
@@ -199,8 +202,8 @@ Example:
 				stakedPercent := stakedAtoms.Quo(allAtoms)
 				acc.AtomStakedPercent = stakedPercent
 
-				baseStars, err := allAtoms.ApproxSqrt()
-				if err != nil {
+				baseStars, error := allAtoms.ApproxSqrt()
+				if error != nil {
 					panic(fmt.Sprintf("failed to root atom balance: %s", err))
 				}
 				acc.StarsBalanceBase = baseStars.RoundInt()
