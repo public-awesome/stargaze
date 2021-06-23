@@ -6,7 +6,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec/types"
@@ -87,23 +86,7 @@ import (
 
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	stargazeappparams "github.com/public-awesome/stargaze/app/params"
-	"github.com/public-awesome/stargaze/x/curating"
-	curatingkeeper "github.com/public-awesome/stargaze/x/curating/keeper"
-	curatingtypes "github.com/public-awesome/stargaze/x/curating/types"
 	"github.com/public-awesome/stargaze/x/dao"
-
-	"github.com/public-awesome/stargaze/x/user"
-	userkeeper "github.com/public-awesome/stargaze/x/user/keeper"
-	usertypes "github.com/public-awesome/stargaze/x/user/types"
-
-	"github.com/public-awesome/stargaze/x/faucet"
-	"github.com/public-awesome/stargaze/x/stake"
-	stakekeeper "github.com/public-awesome/stargaze/x/stake/keeper"
-	staketypes "github.com/public-awesome/stargaze/x/stake/types"
-
-	"github.com/tendermint/liquidity/x/liquidity"
-	liquiditykeeper "github.com/tendermint/liquidity/x/liquidity/keeper"
-	liquiditytypes "github.com/tendermint/liquidity/x/liquidity/types"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	daokeeper "github.com/public-awesome/stargaze/x/dao/keeper"
@@ -170,11 +153,6 @@ var (
 		vesting.AppModuleBasic{},
 
 		// Stargaze Modules
-		curating.AppModuleBasic{},
-		user.AppModuleBasic{},
-		faucet.AppModuleBasic{},
-		stake.AppModuleBasic{},
-		liquidity.AppModuleBasic{},
 		wasm.AppModuleBasic{},
 		dao.AppModuleBasic{},
 	)
@@ -188,13 +166,6 @@ var (
 		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
-
-		curatingtypes.ModuleName:     nil,
-		curatingtypes.RewardPoolName: {authtypes.Minter, authtypes.Burner},
-		curatingtypes.VotingPoolName: {authtypes.Minter, authtypes.Burner},
-		faucet.ModuleName:            {authtypes.Minter, authtypes.Burner},
-		liquiditytypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
-		staketypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
 	}
 )
 
@@ -208,6 +179,7 @@ var (
 // capabilities aren't needed for testing.
 type StargazeApp struct {
 	*baseapp.BaseApp
+	//nolint:staticcheck
 	legacyAmino       *codec.LegacyAmino
 	appCodec          codec.Marshaler
 	interfaceRegistry types.InterfaceRegistry
@@ -236,20 +208,13 @@ type StargazeApp struct {
 	TransferKeeper   ibctransferkeeper.Keeper
 
 	// Stargaze Keepers
-	CuratingKeeper curatingkeeper.Keeper
-	UserKeeper     userkeeper.Keeper
-	FaucetKeeper   faucet.Keeper
-	StakeKeeper    stakekeeper.Keeper
-	daoKeeper      daokeeper.Keeper
+	wasmKeeper wasm.Keeper
+	daoKeeper  daokeeper.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
 	scopedWasmKeeper     capabilitykeeper.ScopedKeeper
-
-	// third party keepers
-	LiquidityKeeper liquiditykeeper.Keeper
-	wasmKeeper      wasm.Keeper
 
 	// the module manager
 	mm *module.Manager
@@ -292,11 +257,6 @@ func NewStargazeApp(
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		// Stargaze Stores
-		curatingtypes.StoreKey,
-		usertypes.StoreKey,
-		faucet.StoreKey,
-		staketypes.StoreKey,
-		liquiditytypes.StoreKey,
 		wasm.StoreKey,
 		daotypes.StoreKey,
 	)
@@ -397,40 +357,6 @@ func NewStargazeApp(
 	// If evidence needs to be handled for the app, set routes in router here and seal
 	app.EvidenceKeeper = *evidenceKeeper
 
-	// Stargaze Keepers
-	app.CuratingKeeper = curatingkeeper.NewKeeper(
-		appCodec, keys[curatingtypes.StoreKey], app.AccountKeeper, app.BankKeeper, app.GetSubspace(curatingtypes.ModuleName))
-
-	app.UserKeeper = userkeeper.NewKeeper(
-		appCodec, keys[curatingtypes.StoreKey], app.AccountKeeper, app.BankKeeper, app.GetSubspace(usertypes.ModuleName))
-
-	config := make(map[string]faucet.DenomConfig)
-	config[curatingtypes.DefaultVoteDenom] = faucet.DenomConfig{
-		Amount:         50 * 1_000_000,
-		BurnBeforeMint: true,
-	}
-	app.FaucetKeeper = faucet.NewKeeper(appCodec, keys[faucet.StoreKey],
-		app.BankKeeper,
-		app.StakingKeeper,
-		10*1_000_000, // amount for mint
-		config,
-		24*time.Hour, // rate limit by time
-	)
-
-	app.StakeKeeper = stakekeeper.NewKeeper(
-		appCodec,
-		keys[staketypes.StoreKey],
-		app.CuratingKeeper,
-		app.StakingKeeper,
-		app.BankKeeper,
-		app.GetSubspace(staketypes.ModuleName),
-	)
-
-	app.LiquidityKeeper = liquiditykeeper.NewKeeper(
-		appCodec, keys[liquiditytypes.StoreKey], app.GetSubspace(liquiditytypes.ModuleName),
-		app.BankKeeper, app.AccountKeeper,
-	)
-
 	app.daoKeeper = daokeeper.NewKeeper(
 		appCodec,
 		keys[daotypes.StoreKey],
@@ -500,11 +426,6 @@ func NewStargazeApp(
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
 		// StargazeModules
-		curating.NewAppModule(appCodec, app.CuratingKeeper, app.AccountKeeper, app.BankKeeper),
-		user.NewAppModule(appCodec, app.UserKeeper),
-		faucet.NewAppModule(app.FaucetKeeper),
-		stake.NewAppModule(appCodec, app.StakeKeeper, app.CuratingKeeper, app.StakingKeeper),
-		liquidity.NewAppModule(appCodec, app.LiquidityKeeper, app.AccountKeeper, app.BankKeeper),
 		wasm.NewAppModule(&app.wasmKeeper, app.StakingKeeper),
 		dao.NewAppModule(appCodec, app.daoKeeper, app.DistrKeeper, app.BankKeeper),
 	)
@@ -514,15 +435,18 @@ func NewStargazeApp(
 	// CanWithdrawInvariant invariant.
 	// NOTE: staking module is required if HistoricalEntries param > 0
 	app.mm.SetOrderBeginBlockers(
-		upgradetypes.ModuleName, minttypes.ModuleName,
-		// must run before distribution
-		curatingtypes.ModuleName,
-		distrtypes.ModuleName, slashingtypes.ModuleName,
-		evidencetypes.ModuleName, stakingtypes.ModuleName, ibchost.ModuleName,
-		liquiditytypes.ModuleName,
+		upgradetypes.ModuleName,
+		minttypes.ModuleName,
+		distrtypes.ModuleName,
+		slashingtypes.ModuleName,
+		evidencetypes.ModuleName,
+		stakingtypes.ModuleName,
+		ibchost.ModuleName,
 	)
-	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName,
-		stakingtypes.ModuleName, curatingtypes.ModuleName, liquiditytypes.ModuleName,
+	app.mm.SetOrderEndBlockers(
+		crisistypes.ModuleName,
+		govtypes.ModuleName,
+		stakingtypes.ModuleName,
 	)
 
 	// NOTE: The genutils moodule must occur after staking so that pools are
@@ -538,10 +462,6 @@ func NewStargazeApp(
 		ibchost.ModuleName, genutiltypes.ModuleName,
 		evidencetypes.ModuleName, ibctransfertypes.ModuleName,
 		// stargaze init genesis
-		curatingtypes.ModuleName,
-		usertypes.ModuleName,
-		staketypes.ModuleName,
-		liquiditytypes.ModuleName,
 		wasm.ModuleName,
 		daotypes.ModuleName,
 	)
@@ -570,7 +490,6 @@ func NewStargazeApp(
 		evidence.NewAppModule(app.EvidenceKeeper),
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
-		liquidity.NewAppModule(appCodec, app.LiquidityKeeper, app.AccountKeeper, app.BankKeeper),
 		wasm.NewAppModule(&app.wasmKeeper, app.StakingKeeper),
 	)
 
@@ -617,6 +536,7 @@ func NewStargazeApp(
 // MakeCodecs constructs the *std.Codec and *codec.LegacyAmino instances used by
 // simapp. It is useful for tests and clients who do not want to construct the
 // full simapp
+//nolint:staticcheck
 func MakeCodecs() (codec.Marshaler, *codec.LegacyAmino) {
 	config := MakeEncodingConfig()
 	return config.Marshaler, config.Amino
@@ -663,6 +583,7 @@ func (app *StargazeApp) ModuleAccountAddrs() map[string]bool {
 //
 // NOTE: This is solely to be used for testing purposes as it may be desirable
 // for modules to register their own custom testing types.
+//nolint:staticcheck
 func (app *StargazeApp) LegacyAmino() *codec.LegacyAmino {
 	return app.legacyAmino
 }
@@ -768,6 +689,7 @@ func GetMaccPerms() map[string][]string {
 
 // initParamsKeeper init params keeper and its subspaces
 func initParamsKeeper(appCodec codec.BinaryMarshaler,
+	//nolint:staticcheck
 	legacyAmino *codec.LegacyAmino,
 	key, tkey sdk.StoreKey) paramskeeper.Keeper {
 	paramsKeeper := paramskeeper.NewKeeper(appCodec, legacyAmino, key, tkey)
@@ -784,10 +706,6 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler,
 	paramsKeeper.Subspace(ibchost.ModuleName)
 
 	// Stargaze Modules
-	paramsKeeper.Subspace(curatingtypes.ModuleName)
-	paramsKeeper.Subspace(usertypes.ModuleName)
-	paramsKeeper.Subspace(staketypes.ModuleName)
-	paramsKeeper.Subspace(liquiditytypes.ModuleName)
 	paramsKeeper.Subspace(wasm.ModuleName)
 
 	return paramsKeeper
