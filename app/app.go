@@ -61,7 +61,6 @@ import (
 	ibctransferkeeper "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/keeper"
 	ibctransfertypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
 	ibc "github.com/cosmos/cosmos-sdk/x/ibc/core"
-	porttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/05-port/types"
 	ibchost "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
 	ibckeeper "github.com/cosmos/cosmos-sdk/x/ibc/core/keeper"
 	"github.com/cosmos/cosmos-sdk/x/mint"
@@ -89,6 +88,7 @@ import (
 	"github.com/public-awesome/stargaze/x/dao"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
+	porttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/05-port/types"
 	daokeeper "github.com/public-awesome/stargaze/x/dao/keeper"
 	daotypes "github.com/public-awesome/stargaze/x/dao/types"
 )
@@ -346,9 +346,11 @@ func NewStargazeApp(
 	)
 	transferModule := transfer.NewAppModule(app.TransferKeeper)
 
-	// Create static IBC router, add transfer route, then set and seal it
+	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 	ibcRouter := porttypes.NewRouter()
 	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferModule)
+	// this line is used by starport scaffolding # ibc/app/router
+	app.IBCKeeper.SetRouter(ibcRouter)
 
 	// create evidence keeper with router
 	evidenceKeeper := evidencekeeper.NewKeeper(
@@ -394,7 +396,6 @@ func NewStargazeApp(
 	if len(enabledProposals) != 0 {
 		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(app.wasmKeeper, enabledProposals))
 	}
-	app.IBCKeeper.SetRouter(ibcRouter)
 
 	/****  Module Options ****/
 
