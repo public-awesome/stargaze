@@ -1,0 +1,12 @@
+syntax = "proto3";
+package publicawesome.stargaze.ibc-spend;
+
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "github.com/public-awesome/stargaze/x/ibc-spend/types";
+
+// GenesisState defines the ibc-spend module's genesis state.
+message GenesisState {
+    // this line is used by starport scaffolding # genesis/proto/state
+    string port_id = 1; // this line is used by starport scaffolding # genesis/proto/stateField
+}
