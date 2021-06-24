@@ -13,30 +13,39 @@ import (
 
 type (
 	Keeper struct {
-		cdc      codec.Marshaler
-		storeKey sdk.StoreKey
-		memKey   sdk.StoreKey
-		channelKeeper types.ChannelKeeper
-portKeeper    types.PortKeeper
-scopedKeeper  types.ScopedKeeper
+		cdc            codec.Marshaler
+		storeKey       sdk.StoreKey
+		memKey         sdk.StoreKey
+		ak             types.AccountKeeper
+		channelKeeper  types.ChannelKeeper
+		portKeeper     types.PortKeeper
+		scopedKeeper   types.ScopedKeeper
+		transferKeeper types.TransferKeeper
+		distrKeeper    types.DistributionKeeper
 	}
 )
 
 func NewKeeper(
-    cdc codec.Marshaler,
-    storeKey,
-    memKey sdk.StoreKey,
-    channelKeeper types.ChannelKeeper,
-portKeeper types.PortKeeper,
-scopedKeeper types.ScopedKeeper,
+	cdc codec.Marshaler,
+	storeKey,
+	memKey sdk.StoreKey,
+	ak types.AccountKeeper,
+	channelKeeper types.ChannelKeeper,
+	portKeeper types.PortKeeper,
+	scopedKeeper types.ScopedKeeper,
+	transferKeeper types.TransferKeeper,
+	distrKeeper types.DistributionKeeper,
 ) *Keeper {
 	return &Keeper{
-		cdc:      cdc,
-		storeKey: storeKey,
-		memKey:   memKey,
-		channelKeeper: channelKeeper,
-portKeeper:    portKeeper,
-scopedKeeper:  scopedKeeper,
+		cdc:            cdc,
+		storeKey:       storeKey,
+		memKey:         memKey,
+		ak:             ak,
+		channelKeeper:  channelKeeper,
+		portKeeper:     portKeeper,
+		scopedKeeper:   scopedKeeper,
+		transferKeeper: transferKeeper,
+		distrKeeper:    distrKeeper,
 	}
 }
 

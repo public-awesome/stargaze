@@ -1,9 +1,9 @@
 syntax = "proto3";
-package publicawesome.stargaze.ibc-spend;
+package publicawesome.stargaze.ibcspend;
 
 option go_package = "github.com/public-awesome/stargaze/x/ibc-spend/types";
 
-message Ibc-SpendPacketData {
+message IbcSpendPacketData {
     oneof packet {
         NoData noData = 1;
         // this line is used by starport scaffolding # ibc/packet/proto/field

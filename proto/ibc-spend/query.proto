@@ -1,8 +1,8 @@
 syntax = "proto3";
-package publicawesome.stargaze.ibc-spend;
+package publicawesome.stargaze.ibcspend;
 
 import "google/api/annotations.proto";
-import "cosmos/base/query/v1beta1/pagination.proto";
+// import "cosmos/base/query/v1beta1/pagination.proto";
 // this line is used by starport scaffolding # 1
 
 option go_package = "github.com/public-awesome/stargaze/x/ibc-spend/types";

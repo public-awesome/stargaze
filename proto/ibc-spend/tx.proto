@@ -1,5 +1,5 @@
 syntax = "proto3";
-package publicawesome.stargaze.ibc-spend;
+package publicawesome.stargaze.ibcspend;
 
 // this line is used by starport scaffolding # proto/tx/import
 

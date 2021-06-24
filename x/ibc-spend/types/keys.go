@@ -10,17 +10,17 @@ const (
 	// RouterKey is the message route for slashing
 	RouterKey = ModuleName
 
-    // QuerierRoute defines the module's query routing key
-    QuerierRoute = ModuleName
+	// QuerierRoute defines the module's query routing key
+	QuerierRoute = ModuleName
 
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_ibc-spend"
 
-    // Version defines the current version the IBC module supports
-Version = "ibc-spend-1"
+	// Version defines the current version the IBC module supports
+	Version = "ibc-spend-1"
 
-// PortID is the default port id that module binds to
-PortID = "ibc-spend"
+	// PortID is the default port id that module binds to
+	PortID = "transfer"
 )
 
 var (
@@ -29,5 +29,5 @@ var (
 )
 
 func KeyPrefix(p string) []byte {
-    return []byte(p)
+	return []byte(p)
 }

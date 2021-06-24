@@ -1,12 +1,14 @@
-package ibc-spend
+package ibcspend
 
 import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/public-awesome/stargaze/x/ibc-spend/keeper"
 	"github.com/public-awesome/stargaze/x/ibc-spend/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 // NewHandler ...
@@ -21,6 +23,18 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		default:
 			errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, msg)
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
+		}
+	}
+}
+
+func NewCommunityPoolIBCSpendProposalHandler(k keeper.Keeper) govtypes.Handler {
+	return func(ctx sdk.Context, content govtypes.Content) error {
+		switch c := content.(type) {
+		case *distrtypes.CommunityPoolSpendProposal:
+			return keeper.HandleCommunityPoolIBCSpendProposal(ctx, k, c)
+
+		default:
+			return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unrecognized distr proposal content type: %T", c)
 		}
 	}
 }
