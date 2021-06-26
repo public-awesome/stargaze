@@ -97,6 +97,11 @@ import (
 	"github.com/public-awesome/stargaze/x/stake"
 	stakekeeper "github.com/public-awesome/stargaze/x/stake/keeper"
 	staketypes "github.com/public-awesome/stargaze/x/stake/types"
+
+	ibcspend "github.com/public-awesome/stargaze/x/ibc-spend"
+	ibcspendclient "github.com/public-awesome/stargaze/x/ibc-spend/client"
+	ibcspendkeeper "github.com/public-awesome/stargaze/x/ibc-spend/keeper"
+	ibcspendtypes "github.com/public-awesome/stargaze/x/ibc-spend/types"
 )
 
 const appName = "SimApp"
@@ -121,6 +126,7 @@ var (
 			distrclient.ProposalHandler,
 			upgradeclient.ProposalHandler,
 			upgradeclient.CancelProposalHandler,
+			ibcspendclient.ProposalHandler,
 		),
 		params.AppModuleBasic{},
 		crisis.AppModuleBasic{},
@@ -135,6 +141,7 @@ var (
 		curating.AppModuleBasic{},
 		user.AppModuleBasic{},
 		stake.AppModuleBasic{},
+		ibcspend.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -196,6 +203,7 @@ type SimApp struct {
 	CuratingKeeper curatingkeeper.Keeper
 	UserKeeper     userkeeper.Keeper
 	StakeKeeper    stakekeeper.Keeper
+	IBCSpendKeeper ibcspendkeeper.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
@@ -244,6 +252,7 @@ func NewSimApp(
 		curatingtypes.StoreKey,
 		usertypes.StoreKey,
 		staketypes.StoreKey,
+		ibcspendtypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -303,7 +312,8 @@ func NewSimApp(
 	govRouter.AddRoute(govtypes.RouterKey, govtypes.ProposalHandler).
 		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.ParamsKeeper)).
 		AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.DistrKeeper)).
-		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.UpgradeKeeper))
+		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.UpgradeKeeper)).
+		AddRoute(ibcspendtypes.RouterKey, ibcspend.NewCommunityPoolIBCSpendProposalHandler(app.IBCSpendKeeper))
 	app.GovKeeper = govkeeper.NewKeeper(
 		appCodec, keys[govtypes.StoreKey], app.GetSubspace(govtypes.ModuleName), app.AccountKeeper, app.BankKeeper,
 		&stakingKeeper, govRouter,
@@ -356,6 +366,13 @@ func NewSimApp(
 		app.GetSubspace(staketypes.ModuleName),
 	)
 
+	app.IBCSpendKeeper = *ibcspendkeeper.NewKeeper(
+		appCodec, keys[ibcspendtypes.StoreKey], memKeys[ibcspendtypes.StoreKey],
+		app.AccountKeeper,
+		app.TransferKeeper,
+		app.DistrKeeper,
+	)
+
 	/****  Module Options ****/
 
 	// NOTE: we may consider parsing `appOpts` inside module constructors. For the moment
@@ -389,6 +406,7 @@ func NewSimApp(
 		curating.NewAppModule(appCodec, app.CuratingKeeper, app.AccountKeeper, app.BankKeeper),
 		user.NewAppModule(appCodec, app.UserKeeper),
 		stake.NewAppModule(appCodec, app.StakeKeeper, app.CuratingKeeper, app.StakingKeeper),
+		ibcspend.NewAppModule(appCodec, app.IBCSpendKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -419,6 +437,7 @@ func NewSimApp(
 		// stargaze init genesis
 		curatingtypes.ModuleName,
 		usertypes.ModuleName,
+		ibcspendtypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -659,6 +678,7 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler,
 	paramsKeeper.Subspace(curatingtypes.ModuleName)
 	paramsKeeper.Subspace(usertypes.ModuleName)
 	paramsKeeper.Subspace(staketypes.ModuleName)
+	paramsKeeper.Subspace(ibcspendtypes.ModuleName)
 
 	return paramsKeeper
 }

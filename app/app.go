@@ -267,6 +267,7 @@ func NewStargazeApp(
 		// Stargaze Stores
 		wasm.StoreKey,
 		daotypes.StoreKey,
+		ibcspendtypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -445,6 +446,7 @@ func NewStargazeApp(
 		// StargazeModules
 		wasm.NewAppModule(&app.wasmKeeper, app.StakingKeeper),
 		dao.NewAppModule(appCodec, app.daoKeeper, app.DistrKeeper, app.BankKeeper),
+		ibcspend.NewAppModule(appCodec, app.ibcSpendKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -481,6 +483,7 @@ func NewStargazeApp(
 		// stargaze init genesis
 		wasm.ModuleName,
 		daotypes.ModuleName,
+		ibcspendtypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
