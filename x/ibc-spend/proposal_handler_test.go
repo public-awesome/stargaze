@@ -10,9 +10,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	channeltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
 	"github.com/cosmos/cosmos-sdk/x/ibc/core/exported"
-	ibctesting "github.com/cosmos/cosmos-sdk/x/ibc/testing"
 	"github.com/public-awesome/stargaze/simapp"
 	ibcspend "github.com/public-awesome/stargaze/x/ibc-spend"
+	ibctesting "github.com/public-awesome/stargaze/x/ibc-spend/testing"
 	"github.com/public-awesome/stargaze/x/ibc-spend/types"
 )
 
@@ -20,7 +20,7 @@ var (
 	delPk1   = ed25519.GenPrivKey().PubKey()
 	delAddr1 = sdk.AccAddress(delPk1.Address())
 
-	amount = sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(1)))
+	amount = sdk.NewCoins(sdk.NewCoin("ustarx", sdk.NewInt(1)))
 )
 
 func testProposal(
@@ -28,7 +28,7 @@ func testProposal(
 	amount sdk.Coins,
 	sourceChannel string) *types.CommunityPoolIBCSpendProposal {
 
-	return types.NewCommunityPoolIBCSpendProposal("Test", "description", "recipient", amount, sourceChannel, 0)
+	return types.NewCommunityPoolIBCSpendProposal("Test", "description", recipient.String(), amount, sourceChannel, 20)
 }
 
 type TransferTestSuite struct {
@@ -48,18 +48,13 @@ func (suite *TransferTestSuite) SetupTest() {
 }
 
 func (suite *TransferTestSuite) TestProposalHandlerPassed() {
-	// app := simapp.Setup(false)
-	// TODO: does not have IBCSpendKeeper in this SimApp...
-	// have to copy ibc testing framework into module..
 	app := suite.chainA.App
-	// ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 	ctx := suite.chainA.GetContext()
 	recipient := delAddr1
 
 	// setup IBC
 	_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-	// channelA, _ := suite.coordinator.CreateTransferChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
-	suite.coordinator.CreateTransferChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+	channelA, _ := suite.coordinator.CreateTransferChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 
 	// add coins to the module account
 	macc := app.DistrKeeper.GetDistributionAccount(ctx)
@@ -77,12 +72,15 @@ func (suite *TransferTestSuite) TestProposalHandlerPassed() {
 	feePool.CommunityPool = sdk.NewDecCoinsFromCoins(amount...)
 	app.DistrKeeper.SetFeePool(ctx, feePool)
 
-	// tp := testProposal(recipient, amount, channelA.ID)
-	// hdlr := ibcspend.NewCommunityPoolIBCSpendProposalHandler(app.IBCSpendKeeper)
-	// suite.Require().NoError(hdlr(ctx, tp))
+	tp := testProposal(recipient, amount, channelA.ID)
+	hdlr := ibcspend.NewCommunityPoolIBCSpendProposalHandler(app.IBCSpendKeeper)
+	suite.Require().NoError(hdlr(ctx, tp))
 
 	// balances = app.BankKeeper.GetAllBalances(ctx, recipient)
 	// suite.Require().Equal(balances, amount)
+	// TODO:
+	// create a recipient on chain B
+	// check if recipient on chain B has balance of amount
 }
 
 func (suite *TransferTestSuite) TestProposalHandlerFailed_InsufficientCoinsInCommunityPool() {
