@@ -21,16 +21,16 @@ func init() {
 	govtypes.RegisterProposalTypeCodec(&CommunityPoolIBCSpendProposal{}, "stargaze/CommunityPoolIBCSpendProposal")
 }
 
-// NewCommunityPoolSpendProposal creates a new community pool spned proposal.
+// NewCommunityPoolIBCSpendProposal creates a new community pool spned proposal.
 //nolint:interfacer
-func NewCommunityPoolSpendProposal(
+func NewCommunityPoolIBCSpendProposal(
 	title, description string,
-	recipient sdk.AccAddress,
+	recipient string,
 	amount sdk.Coins,
 	sourceChannel string,
 	timeout uint64,
 ) *CommunityPoolIBCSpendProposal {
-	return &CommunityPoolIBCSpendProposal{title, description, recipient.String(), amount, sourceChannel, timeout}
+	return &CommunityPoolIBCSpendProposal{title, description, recipient, amount, sourceChannel, timeout}
 }
 
 // GetTitle returns the title of a community pool spend proposal.

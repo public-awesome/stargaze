@@ -2,7 +2,7 @@ package types
 
 const (
 	// ModuleName defines the module name
-	ModuleName = "ibc-spend"
+	ModuleName = "ibcspend"
 
 	// StoreKey defines the primary module store key
 	StoreKey = ModuleName
@@ -14,10 +14,10 @@ const (
 	QuerierRoute = ModuleName
 
 	// MemStoreKey defines the in-memory store key
-	MemStoreKey = "mem_ibc-spend"
+	MemStoreKey = "mem_ibcspend"
 
 	// Version defines the current version the IBC module supports
-	Version = "ibc-spend-1"
+	Version = "ibcspend-1"
 
 	// PortID is the default port id that module binds to
 	PortID = "transfer"
@@ -25,7 +25,7 @@ const (
 
 var (
 	// PortKey defines the key to store the port ID in store
-	PortKey = KeyPrefix("ibc-spend-port-")
+	PortKey = KeyPrefix("ibcspend-port-")
 )
 
 func KeyPrefix(p string) []byte {

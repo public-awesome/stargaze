@@ -33,7 +33,7 @@ func NewCommunityPoolIBCSpendProposalHandler(k keeper.Keeper) govtypes.Handler {
 			return keeper.HandleCommunityPoolIBCSpendProposal(ctx, k, c)
 
 		default:
-			return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unrecognized distr proposal content type: %T", c)
+			return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unrecognized ibcspend proposal content type: %T", c)
 		}
 	}
 }

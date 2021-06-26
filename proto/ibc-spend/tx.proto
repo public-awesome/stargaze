@@ -29,3 +29,16 @@ message CommunityPoolIBCSpendProposal {
     string   source_channel                  = 5;
     uint64   timeout                         = 6;
 }
+
+message CommunityPoolIBCSpendProposalWithDeposit {
+  option (gogoproto.goproto_getters)  = false;
+  option (gogoproto.goproto_stringer) = true;
+
+  string title       = 1 [(gogoproto.moretags) = "yaml:\"title\""];
+  string description = 2 [(gogoproto.moretags) = "yaml:\"description\""];
+  string recipient   = 3 [(gogoproto.moretags) = "yaml:\"recipient\""];
+  string amount      = 4 [(gogoproto.moretags) = "yaml:\"amount\""];
+  string source_channel = 5 [(gogoproto.moretags) = "yaml:\"source_channel\""];
+  uint64 timeout     = 6 [(gogoproto.moretags) = "yaml:\"timeout\""];
+  string deposit     = 7 [(gogoproto.moretags) = "yaml:\"deposit\""];
+}

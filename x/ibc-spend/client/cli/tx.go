@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"io/ioutil"
 	"strings"
 	"time"
 
@@ -9,11 +10,10 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/version"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	distrcli "github.com/cosmos/cosmos-sdk/x/distribution/client/cli"
-	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/public-awesome/stargaze/x/ibc-spend/types"
 )
@@ -61,9 +61,9 @@ Where proposal.json contains:
   "description": "Pay me some tokens over IBC!",
   "recipient": "[prefix]1s5afhd6gxevu37mkqcvvsj8qeylhn0rz46zdlq",
   "amount": "1000stake",
-  "deposit": "1000stake",
   "sourceChannel": "channel-0",
-  "timeout": 100
+  "timeout": 100,
+  "deposit": "1000stake"
 }
 `,
 				version.AppName,
@@ -74,7 +74,7 @@ Where proposal.json contains:
 			if err != nil {
 				return err
 			}
-			proposal, err := distrcli.ParseCommunityPoolSpendProposalWithDeposit(clientCtx.JSONMarshaler, args[0])
+			proposal, err := ParseCommunityPoolIBCSpendProposalWithDeposit(clientCtx.JSONMarshaler, args[0])
 			if err != nil {
 				return err
 			}
@@ -90,11 +90,14 @@ Where proposal.json contains:
 			}
 
 			from := clientCtx.GetFromAddress()
-			recpAddr, err := sdk.AccAddressFromBech32(proposal.Recipient)
-			if err != nil {
-				return err
-			}
-			content := distrtypes.NewCommunityPoolSpendProposal(proposal.Title, proposal.Description, recpAddr, amount)
+
+			content := types.NewCommunityPoolIBCSpendProposal(
+				proposal.Title,
+				proposal.Description,
+				proposal.Recipient,
+				amount,
+				proposal.SourceChannel,
+				proposal.Timeout)
 
 			msg, err := govtypes.NewMsgSubmitProposal(content, deposit, from)
 			if err != nil {
@@ -110,4 +113,20 @@ Where proposal.json contains:
 	}
 
 	return cmd
+}
+
+// ParseCommunityPoolIBCSpendProposalWithDeposit reads and parses a CommunityPoolSpendProposalWithDeposit from a file.
+func ParseCommunityPoolIBCSpendProposalWithDeposit(cdc codec.JSONMarshaler, proposalFile string) (types.CommunityPoolIBCSpendProposalWithDeposit, error) {
+	proposal := types.CommunityPoolIBCSpendProposalWithDeposit{}
+
+	contents, err := ioutil.ReadFile(proposalFile)
+	if err != nil {
+		return proposal, err
+	}
+
+	if err = cdc.UnmarshalJSON(contents, &proposal); err != nil {
+		return proposal, err
+	}
+
+	return proposal, nil
 }
