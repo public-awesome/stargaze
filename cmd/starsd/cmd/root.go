@@ -82,6 +82,8 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		tmcli.NewCompletionCmd(rootCmd, true),
 		testnetCmd(stargaze.ModuleBasics, banktypes.GenesisBalancesIterator{}),
 		ExportAirdropSnapshotCmd(),
+		ImportGenesisAccountsFromSnapshotCmd(stargaze.DefaultNodeHome),
+		PrepareGenesisCmd(stargaze.DefaultNodeHome, stargaze.ModuleBasics),
 		debug.Cmd(),
 	)
 

@@ -21,6 +21,7 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
+	appParams "github.com/public-awesome/stargaze/app/params"
 )
 
 const (
@@ -247,18 +248,18 @@ Example:
 			}
 
 			// Read ions file
-			ionInput := args[1]
-			ionJSON, err := os.Open(ionInput)
-			if err != nil {
-				return err
-			}
-			defer ionJSON.Close()
-			byteValue2, _ := ioutil.ReadAll(ionJSON)
-			var ionAmts map[string]int64
-			json.Unmarshal(byteValue2, &ionAmts)
-			if err != nil {
-				return err
-			}
+			// ionInput := args[1]
+			// ionJSON, err := os.Open(ionInput)
+			// if err != nil {
+			// 	return err
+			// }
+			// defer ionJSON.Close()
+			// byteValue2, _ := ioutil.ReadAll(ionJSON)
+			// var ionAmts map[string]int64
+			// json.Unmarshal(byteValue2, &ionAmts)
+			// if err != nil {
+			// 	return err
+			// }
 
 			// get genesis params
 			genesisParams := MainnetGenesisParams()
@@ -269,27 +270,26 @@ Example:
 				nonAirdropAccs[acc.Address] = acc.GetCoins()
 			}
 
-			for _, acc := range genesisParams.MintParams.WeightedDeveloperRewardsReceivers {
-				if _, ok := nonAirdropAccs[acc.Address]; !ok {
-					nonAirdropAccs[acc.Address] = sdk.NewCoins()
-				}
+			// for _, acc := range genesisParams.MintParams.WeightedDeveloperRewardsReceivers {
+			// 	if _, ok := nonAirdropAccs[acc.Address]; !ok {
+			// 		nonAirdropAccs[acc.Address] = sdk.NewCoins()
+			// 	}
+			// }
 
-			}
+			// for addr, amt := range ionAmts {
+			// 	setCosmosBech32Prefixes()
+			// 	address, err := sdk.AccAddressFromBech32(addr)
+			// 	if err != nil {
+			// 		return err
+			// 	}
+			// 	appParams.SetAddressPrefixes()
 
-			for addr, amt := range ionAmts {
-				setCosmosBech32Prefixes()
-				address, err := sdk.AccAddressFromBech32(addr)
-				if err != nil {
-					return err
-				}
-				appparams.SetAddressPrefixes()
-
-				if val, ok := nonAirdropAccs[address.String()]; ok {
-					nonAirdropAccs[address.String()] = val.Add(sdk.NewCoin("uion", sdk.NewInt(amt).MulRaw(1_000_000)))
-				} else {
-					nonAirdropAccs[address.String()] = sdk.NewCoins(sdk.NewCoin("uion", sdk.NewInt(amt).MulRaw(1_000_000)))
-				}
-			}
+			// 	if val, ok := nonAirdropAccs[address.String()]; ok {
+			// 		nonAirdropAccs[address.String()] = val.Add(sdk.NewCoin("uion", sdk.NewInt(amt).MulRaw(1_000_000)))
+			// 	} else {
+			// 		nonAirdropAccs[address.String()] = sdk.NewCoins(sdk.NewCoin("uion", sdk.NewInt(amt).MulRaw(1_000_000)))
+			// 	}
+			// }
 
 			// figure out normalizationFactor to normalize snapshot balances to desired airdrop supply
 			normalizationFactor := genesisParams.AirdropSupply.ToDec().QuoInt(snapshot.TotalStarsAirdropAmount)
@@ -298,8 +298,8 @@ Example:
 			bankGenState := banktypes.GetGenesisStateFromAppState(cdc, appState)
 
 			liquidBalances := bankGenState.Balances
-			claimRecords := []claimtypes.ClaimRecord{}
-			claimModuleAccountBalance := sdk.NewInt(0)
+			// claimRecords := []claimtypes.ClaimRecord{}
+			// claimModuleAccountBalance := sdk.NewInt(0)
 
 			// for each account in the snapshot
 			for _, acc := range snapshot.Accounts {
@@ -313,7 +313,7 @@ Example:
 				}
 
 				// set stars bech32 prefixes
-				appparams.SetAddressPrefixes()
+				appParams.SetAddressPrefixes()
 
 				// skip accounts with 0 balance
 				if !acc.StarsBalanceBase.IsPositive() {
@@ -339,15 +339,15 @@ Example:
 				})
 
 				// claimable balances
-				claimableAmount := normalizedStarsBalance.Mul(sdk.MustNewDecFromStr("0.8")).TruncateInt()
+				// claimableAmount := normalizedStarsBalance.Mul(sdk.MustNewDecFromStr("0.8")).TruncateInt()
 
-				claimRecords = append(claimRecords, claimtypes.ClaimRecord{
-					Address:                address.String(),
-					InitialClaimableAmount: sdk.NewCoins(sdk.NewCoin(genesisParams.NativeCoinMetadatas[0].Base, claimableAmount)),
-					ActionCompleted:        []bool{false, false, false, false},
-				})
+				// claimRecords = append(claimRecords, claimtypes.ClaimRecord{
+				// 	Address:                address.String(),
+				// 	InitialClaimableAmount: sdk.NewCoins(sdk.NewCoin(genesisParams.NativeCoinMetadatas[0].Base, claimableAmount)),
+				// 	ActionCompleted:        []bool{false, false, false, false},
+				// })
 
-				claimModuleAccountBalance = claimModuleAccountBalance.Add(claimableAmount)
+				// claimModuleAccountBalance = claimModuleAccountBalance.Add(claimableAmount)
 
 				// Add the new account to the set of genesis accounts
 				baseAccount := authtypes.NewBaseAccount(address, nil, 0, 0)
@@ -400,15 +400,15 @@ Example:
 			appState[banktypes.ModuleName] = bankGenStateBz
 
 			// claim module genesis
-			claimGenState := claimtypes.GetGenesisStateFromAppState(depCdc, appState)
-			claimGenState.ModuleAccountBalance = sdk.NewCoin(genesisParams.NativeCoinMetadatas[0].Base, claimModuleAccountBalance)
+			// claimGenState := claimtypes.GetGenesisStateFromAppState(depCdc, appState)
+			// claimGenState.ModuleAccountBalance = sdk.NewCoin(genesisParams.NativeCoinMetadatas[0].Base, claimModuleAccountBalance)
 
-			claimGenState.ClaimRecords = claimRecords
-			claimGenStateBz, err := cdc.MarshalJSON(claimGenState)
-			if err != nil {
-				return fmt.Errorf("failed to marshal claim genesis state: %w", err)
-			}
-			appState[claimtypes.ModuleName] = claimGenStateBz
+			// claimGenState.ClaimRecords = claimRecords
+			// claimGenStateBz, err := cdc.MarshalJSON(claimGenState)
+			// if err != nil {
+			// 	return fmt.Errorf("failed to marshal claim genesis state: %w", err)
+			// }
+			// appState[claimtypes.ModuleName] = claimGenStateBz
 
 			// TODO: add remaining extra to community pool
 			// The total airdrop stars is a smidge short (~1 stars) short of the stated 50M supply.
