@@ -5,7 +5,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/public-awesome/stargaze/x/ibc-spend/keeper"
 	"github.com/public-awesome/stargaze/x/ibc-spend/types"
@@ -30,7 +29,7 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 func NewCommunityPoolIBCSpendProposalHandler(k keeper.Keeper) govtypes.Handler {
 	return func(ctx sdk.Context, content govtypes.Content) error {
 		switch c := content.(type) {
-		case *distrtypes.CommunityPoolSpendProposal:
+		case *types.CommunityPoolIBCSpendProposal:
 			return keeper.HandleCommunityPoolIBCSpendProposal(ctx, k, c)
 
 		default:

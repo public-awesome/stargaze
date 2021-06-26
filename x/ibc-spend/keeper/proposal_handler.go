@@ -2,12 +2,12 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/distribution/types"
 	clienttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/02-client/types"
+	"github.com/public-awesome/stargaze/x/ibc-spend/types"
 )
 
 // HandleCommunityPoolIBCSpendProposal is a handler for executing a passed community spend proposal
-func HandleCommunityPoolIBCSpendProposal(ctx sdk.Context, k Keeper, p *types.CommunityPoolSpendProposal) error {
+func HandleCommunityPoolIBCSpendProposal(ctx sdk.Context, k Keeper, p *types.CommunityPoolIBCSpendProposal) error {
 	moduleAccount := k.ak.GetModuleAddress(types.ModuleName)
 
 	// distribute from community pool to module account
@@ -17,13 +17,12 @@ func HandleCommunityPoolIBCSpendProposal(ctx sdk.Context, k Keeper, p *types.Com
 	}
 
 	sourcePort := k.transferKeeper.GetPort(ctx)
-	sourceChannel := "channel-142"
+	sourceChannel := p.SourceChannel
 	coinToSend := p.Amount[0]
 	sender := moduleAccount
 	receiver := p.Recipient
 	height := clienttypes.GetSelfHeight(ctx)
-	// TODO: what is a good timeout height?
-	timeoutHeight := clienttypes.NewHeight(height.RevisionNumber, height.RevisionHeight+10)
+	timeoutHeight := clienttypes.NewHeight(height.RevisionNumber, height.RevisionHeight+p.Timeout)
 
 	// ibc xfer from module account
 	err = k.transferKeeper.SendTransfer(ctx, sourcePort, sourceChannel, coinToSend, sender, receiver, timeoutHeight, 0)

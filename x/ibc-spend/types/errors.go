@@ -8,7 +8,9 @@ import (
 
 // x/ibc-spend module sentinel errors
 var (
-	ErrSample = sdkerrors.Register(ModuleName, 1100, "sample error")
-	ErrInvalidPacketTimeout = sdkerrors.Register(ModuleName, 1500, "invalid packet timeout")
-ErrInvalidVersion = sdkerrors.Register(ModuleName, 1501, "invalid version")
+	ErrSample                 = sdkerrors.Register(ModuleName, 1100, "sample error")
+	ErrInvalidPacketTimeout   = sdkerrors.Register(ModuleName, 1500, "invalid packet timeout")
+	ErrInvalidVersion         = sdkerrors.Register(ModuleName, 1501, "invalid version")
+	ErrInvalidProposalAmount  = sdkerrors.Register(ModuleName, 1510, "invalid community pool spend proposal amount")
+	ErrEmptyProposalRecipient = sdkerrors.Register(ModuleName, 1511, "invalid community pool spend proposal recipient")
 )

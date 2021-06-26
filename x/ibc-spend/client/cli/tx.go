@@ -61,7 +61,9 @@ Where proposal.json contains:
   "description": "Pay me some tokens over IBC!",
   "recipient": "[prefix]1s5afhd6gxevu37mkqcvvsj8qeylhn0rz46zdlq",
   "amount": "1000stake",
-  "deposit": "1000stake"
+  "deposit": "1000stake",
+  "sourceChannel": "channel-0",
+  "timeout": 100
 }
 `,
 				version.AppName,
