@@ -28,7 +28,7 @@ func testProposal(
 	amount sdk.Coins,
 	sourceChannel string) *types.CommunityPoolIBCSpendProposal {
 
-	return types.NewCommunityPoolIBCSpendProposal("Test", "description", recipient.String(), amount, sourceChannel, 20)
+	return types.NewCommunityPoolIBCSpendProposal("Test", "description", recipient.String(), amount, sourceChannel, 100)
 }
 
 type TransferTestSuite struct {
@@ -76,11 +76,13 @@ func (suite *TransferTestSuite) TestProposalHandlerPassed() {
 	hdlr := ibcspend.NewCommunityPoolIBCSpendProposalHandler(app.IBCSpendKeeper)
 	suite.Require().NoError(hdlr(ctx, tp))
 
-	// balances = app.BankKeeper.GetAllBalances(ctx, recipient)
-	// suite.Require().Equal(balances, amount)
-	// TODO:
-	// create a recipient on chain B
 	// check if recipient on chain B has balance of amount
+	balances = suite.chainB.App.BankKeeper.GetAllBalances(suite.chainB.GetContext(), recipient)
+	// TODO: check if denom trace matches what's expected
+	suite.Require().Equal(amount, balances)
+
+	// TODO: send coin back to chain A
+	// check if denom changed back to ustarx
 }
 
 func (suite *TransferTestSuite) TestProposalHandlerFailed_InsufficientCoinsInCommunityPool() {

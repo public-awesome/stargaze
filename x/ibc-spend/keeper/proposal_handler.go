@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	clienttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/02-client/types"
 	"github.com/public-awesome/stargaze/x/ibc-spend/types"
@@ -8,6 +10,8 @@ import (
 
 // HandleCommunityPoolIBCSpendProposal is a handler for executing a passed community spend proposal
 func HandleCommunityPoolIBCSpendProposal(ctx sdk.Context, k Keeper, p *types.CommunityPoolIBCSpendProposal) error {
+	logger := k.Logger(ctx)
+
 	moduleAccount := k.ak.GetModuleAddress(types.ModuleName)
 
 	// distribute from community pool to module account
@@ -15,6 +19,8 @@ func HandleCommunityPoolIBCSpendProposal(ctx sdk.Context, k Keeper, p *types.Com
 	if err != nil {
 		return err
 	}
+
+	fmt.Println(p.String())
 
 	sourcePort := k.transferKeeper.GetPort(ctx)
 	sourceChannel := p.SourceChannel
@@ -30,7 +36,9 @@ func HandleCommunityPoolIBCSpendProposal(ctx sdk.Context, k Keeper, p *types.Com
 		return err
 	}
 
-	logger := k.Logger(ctx)
+	fmt.Println(
+		"transferred from the community pool to IBC recipient", "amount", p.Amount.String(), "recipient", p.Recipient)
+
 	logger.Info(
 		"transferred from the community pool to IBC recipient", "amount", p.Amount.String(), "recipient", p.Recipient)
 
