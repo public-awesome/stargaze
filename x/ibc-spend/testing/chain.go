@@ -63,7 +63,6 @@ const (
 var (
 	DefaultOpenInitVersion *connectiontypes.Version
 
-	// Default params variables used to create a TM client
 	DefaultTrustLevel ibctmtypes.Fraction = ibctmtypes.DefaultTrustLevel
 	TestHash                              = tmhash.Sum([]byte("TESTING HASH"))
 	TestCoin                              = sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(100))
@@ -299,9 +298,9 @@ func (chain *TestChain) SendMsgs(msgs ...sdk.Msg) (*sdk.Result, error) {
 	chain.NextBlock()
 
 	// increment sequence for successful transaction execution
-	chain.SenderAccount.SetSequence(chain.SenderAccount.GetSequence() + 1)
+	err = chain.SenderAccount.SetSequence(chain.SenderAccount.GetSequence() + 1)
 
-	return r, nil
+	return r, err
 }
 
 // GetClientState retrieves the client state for the provided clientID. The client is
@@ -357,7 +356,8 @@ func (chain *TestChain) GetChannel(testChannel TestChannel) channeltypes.Channel
 // GetAcknowledgement retrieves an acknowledgement for the provided packet. If the
 // acknowledgement does not exist then testing will fail.
 func (chain *TestChain) GetAcknowledgement(packet exported.PacketI) []byte {
-	ack, found := chain.App.IBCKeeper.ChannelKeeper.GetPacketAcknowledgement(chain.GetContext(), packet.GetDestPort(), packet.GetDestChannel(), packet.GetSequence())
+	ack, found := chain.App.IBCKeeper.ChannelKeeper.GetPacketAcknowledgement(
+		chain.GetContext(), packet.GetDestPort(), packet.GetDestChannel(), packet.GetSequence())
 	require.True(chain.t, found)
 
 	return ack
@@ -438,7 +438,9 @@ func (chain *TestChain) NextTestChannel(conn *TestConnection, portID string) Tes
 
 // ConstructMsgCreateClient constructs a message to create a new client state (tendermint or solomachine).
 // NOTE: a solo machine client will be created with an empty diversifier.
-func (chain *TestChain) ConstructMsgCreateClient(counterparty *TestChain, clientID string, clientType string) *clienttypes.MsgCreateClient {
+func (chain *TestChain) ConstructMsgCreateClient(
+	counterparty *TestChain, clientID string, clientType string) *clienttypes.MsgCreateClient {
+
 	var (
 		clientState    exported.ClientState
 		consensusState exported.ConsensusState
@@ -493,7 +495,9 @@ func (chain *TestChain) UpdateTMClient(counterparty *TestChain, clientID string)
 
 // ConstructUpdateTMClientHeader will construct a valid 07-tendermint Header to update the
 // light client on the source chain.
-func (chain *TestChain) ConstructUpdateTMClientHeader(counterparty *TestChain, clientID string) (*ibctmtypes.Header, error) {
+func (chain *TestChain) ConstructUpdateTMClientHeader(
+	counterparty *TestChain, clientID string) (*ibctmtypes.Header, error) {
+
 	header := counterparty.LastHeader
 	// Relayer must query for LatestHeight on client to get TrustedHeight
 	trustedHeight := chain.GetClientState(clientID).GetLatestHeight().(clienttypes.Height)
@@ -513,7 +517,9 @@ func (chain *TestChain) ConstructUpdateTMClientHeader(counterparty *TestChain, c
 		// NextValidatorsHash
 		tmTrustedVals, ok = counterparty.GetValsAtHeight(int64(trustedHeight.RevisionHeight + 1))
 		if !ok {
-			return nil, sdkerrors.Wrapf(ibctmtypes.ErrInvalidHeaderHeight, "could not retrieve trusted validators at trustedHeight: %d", trustedHeight)
+			return nil, sdkerrors.Wrapf(
+				ibctmtypes.ErrInvalidHeaderHeight,
+				"could not retrieve trusted validators at trustedHeight: %d", trustedHeight)
 		}
 	}
 	// inject trusted fields into last header
@@ -539,12 +545,24 @@ func (chain *TestChain) ExpireClient(amount time.Duration) {
 // CurrentTMClientHeader creates a TM header using the current header parameters
 // on the chain. The trusted fields in the header are set to nil.
 func (chain *TestChain) CurrentTMClientHeader() *ibctmtypes.Header {
-	return chain.CreateTMClientHeader(chain.ChainID, chain.CurrentHeader.Height, clienttypes.Height{}, chain.CurrentHeader.Time, chain.Vals, nil, chain.Signers)
+	return chain.CreateTMClientHeader(
+		chain.ChainID,
+		chain.CurrentHeader.Height,
+		clienttypes.Height{},
+		chain.CurrentHeader.Time, chain.Vals, nil, chain.Signers)
 }
 
 // CreateTMClientHeader creates a TM header to update the TM client. Args are passed in to allow
 // caller flexibility to use params that differ from the chain.
-func (chain *TestChain) CreateTMClientHeader(chainID string, blockHeight int64, trustedHeight clienttypes.Height, timestamp time.Time, tmValSet, tmTrustedVals *tmtypes.ValidatorSet, signers []tmtypes.PrivValidator) *ibctmtypes.Header {
+func (chain *TestChain) CreateTMClientHeader(
+	chainID string,
+	blockHeight int64,
+	trustedHeight clienttypes.Height,
+	timestamp time.Time,
+	tmValSet,
+	tmTrustedVals *tmtypes.ValidatorSet,
+	signers []tmtypes.PrivValidator) *ibctmtypes.Header {
+
 	require.NotNil(chain.t, tmValSet)
 
 	vsetHash := tmValSet.Hash()

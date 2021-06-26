@@ -31,7 +31,8 @@ func HandleCommunityPoolIBCSpendProposal(ctx sdk.Context, k Keeper, p *types.Com
 	}
 
 	logger := k.Logger(ctx)
-	logger.Info("transferred from the community pool to IBC recipient", "amount", p.Amount.String(), "recipient", p.Recipient)
+	logger.Info(
+		"transferred from the community pool to IBC recipient", "amount", p.Amount.String(), "recipient", p.Recipient)
 
 	return nil
 }

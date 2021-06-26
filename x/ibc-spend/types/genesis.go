@@ -1,8 +1,8 @@
 package types
 
 import (
-// this line is used by starport scaffolding # genesis/types/import
-host "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
+	// this line is used by starport scaffolding # genesis/types/import
+	host "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
 )
 
 // DefaultIndex is the default capability global index
@@ -12,7 +12,7 @@ const DefaultIndex uint64 = 1
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		PortId: PortID,
-	    // this line is used by starport scaffolding # genesis/types/default
+		// this line is used by starport scaffolding # genesis/types/default
 	}
 }
 
@@ -20,10 +20,10 @@ func DefaultGenesis() *GenesisState {
 // failure.
 func (gs GenesisState) Validate() error {
 	if err := host.PortIdentifierValidator(gs.PortId); err != nil {
-	return err
-}
+		return err
+	}
 
-    // this line is used by starport scaffolding # genesis/types/validate
+	// this line is used by starport scaffolding # genesis/types/validate
 
 	return nil
 }

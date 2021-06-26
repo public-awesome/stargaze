@@ -22,10 +22,6 @@ var (
 	DefaultRelativePacketTimeoutTimestamp = uint64((time.Duration(10) * time.Minute).Nanoseconds())
 )
 
-const (
-	flagPacketTimeoutTimestamp = "packet-timeout-timestamp"
-)
-
 // GetTxCmd returns the transaction commands for this module
 func GetTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
@@ -116,7 +112,9 @@ Where proposal.json contains:
 }
 
 // ParseCommunityPoolIBCSpendProposalWithDeposit reads and parses a CommunityPoolSpendProposalWithDeposit from a file.
-func ParseCommunityPoolIBCSpendProposalWithDeposit(cdc codec.JSONMarshaler, proposalFile string) (types.CommunityPoolIBCSpendProposalWithDeposit, error) {
+func ParseCommunityPoolIBCSpendProposalWithDeposit(
+	cdc codec.JSONMarshaler, proposalFile string) (types.CommunityPoolIBCSpendProposalWithDeposit, error) {
+
 	proposal := types.CommunityPoolIBCSpendProposalWithDeposit{}
 
 	contents, err := ioutil.ReadFile(proposalFile)

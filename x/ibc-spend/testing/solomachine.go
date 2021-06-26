@@ -251,15 +251,18 @@ func (solo *Solomachine) GenerateSignature(signBytes []byte) []byte {
 
 // GetClientStatePath returns the commitment path for the client state.
 func (solo *Solomachine) GetClientStatePath(counterpartyClientIdentifier string) commitmenttypes.MerklePath {
-	path, err := commitmenttypes.ApplyPrefix(prefix, commitmenttypes.NewMerklePath(host.FullClientStatePath(counterpartyClientIdentifier)))
+	path, err := commitmenttypes.ApplyPrefix(
+		prefix, commitmenttypes.NewMerklePath(host.FullClientStatePath(counterpartyClientIdentifier)))
 	require.NoError(solo.t, err)
 
 	return path
 }
 
 // GetConsensusStatePath returns the commitment path for the consensus state.
-func (solo *Solomachine) GetConsensusStatePath(counterpartyClientIdentifier string, consensusHeight exported.Height) commitmenttypes.MerklePath {
-	path, err := commitmenttypes.ApplyPrefix(prefix, commitmenttypes.NewMerklePath(host.FullConsensusStatePath(counterpartyClientIdentifier, consensusHeight)))
+func (solo *Solomachine) GetConsensusStatePath(
+	counterpartyClientIdentifier string, consensusHeight exported.Height) commitmenttypes.MerklePath {
+	path, err := commitmenttypes.ApplyPrefix(
+		prefix, commitmenttypes.NewMerklePath(host.FullConsensusStatePath(counterpartyClientIdentifier, consensusHeight)))
 	require.NoError(solo.t, err)
 
 	return path
