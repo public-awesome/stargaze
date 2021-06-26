@@ -38,6 +38,8 @@ type TransferKeeper interface {
 		timeoutHeight clienttypes.Height,
 		timeoutTimestamp uint64,
 	) error
+
+	GetPort(ctx sdk.Context) string
 }
 
 type DistributionKeeper interface {

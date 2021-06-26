@@ -17,9 +17,6 @@ type (
 		storeKey       sdk.StoreKey
 		memKey         sdk.StoreKey
 		ak             types.AccountKeeper
-		channelKeeper  types.ChannelKeeper
-		portKeeper     types.PortKeeper
-		scopedKeeper   types.ScopedKeeper
 		transferKeeper types.TransferKeeper
 		distrKeeper    types.DistributionKeeper
 	}
@@ -30,9 +27,6 @@ func NewKeeper(
 	storeKey,
 	memKey sdk.StoreKey,
 	ak types.AccountKeeper,
-	channelKeeper types.ChannelKeeper,
-	portKeeper types.PortKeeper,
-	scopedKeeper types.ScopedKeeper,
 	transferKeeper types.TransferKeeper,
 	distrKeeper types.DistributionKeeper,
 ) *Keeper {
@@ -41,9 +35,6 @@ func NewKeeper(
 		storeKey:       storeKey,
 		memKey:         memKey,
 		ak:             ak,
-		channelKeeper:  channelKeeper,
-		portKeeper:     portKeeper,
-		scopedKeeper:   scopedKeeper,
 		transferKeeper: transferKeeper,
 		distrKeeper:    distrKeeper,
 	}

@@ -16,7 +16,7 @@ func HandleCommunityPoolIBCSpendProposal(ctx sdk.Context, k Keeper, p *types.Com
 		return err
 	}
 
-	sourcePort := k.GetPort(ctx)
+	sourcePort := k.transferKeeper.GetPort(ctx)
 	sourceChannel := "channel-142"
 	coinToSend := p.Amount[0]
 	sender := moduleAccount

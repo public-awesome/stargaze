@@ -346,8 +346,6 @@ func NewStargazeApp(
 	app.ibcSpendKeeper = *ibcspendkeeper.NewKeeper(
 		appCodec, keys[ibcspendtypes.StoreKey], memKeys[ibcspendtypes.StoreKey],
 		app.AccountKeeper,
-		app.IBCKeeper.ChannelKeeper, &app.IBCKeeper.PortKeeper,
-		scopedIBCKeeper,
 		app.TransferKeeper,
 		app.DistrKeeper,
 	)

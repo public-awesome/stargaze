@@ -17,7 +17,6 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	porttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/05-port/types"
 	"github.com/public-awesome/stargaze/x/ibc-spend/client/cli"
 	"github.com/public-awesome/stargaze/x/ibc-spend/keeper"
 	"github.com/public-awesome/stargaze/x/ibc-spend/types"
@@ -26,7 +25,6 @@ import (
 var (
 	_ module.AppModule      = AppModule{}
 	_ module.AppModuleBasic = AppModuleBasic{}
-	_ porttypes.IBCModule   = AppModule{}
 )
 
 // ----------------------------------------------------------------------------
