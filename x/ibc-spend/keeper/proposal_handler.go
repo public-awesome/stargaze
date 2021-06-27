@@ -12,10 +12,10 @@ import (
 func HandleCommunityPoolIBCSpendProposal(ctx sdk.Context, k Keeper, p *types.CommunityPoolIBCSpendProposal) error {
 	logger := k.Logger(ctx)
 
-	moduleAccount := k.ak.GetModuleAddress(types.ModuleName)
+	moduleAddr := k.ak.GetModuleAddress(types.ModuleName)
 
 	// distribute from community pool to module account
-	err := k.distrKeeper.DistributeFromFeePool(ctx, p.Amount, moduleAccount)
+	err := k.distrKeeper.DistributeFromFeePool(ctx, p.Amount, moduleAddr)
 	if err != nil {
 		return err
 	}
@@ -25,10 +25,18 @@ func HandleCommunityPoolIBCSpendProposal(ctx sdk.Context, k Keeper, p *types.Com
 	sourcePort := k.transferKeeper.GetPort(ctx)
 	sourceChannel := p.SourceChannel
 	coinToSend := p.Amount[0]
-	sender := moduleAccount
+	sender := moduleAddr
 	receiver := p.Recipient
 	height := clienttypes.GetSelfHeight(ctx)
 	timeoutHeight := clienttypes.NewHeight(height.RevisionNumber, height.RevisionHeight+p.Timeout)
+
+	fmt.Printf("sourcePort %v\n", sourcePort)
+	fmt.Printf("sourceChannel %v\n", sourceChannel)
+	fmt.Printf("coinToSend %v\n", coinToSend.String())
+	fmt.Printf("sender %v\n", sender.String())
+	fmt.Printf("receiver %v\n", receiver)
+	fmt.Printf("height %v\n", height)
+	fmt.Printf("timeoutHeight %v\n", timeoutHeight)
 
 	// ibc xfer from module account
 	err = k.transferKeeper.SendTransfer(ctx, sourcePort, sourceChannel, coinToSend, sender, receiver, timeoutHeight, 0)

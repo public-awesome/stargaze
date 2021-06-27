@@ -7,6 +7,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/public-awesome/stargaze/x/ibc-spend/types"
 	// this line is used by starport scaffolding # ibc/keeper/import
 )
@@ -30,6 +31,12 @@ func NewKeeper(
 	transferKeeper types.TransferKeeper,
 	distrKeeper types.DistributionKeeper,
 ) *Keeper {
+
+	// ensure module account is set
+	// if addr := ak.GetModuleAddress(types.ModuleName); addr == nil {
+	// panic(fmt.Sprintf("%s module account has not been set", types.ModuleName))
+	// }
+
 	return &Keeper{
 		cdc:            cdc,
 		storeKey:       storeKey,
@@ -42,4 +49,9 @@ func NewKeeper(
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
+}
+
+// GetIBCSpendAccount returns the ModuleAccount
+func (k Keeper) GetIBCSpendAccount(ctx sdk.Context) authtypes.ModuleAccountI {
+	return k.ak.GetModuleAccount(ctx, types.ModuleName)
 }

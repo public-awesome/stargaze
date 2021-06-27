@@ -158,6 +158,8 @@ var (
 		curatingtypes.RewardPoolName: {authtypes.Minter, authtypes.Burner},
 		curatingtypes.VotingPoolName: {authtypes.Minter, authtypes.Burner},
 		staketypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
+		// ibcspendtypes.ModuleName:     {authtypes.Minter, authtypes.Burner},
+		ibcspendtypes.ModuleName: nil,
 	}
 )
 
@@ -554,9 +556,9 @@ func (app *SimApp) LoadHeight(height int64) error {
 // ModuleAccountAddrs returns all the app's module account addresses.
 func (app *SimApp) ModuleAccountAddrs() map[string]bool {
 	modAccAddrs := make(map[string]bool)
-	for acc := range maccPerms {
-		modAccAddrs[authtypes.NewModuleAddress(acc).String()] = true
-	}
+	// for acc := range maccPerms {
+	// modAccAddrs[authtypes.NewModuleAddress(acc).String()] = true
+	// }
 
 	return modAccAddrs
 }
