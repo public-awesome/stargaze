@@ -86,6 +86,9 @@ import (
 
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	stargazeappparams "github.com/public-awesome/stargaze/app/params"
+	curatingtypes "github.com/public-awesome/stargaze/x/curating/types"
+
+	"github.com/public-awesome/stargaze/x/claim"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"
@@ -155,6 +158,7 @@ var (
 
 		// Stargaze Modules
 		wasm.AppModuleBasic{},
+		claim.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -167,6 +171,7 @@ var (
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		wasm.ModuleName:                {authtypes.Burner},
+		claimtypes.ModuleName:          {authtypes.Minter, authtypes.Burner},
 	}
 
 	// module accounts that are allowed to receive tokens
@@ -213,8 +218,9 @@ type StargazeApp struct {
 	evidenceKeeper   evidencekeeper.Keeper
 	transferKeeper   ibctransferkeeper.Keeper
 
-	// Stargaze Keepers
-	wasmKeeper wasm.Keeper
+	// Stargaze
+	wasmKeeper  wasm.Keeper
+	ClaimKeeper *claimkeeper.Keeper
 
 	// make scoped keepers public for test purposes
 	scopedIBCKeeper      capabilitykeeper.ScopedKeeper
@@ -263,6 +269,7 @@ func NewStargazeApp(
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		// Stargaze Stores
 		wasm.StoreKey,
+		claimtypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -339,8 +346,8 @@ func NewStargazeApp(
 
 	// register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
-	app.stakingKeeper = *stakingKeeper.SetHooks(
-		stakingtypes.NewMultiStakingHooks(app.distrKeeper.Hooks(), app.slashingKeeper.Hooks()),
+	app.StakingKeeper = *stakingKeeper.SetHooks(
+		stakingtypes.NewMultiStakingHooks(app.DistrKeeper.Hooks(), app.SlashingKeeper.Hooks(), app.ClaimKeeper.Hooks()),
 	)
 
 	// Create IBC Keeper
@@ -365,7 +372,19 @@ func NewStargazeApp(
 		appCodec, keys[evidencetypes.StoreKey], &app.stakingKeeper, app.slashingKeeper,
 	)
 	// If evidence needs to be handled for the app, set routes in router here and seal
-	app.evidenceKeeper = *evidenceKeeper
+	app.EvidenceKeeper = *evidenceKeeper
+
+	app.ClaimKeeper = claimkeeper.NewKeeper(appCodec, keys[claimtypes.StoreKey], app.AccountKeeper, app.BankKeeper, stakingKeeper, app.DistrKeeper)
+
+	// Stargaze Keepers
+
+	// TODO add hooks for curating module
+	app.GovKeeper = *govKeeper.SetHooks(
+		govtypes.NewMultiGovHooks(
+			// insert governance hooks receivers here
+			app.ClaimKeeper.Hooks(),
+		),
+	)
 
 	wasmDir := filepath.Join(homePath, "wasm")
 	wasmConfig, err := wasm.ReadWasmConfig(appOpts)
@@ -426,6 +445,7 @@ func NewStargazeApp(
 		transferModule,
 		// StargazeModules
 		wasm.NewAppModule(appCodec, &app.wasmKeeper, app.stakingKeeper),
+		claim.NewAppModule(appCodec, *app.ClaimKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -435,6 +455,8 @@ func NewStargazeApp(
 	app.mm.SetOrderBeginBlockers(
 		upgradetypes.ModuleName,
 		minttypes.ModuleName,
+		// must run before distribution
+		curatingtypes.ModuleName,
 		distrtypes.ModuleName,
 		slashingtypes.ModuleName,
 		evidencetypes.ModuleName,
@@ -445,6 +467,7 @@ func NewStargazeApp(
 		crisistypes.ModuleName,
 		govtypes.ModuleName,
 		stakingtypes.ModuleName,
+		claimtypes.ModuleName,
 	)
 
 	// NOTE: The genutils moodule must occur after staking so that pools are
@@ -461,6 +484,7 @@ func NewStargazeApp(
 		evidencetypes.ModuleName, ibctransfertypes.ModuleName,
 		// stargaze init genesis
 		wasm.ModuleName,
+		claimtypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.crisisKeeper)
