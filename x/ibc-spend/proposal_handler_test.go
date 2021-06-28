@@ -19,7 +19,7 @@ var (
 	delPk1   = ed25519.GenPrivKey().PubKey()
 	delAddr1 = sdk.AccAddress(delPk1.Address())
 
-	amount = sdk.NewCoins(sdk.NewCoin("ustarx", sdk.NewInt(1)))
+	amount = sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(1)))
 )
 
 func testProposal(
@@ -49,7 +49,7 @@ func (suite *TransferTestSuite) SetupTest() {
 func (suite *TransferTestSuite) TestProposalHandlerPassed() {
 	app := suite.chainA.App
 	ctx := suite.chainA.GetContext()
-	recipient := delAddr1
+	// recipient := delAddr1
 
 	// setup IBC
 	_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
@@ -72,6 +72,7 @@ func (suite *TransferTestSuite) TestProposalHandlerPassed() {
 	feePool.CommunityPool = sdk.NewDecCoinsFromCoins(amount...)
 	app.DistrKeeper.SetFeePool(ctx, feePool)
 
+	recipient := suite.chainB.SenderAccount.GetAddress()
 	tp := testProposal(recipient, amount, channelA.ID)
 	hdlr := ibcspend.NewCommunityPoolIBCSpendProposalHandler(app.IBCSpendKeeper)
 	suite.Require().NoError(hdlr(ctx, tp))
