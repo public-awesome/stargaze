@@ -38,6 +38,9 @@ func HandleCommunityPoolIBCSpendProposal(ctx sdk.Context, k Keeper, p *types.Com
 	fmt.Printf("receiver %v\n", receiver)
 	fmt.Printf("timeoutHeight %v\n", timeoutHeight)
 
+	moduleBalance := k.bankKeeper.GetAllBalances(ctx, sender)
+	fmt.Printf("module balance %v\n", moduleBalance.String())
+
 	// ibc xfer from module account
 	err = k.transferKeeper.SendTransfer(ctx, sourcePort, sourceChannel, coinToSend, sender, receiver, timeoutHeight, 0)
 	if err != nil {

@@ -349,6 +349,7 @@ func NewStargazeApp(
 		app.AccountKeeper,
 		app.TransferKeeper,
 		app.DistrKeeper,
+		app.BankKeeper,
 	)
 
 	// register the proposal types

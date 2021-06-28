@@ -20,6 +20,7 @@ type (
 		ak             types.AccountKeeper
 		transferKeeper types.TransferKeeper
 		distrKeeper    types.DistributionKeeper
+		bankKeeper     types.BankKeeper
 	}
 )
 
@@ -30,6 +31,7 @@ func NewKeeper(
 	ak types.AccountKeeper,
 	transferKeeper types.TransferKeeper,
 	distrKeeper types.DistributionKeeper,
+	bankKeeper types.BankKeeper,
 ) *Keeper {
 
 	// ensure module account is set
@@ -44,6 +46,7 @@ func NewKeeper(
 		ak:             ak,
 		transferKeeper: transferKeeper,
 		distrKeeper:    distrKeeper,
+		bankKeeper:     bankKeeper,
 	}
 }
 

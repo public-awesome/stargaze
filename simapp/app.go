@@ -382,6 +382,7 @@ func NewSimApp(
 		app.AccountKeeper,
 		app.TransferKeeper,
 		app.DistrKeeper,
+		app.BankKeeper,
 	)
 
 	/****  Module Options ****/
