@@ -11,3 +11,4 @@ build/
 *.swp
 
 coverage.txt
+proposal.json

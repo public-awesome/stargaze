@@ -10,6 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	"github.com/gorilla/mux"
+	simappparams "github.com/public-awesome/stargaze/simapp/params"
 	"github.com/rakyll/statik/fs"
 	"github.com/spf13/cast"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -83,8 +84,6 @@ import (
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	SimAppparams "github.com/public-awesome/stargaze/simapp/params"
-
 	"github.com/public-awesome/stargaze/x/curating"
 	curatingkeeper "github.com/public-awesome/stargaze/x/curating/keeper"
 	curatingtypes "github.com/public-awesome/stargaze/x/curating/types"
@@ -97,6 +96,12 @@ import (
 	"github.com/public-awesome/stargaze/x/stake"
 	stakekeeper "github.com/public-awesome/stargaze/x/stake/keeper"
 	staketypes "github.com/public-awesome/stargaze/x/stake/types"
+
+	ibcmock "github.com/cosmos/cosmos-sdk/x/ibc/testing/mock"
+	ibcspend "github.com/public-awesome/stargaze/x/ibc-spend"
+	ibcspendclient "github.com/public-awesome/stargaze/x/ibc-spend/client"
+	ibcspendkeeper "github.com/public-awesome/stargaze/x/ibc-spend/keeper"
+	ibcspendtypes "github.com/public-awesome/stargaze/x/ibc-spend/types"
 )
 
 const appName = "SimApp"
@@ -121,6 +126,7 @@ var (
 			distrclient.ProposalHandler,
 			upgradeclient.ProposalHandler,
 			upgradeclient.CancelProposalHandler,
+			ibcspendclient.ProposalHandler,
 		),
 		params.AppModuleBasic{},
 		crisis.AppModuleBasic{},
@@ -135,6 +141,7 @@ var (
 		curating.AppModuleBasic{},
 		user.AppModuleBasic{},
 		stake.AppModuleBasic{},
+		ibcspend.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -151,6 +158,8 @@ var (
 		curatingtypes.RewardPoolName: {authtypes.Minter, authtypes.Burner},
 		curatingtypes.VotingPoolName: {authtypes.Minter, authtypes.Burner},
 		staketypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
+		// ibcspendtypes.ModuleName:     {authtypes.Minter, authtypes.Burner},
+		ibcspendtypes.ModuleName: nil,
 	}
 )
 
@@ -196,10 +205,12 @@ type SimApp struct {
 	CuratingKeeper curatingkeeper.Keeper
 	UserKeeper     userkeeper.Keeper
 	StakeKeeper    stakekeeper.Keeper
+	IBCSpendKeeper ibcspendkeeper.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
+	ScopedIBCMockKeeper  capabilitykeeper.ScopedKeeper
 
 	// the module manager
 	mm *module.Manager
@@ -221,7 +232,7 @@ func init() {
 func NewSimApp(
 	logger log.Logger, db dbm.DB, traceStore io.Writer,
 	loadLatest bool, skipUpgradeHeights map[int64]bool,
-	homePath string, invCheckPeriod uint, encodingConfig SimAppparams.EncodingConfig,
+	homePath string, invCheckPeriod uint, encodingConfig simappparams.EncodingConfig,
 	appOpts servertypes.AppOptions,
 	baseAppOptions ...func(*baseapp.BaseApp),
 ) *SimApp {
@@ -244,6 +255,7 @@ func NewSimApp(
 		curatingtypes.StoreKey,
 		usertypes.StoreKey,
 		staketypes.StoreKey,
+		ibcspendtypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -270,6 +282,9 @@ func NewSimApp(
 		memKeys[capabilitytypes.MemStoreKey])
 	scopedIBCKeeper := app.CapabilityKeeper.ScopeToModule(ibchost.ModuleName)
 	scopedTransferKeeper := app.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
+	// NOTE: the IBC mock keeper and application module is used only for testing core IBC. Do
+	// note replicate if you do not need to test core IBC or light clients.
+	scopedIBCMockKeeper := app.CapabilityKeeper.ScopeToModule(ibcmock.ModuleName)
 
 	// add keepers
 	app.AccountKeeper = authkeeper.NewAccountKeeper(
@@ -303,7 +318,8 @@ func NewSimApp(
 	govRouter.AddRoute(govtypes.RouterKey, govtypes.ProposalHandler).
 		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.ParamsKeeper)).
 		AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.DistrKeeper)).
-		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.UpgradeKeeper))
+		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.UpgradeKeeper)).
+		AddRoute(ibcspendtypes.RouterKey, ibcspend.NewCommunityPoolIBCSpendProposalHandler(app.IBCSpendKeeper))
 	app.GovKeeper = govkeeper.NewKeeper(
 		appCodec, keys[govtypes.StoreKey], app.GetSubspace(govtypes.ModuleName), app.AccountKeeper, app.BankKeeper,
 		&stakingKeeper, govRouter,
@@ -328,9 +344,14 @@ func NewSimApp(
 	)
 	transferModule := transfer.NewAppModule(app.TransferKeeper)
 
+	// NOTE: the IBC mock keeper and application module is used only for testing core IBC. Do
+	// note replicate if you do not need to test core IBC or light clients.
+	mockModule := ibcmock.NewAppModule(scopedIBCMockKeeper)
+
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
 	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferModule)
+	ibcRouter.AddRoute(ibcmock.ModuleName, mockModule)
 	app.IBCKeeper.SetRouter(ibcRouter)
 
 	// create evidence keeper with router
@@ -354,6 +375,14 @@ func NewSimApp(
 		app.StakingKeeper,
 		app.BankKeeper,
 		app.GetSubspace(staketypes.ModuleName),
+	)
+
+	app.IBCSpendKeeper = *ibcspendkeeper.NewKeeper(
+		appCodec, keys[ibcspendtypes.StoreKey], memKeys[ibcspendtypes.StoreKey],
+		app.AccountKeeper,
+		app.TransferKeeper,
+		app.DistrKeeper,
+		app.BankKeeper,
 	)
 
 	/****  Module Options ****/
@@ -389,6 +418,7 @@ func NewSimApp(
 		curating.NewAppModule(appCodec, app.CuratingKeeper, app.AccountKeeper, app.BankKeeper),
 		user.NewAppModule(appCodec, app.UserKeeper),
 		stake.NewAppModule(appCodec, app.StakeKeeper, app.CuratingKeeper, app.StakingKeeper),
+		ibcspend.NewAppModule(appCodec, app.IBCSpendKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -419,6 +449,7 @@ func NewSimApp(
 		// stargaze init genesis
 		curatingtypes.ModuleName,
 		usertypes.ModuleName,
+		ibcspendtypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -480,6 +511,9 @@ func NewSimApp(
 
 	app.ScopedIBCKeeper = scopedIBCKeeper
 	app.ScopedTransferKeeper = scopedTransferKeeper
+	// NOTE: the IBC mock keeper and application module is used only for testing core IBC. Do
+	// note replicate if you do not need to test core IBC or light clients.
+	app.ScopedIBCMockKeeper = scopedIBCMockKeeper
 
 	return app
 }
@@ -523,9 +557,9 @@ func (app *SimApp) LoadHeight(height int64) error {
 // ModuleAccountAddrs returns all the app's module account addresses.
 func (app *SimApp) ModuleAccountAddrs() map[string]bool {
 	modAccAddrs := make(map[string]bool)
-	for acc := range maccPerms {
-		modAccAddrs[authtypes.NewModuleAddress(acc).String()] = true
-	}
+	// for acc := range maccPerms {
+	// modAccAddrs[authtypes.NewModuleAddress(acc).String()] = true
+	// }
 
 	return modAccAddrs
 }
@@ -659,6 +693,7 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler,
 	paramsKeeper.Subspace(curatingtypes.ModuleName)
 	paramsKeeper.Subspace(usertypes.ModuleName)
 	paramsKeeper.Subspace(staketypes.ModuleName)
+	paramsKeeper.Subspace(ibcspendtypes.ModuleName)
 
 	return paramsKeeper
 }

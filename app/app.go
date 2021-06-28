@@ -61,7 +61,6 @@ import (
 	ibctransferkeeper "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/keeper"
 	ibctransfertypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
 	ibc "github.com/cosmos/cosmos-sdk/x/ibc/core"
-	porttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/05-port/types"
 	ibchost "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
 	ibckeeper "github.com/cosmos/cosmos-sdk/x/ibc/core/keeper"
 	"github.com/cosmos/cosmos-sdk/x/mint"
@@ -89,8 +88,13 @@ import (
 	"github.com/public-awesome/stargaze/x/dao"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
+	porttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/05-port/types"
 	daokeeper "github.com/public-awesome/stargaze/x/dao/keeper"
 	daotypes "github.com/public-awesome/stargaze/x/dao/types"
+	ibcspend "github.com/public-awesome/stargaze/x/ibc-spend"
+	ibcspendclient "github.com/public-awesome/stargaze/x/ibc-spend/client"
+	ibcspendkeeper "github.com/public-awesome/stargaze/x/ibc-spend/keeper"
+	ibcspendtypes "github.com/public-awesome/stargaze/x/ibc-spend/types"
 )
 
 const appName = "StargazeApp"
@@ -142,6 +146,7 @@ var (
 			distrclient.ProposalHandler,
 			upgradeclient.ProposalHandler,
 			upgradeclient.CancelProposalHandler,
+			ibcspendclient.ProposalHandler,
 		),
 		params.AppModuleBasic{},
 		crisis.AppModuleBasic{},
@@ -155,6 +160,7 @@ var (
 		// Stargaze Modules
 		wasm.AppModuleBasic{},
 		dao.AppModuleBasic{},
+		ibcspend.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -166,6 +172,7 @@ var (
 		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
+		ibcspendtypes.ModuleName:       {authtypes.Minter, authtypes.Burner},
 	}
 )
 
@@ -208,8 +215,9 @@ type StargazeApp struct {
 	TransferKeeper   ibctransferkeeper.Keeper
 
 	// Stargaze Keepers
-	wasmKeeper wasm.Keeper
-	daoKeeper  daokeeper.Keeper
+	wasmKeeper     wasm.Keeper
+	daoKeeper      daokeeper.Keeper
+	ibcSpendKeeper ibcspendkeeper.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
@@ -259,6 +267,7 @@ func NewStargazeApp(
 		// Stargaze Stores
 		wasm.StoreKey,
 		daotypes.StoreKey,
+		ibcspendtypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -316,17 +325,6 @@ func NewStargazeApp(
 	)
 	app.UpgradeKeeper = upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec, homePath)
 
-	// register the proposal types
-	govRouter := govtypes.NewRouter()
-	govRouter.AddRoute(govtypes.RouterKey, govtypes.ProposalHandler).
-		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.ParamsKeeper)).
-		AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.DistrKeeper)).
-		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.UpgradeKeeper))
-	app.GovKeeper = govkeeper.NewKeeper(
-		appCodec, keys[govtypes.StoreKey], app.GetSubspace(govtypes.ModuleName), app.AccountKeeper, app.BankKeeper,
-		&stakingKeeper, govRouter,
-	)
-
 	// register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
 	app.StakingKeeper = *stakingKeeper.SetHooks(
@@ -346,9 +344,31 @@ func NewStargazeApp(
 	)
 	transferModule := transfer.NewAppModule(app.TransferKeeper)
 
-	// Create static IBC router, add transfer route, then set and seal it
+	app.ibcSpendKeeper = *ibcspendkeeper.NewKeeper(
+		appCodec, keys[ibcspendtypes.StoreKey], memKeys[ibcspendtypes.StoreKey],
+		app.AccountKeeper,
+		app.TransferKeeper,
+		app.DistrKeeper,
+		app.BankKeeper,
+	)
+
+	// register the proposal types
+	govRouter := govtypes.NewRouter()
+	govRouter.AddRoute(govtypes.RouterKey, govtypes.ProposalHandler).
+		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.ParamsKeeper)).
+		AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.DistrKeeper)).
+		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.UpgradeKeeper)).
+		AddRoute(ibcspendtypes.RouterKey, ibcspend.NewCommunityPoolIBCSpendProposalHandler(app.ibcSpendKeeper))
+	app.GovKeeper = govkeeper.NewKeeper(
+		appCodec, keys[govtypes.StoreKey], app.GetSubspace(govtypes.ModuleName), app.AccountKeeper, app.BankKeeper,
+		&stakingKeeper, govRouter,
+	)
+
+	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 	ibcRouter := porttypes.NewRouter()
 	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferModule)
+	// this line is used by starport scaffolding # ibc/app/router
+	app.IBCKeeper.SetRouter(ibcRouter)
 
 	// create evidence keeper with router
 	evidenceKeeper := evidencekeeper.NewKeeper(
@@ -394,7 +414,6 @@ func NewStargazeApp(
 	if len(enabledProposals) != 0 {
 		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(app.wasmKeeper, enabledProposals))
 	}
-	app.IBCKeeper.SetRouter(ibcRouter)
 
 	/****  Module Options ****/
 
@@ -428,6 +447,7 @@ func NewStargazeApp(
 		// StargazeModules
 		wasm.NewAppModule(&app.wasmKeeper, app.StakingKeeper),
 		dao.NewAppModule(appCodec, app.daoKeeper, app.DistrKeeper, app.BankKeeper),
+		ibcspend.NewAppModule(appCodec, app.ibcSpendKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -464,6 +484,7 @@ func NewStargazeApp(
 		// stargaze init genesis
 		wasm.ModuleName,
 		daotypes.ModuleName,
+		ibcspendtypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
