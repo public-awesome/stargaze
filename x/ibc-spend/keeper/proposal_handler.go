@@ -27,15 +27,15 @@ func HandleCommunityPoolIBCSpendProposal(ctx sdk.Context, k Keeper, p *types.Com
 	coinToSend := p.Amount[0]
 	sender := moduleAddr
 	receiver := p.Recipient
-	height := clienttypes.GetSelfHeight(ctx)
-	timeoutHeight := clienttypes.NewHeight(height.RevisionNumber, height.RevisionHeight+p.Timeout)
+	// height := clienttypes.GetSelfHeight(ctx)
+	// timeoutHeight := clienttypes.NewHeight(height.RevisionNumber, height.RevisionHeight+p.Timeout)
+	timeoutHeight := clienttypes.NewHeight(0, 110)
 
 	fmt.Printf("sourcePort %v\n", sourcePort)
 	fmt.Printf("sourceChannel %v\n", sourceChannel)
 	fmt.Printf("coinToSend %v\n", coinToSend.String())
 	fmt.Printf("sender %v\n", sender.String())
 	fmt.Printf("receiver %v\n", receiver)
-	fmt.Printf("height %v\n", height)
 	fmt.Printf("timeoutHeight %v\n", timeoutHeight)
 
 	// ibc xfer from module account
