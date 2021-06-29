@@ -8,19 +8,27 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/server"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	v036genaccounts "github.com/cosmos/cosmos-sdk/x/genaccounts/legacy/v036"
+	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	v036staking "github.com/cosmos/cosmos-sdk/x/staking/legacy/v036"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/spf13/cobra"
 )
 
-// GenesisStateV036 is minimum structure to import airdrop accounts
+const (
+	flagLegacyGenesis = "legacy-genesis"
+)
+
+// // GenesisStateV036 is minimum structure to import airdrop accounts
 type GenesisStateV036 struct {
 	AppState AppStateV036 `json:"app_state"`
 }
 
-// AppStateV036 is app state structure for app state
+// // AppStateV036 is app state structure for app state
 type AppStateV036 struct {
 	Accounts []v036genaccounts.GenesisAccount `json:"accounts"`
 	Staking  v036staking.GenesisState         `json:"staking"`
@@ -111,74 +119,141 @@ Example:
 				return err
 			}
 
-			var genStateV036 GenesisStateV036
-
 			setCosmosBech32Prefixes()
-			err = aminoCodec.UnmarshalJSON(byteValue, &genStateV036)
+
+			// Produce the map of address to total atom balance, both staked and unstaked
+			snapshotAccs := make(map[string]SnapshotAccount)
+			totalAtomBalance := sdk.NewInt(0)
+
+			legacyGenesis, err := cmd.Flags().GetBool(flagLegacyGenesis)
 			if err != nil {
 				return err
 			}
 
-			// Produce the map of address to total atom balance, both staked and unstaked
-			snapshotAccs := make(map[string]SnapshotAccount)
+			if legacyGenesis {
+				var genStateV036 GenesisStateV036
+				err = aminoCodec.UnmarshalJSON(byteValue, &genStateV036)
 
-			totalAtomBalance := sdk.NewInt(0)
-			for _, account := range genStateV036.AppState.Accounts {
+				for _, account := range genStateV036.AppState.Accounts {
+					balance := account.Coins.AmountOf(denom)
+					totalAtomBalance = totalAtomBalance.Add(balance)
 
-				balance := account.Coins.AmountOf(denom)
-				totalAtomBalance = totalAtomBalance.Add(balance)
+					if account.ModuleName != "" {
+						continue
+					}
 
-				if account.ModuleName != "" {
-					continue
+					snapshotAccs[account.Address.String()] = SnapshotAccount{
+						AtomAddress:         account.Address.String(),
+						AtomBalance:         balance,
+						AtomUnstakedBalance: balance,
+						AtomStakedBalance:   sdk.ZeroInt(),
+					}
 				}
 
-				snapshotAccs[account.Address.String()] = SnapshotAccount{
-					AtomAddress:         account.Address.String(),
-					AtomBalance:         balance,
-					AtomUnstakedBalance: balance,
-					AtomStakedBalance:   sdk.ZeroInt(),
-				}
-			}
+				for _, unbonding := range genStateV036.AppState.Staking.UnbondingDelegations {
+					address := unbonding.DelegatorAddress.String()
+					acc, ok := snapshotAccs[address]
+					if !ok {
+						panic("no account found for unbonding")
+					}
 
-			for _, unbonding := range genStateV036.AppState.Staking.UnbondingDelegations {
-				address := unbonding.DelegatorAddress.String()
-				acc, ok := snapshotAccs[address]
-				if !ok {
-					panic("no account found for unbonding")
-				}
+					unbondingAtoms := sdk.NewInt(0)
+					for _, entry := range unbonding.Entries {
+						unbondingAtoms = unbondingAtoms.Add(entry.Balance)
+					}
 
-				unbondingAtoms := sdk.NewInt(0)
-				for _, entry := range unbonding.Entries {
-					unbondingAtoms = unbondingAtoms.Add(entry.Balance)
+					acc.AtomBalance = acc.AtomBalance.Add(unbondingAtoms)
+					acc.AtomUnstakedBalance = acc.AtomUnstakedBalance.Add(unbondingAtoms)
+
+					snapshotAccs[address] = acc
 				}
 
-				acc.AtomBalance = acc.AtomBalance.Add(unbondingAtoms)
-				acc.AtomUnstakedBalance = acc.AtomUnstakedBalance.Add(unbondingAtoms)
-
-				snapshotAccs[address] = acc
-			}
-
-			// Make a map from validator operator address to the v036 validator type
-			validators := make(map[string]v036staking.Validator)
-			for _, validator := range genStateV036.AppState.Staking.Validators {
-				validators[validator.OperatorAddress.String()] = validator
-			}
-
-			for _, delegation := range genStateV036.AppState.Staking.Delegations {
-				address := delegation.DelegatorAddress.String()
-
-				acc, ok := snapshotAccs[address]
-				if !ok {
-					panic("no account found for delegation")
+				// Make a map from validator operator address to the v036 validator type
+				validators := make(map[string]v036staking.Validator)
+				for _, validator := range genStateV036.AppState.Staking.Validators {
+					validators[validator.OperatorAddress.String()] = validator
 				}
 
-				val := validators[delegation.ValidatorAddress.String()]
-				stakedAtoms := delegation.Shares.MulInt(val.Tokens).Quo(val.DelegatorShares).RoundInt()
+				for _, delegation := range genStateV036.AppState.Staking.Delegations {
+					address := delegation.DelegatorAddress.String()
 
-				acc.AtomBalance = acc.AtomBalance.Add(stakedAtoms)
-				acc.AtomStakedBalance = acc.AtomStakedBalance.Add(stakedAtoms)
+					acc, ok := snapshotAccs[address]
+					if !ok {
+						panic("no account found for delegation")
+					}
 
-				snapshotAccs[address] = acc
+					val := validators[delegation.ValidatorAddress.String()]
+					stakedAtoms := delegation.Shares.MulInt(val.Tokens).Quo(val.DelegatorShares).RoundInt()
+
+					acc.AtomBalance = acc.AtomBalance.Add(stakedAtoms)
+					acc.AtomStakedBalance = acc.AtomStakedBalance.Add(stakedAtoms)
+
+					snapshotAccs[address] = acc
+				}
+
+			} else {
+				depCdc := clientCtx.JSONMarshaler
+				cdc := depCdc.(codec.Marshaler)
+
+				appState, _, err := genutiltypes.GenesisStateFromGenFile(genesisFile)
+				if err != nil {
+					return fmt.Errorf("failed to unmarshal genesis state: %w", err)
+				}
+
+				bankGenState := banktypes.GetGenesisStateFromAppState(cdc, appState)
+				for _, account := range bankGenState.Balances {
+					balance := account.Coins.AmountOf(denom)
+					totalAtomBalance = totalAtomBalance.Add(balance)
+
+					snapshotAccs[account.Address] = SnapshotAccount{
+						AtomAddress:         account.Address,
+						AtomBalance:         balance,
+						AtomUnstakedBalance: balance,
+						AtomStakedBalance:   sdk.ZeroInt(),
+					}
+				}
+
+				stakingGenState := stakingtypes.GetGenesisStateFromAppState(cdc, appState)
+				for _, unbonding := range stakingGenState.UnbondingDelegations {
+					address := unbonding.DelegatorAddress
+					acc, ok := snapshotAccs[address]
+					if !ok {
+						panic("no account found for unbonding")
+					}
+
+					unbondingAtoms := sdk.NewInt(0)
+					for _, entry := range unbonding.Entries {
+						unbondingAtoms = unbondingAtoms.Add(entry.Balance)
+					}
+
+					acc.AtomBalance = acc.AtomBalance.Add(unbondingAtoms)
+					acc.AtomUnstakedBalance = acc.AtomUnstakedBalance.Add(unbondingAtoms)
+
+					snapshotAccs[address] = acc
+				}
+
+				// // Make a map from validator operator address to the v036 validator type
+				validators := make(map[string]stakingtypes.Validator)
+				for _, validator := range stakingGenState.Validators {
+					validators[validator.OperatorAddress] = validator
+				}
+
+				for _, delegation := range stakingGenState.Delegations {
+					address := delegation.DelegatorAddress
+
+					acc, ok := snapshotAccs[address]
+					if !ok {
+						panic("no account found for delegation")
+					}
+
+					val := validators[delegation.ValidatorAddress]
+					stakedAtoms := delegation.Shares.MulInt(val.Tokens).Quo(val.DelegatorShares).RoundInt()
+
+					acc.AtomBalance = acc.AtomBalance.Add(stakedAtoms)
+					acc.AtomStakedBalance = acc.AtomStakedBalance.Add(stakedAtoms)
+
+					snapshotAccs[address] = acc
+				}
 			}
 
 			totalStarsBalance := sdk.NewInt(0)
@@ -254,6 +329,7 @@ Example:
 		},
 	}
 
+	cmd.Flags().Bool(flagLegacyGenesis, false, "Used to parse legacy genesis file (e.g. cosmoshub-3)")
 	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd
