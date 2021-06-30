@@ -196,19 +196,19 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 
 func ImportGenesisAccountsFromSnapshotCmd(defaultNodeHome string) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "import-genesis-accounts-from-snapshot [input-snapshot-file] [input-ions-file]",
-		Short: "Import genesis accounts from fairdrop snapshot.json and an ions.json",
+		Use:   "import-genesis-accounts-from-snapshot [input-snapshot-file]",
+		Short: "Import genesis accounts from fairdrop snapshot.json",
 		Long: `Import genesis accounts from fairdrop snapshot.json
 20% of airdrop amount is liquid in accounts.
 The remaining is placed in the claims module.
 
 Must also pass in an ions.json file to airdrop genesis ions
 Example:
-	starsd import-genesis-accounts-from-snapshot ../snapshot.json ../ions.json
+	starsd import-genesis-accounts-from-snapshot ../snapshot.json
 	- Check input genesis:
 		file is at ~/.starsd/config/genesis.json
 `,
-		Args: cobra.ExactArgs(2),
+		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 			depCdc := clientCtx.JSONMarshaler
