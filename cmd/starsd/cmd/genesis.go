@@ -73,6 +73,9 @@ Example:
 
 			// run Prepare Genesis
 			appState, genDoc, err = PrepareGenesis(clientCtx, appState, genDoc, genesisParams, chainID)
+			if err != nil {
+				return fmt.Errorf("failed to prepare genesis: %w", err)
+			}
 
 			// validate genesis state
 			if err = mbm.ValidateGenesis(cdc, clientCtx.TxConfig, appState); err != nil {
@@ -128,8 +131,9 @@ func PrepareGenesis(clientCtx client.Context, appState map[string]json.RawMessag
 	// distribution module genesis
 	distributionGenState := distributiontypes.DefaultGenesisState()
 	distributionGenState.Params = genesisParams.DistributionParams
-	// TODO Set initial community pool
-	// distributionGenState.FeePool.CommunityPool = sdk.NewDecCoins()
+	// Set initial community pool
+	poolCoin := sdk.NewInt64Coin(stakingGenState.Params.BondDenom, 250_000_000_000_000)
+	distributionGenState.FeePool.CommunityPool = sdk.NewDecCoins(sdk.NewDecCoinFromCoin(poolCoin))
 	distributionGenStateBz, err := cdc.MarshalJSON(distributionGenState)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to marshal distribution genesis state: %w", err)
@@ -150,8 +154,6 @@ func PrepareGenesis(clientCtx client.Context, appState map[string]json.RawMessag
 	// crisis module genesis
 	crisisGenState := crisistypes.DefaultGenesisState()
 	crisisGenState.ConstantFee = genesisParams.CrisisConstantFee
-	// TODO Set initial community pool
-	// distributionGenState.FeePool.CommunityPool = sdk.NewDecCoins()
 	crisisGenStateBz, err := cdc.MarshalJSON(crisisGenState)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to marshal crisis genesis state: %w", err)
@@ -167,26 +169,6 @@ func PrepareGenesis(clientCtx client.Context, appState map[string]json.RawMessag
 	}
 	appState[slashingtypes.ModuleName] = slashingGenStateBz
 
-	// incentives module genesis
-	// incentivesGenState := incentivestypes.GetGenesisStateFromAppState(depCdc, appState)
-	// incentivesGenState.Params = genesisParams.IncentivesGenesis.Params
-	// incentivesGenState.LockableDurations = genesisParams.IncentivesGenesis.LockableDurations
-	// incentivesGenState.Gauges = genesisParams.IncentivesGenesis.Gauges
-	// incentivesGenStateBz, err := cdc.MarshalJSON(incentivesGenState)
-	// if err != nil {
-	// 	return nil, nil, fmt.Errorf("failed to marshal incentives genesis state: %w", err)
-	// }
-	// appState[incentivestypes.ModuleName] = incentivesGenStateBz
-
-	// epochs module genesis
-	// epochsGenState := epochstypes.DefaultGenesis()
-	// epochsGenState.Epochs = genesisParams.Epochs
-	// epochsGenStateBz, err := cdc.MarshalJSON(epochsGenState)
-	// if err != nil {
-	// 	return nil, nil, fmt.Errorf("failed to marshal epochs genesis state: %w", err)
-	// }
-	// appState[epochstypes.ModuleName] = epochsGenStateBz
-
 	// claim module genesis
 	// claimGenState := claimtypes.GetGenesisStateFromAppState(depCdc, appState)
 	// claimGenState.Params = genesisParams.ClaimParams
@@ -195,14 +177,6 @@ func PrepareGenesis(clientCtx client.Context, appState map[string]json.RawMessag
 	// 	return nil, nil, fmt.Errorf("failed to marshal claim genesis state: %w", err)
 	// }
 	// appState[claimtypes.ModuleName] = claimGenStateBz
-
-	// poolincentives module genesis
-	// poolincentivesGenState := &genesisParams.PoolIncentivesGenesis
-	// poolincentivesGenStateBz, err := cdc.MarshalJSON(poolincentivesGenState)
-	// if err != nil {
-	// 	return nil, nil, fmt.Errorf("failed to marshal poolincentives genesis state: %w", err)
-	// }
-	// appState[poolincentivestypes.ModuleName] = poolincentivesGenStateBz
 
 	// return appState and genDoc
 	return appState, genDoc, nil
@@ -226,11 +200,6 @@ type GenesisParams struct {
 	CrisisConstantFee sdk.Coin
 
 	SlashingParams slashingtypes.Params
-	// IncentivesGenesis incentivestypes.GenesisState
-
-	// PoolIncentivesGenesis poolincentivestypes.GenesisState
-
-	// Epochs []epochstypes.EpochInfo
 
 	// ClaimParams claimtypes.Params
 }
@@ -243,7 +212,7 @@ func MainnetGenesisParams() GenesisParams {
 
 	genParams.NativeCoinMetadatas = []banktypes.Metadata{
 		{
-			Description: fmt.Sprintf("The native token of Stargaze"),
+			Description: "The native token of Stargaze",
 			DenomUnits: []*banktypes.DenomUnit{
 				{
 					Denom:    appParams.BaseCoinUnit,
@@ -272,7 +241,7 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
 	genParams.StakingParams.MaxValidators = 100
 	genParams.StakingParams.BondDenom = genParams.NativeCoinMetadatas[0].Base
-	genParams.StakingParams.MinCommissionRate = sdk.MustNewDecFromStr("0.05")
+	// genParams.StakingParams.MinCommissionRate = sdk.MustNewDecFromStr("0.05")
 
 	genParams.DistributionParams = distributiontypes.DefaultParams()
 	genParams.DistributionParams.BaseProposerReward = sdk.MustNewDecFromStr("0.01")
