@@ -272,32 +272,12 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
 	genParams.StakingParams.MaxValidators = 100
 	genParams.StakingParams.BondDenom = genParams.NativeCoinMetadatas[0].Base
-	// genParams.StakingParams.MinCommissionRate = sdk.MustNewDecFromStr("0.05")
-
-	// genParams.MintParams = minttypes.DefaultParams()
-	// genParams.MintParams.EpochIdentifier = "day"                                                // 1 day
-	// genParams.MintParams.GenesisEpochProvisions = sdk.NewDec(300_000_000_000_000).QuoInt64(365) // 300M * 10^6 / 365 = ~821917.8082191781 * 10^6
-	// genParams.MintParams.MintDenom = genParams.NativeCoinMetadatas[0].Base
-	// genParams.MintParams.ReductionFactor = sdk.NewDec(2).QuoInt64(3) // 2/3
-	// genParams.MintParams.ReductionPeriodInEpochs = 365               // 1 year (screw leap years)
-	// genParams.MintParams.DistributionProportions = minttypes.DistributionProportions{
-	// 	Staking:          sdk.MustNewDecFromStr("0.25"), // 25%
-	// 	DeveloperRewards: sdk.MustNewDecFromStr("0.25"), // 25%
-	// 	PoolIncentives:   sdk.MustNewDecFromStr("0.45"), // 45%
-	// 	CommunityPool:    sdk.MustNewDecFromStr("0.05"), // 5%
-	// }
-	// genParams.MintParams.MintingRewardsDistributionStartEpoch = 1
-	// genParams.MintParams.WeightedDeveloperRewardsReceivers = []minttypes.WeightedAddress{
-	// 	minttypes.WeightedAddress{
-	// 		Address: "stars14kjcwdwcqsujkdt8n5qwpd8x8ty2rys5rjrdjj",
-	// 		Weight:  sdk.MustNewDecFromStr("0.2887"),
-	// 	},
-	// }
+	genParams.StakingParams.MinCommissionRate = sdk.MustNewDecFromStr("0.05")
 
 	genParams.DistributionParams = distributiontypes.DefaultParams()
 	genParams.DistributionParams.BaseProposerReward = sdk.MustNewDecFromStr("0.01")
 	genParams.DistributionParams.BonusProposerReward = sdk.MustNewDecFromStr("0.04")
-	genParams.DistributionParams.CommunityTax = sdk.MustNewDecFromStr("0")
+	genParams.DistributionParams.CommunityTax = sdk.MustNewDecFromStr("0.05")
 	genParams.DistributionParams.WithdrawAddrEnabled = true
 
 	genParams.GovParams = govtypes.DefaultParams()
@@ -321,19 +301,6 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.SlashingParams.SlashFractionDoubleSign = sdk.MustNewDecFromStr("0.05") // 5% double sign slashing
 	genParams.SlashingParams.SlashFractionDowntime = sdk.ZeroDec()                   // 0% liveness slashing
 
-	// genParams.Epochs = epochstypes.DefaultGenesis().Epochs
-	// for _, epoch := range genParams.Epochs {
-	// 	epoch.StartTime = genParams.GenesisTime
-	// }
-
-	// genParams.IncentivesGenesis = *incentivestypes.DefaultGenesis()
-	// genParams.IncentivesGenesis.Params.DistrEpochIdentifier = "day"
-	// genParams.IncentivesGenesis.LockableDurations = []time.Duration{
-	// 	time.Hour * 24,      // 1 day
-	// 	time.Hour * 24 * 7,  // 7 day
-	// 	time.Hour * 24 * 14, // 14 days
-	// }
-
 	// genParams.ClaimParams = claimtypes.Params{
 	// 	AirdropStartTime:   genParams.GenesisTime,
 	// 	DurationUntilDecay: time.Hour * 24 * 60,  // 60 days = ~2 months
@@ -348,19 +315,6 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.ConsensusParams.Evidence.MaxAgeNumBlocks = int64(genParams.StakingParams.UnbondingTime.Seconds()) / 3
 	genParams.ConsensusParams.Version.AppVersion = 1
 
-	// genParams.PoolIncentivesGenesis = *poolincentivestypes.DefaultGenesisState()
-	// genParams.PoolIncentivesGenesis.Params.MintedDenom = genParams.NativeCoinMetadatas[0].Base
-	// genParams.PoolIncentivesGenesis.LockableDurations = genParams.IncentivesGenesis.LockableDurations
-	// genParams.PoolIncentivesGenesis.DistrInfo = &poolincentivestypes.DistrInfo{
-	// 	TotalWeight: sdk.NewInt(1000),
-	// 	Records: []poolincentivestypes.DistrRecord{
-	// 		{
-	// 			GaugeId: 0,
-	// 			Weight:  sdk.NewInt(1000),
-	// 		},
-	// 	},
-	// }
-
 	return genParams
 }
 
@@ -370,24 +324,7 @@ func TestnetGenesisParams() GenesisParams {
 
 	genParams.GenesisTime = time.Now()
 
-	// genParams.Epochs = append(genParams.Epochs, epochstypes.EpochInfo{
-	// 	Identifier:            "15min",
-	// 	StartTime:             time.Time{},
-	// 	Duration:              15 * time.Minute,
-	// 	CurrentEpoch:          0,
-	// 	CurrentEpochStartTime: time.Time{},
-	// 	EpochCountingStarted:  false,
-	// 	CurrentEpochEnded:     true,
-	// })
-
-	// for _, epoch := range genParams.Epochs {
-	// 	epoch.StartTime = genParams.GenesisTime
-	// }
-
 	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
-
-	// genParams.MintParams.EpochIdentifier = "15min"     // 15min
-	// genParams.MintParams.ReductionPeriodInEpochs = 192 // 2 days
 
 	genParams.GovParams.DepositParams.MinDeposit = sdk.NewCoins(sdk.NewCoin(
 		genParams.NativeCoinMetadatas[0].Base,
@@ -396,19 +333,9 @@ func TestnetGenesisParams() GenesisParams {
 	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.0000000001") // 0.00000001%
 	genParams.GovParams.VotingParams.VotingPeriod = time.Second * 300              // 300 seconds
 
-	// genParams.IncentivesGenesis = *incentivestypes.DefaultGenesis()
-	// genParams.IncentivesGenesis.Params.DistrEpochIdentifier = "15min"
-	// genParams.IncentivesGenesis.LockableDurations = []time.Duration{
-	// 	time.Minute * 30, // 30 min
-	// 	time.Hour * 1,    // 1 hour
-	// 	time.Hour * 2,    // 2 hours
-	// }
-
 	// genParams.ClaimParams.AirdropStartTime = genParams.GenesisTime
 	// genParams.ClaimParams.DurationUntilDecay = time.Hour * 48 // 2 days
 	// genParams.ClaimParams.DurationOfDecay = time.Hour * 48    // 2 days
-
-	// genParams.PoolIncentivesGenesis.LockableDurations = genParams.IncentivesGenesis.LockableDurations
 
 	return genParams
 }
