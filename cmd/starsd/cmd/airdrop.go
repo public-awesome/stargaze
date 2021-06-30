@@ -87,7 +87,7 @@ func ExportAirdropSnapshotCmd() *cobra.Command {
 Sample genesis file:
 	https://raw.githubusercontent.com/cephalopodequipment/cosmoshub-3/master/genesis.json
 Example:
-	starsd export-airdrop-genesis uatom ~/.gaiad/config/genesis.json ../snapshot.json --stars-supply=100000000000000
+	starsd export-airdrop-snapshot uatom ~/.gaiad/config/genesis.json ../snapshot.json --stars-supply=100000000000000
 	- Check input genesis:
 		file is at ~/.gaiad/config/genesis.json
 	- Snapshot
