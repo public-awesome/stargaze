@@ -86,11 +86,8 @@ import (
 
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	stargazeappparams "github.com/public-awesome/stargaze/app/params"
-	"github.com/public-awesome/stargaze/x/dao"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
-	daokeeper "github.com/public-awesome/stargaze/x/dao/keeper"
-	daotypes "github.com/public-awesome/stargaze/x/dao/types"
 )
 
 const appName = "StargazeApp"
@@ -154,7 +151,6 @@ var (
 
 		// Stargaze Modules
 		wasm.AppModuleBasic{},
-		dao.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -209,7 +205,6 @@ type StargazeApp struct {
 
 	// Stargaze Keepers
 	wasmKeeper wasm.Keeper
-	daoKeeper  daokeeper.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
@@ -258,7 +253,6 @@ func NewStargazeApp(
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		// Stargaze Stores
 		wasm.StoreKey,
-		daotypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -357,12 +351,6 @@ func NewStargazeApp(
 	// If evidence needs to be handled for the app, set routes in router here and seal
 	app.EvidenceKeeper = *evidenceKeeper
 
-	app.daoKeeper = daokeeper.NewKeeper(
-		appCodec,
-		keys[daotypes.StoreKey],
-		memKeys[daotypes.StoreKey],
-	)
-
 	// just re-use the full router - do we want to limit this more?
 	var wasmRouter = bApp.Router()
 	wasmDir := filepath.Join(homePath, "wasm")
@@ -427,7 +415,6 @@ func NewStargazeApp(
 		transferModule,
 		// StargazeModules
 		wasm.NewAppModule(&app.wasmKeeper, app.StakingKeeper),
-		dao.NewAppModule(appCodec, app.daoKeeper, app.DistrKeeper, app.BankKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -463,7 +450,6 @@ func NewStargazeApp(
 		evidencetypes.ModuleName, ibctransfertypes.ModuleName,
 		// stargaze init genesis
 		wasm.ModuleName,
-		daotypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
