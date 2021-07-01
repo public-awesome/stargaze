@@ -73,6 +73,9 @@ Example:
 
 			// run Prepare Genesis
 			appState, genDoc, err = PrepareGenesis(clientCtx, appState, genDoc, genesisParams, chainID)
+			if err != nil {
+				return fmt.Errorf("failed to prepare genesis: %w", err)
+			}
 
 			// validate genesis state
 			if err = mbm.ValidateGenesis(cdc, clientCtx.TxConfig, appState); err != nil {
@@ -128,8 +131,9 @@ func PrepareGenesis(clientCtx client.Context, appState map[string]json.RawMessag
 	// distribution module genesis
 	distributionGenState := distributiontypes.DefaultGenesisState()
 	distributionGenState.Params = genesisParams.DistributionParams
-	// TODO Set initial community pool
-	// distributionGenState.FeePool.CommunityPool = sdk.NewDecCoins()
+	// Set initial community pool
+	poolCoin := sdk.NewInt64Coin(stakingGenState.Params.BondDenom, 250_000_000_000_000)
+	distributionGenState.FeePool.CommunityPool = sdk.NewDecCoins(sdk.NewDecCoinFromCoin(poolCoin))
 	distributionGenStateBz, err := cdc.MarshalJSON(distributionGenState)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to marshal distribution genesis state: %w", err)
@@ -150,8 +154,6 @@ func PrepareGenesis(clientCtx client.Context, appState map[string]json.RawMessag
 	// crisis module genesis
 	crisisGenState := crisistypes.DefaultGenesisState()
 	crisisGenState.ConstantFee = genesisParams.CrisisConstantFee
-	// TODO Set initial community pool
-	// distributionGenState.FeePool.CommunityPool = sdk.NewDecCoins()
 	crisisGenStateBz, err := cdc.MarshalJSON(crisisGenState)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to marshal crisis genesis state: %w", err)
@@ -167,26 +169,6 @@ func PrepareGenesis(clientCtx client.Context, appState map[string]json.RawMessag
 	}
 	appState[slashingtypes.ModuleName] = slashingGenStateBz
 
-	// incentives module genesis
-	// incentivesGenState := incentivestypes.GetGenesisStateFromAppState(depCdc, appState)
-	// incentivesGenState.Params = genesisParams.IncentivesGenesis.Params
-	// incentivesGenState.LockableDurations = genesisParams.IncentivesGenesis.LockableDurations
-	// incentivesGenState.Gauges = genesisParams.IncentivesGenesis.Gauges
-	// incentivesGenStateBz, err := cdc.MarshalJSON(incentivesGenState)
-	// if err != nil {
-	// 	return nil, nil, fmt.Errorf("failed to marshal incentives genesis state: %w", err)
-	// }
-	// appState[incentivestypes.ModuleName] = incentivesGenStateBz
-
-	// epochs module genesis
-	// epochsGenState := epochstypes.DefaultGenesis()
-	// epochsGenState.Epochs = genesisParams.Epochs
-	// epochsGenStateBz, err := cdc.MarshalJSON(epochsGenState)
-	// if err != nil {
-	// 	return nil, nil, fmt.Errorf("failed to marshal epochs genesis state: %w", err)
-	// }
-	// appState[epochstypes.ModuleName] = epochsGenStateBz
-
 	// claim module genesis
 	// claimGenState := claimtypes.GetGenesisStateFromAppState(depCdc, appState)
 	// claimGenState.Params = genesisParams.ClaimParams
@@ -195,14 +177,6 @@ func PrepareGenesis(clientCtx client.Context, appState map[string]json.RawMessag
 	// 	return nil, nil, fmt.Errorf("failed to marshal claim genesis state: %w", err)
 	// }
 	// appState[claimtypes.ModuleName] = claimGenStateBz
-
-	// poolincentives module genesis
-	// poolincentivesGenState := &genesisParams.PoolIncentivesGenesis
-	// poolincentivesGenStateBz, err := cdc.MarshalJSON(poolincentivesGenState)
-	// if err != nil {
-	// 	return nil, nil, fmt.Errorf("failed to marshal poolincentives genesis state: %w", err)
-	// }
-	// appState[poolincentivestypes.ModuleName] = poolincentivesGenStateBz
 
 	// return appState and genDoc
 	return appState, genDoc, nil
@@ -226,11 +200,6 @@ type GenesisParams struct {
 	CrisisConstantFee sdk.Coin
 
 	SlashingParams slashingtypes.Params
-	// IncentivesGenesis incentivestypes.GenesisState
-
-	// PoolIncentivesGenesis poolincentivestypes.GenesisState
-
-	// Epochs []epochstypes.EpochInfo
 
 	// ClaimParams claimtypes.Params
 }
@@ -238,12 +207,12 @@ type GenesisParams struct {
 func MainnetGenesisParams() GenesisParams {
 	genParams := GenesisParams{}
 
-	genParams.AirdropSupply = sdk.NewIntWithDecimal(5, 13)                // 5*10^13 ustars, 5*10^7 (50 million) stars
+	genParams.AirdropSupply = sdk.NewIntWithDecimal(2, 14)                // 2*10^14 ustars, 2*10^8 (200 million) stars
 	genParams.GenesisTime = time.Date(2021, 6, 18, 17, 0, 0, 0, time.UTC) // Jun 18, 2021 - 17:00 UTC
 
 	genParams.NativeCoinMetadatas = []banktypes.Metadata{
 		{
-			Description: fmt.Sprintf("The native token of Stargaze"),
+			Description: "The native token of Stargaze",
 			DenomUnits: []*banktypes.DenomUnit{
 				{
 					Denom:    appParams.BaseCoinUnit,
@@ -264,7 +233,19 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.StrategicReserveAccounts = []banktypes.Balance{
 		{
 			Address: "stars1s4ckh9405q0a3jhkwx9wkf9hsjh66nmuu53dwe",
-			Coins:   sdk.NewCoins(sdk.NewCoin(genParams.NativeCoinMetadatas[0].Base, sdk.NewInt(47_874_500_000_000))), // 47.8745 million STARS
+			Coins:   sdk.NewCoins(sdk.NewCoin(genParams.NativeCoinMetadatas[0].Base, sdk.NewInt(300_000_000_000_000))), // 300M STARS
+		},
+		{
+			Address: "stars19vcu4svzydq79gqk504pg0fjn2nq4x03tvcz0p",
+			Coins:   sdk.NewCoins(sdk.NewCoin(genParams.NativeCoinMetadatas[0].Base, sdk.NewInt(100_000_000_000_000))), // 100M STARS
+		},
+		{
+			Address: "stars13rnh73rv3txzzzxp8958af2mw0zesma9psa9v7",
+			Coins:   sdk.NewCoins(sdk.NewCoin(genParams.NativeCoinMetadatas[0].Base, sdk.NewInt(50_000_000_000_000))), // 50M STARS
+		},
+		{
+			Address: "stars1wppujuuqrv52atyg8uw3x779r8w72ehrr5a4yx",
+			Coins:   sdk.NewCoins(sdk.NewCoin(genParams.NativeCoinMetadatas[0].Base, sdk.NewInt(50_000_000_000_000))), // 50M STARS
 		},
 	}
 
@@ -274,30 +255,10 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.StakingParams.BondDenom = genParams.NativeCoinMetadatas[0].Base
 	// genParams.StakingParams.MinCommissionRate = sdk.MustNewDecFromStr("0.05")
 
-	// genParams.MintParams = minttypes.DefaultParams()
-	// genParams.MintParams.EpochIdentifier = "day"                                                // 1 day
-	// genParams.MintParams.GenesisEpochProvisions = sdk.NewDec(300_000_000_000_000).QuoInt64(365) // 300M * 10^6 / 365 = ~821917.8082191781 * 10^6
-	// genParams.MintParams.MintDenom = genParams.NativeCoinMetadatas[0].Base
-	// genParams.MintParams.ReductionFactor = sdk.NewDec(2).QuoInt64(3) // 2/3
-	// genParams.MintParams.ReductionPeriodInEpochs = 365               // 1 year (screw leap years)
-	// genParams.MintParams.DistributionProportions = minttypes.DistributionProportions{
-	// 	Staking:          sdk.MustNewDecFromStr("0.25"), // 25%
-	// 	DeveloperRewards: sdk.MustNewDecFromStr("0.25"), // 25%
-	// 	PoolIncentives:   sdk.MustNewDecFromStr("0.45"), // 45%
-	// 	CommunityPool:    sdk.MustNewDecFromStr("0.05"), // 5%
-	// }
-	// genParams.MintParams.MintingRewardsDistributionStartEpoch = 1
-	// genParams.MintParams.WeightedDeveloperRewardsReceivers = []minttypes.WeightedAddress{
-	// 	minttypes.WeightedAddress{
-	// 		Address: "stars14kjcwdwcqsujkdt8n5qwpd8x8ty2rys5rjrdjj",
-	// 		Weight:  sdk.MustNewDecFromStr("0.2887"),
-	// 	},
-	// }
-
 	genParams.DistributionParams = distributiontypes.DefaultParams()
 	genParams.DistributionParams.BaseProposerReward = sdk.MustNewDecFromStr("0.01")
 	genParams.DistributionParams.BonusProposerReward = sdk.MustNewDecFromStr("0.04")
-	genParams.DistributionParams.CommunityTax = sdk.MustNewDecFromStr("0")
+	genParams.DistributionParams.CommunityTax = sdk.MustNewDecFromStr("0.05")
 	genParams.DistributionParams.WithdrawAddrEnabled = true
 
 	genParams.GovParams = govtypes.DefaultParams()
@@ -321,19 +282,6 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.SlashingParams.SlashFractionDoubleSign = sdk.MustNewDecFromStr("0.05") // 5% double sign slashing
 	genParams.SlashingParams.SlashFractionDowntime = sdk.ZeroDec()                   // 0% liveness slashing
 
-	// genParams.Epochs = epochstypes.DefaultGenesis().Epochs
-	// for _, epoch := range genParams.Epochs {
-	// 	epoch.StartTime = genParams.GenesisTime
-	// }
-
-	// genParams.IncentivesGenesis = *incentivestypes.DefaultGenesis()
-	// genParams.IncentivesGenesis.Params.DistrEpochIdentifier = "day"
-	// genParams.IncentivesGenesis.LockableDurations = []time.Duration{
-	// 	time.Hour * 24,      // 1 day
-	// 	time.Hour * 24 * 7,  // 7 day
-	// 	time.Hour * 24 * 14, // 14 days
-	// }
-
 	// genParams.ClaimParams = claimtypes.Params{
 	// 	AirdropStartTime:   genParams.GenesisTime,
 	// 	DurationUntilDecay: time.Hour * 24 * 60,  // 60 days = ~2 months
@@ -348,19 +296,6 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.ConsensusParams.Evidence.MaxAgeNumBlocks = int64(genParams.StakingParams.UnbondingTime.Seconds()) / 3
 	genParams.ConsensusParams.Version.AppVersion = 1
 
-	// genParams.PoolIncentivesGenesis = *poolincentivestypes.DefaultGenesisState()
-	// genParams.PoolIncentivesGenesis.Params.MintedDenom = genParams.NativeCoinMetadatas[0].Base
-	// genParams.PoolIncentivesGenesis.LockableDurations = genParams.IncentivesGenesis.LockableDurations
-	// genParams.PoolIncentivesGenesis.DistrInfo = &poolincentivestypes.DistrInfo{
-	// 	TotalWeight: sdk.NewInt(1000),
-	// 	Records: []poolincentivestypes.DistrRecord{
-	// 		{
-	// 			GaugeId: 0,
-	// 			Weight:  sdk.NewInt(1000),
-	// 		},
-	// 	},
-	// }
-
 	return genParams
 }
 
@@ -370,24 +305,7 @@ func TestnetGenesisParams() GenesisParams {
 
 	genParams.GenesisTime = time.Now()
 
-	// genParams.Epochs = append(genParams.Epochs, epochstypes.EpochInfo{
-	// 	Identifier:            "15min",
-	// 	StartTime:             time.Time{},
-	// 	Duration:              15 * time.Minute,
-	// 	CurrentEpoch:          0,
-	// 	CurrentEpochStartTime: time.Time{},
-	// 	EpochCountingStarted:  false,
-	// 	CurrentEpochEnded:     true,
-	// })
-
-	// for _, epoch := range genParams.Epochs {
-	// 	epoch.StartTime = genParams.GenesisTime
-	// }
-
 	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
-
-	// genParams.MintParams.EpochIdentifier = "15min"     // 15min
-	// genParams.MintParams.ReductionPeriodInEpochs = 192 // 2 days
 
 	genParams.GovParams.DepositParams.MinDeposit = sdk.NewCoins(sdk.NewCoin(
 		genParams.NativeCoinMetadatas[0].Base,
@@ -396,19 +314,9 @@ func TestnetGenesisParams() GenesisParams {
 	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.0000000001") // 0.00000001%
 	genParams.GovParams.VotingParams.VotingPeriod = time.Second * 300              // 300 seconds
 
-	// genParams.IncentivesGenesis = *incentivestypes.DefaultGenesis()
-	// genParams.IncentivesGenesis.Params.DistrEpochIdentifier = "15min"
-	// genParams.IncentivesGenesis.LockableDurations = []time.Duration{
-	// 	time.Minute * 30, // 30 min
-	// 	time.Hour * 1,    // 1 hour
-	// 	time.Hour * 2,    // 2 hours
-	// }
-
 	// genParams.ClaimParams.AirdropStartTime = genParams.GenesisTime
 	// genParams.ClaimParams.DurationUntilDecay = time.Hour * 48 // 2 days
 	// genParams.ClaimParams.DurationOfDecay = time.Hour * 48    // 2 days
-
-	// genParams.PoolIncentivesGenesis.LockableDurations = genParams.IncentivesGenesis.LockableDurations
 
 	return genParams
 }

@@ -71,6 +71,12 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 	authclient.Codec = encodingConfig.Marshaler
 
+	// cfg := sdk.GetConfig()
+	// cfg.Seal()
+
+	debugCmd := debug.Cmd()
+	debugCmd.AddCommand(ConvertBech32Cmd())
+
 	rootCmd.AddCommand(
 		InitCmd(stargaze.ModuleBasics, stargaze.DefaultNodeHome),
 		genutilcli.CollectGenTxsCmd(banktypes.GenesisBalancesIterator{}, stargaze.DefaultNodeHome),
@@ -84,7 +90,7 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		ExportAirdropSnapshotCmd(),
 		ImportGenesisAccountsFromSnapshotCmd(stargaze.DefaultNodeHome),
 		PrepareGenesisCmd(stargaze.DefaultNodeHome, stargaze.ModuleBasics),
-		debug.Cmd(),
+		debugCmd,
 	)
 
 	server.AddCommands(rootCmd, stargaze.DefaultNodeHome, newApp, createSimappAndExport, addModuleInitFlags)
