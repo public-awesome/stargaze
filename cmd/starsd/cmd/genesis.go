@@ -31,7 +31,7 @@ import (
 
 func PrepareGenesisCmd(defaultNodeHome string, mbm module.BasicManager) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "prepare-genesis",
+		Use:   "prepare-genesis [network] [chainID]",
 		Short: "Prepare a genesis file with initial setup",
 		Long: `Prepare a genesis file with initial setup.
 Examples include:
@@ -106,7 +106,7 @@ func PrepareGenesis(clientCtx client.Context, appState map[string]json.RawMessag
 
 	// chain params genesis
 	genDoc.GenesisTime = genesisParams.GenesisTime
-
+	genDoc.ChainID = chainID
 	genDoc.ConsensusParams = genesisParams.ConsensusParams
 
 	// ---
