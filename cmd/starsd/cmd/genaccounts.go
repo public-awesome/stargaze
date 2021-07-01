@@ -250,20 +250,6 @@ Example:
 				return err
 			}
 
-			// Read ions file
-			// ionInput := args[1]
-			// ionJSON, err := os.Open(ionInput)
-			// if err != nil {
-			// 	return err
-			// }
-			// defer ionJSON.Close()
-			// byteValue2, _ := ioutil.ReadAll(ionJSON)
-			// var ionAmts map[string]int64
-			// json.Unmarshal(byteValue2, &ionAmts)
-			// if err != nil {
-			// 	return err
-			// }
-
 			// get genesis params
 			genesisParams := MainnetGenesisParams()
 
@@ -272,27 +258,6 @@ Example:
 			for _, acc := range genesisParams.StrategicReserveAccounts {
 				nonAirdropAccs[acc.Address] = acc.GetCoins()
 			}
-
-			// for _, acc := range genesisParams.MintParams.WeightedDeveloperRewardsReceivers {
-			// 	if _, ok := nonAirdropAccs[acc.Address]; !ok {
-			// 		nonAirdropAccs[acc.Address] = sdk.NewCoins()
-			// 	}
-			// }
-
-			// for addr, amt := range ionAmts {
-			// 	setCosmosBech32Prefixes()
-			// 	address, err := sdk.AccAddressFromBech32(addr)
-			// 	if err != nil {
-			// 		return err
-			// 	}
-			// 	appParams.SetAddressPrefixes()
-
-			// 	if val, ok := nonAirdropAccs[address.String()]; ok {
-			// 		nonAirdropAccs[address.String()] = val.Add(sdk.NewCoin("uion", sdk.NewInt(amt).MulRaw(1_000_000)))
-			// 	} else {
-			// 		nonAirdropAccs[address.String()] = sdk.NewCoins(sdk.NewCoin("uion", sdk.NewInt(amt).MulRaw(1_000_000)))
-			// 	}
-			// }
 
 			// figure out normalizationFactor to normalize snapshot balances to desired airdrop supply
 			normalizationFactor := genesisParams.AirdropSupply.ToDec().QuoInt(snapshot.TotalStarsAirdropAmount)
