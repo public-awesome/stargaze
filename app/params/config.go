@@ -1,6 +1,8 @@
 package params
 
 import (
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -33,8 +35,14 @@ func init() {
 }
 
 func RegisterDenoms() {
-	sdk.RegisterDenom(HumanCoinUnit, sdk.OneDec())
-	sdk.RegisterDenom(BaseCoinUnit, sdk.NewDecWithPrec(1, StarsExponent))
+	err := sdk.RegisterDenom(HumanCoinUnit, sdk.OneDec())
+	if err != nil {
+		fmt.Println(err)
+	}
+	err = sdk.RegisterDenom(BaseCoinUnit, sdk.NewDecWithPrec(1, StarsExponent))
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func SetAddressPrefixes() {

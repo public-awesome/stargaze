@@ -240,9 +240,12 @@ Example:
 				return err
 			}
 			defer snapshotJSON.Close()
-			byteValue, _ := ioutil.ReadAll(snapshotJSON)
+			byteValue, err := ioutil.ReadAll(snapshotJSON)
+			if err != nil {
+				return err
+			}
 			snapshot := Snapshot{}
-			json.Unmarshal(byteValue, &snapshot)
+			err = json.Unmarshal(byteValue, &snapshot)
 			if err != nil {
 				return err
 			}
@@ -307,8 +310,8 @@ Example:
 				setCosmosBech32Prefixes()
 
 				// read address from snapshot
-				address, err := sdk.AccAddressFromBech32(acc.AtomAddress)
-				if err != nil {
+				address, error := sdk.AccAddressFromBech32(acc.AtomAddress)
+				if error != nil {
 					return err
 				}
 
@@ -351,7 +354,7 @@ Example:
 
 				// Add the new account to the set of genesis accounts
 				baseAccount := authtypes.NewBaseAccount(address, nil, 0, 0)
-				if err := baseAccount.Validate(); err != nil {
+				if error := baseAccount.Validate(); error != nil {
 					return fmt.Errorf("failed to validate new genesis account: %w", err)
 				}
 				accs = append(accs, baseAccount)
@@ -360,8 +363,8 @@ Example:
 			// distribute remaining ions to accounts not in fairdrop
 			for addr, remainingNonAirdrop := range nonAirdropAccs {
 				// read address from snapshot
-				address, err := sdk.AccAddressFromBech32(addr)
-				if err != nil {
+				address, error := sdk.AccAddressFromBech32(addr)
+				if error != nil {
 					return err
 				}
 
@@ -372,7 +375,7 @@ Example:
 
 				// Add the new account to the set of genesis accounts
 				baseAccount := authtypes.NewBaseAccount(address, nil, 0, 0)
-				if err := baseAccount.Validate(); err != nil {
+				if error := baseAccount.Validate(); error != nil {
 					return fmt.Errorf("failed to validate new genesis account: %w", err)
 				}
 				accs = append(accs, baseAccount)
@@ -401,7 +404,10 @@ Example:
 
 			// claim module genesis
 			// claimGenState := claimtypes.GetGenesisStateFromAppState(depCdc, appState)
-			// claimGenState.ModuleAccountBalance = sdk.NewCoin(genesisParams.NativeCoinMetadatas[0].Base, claimModuleAccountBalance)
+			// claimGenState.ModuleAccountBalance = sdk.NewCoin(
+			// 	genesisParams.NativeCoinMetadatas[0].Base,
+			// 	claimModuleAccountBalance,
+			// )
 
 			// claimGenState.ClaimRecords = claimRecords
 			// claimGenStateBz, err := cdc.MarshalJSON(claimGenState)

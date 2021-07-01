@@ -60,11 +60,12 @@ Example:
 			// get genesis params
 			var genesisParams GenesisParams
 			network := args[0]
-			if network == "testnet" {
+			switch network {
+			case "testnet":
 				genesisParams = TestnetGenesisParams()
-			} else if network == "mainnet" {
+			case "mainnet":
 				genesisParams = MainnetGenesisParams()
-			} else {
+			default:
 				return fmt.Errorf("please choose 'mainnet' or 'testnet'")
 			}
 
@@ -100,7 +101,13 @@ Example:
 	return cmd
 }
 
-func PrepareGenesis(clientCtx client.Context, appState map[string]json.RawMessage, genDoc *tmtypes.GenesisDoc, genesisParams GenesisParams, chainID string) (map[string]json.RawMessage, *tmtypes.GenesisDoc, error) {
+func PrepareGenesis(
+	clientCtx client.Context,
+	appState map[string]json.RawMessage,
+	genDoc *tmtypes.GenesisDoc,
+	genesisParams GenesisParams,
+	chainID string,
+) (map[string]json.RawMessage, *tmtypes.GenesisDoc, error) {
 	depCdc := clientCtx.JSONMarshaler
 	cdc := depCdc.(codec.Marshaler)
 
@@ -233,19 +240,39 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.StrategicReserveAccounts = []banktypes.Balance{
 		{
 			Address: "stars1s4ckh9405q0a3jhkwx9wkf9hsjh66nmuu53dwe",
-			Coins:   sdk.NewCoins(sdk.NewCoin(genParams.NativeCoinMetadatas[0].Base, sdk.NewInt(300_000_000_000_000))), // 300M STARS
+			Coins: sdk.NewCoins(
+				sdk.NewCoin(
+					genParams.NativeCoinMetadatas[0].Base,
+					sdk.NewInt(300_000_000_000_000),
+				),
+			), // 300M STARS
 		},
 		{
 			Address: "stars19vcu4svzydq79gqk504pg0fjn2nq4x03tvcz0p",
-			Coins:   sdk.NewCoins(sdk.NewCoin(genParams.NativeCoinMetadatas[0].Base, sdk.NewInt(100_000_000_000_000))), // 100M STARS
+			Coins: sdk.NewCoins(
+				sdk.NewCoin(
+					genParams.NativeCoinMetadatas[0].Base,
+					sdk.NewInt(100_000_000_000_000),
+				),
+			), // 100M STARS
 		},
 		{
 			Address: "stars13rnh73rv3txzzzxp8958af2mw0zesma9psa9v7",
-			Coins:   sdk.NewCoins(sdk.NewCoin(genParams.NativeCoinMetadatas[0].Base, sdk.NewInt(50_000_000_000_000))), // 50M STARS
+			Coins: sdk.NewCoins(
+				sdk.NewCoin(
+					genParams.NativeCoinMetadatas[0].Base,
+					sdk.NewInt(50_000_000_000_000),
+				),
+			), // 50M STARS
 		},
 		{
 			Address: "stars1wppujuuqrv52atyg8uw3x779r8w72ehrr5a4yx",
-			Coins:   sdk.NewCoins(sdk.NewCoin(genParams.NativeCoinMetadatas[0].Base, sdk.NewInt(50_000_000_000_000))), // 50M STARS
+			Coins: sdk.NewCoins(
+				sdk.NewCoin(
+					genParams.NativeCoinMetadatas[0].Base,
+					sdk.NewInt(50_000_000_000_000),
+				),
+			), // 50M STARS
 		},
 	}
 
@@ -276,7 +303,7 @@ func MainnetGenesisParams() GenesisParams {
 	)
 
 	genParams.SlashingParams = slashingtypes.DefaultParams()
-	genParams.SlashingParams.SignedBlocksWindow = int64(30000)                       // 30000 blocks (~41 hr at 5 second blocks)
+	genParams.SlashingParams.SignedBlocksWindow = int64(30000)                       // ~41 hr at 5 second blocks
 	genParams.SlashingParams.MinSignedPerWindow = sdk.MustNewDecFromStr("0.05")      // 5% minimum liveness
 	genParams.SlashingParams.DowntimeJailDuration = time.Minute                      // 1 minute jail period
 	genParams.SlashingParams.SlashFractionDoubleSign = sdk.MustNewDecFromStr("0.05") // 5% double sign slashing

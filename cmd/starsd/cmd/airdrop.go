@@ -81,13 +81,13 @@ func setCosmosBech32Prefixes() {
 // ExportAirdropSnapshotCmd generates a snapshot.json from a provided cosmos-sdk v0.36 genesis export.
 func ExportAirdropSnapshotCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "export-airdrop-snapshot [airdrop-to-denom] [input-genesis-file] [output-snapshot-json] --stars-supply=[stars-genesis-supply]",
-		Short: "Export a quadratic fairdrop snapshot from a provided cosmos-sdk v0.36 genesis export",
-		Long: `Export a quadratic fairdrop snapshot from a provided cosmos-sdk v0.36 genesis export
+		Use:   "export-airdrop-snapshot [airdrop-to-denom] [input-genesis-file] [output-snapshot-json]",
+		Short: "Export a quadratic fairdrop snapshot from a provided cosmos-sdk genesis export",
+		Long: `Export a quadratic fairdrop snapshot from a provided cosmos-sdk genesis export
 Sample genesis file:
 	https://raw.githubusercontent.com/cephalopodequipment/cosmoshub-3/master/genesis.json
 Example:
-	starsd export-airdrop-snapshot uatom ~/.gaiad/config/genesis.json ../snapshot.json --stars-supply=100000000000000
+	starsd export-airdrop-snapshot uatom ~/.gaiad/config/genesis.json ../snapshot.json
 	- Check input genesis:
 		file is at ~/.gaiad/config/genesis.json
 	- Snapshot
@@ -195,8 +195,8 @@ Example:
 				depCdc := clientCtx.JSONMarshaler
 				cdc := depCdc.(codec.Marshaler)
 
-				appState, _, err := genutiltypes.GenesisStateFromGenFile(genesisFile)
-				if err != nil {
+				appState, _, error := genutiltypes.GenesisStateFromGenFile(genesisFile)
+				if error != nil {
 					return fmt.Errorf("failed to unmarshal genesis state: %w", err)
 				}
 
