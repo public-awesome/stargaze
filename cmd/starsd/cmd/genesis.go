@@ -26,6 +26,7 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
+	ibctransfertypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
 	appParams "github.com/public-awesome/stargaze/app/params"
 )
 
@@ -117,6 +118,25 @@ func PrepareGenesis(
 	genDoc.ConsensusParams = genesisParams.ConsensusParams
 
 	// ---
+	// bank module genesis
+	bankGenState := banktypes.DefaultGenesisState()
+	bankGenState.Params.DefaultSendEnabled = false
+	bankGenStateBz, err := cdc.MarshalJSON(bankGenState)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to marshal bank genesis state: %w", err)
+	}
+	appState[banktypes.ModuleName] = bankGenStateBz
+
+	// IBC transfer module genesis
+	ibcGenState := ibctransfertypes.DefaultGenesisState()
+	ibcGenState.Params.SendEnabled = false
+	ibcGenState.Params.ReceiveEnabled = false
+	ibcGenStateBz, err := cdc.MarshalJSON(ibcGenState)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to marshal IBC transfer genesis state: %w", err)
+	}
+	appState[ibctransfertypes.ModuleName] = ibcGenStateBz
+
 	// staking module genesis
 	stakingGenState := stakingtypes.GetGenesisStateFromAppState(depCdc, appState)
 	stakingGenState.Params = genesisParams.StakingParams
@@ -275,6 +295,8 @@ func MainnetGenesisParams() GenesisParams {
 			), // 50M STARS
 		},
 	}
+
+	// TODO: add vesting accounts
 
 	genParams.StakingParams = stakingtypes.DefaultParams()
 	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
