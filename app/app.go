@@ -169,10 +169,10 @@ var (
 		wasm.ModuleName:                {authtypes.Burner},
 	}
 
-	// // module accounts that are allowed to receive tokens
-	// allowedReceivingModAcc = map[string]bool{
-	// 	distrtypes.ModuleName: true,
-	// }
+	// module accounts that are allowed to receive tokens
+	allowedReceivingModAcc = map[string]bool{
+		distrtypes.ModuleName: true,
+	}
 )
 
 var (
@@ -299,7 +299,7 @@ func NewStargazeApp(
 	)
 	app.BankKeeper = bankkeeper.NewBaseKeeper(
 		appCodec, keys[banktypes.StoreKey], app.AccountKeeper, app.GetSubspace(banktypes.ModuleName),
-		app.ModuleAccountAddrs(),
+		app.BlockedAddrs(),
 	)
 	stakingKeeper := stakingkeeper.NewKeeper(
 		appCodec, keys[stakingtypes.StoreKey], app.AccountKeeper, app.BankKeeper, app.GetSubspace(stakingtypes.ModuleName),
@@ -573,6 +573,17 @@ func (app *StargazeApp) ModuleAccountAddrs() map[string]bool {
 	}
 
 	return modAccAddrs
+}
+
+// BlockedAddrs returns all the app's module account addresses that are not
+// allowed to receive external tokens.
+func (app *StargazeApp) BlockedAddrs() map[string]bool {
+	blockedAddrs := make(map[string]bool)
+	for acc := range maccPerms {
+		blockedAddrs[authtypes.NewModuleAddress(acc).String()] = !allowedReceivingModAcc[acc]
+	}
+
+	return blockedAddrs
 }
 
 // LegacyAmino returns SimApp's amino codec.
