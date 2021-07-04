@@ -95,7 +95,7 @@ clean:
 	rm -rf $(HOME)/.starsd/keyring-test
 
 init:
-	./bin/starsd init stargaze --stake-denom $(STAKE_DENOM) --chain-id localnet-1
+	./bin/starsd init stargaze --chain-id localnet-1
 	./bin/starsd add-genesis-account $(shell ./bin/starsd keys show validator -a --keyring-backend test) 10000000000000000$(STAKE_DENOM),10000000000000000ucredits
 	./bin/starsd add-genesis-account $(shell ./bin/starsd keys show user1 -a --keyring-backend test) 10000000000000$(STAKE_DENOM),10000000000000ucredits,10000000000000uatom
 	./bin/starsd add-genesis-account stars1czlu4tvr3dg3ksuf8zak87eafztr2u004zyh5a 300000000000000$(STAKE_DENOM)
