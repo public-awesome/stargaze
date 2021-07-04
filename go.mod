@@ -3,7 +3,7 @@ module github.com/public-awesome/stargaze
 go 1.15
 
 require (
-	github.com/CosmWasm/wasmd v0.15.1
+	github.com/CosmWasm/wasmd v0.17.0
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/cosmos/cosmos-sdk v0.42.6
 	github.com/gogo/protobuf v1.3.3
@@ -11,6 +11,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.4.0 // indirect
+	github.com/prometheus/client_golang v1.11.0 // indirect
 	github.com/rakyll/statik v0.1.7
 	github.com/spf13/cast v1.3.1
 	github.com/spf13/cobra v1.1.3

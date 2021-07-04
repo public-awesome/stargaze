@@ -8,7 +8,7 @@ fi
 RELAYER_TAG="goz-phase-3"
 
 # start gaia + stargaze
-./contrib/ibc/gaia-stargaze.sh
+./scripts/ibc/gaia-stargaze.sh
 sleep 20
 
 set -e
@@ -27,7 +27,7 @@ rly cfg init
 # what is added in each step. The config is located at ~/.relayer/config/config.yaml
 cat ~/.relayer/config/config.yaml
 
-rly cfg add-dir contrib/ibc/relayer/configs/stargaze-xfer/
+rly cfg add-dir scripts/ibc/relayer/configs/stargaze-xfer/
 
 # NOTE: you may want to look at the config between these steps
 cat ~/.relayer/config/config.yaml
