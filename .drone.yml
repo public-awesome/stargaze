@@ -21,7 +21,7 @@ steps:
     image: golang:1.15.7
     commands:
       - apt-get update && apt-get install -y cmake
-      - ./contrib/go-test.sh
+      - ./scripts/go-test.sh
     environment:
       GOPROXY: http://goproxy
   - name: build
@@ -138,20 +138,20 @@ steps:
     image: golang:1.15.7
     detach: true
     commands:
-      - ./contrib/ci/setup-gaia.sh
+      - ./scripts/ci/setup-gaia.sh
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
     image: golang:1.15.7
     commands:
-      - ./contrib/ci/setup-stargaze.sh
+      - ./scripts/ci/setup-stargaze.sh
     environment:
       GOPROXY: http://goproxy
     detach: true
   - name: relayer
     image: golang:1.15.7
     commands:
-      - /bin/bash ./contrib/ci/setup-relayer.sh
+      - /bin/bash ./scripts/ci/setup-relayer.sh
     environment:
       GOPROXY: http://goproxy
 
@@ -165,6 +165,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: 733ed6d33798b9e57f4e1a71f96e71c5532710a1b77a7e0bc65191e285162abb
+hmac: ccdcced6bf40716454e395965d8ccad9be4675014e310f9f6434697af05a688e
 
 ...
