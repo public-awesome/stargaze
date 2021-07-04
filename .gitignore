@@ -11,3 +11,5 @@ build/
 *.swp
 
 coverage.txt
+*.wasm
+
