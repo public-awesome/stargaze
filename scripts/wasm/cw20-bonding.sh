@@ -41,3 +41,10 @@ starsd tx wasm execute $CONTRACT $BUY --from investor --amount=500000000ustarx $
 # check balances
 starsd q bank balances $INVESTOR
 starsd q wasm contract-state smart $CONTRACT "{\"balance\":{\"address\":\"$INVESTOR\"}}"
+
+# execute a burn / sell order
+SELL='{"burn":{"amount":"500"}}'
+starsd tx wasm execute $CONTRACT $SELL --from investor $TXFLAG
+starsd q wasm contract-state smart $CONTRACT "{\"balance\":{\"address\":\"$INVESTOR\"}}"
+starsd q bank balances $INVESTOR
+
