@@ -89,6 +89,8 @@ import (
 	curatingtypes "github.com/public-awesome/stargaze/x/curating/types"
 
 	"github.com/public-awesome/stargaze/x/claim"
+	claimkeeper "github.com/public-awesome/stargaze/x/claim"
+	claimtypes "github.com/public-awesome/stargaze/x/claim"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"

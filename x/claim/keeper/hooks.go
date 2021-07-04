@@ -2,8 +2,6 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/public-awesome/stargaze/x/claim/types"
 )
 
@@ -29,8 +27,8 @@ type Hooks struct {
 	k Keeper
 }
 
-var _ govtypes.GovHooks = Hooks{}
-var _ stakingtypes.StakingHooks = Hooks{}
+// var _ govtypes.GovHooks = Hooks{}
+// var _ stakingtypes.StakingHooks = Hooks{}
 
 // Return the wrapper struct
 func (k Keeper) Hooks() Hooks {

@@ -10,7 +10,7 @@ enum Action {
   option (gogoproto.goproto_enum_prefix) = false;
 
   ActionRecieveInvite = 0;
-  ActionVerifyProfile = 1;
+  ActionCreateCreatorCoin = 1;
   ActionPost = 2;
   ActionCurate = 3;
   ActionVote = 4;
