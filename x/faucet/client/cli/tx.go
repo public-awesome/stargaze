@@ -26,7 +26,7 @@ func NewMintCmd() *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Mint
 Example:
-$ %s tx faucet mint ustb --from address
+$ %s tx faucet mint ustarx --from address
 `,
 				version.AppName,
 			),
@@ -64,7 +64,7 @@ func NewMintForCmd() *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Mint
 Example:
-$ %s tx faucet mintfor stb14lq34sm8yp687sz3v37s9jk9j3vek0vxl4w0pe ustb --from address
+$ %s tx faucet mintfor stb14lq34sm8yp687sz3v37s9jk9j3vek0vxl4w0pe ustarx --from address
 `,
 				version.AppName,
 			),
