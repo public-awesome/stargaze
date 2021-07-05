@@ -202,7 +202,6 @@ func ImportGenesisAccountsFromSnapshotCmd(defaultNodeHome string) *cobra.Command
 20% of airdrop amount is liquid in accounts.
 The remaining is placed in the claims module.
 
-Must also pass in an ions.json file to airdrop genesis ions
 Example:
 	starsd import-genesis-accounts-from-snapshot ../snapshot.json
 	- Check input genesis:
@@ -213,7 +212,6 @@ Example:
 			clientCtx := client.GetClientContextFromCmd(cmd)
 			depCdc := clientCtx.JSONMarshaler
 			cdc := depCdc.(codec.Marshaler)
-			// aminoCodec := clientCtx.LegacyAmino.Amino
 
 			serverCtx := server.GetServerContextFromCmd(cmd)
 			config := serverCtx.Config
@@ -256,6 +254,9 @@ Example:
 			nonAirdropAccs := make(map[string]sdk.Coins)
 
 			for _, acc := range genesisParams.StrategicReserveAccounts {
+				if acc.Address == "stars1s4ckh9405q0a3jhkwx9wkf9hsjh66nmuu53dwe" {
+					fmt.Println("FOUND FOUNDATION ACCT")
+				}
 				nonAirdropAccs[acc.Address] = acc.GetCoins()
 			}
 
@@ -325,26 +326,26 @@ Example:
 				accs = append(accs, baseAccount)
 			}
 
-			// distribute remaining ions to accounts not in fairdrop
-			for addr, remainingNonAirdrop := range nonAirdropAccs {
-				// read address from snapshot
-				address, error := sdk.AccAddressFromBech32(addr)
-				if error != nil {
-					return err
-				}
+			// // distribute remaining ions to accounts not in fairdrop
+			// for addr, remainingNonAirdrop := range nonAirdropAccs {
+			// 	// read address from snapshot
+			// 	address, error := sdk.AccAddressFromBech32(addr)
+			// 	if error != nil {
+			// 		return err
+			// 	}
 
-				liquidBalances = append(liquidBalances, banktypes.Balance{
-					Address: address.String(),
-					Coins:   remainingNonAirdrop,
-				})
+			// 	liquidBalances = append(liquidBalances, banktypes.Balance{
+			// 		Address: address.String(),
+			// 		Coins:   remainingNonAirdrop,
+			// 	})
 
-				// Add the new account to the set of genesis accounts
-				baseAccount := authtypes.NewBaseAccount(address, nil, 0, 0)
-				if error := baseAccount.Validate(); error != nil {
-					return fmt.Errorf("failed to validate new genesis account: %w", err)
-				}
-				accs = append(accs, baseAccount)
-			}
+			// 	// Add the new account to the set of genesis accounts
+			// 	baseAccount := authtypes.NewBaseAccount(address, nil, 0, 0)
+			// 	if error := baseAccount.Validate(); error != nil {
+			// 		return fmt.Errorf("failed to validate new genesis account: %w", err)
+			// 	}
+			// 	accs = append(accs, baseAccount)
+			// }
 
 			// auth module genesis
 			accs = authtypes.SanitizeGenesisAccounts(accs)

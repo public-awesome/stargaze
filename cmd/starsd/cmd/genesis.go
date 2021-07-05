@@ -263,9 +263,9 @@ func MainnetGenesisParams() GenesisParams {
 			Coins: sdk.NewCoins(
 				sdk.NewCoin(
 					genParams.NativeCoinMetadatas[0].Base,
-					sdk.NewInt(300_000_000_000_000),
+					sdk.NewInt(250_000_000_000_000),
 				),
-			), // 300M STARS
+			), // 250M STARS
 		},
 		{
 			Address: "stars19vcu4svzydq79gqk504pg0fjn2nq4x03tvcz0p",
