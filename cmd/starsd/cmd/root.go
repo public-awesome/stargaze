@@ -97,10 +97,10 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		genutilcli.ValidateGenesisCmd(app.ModuleBasics),
 		AddGenesisAccountCmd(app.DefaultNodeHome),
 		tmcli.NewCompletionCmd(rootCmd, true),
-		testnetCmd(stargaze.ModuleBasics, banktypes.GenesisBalancesIterator{}),
+		testnetCmd(app.ModuleBasics, banktypes.GenesisBalancesIterator{}),
 		ExportAirdropSnapshotCmd(),
-		ImportGenesisAccountsFromSnapshotCmd(stargaze.DefaultNodeHome),
-		PrepareGenesisCmd(stargaze.DefaultNodeHome, stargaze.ModuleBasics),
+		ImportGenesisAccountsFromSnapshotCmd(app.DefaultNodeHome),
+		PrepareGenesisCmd(app.DefaultNodeHome, app.ModuleBasics),
 		debugCmd,
 		config.Cmd(),
 	)
