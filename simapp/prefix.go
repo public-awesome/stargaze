@@ -7,7 +7,7 @@ import (
 const (
 
 	// DefaultStakeDenom for Stargaze
-	DefaultStakeDenom = "ustb"
+	DefaultStakeDenom = "ustarx"
 
 	// DefaultUnbondingPeriod for Stargaze
 	DefaultUnbondingPeriod = "504h"

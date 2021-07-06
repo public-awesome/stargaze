@@ -27,7 +27,7 @@ const (
 	VotingPoolName = "voting_pool"
 
 	// DefaultStakeDenom is the staking denom for the zone
-	DefaultStakeDenom = "ustb"
+	DefaultStakeDenom = "ustarx"
 
 	// DefaultVoteDenom is the denom for quadratic voting
 	DefaultVoteDenom = "ucredits"

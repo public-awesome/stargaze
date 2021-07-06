@@ -85,8 +85,7 @@ all: install
 
 create-wallet:
 	./bin/starsd keys add validator --keyring-backend test
-	./bin/starsd keys add user1 --keyring-backend test
-	./bin/starsd keys add dao --keyring-backend test --pubkey starspub1addwnpepqfqzrt4mzg8e6w0ltk557ysys3dl6vf40lfkqrlpmz0m83xs5fgjy42tt8y
+	./bin/starsd keys add user1 --keyring-backend test --pubkey starspub1addwnpepqwmnprxqj8at8rgnejj5y7kay5xt7u0r74eqnj4dwvkkcwtyf9nxsve82v3
 
 reset: clean create-wallet init
 clean:
@@ -95,10 +94,9 @@ clean:
 	rm -rf $(HOME)/.starsd/keyring-test
 
 init:
-	./bin/starsd init stargaze --stake-denom $(STAKE_DENOM) --chain-id localnet-1
+	./bin/starsd init stargaze --chain-id localnet-1
 	./bin/starsd add-genesis-account $(shell ./bin/starsd keys show validator -a --keyring-backend test) 10000000000000000$(STAKE_DENOM),10000000000000000ucredits
 	./bin/starsd add-genesis-account $(shell ./bin/starsd keys show user1 -a --keyring-backend test) 10000000000000$(STAKE_DENOM),10000000000000ucredits,10000000000000uatom
-	./bin/starsd add-genesis-account stars1czlu4tvr3dg3ksuf8zak87eafztr2u004zyh5a 300000000000000$(STAKE_DENOM)
 	./bin/starsd gentx validator 10000000000$(STAKE_DENOM) --chain-id localnet-1  --keyring-backend test
 	./bin/starsd collect-gentxs 
 
