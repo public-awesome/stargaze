@@ -5,8 +5,10 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/config"
 	"github.com/cosmos/cosmos-sdk/client/debug"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
@@ -23,21 +25,23 @@ import (
 	vestingcli "github.com/cosmos/cosmos-sdk/x/auth/vesting/client/cli"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
 
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
-	stargaze "github.com/public-awesome/stargaze/app"
+	"github.com/public-awesome/stargaze/app"
 	"github.com/public-awesome/stargaze/app/params"
 )
 
 // NewRootCmd creates a new root command for simd. It is called once in the
 // main function.
 func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
-	encodingConfig := stargaze.MakeEncodingConfig()
+	encodingConfig := app.MakeEncodingConfig()
 	initClientCtx := client.Context{}.
 		WithJSONMarshaler(encodingConfig.Marshaler).
 		WithInterfaceRegistry(encodingConfig.InterfaceRegistry).
@@ -45,14 +49,21 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 		WithLegacyAmino(encodingConfig.Amino).
 		WithInput(os.Stdin).
 		WithAccountRetriever(types.AccountRetriever{}).
-		WithBroadcastMode(flags.BroadcastBlock).
-		WithHomeDir(stargaze.DefaultNodeHome).
-		WithOutput(os.Stdout)
+		WithHomeDir(app.DefaultNodeHome).
+		WithViper("STARGAZE")
 
 	rootCmd := &cobra.Command{
 		Use:   "starsd",
 		Short: "Stargate CosmosHub App",
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
+			initClientCtx = client.ReadHomeFlag(initClientCtx, cmd)
+
+			//nolint:govet
+			initClientCtx, err := config.ReadFromClientConfig(initClientCtx)
+			if err != nil {
+				return err
+			}
+
 			if err := client.SetCmdClientContextHandler(initClientCtx, cmd); err != nil {
 				return err
 			}
@@ -78,29 +89,30 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 	debugCmd.AddCommand(ConvertBech32Cmd())
 
 	rootCmd.AddCommand(
-		InitCmd(stargaze.ModuleBasics, stargaze.DefaultNodeHome),
-		genutilcli.CollectGenTxsCmd(banktypes.GenesisBalancesIterator{}, stargaze.DefaultNodeHome),
+		InitCmd(app.ModuleBasics, app.DefaultNodeHome),
+		genutilcli.CollectGenTxsCmd(banktypes.GenesisBalancesIterator{}, app.DefaultNodeHome),
 		genutilcli.MigrateGenesisCmd(),
-		genutilcli.GenTxCmd(stargaze.ModuleBasics, encodingConfig.TxConfig,
-			banktypes.GenesisBalancesIterator{}, stargaze.DefaultNodeHome),
-		genutilcli.ValidateGenesisCmd(stargaze.ModuleBasics),
-		AddGenesisAccountCmd(stargaze.DefaultNodeHome),
+		genutilcli.GenTxCmd(app.ModuleBasics, encodingConfig.TxConfig,
+			banktypes.GenesisBalancesIterator{}, app.DefaultNodeHome),
+		genutilcli.ValidateGenesisCmd(app.ModuleBasics),
+		AddGenesisAccountCmd(app.DefaultNodeHome),
 		tmcli.NewCompletionCmd(rootCmd, true),
 		testnetCmd(stargaze.ModuleBasics, banktypes.GenesisBalancesIterator{}),
 		ExportAirdropSnapshotCmd(),
 		ImportGenesisAccountsFromSnapshotCmd(stargaze.DefaultNodeHome),
 		PrepareGenesisCmd(stargaze.DefaultNodeHome, stargaze.ModuleBasics),
 		debugCmd,
+		config.Cmd(),
 	)
 
-	server.AddCommands(rootCmd, stargaze.DefaultNodeHome, newApp, createSimappAndExport, addModuleInitFlags)
+	server.AddCommands(rootCmd, app.DefaultNodeHome, newApp, createSimappAndExport, addModuleInitFlags)
 
 	// add keybase, auxiliary RPC, query, and tx child commands
 	rootCmd.AddCommand(
 		rpc.StatusCommand(),
 		queryCommand(),
 		txCommand(),
-		keys.Commands(stargaze.DefaultNodeHome),
+		keys.Commands(app.DefaultNodeHome),
 	)
 }
 
@@ -126,7 +138,7 @@ func queryCommand() *cobra.Command {
 		authcmd.QueryTxCmd(),
 	)
 
-	stargaze.ModuleBasics.AddQueryCommands(cmd)
+	app.ModuleBasics.AddQueryCommands(cmd)
 	cmd.PersistentFlags().String(flags.FlagChainID, "", "The network chain ID")
 
 	return cmd
@@ -154,7 +166,7 @@ func txCommand() *cobra.Command {
 		vestingcli.GetTxCmd(),
 	)
 
-	stargaze.ModuleBasics.AddTxCommands(cmd)
+	app.ModuleBasics.AddTxCommands(cmd)
 	cmd.PersistentFlags().String(flags.FlagChainID, "", "The network chain ID")
 
 	return cmd
@@ -187,14 +199,19 @@ func newApp(logger log.Logger, db dbm.DB,
 	if err != nil {
 		panic(err)
 	}
+	var wasmOpts []wasm.Option
+	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
+		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
+	}
 
-	return stargaze.NewStargazeApp(
+	return app.NewStargazeApp(
 		logger, db, traceStore, true, skipUpgradeHeights,
 		cast.ToString(appOpts.Get(flags.FlagHome)),
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
-		stargaze.GetEnabledProposals(),
-		stargaze.MakeEncodingConfig(), // Ideally, we would reuse the one created by NewRootCmd.
+		app.GetEnabledProposals(),
+		app.MakeEncodingConfig(), // Ideally, we would reuse the one created by NewRootCmd.
 		appOpts,
+		wasmOpts,
 		baseapp.SetPruning(pruningOpts),
 		baseapp.SetMinGasPrices(cast.ToString(appOpts.Get(server.FlagMinGasPrices))),
 		baseapp.SetMinRetainBlocks(cast.ToUint64(appOpts.Get(server.FlagMinRetainBlocks))),
@@ -215,21 +232,22 @@ func createSimappAndExport(
 	appOpts servertypes.AppOptions,
 ) (servertypes.ExportedApp, error) {
 
-	encCfg := stargaze.MakeEncodingConfig() // Ideally, we would reuse the one created by NewRootCmd.
+	encCfg := app.MakeEncodingConfig() // Ideally, we would reuse the one created by NewRootCmd.
 	encCfg.Marshaler = codec.NewProtoCodec(encCfg.InterfaceRegistry)
-	var StargazeApp *stargaze.StargazeApp
+	var StargazeApp *app.StargazeApp
+	var emptyWasmOpts []wasm.Option
 	if height != -1 {
-		StargazeApp = stargaze.NewStargazeApp(logger, db, traceStore,
+		StargazeApp = app.NewStargazeApp(logger, db, traceStore,
 			false, map[int64]bool{}, "",
-			uint(1), stargaze.GetEnabledProposals(), encCfg, appOpts)
+			uint(1), app.GetEnabledProposals(), encCfg, appOpts, emptyWasmOpts)
 
 		if err := StargazeApp.LoadHeight(height); err != nil {
 			return servertypes.ExportedApp{}, err
 		}
 	} else {
-		StargazeApp = stargaze.NewStargazeApp(logger, db, traceStore,
+		StargazeApp = app.NewStargazeApp(logger, db, traceStore,
 			true, map[int64]bool{}, "",
-			uint(1), stargaze.GetEnabledProposals(), encCfg, appOpts)
+			uint(1), app.GetEnabledProposals(), encCfg, appOpts, emptyWasmOpts)
 	}
 
 	return StargazeApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)

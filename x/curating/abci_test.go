@@ -52,7 +52,7 @@ func setup(t *testing.T) (*simapp.SimApp, sdk.Context) {
 
 	creatorBal := app.BankKeeper.GetAllBalances(ctx, addrs[0])
 	require.Equal(t, "10000000", creatorBal.AmountOf("ucredits").String())
-	require.Equal(t, "10000000", creatorBal.AmountOf("ustb").String())
+	require.Equal(t, "10000000", creatorBal.AmountOf("ustarx").String())
 
 	// curator1
 	err = app.CuratingKeeper.CreateUpvote(ctx, vendorID, postID, addrs[1], addrs[1], 1)
@@ -100,7 +100,7 @@ func TestEndBlockerExpiringPost(t *testing.T) {
 	app, ctx := setup(t)
 
 	// add funds to reward pool
-	funds := sdk.NewInt64Coin("ustb", 10_000_000_000)
+	funds := sdk.NewInt64Coin("ustarx", 10_000_000_000)
 	err := app.BankKeeper.MintCoins(ctx, types.RewardPoolName, sdk.NewCoins(funds))
 	require.NoError(t, err)
 
@@ -110,19 +110,19 @@ func TestEndBlockerExpiringPost(t *testing.T) {
 	require.Equal(t, "10000000", creatorBal.AmountOf("ucredits").String(),
 		"10 (bal)")
 
-	require.Equal(t, "10000000", creatorBal.AmountOf("ustb").String(),
+	require.Equal(t, "10000000", creatorBal.AmountOf("ustarx").String(),
 		"10 (bal)")
 
 	curator1Bal := app.BankKeeper.GetAllBalances(ctx, addrs[1])
 	require.Equal(t, "9000000", curator1Bal.AmountOf("ucredits").String(),
 		"9 (bal)")
-	require.Equal(t, "11500000", curator1Bal.AmountOf("ustb").String(),
+	require.Equal(t, "11500000", curator1Bal.AmountOf("ustarx").String(),
 		"9 (bal) + 1 (deposit) + 1.5 (match reward)")
 
 	curator2Bal := app.BankKeeper.GetAllBalances(ctx, addrs[2])
 	require.Equal(t, "1000000", curator2Bal.AmountOf("ucredits").String(),
 		"1 (bal)")
-	require.Equal(t, "14500000", curator2Bal.AmountOf("ustb").String(),
+	require.Equal(t, "14500000", curator2Bal.AmountOf("ustarx").String(),
 		"9 (bal) + 1 (deposit) + 4.5 (match reward)")
 }
 
@@ -135,27 +135,27 @@ func TestEndBlockerExpiringPostWithSmolRewardPool(t *testing.T) {
 	require.NoError(t, err)
 
 	// add funds to reward pool
-	funds = sdk.NewInt64Coin("ustb", 1_000_000)
+	funds = sdk.NewInt64Coin("ustarx", 1_000_000)
 	err = app.BankKeeper.MintCoins(ctx, types.RewardPoolName, sdk.NewCoins(funds))
 	require.NoError(t, err)
 
 	curating.EndBlocker(ctx, app.CuratingKeeper)
 
 	// creator match reward = 0.05 * match_reward = 3 STB
-	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ustb")
+	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ustarx")
 	require.Equal(t, "10000000", creatorBal.Amount.String(),
 		"10 (initial)")
 
 	curator1Bal := app.BankKeeper.GetAllBalances(ctx, addrs[1])
 	require.Equal(t, "9000000", curator1Bal.AmountOf("ucredits").String(),
 		"9 (bal)")
-	require.Equal(t, "10000250", curator1Bal.AmountOf("ustb").String(),
+	require.Equal(t, "10000250", curator1Bal.AmountOf("ustarx").String(),
 		"9 (bal) + 1 (deposit) + 250u (match reward)")
 
 	curator2Bal := app.BankKeeper.GetAllBalances(ctx, addrs[2])
 	require.Equal(t, "1000000", curator2Bal.AmountOf("ucredits").String(),
 		"1 (bal)")
-	require.Equal(t, "10000750", curator2Bal.AmountOf("ustb").String(),
+	require.Equal(t, "10000750", curator2Bal.AmountOf("ustarx").String(),
 		"9 (bal) + 1 (deposit) + 750u (match reward)")
 }
 

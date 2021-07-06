@@ -7,10 +7,10 @@ import (
 const (
 
 	// DefaultStakeDenom for Stargaze
-	DefaultStakeDenom = "ustb"
+	DefaultStakeDenom = "ustarx"
 
 	// DefaultUnbondingPeriod for Stargaze
-	DefaultUnbondingPeriod = "504h"
+	DefaultUnbondingPeriod = "604800s"
 
 	// Bech32MainPrefix defines the Bech32 prefix of an account's address
 	Bech32MainPrefix = "stars"

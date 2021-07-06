@@ -4,7 +4,7 @@
   "rpc-addr": "http://localhost:26557",
   "account-prefix": "stars",
   "gas": 200000,
-  "gas-prices": "0.025ustb,0.025uatom",
-  "default-denom": "ustb",
+  "gas-prices": "0.025ustarx,0.025uatom",
+  "default-denom": "ustarx",
   "trusting-period": "336h"
 }

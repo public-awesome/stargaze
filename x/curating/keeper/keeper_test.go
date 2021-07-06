@@ -41,7 +41,7 @@ func TestPost(t *testing.T) {
 	require.NoError(t, err)
 	require.True(t, found, "post should be found")
 
-	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ustb")
+	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ustarx")
 	require.Equal(t, "1000000", creatorBal.Amount.String())
 
 	vps := app.CuratingKeeper.GetCurationQueueTimeSlice(ctx, ctx.BlockTime())
@@ -72,10 +72,10 @@ func TestPost_EmptyCreator(t *testing.T) {
 	require.NoError(t, err)
 	require.True(t, found, "post should be found")
 
-	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ustb")
+	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ustarx")
 	require.Equal(t, "1000000", creatorBal.Amount.String())
 
-	rewardAccountBal := app.BankKeeper.GetBalance(ctx, addrs[1], "ustb")
+	rewardAccountBal := app.BankKeeper.GetBalance(ctx, addrs[1], "ustarx")
 	require.Equal(t, "1000000", rewardAccountBal.Amount.String())
 
 	vps := app.CuratingKeeper.GetCurationQueueTimeSlice(ctx, ctx.BlockTime())
@@ -103,7 +103,7 @@ func TestPost_EmptyRewardAccount(t *testing.T) {
 	require.NoError(t, err)
 	require.True(t, found, "post should be found")
 
-	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ustb")
+	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ustarx")
 	require.Equal(t, "1000000", creatorBal.Amount.String())
 
 	vps := app.CuratingKeeper.GetCurationQueueTimeSlice(ctx, ctx.BlockTime())
@@ -131,10 +131,10 @@ func TestPost_WithRewardAccount(t *testing.T) {
 	require.NoError(t, err)
 	require.True(t, found, "post should be found")
 
-	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ustb")
+	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ustarx")
 	require.Equal(t, "1000000", creatorBal.Amount.String())
 
-	rewardAccountBal := app.BankKeeper.GetBalance(ctx, addrs[1], "ustb")
+	rewardAccountBal := app.BankKeeper.GetBalance(ctx, addrs[1], "ustarx")
 	require.Equal(t, "1000000", rewardAccountBal.Amount.String())
 
 	vps := app.CuratingKeeper.GetCurationQueueTimeSlice(ctx, ctx.BlockTime())

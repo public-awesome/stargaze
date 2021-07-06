@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/server"
+	appcfg "github.com/cosmos/cosmos-sdk/server/config"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
@@ -22,6 +24,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	liquiditytypes "github.com/tendermint/liquidity/x/liquidity/types"
+	tmcfg "github.com/tendermint/tendermint/config"
 	tmjson "github.com/tendermint/tendermint/libs/json"
 	"github.com/tendermint/tendermint/types"
 )
@@ -43,7 +46,16 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 		serverCtx := server.GetServerContextFromCmd(cmd)
 		config := serverCtx.Config
 
+		config.P2P.MaxNumOutboundPeers = 40
+		config.Mempool.Size = 10000
+		config.StateSync.TrustPeriod = 112 * time.Hour
+
 		config.SetRoot(clientCtx.HomeDir)
+
+		appConfig := appcfg.DefaultConfig()
+		appConfig.API.Enable = true
+		appConfig.StateSync.SnapshotInterval = 1500
+		appConfig.StateSync.SnapshotKeepRecent = 2
 
 		genFile := config.GenesisFile()
 		genDoc := &types.GenesisDoc{}
@@ -68,6 +80,10 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 		if err = genutil.ExportGenesisFile(genDoc, genFile); err != nil {
 			return fmt.Errorf("failed to export gensis file %w", err)
 		}
+
+		tmcfg.WriteConfigFile(filepath.Join(config.RootDir, "config", "config.toml"), config)
+		appcfg.WriteConfigFile(filepath.Join(config.RootDir, "config", "app.toml"), appConfig)
+
 		return nil
 	}
 

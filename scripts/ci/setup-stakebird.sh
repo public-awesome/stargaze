@@ -1,5 +1,5 @@
 GAIA_TAG="goz-phase-3"
-DENOM=ustb
+DENOM=ustarx
 CHAINID=stargaze
 RLYKEY=stb10dmk2q0numq3v0s7vwsx20dm4hq040vslyu4hy
 make install

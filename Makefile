@@ -85,7 +85,7 @@ all: install
 
 create-wallet:
 	./bin/starsd keys add validator --keyring-backend test
-	./bin/starsd keys add user1 --keyring-backend test
+	./bin/starsd keys add user1 --keyring-backend test --pubkey starspub1addwnpepqwmnprxqj8at8rgnejj5y7kay5xt7u0r74eqnj4dwvkkcwtyf9nxsve82v3
 
 reset: clean create-wallet init
 clean:
@@ -94,7 +94,7 @@ clean:
 	rm -rf $(HOME)/.starsd/keyring-test
 
 init:
-	./bin/starsd init stargaze --stake-denom $(STAKE_DENOM) --chain-id localnet-1
+	./bin/starsd init stargaze --chain-id localnet-1
 	./bin/starsd add-genesis-account $(shell ./bin/starsd keys show validator -a --keyring-backend test) 10000000000000000$(STAKE_DENOM),10000000000000000ucredits
 	./bin/starsd add-genesis-account $(shell ./bin/starsd keys show user1 -a --keyring-backend test) 10000000000000$(STAKE_DENOM),10000000000000ucredits,10000000000000uatom
 	./bin/starsd gentx validator 10000000000$(STAKE_DENOM) --chain-id localnet-1  --keyring-backend test
@@ -171,7 +171,7 @@ proto-all: proto-gen proto-lint proto-check-breaking
 
 proto-gen:
 	@echo "Generating Protobuf files"
-	$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace tendermintdev/sdk-proto-gen sh ./contrib/protocgen.sh
+	$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace tendermintdev/sdk-proto-gen sh ./scripts/protocgen.sh
 
 proto-format:
 	@echo "Formatting Protobuf files"

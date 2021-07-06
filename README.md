@@ -13,23 +13,17 @@ Stargaze is a protocol for incentivized content creation and curation. It create
 
 ```sh
 # install binaries
-make
+make install
 
-# create keys
-make create-wallet
-
-# initialize chain
-make init
+# create keys and initialize chain
+make reset
 
 # run
-starsd start
+make start
 ```
 
-## CLI
+### Test smart contracts
 
-The curating module can be accessed via CLI and REST API.
+See [./scripts/wasm/README.md](./scripts/wasm/README.md).
 
-```sh
-starsd tx curating post -h
-starsd tx curating upvote -h
-```
+
