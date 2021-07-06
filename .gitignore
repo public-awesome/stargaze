@@ -11,5 +11,6 @@ build/
 *.swp
 
 coverage.txt
+*.json
 *.wasm
 

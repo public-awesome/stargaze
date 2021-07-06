@@ -82,6 +82,12 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 	authclient.Codec = encodingConfig.Marshaler
 
+	// cfg := sdk.GetConfig()
+	// cfg.Seal()
+
+	debugCmd := debug.Cmd()
+	debugCmd.AddCommand(ConvertBech32Cmd())
+
 	rootCmd.AddCommand(
 		InitCmd(app.ModuleBasics, app.DefaultNodeHome),
 		genutilcli.CollectGenTxsCmd(banktypes.GenesisBalancesIterator{}, app.DefaultNodeHome),
@@ -92,7 +98,10 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		AddGenesisAccountCmd(app.DefaultNodeHome),
 		tmcli.NewCompletionCmd(rootCmd, true),
 		testnetCmd(app.ModuleBasics, banktypes.GenesisBalancesIterator{}),
-		debug.Cmd(),
+		ExportAirdropSnapshotCmd(),
+		ImportGenesisAccountsFromSnapshotCmd(app.DefaultNodeHome),
+		PrepareGenesisCmd(app.DefaultNodeHome, app.ModuleBasics),
+		debugCmd,
 		config.Cmd(),
 	)
 
