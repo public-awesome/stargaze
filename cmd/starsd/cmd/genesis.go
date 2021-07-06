@@ -30,6 +30,28 @@ import (
 	appParams "github.com/public-awesome/stargaze/app/params"
 )
 
+type GenesisParams struct {
+	AirdropSupply sdk.Int
+
+	StrategicReserveAccounts []banktypes.Balance
+
+	ConsensusParams *tmproto.ConsensusParams
+
+	GenesisTime         time.Time
+	NativeCoinMetadatas []banktypes.Metadata
+
+	StakingParams stakingtypes.Params
+	// MintParams         minttypes.Params
+	DistributionParams distributiontypes.Params
+	GovParams          govtypes.Params
+
+	CrisisConstantFee sdk.Coin
+
+	SlashingParams slashingtypes.Params
+
+	// ClaimParams claimtypes.Params
+}
+
 func PrepareGenesisCmd(defaultNodeHome string, mbm module.BasicManager) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "prepare-genesis [network] [chainID]",
@@ -121,6 +143,7 @@ func PrepareGenesis(
 	// bank module genesis
 	bankGenState := banktypes.DefaultGenesisState()
 	bankGenState.Params.DefaultSendEnabled = false
+	// bankGenState.Balances = genDoc.AppState.
 	bankGenStateBz, err := cdc.MarshalJSON(bankGenState)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to marshal bank genesis state: %w", err)
@@ -209,28 +232,6 @@ func PrepareGenesis(
 	return appState, genDoc, nil
 }
 
-type GenesisParams struct {
-	AirdropSupply sdk.Int
-
-	StrategicReserveAccounts []banktypes.Balance
-
-	ConsensusParams *tmproto.ConsensusParams
-
-	GenesisTime         time.Time
-	NativeCoinMetadatas []banktypes.Metadata
-
-	StakingParams stakingtypes.Params
-	// MintParams         minttypes.Params
-	DistributionParams distributiontypes.Params
-	GovParams          govtypes.Params
-
-	CrisisConstantFee sdk.Coin
-
-	SlashingParams slashingtypes.Params
-
-	// ClaimParams claimtypes.Params
-}
-
 func MainnetGenesisParams() GenesisParams {
 	genParams := GenesisParams{}
 
@@ -267,36 +268,7 @@ func MainnetGenesisParams() GenesisParams {
 				),
 			), // 250M STARS
 		},
-		{
-			Address: "stars19vcu4svzydq79gqk504pg0fjn2nq4x03tvcz0p",
-			Coins: sdk.NewCoins(
-				sdk.NewCoin(
-					genParams.NativeCoinMetadatas[0].Base,
-					sdk.NewInt(100_000_000_000_000),
-				),
-			), // 100M STARS
-		},
-		{
-			Address: "stars13rnh73rv3txzzzxp8958af2mw0zesma9psa9v7",
-			Coins: sdk.NewCoins(
-				sdk.NewCoin(
-					genParams.NativeCoinMetadatas[0].Base,
-					sdk.NewInt(50_000_000_000_000),
-				),
-			), // 50M STARS
-		},
-		{
-			Address: "stars1wppujuuqrv52atyg8uw3x779r8w72ehrr5a4yx",
-			Coins: sdk.NewCoins(
-				sdk.NewCoin(
-					genParams.NativeCoinMetadatas[0].Base,
-					sdk.NewInt(50_000_000_000_000),
-				),
-			), // 50M STARS
-		},
 	}
-
-	// TODO: add vesting accounts
 
 	genParams.StakingParams = stakingtypes.DefaultParams()
 	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
@@ -348,6 +320,7 @@ func MainnetGenesisParams() GenesisParams {
 	return genParams
 }
 
+// TestnetGenesisParams imports mainnet genesis params and overwrites them
 func TestnetGenesisParams() GenesisParams {
 
 	genParams := MainnetGenesisParams()

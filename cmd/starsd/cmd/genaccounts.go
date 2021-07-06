@@ -327,25 +327,25 @@ Example:
 			}
 
 			// // distribute remaining ions to accounts not in fairdrop
-			// for addr, remainingNonAirdrop := range nonAirdropAccs {
-			// 	// read address from snapshot
-			// 	address, error := sdk.AccAddressFromBech32(addr)
-			// 	if error != nil {
-			// 		return err
-			// 	}
+			for addr, remainingNonAirdrop := range nonAirdropAccs {
+				// read address from snapshot
+				address, error := sdk.AccAddressFromBech32(addr)
+				if error != nil {
+					return err
+				}
 
-			// 	liquidBalances = append(liquidBalances, banktypes.Balance{
-			// 		Address: address.String(),
-			// 		Coins:   remainingNonAirdrop,
-			// 	})
+				liquidBalances = append(liquidBalances, banktypes.Balance{
+					Address: address.String(),
+					Coins:   remainingNonAirdrop,
+				})
 
-			// 	// Add the new account to the set of genesis accounts
-			// 	baseAccount := authtypes.NewBaseAccount(address, nil, 0, 0)
-			// 	if error := baseAccount.Validate(); error != nil {
-			// 		return fmt.Errorf("failed to validate new genesis account: %w", err)
-			// 	}
-			// 	accs = append(accs, baseAccount)
-			// }
+				// Add the new account to the set of genesis accounts
+				baseAccount := authtypes.NewBaseAccount(address, nil, 0, 0)
+				if error := baseAccount.Validate(); error != nil {
+					return fmt.Errorf("failed to validate new genesis account: %w", err)
+				}
+				accs = append(accs, baseAccount)
+			}
 
 			// auth module genesis
 			accs = authtypes.SanitizeGenesisAccounts(accs)
