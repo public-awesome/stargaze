@@ -257,47 +257,6 @@ func MainnetGenesisParams() GenesisParams {
 		},
 	}
 
-	genParams.StrategicReserveAccounts = []banktypes.Balance{
-		{
-			Address: "stars1s4ckh9405q0a3jhkwx9wkf9hsjh66nmuu53dwe",
-			Coins: sdk.NewCoins(
-				sdk.NewCoin(
-					genParams.NativeCoinMetadatas[0].Base,
-					sdk.NewInt(300_000_000_000_000),
-				),
-			), // 300M STARS
-		},
-		{
-			Address: "stars19vcu4svzydq79gqk504pg0fjn2nq4x03tvcz0p",
-			Coins: sdk.NewCoins(
-				sdk.NewCoin(
-					genParams.NativeCoinMetadatas[0].Base,
-					sdk.NewInt(100_000_000_000_000),
-				),
-			), // 100M STARS
-		},
-		{
-			Address: "stars13rnh73rv3txzzzxp8958af2mw0zesma9psa9v7",
-			Coins: sdk.NewCoins(
-				sdk.NewCoin(
-					genParams.NativeCoinMetadatas[0].Base,
-					sdk.NewInt(50_000_000_000_000),
-				),
-			), // 50M STARS
-		},
-		{
-			Address: "stars1wppujuuqrv52atyg8uw3x779r8w72ehrr5a4yx",
-			Coins: sdk.NewCoins(
-				sdk.NewCoin(
-					genParams.NativeCoinMetadatas[0].Base,
-					sdk.NewInt(50_000_000_000_000),
-				),
-			), // 50M STARS
-		},
-	}
-
-	// TODO: add vesting accounts
-
 	genParams.StakingParams = stakingtypes.DefaultParams()
 	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
 	genParams.StakingParams.MaxValidators = 100
