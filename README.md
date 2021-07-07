@@ -5,21 +5,18 @@
 [![LOC](https://tokei.rs/b1/github/public-awesome/stargaze)](https://github.com/public-awesome/stargaze)
 [![codecov](https://codecov.io/gh/public-awesome/stargaze/branch/master/graph/badge.svg)](https://codecov.io/gh/public-awesome/stargaze)
 
-Stargaze is a protocol for incentivized content creation and curation. It creates attestations of content from social networks (currently Twitter), and enables their curation via quadratic voting. It is built as a sovereign proof-of-stake blockchain with it's own governance, that can interoperate with other blockchains such as Ethereum and Bitcoin via [IBC](https://cosmos.network/ibc).
+Stargaze is a [Cosmos](https://cosmos.network) zone (layer 1 proof-of-stake blockchain) for decentralized social.
 
 ## Install
 
 ### Run a local, single-node chain
 
+Requires [Go](https://golang.org/doc/install).
+
 ```sh
-# install binaries
 make install
 
-# create keys and initialize chain
-make reset
-
-# run
-make start
+./scripts/single-node.sh
 ```
 
 ### Test smart contracts
