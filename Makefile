@@ -100,7 +100,7 @@ init:
 	./bin/starsd gentx validator 10000000000$(STAKE_DENOM) --chain-id localnet-1  --keyring-backend test
 	./bin/starsd collect-gentxs 
 
-install: go.sum
+install: build
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/starsd
 
 start:
