@@ -5,7 +5,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/config"
@@ -19,20 +18,18 @@ import (
 	"github.com/cosmos/cosmos-sdk/snapshots"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authclient "github.com/cosmos/cosmos-sdk/x/auth/client"
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	vestingcli "github.com/cosmos/cosmos-sdk/x/auth/vesting/client/cli"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
-	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
 
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	// wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	"github.com/public-awesome/stargaze/app"
 	"github.com/public-awesome/stargaze/app/params"
@@ -43,7 +40,7 @@ import (
 func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 	encodingConfig := app.MakeEncodingConfig()
 	initClientCtx := client.Context{}.
-		WithJSONMarshaler(encodingConfig.Marshaler).
+		WithJSONCodec(encodingConfig.Marshaler).
 		WithInterfaceRegistry(encodingConfig.InterfaceRegistry).
 		WithTxConfig(encodingConfig.TxConfig).
 		WithLegacyAmino(encodingConfig.Amino).
@@ -68,7 +65,8 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 				return err
 			}
 
-			return server.InterceptConfigsPreRunHandler(cmd)
+			var emptyInterface interface{}
+			return server.InterceptConfigsPreRunHandler(cmd, "", emptyInterface)
 		},
 	}
 	rootCmd.SetOut(rootCmd.OutOrStdout())
@@ -80,8 +78,6 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 }
 
 func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
-	authclient.Codec = encodingConfig.Marshaler
-
 	// cfg := sdk.GetConfig()
 	// cfg.Seal()
 
@@ -199,19 +195,19 @@ func newApp(logger log.Logger, db dbm.DB,
 	if err != nil {
 		panic(err)
 	}
-	var wasmOpts []wasm.Option
-	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
-		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
-	}
+	// var wasmOpts []wasm.Option
+	// if cast.ToBool(appOpts.Get("telemetry.enabled")) {
+	// 	wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
+	// }
 
 	return app.NewStargazeApp(
 		logger, db, traceStore, true, skipUpgradeHeights,
 		cast.ToString(appOpts.Get(flags.FlagHome)),
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
-		app.GetEnabledProposals(),
+		// app.GetEnabledProposals(),
 		app.MakeEncodingConfig(), // Ideally, we would reuse the one created by NewRootCmd.
 		appOpts,
-		wasmOpts,
+		// wasmOpts,
 		baseapp.SetPruning(pruningOpts),
 		baseapp.SetMinGasPrices(cast.ToString(appOpts.Get(server.FlagMinGasPrices))),
 		baseapp.SetMinRetainBlocks(cast.ToUint64(appOpts.Get(server.FlagMinRetainBlocks))),
@@ -235,19 +231,38 @@ func createSimappAndExport(
 	encCfg := app.MakeEncodingConfig() // Ideally, we would reuse the one created by NewRootCmd.
 	encCfg.Marshaler = codec.NewProtoCodec(encCfg.InterfaceRegistry)
 	var StargazeApp *app.StargazeApp
-	var emptyWasmOpts []wasm.Option
+	// var emptyWasmOpts []wasm.Option
 	if height != -1 {
-		StargazeApp = app.NewStargazeApp(logger, db, traceStore,
-			false, map[int64]bool{}, "",
-			uint(1), app.GetEnabledProposals(), encCfg, appOpts, emptyWasmOpts)
+		StargazeApp = app.NewStargazeApp(
+			logger,
+			db,
+			traceStore,
+			false,
+			map[int64]bool{}, "",
+			uint(1),
+			// app.GetEnabledProposals(),
+			encCfg,
+			appOpts,
+			// emptyWasmOpts,
+		)
 
 		if err := StargazeApp.LoadHeight(height); err != nil {
 			return servertypes.ExportedApp{}, err
 		}
 	} else {
-		StargazeApp = app.NewStargazeApp(logger, db, traceStore,
-			true, map[int64]bool{}, "",
-			uint(1), app.GetEnabledProposals(), encCfg, appOpts, emptyWasmOpts)
+		StargazeApp = app.NewStargazeApp(
+			logger,
+			db,
+			traceStore,
+			true,
+			map[int64]bool{},
+			"",
+			uint(1),
+			// app.GetEnabledProposals(),
+			encCfg,
+			appOpts,
+			// emptyWasmOpts,
+		)
 	}
 
 	return StargazeApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)

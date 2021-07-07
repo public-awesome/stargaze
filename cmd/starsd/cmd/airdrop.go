@@ -102,8 +102,8 @@ Example:
 			snapshotAccs := make(map[string]SnapshotAccount)
 			totalAtomBalance := sdk.NewInt(0)
 
-			depCdc := clientCtx.JSONMarshaler
-			cdc := depCdc.(codec.Marshaler)
+			depCdc := clientCtx.JSONCodec
+			cdc := depCdc.(codec.Codec)
 
 			appState, _, error := genutiltypes.GenesisStateFromGenFile(genesisFile)
 			if error != nil {

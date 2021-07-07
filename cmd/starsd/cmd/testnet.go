@@ -371,11 +371,11 @@ func initGenFiles(
 	genFiles []string, numValidators int,
 ) error {
 
-	appGenState := mbm.DefaultGenesis(clientCtx.JSONMarshaler)
+	appGenState := mbm.DefaultGenesis(clientCtx.JSONCodec)
 
 	// set the accounts in the genesis state
 	var authGenState authtypes.GenesisState
-	clientCtx.JSONMarshaler.MustUnmarshalJSON(appGenState[authtypes.ModuleName], &authGenState)
+	clientCtx.JSONCodec.MustUnmarshalJSON(appGenState[authtypes.ModuleName], &authGenState)
 
 	accounts, err := authtypes.PackAccounts(genAccounts)
 	if err != nil {
@@ -383,14 +383,14 @@ func initGenFiles(
 	}
 
 	authGenState.Accounts = accounts
-	appGenState[authtypes.ModuleName] = clientCtx.JSONMarshaler.MustMarshalJSON(&authGenState)
+	appGenState[authtypes.ModuleName] = clientCtx.JSONCodec.MustMarshalJSON(&authGenState)
 
 	// set the balances in the genesis state
 	var bankGenState banktypes.GenesisState
-	clientCtx.JSONMarshaler.MustUnmarshalJSON(appGenState[banktypes.ModuleName], &bankGenState)
+	clientCtx.JSONCodec.MustUnmarshalJSON(appGenState[banktypes.ModuleName], &bankGenState)
 
 	bankGenState.Balances = genBalances
-	appGenState[banktypes.ModuleName] = clientCtx.JSONMarshaler.MustMarshalJSON(&bankGenState)
+	appGenState[banktypes.ModuleName] = clientCtx.JSONCodec.MustMarshalJSON(&bankGenState)
 
 	// curating module
 	curationWindow, err := cmd.Flags().GetString(flagCurationWindow)
@@ -403,9 +403,9 @@ func initGenFiles(
 	}
 
 	var curatingGenState curatingtypes.GenesisState
-	clientCtx.JSONMarshaler.MustUnmarshalJSON(appGenState[curatingtypes.ModuleName], &curatingGenState)
+	clientCtx.JSONCodec.MustUnmarshalJSON(appGenState[curatingtypes.ModuleName], &curatingGenState)
 	curatingGenState.Params.CurationWindow = curationWindowDuration
-	appGenState[curatingtypes.ModuleName] = clientCtx.JSONMarshaler.MustMarshalJSON(&curatingGenState)
+	appGenState[curatingtypes.ModuleName] = clientCtx.JSONCodec.MustMarshalJSON(&curatingGenState)
 
 	appGenStateJSON, err := json.MarshalIndent(appGenState, "", "  ")
 	if err != nil {
@@ -417,7 +417,7 @@ func initGenFiles(
 		AppState:   appGenStateJSON,
 		Validators: nil,
 	}
-	genDoc.AppState, err = initGenesis(clientCtx.JSONMarshaler, &genDoc, stakeDenom, unbondingPeriod)
+	genDoc.AppState, err = initGenesis(clientCtx.JSONCodec, &genDoc, stakeDenom, unbondingPeriod)
 	if err != nil {
 		return err
 	}
@@ -456,7 +456,7 @@ func collectGenFiles(
 			return err
 		}
 
-		nodeAppState, err := genutil.GenAppStateFromConfig(clientCtx.JSONMarshaler, clientCtx.TxConfig,
+		nodeAppState, err := genutil.GenAppStateFromConfig(clientCtx.JSONCodec, clientCtx.TxConfig,
 			nodeConfig, initCfg, *genDoc, genBalIterator)
 		if err != nil {
 			return err

@@ -15,7 +15,7 @@ import (
 // Keeper of the x/curating store
 type Keeper struct {
 	storeKey      sdk.StoreKey
-	cdc           codec.BinaryMarshaler
+	cdc           codec.BinaryCodec
 	accountKeeper types.AccountKeeper
 	bankKeeper    types.BankKeeper
 	paramstore    paramtypes.Subspace
@@ -23,7 +23,7 @@ type Keeper struct {
 
 // NewKeeper creates a new staking Keeper instance
 func NewKeeper(
-	cdc codec.BinaryMarshaler, key sdk.StoreKey, ak types.AccountKeeper, bk types.BankKeeper,
+	cdc codec.BinaryCodec, key sdk.StoreKey, ak types.AccountKeeper, bk types.BankKeeper,
 	ps paramtypes.Subspace,
 ) Keeper {
 

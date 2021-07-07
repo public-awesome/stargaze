@@ -20,12 +20,12 @@ type Keeper struct {
 	limit         time.Duration // rate limiting for mint, etc 24 * time.Hours
 	storeKey      sdk.StoreKey  // Unexposed key to access store from sdk.Context
 
-	cdc codec.BinaryMarshaler
+	cdc codec.BinaryCodec
 }
 
 // NewKeeper creates a new staking Keeper instance
 func NewKeeper(
-	cdc codec.BinaryMarshaler,
+	cdc codec.BinaryCodec,
 	key sdk.StoreKey,
 	bankKeeper types.BankKeeper,
 	stakingKeeper types.StakingKeeper,

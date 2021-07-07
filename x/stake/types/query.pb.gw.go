@@ -336,9 +336,9 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_Stakes_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"stargaze", "stake", "v1beta1", "stakes", "vendor_id", "post_id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Stakes_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"stargaze", "stake", "v1beta1", "stakes", "vendor_id", "post_id"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_Stake_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5, 1, 0, 4, 1, 5, 6}, []string{"stargaze", "stake", "v1beta1", "stakes", "vendor_id", "post_id", "delegator"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Stake_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5, 1, 0, 4, 1, 5, 6}, []string{"stargaze", "stake", "v1beta1", "stakes", "vendor_id", "post_id", "delegator"}, "", runtime.AssumeColonVerbOpt(false)))
 )
 
 var (

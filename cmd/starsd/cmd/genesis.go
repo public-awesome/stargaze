@@ -26,7 +26,7 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	ibctransfertypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
+	ibctransfertypes "github.com/cosmos/ibc-go/modules/apps/transfer/types"
 	appParams "github.com/public-awesome/stargaze/app/params"
 )
 
@@ -46,8 +46,8 @@ Example:
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
-			depCdc := clientCtx.JSONMarshaler
-			cdc := depCdc.(codec.Marshaler)
+			depCdc := clientCtx.JSONCodec
+			cdc := depCdc.(codec.Codec)
 			serverCtx := server.GetServerContextFromCmd(cmd)
 			config := serverCtx.Config
 
@@ -109,8 +109,8 @@ func PrepareGenesis(
 	genesisParams GenesisParams,
 	chainID string,
 ) (map[string]json.RawMessage, *tmtypes.GenesisDoc, error) {
-	depCdc := clientCtx.JSONMarshaler
-	cdc := depCdc.(codec.Marshaler)
+	depCdc := clientCtx.JSONCodec
+	cdc := depCdc.(codec.Codec)
 
 	// chain params genesis
 	genDoc.GenesisTime = genesisParams.GenesisTime

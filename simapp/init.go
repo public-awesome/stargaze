@@ -50,7 +50,7 @@ func SetupWithStakeDenom(isCheckTx bool, stakeDenom string) *SimApp {
 }
 
 func initGenesis(
-	cdc codec.JSONMarshaler,
+	cdc codec.JSONCodec,
 	appState GenesisState,
 	stakeDenom,
 	unbondingPeriod string,
