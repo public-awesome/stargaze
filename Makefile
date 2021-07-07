@@ -83,28 +83,8 @@ endif
 
 all: install
 
-create-wallet:
-	./bin/starsd keys add validator --keyring-backend test
-	./bin/starsd keys add user1 --keyring-backend test --pubkey starspub1addwnpepqwmnprxqj8at8rgnejj5y7kay5xt7u0r74eqnj4dwvkkcwtyf9nxsve82v3
-
-reset: clean create-wallet init
-clean:
-	rm -rf $(HOME)/.starsd/config
-	rm -rf $(HOME)/.starsd/data
-	rm -rf $(HOME)/.starsd/keyring-test
-
-init:
-	./bin/starsd init stargaze --chain-id localnet-1
-	./bin/starsd add-genesis-account $(shell ./bin/starsd keys show validator -a --keyring-backend test) 10000000000000000$(STAKE_DENOM),10000000000000000ucredits
-	./bin/starsd add-genesis-account $(shell ./bin/starsd keys show user1 -a --keyring-backend test) 10000000000000$(STAKE_DENOM),10000000000000ucredits,10000000000000uatom
-	./bin/starsd gentx validator 10000000000$(STAKE_DENOM) --chain-id localnet-1  --keyring-backend test
-	./bin/starsd collect-gentxs 
-
 install: build
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/starsd
-
-start:
-	./bin/starsd start --grpc.address 0.0.0.0:9091
 
 build:
 	go build $(BUILD_FLAGS) -o bin/starsd ./cmd/starsd
@@ -112,10 +92,6 @@ build:
 go.sum: go.mod
 	@echo "--> Ensure dependencies have not been modified"
 	GO111MODULE=on go mod verify
-
-# Uncomment when you have some tests
-# test:
-# 	@go test -mod=readonly $(PACKAGES)
 
 # look into .golangci.yml for enabling / disabling linters
 lint:
@@ -137,31 +113,7 @@ docker-test: build-linux
 test:
 	go test github.com/public-awesome/stargaze/x/...
 
-fake-post:
-	./bin/starsd tx curating post  1 $(POST_ID) "post body"  --from validator --keyring-backend test --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') -b block -y
-
-fake-upvote:
-	./bin/starsd tx curating upvote 1 $(POST_ID) 10  --from validator --keyring-backend test --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') -b block -y
-
-fake-upvote-user:
-	./bin/starsd tx curating upvote 1 $(POST_ID) 10  --from user1 --keyring-backend test --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') -b block -y
-
-fake-stake:
-	./bin/starsd tx stake stake 1 $(POST_ID) 100 $(shell ./bin/starsd keys show validator --keyring-backend test --bech val --output json | jq -r '.address') --from validator --keyring-backend test --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') -b block -y
-
-fake-unstake:
-	./bin/starsd tx stake unstake 1 $(POST_ID) 10  --from validator --keyring-backend test --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') -b block -y
-
-fake-create-pool1:
-	./bin/starsd tx liquidity create-pool 1 100000000$(STAKE_DENOM),100000000ucredits --from validator --keyring-backend test --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') -b block -y
-
-fake-create-pool2:
-	./bin/starsd tx liquidity create-pool 1 100000000$(STAKE_DENOM),100000000uatom --from user1 --keyring-backend test --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') -y
-
-fake-swap:
-	./bin/starsd tx liquidity swap 2 1 1000ustarx uatom 1.15 0.003 --from validator --chain-id $(shell ./bin/starsd status | jq -r '.NodeInfo.network') --keyring-backend test -y
-
-.PHONY: test build-linux docker-test lint  build init install
+.PHONY: test build-linux docker-test lint build install
 
 ###############################################################################
 ###                                Protobuf                                 ###
@@ -190,6 +142,3 @@ proto-check-breaking:
 
 ci-sign: 
 	drone sign public-awesome/stargaze --save
-
-post: 
-	starsd tx curating post 1 1 "test" --from validator --keyring-backend test --chain-id localnet-1
