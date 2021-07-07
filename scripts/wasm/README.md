@@ -3,7 +3,7 @@
 ## Start chain
 
 ```sh
-./setup_chain.sh
+../single_node.sh
 ```
 
 ## Upload and test contract
