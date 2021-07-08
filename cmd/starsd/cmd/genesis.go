@@ -25,6 +25,7 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	claimtypes "github.com/public-awesome/stargaze/x/claim/types"
 
 	ibctransfertypes "github.com/cosmos/ibc-go/modules/apps/transfer/types"
 	appParams "github.com/public-awesome/stargaze/app/params"
@@ -197,13 +198,13 @@ func PrepareGenesis(
 	appState[slashingtypes.ModuleName] = slashingGenStateBz
 
 	// claim module genesis
-	// claimGenState := claimtypes.GetGenesisStateFromAppState(depCdc, appState)
-	// claimGenState.Params = genesisParams.ClaimParams
-	// claimGenStateBz, err := cdc.MarshalJSON(claimGenState)
-	// if err != nil {
-	// 	return nil, nil, fmt.Errorf("failed to marshal claim genesis state: %w", err)
-	// }
-	// appState[claimtypes.ModuleName] = claimGenStateBz
+	claimGenState := claimtypes.GetGenesisStateFromAppState(depCdc, appState)
+	claimGenState.Params = genesisParams.ClaimParams
+	claimGenStateBz, err := cdc.MarshalJSON(claimGenState)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to marshal claim genesis state: %w", err)
+	}
+	appState[claimtypes.ModuleName] = claimGenStateBz
 
 	// return appState and genDoc
 	return appState, genDoc, nil
@@ -228,7 +229,7 @@ type GenesisParams struct {
 
 	SlashingParams slashingtypes.Params
 
-	// ClaimParams claimtypes.Params
+	ClaimParams claimtypes.Params
 }
 
 func MainnetGenesisParams() GenesisParams {
@@ -290,12 +291,12 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.SlashingParams.SlashFractionDoubleSign = sdk.MustNewDecFromStr("0.05") // 5% double sign slashing
 	genParams.SlashingParams.SlashFractionDowntime = sdk.ZeroDec()                   // 0% liveness slashing
 
-	// genParams.ClaimParams = claimtypes.Params{
-	// 	AirdropStartTime:   genParams.GenesisTime,
-	// 	DurationUntilDecay: time.Hour * 24 * 60,  // 60 days = ~2 months
-	// 	DurationOfDecay:    time.Hour * 24 * 120, // 120 days = ~4 months
-	// 	ClaimDenom:         genParams.NativeCoinMetadatas[0].Base,
-	// }
+	genParams.ClaimParams = claimtypes.Params{
+		AirdropStartTime:   genParams.GenesisTime,
+		DurationUntilDecay: time.Hour * 24 * 60,  // 60 days = ~2 months
+		DurationOfDecay:    time.Hour * 24 * 120, // 120 days = ~4 months
+		ClaimDenom:         genParams.NativeCoinMetadatas[0].Base,
+	}
 
 	genParams.ConsensusParams = tmtypes.DefaultConsensusParams()
 	genParams.ConsensusParams.Block.MaxBytes = 5 * 1024 * 1024
@@ -322,9 +323,9 @@ func TestnetGenesisParams() GenesisParams {
 	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.0000000001") // 0.00000001%
 	genParams.GovParams.VotingParams.VotingPeriod = time.Second * 300              // 300 seconds
 
-	// genParams.ClaimParams.AirdropStartTime = genParams.GenesisTime
-	// genParams.ClaimParams.DurationUntilDecay = time.Hour * 48 // 2 days
-	// genParams.ClaimParams.DurationOfDecay = time.Hour * 48    // 2 days
+	genParams.ClaimParams.AirdropStartTime = genParams.GenesisTime
+	genParams.ClaimParams.DurationUntilDecay = time.Hour * 48 // 2 days
+	genParams.ClaimParams.DurationOfDecay = time.Hour * 48    // 2 days
 
 	return genParams
 }
