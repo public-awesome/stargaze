@@ -558,7 +558,23 @@ func (app *StargazeApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) 
 	if err := tmjson.Unmarshal(req.AppStateBytes, &genesisState); err != nil {
 		panic(err)
 	}
-	return app.mm.InitGenesis(ctx, app.appCodec, genesisState)
+
+	res := app.mm.InitGenesis(ctx, app.appCodec, genesisState)
+
+	// If this account exists and has coins, fund the community pool
+	funder, err := sdk.AccAddressFromBech32("stars13nh557xzyfdm6csyp0xslu939l753sdlgdc2q0")
+	if err != nil {
+		panic(err)
+	}
+	amount := app.bankKeeper.GetAllBalances(ctx, funder)
+	if !amount.IsZero() {
+		err = app.distrKeeper.FundCommunityPool(ctx, amount, funder)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	return res
 }
 
 // LoadHeight loads a particular height
