@@ -3,7 +3,7 @@
 ## Start chain
 
 ```sh
-../single_node.sh
+../../startnode.sh
 ```
 
 ## Upload and test contract

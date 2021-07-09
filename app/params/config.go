@@ -9,7 +9,7 @@ import (
 
 const (
 	HumanCoinUnit = "stars"
-	BaseCoinUnit  = "ustars"
+	BaseCoinUnit  = "ustarx"
 	StarsExponent = 6
 
 	// Bech32PrefixAccAddr defines the Bech32 prefix of an account's address

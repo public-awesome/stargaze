@@ -146,21 +146,9 @@ func PrepareGenesis(
 	}
 	appState[stakingtypes.ModuleName] = stakingGenStateBz
 
-	// mint module genesis
-	// mintGenState := minttypes.DefaultGenesisState()
-	// mintGenState.Params = genesisParams.MintParams
-	// mintGenStateBz, err := cdc.MarshalJSON(mintGenState)
-	// if err != nil {
-	// 	return nil, nil, fmt.Errorf("failed to marshal mint genesis state: %w", err)
-	// }
-	// appState[minttypes.ModuleName] = mintGenStateBz
-
 	// distribution module genesis
 	distributionGenState := distributiontypes.DefaultGenesisState()
 	distributionGenState.Params = genesisParams.DistributionParams
-	// Set initial community pool
-	poolCoin := sdk.NewInt64Coin(stakingGenState.Params.BondDenom, 250_000_000_000_000)
-	distributionGenState.FeePool.CommunityPool = sdk.NewDecCoins(sdk.NewDecCoinFromCoin(poolCoin))
 	distributionGenStateBz, err := cdc.MarshalJSON(distributionGenState)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to marshal distribution genesis state: %w", err)

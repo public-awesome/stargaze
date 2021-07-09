@@ -168,11 +168,6 @@ var (
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		wasm.ModuleName:                {authtypes.Burner},
 	}
-
-	// module accounts that are allowed to receive tokens
-	allowedReceivingModAcc = map[string]bool{
-		distrtypes.ModuleName: true,
-	}
 )
 
 var (
@@ -299,7 +294,7 @@ func NewStargazeApp(
 	)
 	app.bankKeeper = bankKeeper.NewBaseKeeper(
 		appCodec, keys[banktypes.StoreKey], app.accountKeeper, app.getSubspace(banktypes.ModuleName),
-		app.BlockedAddrs(),
+		app.ModuleAccountAddrs(),
 	)
 	stakingKeeper := stakingKeeper.NewKeeper(
 		appCodec, keys[stakingtypes.StoreKey], app.accountKeeper, app.bankKeeper, app.getSubspace(stakingtypes.ModuleName),
@@ -558,7 +553,23 @@ func (app *StargazeApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) 
 	if err := tmjson.Unmarshal(req.AppStateBytes, &genesisState); err != nil {
 		panic(err)
 	}
-	return app.mm.InitGenesis(ctx, app.appCodec, genesisState)
+
+	res := app.mm.InitGenesis(ctx, app.appCodec, genesisState)
+
+	// If this account exists and has coins, fund the community pool
+	funder, err := sdk.AccAddressFromBech32("stars13nh557xzyfdm6csyp0xslu939l753sdlgdc2q0")
+	if err != nil {
+		panic(err)
+	}
+	amount := app.bankKeeper.GetAllBalances(ctx, funder)
+	if !amount.IsZero() {
+		err = app.distrKeeper.FundCommunityPool(ctx, amount, funder)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	return res
 }
 
 // LoadHeight loads a particular height
@@ -574,17 +585,6 @@ func (app *StargazeApp) ModuleAccountAddrs() map[string]bool {
 	}
 
 	return modAccAddrs
-}
-
-// BlockedAddrs returns all the app's module account addresses that are not
-// allowed to receive external tokens.
-func (app *StargazeApp) BlockedAddrs() map[string]bool {
-	blockedAddrs := make(map[string]bool)
-	for acc := range maccPerms {
-		blockedAddrs[authtypes.NewModuleAddress(acc).String()] = !allowedReceivingModAcc[acc]
-	}
-
-	return blockedAddrs
 }
 
 // LegacyAmino returns SimApp's amino codec.
