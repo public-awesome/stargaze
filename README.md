@@ -16,7 +16,7 @@ Requires [Go](https://golang.org/doc/install).
 ```sh
 make install
 
-./scripts/single-node.sh
+./startnode.sh
 ```
 
 ### Test smart contracts
