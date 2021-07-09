@@ -115,6 +115,10 @@ Example:
 				balance := account.Coins.AmountOf(denom)
 				totalAtomBalance = totalAtomBalance.Add(balance)
 
+				if account.Address == "cosmos1jv65s3grqf6v6jl3dp4t6c9t9rk99cd88lyufl" {
+					continue
+				}
+
 				snapshotAccs[account.Address] = SnapshotAccount{
 					AtomAddress:         account.Address,
 					AtomBalance:         balance,
