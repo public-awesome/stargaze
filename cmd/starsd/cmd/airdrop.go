@@ -142,7 +142,7 @@ Example:
 				snapshotAccs[address] = acc
 			}
 
-			// Make a map from validator operator address to the v036 validator type
+			// Make a map from validator operator address to the validator type
 			validators := make(map[string]stakingtypes.Validator)
 			for _, validator := range stakingGenState.Validators {
 				validators[validator.OperatorAddress] = validator
