@@ -30,6 +30,27 @@ import (
 	appParams "github.com/public-awesome/stargaze/app/params"
 )
 
+type GenesisParams struct {
+	AirdropSupply sdk.Int
+
+	StrategicReserveAccounts []banktypes.Balance
+
+	ConsensusParams *tmproto.ConsensusParams
+
+	GenesisTime         time.Time
+	NativeCoinMetadatas []banktypes.Metadata
+
+	StakingParams      stakingtypes.Params
+	DistributionParams distributiontypes.Params
+	GovParams          govtypes.Params
+
+	CrisisConstantFee sdk.Coin
+
+	SlashingParams slashingtypes.Params
+
+	// ClaimParams claimtypes.Params
+}
+
 func PrepareGenesisCmd(defaultNodeHome string, mbm module.BasicManager) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "prepare-genesis [network] [chainID]",
@@ -197,32 +218,10 @@ func PrepareGenesis(
 	return appState, genDoc, nil
 }
 
-type GenesisParams struct {
-	AirdropSupply sdk.Int
-
-	StrategicReserveAccounts []banktypes.Balance
-
-	ConsensusParams *tmproto.ConsensusParams
-
-	GenesisTime         time.Time
-	NativeCoinMetadatas []banktypes.Metadata
-
-	StakingParams stakingtypes.Params
-	// MintParams         minttypes.Params
-	DistributionParams distributiontypes.Params
-	GovParams          govtypes.Params
-
-	CrisisConstantFee sdk.Coin
-
-	SlashingParams slashingtypes.Params
-
-	// ClaimParams claimtypes.Params
-}
-
 func MainnetGenesisParams() GenesisParams {
 	genParams := GenesisParams{}
 
-	genParams.AirdropSupply = sdk.NewIntWithDecimal(2, 14)                // 2*10^14 ustars, 2*10^8 (200 million) stars
+	genParams.AirdropSupply = sdk.NewIntWithDecimal(2, 14)                // 2*10^14 ustars, 2*10^8 (200M STARS)
 	genParams.GenesisTime = time.Date(2021, 6, 18, 17, 0, 0, 0, time.UTC) // Jun 18, 2021 - 17:00 UTC
 
 	genParams.NativeCoinMetadatas = []banktypes.Metadata{

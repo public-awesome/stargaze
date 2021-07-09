@@ -402,7 +402,7 @@ Example:
 
 			// communityPoolExtra := sdk.NewCoins(
 			// 	sdk.NewCoin(
-			// 		genesisParams.NativeCoinMetadata.Base,
+			// 		genesisParams.NativeCoinMetadatas[0].Base,
 			// 		genesisParams.AirdropSupply,
 			// 	),
 			// ).Sub(sumAirdrop)

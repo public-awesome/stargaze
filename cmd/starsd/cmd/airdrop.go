@@ -110,10 +110,23 @@ Example:
 				return fmt.Errorf("failed to unmarshal genesis state: %w", err)
 			}
 
+			moduleAccountsToSkip := map[string]bool{
+				"cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta": true,
+				"cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn": true,
+				"cosmos1jv65s3grqf6v6jl3dp4t6c9t9rk99cd88lyufl": true,
+				"cosmos1fl48vsnmsdzcv85q5d2q4z5ajdha8yu34mf0eh": true,
+				"cosmos1tygms3xhhs3yv487phx3dw4a95jn7t7lpm470r": true,
+				"cosmos1m3h30wlvsf8llruxtpukdvsy0km2kum8g38c8q": true,
+			}
+
 			bankGenState := banktypes.GetGenesisStateFromAppState(cdc, appState)
 			for _, account := range bankGenState.Balances {
 				balance := account.Coins.AmountOf(denom)
 				totalAtomBalance = totalAtomBalance.Add(balance)
+
+				if _, ok := moduleAccountsToSkip[account.Address]; ok {
+					continue
+				}
 
 				snapshotAccs[account.Address] = SnapshotAccount{
 					AtomAddress:         account.Address,
@@ -142,7 +155,7 @@ Example:
 				snapshotAccs[address] = acc
 			}
 
-			// Make a map from validator operator address to the v036 validator type
+			// Make a map from validator operator address to the validator type
 			validators := make(map[string]stakingtypes.Validator)
 			for _, validator := range stakingGenState.Validators {
 				validators[validator.OperatorAddress] = validator
