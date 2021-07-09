@@ -146,21 +146,9 @@ func PrepareGenesis(
 	}
 	appState[stakingtypes.ModuleName] = stakingGenStateBz
 
-	// mint module genesis
-	// mintGenState := minttypes.DefaultGenesisState()
-	// mintGenState.Params = genesisParams.MintParams
-	// mintGenStateBz, err := cdc.MarshalJSON(mintGenState)
-	// if err != nil {
-	// 	return nil, nil, fmt.Errorf("failed to marshal mint genesis state: %w", err)
-	// }
-	// appState[minttypes.ModuleName] = mintGenStateBz
-
 	// distribution module genesis
 	distributionGenState := distributiontypes.DefaultGenesisState()
 	distributionGenState.Params = genesisParams.DistributionParams
-	// Set initial community pool
-	// poolCoin := sdk.NewInt64Coin(stakingGenState.Params.BondDenom, 250_000_000_000_000)
-	// distributionGenState.FeePool.CommunityPool = sdk.NewDecCoins(sdk.NewDecCoinFromCoin(poolCoin))
 	distributionGenStateBz, err := cdc.MarshalJSON(distributionGenState)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to marshal distribution genesis state: %w", err)
@@ -256,13 +244,6 @@ func MainnetGenesisParams() GenesisParams {
 			Display: appParams.HumanCoinUnit,
 		},
 	}
-
-	// genParams.StrategicReserveAccounts = []banktypes.Balance{
-	// 	{
-	// 		Address: "stars1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8nrnpzw11",
-	// 		Coins:   sdk.NewCoins(sdk.NewCoin(genParams.NativeCoinMetadatas[0].Base, sdk.NewInt(250000000000000))),
-	// 	},
-	// }
 
 	genParams.StakingParams = stakingtypes.DefaultParams()
 	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks

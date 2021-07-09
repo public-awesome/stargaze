@@ -168,11 +168,6 @@ var (
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		wasm.ModuleName:                {authtypes.Burner},
 	}
-
-	// // module accounts that are allowed to receive tokens
-	// allowedReceivingModAcc = map[string]bool{
-	// 	distrtypes.ModuleName: true,
-	// }
 )
 
 var (
@@ -591,17 +586,6 @@ func (app *StargazeApp) ModuleAccountAddrs() map[string]bool {
 
 	return modAccAddrs
 }
-
-// // BlockedAddrs returns all the app's module account addresses that are not
-// // allowed to receive external tokens.
-// func (app *StargazeApp) BlockedAddrs() map[string]bool {
-// 	blockedAddrs := make(map[string]bool)
-// 	for acc := range maccPerms {
-// 		blockedAddrs[authtypes.NewModuleAddress(acc).String()] = !allowedReceivingModAcc[acc]
-// 	}
-
-// 	return blockedAddrs
-// }
 
 // LegacyAmino returns SimApp's amino codec.
 //
