@@ -245,13 +245,6 @@ func MainnetGenesisParams() GenesisParams {
 		},
 	}
 
-	// genParams.StrategicReserveAccounts = []banktypes.Balance{
-	// 	{
-	// 		Address: "stars1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8nrnpzw11",
-	// 		Coins:   sdk.NewCoins(sdk.NewCoin(genParams.NativeCoinMetadatas[0].Base, sdk.NewInt(250000000000000))),
-	// 	},
-	// }
-
 	genParams.StakingParams = stakingtypes.DefaultParams()
 	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
 	genParams.StakingParams.MaxValidators = 100
