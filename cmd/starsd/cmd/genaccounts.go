@@ -19,7 +19,6 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	authvesting "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	distributiontypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	appParams "github.com/public-awesome/stargaze/app/params"
@@ -395,35 +394,27 @@ Example:
 			// 	sumAirdrop = sumAirdrop.Add(claim.InitialClaimableAmount...)
 			// }
 
-			var distributionGenState distributiontypes.GenesisState
+			// var distributionGenState distributiontypes.GenesisState
 
-			if appState[distributiontypes.ModuleName] != nil {
-				cdc.MustUnmarshalJSON(appState[distributiontypes.ModuleName], &distributionGenState)
-			}
+			// if appState[distributiontypes.ModuleName] != nil {
+			// 	cdc.MustUnmarshalJSON(appState[distributiontypes.ModuleName], &distributionGenState)
+			// }
 
-			// // communityPoolExtra := sdk.NewCoins(
-			// // 	sdk.NewCoin(
-			// // 		genesisParams.NativeCoinMetadatas[0].Base,
-			// // 		genesisParams.AirdropSupply,
-			// // 	),
-			// // ).Sub(sumAirdrop)
+			// communityPoolExtra := sdk.NewCoins(
+			// 	sdk.NewCoin(
+			// 		genesisParams.NativeCoinMetadatas[0].Base,
+			// 		genesisParams.AirdropSupply,
+			// 	),
+			// ).Sub(sumAirdrop)
 
-			// // fmt.Printf("community pool amount: %s\n", communityPoolExtra)
-			poolAmount := sdk.NewCoins(
-				sdk.NewCoin(
-					genesisParams.NativeCoinMetadatas[0].Base,
-					genesisParams.CommunityPoolSupply,
-				),
-			)
-			fmt.Printf("community pool amount: %s\n", poolAmount)
+			// fmt.Printf("community pool amount: %s\n", communityPoolExtra)
 
 			// distributionGenState.FeePool.CommunityPool = sdk.NewDecCoinsFromCoins(communityPoolExtra...)
-			distributionGenState.FeePool.CommunityPool = sdk.NewDecCoinsFromCoins(poolAmount...)
-			distributionGenStateBz, err := cdc.MarshalJSON(&distributionGenState)
-			if err != nil {
-				return fmt.Errorf("failed to marshal distribution genesis state: %w", err)
-			}
-			appState[distributiontypes.ModuleName] = distributionGenStateBz
+			// distributionGenStateBz, err := cdc.MarshalJSON(&distributionGenState)
+			// if err != nil {
+			// 	return fmt.Errorf("failed to marshal distribution genesis state: %w", err)
+			// }
+			// appState[distributiontypes.ModuleName] = distributionGenStateBz
 
 			// save entire genesis state to json
 

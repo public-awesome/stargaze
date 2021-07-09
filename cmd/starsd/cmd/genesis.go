@@ -31,8 +31,7 @@ import (
 )
 
 type GenesisParams struct {
-	AirdropSupply       sdk.Int
-	CommunityPoolSupply sdk.Int
+	AirdropSupply sdk.Int
 
 	StrategicReserveAccounts []banktypes.Balance
 
@@ -224,7 +223,6 @@ func MainnetGenesisParams() GenesisParams {
 
 	genParams.AirdropSupply = sdk.NewIntWithDecimal(2, 14)                // 2*10^14 ustars, 2*10^8 (200M STARS)
 	genParams.GenesisTime = time.Date(2021, 6, 18, 17, 0, 0, 0, time.UTC) // Jun 18, 2021 - 17:00 UTC
-	genParams.CommunityPoolSupply = sdk.NewIntWithDecimal(25, 13)         // 25*10^13 ustars = 25*10^7 (250M STARS)
 
 	genParams.NativeCoinMetadatas = []banktypes.Metadata{
 		{
