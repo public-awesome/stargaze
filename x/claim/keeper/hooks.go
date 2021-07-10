@@ -48,23 +48,6 @@ func (k Keeper) Hooks() Hooks {
 	return Hooks{k}
 }
 
-// gamm hooks
-func (h Hooks) AfterPoolCreated(
-	ctx sdk.Context, sender sdk.AccAddress, poolID uint64) {
-	h.k.AfterMintSocialToken(ctx, sender)
-}
-func (h Hooks) AfterJoinPool(
-	ctx sdk.Context, sender sdk.AccAddress, poolID uint64, enterCoins sdk.Coins, shareOutAmount sdk.Int) {
-	h.k.AfterMintSocialToken(ctx, sender)
-}
-func (h Hooks) AfterExitPool(
-	ctx sdk.Context, sender sdk.AccAddress, poolID uint64, shareInAmount sdk.Int, exitCoins sdk.Coins) {
-}
-func (h Hooks) AfterBuySocialToken(
-	ctx sdk.Context, sender sdk.AccAddress, poolID uint64, input sdk.Coins, output sdk.Coins) {
-	h.k.AfterBuySocialToken(ctx, sender)
-}
-
 // governance hooks
 func (h Hooks) AfterProposalSubmission(ctx sdk.Context, proposalID uint64) {}
 func (h Hooks) AfterProposalDeposit(ctx sdk.Context, proposalID uint64, depositorAddr sdk.AccAddress) {
