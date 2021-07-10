@@ -1,17 +1,17 @@
 syntax = "proto3";
-package osmosis.claim.v1beta1;
+package stargaze.claim.v1beta1;
 
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "cosmos/bank/v1beta1/genesis.proto";
 
-option go_package = "github.com/osmosis-labs/osmosis/x/claim/types";
+option go_package = "github.com/public-awesome/stargaze/x/claim/types";
 
 enum Action {
   option (gogoproto.goproto_enum_prefix) = false;
 
-  ActionAddLiquidity = 0;
-  ActionSwap = 1;
+  ActionMintSocialToken = 0;
+  ActionBuySocialToken = 1;
   ActionVote = 2;
   ActionDelegateStake = 3;
 }

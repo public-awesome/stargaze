@@ -1,11 +1,11 @@
 syntax = "proto3";
-package osmosis.claim.v1beta1;
+package stargaze.claim.v1beta1;
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/osmosis-labs/osmosis/x/claim/types";
+option go_package = "github.com/public-awesome/stargaze/x/claim/types";
 
 // Params defines the claim module's parameters.
 message Params {

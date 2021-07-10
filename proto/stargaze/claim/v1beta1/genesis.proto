@@ -1,15 +1,15 @@
 syntax = "proto3";
-package osmosis.claim.v1beta1;
+package stargaze.claim.v1beta1;
 
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "cosmos/bank/v1beta1/genesis.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
-import "osmosis/claim/v1beta1/claim.proto";
-import "osmosis/claim/v1beta1/params.proto";
+import "stargaze/claim/v1beta1/claim.proto";
+import "stargaze/claim/v1beta1/params.proto";
 
-option go_package = "github.com/osmosis-labs/osmosis/x/claim/types";
+option go_package = "github.com/public-awesome/stargaze/x/claim/types";
 
 // GenesisState defines the claim module's genesis state.
 message GenesisState {
