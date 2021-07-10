@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 
-	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
@@ -66,6 +66,8 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	claimGenStateBz := encCfg.Marshaler.MustMarshalJSON(claimGenState)
 	genState[claimtypes.ModuleName] = claimGenStateBz
 
+	var emptyWasmOpts []wasm.Option
+
 	s.cfg = network.Config{
 		Codec:             encCfg.Marshaler,
 		TxConfig:          encCfg.TxConfig,
@@ -73,16 +75,24 @@ func (s *IntegrationTestSuite) SetupSuite() {
 		InterfaceRegistry: encCfg.InterfaceRegistry,
 		AccountRetriever:  authtypes.AccountRetriever{},
 		AppConstructor: func(val network.Validator) servertypes.Application {
-			return app.NewOsmosisApp(
-				val.Ctx.Logger, dbm.NewMemDB(), nil, true, make(map[int64]bool), val.Ctx.Config.RootDir, 0,
+
+			return app.NewStargazeApp(
+				val.Ctx.Logger,
+				dbm.NewMemDB(),
+				nil,
+				true,
+				make(map[int64]bool),
+				val.Ctx.Config.RootDir,
+				0,
+				app.GetEnabledProposals(),
 				encCfg,
 				simapp.EmptyAppOptions{},
-				baseapp.SetMinGasPrices(val.AppConfig.MinGasPrices),
+				emptyWasmOpts,
 			)
 		},
 		GenesisState:    genState,
 		TimeoutCommit:   2 * time.Second,
-		ChainID:         "osmosis-1",
+		ChainID:         "stargaze-1",
 		NumValidators:   1,
 		BondDenom:       sdk.DefaultBondDenom,
 		MinGasPrices:    fmt.Sprintf("0.000006%s", sdk.DefaultBondDenom),

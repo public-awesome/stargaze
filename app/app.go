@@ -438,6 +438,7 @@ func NewStargazeApp(
 		transferModule,
 		// StargazeModules
 		wasm.NewAppModule(appCodec, &app.wasmKeeper, app.stakingKeeper),
+		claim.NewAppModule(appCodec, *app.claimKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -457,6 +458,7 @@ func NewStargazeApp(
 		crisistypes.ModuleName,
 		govtypes.ModuleName,
 		stakingtypes.ModuleName,
+		claimtypes.ModuleName,
 	)
 
 	// NOTE: The genutils moodule must occur after staking so that pools are
@@ -473,6 +475,7 @@ func NewStargazeApp(
 		evidencetypes.ModuleName, ibctransfertypes.ModuleName,
 		// stargaze init genesis
 		wasm.ModuleName,
+		claimtypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.crisisKeeper)
