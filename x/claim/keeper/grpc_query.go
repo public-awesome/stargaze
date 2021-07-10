@@ -12,7 +12,9 @@ import (
 var _ types.QueryServer = Keeper{}
 
 // Params returns params of the mint module.
-func (k Keeper) ModuleAccountBalance(c context.Context, _ *types.QueryModuleAccountBalanceRequest) (*types.QueryModuleAccountBalanceResponse, error) {
+func (k Keeper) ModuleAccountBalance(
+	c context.Context, _ *types.QueryModuleAccountBalanceRequest) (*types.QueryModuleAccountBalanceResponse, error) {
+
 	ctx := sdk.UnwrapSDKContext(c)
 	moduleAccBal := sdk.NewCoins(k.GetModuleAccountBalance(ctx))
 

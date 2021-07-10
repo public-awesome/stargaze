@@ -21,7 +21,13 @@ type Keeper struct {
 }
 
 // NewKeeper returns keeper
-func NewKeeper(cdc codec.Marshaler, storeKey sdk.StoreKey, ak types.AccountKeeper, bk types.BankKeeper, sk types.StakingKeeper, dk types.DistrKeeper) *Keeper {
+func NewKeeper(
+	cdc codec.Marshaler,
+	storeKey sdk.StoreKey,
+	ak types.AccountKeeper,
+	bk types.BankKeeper,
+	sk types.StakingKeeper,
+	dk types.DistrKeeper) *Keeper {
 	return &Keeper{
 		cdc:           cdc,
 		storeKey:      storeKey,

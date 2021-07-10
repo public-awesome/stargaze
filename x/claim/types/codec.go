@@ -5,6 +5,7 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 )
 
+//nolint:staticcheck
 func RegisterCodec(cdc *codec.LegacyAmino) {
 }
 
