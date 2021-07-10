@@ -89,6 +89,10 @@ import (
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"
+
+	"github.com/public-awesome/stargaze/x/claim"
+	claimkeeper "github.com/public-awesome/stargaze/x/claim/keeper"
+	claimtypes "github.com/public-awesome/stargaze/x/claim/types"
 )
 
 const appName = "StargazeApp"
@@ -155,6 +159,7 @@ var (
 
 		// Stargaze Modules
 		wasm.AppModuleBasic{},
+		claim.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -167,6 +172,7 @@ var (
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		wasm.ModuleName:                {authtypes.Burner},
+		claimtypes.ModuleName:          {authtypes.Minter, authtypes.Burner},
 	}
 )
 
@@ -209,7 +215,8 @@ type StargazeApp struct {
 	transferKeeper   ibctransferkeeper.Keeper
 
 	// Stargaze Keepers
-	wasmKeeper wasm.Keeper
+	wasmKeeper  wasm.Keeper
+	claimKeeper *claimkeeper.Keeper
 
 	// make scoped keepers public for test purposes
 	scopedIBCKeeper      capabilitykeeper.ScopedKeeper
@@ -258,6 +265,7 @@ func NewStargazeApp(
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		// Stargaze Stores
 		wasm.StoreKey,
+		claimtypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -389,6 +397,15 @@ func NewStargazeApp(
 		wasmOpts...,
 	)
 	app.ibcKeeper.SetRouter(ibcRouter)
+
+	app.claimKeeper = claimkeeper.NewKeeper(
+		appCodec,
+		keys[claimtypes.StoreKey],
+		app.accountKeeper,
+		app.bankKeeper,
+		stakingKeeper,
+		app.distrKeeper,
+	)
 
 	/****  Module Options ****/
 
