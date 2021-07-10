@@ -7,7 +7,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/osmosis-labs/osmosis/x/claim/types"
+	"github.com/public-awesome/stargaze/x/claim/types"
 )
 
 // Keeper struct
