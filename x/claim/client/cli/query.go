@@ -137,7 +137,7 @@ func GetCmdQueryClaimableForAction() *cobra.Command {
 			fmt.Sprintf(`Query an address' claimable amount for a specific action
 
 Example:
-$ %s query claim claimable-for-action osmo1ey69r37gfxvxg62sh4r0ktpuc46pzjrm23kcrx ActionMintSocialToken
+$ %s query claim claimable-for-action stars1ey69r37gfxvxg62sh4r0ktpuc46pzjrmkkj479 ActionMintSocialToken
 `,
 				version.AppName,
 			),
