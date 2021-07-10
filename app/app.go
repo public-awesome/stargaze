@@ -340,10 +340,23 @@ func NewStargazeApp(
 		&stakingKeeper, govRouter,
 	)
 
+	app.claimKeeper = claimkeeper.NewKeeper(
+		appCodec,
+		keys[claimtypes.StoreKey],
+		app.accountKeeper,
+		app.bankKeeper,
+		stakingKeeper,
+		app.distrKeeper,
+	)
+
 	// register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
 	app.stakingKeeper = *stakingKeeper.SetHooks(
-		stakingtypes.NewMultiStakingHooks(app.distrKeeper.Hooks(), app.slashingKeeper.Hooks()),
+		stakingtypes.NewMultiStakingHooks(
+			app.distrKeeper.Hooks(),
+			app.slashingKeeper.Hooks(),
+			app.claimKeeper.Hooks(),
+		),
 	)
 
 	// Create IBC Keeper
@@ -397,15 +410,6 @@ func NewStargazeApp(
 		wasmOpts...,
 	)
 	app.ibcKeeper.SetRouter(ibcRouter)
-
-	app.claimKeeper = claimkeeper.NewKeeper(
-		appCodec,
-		keys[claimtypes.StoreKey],
-		app.accountKeeper,
-		app.bankKeeper,
-		stakingKeeper,
-		app.distrKeeper,
-	)
 
 	/****  Module Options ****/
 

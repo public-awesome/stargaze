@@ -161,9 +161,9 @@ func (suite *KeeperTestSuite) TestDelegationAutoWithdrawAndDelegateMore() {
 
 	// delegation should automatically call claim and withdraw balance
 	claimedCoins := suite.app.BankKeeper.GetAllBalances(suite.ctx, addr2)
-	// suite.Require().Equal(
-	// 	claimedCoins.AmountOf(sdk.DefaultBondDenom).String(),
-	// 	claimRecords[1].InitialClaimableAmount.AmountOf(sdk.DefaultBondDenom).Quo(sdk.NewInt(int64(len(claimRecords[1].ActionCompleted)))).String())
+	suite.Require().Equal(
+		claimedCoins.AmountOf(sdk.DefaultBondDenom).String(),
+		claimRecords[1].InitialClaimableAmount.AmountOf(sdk.DefaultBondDenom).Quo(sdk.NewInt(int64(len(claimRecords[1].ActionCompleted)))).String())
 
 	_, err = suite.app.StakingKeeper.Delegate(suite.ctx, addr2, claimedCoins.AmountOf(sdk.DefaultBondDenom), stakingtypes.Unbonded, validator, true)
 	suite.NoError(err)

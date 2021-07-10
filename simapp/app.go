@@ -316,10 +316,23 @@ func NewSimApp(
 		&stakingKeeper, govRouter,
 	)
 
+	app.ClaimKeeper = claimkeeper.NewKeeper(
+		appCodec,
+		keys[claimtypes.StoreKey],
+		app.AccountKeeper,
+		app.BankKeeper,
+		stakingKeeper,
+		app.DistrKeeper,
+	)
+
 	// register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
 	app.StakingKeeper = *stakingKeeper.SetHooks(
-		stakingtypes.NewMultiStakingHooks(app.DistrKeeper.Hooks(), app.SlashingKeeper.Hooks()),
+		stakingtypes.NewMultiStakingHooks(
+			app.DistrKeeper.Hooks(),
+			app.SlashingKeeper.Hooks(),
+			app.ClaimKeeper.Hooks(),
+		),
 	)
 
 	// Create IBC Keeper
@@ -361,15 +374,6 @@ func NewSimApp(
 		app.StakingKeeper,
 		app.BankKeeper,
 		app.GetSubspace(staketypes.ModuleName),
-	)
-
-	app.ClaimKeeper = claimkeeper.NewKeeper(
-		appCodec,
-		keys[claimtypes.StoreKey],
-		app.AccountKeeper,
-		app.BankKeeper,
-		stakingKeeper,
-		app.DistrKeeper,
 	)
 
 	/****  Module Options ****/
