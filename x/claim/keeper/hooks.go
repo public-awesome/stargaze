@@ -6,15 +6,15 @@ import (
 	"github.com/public-awesome/stargaze/x/claim/types"
 )
 
-func (k Keeper) AfterAddLiquidity(ctx sdk.Context, sender sdk.AccAddress) {
-	_, err := k.ClaimCoinsForAction(ctx, sender, types.ActionAddLiquidity)
+func (k Keeper) AfterMintSocialToken(ctx sdk.Context, sender sdk.AccAddress) {
+	_, err := k.ClaimCoinsForAction(ctx, sender, types.ActionMintSocialToken)
 	if err != nil {
 		panic(err.Error())
 	}
 }
 
-func (k Keeper) AfterSwap(ctx sdk.Context, sender sdk.AccAddress) {
-	_, err := k.ClaimCoinsForAction(ctx, sender, types.ActionSwap)
+func (k Keeper) AfterBuySocialToken(ctx sdk.Context, sender sdk.AccAddress) {
+	_, err := k.ClaimCoinsForAction(ctx, sender, types.ActionBuySocialToken)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -50,15 +50,15 @@ func (k Keeper) Hooks() Hooks {
 
 // gamm hooks
 func (h Hooks) AfterPoolCreated(ctx sdk.Context, sender sdk.AccAddress, poolId uint64) {
-	h.k.AfterAddLiquidity(ctx, sender)
+	h.k.AfterMintSocialToken(ctx, sender)
 }
 func (h Hooks) AfterJoinPool(ctx sdk.Context, sender sdk.AccAddress, poolId uint64, enterCoins sdk.Coins, shareOutAmount sdk.Int) {
-	h.k.AfterAddLiquidity(ctx, sender)
+	h.k.AfterMintSocialToken(ctx, sender)
 }
 func (h Hooks) AfterExitPool(ctx sdk.Context, sender sdk.AccAddress, poolId uint64, shareInAmount sdk.Int, exitCoins sdk.Coins) {
 }
-func (h Hooks) AfterSwap(ctx sdk.Context, sender sdk.AccAddress, poolId uint64, input sdk.Coins, output sdk.Coins) {
-	h.k.AfterSwap(ctx, sender)
+func (h Hooks) AfterBuySocialToken(ctx sdk.Context, sender sdk.AccAddress, poolId uint64, input sdk.Coins, output sdk.Coins) {
+	h.k.AfterBuySocialToken(ctx, sender)
 }
 
 // governance hooks

@@ -191,7 +191,7 @@ func (s *IntegrationTestSuite) TestCmdQueryClaimableForAction() {
 			"query claimable-for-action amount",
 			[]string{
 				addr2.String(),
-				types.ActionAddLiquidity.String(),
+				types.ActionMintSocialToken.String(),
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			sdk.Coins{sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(5))},

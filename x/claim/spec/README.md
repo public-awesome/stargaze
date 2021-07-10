@@ -30,8 +30,8 @@ There are 4 types of actions, each of which release another 20% of the airdrop a
 The 4 actions are as follows:
 
 ```golang
-ActionAddLiquidity  Action = 0
-ActionSwap          Action = 1
+ActionMintSocialToken  Action = 0
+ActionBuySocialToken          Action = 1
 ActionVote          Action = 2
 ActionDelegateStake Action = 3
 ```
@@ -52,7 +52,7 @@ A claim record is a struct that contains data about the claims process of each a
 It contains an address, the initial claimable airdrop amount, and an array of bools representing 
 whether each action has been completed. The position in the array refers to enum number of the action.
 
-So for example, `[false, true, true, false]` means that `ActionSwap` and `ActionVote` are completed.
+So for example, `[false, true, true, false]` means that `ActionBuySocialToken` and `ActionVote` are completed.
 
 ```golang
 type ClaimRecord struct {
