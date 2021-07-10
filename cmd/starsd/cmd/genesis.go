@@ -28,6 +28,7 @@ import (
 
 	ibctransfertypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
 	appParams "github.com/public-awesome/stargaze/app/params"
+	claimtypes "github.com/public-awesome/stargaze/x/claim/types"
 )
 
 type GenesisParams struct {
@@ -48,7 +49,7 @@ type GenesisParams struct {
 
 	SlashingParams slashingtypes.Params
 
-	// ClaimParams claimtypes.Params
+	ClaimParams claimtypes.Params
 }
 
 func PrepareGenesisCmd(defaultNodeHome string, mbm module.BasicManager) *cobra.Command {
@@ -206,13 +207,13 @@ func PrepareGenesis(
 	appState[slashingtypes.ModuleName] = slashingGenStateBz
 
 	// claim module genesis
-	// claimGenState := claimtypes.GetGenesisStateFromAppState(depCdc, appState)
-	// claimGenState.Params = genesisParams.ClaimParams
-	// claimGenStateBz, err := cdc.MarshalJSON(claimGenState)
-	// if err != nil {
-	// 	return nil, nil, fmt.Errorf("failed to marshal claim genesis state: %w", err)
-	// }
-	// appState[claimtypes.ModuleName] = claimGenStateBz
+	claimGenState := claimtypes.GetGenesisStateFromAppState(depCdc, appState)
+	claimGenState.Params = genesisParams.ClaimParams
+	claimGenStateBz, err := cdc.MarshalJSON(claimGenState)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to marshal claim genesis state: %w", err)
+	}
+	appState[claimtypes.ModuleName] = claimGenStateBz
 
 	// return appState and genDoc
 	return appState, genDoc, nil
@@ -277,12 +278,12 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.SlashingParams.SlashFractionDoubleSign = sdk.MustNewDecFromStr("0.05") // 5% double sign slashing
 	genParams.SlashingParams.SlashFractionDowntime = sdk.ZeroDec()                   // 0% liveness slashing
 
-	// genParams.ClaimParams = claimtypes.Params{
-	// 	AirdropStartTime:   genParams.GenesisTime,
-	// 	DurationUntilDecay: time.Hour * 24 * 60,  // 60 days = ~2 months
-	// 	DurationOfDecay:    time.Hour * 24 * 120, // 120 days = ~4 months
-	// 	ClaimDenom:         genParams.NativeCoinMetadatas[0].Base,
-	// }
+	genParams.ClaimParams = claimtypes.Params{
+		AirdropStartTime:   genParams.GenesisTime,
+		DurationUntilDecay: time.Hour * 24 * 183, // 183 days = ~6 months
+		DurationOfDecay:    time.Hour * 24 * 120, // 120 days = ~4 months
+		ClaimDenom:         genParams.NativeCoinMetadatas[0].Base,
+	}
 
 	genParams.ConsensusParams = tmtypes.DefaultConsensusParams()
 	genParams.ConsensusParams.Block.MaxBytes = 5 * 1024 * 1024
