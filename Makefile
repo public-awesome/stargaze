@@ -4,11 +4,10 @@
 PACKAGES_SIMTEST=$(shell go list ./... | grep '/simulation')
 VERSION := $(shell echo $(shell git describe --tags) | sed 's/^v//')
 COMMIT := $(shell git log -1 --format='%H')
-LEDGER_ENABLED ?= false
+LEDGER_ENABLED ?= true
 SDK_PACK := $(shell go list -m github.com/cosmos/cosmos-sdk | sed  's/ /\@/g')
 TM_VERSION := $(shell go list -m github.com/tendermint/tendermint | sed 's:.* ::')
 BUILDDIR ?= $(CURDIR)/build
-FAUCET_ENABLED ?= false
 DOCKER := $(shell which docker)
 POST_ID ?= 1
 STAKE_DENOM ?= ustarx
@@ -16,12 +15,7 @@ STAKE_DENOM ?= ustarx
 export GO111MODULE = on
 
 # process build tags
-
 build_tags = netgo
-ifeq ($(FAUCET_ENABLED),true)
- build_tags += faucet
-endif
-
 ifeq ($(LEDGER_ENABLED),true)
   ifeq ($(OS),Windows_NT)
     GCCEXE = $(shell where gcc.exe 2> NUL)
