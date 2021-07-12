@@ -223,7 +223,7 @@ func MainnetGenesisParams() GenesisParams {
 	genParams := GenesisParams{}
 
 	genParams.AirdropSupply = sdk.NewIntWithDecimal(2, 14)                // 2*10^14 ustars, 2*10^8 (200M STARS)
-	genParams.GenesisTime = time.Date(2021, 7, 13, 17, 0, 0, 0, time.UTC) // Jul 13, 2021 - 17:00 UTC
+	genParams.GenesisTime = time.Date(2021, 7, 29, 17, 0, 0, 0, time.UTC) // Jul 29, 2021 - 17:00 UTC
 
 	genParams.NativeCoinMetadatas = []banktypes.Metadata{
 		{
@@ -299,20 +299,22 @@ func TestnetGenesisParams() GenesisParams {
 
 	genParams := MainnetGenesisParams()
 
-	genParams.GenesisTime = time.Now()
+	// genParams.GenesisTime = time.Now()
+	genParams.GenesisTime = time.Date(2021, 7, 13, 17, 0, 0, 0, time.UTC) // Jul 13, 2021 - 17:00 UTC
 
 	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
 
 	genParams.GovParams.DepositParams.MinDeposit = sdk.NewCoins(sdk.NewCoin(
 		genParams.NativeCoinMetadatas[0].Base,
-		sdk.NewInt(1000000), // 1 STARS
+		sdk.NewInt(1_000_000), // 1 STARS
 	))
-	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.0000000001") // 0.00000001%
-	genParams.GovParams.VotingParams.VotingPeriod = time.Second * 300              // 300 seconds
 
-	// genParams.ClaimParams.AirdropStartTime = genParams.GenesisTime
-	// genParams.ClaimParams.DurationUntilDecay = time.Hour * 48 // 2 days
-	// genParams.ClaimParams.DurationOfDecay = time.Hour * 48    // 2 days
+	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.1") // 10%
+	genParams.GovParams.VotingParams.VotingPeriod = time.Hour * 24 * 1    // 1 day
+
+	genParams.ClaimParams.AirdropStartTime = genParams.GenesisTime
+	genParams.ClaimParams.DurationUntilDecay = time.Hour * 24 * 5 // 5 days
+	genParams.ClaimParams.DurationOfDecay = time.Hour * 24 * 5    // 5 days
 
 	return genParams
 }
