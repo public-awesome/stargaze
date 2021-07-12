@@ -85,6 +85,7 @@ import (
 
 	SimAppparams "github.com/public-awesome/stargaze/simapp/params"
 
+	"github.com/public-awesome/stargaze/x/claim"
 	"github.com/public-awesome/stargaze/x/curating"
 	curatingkeeper "github.com/public-awesome/stargaze/x/curating/keeper"
 	curatingtypes "github.com/public-awesome/stargaze/x/curating/types"
@@ -94,6 +95,8 @@ import (
 	userkeeper "github.com/public-awesome/stargaze/x/user/keeper"
 	usertypes "github.com/public-awesome/stargaze/x/user/types"
 
+	claimkeeper "github.com/public-awesome/stargaze/x/claim/keeper"
+	claimtypes "github.com/public-awesome/stargaze/x/claim/types"
 	"github.com/public-awesome/stargaze/x/stake"
 	stakekeeper "github.com/public-awesome/stargaze/x/stake/keeper"
 	staketypes "github.com/public-awesome/stargaze/x/stake/types"
@@ -135,6 +138,7 @@ var (
 		curating.AppModuleBasic{},
 		user.AppModuleBasic{},
 		stake.AppModuleBasic{},
+		claim.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -151,6 +155,7 @@ var (
 		curatingtypes.RewardPoolName: {authtypes.Minter, authtypes.Burner},
 		curatingtypes.VotingPoolName: {authtypes.Minter, authtypes.Burner},
 		staketypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
+		claimtypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
 	}
 )
 
@@ -196,6 +201,7 @@ type SimApp struct {
 	CuratingKeeper curatingkeeper.Keeper
 	UserKeeper     userkeeper.Keeper
 	StakeKeeper    stakekeeper.Keeper
+	ClaimKeeper    *claimkeeper.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
@@ -244,6 +250,7 @@ func NewSimApp(
 		curatingtypes.StoreKey,
 		usertypes.StoreKey,
 		staketypes.StoreKey,
+		claimtypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -309,10 +316,23 @@ func NewSimApp(
 		&stakingKeeper, govRouter,
 	)
 
+	app.ClaimKeeper = claimkeeper.NewKeeper(
+		appCodec,
+		keys[claimtypes.StoreKey],
+		app.AccountKeeper,
+		app.BankKeeper,
+		stakingKeeper,
+		app.DistrKeeper,
+	)
+
 	// register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
 	app.StakingKeeper = *stakingKeeper.SetHooks(
-		stakingtypes.NewMultiStakingHooks(app.DistrKeeper.Hooks(), app.SlashingKeeper.Hooks()),
+		stakingtypes.NewMultiStakingHooks(
+			app.DistrKeeper.Hooks(),
+			app.SlashingKeeper.Hooks(),
+			app.ClaimKeeper.Hooks(),
+		),
 	)
 
 	// Create IBC Keeper
@@ -389,6 +409,7 @@ func NewSimApp(
 		curating.NewAppModule(appCodec, app.CuratingKeeper, app.AccountKeeper, app.BankKeeper),
 		user.NewAppModule(appCodec, app.UserKeeper),
 		stake.NewAppModule(appCodec, app.StakeKeeper, app.CuratingKeeper, app.StakingKeeper),
+		claim.NewAppModule(appCodec, *app.ClaimKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -403,8 +424,13 @@ func NewSimApp(
 		evidencetypes.ModuleName,
 		stakingtypes.ModuleName, ibchost.ModuleName,
 	)
-	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName,
-		stakingtypes.ModuleName, curatingtypes.ModuleName)
+	app.mm.SetOrderEndBlockers(
+		crisistypes.ModuleName,
+		govtypes.ModuleName,
+		stakingtypes.ModuleName,
+		curatingtypes.ModuleName,
+		claimtypes.ModuleName,
+	)
 
 	// NOTE: The genutils moodule must occur after staking so that pools are
 	// properly initialized with tokens from genesis accounts.
@@ -419,6 +445,7 @@ func NewSimApp(
 		// stargaze init genesis
 		curatingtypes.ModuleName,
 		usertypes.ModuleName,
+		claimtypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)

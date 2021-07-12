@@ -22,6 +22,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	appParams "github.com/public-awesome/stargaze/app/params"
+	claimtypes "github.com/public-awesome/stargaze/x/claim/types"
 )
 
 const (
@@ -266,8 +267,8 @@ Example:
 			bankGenState := banktypes.GetGenesisStateFromAppState(cdc, appState)
 
 			liquidBalances := bankGenState.Balances
-			// claimRecords := []claimtypes.ClaimRecord{}
-			// claimModuleAccountBalance := sdk.NewInt(0)
+			claimRecords := []claimtypes.ClaimRecord{}
+			claimModuleAccountBalance := sdk.NewInt(0)
 
 			// for each account in the snapshot
 			for _, acc := range snapshot.Accounts {
@@ -307,15 +308,15 @@ Example:
 				})
 
 				// claimable balances
-				// claimableAmount := normalizedStarsBalance.Mul(sdk.MustNewDecFromStr("0.8")).TruncateInt()
+				claimableAmount := normalizedStarsBalance.Mul(sdk.MustNewDecFromStr("0.8")).TruncateInt()
 
-				// claimRecords = append(claimRecords, claimtypes.ClaimRecord{
-				// 	Address:                address.String(),
-				// 	InitialClaimableAmount: sdk.NewCoins(sdk.NewCoin(genesisParams.NativeCoinMetadatas[0].Base, claimableAmount)),
-				// 	ActionCompleted:        []bool{false, false, false, false},
-				// })
+				claimRecords = append(claimRecords, claimtypes.ClaimRecord{
+					Address:                address.String(),
+					InitialClaimableAmount: sdk.NewCoins(sdk.NewCoin(genesisParams.NativeCoinMetadatas[0].Base, claimableAmount)),
+					ActionCompleted:        []bool{false, false, false, false},
+				})
 
-				// claimModuleAccountBalance = claimModuleAccountBalance.Add(claimableAmount)
+				claimModuleAccountBalance = claimModuleAccountBalance.Add(claimableAmount)
 
 				// Add the new account to the set of genesis accounts
 				baseAccount := authtypes.NewBaseAccount(address, nil, 0, 0)
@@ -368,18 +369,18 @@ Example:
 			appState[banktypes.ModuleName] = bankGenStateBz
 
 			// claim module genesis
-			// claimGenState := claimtypes.GetGenesisStateFromAppState(depCdc, appState)
-			// claimGenState.ModuleAccountBalance = sdk.NewCoin(
-			// 	genesisParams.NativeCoinMetadatas[0].Base,
-			// 	claimModuleAccountBalance,
-			// )
+			claimGenState := claimtypes.GetGenesisStateFromAppState(depCdc, appState)
+			claimGenState.ModuleAccountBalance = sdk.NewCoin(
+				genesisParams.NativeCoinMetadatas[0].Base,
+				claimModuleAccountBalance,
+			)
 
-			// claimGenState.ClaimRecords = claimRecords
-			// claimGenStateBz, err := cdc.MarshalJSON(claimGenState)
-			// if err != nil {
-			// 	return fmt.Errorf("failed to marshal claim genesis state: %w", err)
-			// }
-			// appState[claimtypes.ModuleName] = claimGenStateBz
+			claimGenState.ClaimRecords = claimRecords
+			claimGenStateBz, err := cdc.MarshalJSON(claimGenState)
+			if err != nil {
+				return fmt.Errorf("failed to marshal claim genesis state: %w", err)
+			}
+			appState[claimtypes.ModuleName] = claimGenStateBz
 
 			// TODO: add remaining extra to community pool
 			// The total airdrop stars is a smidge short (~1 stars) short of the stated 50M supply.
