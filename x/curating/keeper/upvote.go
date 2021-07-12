@@ -4,12 +4,12 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stargaze/x/curating/types"
 )
 
 // CreateUpvote performs an upvote operation
 func (k Keeper) CreateUpvote(
-	ctx sdk.Context, vendorID uint32, postID string, curator,
+	ctx sdk.Context, vendorID uint32, postID types.PostID, curator,
 	rewardAccount sdk.AccAddress, voteNum int32) error {
 
 	err := k.validateVendorID(ctx, vendorID)
@@ -20,18 +20,36 @@ func (k Keeper) CreateUpvote(
 		rewardAccount = curator
 	}
 
-	postIDBz, err := postIDBytes(postID)
-	if err != nil {
-		return err
-	}
+	voteAmt := k.voteAmount(ctx, int64(voteNum))
 
 	// check if there is already an upvote
-	_, found, err := k.GetUpvote(ctx, vendorID, postID, curator)
+	upvote, found, err := k.GetUpvote(ctx, vendorID, postID, curator)
 	if err != nil {
 		return err
 	}
 	if found {
-		return types.ErrAlreadyVoted
+		voteNumNew := voteNum + upvote.VoteNum
+		voteAmtNew := k.voteAmount(ctx, int64(voteNumNew))
+
+		// shadow voteAmt with the delta
+		voteAmt = voteAmtNew.Sub(upvote.VoteAmount)
+		// every additional upvote reward goes to the original reward account
+		rewardAccount, err = sdk.AccAddressFromBech32(upvote.RewardAccount)
+		if err != nil {
+			return err
+		}
+		upvote = types.NewUpvote(
+			vendorID,
+			postID,
+			curator,
+			rewardAccount,
+			voteNumNew,
+			voteAmtNew,
+			upvote.CuratedTime,
+			ctx.BlockTime(),
+		)
+	} else {
+		upvote = types.NewUpvote(vendorID, postID, curator, rewardAccount, voteNum, voteAmt, ctx.BlockTime(), ctx.BlockTime())
 	}
 
 	// check if post exist, if not, create it and start the curation period
@@ -46,19 +64,35 @@ func (k Keeper) CreateUpvote(
 	if !found {
 		// no deposit is locked
 		// this curator gets both creator + curator rewards (sent to reward_account)
-		err = k.CreatePost(ctx, vendorID, postID, "", nil, rewardAccount)
+		_, err = k.CreatePost(
+			ctx,
+			vendorID,
+			&postID,
+			types.BodyHash{},
+			"",
+			nil,
+			rewardAccount,
+			"",
+			nil,
+			"",
+			nil,
+		)
 		if err != nil {
 			return err
 		}
 	}
 
-	voteAmt := k.voteAmount(ctx, int64(voteNum))
-	upvote := types.NewUpvote(curator, rewardAccount, voteAmt, ctx.BlockTime())
+	// update post totals
+	post.TotalVotes += uint64(voteNum)
+	post.TotalVoters++
+	if !post.TotalAmount.IsValid() {
+		post.TotalAmount = sdk.NewInt64Coin(voteAmt.Denom, 0)
+	}
+	post.TotalAmount = post.TotalAmount.Add(voteAmt)
 
-	store := ctx.KVStore(k.storeKey)
-	key := types.UpvoteKey(vendorID, postIDBz, curator)
-	value := k.MustMarshalUpvote(upvote)
-	store.Set(key, value)
+	k.SetPost(ctx, post)
+
+	k.SetUpvote(ctx, upvote, curator)
 
 	// add vote amount to the voting pool
 	err = k.bankKeeper.SendCoinsFromAccountToModule(
@@ -71,7 +105,7 @@ func (k Keeper) CreateUpvote(
 		sdk.NewEvent(
 			types.EventTypeUpvote,
 			sdk.NewAttribute(types.AttributeKeyVendorID, fmt.Sprintf("%d", vendorID)),
-			sdk.NewAttribute(types.AttributeKeyPostID, postID),
+			sdk.NewAttribute(types.AttributeKeyPostID, postID.String()),
 			sdk.NewAttribute(types.AttributeKeyCurator, curator.String()),
 			sdk.NewAttribute(types.AttributeKeyRewardAccount, rewardAccount.String()),
 			sdk.NewAttribute(types.AttributeKeyVoteNumber, fmt.Sprintf("%d", voteNum)),
@@ -82,18 +116,25 @@ func (k Keeper) CreateUpvote(
 	return nil
 }
 
+// SetUpvote sets a upvote in the store
+func (k Keeper) SetUpvote(ctx sdk.Context, upvote types.Upvote, curator sdk.AccAddress) {
+	store := ctx.KVStore(k.storeKey)
+	key := types.UpvoteKey(upvote.VendorID, upvote.PostID, curator)
+	value := k.MustMarshalUpvote(upvote)
+	store.Set(key, value)
+}
+
 // GetUpvote returns an upvote if one exists
 func (k Keeper) GetUpvote(
-	ctx sdk.Context, vendorID uint32, postID string,
+	ctx sdk.Context, vendorID uint32, postID types.PostID,
 	curator sdk.AccAddress) (upvote types.Upvote, found bool, err error) {
 
 	store := ctx.KVStore(k.storeKey)
-	postIDBz, err := postIDBytes(postID)
 	if err != nil {
 		return upvote, false, err
 	}
 
-	key := types.UpvoteKey(vendorID, postIDBz, curator)
+	key := types.UpvoteKey(vendorID, postID, curator)
 	value := store.Get(key)
 	if value == nil {
 		return upvote, false, nil
@@ -104,7 +145,7 @@ func (k Keeper) GetUpvote(
 }
 
 // DeleteUpvote removes an upvote
-func (k Keeper) DeleteUpvote(ctx sdk.Context, vendorID uint32, postIDBz []byte, upvote types.Upvote) error {
+func (k Keeper) DeleteUpvote(ctx sdk.Context, vendorID uint32, postID types.PostID, upvote types.Upvote) error {
 	err := k.validateVendorID(ctx, vendorID)
 	if err != nil {
 		return err
@@ -115,7 +156,7 @@ func (k Keeper) DeleteUpvote(ctx sdk.Context, vendorID uint32, postIDBz []byte, 
 	if err != nil {
 		return err
 	}
-	key := types.UpvoteKey(vendorID, postIDBz, curator)
+	key := types.UpvoteKey(vendorID, postID, curator)
 
 	store.Delete(key)
 	return nil
@@ -134,12 +175,12 @@ func (k Keeper) voteAmount(ctx sdk.Context, voteNum int64) sdk.Coin {
 
 // IterateUpvotes performs a callback function for each upvoter on a post
 func (k Keeper) IterateUpvotes(
-	ctx sdk.Context, vendorID uint32, postIDBz []byte, cb func(upvote types.Upvote) (stop bool)) {
+	ctx sdk.Context, vendorID uint32, postID types.PostID, cb func(upvote types.Upvote) (stop bool)) {
 
 	store := ctx.KVStore(k.storeKey)
 
 	// iterator over upvoters on a post
-	it := sdk.KVStorePrefixIterator(store, types.UpvotePrefixKey(vendorID, postIDBz))
+	it := sdk.KVStorePrefixIterator(store, types.UpvotePrefixKey(vendorID, postID))
 	defer it.Close()
 
 	for ; it.Valid(); it.Next() {

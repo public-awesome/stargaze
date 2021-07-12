@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	curatingtypes "github.com/public-awesome/stakebird/x/curating/types"
+	curatingtypes "github.com/public-awesome/stargaze/x/curating/types"
 	"gopkg.in/yaml.v2"
 )
 

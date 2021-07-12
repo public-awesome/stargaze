@@ -19,6 +19,7 @@ import (
 	dbm "github.com/tendermint/tm-db"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
+	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
 	"github.com/cosmos/cosmos-sdk/client/rpc"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/server/api"
@@ -82,20 +83,23 @@ import (
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	SimAppparams "github.com/public-awesome/stakebird/simapp/params"
+	SimAppparams "github.com/public-awesome/stargaze/simapp/params"
 
-	"github.com/public-awesome/stakebird/x/curating"
-	curatingkeeper "github.com/public-awesome/stakebird/x/curating/keeper"
-	curatingtypes "github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stargaze/x/claim"
+	"github.com/public-awesome/stargaze/x/curating"
+	curatingkeeper "github.com/public-awesome/stargaze/x/curating/keeper"
+	curatingtypes "github.com/public-awesome/stargaze/x/curating/types"
 
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
-	"github.com/public-awesome/stakebird/x/user"
-	userkeeper "github.com/public-awesome/stakebird/x/user/keeper"
-	usertypes "github.com/public-awesome/stakebird/x/user/types"
+	"github.com/public-awesome/stargaze/x/user"
+	userkeeper "github.com/public-awesome/stargaze/x/user/keeper"
+	usertypes "github.com/public-awesome/stargaze/x/user/types"
 
-	"github.com/public-awesome/stakebird/x/stake"
-	stakekeeper "github.com/public-awesome/stakebird/x/stake/keeper"
-	staketypes "github.com/public-awesome/stakebird/x/stake/types"
+	claimkeeper "github.com/public-awesome/stargaze/x/claim/keeper"
+	claimtypes "github.com/public-awesome/stargaze/x/claim/types"
+	"github.com/public-awesome/stargaze/x/stake"
+	stakekeeper "github.com/public-awesome/stargaze/x/stake/keeper"
+	staketypes "github.com/public-awesome/stargaze/x/stake/types"
 )
 
 const appName = "SimApp"
@@ -130,10 +134,11 @@ var (
 		transfer.AppModuleBasic{},
 		vesting.AppModuleBasic{},
 
-		// Stakebird Modules
+		// Stargaze Modules
 		curating.AppModuleBasic{},
 		user.AppModuleBasic{},
 		stake.AppModuleBasic{},
+		claim.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -149,11 +154,8 @@ var (
 		curatingtypes.ModuleName:     nil,
 		curatingtypes.RewardPoolName: {authtypes.Minter, authtypes.Burner},
 		curatingtypes.VotingPoolName: {authtypes.Minter, authtypes.Burner},
-	}
-
-	// module accounts that are allowed to receive tokens
-	allowedReceivingModAcc = map[string]bool{
-		distrtypes.ModuleName: true,
+		staketypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
+		claimtypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
 	}
 )
 
@@ -167,6 +169,7 @@ var (
 // capabilities aren't needed for testing.
 type SimApp struct {
 	*baseapp.BaseApp
+	//nolint:staticcheck
 	legacyAmino       *codec.LegacyAmino
 	appCodec          codec.Marshaler
 	interfaceRegistry types.InterfaceRegistry
@@ -194,10 +197,11 @@ type SimApp struct {
 	EvidenceKeeper   evidencekeeper.Keeper
 	TransferKeeper   ibctransferkeeper.Keeper
 
-	// Stakebird Keepers
+	// Stargaze Keepers
 	CuratingKeeper curatingkeeper.Keeper
 	UserKeeper     userkeeper.Keeper
 	StakeKeeper    stakekeeper.Keeper
+	ClaimKeeper    *claimkeeper.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
@@ -216,7 +220,7 @@ func init() {
 		panic(err)
 	}
 
-	DefaultNodeHome = filepath.Join(userHomeDir, ".staked")
+	DefaultNodeHome = filepath.Join(userHomeDir, ".starsd")
 }
 
 // NewSimApp returns a reference to an initialized Gaia.
@@ -242,10 +246,11 @@ func NewSimApp(
 		minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
-		// Stakebird Stores
+		// Stargaze Stores
 		curatingtypes.StoreKey,
 		usertypes.StoreKey,
 		staketypes.StoreKey,
+		claimtypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -278,7 +283,8 @@ func NewSimApp(
 		appCodec, keys[authtypes.StoreKey], app.GetSubspace(authtypes.ModuleName), authtypes.ProtoBaseAccount, maccPerms,
 	)
 	app.BankKeeper = bankkeeper.NewBaseKeeper(
-		appCodec, keys[banktypes.StoreKey], app.AccountKeeper, app.GetSubspace(banktypes.ModuleName), app.BlockedAddrs(),
+		appCodec, keys[banktypes.StoreKey], app.AccountKeeper, app.GetSubspace(banktypes.ModuleName),
+		app.ModuleAccountAddrs(),
 	)
 	stakingKeeper := stakingkeeper.NewKeeper(
 		appCodec, keys[stakingtypes.StoreKey], app.AccountKeeper, app.BankKeeper, app.GetSubspace(stakingtypes.ModuleName),
@@ -310,15 +316,28 @@ func NewSimApp(
 		&stakingKeeper, govRouter,
 	)
 
+	app.ClaimKeeper = claimkeeper.NewKeeper(
+		appCodec,
+		keys[claimtypes.StoreKey],
+		app.AccountKeeper,
+		app.BankKeeper,
+		stakingKeeper,
+		app.DistrKeeper,
+	)
+
 	// register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
 	app.StakingKeeper = *stakingKeeper.SetHooks(
-		stakingtypes.NewMultiStakingHooks(app.DistrKeeper.Hooks(), app.SlashingKeeper.Hooks()),
+		stakingtypes.NewMultiStakingHooks(
+			app.DistrKeeper.Hooks(),
+			app.SlashingKeeper.Hooks(),
+			app.ClaimKeeper.Hooks(),
+		),
 	)
 
 	// Create IBC Keeper
 	app.IBCKeeper = ibckeeper.NewKeeper(
-		appCodec, keys[ibchost.StoreKey], app.StakingKeeper, scopedIBCKeeper,
+		appCodec, keys[ibchost.StoreKey], app.GetSubspace(ibchost.ModuleName), app.StakingKeeper, scopedIBCKeeper,
 	)
 
 	// Create Transfer Keepers
@@ -341,7 +360,7 @@ func NewSimApp(
 	// If evidence needs to be handled for the app, set routes in router here and seal
 	app.EvidenceKeeper = *evidenceKeeper
 
-	// Stakebird Keepers
+	// Stargaze Keepers
 	app.CuratingKeeper = curatingkeeper.NewKeeper(
 		appCodec, keys[curatingtypes.StoreKey], app.AccountKeeper, app.BankKeeper, app.GetSubspace(curatingtypes.ModuleName))
 
@@ -349,7 +368,13 @@ func NewSimApp(
 		appCodec, keys[curatingtypes.StoreKey], app.AccountKeeper, app.BankKeeper, app.GetSubspace(usertypes.ModuleName))
 
 	app.StakeKeeper = stakekeeper.NewKeeper(
-		appCodec, keys[staketypes.StoreKey], app.CuratingKeeper, app.StakingKeeper, app.GetSubspace(staketypes.ModuleName))
+		appCodec,
+		keys[staketypes.StoreKey],
+		app.CuratingKeeper,
+		app.StakingKeeper,
+		app.BankKeeper,
+		app.GetSubspace(staketypes.ModuleName),
+	)
 
 	/****  Module Options ****/
 
@@ -380,10 +405,11 @@ func NewSimApp(
 		ibc.NewAppModule(app.IBCKeeper),
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
-		// StakebirdModules
+		// StargazeModules
 		curating.NewAppModule(appCodec, app.CuratingKeeper, app.AccountKeeper, app.BankKeeper),
 		user.NewAppModule(appCodec, app.UserKeeper),
 		stake.NewAppModule(appCodec, app.StakeKeeper, app.CuratingKeeper, app.StakingKeeper),
+		claim.NewAppModule(appCodec, *app.ClaimKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -398,8 +424,13 @@ func NewSimApp(
 		evidencetypes.ModuleName,
 		stakingtypes.ModuleName, ibchost.ModuleName,
 	)
-	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName,
-		stakingtypes.ModuleName, curatingtypes.ModuleName)
+	app.mm.SetOrderEndBlockers(
+		crisistypes.ModuleName,
+		govtypes.ModuleName,
+		stakingtypes.ModuleName,
+		curatingtypes.ModuleName,
+		claimtypes.ModuleName,
+	)
 
 	// NOTE: The genutils moodule must occur after staking so that pools are
 	// properly initialized with tokens from genesis accounts.
@@ -411,9 +442,10 @@ func NewSimApp(
 		distrtypes.ModuleName, stakingtypes.ModuleName,
 		slashingtypes.ModuleName, govtypes.ModuleName, minttypes.ModuleName, crisistypes.ModuleName,
 		ibchost.ModuleName, genutiltypes.ModuleName, evidencetypes.ModuleName, ibctransfertypes.ModuleName,
-		// stakebird init genesis
+		// stargaze init genesis
 		curatingtypes.ModuleName,
 		usertypes.ModuleName,
+		claimtypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -482,6 +514,7 @@ func NewSimApp(
 // MakeCodecs constructs the *std.Codec and *codec.LegacyAmino instances used by
 // simapp. It is useful for tests and clients who do not want to construct the
 // full simapp
+//nolint:staticcheck
 func MakeCodecs() (codec.Marshaler, *codec.LegacyAmino) {
 	config := MakeEncodingConfig()
 	return config.Marshaler, config.Amino
@@ -524,21 +557,11 @@ func (app *SimApp) ModuleAccountAddrs() map[string]bool {
 	return modAccAddrs
 }
 
-// BlockedAddrs returns all the app's module account addresses that are not
-// allowed to receive external tokens.
-func (app *SimApp) BlockedAddrs() map[string]bool {
-	blockedAddrs := make(map[string]bool)
-	for acc := range maccPerms {
-		blockedAddrs[authtypes.NewModuleAddress(acc).String()] = !allowedReceivingModAcc[acc]
-	}
-
-	return blockedAddrs
-}
-
 // LegacyAmino returns SimApp's amino codec.
 //
 // NOTE: This is solely to be used for testing purposes as it may be desirable
 // for modules to register their own custom testing types.
+//nolint:staticcheck
 func (app *SimApp) LegacyAmino() *codec.LegacyAmino {
 	return app.legacyAmino
 }
@@ -596,8 +619,15 @@ func (app *SimApp) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APICon
 	clientCtx := apiSvr.ClientCtx
 	rpc.RegisterRoutes(clientCtx, apiSvr.Router)
 	authrest.RegisterTxRoutes(clientCtx, apiSvr.Router)
+
+	// Register new tx routes from grpc-gateway.
+	authtx.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
+
+	// Register new tendermint queries routes from grpc-gateway.
+	tmservice.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
+
 	ModuleBasics.RegisterRESTRoutes(clientCtx, apiSvr.Router)
-	ModuleBasics.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCRouter)
+	ModuleBasics.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
 
 	// register swagger API from root so that other applications can override easily
 	if apiConfig.Swagger {
@@ -608,6 +638,11 @@ func (app *SimApp) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APICon
 // RegisterTxService implements the Application.RegisterTxService method.
 func (app *SimApp) RegisterTxService(clientCtx client.Context) {
 	authtx.RegisterTxService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.BaseApp.Simulate, app.interfaceRegistry)
+}
+
+// RegisterTendermintService implements the Application.RegisterTendermintService method.
+func (app *SimApp) RegisterTendermintService(clientCtx client.Context) {
+	tmservice.RegisterTendermintService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.interfaceRegistry)
 }
 
 // RegisterSwaggerAPI registers swagger route with API Server
@@ -632,6 +667,7 @@ func GetMaccPerms() map[string][]string {
 
 // initParamsKeeper init params keeper and its subspaces
 func initParamsKeeper(appCodec codec.BinaryMarshaler,
+	//nolint:staticcheck
 	legacyAmino *codec.LegacyAmino, key, tkey sdk.StoreKey) paramskeeper.Keeper {
 	paramsKeeper := paramskeeper.NewKeeper(appCodec, legacyAmino, key, tkey)
 
@@ -644,8 +680,9 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler,
 	paramsKeeper.Subspace(govtypes.ModuleName).WithKeyTable(govtypes.ParamKeyTable())
 	paramsKeeper.Subspace(crisistypes.ModuleName)
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
+	paramsKeeper.Subspace(ibchost.ModuleName)
 
-	// Stakebird Modules
+	// Stargaze Modules
 	paramsKeeper.Subspace(curatingtypes.ModuleName)
 	paramsKeeper.Subspace(usertypes.ModuleName)
 	paramsKeeper.Subspace(staketypes.ModuleName)

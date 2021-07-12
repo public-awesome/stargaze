@@ -1,6 +1,6 @@
 package keeper
 
-import "github.com/public-awesome/stakebird/x/curating/types"
+import "github.com/public-awesome/stargaze/x/curating/types"
 
 // MustMarshalPost attempts to encode a Post object and returns the
 // raw encoded bytes. It panics on error.

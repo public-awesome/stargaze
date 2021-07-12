@@ -4,27 +4,27 @@ package types
 const (
 	EventTypePost             = "post"
 	EventTypeUpvote           = "upvote"
-	EventTypeModerate         = "moderate"
 	EventTypeCurationComplete = "curation_complete"
 	EventTypeProtocolReward   = "protocol_reward"
-	EventTypeVotingPoolReturn = "voting_pool_return"
 
 	AttributeKeyVendorID           = "vendor_id"
 	AttributeKeyPostID             = "post_id"
 	AttributeKeyCreator            = "creator"
 	AttributeKeyCurator            = "curator"
-	AttributeKeyModerator          = "moderator"
 	AttributeKeyRewardAccount      = "reward_account"
-	AttributeKeyDeposit            = "deposit"
+	AttributeKeyBodyHash           = "body_hash"
 	AttributeKeyBody               = "body"
 	AttributeCurationEndTime       = "curation_end_time"
 	AttributeKeyVoteNumber         = "vote_number"
 	AttributeKeyVoteAmount         = "vote_amount"
 	AttributeKeyVoteDenom          = "vote_denom"
 	AttributeKeyProtocolRewardType = "reward_type"
-
-	AttributeRewardTypeCreator = "creator"
-	AttributeRewardTypeCurator = "curator"
+	AttributeKeyRewardAmount       = "reward_amount"
+	AttributeKeyChainID            = "chain_id"
+	AttributeKeyContractAddress    = "contract_address"
+	AttributeKeyMetadata           = "metadata"
+	AttributeKeyParentID           = "parent_id"
+	AttributeKeyLocked             = "locked"
 
 	AttributeValueCategory = ModuleName
 )

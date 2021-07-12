@@ -3,7 +3,7 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/public-awesome/stakebird/x/stake/types"
+	"github.com/public-awesome/stargaze/x/stake/types"
 )
 
 // ParamKeyTable for staking module

@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package stargaze.stake.v1beta1;
+
+option go_package = "github.com/public-awesome/stargaze/x/stake/types";
+
+import "gogoproto/gogo.proto";
+import "stargaze/stake/v1beta1/stake.proto";
+
+message GenesisState {
+  repeated Stake stakes = 1
+      [ (gogoproto.castrepeated) = "Stakes", (gogoproto.nullable) = false ];
+}

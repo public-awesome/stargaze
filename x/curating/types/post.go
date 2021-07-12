@@ -1,65 +1,211 @@
 package types
 
 import (
+	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"time"
 
 	"github.com/bwmarrin/snowflake"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+// CustomProtobufType defines the interface custom gogo proto types must implement
+// in order to be used as a "customtype" extension.
+//
+// ref: https://github.com/gogo/protobuf/blob/master/custom_types.md
+type CustomProtobufType interface {
+	Marshal() ([]byte, error)
+	MarshalTo(data []byte) (n int, err error)
+	Unmarshal(data []byte) error
+	Size() int
+
+	MarshalJSON() ([]byte, error)
+	UnmarshalJSON(data []byte) error
+}
+
+var _ CustomProtobufType = (*PostID)(nil)
+var _ CustomProtobufType = (*BodyHash)(nil)
+
+// PostID represents a Twitter post ID (for now)
+type PostID struct {
+	id snowflake.ID
+}
+
+// PostIDFromString does exactly whats on the label
+func PostIDFromString(id string) (PostID, error) {
+	postID, err := snowflake.ParseString(id)
+	if err != nil {
+		return PostID{}, err
+	}
+	return PostID{id: postID}, nil
+}
+
+// PostIDFromInt64 does exactly whats on the label
+func PostIDFromInt64(id int64) PostID {
+	postID := snowflake.ParseInt64(id)
+	return PostID{id: postID}
+}
+
+// String like the array of chars, not the theory
+func (p PostID) String() string {
+	return p.id.String()
+}
+
+// Bytes returns bytes in big endian
+func (p PostID) Bytes() []byte {
+	temp := p.id.IntBytes()
+	return temp[:]
+}
+
+// Marshal implements the gogo proto custom type interface
+func (p PostID) Marshal() ([]byte, error) {
+	return p.id.Bytes(), nil
+}
+
+// MarshalTo implements the gogo proto custom type interface
+func (p PostID) MarshalTo(data []byte) (n int, err error) {
+	bz, err := p.Marshal()
+	if err != nil {
+		return 0, err
+	}
+
+	copy(data, bz)
+	return len(bz), nil
+}
+
+// Unmarshal implements the gogo proto custom type interface
+func (p *PostID) Unmarshal(data []byte) error {
+	id, err := snowflake.ParseBytes(data)
+	if err != nil {
+		return err
+	}
+	p.id = id
+
+	return nil
+}
+
+// Size implements the gogo proto custom type interface
+func (p PostID) Size() int {
+	bz, err := p.Marshal()
+	if err != nil {
+		return 0
+	}
+	return len(bz)
+}
+
+// MarshalJSON implements the gogo proto custom type interface
+func (p PostID) MarshalJSON() ([]byte, error) {
+	return p.id.MarshalJSON()
+}
+
+// UnmarshalJSON implements the gogo proto custom type interface
+func (p *PostID) UnmarshalJSON(data []byte) error {
+	err := p.id.UnmarshalJSON(data)
+	return err
+}
+
+// Equal compares post id is the same
+func (p PostID) Equal(p2 PostID) bool {
+	return p.id == p2.id
+}
+
+// Posts is a collection of Post objects
+type Posts []Post
+
+// CuratingQueue is a collection of VPPairs objects
+type CuratingQueue []VPPair
+
 // NewPost allocates and returns a new `Post` struct
 func NewPost(
-	vendorID uint32, postIDBz []byte, bodyHash []byte, creator,
-	rewardAccount sdk.AccAddress, curatingEndTime time.Time) Post {
+	vendorID uint32, postID PostID, bodyHash BodyHash, body string, creator,
+	rewardAccount sdk.AccAddress, curatingEndTime time.Time,
+	chainID string, owner sdk.AccAddress, contractAddress sdk.AccAddress,
+	metaData string, locked bool, parentID *PostID) Post {
 
 	return Post{
 		VendorID:        vendorID,
-		PostID:          postIDBz,
+		PostID:          postID,
 		Creator:         creator.String(),
 		RewardAccount:   rewardAccount.String(),
 		BodyHash:        bodyHash,
+		Body:            body,
 		CuratingEndTime: curatingEndTime,
+		TotalVotes:      0,
+		TotalAmount:     sdk.Coin{},
+		ChainID:         chainID,
+		Owner:           owner.String(),
+		ContractAddress: contractAddress.String(),
+		Metadata:        metaData,
+		Locked:          locked,
+		ParentID:        parentID,
 	}
 }
 
-// postPretty is a representation of `Post` suitable for silly hoomans
-type postPretty struct {
-	VendorID        uint32 `json:"vendor_id" yaml:"vendor_id"`
-	PostID          string `json:"post_id" yaml:"post_id"`
-	Creator         string `json:"creator" yaml:"creator"`
-	RewardAccount   string `json:"reward_account" yaml:"reward_account"`
-	BodyHash        string `json:"body_hash" yaml:"body_hash"`
-	CuratingEndTime string `json:"curating_end_time" yaml:"curating_end_time"`
+type BodyHash struct {
+	data []byte
 }
 
-// MarshalJSON defines custom encoding scheme
-func (p Post) MarshalJSON() ([]byte, error) {
-	var temp [8]byte
-	copy(temp[:], p.PostID) // convert a postID byte slice into a fixed 8 byte array
-	postID := snowflake.ParseIntBytes(temp)
-
-	out, err := json.Marshal(postPretty{
-		VendorID:        p.VendorID,
-		PostID:          postID.String(),
-		Creator:         p.Creator,
-		RewardAccount:   p.RewardAccount,
-		BodyHash:        hex.EncodeToString(p.BodyHash),
-		CuratingEndTime: p.CuratingEndTime.Format(time.RFC3339),
-	})
+// BodyHashFromString does exactly whats on the label
+func BodyHashFromString(body string) (BodyHash, error) {
+	h := sha256.New()
+	_, err := h.Write([]byte(body))
 	if err != nil {
-		return out, err
+		return BodyHash{}, err
 	}
-
-	return out, nil
+	digest := h.Sum(nil)
+	return BodyHash{digest[:20]}, nil
 }
 
-// PostIDStr returns a string representation of the underlying bytes that conforms an id.
-func (p Post) PostIDStr() string {
-	var temp [8]byte
-	copy(temp[:], p.PostID) // convert a postID byte slice into a fixed 8 byte array
-	postID := snowflake.ParseIntBytes(temp)
-	return postID.String()
+// String returns the hex string of the body hash
+func (b *BodyHash) String() string {
+	return hex.EncodeToString(b.data)
+}
+
+// Marshal implements the gogo proto custom type interface
+func (b BodyHash) Marshal() ([]byte, error) {
+	return b.data, nil
+}
+
+// MarshalJSON implements the gogo proto custom type interface
+func (b BodyHash) MarshalJSON() ([]byte, error) {
+	return json.Marshal(b.data)
+}
+
+// MarshalTo implements the gogo proto custom type interface
+func (b BodyHash) MarshalTo(data []byte) (n int, err error) {
+	bz, err := b.Marshal()
+	if err != nil {
+		return 0, err
+	}
+
+	copy(data, bz)
+	return len(bz), nil
+}
+
+// Size implements the gogo proto custom type interface
+func (b BodyHash) Size() int {
+	bz, err := b.Marshal()
+	if err != nil {
+		return 0
+	}
+	return len(bz)
+}
+
+// Unmarshal implements the gogo proto custom type interface
+func (b *BodyHash) Unmarshal(data []byte) error {
+	b.data = data
+	return nil
+}
+
+// UnmarshalJSON implements the gogo proto custom type interface
+func (b *BodyHash) UnmarshalJSON(data []byte) error {
+	var d []byte
+	err := json.Unmarshal(data, &d)
+	if err != nil {
+		return err
+	}
+	b.data = d
+
+	return nil
 }

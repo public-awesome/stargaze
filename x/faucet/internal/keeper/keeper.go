@@ -8,14 +8,15 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stakebird/x/faucet/internal/types"
+	"github.com/public-awesome/stargaze/x/faucet/internal/types"
 )
 
 // Keeper maintains the link to storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
 	bankKeeper    types.BankKeeper
 	stakingKeeper types.StakingKeeper
-	amount        int64         // set default amount for each mint.
+	defaultAmount int64 // set default amount for each mint.
+	denomConfig   map[string]types.DenomConfig
 	limit         time.Duration // rate limiting for mint, etc 24 * time.Hours
 	storeKey      sdk.StoreKey  // Unexposed key to access store from sdk.Context
 
@@ -28,12 +29,14 @@ func NewKeeper(
 	key sdk.StoreKey,
 	bankKeeper types.BankKeeper,
 	stakingKeeper types.StakingKeeper,
-	amount int64,
+	defaultAmount int64,
+	denomConfig map[string]types.DenomConfig,
 	limit time.Duration) Keeper {
 	return Keeper{
 		bankKeeper:    bankKeeper,
 		stakingKeeper: stakingKeeper,
-		amount:        amount,
+		defaultAmount: defaultAmount,
+		denomConfig:   denomConfig,
 		limit:         limit,
 		storeKey:      key,
 		cdc:           cdc,
@@ -50,6 +53,17 @@ func (k Keeper) Limit() time.Duration {
 	return k.limit
 }
 
+func (k Keeper) getDenomConfig(denom string) types.DenomConfig {
+	c, ok := k.denomConfig[denom]
+	if !ok {
+		return types.DenomConfig{
+			Amount:         k.defaultAmount,
+			BurnBeforeMint: false,
+		}
+	}
+	return c
+}
+
 // MintAndSend mint coins and send to minter.
 func (k Keeper) MintAndSend(ctx sdk.Context, minter sdk.AccAddress, mintTime int64, denom string) error {
 
@@ -61,7 +75,19 @@ func (k Keeper) MintAndSend(ctx sdk.Context, minter sdk.AccAddress, mintTime int
 		return types.ErrWithdrawTooOften
 	}
 
-	newCoin := sdk.NewCoin(denom, sdk.NewInt(k.amount))
+	denomConfig := k.getDenomConfig(denom)
+	balance := k.bankKeeper.GetBalance(ctx, minter, denom)
+	if denomConfig.BurnBeforeMint && balance.IsValid() && !balance.IsZero() {
+		err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, minter, types.ModuleName, sdk.NewCoins(balance))
+		if err != nil {
+			return err
+		}
+		err = k.bankKeeper.BurnCoins(ctx, types.ModuleName, sdk.NewCoins(balance))
+		if err != nil {
+			return err
+		}
+	}
+	newCoin := sdk.NewCoin(denom, sdk.NewInt(denomConfig.Amount))
 	mining.Total = mining.Total.Add(newCoin)
 	mining.LastTime = mintTime
 	err := k.setMining(ctx, minter, mining, denom)

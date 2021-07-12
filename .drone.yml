@@ -9,23 +9,30 @@ steps:
     commands:
       - git fetch --tags
   - name: lint
-    image: golangci/golangci-lint:v1.31
+    image: golangci/golangci-lint:v1.36.0
     commands:
       - export GL_DEBUG=linters_output
       - export GOPACKAGESPRINTGOLISTERRORS=1
       - go mod download
-      - golangci-lint run -v --timeout 5m --tests=false --skip-dirs="simapp"
+      - golangci-lint run -v --timeout 10m --tests=false --skip-dirs="simapp"
     environment:
       GOPROXY: http://goproxy
-  - name: test-and-build
-    image: golang:1.15.2
+  - name: test
+    image: golang:1.15.7
     commands:
       - apt-get update && apt-get install -y cmake
-      - ./contrib/go-test.sh
-      - FAUCET_ENABLED=true make build-linux
-      - make build-linux
+      - ./scripts/go-test.sh
     environment:
       GOPROXY: http://goproxy
+  - name: build
+    image: golang:1.15-alpine3.12
+    commands:
+      - apk add --no-cache ca-certificates build-base git
+      - wget https://github.com/CosmWasm/wasmvm/releases/download/v0.15.0/libwasmvm_muslc.a -O /lib/libwasmvm_muslc.a
+      - sha256sum /lib/libwasmvm_muslc.a | grep 379c61d2e53f87f63639eaa8ba8bbe687e5833158bb10e0dc0523c3377248d01
+      - FAUCET_ENABLED=true LEDGER_ENABLED=false BUILD_TAGS=muslc make build
+    environment:
+      GOPROXY: http://goproxy   
   - name: coverage
     image: plugins/codecov
     settings:
@@ -55,16 +62,18 @@ steps:
     image: plugins/docker:18
     settings:
       dockerfile: docker/Dockerfile
-      repo: publicawesome/stakebird
-      auto_tag: true
+      repo: publicawesome/stargaze
       username:
         from_secret: docker_username
       password:
         from_secret: docker_password
+      tags:
+        - develop
     when:
       event:
         - push
-        - tag
+      branch:
+        - develop
   - name: trigger
     image: plugins/downstream
     settings:
@@ -72,15 +81,32 @@ steps:
         from_secret: ci_server
       token:
         from_secret: ci_token
+      deploy: deploy-devnet
+      last_successful: true
       fork: true
       repositories:
         from_secret: downstream_repositories
     when:
-      branch: master
+      branch: 
+        - develop
       event:
         - push
+  - name: docker_release
+    image: plugins/docker:18
+    settings:
+      dockerfile: docker/Dockerfile
+      repo: publicawesome/stargaze
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      auto_tag: true
+    when:
+      event:
+        - tag
+
   - name: release
-    image: golang:1.15.2
+    image: golang:1.15.7
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -91,6 +117,7 @@ steps:
     when:
       event:
         - tag
+
   - name: discord
     image: appleboy/drone-discord
     settings:
@@ -108,23 +135,23 @@ name: ibc-integration-test
 
 steps:
   - name: gaiad
-    image: golang:1.15.2
+    image: golang:1.15.7
     detach: true
     commands:
-      - ./contrib/ci/setup-gaia.sh
+      - ./scripts/ci/setup-gaia.sh
     environment:
       GOPROXY: http://goproxy
-  - name: stakebird
-    image: golang:1.15.2
+  - name: stargaze
+    image: golang:1.15.7
     commands:
-      - ./contrib/ci/setup-stakebird.sh
+      - ./scripts/ci/setup-stargaze.sh
     environment:
       GOPROXY: http://goproxy
     detach: true
   - name: relayer
-    image: golang:1.15.2
+    image: golang:1.15.7
     commands:
-      - /bin/bash ./contrib/ci/setup-relayer.sh
+      - /bin/bash ./scripts/ci/setup-relayer.sh
     environment:
       GOPROXY: http://goproxy
 
@@ -138,6 +165,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: e9440363dcc793d3b9dd174e68a8b15ba4855ff034e6b9646489b14b86dcdfa0
+hmac: ccdcced6bf40716454e395965d8ccad9be4675014e310f9f6434697af05a688e
 
 ...

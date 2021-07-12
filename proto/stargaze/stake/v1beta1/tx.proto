@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package stargaze.stake.v1beta1;
+
+option go_package = "github.com/public-awesome/stargaze/x/stake/types";
+
+import "gogoproto/gogo.proto";
+
+// Msg defines the stake Msg service.
+service Msg {
+  rpc Stake(MsgStake) returns (MsgStakeResponse);
+  rpc Unstake(MsgUnstake) returns (MsgUnstakeResponse);
+  rpc BuyCreatorCoin(MsgBuyCreatorCoin) returns (MsgBuyCreatorCoinResponse);
+  rpc SellCreatorCoin(MsgSellCreatorCoin) returns (MsgSellCreatorCoinResponse);
+}
+message MsgStakeResponse {}
+message MsgUnstakeResponse {}
+message MsgBuyCreatorCoinResponse {}
+message MsgSellCreatorCoinResponse {}
+
+message MsgStake {
+  option (gogoproto.equal) = true;
+
+  uint32 vendor_id = 1 [
+    (gogoproto.customname) = "VendorID",
+    (gogoproto.moretags) = "yaml:\"vendor_id\"",
+    (gogoproto.jsontag) = "vendor_id"
+  ];
+  string post_id = 2 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\"",
+    (gogoproto.jsontag) = "post_id"
+  ];
+  string delegator = 3 [ (gogoproto.moretags) = "yaml:\"delegator\"" ];
+  string validator = 4 [ (gogoproto.moretags) = "yaml:\"validator\"" ];
+  string amount = 5 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message MsgUnstake {
+  option (gogoproto.equal) = true;
+
+  uint32 vendor_id = 1 [
+    (gogoproto.customname) = "VendorID",
+    (gogoproto.moretags) = "yaml:\"vendor_id\"",
+    (gogoproto.jsontag) = "vendor_id"
+  ];
+  string post_id = 2 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\"",
+    (gogoproto.jsontag) = "post_id"
+  ];
+  string delegator = 3 [ (gogoproto.moretags) = "yaml:\"delegator\"" ];
+  string amount = 4 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message MsgBuyCreatorCoin {
+  option (gogoproto.equal) = true;
+
+  string username = 1 [ (gogoproto.moretags) = "yaml:\"username\"" ];
+  string creator = 2 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+  string buyer = 3 [ (gogoproto.moretags) = "yaml:\"buyer\"" ];
+  string validator = 4 [ (gogoproto.moretags) = "yaml:\"validator\"" ];
+  string amount = 5 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message MsgSellCreatorCoin {
+  option (gogoproto.equal) = true;
+
+  string username = 1 [ (gogoproto.moretags) = "yaml:\"username\"" ];
+  string creator = 2 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+  string seller = 3 [ (gogoproto.moretags) = "yaml:\"seller\"" ];
+  string validator = 4 [ (gogoproto.moretags) = "yaml:\"validator\"" ];
+  string amount = 5 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+}

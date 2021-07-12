@@ -1,19 +1,15 @@
 package keeper_test
 
 import (
-	"crypto/sha256"
 	"testing"
 
-	"github.com/bwmarrin/snowflake"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stargaze/x/curating/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stakebird/simapp"
+	"github.com/public-awesome/stargaze/simapp"
 	"github.com/stretchr/testify/require"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
-
-var postID = "500"
 
 func TestPost(t *testing.T) {
 	app := simapp.Setup(false)
@@ -22,20 +18,36 @@ func TestPost(t *testing.T) {
 	vendorID := uint32(1)
 	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
 
-	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], addrs[0])
+	postID, err := types.PostIDFromString("500")
+	require.NoError(t, err)
+
+	body := "body string"
+	bodyHash, err := types.BodyHashFromString(body)
+	require.NoError(t, err)
+
+	_, err = app.CuratingKeeper.CreatePost(
+		ctx,
+		vendorID,
+		&postID,
+		bodyHash,
+		body,
+		addrs[0],
+		addrs[0],
+		"chain_id", nil, "metadata", nil,
+	)
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
 	require.NoError(t, err)
 	require.True(t, found, "post should be found")
 
-	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ustb")
+	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ustarx")
 	require.Equal(t, "1000000", creatorBal.Amount.String())
 
 	vps := app.CuratingKeeper.GetCurationQueueTimeSlice(ctx, ctx.BlockTime())
 	require.NotNil(t, vps)
 
-	err = app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], addrs[0])
+	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, addrs[0], addrs[0], "", nil, "", nil)
 	require.Equal(t, types.ErrDuplicatePost, err)
 }
 
@@ -44,18 +56,26 @@ func TestPost_EmptyCreator(t *testing.T) {
 
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 	vendorID := uint32(1)
+
+	postID, err := types.PostIDFromString("500")
+	require.NoError(t, err)
+
+	body := "body string"
+	bodyHash, err := types.BodyHashFromString(body)
+	require.NoError(t, err)
+
 	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
-	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", nil, addrs[1])
+	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, nil, addrs[1], "", nil, "", nil)
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
 	require.NoError(t, err)
 	require.True(t, found, "post should be found")
 
-	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ustb")
+	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ustarx")
 	require.Equal(t, "1000000", creatorBal.Amount.String())
 
-	rewardAccountBal := app.BankKeeper.GetBalance(ctx, addrs[1], "ustb")
+	rewardAccountBal := app.BankKeeper.GetBalance(ctx, addrs[1], "ustarx")
 	require.Equal(t, "1000000", rewardAccountBal.Amount.String())
 
 	vps := app.CuratingKeeper.GetCurationQueueTimeSlice(ctx, ctx.BlockTime())
@@ -69,14 +89,21 @@ func TestPost_EmptyRewardAccount(t *testing.T) {
 	vendorID := uint32(1)
 	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
 
-	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], nil)
+	postID, err := types.PostIDFromString("500")
+	require.NoError(t, err)
+
+	body := "body string"
+	bodyHash, err := types.BodyHashFromString(body)
+	require.NoError(t, err)
+
+	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, addrs[0], nil, "", nil, "", nil)
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
 	require.NoError(t, err)
 	require.True(t, found, "post should be found")
 
-	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ustb")
+	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ustarx")
 	require.Equal(t, "1000000", creatorBal.Amount.String())
 
 	vps := app.CuratingKeeper.GetCurationQueueTimeSlice(ctx, ctx.BlockTime())
@@ -90,17 +117,24 @@ func TestPost_WithRewardAccount(t *testing.T) {
 	vendorID := uint32(1)
 	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
 
-	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], addrs[1])
+	postID, err := types.PostIDFromString("500")
+	require.NoError(t, err)
+
+	body := "body string"
+	bodyHash, err := types.BodyHashFromString(body)
+	require.NoError(t, err)
+
+	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, addrs[0], addrs[1], "", nil, "", nil)
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
 	require.NoError(t, err)
 	require.True(t, found, "post should be found")
 
-	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ustb")
+	creatorBal := app.BankKeeper.GetBalance(ctx, addrs[0], "ustarx")
 	require.Equal(t, "1000000", creatorBal.Amount.String())
 
-	rewardAccountBal := app.BankKeeper.GetBalance(ctx, addrs[1], "ustb")
+	rewardAccountBal := app.BankKeeper.GetBalance(ctx, addrs[1], "ustarx")
 	require.Equal(t, "1000000", rewardAccountBal.Amount.String())
 
 	vps := app.CuratingKeeper.GetCurationQueueTimeSlice(ctx, ctx.BlockTime())
@@ -114,16 +148,21 @@ func TestDeletePost(t *testing.T) {
 	vendorID := uint32(1)
 	addrs := simapp.AddTestAddrsIncremental(app, ctx, 3, sdk.NewInt(1000000))
 
-	err := app.CuratingKeeper.CreatePost(ctx, vendorID, postID, "body string", addrs[0], addrs[1])
+	postID, err := types.PostIDFromString("500")
+	require.NoError(t, err)
+
+	body := "body string"
+	bodyHash, err := types.BodyHashFromString(body)
+	require.NoError(t, err)
+
+	_, err = app.CuratingKeeper.CreatePost(ctx, vendorID, &postID, bodyHash, body, addrs[0], addrs[1], "", nil, "", nil)
 	require.NoError(t, err)
 
 	_, found, err := app.CuratingKeeper.GetPost(ctx, vendorID, postID)
 	require.NoError(t, err)
 	require.True(t, found, "post should be found")
 
-	postIDBz, err := postIDBytes(postID)
-	require.NoError(t, err)
-	err = app.CuratingKeeper.DeletePost(ctx, vendorID, postIDBz)
+	err = app.CuratingKeeper.DeletePost(ctx, vendorID, postID)
 	require.NoError(t, err)
 
 	_, found, err = app.CuratingKeeper.GetPost(ctx, vendorID, postID)
@@ -136,17 +175,17 @@ func TestInsertCurationQueue(t *testing.T) {
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
 	vendorID := uint32(1)
-	postIDBz, err := postIDBytes(postID)
+	postID, err := types.PostIDFromString("500")
 	require.NoError(t, err)
 
 	curationWindow := app.CuratingKeeper.GetParams(ctx).CurationWindow
 	curationEndTime := ctx.BlockTime().Add(curationWindow)
-	app.CuratingKeeper.InsertCurationQueue(ctx, vendorID, postIDBz, curationEndTime)
+	app.CuratingKeeper.InsertCurationQueue(ctx, vendorID, postID, curationEndTime)
 
 	timeSlice := app.CuratingKeeper.GetCurationQueueTimeSlice(ctx, curationEndTime)
 	require.Len(t, timeSlice, 1)
 
-	vpPair := types.VPPair{VendorID: vendorID, PostID: postIDBz}
+	vpPair := types.VPPair{VendorID: vendorID, PostID: postID}
 	require.Equal(t, vpPair, timeSlice[0])
 }
 
@@ -155,9 +194,9 @@ func TestCurationQueueTimeSlice(t *testing.T) {
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
 	vendorID := uint32(1)
-	postIDBz, err := hash(postID)
+	postID, err := types.PostIDFromString("500")
 	require.NoError(t, err)
-	vpPair := types.VPPair{VendorID: vendorID, PostID: postIDBz}
+	vpPair := types.VPPair{VendorID: vendorID, PostID: postID}
 
 	curationWindow := app.CuratingKeeper.GetParams(ctx).CurationWindow
 	curationEndTime := ctx.BlockTime().Add(curationWindow)
@@ -166,26 +205,4 @@ func TestCurationQueueTimeSlice(t *testing.T) {
 	timeSlice := app.CuratingKeeper.GetCurationQueueTimeSlice(ctx, curationEndTime)
 	require.Len(t, timeSlice, 1)
 	require.Equal(t, vpPair, timeSlice[0])
-}
-
-// NOTE: these unexported functions are duplicated to enable black-box testing
-func hash(body string) ([]byte, error) {
-	h := sha256.New()
-	_, err := h.Write([]byte(body))
-	if err != nil {
-		return nil, err
-	}
-	return h.Sum(nil), nil
-}
-
-// postIDBytes returns the byte representation of a postID int64
-func postIDBytes(postID string) ([]byte, error) {
-	pID, err := snowflake.ParseString(postID)
-	if err != nil {
-		return nil, err
-	}
-
-	temp := pID.IntBytes()
-
-	return temp[:], nil
 }

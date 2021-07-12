@@ -17,3 +17,9 @@ func NewFaucetKey(armor string) FaucetKey {
 		Armor: armor,
 	}
 }
+
+// DenomConfig holds configuration for each individual denom minting
+type DenomConfig struct {
+	Amount         int64
+	BurnBeforeMint bool
+}

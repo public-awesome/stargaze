@@ -1,0 +1,10 @@
+{
+  "key": "integration-test",
+  "chain-id": "stargaze",
+  "rpc-addr": "http://stargaze:26657",
+  "account-prefix": "stars",
+  "gas": 200000,
+  "gas-prices": "0.025ustarx,0.025uatom",
+  "default-denom": "ustarx",
+  "trusting-period": "330h"
+}

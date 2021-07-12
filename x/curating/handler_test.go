@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stakebird/simapp"
-	"github.com/public-awesome/stakebird/x/curating"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stargaze/simapp"
+	"github.com/public-awesome/stargaze/x/curating"
+	"github.com/public-awesome/stargaze/x/curating/types"
 	"github.com/stretchr/testify/assert"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )

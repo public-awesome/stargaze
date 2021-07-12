@@ -2,7 +2,7 @@ package app
 
 import (
 	"github.com/cosmos/cosmos-sdk/std"
-	"github.com/public-awesome/stakebird/app/params"
+	"github.com/public-awesome/stargaze/app/params"
 )
 
 // MakeEncodingConfig creates an EncodingConfig for testing

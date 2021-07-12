@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/public-awesome/stakebird/x/stake/types"
+	"github.com/public-awesome/stargaze/x/stake/types"
 )
 
 // Keeper of the x/curating store
@@ -17,11 +17,17 @@ type Keeper struct {
 	cdc            codec.BinaryMarshaler
 	stakingKeeper  types.StakingKeeper
 	curatingKeeper types.CurationKeeper
+	bankKeeper     types.BankKeeper
 	paramstore     paramtypes.Subspace
 }
 
 // NewKeeper creates a new staking Keeper instance
-func NewKeeper(cdc codec.BinaryMarshaler, key sdk.StoreKey, ck types.CurationKeeper, sk types.StakingKeeper,
+func NewKeeper(
+	cdc codec.BinaryMarshaler,
+	key sdk.StoreKey,
+	ck types.CurationKeeper,
+	sk types.StakingKeeper,
+	bk types.BankKeeper,
 	ps paramtypes.Subspace) Keeper {
 
 	keeper := Keeper{
@@ -29,6 +35,7 @@ func NewKeeper(cdc codec.BinaryMarshaler, key sdk.StoreKey, ck types.CurationKee
 		cdc:            cdc,
 		stakingKeeper:  sk,
 		curatingKeeper: ck,
+		bankKeeper:     bk,
 		paramstore:     ps,
 	}
 	return keeper

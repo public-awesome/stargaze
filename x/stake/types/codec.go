@@ -13,6 +13,8 @@ func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgStake{},
 		&MsgUnstake{},
+		&MsgBuyCreatorCoin{},
+		&MsgSellCreatorCoin{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

@@ -7,7 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stargaze/x/curating/types"
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 )

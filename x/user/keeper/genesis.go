@@ -2,7 +2,7 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stakebird/x/user/types"
+	"github.com/public-awesome/stargaze/x/user/types"
 )
 
 // InitGenesis initializes the curating module state

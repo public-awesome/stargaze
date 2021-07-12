@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stargaze/x/curating/types"
 )
 
 type msgServer struct {
@@ -29,12 +29,33 @@ func (k msgServer) Post(goCtx context.Context, msg *types.MsgPost) (*types.MsgPo
 	if strings.TrimSpace(msg.RewardAccount) != "" {
 		rewardAccount, err = sdk.AccAddressFromBech32(msg.RewardAccount)
 	}
-
 	if err != nil {
 		return nil, err
 	}
-	err = k.CreatePost(
-		ctx, msg.VendorID, msg.PostID, msg.Body, creator, rewardAccount)
+
+	postID, err := types.PostIDFromString(msg.PostID)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyHash, err := types.BodyHashFromString(msg.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	post, err := k.CreatePost(
+		ctx,
+		msg.VendorID,
+		&postID,
+		bodyHash,
+		msg.Body,
+		creator,
+		rewardAccount,
+		msg.ChainID,
+		creator, // owner = creator initially
+		msg.Metadata,
+		msg.ParentID,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +67,9 @@ func (k msgServer) Post(goCtx context.Context, msg *types.MsgPost) (*types.MsgPo
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
 		),
 	})
-	return &types.MsgPostResponse{}, nil
+	return &types.MsgPostResponse{
+		PostID: post.PostID.String(),
+	}, nil
 }
 
 func (k msgServer) Upvote(goCtx context.Context, msg *types.MsgUpvote) (*types.MsgUpvoteResponse, error) {
@@ -61,13 +84,17 @@ func (k msgServer) Upvote(goCtx context.Context, msg *types.MsgUpvote) (*types.M
 	if strings.TrimSpace(msg.RewardAccount) != "" {
 		rewardAccount, err = sdk.AccAddressFromBech32(msg.RewardAccount)
 	}
+	if err != nil {
+		return nil, err
+	}
 
+	postID, err := types.PostIDFromString(msg.PostID)
 	if err != nil {
 		return nil, err
 	}
 
 	err = k.CreateUpvote(
-		ctx, msg.VendorID, msg.PostID, curator, rewardAccount, msg.VoteNum)
+		ctx, msg.VendorID, postID, curator, rewardAccount, msg.VoteNum)
 	if err != nil {
 		return nil, err
 	}

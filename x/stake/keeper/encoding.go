@@ -1,6 +1,6 @@
 package keeper
 
-import "github.com/public-awesome/stakebird/x/stake/types"
+import "github.com/public-awesome/stargaze/x/stake/types"
 
 // MustMarshalStake attempts to encode a Stake object and returns the
 // raw encoded bytes. It panics on error.

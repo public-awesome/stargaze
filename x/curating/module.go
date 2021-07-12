@@ -18,10 +18,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	"github.com/public-awesome/stakebird/x/curating/client/cli"
-	"github.com/public-awesome/stakebird/x/curating/keeper"
-	"github.com/public-awesome/stakebird/x/curating/simulation"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stargaze/x/curating/client/cli"
+	"github.com/public-awesome/stargaze/x/curating/keeper"
+	"github.com/public-awesome/stargaze/x/curating/simulation"
+	"github.com/public-awesome/stargaze/x/curating/types"
 )
 
 var (
@@ -43,6 +43,7 @@ func (AppModuleBasic) Name() string {
 }
 
 // RegisterLegacyAminoCodec registers the staking module's types on the given LegacyAmino codec.
+//nolint:staticcheck
 func (AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {}
 
 // RegisterInterfaces registers the module's interface types
@@ -113,7 +114,7 @@ func (AppModule) Name() string {
 
 // RegisterInvariants registers the staking module invariants.
 func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
-	// TODO: https://github.com/public-awesome/stakebird/issues/108
+	// TODO: https://github.com/public-awesome/stargaze/issues/108
 }
 
 // Route returns the message routing key for the curating module.
@@ -127,6 +128,7 @@ func (AppModule) QuerierRoute() string {
 }
 
 // LegacyQuerierHandler returns the staking module sdk.Querier.
+//nolint:staticcheck
 func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
 	return nil
 }

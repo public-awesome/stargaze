@@ -13,7 +13,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
-	"github.com/public-awesome/stakebird/x/faucet/internal/types"
+	"github.com/public-awesome/stargaze/x/faucet/internal/types"
 	"github.com/spf13/cobra"
 )
 
@@ -26,14 +26,13 @@ func NewMintCmd() *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Mint
 Example:
-$ %s tx faucet mint ustb --from address
+$ %s tx faucet mint ustarx --from address
 `,
 				version.AppName,
 			),
 		),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
-			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
+			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
@@ -65,14 +64,13 @@ func NewMintForCmd() *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Mint
 Example:
-$ %s tx faucet mintfor stb14lq34sm8yp687sz3v37s9jk9j3vek0vxl4w0pe ustb --from address
+$ %s tx faucet mintfor stb14lq34sm8yp687sz3v37s9jk9j3vek0vxl4w0pe ustarx --from address
 `,
 				version.AppName,
 			),
 		),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
-			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
+			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
@@ -116,8 +114,7 @@ $ %s tx faucet publish --from faucet_key
 			),
 		),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
-			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
+			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
 				return err
 			}
@@ -158,8 +155,7 @@ $ %s tx faucet load-key
 			),
 		),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
-			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
+			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}

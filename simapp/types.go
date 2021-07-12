@@ -17,6 +17,7 @@ type App interface {
 
 	// The application types codec.
 	// NOTE: This shoult be sealed before being returned.
+	//nolint:staticcheck
 	LegacyAmino() *codec.LegacyAmino
 
 	// Application updates every begin block.
