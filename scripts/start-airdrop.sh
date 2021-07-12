@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 DENOM=ustarx
 CHAIN_ID=localnet-1
