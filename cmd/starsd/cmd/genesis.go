@@ -142,7 +142,7 @@ func PrepareGenesis(
 	// ---
 	// bank module genesis
 	bankGenState := banktypes.DefaultGenesisState()
-	bankGenState.Params.DefaultSendEnabled = false
+	bankGenState.Params.DefaultSendEnabled = true
 	bankGenStateBz, err := cdc.MarshalJSON(bankGenState)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to marshal bank genesis state: %w", err)
@@ -151,8 +151,8 @@ func PrepareGenesis(
 
 	// IBC transfer module genesis
 	ibcGenState := ibctransfertypes.DefaultGenesisState()
-	ibcGenState.Params.SendEnabled = false
-	ibcGenState.Params.ReceiveEnabled = false
+	ibcGenState.Params.SendEnabled = true
+	ibcGenState.Params.ReceiveEnabled = true
 	ibcGenStateBz, err := cdc.MarshalJSON(ibcGenState)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to marshal IBC transfer genesis state: %w", err)
