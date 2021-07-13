@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package stargaze.curating.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "stargaze/curating/v1beta1/curating.proto";
+
+option go_package = "github.com/public-awesome/stargaze/x/curating/types";
+
+message GenesisState {
+  Params params = 1 [ (gogoproto.nullable) = false ];
+
+  repeated Post posts = 3
+      [ (gogoproto.castrepeated) = "Posts", (gogoproto.nullable) = false ];
+
+  repeated Upvote upvotes = 4
+      [ (gogoproto.castrepeated) = "Upvotes", (gogoproto.nullable) = false ];
+
+  repeated VPPair curating_queue = 5 [
+    (gogoproto.castrepeated) = "CuratingQueue",
+    (gogoproto.nullable) = false
+  ];
+}

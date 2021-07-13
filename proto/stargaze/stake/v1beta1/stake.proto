@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package stargaze.stake.v1beta1;
+
+option go_package = "github.com/public-awesome/stargaze/x/stake/types";
+
+import "gogoproto/gogo.proto";
+
+message Stake {
+  uint32 vendor_id = 1 [
+    (gogoproto.customname) = "VendorID",
+    (gogoproto.moretags) = "yaml:\"vendor_id\"",
+    (gogoproto.jsontag) = "vendor_id"
+  ];
+  string post_id = 2 [
+    (gogoproto.customtype) =
+        "github.com/public-awesome/stargaze/x/curating/types.PostID",
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\"",
+    (gogoproto.jsontag) = "post_id",
+    (gogoproto.nullable) = false
+  ];
+  string delegator = 3 [ (gogoproto.moretags) = "yaml:\"delegator\"" ];
+  string validator = 4 [ (gogoproto.moretags) = "yaml:\"validator\"" ];
+  string amount = 5 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message Params {}

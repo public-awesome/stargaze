@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stargaze/x/curating/types"
 )
 
 var _ types.QueryServer = Keeper{}
@@ -30,7 +30,13 @@ func (k Keeper) Posts(c context.Context, req *types.QueryPostsRequest) (*types.Q
 // Post returns a post based on vendor and post id
 func (k Keeper) Post(c context.Context, req *types.QueryPostRequest) (*types.QueryPostResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
-	post, found, err := k.GetPost(ctx, req.VendorId, req.PostId)
+
+	postID, err := types.PostIDFromString(req.PostId)
+	if err != nil {
+		return nil, err
+	}
+
+	post, found, err := k.GetPost(ctx, req.VendorId, postID)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +52,13 @@ func (k Keeper) Post(c context.Context, req *types.QueryPostRequest) (*types.Que
 func (k Keeper) Upvotes(c context.Context, req *types.QueryUpvotesRequest) (*types.QueryUpvotesResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
 	var upvotes []types.Upvote
-	post, found, err := k.GetPost(ctx, req.VendorId, req.PostId)
+
+	postID, err := types.PostIDFromString(req.PostId)
+	if err != nil {
+		return nil, err
+	}
+
+	post, found, err := k.GetPost(ctx, req.VendorId, postID)
 	if err != nil || !found {
 		return nil, types.ErrPostNotFound
 	}

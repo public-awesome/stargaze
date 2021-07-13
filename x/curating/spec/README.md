@@ -119,7 +119,7 @@ Validate the post, calculate the curation end time, and insert the vendor/post_i
 
 ### MsgUpvote
 
-Every transaction on Stakebird includes a deposit which could be slashed by governance for bad behavior. This helps keep the network honest.
+Every transaction on Stargaze includes a deposit which could be slashed by governance for bad behavior. This helps keep the network honest.
 
 The amount of vote credits (`VoteAmount`) is quadratically associated to `VoteNum`, and is used for the upvote amount.
 
@@ -159,7 +159,7 @@ deposit: `MsgModerate.Deposit`
 
 Governance will have to match the hash of the post with the actual post, and moderate the content.
 
-[TODO] Figure out how to handle the result of moderation (i.e: re-start curation or delete/flag post). See https://github.com/public-awesome/stakebird/issues/51.
+[TODO] Figure out how to handle the result of moderation (i.e: re-start curation or delete/flag post). See https://github.com/public-awesome/stargaze/issues/51.
 
 ```go
 type MsgModerate struct {

@@ -10,7 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stargaze/x/curating/types"
 	"github.com/spf13/cobra"
 )
 
@@ -25,19 +25,17 @@ func NewPostTxCmd() *cobra.Command {
 			fmt.Sprintf(`Create a post.
 Example:
 $ %s tx curating post 1 "2" "body" --from mykey
+(post-id is ignored when vendor-id is 0)
 `,
 				version.AppName,
 			),
 		),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
-			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
+			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
-
 			creator := clientCtx.GetFromAddress()
-
 			vendorID, err := strconv.ParseUint(args[0], 10, 32)
 			if err != nil {
 				return err
@@ -84,8 +82,7 @@ $ %s tx curating upvote 1 "2" 5 --from mykey
 			),
 		),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
-			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
+			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}

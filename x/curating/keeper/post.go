@@ -1,13 +1,11 @@
 package keeper
 
 import (
-	"crypto/sha256"
 	"fmt"
 	"time"
 
-	"github.com/bwmarrin/snowflake"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stargaze/x/curating/types"
 )
 
 // GetPosts returns all posts on chain based on vendor id
@@ -21,23 +19,11 @@ func (k Keeper) GetPosts(ctx sdk.Context, vendorID uint32) (posts []types.Post) 
 
 // GetPost returns post if one exists
 func (k Keeper) GetPost(
-	ctx sdk.Context, vendorID uint32, postID string) (post types.Post, found bool, err error) {
-
-	postIDBz, err := postIDBytes(postID)
-	if err != nil {
-		return post, false, err
-	}
-
-	return k.GetPostZ(ctx, vendorID, postIDBz)
-}
-
-// GetPostZ returns post if one exists
-func (k Keeper) GetPostZ(
-	ctx sdk.Context, vendorID uint32, postIDBz []byte) (post types.Post, found bool, err error) {
+	ctx sdk.Context, vendorID uint32, postID types.PostID) (post types.Post, found bool, err error) {
 
 	store := ctx.KVStore(k.storeKey)
 
-	key := types.PostKey(vendorID, postIDBz)
+	key := types.PostKey(vendorID, postID)
 	value := store.Get(key)
 	if value == nil {
 		return post, false, nil
@@ -50,70 +36,122 @@ func (k Keeper) GetPostZ(
 // CreatePost registers a post on-chain and starts the curation period.
 // It can be called from CreateUpvote() when a post doesn't exist yet.
 func (k Keeper) CreatePost(
-	ctx sdk.Context, vendorID uint32, postID, body string, creator, rewardAccount sdk.AccAddress) error {
-
-	_, found, err := k.GetPost(ctx, vendorID, postID)
-	if err != nil {
-		return err
-	}
-	if found {
-		return types.ErrDuplicatePost
-	}
+	ctx sdk.Context,
+	vendorID uint32,
+	postID *types.PostID,
+	bodyHash types.BodyHash,
+	body string,
+	creator, rewardAccount sdk.AccAddress,
+	chainID string,
+	contractAddress sdk.AccAddress,
+	metadata string,
+	parentID *types.PostID,
+) (post types.Post, err error) {
 
 	err = k.validateVendorID(ctx, vendorID)
 	if err != nil {
-		return err
+		return post, err
+	}
+	err = k.validatePostBodyLength(ctx, body)
+	if err != nil {
+		return post, err
+	}
+	err = k.validatePostBodyLength(ctx, body)
+	if err != nil {
+		return post, err
 	}
 	if rewardAccount.Empty() {
 		rewardAccount = creator
 	}
 
-	postIDBz, err := postIDBytes(postID)
-	if err != nil {
-		return err
+	if postID != nil {
+		_, found, err := k.GetPost(ctx, vendorID, *postID)
+		if err != nil {
+			return post, err
+		}
+		if found {
+			return post, types.ErrDuplicatePost
+		}
 	}
-
-	bodyHash, err := hash(body)
-	if err != nil {
-		return err
+	if vendorID == 0 {
+		rawPostID := k.GetPostID(ctx) + 1
+		k.SetPostID(ctx, rawPostID)
+		id := types.PostIDFromInt64(int64(rawPostID))
+		postID = &id
+	}
+	if postID == nil {
+		return post, types.ErrInvalidPostID
 	}
 
 	curationWindow := k.GetParams(ctx).CurationWindow
 	curationEndTime := ctx.BlockTime().Add(curationWindow)
-	post := types.NewPost(vendorID, postIDBz, bodyHash, creator, rewardAccount, curationEndTime)
-
-	store := ctx.KVStore(k.storeKey)
-	key := types.PostKey(vendorID, postIDBz)
-	value := k.MustMarshalPost(post)
-	store.Set(key, value)
-
-	k.InsertCurationQueue(ctx, vendorID, postIDBz, curationEndTime)
+	post = types.NewPost(
+		vendorID,
+		*postID,
+		bodyHash,
+		body,
+		creator,
+		rewardAccount,
+		curationEndTime,
+		chainID,
+		creator,
+		contractAddress,
+		metadata,
+		false,
+		parentID,
+	)
+	k.SetPost(ctx, post)
+	k.InsertCurationQueue(ctx, vendorID, *postID, curationEndTime)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypePost,
 			sdk.NewAttribute(types.AttributeKeyVendorID, fmt.Sprintf("%d", vendorID)),
-			sdk.NewAttribute(types.AttributeKeyPostID, postID),
+			sdk.NewAttribute(types.AttributeKeyPostID, postID.String()),
 			sdk.NewAttribute(types.AttributeKeyCreator, creator.String()),
 			sdk.NewAttribute(types.AttributeKeyRewardAccount, rewardAccount.String()),
+			sdk.NewAttribute(types.AttributeKeyBodyHash, bodyHash.String()),
 			sdk.NewAttribute(types.AttributeKeyBody, body),
 			sdk.NewAttribute(types.AttributeCurationEndTime, curationEndTime.Format(time.RFC3339)),
 			sdk.NewAttribute(types.AttributeKeyVoteDenom, types.DefaultVoteDenom),
+			sdk.NewAttribute(types.AttributeKeyChainID, chainID),
+			sdk.NewAttribute(types.AttributeKeyContractAddress, contractAddress.String()),
+			sdk.NewAttribute(types.AttributeKeyMetadata, metadata),
+			sdk.NewAttribute(types.AttributeKeyLocked, "false"),
 		),
 	})
 
-	return nil
+	if parentID != nil {
+		ctx.EventManager().EmitEvents(sdk.Events{
+			sdk.NewEvent(
+				types.EventTypePost,
+				sdk.NewAttribute(types.AttributeKeyVendorID, fmt.Sprintf("%d", vendorID)),
+				sdk.NewAttribute(types.AttributeKeyPostID, postID.String()),
+				sdk.NewAttribute(types.AttributeKeyParentID, parentID.String()),
+			),
+		})
+	}
+
+	return post, nil
+}
+
+// SetPost sets a post in the store
+func (k Keeper) SetPost(ctx sdk.Context, post types.Post) {
+	store := ctx.KVStore(k.storeKey)
+	key := types.PostKey(post.VendorID, post.PostID)
+	value := k.MustMarshalPost(post)
+	store.Set(key, value)
 }
 
 // DeletePost removes a post
-func (k Keeper) DeletePost(ctx sdk.Context, vendorID uint32, postIDBz []byte) error {
+func (k Keeper) DeletePost(ctx sdk.Context, vendorID uint32, postID types.PostID) error {
 	err := k.validateVendorID(ctx, vendorID)
 	if err != nil {
 		return err
 	}
 
 	store := ctx.KVStore(k.storeKey)
-	key := types.PostKey(vendorID, postIDBz)
+	key := types.PostKey(vendorID, postID)
 
 	store.Delete(key)
 	return nil
@@ -121,7 +159,7 @@ func (k Keeper) DeletePost(ctx sdk.Context, vendorID uint32, postIDBz []byte) er
 
 // InsertCurationQueue inserts a VPPair into the right timeslot in the curation queue
 func (k Keeper) InsertCurationQueue(
-	ctx sdk.Context, vendorID uint32, postID []byte, curationEndTime time.Time) {
+	ctx sdk.Context, vendorID uint32, postID types.PostID, curationEndTime time.Time) {
 	vpPair := types.VPPair{VendorID: vendorID, PostID: postID}
 
 	timeSlice := k.GetCurationQueueTimeSlice(ctx, curationEndTime)
@@ -177,7 +215,7 @@ func (k Keeper) IterateExpiredPosts(
 		vps := types.VPPairs{}
 		k.cdc.MustUnmarshalBinaryBare(it.Value(), &vps)
 		for _, vp := range vps.Pairs {
-			post, found, err := k.GetPostZ(ctx, vp.VendorID, vp.PostID)
+			post, found, err := k.GetPost(ctx, vp.VendorID, vp.PostID)
 			if err != nil {
 				// Do want to panic here because if a post doesn't exist for an upvote
 				// it means there's some kind of consensus failure, so halt the chain.
@@ -216,25 +254,23 @@ func (k Keeper) IteratePosts(ctx sdk.Context, vendorID uint32, cb func(post type
 	}
 }
 
-// postIDBytes returns the byte representation of a postID int64
-func postIDBytes(postID string) ([]byte, error) {
-	pID, err := snowflake.ParseString(postID)
-	if err != nil {
-		return nil, err
+// ----- The PostID for native posts (vendor = 0)
+
+// GetPostID gets the highest postl ID
+func (k Keeper) GetPostID(ctx sdk.Context) (postID uint64) {
+	store := ctx.KVStore(k.storeKey)
+	bz := store.Get(types.PostIDKey)
+	if bz == nil {
+		k.SetPostID(ctx, 0)
+		return 0
 	}
 
-	temp := pID.IntBytes()
-
-	return temp[:], nil
+	postID = types.GetPostIDFromBytes(bz)
+	return postID
 }
 
-// hash performs a sha256 hash over body content and truncates to 160-bits
-func hash(body string) ([]byte, error) {
-	h := sha256.New()
-	_, err := h.Write([]byte(body))
-	if err != nil {
-		return nil, err
-	}
-	digest := h.Sum(nil)
-	return digest[:20], nil
+// SetPostID sets the new post ID to the store
+func (k Keeper) SetPostID(ctx sdk.Context, postID uint64) {
+	store := ctx.KVStore(k.storeKey)
+	store.Set(types.PostIDKey, types.GetPostIDBytes(postID))
 }
