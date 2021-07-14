@@ -313,7 +313,7 @@ Example:
 				claimRecords = append(claimRecords, claimtypes.ClaimRecord{
 					Address:                address.String(),
 					InitialClaimableAmount: sdk.NewCoins(sdk.NewCoin(genesisParams.NativeCoinMetadatas[0].Base, claimableAmount)),
-					ActionCompleted:        []bool{false, false, false, false},
+					ActionCompleted:        []bool{false, false, false, false, false},
 				})
 
 				claimModuleAccountBalance = claimModuleAccountBalance.Add(claimableAmount)
