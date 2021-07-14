@@ -294,7 +294,7 @@ Example:
 
 				// initial liquid amounts
 				// We consistently round down to the nearest ustars
-				liquidAmount := normalizedStarsBalance.Mul(sdk.MustNewDecFromStr("0.2")).TruncateInt() // 20% of airdrop amount
+				liquidAmount := normalizedStarsBalance.Mul(sdk.MustNewDecFromStr("0.01")).TruncateInt() // 1% of airdrop amount
 				liquidCoins := sdk.NewCoins(sdk.NewCoin(genesisParams.NativeCoinMetadatas[0].Base, liquidAmount))
 
 				if coins, ok := nonAirdropAccs[address.String()]; ok {
@@ -308,7 +308,7 @@ Example:
 				})
 
 				// claimable balances
-				claimableAmount := normalizedStarsBalance.Mul(sdk.MustNewDecFromStr("0.8")).TruncateInt()
+				claimableAmount := normalizedStarsBalance.Mul(sdk.MustNewDecFromStr("0.99")).TruncateInt()
 
 				claimRecords = append(claimRecords, claimtypes.ClaimRecord{
 					Address:                address.String(),
