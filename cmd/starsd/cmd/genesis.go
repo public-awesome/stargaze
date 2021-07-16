@@ -320,6 +320,7 @@ func TestnetGenesisParams() GenesisParams {
 	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
 	genParams.MintParams = minttypes.DefaultParams()
 	genParams.MintParams.InflationMax = sdk.NewDecWithPrec(40, 2) // Max 40%
+	genParams.MintParams.InflationRateChange = sdk.NewDec(1)      // 100%
 
 	genParams.GovParams.DepositParams.MinDeposit = sdk.NewCoins(sdk.NewCoin(
 		genParams.NativeCoinMetadatas[0].Base,
