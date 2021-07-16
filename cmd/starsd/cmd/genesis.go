@@ -300,7 +300,7 @@ func TestnetGenesisParams() GenesisParams {
 	genParams := MainnetGenesisParams()
 
 	// genParams.GenesisTime = time.Now()
-	genParams.GenesisTime = time.Date(2021, 7, 15, 17, 0, 0, 0, time.UTC) // Jul 15, 2021 - 17:00 UTC
+	genParams.GenesisTime = time.Date(2021, 7, 19, 17, 0, 0, 0, time.UTC) // Jul 19, 2021 - 17:00 UTC
 
 	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
 
