@@ -23,6 +23,7 @@ import (
 	distributiontypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
@@ -50,6 +51,7 @@ type GenesisParams struct {
 	SlashingParams slashingtypes.Params
 
 	ClaimParams claimtypes.Params
+	MintParams  minttypes.Params
 }
 
 func PrepareGenesisCmd(defaultNodeHome string, mbm module.BasicManager) *cobra.Command {
@@ -159,6 +161,17 @@ func PrepareGenesis(
 	}
 	appState[ibctransfertypes.ModuleName] = ibcGenStateBz
 
+	// mint module genesis
+
+	mintGenState := minttypes.DefaultGenesisState()
+	mintGenState.Params = genesisParams.MintParams
+
+	mintGenStateBz, err := cdc.MarshalJSON(mintGenState)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to marshal gov genesis state: %w", err)
+	}
+	appState[minttypes.ModuleName] = mintGenStateBz
+
 	// staking module genesis
 	stakingGenState := stakingtypes.GetGenesisStateFromAppState(depCdc, appState)
 	stakingGenState.Params = genesisParams.StakingParams
@@ -244,6 +257,8 @@ func MainnetGenesisParams() GenesisParams {
 			Display: appParams.HumanCoinUnit,
 		},
 	}
+	// mint
+	genParams.MintParams = minttypes.DefaultParams()
 
 	genParams.StakingParams = stakingtypes.DefaultParams()
 	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
@@ -303,6 +318,8 @@ func TestnetGenesisParams() GenesisParams {
 	genParams.GenesisTime = time.Date(2021, 7, 19, 17, 0, 0, 0, time.UTC) // Jul 19, 2021 - 17:00 UTC
 
 	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
+	genParams.MintParams = minttypes.DefaultParams()
+	genParams.MintParams.InflationMax = sdk.NewDecWithPrec(40, 2) // Max 40%
 
 	genParams.GovParams.DepositParams.MinDeposit = sdk.NewCoins(sdk.NewCoin(
 		genParams.NativeCoinMetadatas[0].Base,
