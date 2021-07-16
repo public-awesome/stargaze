@@ -168,7 +168,7 @@ func PrepareGenesis(
 
 	mintGenStateBz, err := cdc.MarshalJSON(mintGenState)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal gov genesis state: %w", err)
+		return nil, nil, fmt.Errorf("failed to marshal mint genesis state: %w", err)
 	}
 	appState[minttypes.ModuleName] = mintGenStateBz
 
