@@ -47,7 +47,7 @@ func (suite *KeeperTestSuite) TestHookBeforeAirdropStart() {
 		{
 			Address:                addr1.String(),
 			InitialClaimableAmount: sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 1000)),
-			ActionCompleted:        []bool{false, false, false, false},
+			ActionCompleted:        []bool{false, false, false, false, false},
 		},
 	}
 	suite.app.AccountKeeper.SetAccount(suite.ctx, authtypes.NewBaseAccount(addr1, nil, 0, 0))
@@ -73,7 +73,7 @@ func (suite *KeeperTestSuite) TestHookBeforeAirdropStart() {
 	suite.app.ClaimKeeper.AfterBuySocialToken(suite.ctx.WithBlockTime(airdropStartTime), addr1)
 	balances = suite.app.BankKeeper.GetAllBalances(suite.ctx, addr1)
 	// Now, it is the time for air drop, so claim module should send the balances to the user after swap.
-	suite.Equal(claimRecords[0].InitialClaimableAmount.AmountOf(sdk.DefaultBondDenom).Quo(sdk.NewInt(4)), balances.AmountOf(sdk.DefaultBondDenom))
+	suite.Equal(claimRecords[0].InitialClaimableAmount.AmountOf(sdk.DefaultBondDenom).Quo(sdk.NewInt(5)), balances.AmountOf(sdk.DefaultBondDenom))
 }
 
 func (suite *KeeperTestSuite) TestDuplicatedActionNotWithdrawRepeatedly() {
@@ -86,7 +86,7 @@ func (suite *KeeperTestSuite) TestDuplicatedActionNotWithdrawRepeatedly() {
 		{
 			Address:                addr1.String(),
 			InitialClaimableAmount: sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 1000)),
-			ActionCompleted:        []bool{false, false, false, false},
+			ActionCompleted:        []bool{false, false, false, false, false},
 		},
 	}
 	suite.app.AccountKeeper.SetAccount(suite.ctx, authtypes.NewBaseAccount(addr1, nil, 0, 0))
@@ -103,14 +103,14 @@ func (suite *KeeperTestSuite) TestDuplicatedActionNotWithdrawRepeatedly() {
 	suite.NoError(err)
 	suite.True(claim.ActionCompleted[types.ActionBuySocialToken])
 	claimedCoins := suite.app.BankKeeper.GetAllBalances(suite.ctx, addr1)
-	suite.Require().Equal(claimedCoins.AmountOf(sdk.DefaultBondDenom), claimRecords[0].InitialClaimableAmount.AmountOf(sdk.DefaultBondDenom).Quo(sdk.NewInt(4)))
+	suite.Require().Equal(claimedCoins.AmountOf(sdk.DefaultBondDenom), claimRecords[0].InitialClaimableAmount.AmountOf(sdk.DefaultBondDenom).Quo(sdk.NewInt(5)))
 
 	suite.app.ClaimKeeper.AfterBuySocialToken(suite.ctx, addr1)
 	claim, err = suite.app.ClaimKeeper.GetClaimRecord(suite.ctx, addr1)
 	suite.NoError(err)
 	suite.True(claim.ActionCompleted[types.ActionBuySocialToken])
 	claimedCoins = suite.app.BankKeeper.GetAllBalances(suite.ctx, addr1)
-	suite.Require().Equal(claimedCoins.AmountOf(sdk.DefaultBondDenom), claimRecords[0].InitialClaimableAmount.AmountOf(sdk.DefaultBondDenom).Quo(sdk.NewInt(4)))
+	suite.Require().Equal(claimedCoins.AmountOf(sdk.DefaultBondDenom), claimRecords[0].InitialClaimableAmount.AmountOf(sdk.DefaultBondDenom).Quo(sdk.NewInt(5)))
 }
 
 func (suite *KeeperTestSuite) TestDelegationAutoWithdrawAndDelegateMore() {
@@ -125,12 +125,12 @@ func (suite *KeeperTestSuite) TestDelegationAutoWithdrawAndDelegateMore() {
 		{
 			Address:                addr1.String(),
 			InitialClaimableAmount: sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 1000)),
-			ActionCompleted:        []bool{false, false, false, false},
+			ActionCompleted:        []bool{false, false, false, false, false},
 		},
 		{
 			Address:                addr2.String(),
 			InitialClaimableAmount: sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 1000)),
-			ActionCompleted:        []bool{false, false, false, false},
+			ActionCompleted:        []bool{false, false, false, false, false},
 		},
 	}
 
@@ -180,12 +180,12 @@ func (suite *KeeperTestSuite) TestAirdropFlow() {
 		{
 			Address:                addr1.String(),
 			InitialClaimableAmount: sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 100)),
-			ActionCompleted:        []bool{false, false, false, false},
+			ActionCompleted:        []bool{false, false, false, false, false},
 		},
 		{
 			Address:                addr2.String(),
 			InitialClaimableAmount: sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 200)),
-			ActionCompleted:        []bool{false, false, false, false},
+			ActionCompleted:        []bool{false, false, false, false, false},
 		},
 	}
 
@@ -207,7 +207,7 @@ func (suite *KeeperTestSuite) TestAirdropFlow() {
 	// get rewards amount per action
 	coins4, err := suite.app.ClaimKeeper.GetClaimableAmountForAction(suite.ctx, addr1, types.ActionMintSocialToken)
 	suite.Require().NoError(err)
-	suite.Require().Equal(coins4.String(), sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 25)).String()) // 2 = 10.Quo(4)
+	suite.Require().Equal(coins4.String(), sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 20)).String())
 
 	// get completed activities
 	claimRecord, err := suite.app.ClaimKeeper.GetClaimRecord(suite.ctx, addr1)
@@ -228,7 +228,7 @@ func (suite *KeeperTestSuite) TestAirdropFlow() {
 
 	// get balance after 2 actions done
 	coins1 = suite.app.BankKeeper.GetAllBalances(suite.ctx, addr1)
-	suite.Require().Equal(coins1.String(), sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 50)).String())
+	suite.Require().Equal(coins1.String(), sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 40)).String())
 
 	// check that claimable for completed activity is 0
 	coins4, err = suite.app.ClaimKeeper.GetClaimableAmountForAction(suite.ctx, addr1, types.ActionMintSocialToken)
@@ -238,6 +238,7 @@ func (suite *KeeperTestSuite) TestAirdropFlow() {
 	// do rest of actions
 	suite.app.ClaimKeeper.AfterProposalVote(suite.ctx, 1, addr1)
 	suite.app.ClaimKeeper.AfterDelegationModified(suite.ctx, addr1, sdk.ValAddress(addr1))
+	suite.app.ClaimKeeper.AfterMintNFT(suite.ctx, addr1)
 
 	// get balance after rest actions done
 	coins1 = suite.app.BankKeeper.GetAllBalances(suite.ctx, addr1)
@@ -272,7 +273,7 @@ func (suite *KeeperTestSuite) TestClaimOfDecayed() {
 		{
 			Address:                addr1.String(),
 			InitialClaimableAmount: sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 1000)),
-			ActionCompleted:        []bool{false, false, false, false},
+			ActionCompleted:        []bool{false, false, false, false, false},
 		},
 	}
 
@@ -284,11 +285,11 @@ func (suite *KeeperTestSuite) TestClaimOfDecayed() {
 				ctx := suite.ctx.WithBlockTime(airdropStartTime)
 				coins, err := suite.app.ClaimKeeper.GetClaimableAmountForAction(ctx, addr1, types.ActionBuySocialToken)
 				suite.NoError(err)
-				suite.Equal(claimRecords[0].InitialClaimableAmount.AmountOf(sdk.DefaultBondDenom).Quo(sdk.NewInt(4)).String(), coins.AmountOf(sdk.DefaultBondDenom).String())
+				suite.Equal(claimRecords[0].InitialClaimableAmount.AmountOf(sdk.DefaultBondDenom).Quo(sdk.NewInt(5)).String(), coins.AmountOf(sdk.DefaultBondDenom).String())
 
 				suite.app.ClaimKeeper.AfterBuySocialToken(ctx, addr1)
 				coins = suite.app.BankKeeper.GetAllBalances(ctx, addr1)
-				suite.Equal(claimRecords[0].InitialClaimableAmount.AmountOf(sdk.DefaultBondDenom).Quo(sdk.NewInt(4)).String(), coins.AmountOf(sdk.DefaultBondDenom).String())
+				suite.Equal(claimRecords[0].InitialClaimableAmount.AmountOf(sdk.DefaultBondDenom).Quo(sdk.NewInt(5)).String(), coins.AmountOf(sdk.DefaultBondDenom).String())
 			},
 		},
 		{
@@ -296,11 +297,11 @@ func (suite *KeeperTestSuite) TestClaimOfDecayed() {
 				ctx := suite.ctx.WithBlockTime(airdropStartTime.Add(durationUntilDecay))
 				coins, err := suite.app.ClaimKeeper.GetClaimableAmountForAction(ctx, addr1, types.ActionBuySocialToken)
 				suite.NoError(err)
-				suite.Equal(claimRecords[0].InitialClaimableAmount.AmountOf(sdk.DefaultBondDenom).Quo(sdk.NewInt(4)).String(), coins.AmountOf(sdk.DefaultBondDenom).String())
+				suite.Equal(claimRecords[0].InitialClaimableAmount.AmountOf(sdk.DefaultBondDenom).Quo(sdk.NewInt(5)).String(), coins.AmountOf(sdk.DefaultBondDenom).String())
 
 				suite.app.ClaimKeeper.AfterBuySocialToken(ctx, addr1)
 				coins = suite.app.BankKeeper.GetAllBalances(ctx, addr1)
-				suite.Equal(claimRecords[0].InitialClaimableAmount.AmountOf(sdk.DefaultBondDenom).Quo(sdk.NewInt(4)).String(), coins.AmountOf(sdk.DefaultBondDenom).String())
+				suite.Equal(claimRecords[0].InitialClaimableAmount.AmountOf(sdk.DefaultBondDenom).Quo(sdk.NewInt(5)).String(), coins.AmountOf(sdk.DefaultBondDenom).String())
 			},
 		},
 		{
@@ -308,11 +309,11 @@ func (suite *KeeperTestSuite) TestClaimOfDecayed() {
 				ctx := suite.ctx.WithBlockTime(airdropStartTime.Add(durationUntilDecay).Add(durationOfDecay / 2))
 				coins, err := suite.app.ClaimKeeper.GetClaimableAmountForAction(ctx, addr1, types.ActionBuySocialToken)
 				suite.NoError(err)
-				suite.Equal(claimRecords[0].InitialClaimableAmount.AmountOf(sdk.DefaultBondDenom).Quo(sdk.NewInt(8)).String(), coins.AmountOf(sdk.DefaultBondDenom).String())
+				suite.Equal(claimRecords[0].InitialClaimableAmount.AmountOf(sdk.DefaultBondDenom).Quo(sdk.NewInt(10)).String(), coins.AmountOf(sdk.DefaultBondDenom).String())
 
 				suite.app.ClaimKeeper.AfterBuySocialToken(ctx, addr1)
 				coins = suite.app.BankKeeper.GetAllBalances(ctx, addr1)
-				suite.Equal(claimRecords[0].InitialClaimableAmount.AmountOf(sdk.DefaultBondDenom).Quo(sdk.NewInt(8)).String(), coins.AmountOf(sdk.DefaultBondDenom).String())
+				suite.Equal(claimRecords[0].InitialClaimableAmount.AmountOf(sdk.DefaultBondDenom).Quo(sdk.NewInt(10)).String(), coins.AmountOf(sdk.DefaultBondDenom).String())
 			},
 		},
 		{

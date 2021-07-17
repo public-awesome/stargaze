@@ -12,8 +12,9 @@ enum Action {
 
   ActionMintSocialToken = 0;
   ActionBuySocialToken = 1;
-  ActionVote = 2;
-  ActionDelegateStake = 3;
+  ActionMintNFT = 2;
+  ActionVote = 3;
+  ActionDelegateStake = 4;
 }
 
 // A Claim Records is the metadata of claim data per address
@@ -30,7 +31,7 @@ message ClaimRecord {
 
   // true if action is completed
   // index of bool in array refers to action enum #
-  repeated bool action_completed = 3 [
+  repeated bool action_completed = 4 [
     (gogoproto.moretags) = "yaml:\"action_completed\"",
     (gogoproto.nullable) = false
   ];

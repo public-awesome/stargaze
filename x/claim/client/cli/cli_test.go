@@ -55,12 +55,12 @@ func (s *IntegrationTestSuite) SetupSuite() {
 		{
 			Address:                addr1.String(),
 			InitialClaimableAmount: sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 10)),
-			ActionCompleted:        []bool{false, false, false, false},
+			ActionCompleted:        []bool{false, false, false, false, false},
 		},
 		{
 			Address:                addr2.String(),
 			InitialClaimableAmount: sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 20)),
-			ActionCompleted:        []bool{false, false, false, false},
+			ActionCompleted:        []bool{false, false, false, false, false},
 		},
 	}
 	claimGenStateBz := encCfg.Marshaler.MustMarshalJSON(claimGenState)
@@ -204,7 +204,7 @@ func (s *IntegrationTestSuite) TestCmdQueryClaimableForAction() {
 				types.ActionMintSocialToken.String(),
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			sdk.Coins{sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(5))},
+			sdk.Coins{sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(4))},
 		},
 	}
 

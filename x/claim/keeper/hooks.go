@@ -20,6 +20,13 @@ func (k Keeper) AfterBuySocialToken(ctx sdk.Context, sender sdk.AccAddress) {
 	}
 }
 
+func (k Keeper) AfterMintNFT(ctx sdk.Context, sender sdk.AccAddress) {
+	_, err := k.ClaimCoinsForAction(ctx, sender, types.ActionMintNFT)
+	if err != nil {
+		panic(err.Error())
+	}
+}
+
 func (k Keeper) AfterProposalVote(ctx sdk.Context, proposalID uint64, voterAddr sdk.AccAddress) {
 	_, err := k.ClaimCoinsForAction(ctx, voterAddr, types.ActionVote)
 	if err != nil {
