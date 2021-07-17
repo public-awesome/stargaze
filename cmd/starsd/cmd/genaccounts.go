@@ -294,7 +294,7 @@ Example:
 
 				// initial liquid amounts
 				// We consistently round down to the nearest ustars
-				liquidAmount := normalizedStarsBalance.Mul(sdk.MustNewDecFromStr("0.2")).TruncateInt() // 20% of airdrop amount
+				liquidAmount := normalizedStarsBalance.Mul(sdk.MustNewDecFromStr("0.01")).TruncateInt() // 1% of airdrop amount
 				liquidCoins := sdk.NewCoins(sdk.NewCoin(genesisParams.NativeCoinMetadatas[0].Base, liquidAmount))
 
 				if coins, ok := nonAirdropAccs[address.String()]; ok {
@@ -308,12 +308,12 @@ Example:
 				})
 
 				// claimable balances
-				claimableAmount := normalizedStarsBalance.Mul(sdk.MustNewDecFromStr("0.8")).TruncateInt()
+				claimableAmount := normalizedStarsBalance.Mul(sdk.MustNewDecFromStr("0.99")).TruncateInt()
 
 				claimRecords = append(claimRecords, claimtypes.ClaimRecord{
 					Address:                address.String(),
 					InitialClaimableAmount: sdk.NewCoins(sdk.NewCoin(genesisParams.NativeCoinMetadatas[0].Base, claimableAmount)),
-					ActionCompleted:        []bool{false, false, false, false},
+					ActionCompleted:        []bool{false, false, false, false, false},
 				})
 
 				claimModuleAccountBalance = claimModuleAccountBalance.Add(claimableAmount)
@@ -382,43 +382,7 @@ Example:
 			}
 			appState[claimtypes.ModuleName] = claimGenStateBz
 
-			// TODO: add remaining extra to community pool
-			// The total airdrop stars is a smidge short (~1 stars) short of the stated 50M supply.
-			// This is due to consistently rounding down.
-			// We place this remaining 1 stars into the community pool at genesis
-
-			// sumAirdrop := sdk.Coins{}
-			// for _, balance := range bankGenState.Balances {
-			// 	sumAirdrop = sumAirdrop.Add(balance.Coins...)
-			// }
-			// for _, claim := range claimGenState.ClaimRecords {
-			// 	sumAirdrop = sumAirdrop.Add(claim.InitialClaimableAmount...)
-			// }
-
-			// var distributionGenState distributiontypes.GenesisState
-
-			// if appState[distributiontypes.ModuleName] != nil {
-			// 	cdc.MustUnmarshalJSON(appState[distributiontypes.ModuleName], &distributionGenState)
-			// }
-
-			// communityPoolExtra := sdk.NewCoins(
-			// 	sdk.NewCoin(
-			// 		genesisParams.NativeCoinMetadatas[0].Base,
-			// 		genesisParams.AirdropSupply,
-			// 	),
-			// ).Sub(sumAirdrop)
-
-			// fmt.Printf("community pool amount: %s\n", communityPoolExtra)
-
-			// distributionGenState.FeePool.CommunityPool = sdk.NewDecCoinsFromCoins(communityPoolExtra...)
-			// distributionGenStateBz, err := cdc.MarshalJSON(&distributionGenState)
-			// if err != nil {
-			// 	return fmt.Errorf("failed to marshal distribution genesis state: %w", err)
-			// }
-			// appState[distributiontypes.ModuleName] = distributionGenStateBz
-
 			// save entire genesis state to json
-
 			appStateJSON, err := json.Marshal(appState)
 			if err != nil {
 				return fmt.Errorf("failed to marshal application genesis state: %w", err)
