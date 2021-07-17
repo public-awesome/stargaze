@@ -27,6 +27,7 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	ibctransfertypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
 	appParams "github.com/public-awesome/stargaze/app/params"
 	claimtypes "github.com/public-awesome/stargaze/x/claim/types"
@@ -52,6 +53,7 @@ type GenesisParams struct {
 
 	ClaimParams claimtypes.Params
 	MintParams  minttypes.Params
+	WasmParams  wasmtypes.Params
 }
 
 func PrepareGenesisCmd(defaultNodeHome string, mbm module.BasicManager) *cobra.Command {
@@ -228,6 +230,15 @@ func PrepareGenesis(
 	}
 	appState[claimtypes.ModuleName] = claimGenStateBz
 
+	wasmGenState := &wasmtypes.GenesisState{
+		Params: genesisParams.WasmParams,
+	}
+
+	wasmGenStateBz, err := cdc.MarshalJSON(wasmGenState)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to marshal claim genesis state: %w", err)
+	}
+	appState[wasmtypes.ModuleName] = wasmGenStateBz
 	// return appState and genDoc
 	return appState, genDoc, nil
 }
@@ -259,6 +270,9 @@ func MainnetGenesisParams() GenesisParams {
 	}
 	// mint
 	genParams.MintParams = minttypes.DefaultParams()
+
+	genParams.WasmParams = wasmtypes.DefaultParams()
+	genParams.WasmParams.CodeUploadAccess = wasmtypes.AllowNobody
 
 	genParams.StakingParams = stakingtypes.DefaultParams()
 	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
@@ -334,5 +348,7 @@ func TestnetGenesisParams() GenesisParams {
 	genParams.ClaimParams.DurationUntilDecay = time.Hour * 24 * 5 // 5 days
 	genParams.ClaimParams.DurationOfDecay = time.Hour * 24 * 5    // 5 days
 
+	genParams.WasmParams = wasmtypes.DefaultParams()
+	genParams.WasmParams.CodeUploadAccess = wasmtypes.AllowNobody
 	return genParams
 }
