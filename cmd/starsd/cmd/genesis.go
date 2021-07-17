@@ -270,6 +270,8 @@ func MainnetGenesisParams() GenesisParams {
 	}
 	// mint
 	genParams.MintParams = minttypes.DefaultParams()
+	genParams.MintParams.InflationMax = sdk.NewDecWithPrec(40, 2) // Max 40%
+	genParams.MintParams.InflationRateChange = sdk.NewDec(1)      // 100%
 
 	genParams.WasmParams = wasmtypes.DefaultParams()
 	genParams.WasmParams.CodeUploadAccess = wasmtypes.AllowNobody
@@ -308,9 +310,9 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.SlashingParams.SlashFractionDowntime = sdk.ZeroDec()                   // 0% liveness slashing
 
 	genParams.ClaimParams = claimtypes.Params{
-		AirdropStartTime:   genParams.GenesisTime,
-		DurationUntilDecay: time.Hour * 24 * 183, // 183 days = ~6 months
-		DurationOfDecay:    time.Hour * 24 * 120, // 120 days = ~4 months
+		AirdropStartTime:   genParams.GenesisTime.Add(time.Hour * 24 * 365), // 1 year (will be changed by gov)
+		DurationUntilDecay: time.Hour * 24 * 183,                            // 183 days = ~6 months
+		DurationOfDecay:    time.Hour * 24 * 120,                            // 120 days = ~4 months
 		ClaimDenom:         genParams.NativeCoinMetadatas[0].Base,
 	}
 
@@ -331,10 +333,7 @@ func TestnetGenesisParams() GenesisParams {
 	// genParams.GenesisTime = time.Now()
 	genParams.GenesisTime = time.Date(2021, 7, 19, 17, 0, 0, 0, time.UTC) // Jul 19, 2021 - 17:00 UTC
 
-	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
-	genParams.MintParams = minttypes.DefaultParams()
-	genParams.MintParams.InflationMax = sdk.NewDecWithPrec(40, 2) // Max 40%
-	genParams.MintParams.InflationRateChange = sdk.NewDec(1)      // 100%
+	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 3 // 3 days
 
 	genParams.GovParams.DepositParams.MinDeposit = sdk.NewCoins(sdk.NewCoin(
 		genParams.NativeCoinMetadatas[0].Base,
@@ -344,11 +343,8 @@ func TestnetGenesisParams() GenesisParams {
 	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.1") // 10%
 	genParams.GovParams.VotingParams.VotingPeriod = time.Hour * 24 * 1    // 1 day
 
-	genParams.ClaimParams.AirdropStartTime = genParams.GenesisTime
 	genParams.ClaimParams.DurationUntilDecay = time.Hour * 24 * 5 // 5 days
 	genParams.ClaimParams.DurationOfDecay = time.Hour * 24 * 5    // 5 days
 
-	genParams.WasmParams = wasmtypes.DefaultParams()
-	genParams.WasmParams.CodeUploadAccess = wasmtypes.AllowNobody
 	return genParams
 }
