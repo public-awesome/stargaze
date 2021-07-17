@@ -348,7 +348,5 @@ func TestnetGenesisParams() GenesisParams {
 	genParams.ClaimParams.DurationUntilDecay = time.Hour * 24 * 5 // 5 days
 	genParams.ClaimParams.DurationOfDecay = time.Hour * 24 * 5    // 5 days
 
-	genParams.WasmParams = wasmtypes.DefaultParams()
-	genParams.WasmParams.CodeUploadAccess = wasmtypes.AllowNobody
 	return genParams
 }
