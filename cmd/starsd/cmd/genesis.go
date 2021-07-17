@@ -23,9 +23,11 @@ import (
 	distributiontypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	ibctransfertypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
 	appParams "github.com/public-awesome/stargaze/app/params"
 	claimtypes "github.com/public-awesome/stargaze/x/claim/types"
@@ -50,6 +52,8 @@ type GenesisParams struct {
 	SlashingParams slashingtypes.Params
 
 	ClaimParams claimtypes.Params
+	MintParams  minttypes.Params
+	WasmParams  wasmtypes.Params
 }
 
 func PrepareGenesisCmd(defaultNodeHome string, mbm module.BasicManager) *cobra.Command {
@@ -159,6 +163,17 @@ func PrepareGenesis(
 	}
 	appState[ibctransfertypes.ModuleName] = ibcGenStateBz
 
+	// mint module genesis
+
+	mintGenState := minttypes.DefaultGenesisState()
+	mintGenState.Params = genesisParams.MintParams
+
+	mintGenStateBz, err := cdc.MarshalJSON(mintGenState)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to marshal mint genesis state: %w", err)
+	}
+	appState[minttypes.ModuleName] = mintGenStateBz
+
 	// staking module genesis
 	stakingGenState := stakingtypes.GetGenesisStateFromAppState(depCdc, appState)
 	stakingGenState.Params = genesisParams.StakingParams
@@ -215,6 +230,15 @@ func PrepareGenesis(
 	}
 	appState[claimtypes.ModuleName] = claimGenStateBz
 
+	wasmGenState := &wasmtypes.GenesisState{
+		Params: genesisParams.WasmParams,
+	}
+
+	wasmGenStateBz, err := cdc.MarshalJSON(wasmGenState)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to marshal claim genesis state: %w", err)
+	}
+	appState[wasmtypes.ModuleName] = wasmGenStateBz
 	// return appState and genDoc
 	return appState, genDoc, nil
 }
@@ -244,6 +268,13 @@ func MainnetGenesisParams() GenesisParams {
 			Display: appParams.HumanCoinUnit,
 		},
 	}
+	// mint
+	genParams.MintParams = minttypes.DefaultParams()
+	genParams.MintParams.InflationMax = sdk.NewDecWithPrec(40, 2) // Max 40%
+	genParams.MintParams.InflationRateChange = sdk.NewDec(1)      // 100%
+
+	genParams.WasmParams = wasmtypes.DefaultParams()
+	genParams.WasmParams.CodeUploadAccess = wasmtypes.AllowNobody
 
 	genParams.StakingParams = stakingtypes.DefaultParams()
 	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
@@ -279,9 +310,9 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.SlashingParams.SlashFractionDowntime = sdk.ZeroDec()                   // 0% liveness slashing
 
 	genParams.ClaimParams = claimtypes.Params{
-		AirdropStartTime:   genParams.GenesisTime,
-		DurationUntilDecay: time.Hour * 24 * 183, // 183 days = ~6 months
-		DurationOfDecay:    time.Hour * 24 * 120, // 120 days = ~4 months
+		AirdropStartTime:   genParams.GenesisTime.Add(time.Hour * 24 * 365), // 1 year (will be changed by gov)
+		DurationUntilDecay: time.Hour * 24 * 183,                            // 183 days = ~6 months
+		DurationOfDecay:    time.Hour * 24 * 120,                            // 120 days = ~4 months
 		ClaimDenom:         genParams.NativeCoinMetadatas[0].Base,
 	}
 
@@ -300,9 +331,9 @@ func TestnetGenesisParams() GenesisParams {
 	genParams := MainnetGenesisParams()
 
 	// genParams.GenesisTime = time.Now()
-	genParams.GenesisTime = time.Date(2021, 7, 15, 17, 0, 0, 0, time.UTC) // Jul 15, 2021 - 17:00 UTC
+	genParams.GenesisTime = time.Date(2021, 7, 19, 17, 0, 0, 0, time.UTC) // Jul 19, 2021 - 17:00 UTC
 
-	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
+	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 3 // 3 days
 
 	genParams.GovParams.DepositParams.MinDeposit = sdk.NewCoins(sdk.NewCoin(
 		genParams.NativeCoinMetadatas[0].Base,
@@ -312,7 +343,6 @@ func TestnetGenesisParams() GenesisParams {
 	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.1") // 10%
 	genParams.GovParams.VotingParams.VotingPeriod = time.Hour * 24 * 1    // 1 day
 
-	genParams.ClaimParams.AirdropStartTime = genParams.GenesisTime
 	genParams.ClaimParams.DurationUntilDecay = time.Hour * 24 * 5 // 5 days
 	genParams.ClaimParams.DurationOfDecay = time.Hour * 24 * 5    // 5 days
 
