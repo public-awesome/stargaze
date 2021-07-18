@@ -475,7 +475,7 @@ func NewStargazeApp(
 	app.mm.SetOrderBeginBlockers(
 		upgradetypes.ModuleName,
 		minttypes.ModuleName,
-		alloctypes.ModuleName,
+		alloctypes.ModuleName, // must run before distribution begin blocker
 		distrtypes.ModuleName,
 		slashingtypes.ModuleName,
 		evidencetypes.ModuleName,
