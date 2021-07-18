@@ -274,6 +274,7 @@ func NewStargazeApp(
 		// Stargaze Stores
 		wasm.StoreKey,
 		claimtypes.StoreKey,
+		alloctypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -361,6 +362,7 @@ func NewStargazeApp(
 		app.BankKeeper,
 		stakingKeeper,
 		app.DistrKeeper,
+		app.getSubspace(alloctypes.ModuleName),
 	)
 
 	// register the staking hooks
