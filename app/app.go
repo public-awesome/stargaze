@@ -330,16 +330,6 @@ func NewStargazeApp(
 		AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.distrKeeper)).
 		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.upgradeKeeper))
 
-	// The gov proposal types can be individually enabled
-	if len(enabledProposals) != 0 {
-		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(app.wasmKeeper, enabledProposals))
-	}
-
-	app.govKeeper = govkeeper.NewKeeper(
-		appCodec, keys[govtypes.StoreKey], app.getSubspace(govtypes.ModuleName), app.accountKeeper, app.bankKeeper,
-		&stakingKeeper, govRouter,
-	)
-
 	app.claimKeeper = claimkeeper.NewKeeper(
 		appCodec,
 		keys[claimtypes.StoreKey],
@@ -409,7 +399,17 @@ func NewStargazeApp(
 		supportedFeatures,
 		wasmOpts...,
 	)
-	app.ibcKeeper.SetRouter(ibcRouter)
+
+	// The gov proposal types can be individually enabled
+	if len(enabledProposals) != 0 {
+		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(app.wasmKeeper, enabledProposals))
+	}
+	ibcRouter.AddRoute(wasm.ModuleName, wasm.NewIBCHandler(app.wasmKeeper, app.ibcKeeper.ChannelKeeper))
+
+	app.govKeeper = govkeeper.NewKeeper(
+		appCodec, keys[govtypes.StoreKey], app.getSubspace(govtypes.ModuleName), app.accountKeeper, app.bankKeeper,
+		&stakingKeeper, govRouter,
+	)
 
 	/****  Module Options ****/
 
@@ -540,6 +540,11 @@ func NewStargazeApp(
 		// `loadLatest` is set to true.
 		ctx := app.BaseApp.NewUncachedContext(true, tmproto.Header{})
 		app.capabilityKeeper.InitializeAndSeal(ctx)
+
+		// Initialize pinned codes in wasmvm as they are not persisted there
+		if err := app.wasmKeeper.InitializePinnedCodes(ctx); err != nil {
+			panic(err)
+		}
 	}
 
 	app.scopedIBCKeeper = scopedibcKeeper
@@ -736,8 +741,6 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler,
 	paramsKeeper.Subspace(crisistypes.ModuleName)
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
-
-	// Stargaze Modules
 	paramsKeeper.Subspace(wasm.ModuleName)
 
 	return paramsKeeper
