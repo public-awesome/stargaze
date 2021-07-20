@@ -272,6 +272,7 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.MintParams = minttypes.DefaultParams()
 	genParams.MintParams.InflationMax = sdk.NewDecWithPrec(40, 2) // Max 40%
 	genParams.MintParams.InflationRateChange = sdk.NewDec(1)      // 100%
+	genParams.MintParams.MintDenom = appParams.BaseCoinUnit
 
 	genParams.WasmParams = wasmtypes.DefaultParams()
 	genParams.WasmParams.CodeUploadAccess = wasmtypes.AllowNobody
