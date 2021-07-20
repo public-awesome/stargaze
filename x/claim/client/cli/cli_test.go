@@ -113,6 +113,8 @@ func (s *IntegrationTestSuite) SetupSuite() {
 
 func (s *IntegrationTestSuite) TearDownSuite() {
 	s.T().Log("tearing down integration test suite")
+	// try to workardound  race condition in testsuite/network/util.go
+	<-time.After(time.Second * 5)
 	s.network.Cleanup()
 }
 
