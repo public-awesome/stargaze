@@ -18,5 +18,5 @@ jobs:
       - uses: golangci/golangci-lint-action@v2
         with:
           version: latest
-          args: --timeout 10m
+          args: --timeout 10m --tests=false --skip-dirs="simapp"
           github-token: ${{ secrets.github_token }}
