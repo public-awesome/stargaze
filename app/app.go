@@ -323,7 +323,7 @@ func NewStargazeApp(
 		app.getSubspace(crisistypes.ModuleName), invCheckPeriod, app.bankKeeper, authtypes.FeeCollectorName,
 	)
 	app.upgradeKeeper = upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec, homePath)
-
+	app.registerUpgradeHandlers()
 	// Create IBC Keeper
 	app.ibcKeeper = ibcKeeper.NewKeeper(
 		appCodec, keys[ibchost.StoreKey], app.getSubspace(ibchost.ModuleName), app.stakingKeeper, scopedibcKeeper,
@@ -747,4 +747,10 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler,
 	paramsKeeper.Subspace(wasm.ModuleName)
 
 	return paramsKeeper
+}
+
+func (app *StargazeApp) registerUpgradeHandlers() {
+	app.upgradeKeeper.SetUpgradeHandler("panic-at-the-distro", func(ctx sdk.Context, plan upgradetypes.Plan) {
+		// DM stargaze dev team for a bonus if you read this
+	})
 }
