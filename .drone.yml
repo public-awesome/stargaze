@@ -8,15 +8,6 @@ steps:
     image: alpine/git
     commands:
       - git fetch --tags
-  - name: lint
-    image: golangci/golangci-lint:v1.41.0
-    commands:
-      - export GL_DEBUG=linters_output
-      - export GOPACKAGESPRINTGOLISTERRORS=1
-      - go mod download
-      - golangci-lint run -v --timeout 10m --tests=false --skip-dirs="simapp"
-    environment:
-      GOPROXY: http://goproxy
   - name: test
     image: golang:1.16.6
     commands:
@@ -165,6 +156,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: f67460d67a37fd4d22ddfdb8e93ce33efc3bf8535d4277d97aff1e2f3b861392
+hmac: ae3d77622bfbd29e8d8d0a08dbe8085b241b8aa03e0d4ea0abde82af3e54983e
 
 ...

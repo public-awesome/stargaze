@@ -61,6 +61,7 @@ import (
 	ibctransferkeeper "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/keeper"
 	ibctransfertypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
 	ibc "github.com/cosmos/cosmos-sdk/x/ibc/core"
+	ibcclient "github.com/cosmos/cosmos-sdk/x/ibc/core/02-client"
 	porttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/05-port/types"
 	ibchost "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
 	ibcKeeper "github.com/cosmos/cosmos-sdk/x/ibc/core/keeper"
@@ -323,22 +324,18 @@ func NewStargazeApp(
 	)
 	app.upgradeKeeper = upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec, homePath)
 
+	// Create IBC Keeper
+	app.ibcKeeper = ibcKeeper.NewKeeper(
+		appCodec, keys[ibchost.StoreKey], app.getSubspace(ibchost.ModuleName), app.stakingKeeper, scopedibcKeeper,
+	)
+
 	// register the proposal types
 	govRouter := govtypes.NewRouter()
 	govRouter.AddRoute(govtypes.RouterKey, govtypes.ProposalHandler).
 		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.paramsKeeper)).
 		AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.distrKeeper)).
-		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.upgradeKeeper))
-
-	// The gov proposal types can be individually enabled
-	if len(enabledProposals) != 0 {
-		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(app.wasmKeeper, enabledProposals))
-	}
-
-	app.govKeeper = govkeeper.NewKeeper(
-		appCodec, keys[govtypes.StoreKey], app.getSubspace(govtypes.ModuleName), app.accountKeeper, app.bankKeeper,
-		&stakingKeeper, govRouter,
-	)
+		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.upgradeKeeper)).
+		AddRoute(ibchost.RouterKey, ibcclient.NewClientUpdateProposalHandler(app.ibcKeeper.ClientKeeper))
 
 	app.claimKeeper = claimkeeper.NewKeeper(
 		appCodec,
@@ -357,11 +354,6 @@ func NewStargazeApp(
 			app.slashingKeeper.Hooks(),
 			app.claimKeeper.Hooks(),
 		),
-	)
-
-	// Create IBC Keeper
-	app.ibcKeeper = ibcKeeper.NewKeeper(
-		appCodec, keys[ibchost.StoreKey], app.getSubspace(ibchost.ModuleName), app.stakingKeeper, scopedibcKeeper,
 	)
 
 	// Create Transfer Keepers
@@ -409,7 +401,18 @@ func NewStargazeApp(
 		supportedFeatures,
 		wasmOpts...,
 	)
+
+	// The gov proposal types can be individually enabled
+	if len(enabledProposals) != 0 {
+		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(app.wasmKeeper, enabledProposals))
+	}
+	ibcRouter.AddRoute(wasm.ModuleName, wasm.NewIBCHandler(app.wasmKeeper, app.ibcKeeper.ChannelKeeper))
 	app.ibcKeeper.SetRouter(ibcRouter)
+
+	app.govKeeper = govkeeper.NewKeeper(
+		appCodec, keys[govtypes.StoreKey], app.getSubspace(govtypes.ModuleName), app.accountKeeper, app.bankKeeper,
+		&stakingKeeper, govRouter,
+	)
 
 	/****  Module Options ****/
 
@@ -540,6 +543,11 @@ func NewStargazeApp(
 		// `loadLatest` is set to true.
 		ctx := app.BaseApp.NewUncachedContext(true, tmproto.Header{})
 		app.capabilityKeeper.InitializeAndSeal(ctx)
+
+		// Initialize pinned codes in wasmvm as they are not persisted there
+		if err := app.wasmKeeper.InitializePinnedCodes(ctx); err != nil {
+			panic(err)
+		}
 	}
 
 	app.scopedIBCKeeper = scopedibcKeeper
@@ -736,8 +744,6 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler,
 	paramsKeeper.Subspace(crisistypes.ModuleName)
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
-
-	// Stargaze Modules
 	paramsKeeper.Subspace(wasm.ModuleName)
 
 	return paramsKeeper
