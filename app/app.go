@@ -324,6 +324,11 @@ func NewStargazeApp(
 	)
 	app.upgradeKeeper = upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec, homePath)
 
+	// Create IBC Keeper
+	app.ibcKeeper = ibcKeeper.NewKeeper(
+		appCodec, keys[ibchost.StoreKey], app.getSubspace(ibchost.ModuleName), app.stakingKeeper, scopedibcKeeper,
+	)
+
 	// register the proposal types
 	govRouter := govtypes.NewRouter()
 	govRouter.AddRoute(govtypes.RouterKey, govtypes.ProposalHandler).
@@ -349,11 +354,6 @@ func NewStargazeApp(
 			app.slashingKeeper.Hooks(),
 			app.claimKeeper.Hooks(),
 		),
-	)
-
-	// Create IBC Keeper
-	app.ibcKeeper = ibcKeeper.NewKeeper(
-		appCodec, keys[ibchost.StoreKey], app.getSubspace(ibchost.ModuleName), app.stakingKeeper, scopedibcKeeper,
 	)
 
 	// Create Transfer Keepers
