@@ -8,6 +8,7 @@ on:
       - main
       - develop
       - feature/*
+      - fix/*
 jobs:
   golangci:
     name: golangci-lint
