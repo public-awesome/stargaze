@@ -19,8 +19,8 @@ steps:
     image: golang:1.16-alpine3.14
     commands:
       - apk add --no-cache ca-certificates build-base git
-      - wget https://github.com/CosmWasm/wasmvm/releases/download/v0.15.0/libwasmvm_muslc.a -O /lib/libwasmvm_muslc.a
-      - sha256sum /lib/libwasmvm_muslc.a | grep 379c61d2e53f87f63639eaa8ba8bbe687e5833158bb10e0dc0523c3377248d01
+      - wget https://github.com/CosmWasm/wasmvm/releases/download/v0.14.0/libwasmvm_muslc.a -O /lib/libwasmvm_muslc.a
+      - sha256sum /lib/libwasmvm_muslc.a | grep 220b85158d1ae72008f099a7ddafe27f6374518816dd5873fd8be272c5418026
       - FAUCET_ENABLED=true LEDGER_ENABLED=false BUILD_TAGS=muslc make build
     environment:
       GOPROXY: http://goproxy   
@@ -156,6 +156,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: ae3d77622bfbd29e8d8d0a08dbe8085b241b8aa03e0d4ea0abde82af3e54983e
+hmac: dece428250a26d793910c085de8d381eed42cd96fccb3b63cc0394112950e164
 
 ...
