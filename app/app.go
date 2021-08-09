@@ -753,4 +753,7 @@ func (app *StargazeApp) registerUpgradeHandlers() {
 	app.upgradeKeeper.SetUpgradeHandler("panic-at-the-distro", func(ctx sdk.Context, plan upgradetypes.Plan) {
 		// DM stargaze dev team for a bonus if you read this
 	})
+	app.upgradeKeeper.SetUpgradeHandler("capability-fix", func(ctx sdk.Context, plan upgradetypes.Plan) {
+		// no bonus this time :( but glad you are reading it
+	})
 }
