@@ -19,9 +19,9 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/tendermint/liquidity v0.1.0-rc0.0.20210206010652-2ca7f61d0f15
 	github.com/tendermint/tendermint v0.34.11
-	github.com/tendermint/tm-db v0.6.4
+	github.com/tendermint/tm-db v0.6.5
 	google.golang.org/genproto v0.0.0-20210426193834-eac7f76ac494
-	google.golang.org/grpc v1.37.0
+	google.golang.org/grpc v1.38.0
 	google.golang.org/protobuf v1.26.0
 	gopkg.in/yaml.v2 v2.4.0
 )
