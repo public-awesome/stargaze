@@ -1,0 +1,21 @@
+syntax = "proto3";
+package stargaze.faucet.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "stargaze/faucet/v1beta1/faucet.proto";
+import "google/api/annotations.proto";
+
+option go_package = "github.com/public-awesome/stargaze/x/faucet/internal/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  rpc FaucetKey(QueryFaucetKeyRequest) returns (QueryFaucetKeyResponse) {
+    option (google.api.http).get = "/stargaze/faucet/v1beta1/key";
+  }
+}
+
+message QueryFaucetKeyRequest {}
+
+message QueryFaucetKeyResponse {
+  FaucetKey faucet_key = 1 [ (gogoproto.nullable) = false ];
+}

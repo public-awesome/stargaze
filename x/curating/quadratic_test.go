@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stakebird/simapp"
-	"github.com/public-awesome/stakebird/x/curating"
-	curatingtypes "github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stargaze/simapp"
+	"github.com/public-awesome/stargaze/x/curating"
+	curatingtypes "github.com/public-awesome/stargaze/x/curating/types"
 	"github.com/stretchr/testify/require"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
@@ -69,7 +69,7 @@ func TestQVFOneVote(t *testing.T) {
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
 	// add funds to reward pool
-	funds := sdk.NewInt64Coin("ustb", 10_000_000)
+	funds := sdk.NewInt64Coin("ustarx", 10_000_000)
 	err := app.BankKeeper.MintCoins(ctx, curatingtypes.RewardPoolName, sdk.NewCoins(funds))
 	require.NoError(t, err)
 

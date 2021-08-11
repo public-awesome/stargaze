@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package stargaze.curating.v1beta1;
+
+option go_package = "github.com/public-awesome/stargaze/x/curating/types";
+
+import "gogoproto/gogo.proto";
+
+// Msg defines the curating Msg service.
+service Msg {
+  // Post defines a method for sending a post
+  rpc Post(MsgPost) returns (MsgPostResponse);
+
+  // Upvote defines a method for upvoting a post
+  rpc Upvote(MsgUpvote) returns (MsgUpvoteResponse);
+}
+
+message MsgPostResponse {
+  string post_id = 1 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.jsontag) = "post_id",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+}
+
+message MsgUpvoteResponse {}
+
+message MsgPost {
+  option (gogoproto.equal) = true;
+
+  uint32 vendor_id = 1 [
+    (gogoproto.customname) = "VendorID",
+    (gogoproto.moretags) = "yaml:\"vendor_id\"",
+    (gogoproto.jsontag) = "vendor_id"
+  ];
+  string post_id = 2 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\"",
+    (gogoproto.jsontag) = "post_id",
+    (gogoproto.nullable) = true
+  ];
+  string creator = 3 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+  string reward_account = 4
+      [ (gogoproto.moretags) = "yaml:\"reward_account\"" ];
+  string body = 5 [ (gogoproto.moretags) = "yaml:\"body\"" ];
+  string chain_id = 6 [
+    (gogoproto.customname) = "ChainID",
+    (gogoproto.moretags) = "yaml:\"chain_id\"",
+    (gogoproto.jsontag) = "chain_id",
+    (gogoproto.nullable) = true
+  ];
+  string contract_address = 7
+      [ (gogoproto.moretags) = "yaml:\"contract_address\"" ];
+  string metadata = 8 [ (gogoproto.moretags) = "yaml:\"metadata\"" ];
+  string parent_id = 9 [
+    (gogoproto.customname) = "ParentID",
+    (gogoproto.customtype) = "PostID",
+    (gogoproto.moretags) = "yaml:\"parent_id\"",
+    (gogoproto.jsontag) = "parent_id",
+    (gogoproto.nullable) = true
+  ];
+}
+
+message MsgUpvote {
+  option (gogoproto.equal) = true;
+
+  uint32 vendor_id = 1 [
+    (gogoproto.customname) = "VendorID",
+    (gogoproto.moretags) = "yaml:\"vendor_id\"",
+    (gogoproto.jsontag) = "vendor_id"
+  ];
+  string post_id = 2 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\"",
+    (gogoproto.jsontag) = "post_id"
+  ];
+  string curator = 3 [ (gogoproto.moretags) = "yaml:\"curator\"" ];
+  string reward_account = 4
+      [ (gogoproto.moretags) = "yaml:\"reward_account\"" ];
+  int32 vote_num = 5;
+}

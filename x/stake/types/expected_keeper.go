@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	curatingtypes "github.com/public-awesome/stakebird/x/curating/types"
+	curatingtypes "github.com/public-awesome/stargaze/x/curating/types"
 )
 
 /*
@@ -15,7 +15,8 @@ as an interface so the module cannot use things that are not permitted.
 
 // CurationKeeper defines the expected interface for the curation module
 type CurationKeeper interface {
-	GetPostZ(ctx sdk.Context, vendorID uint32, postIDBz []byte) (post curatingtypes.Post, found bool, err error)
+	GetPost(ctx sdk.Context, vendorID uint32, postID curatingtypes.PostID) (post curatingtypes.Post, found bool, err error)
+	IteratePosts(ctx sdk.Context, vendorID uint32, cb func(post curatingtypes.Post) (stop bool))
 }
 
 // StakingKeeper expected staking keeper
@@ -24,4 +25,13 @@ type StakingKeeper interface {
 	Delegate(ctx sdk.Context, delAddr sdk.AccAddress, bondAmt sdk.Int, tokenSrc stakingtypes.BondStatus,
 		validator stakingtypes.Validator, subtractAccount bool) (newShares sdk.Dec, err error)
 	Undelegate(ctx sdk.Context, delAddr sdk.AccAddress, valAddr sdk.ValAddress, sharesAmount sdk.Dec) (time.Time, error)
+}
+
+// BankKeeper defines the expected interface needed to retrieve account balances.
+type BankKeeper interface {
+	MintCoins(ctx sdk.Context, moduleName string, amt sdk.Coins) error
+	BurnCoins(ctx sdk.Context, moduleName string, amt sdk.Coins) error
+
+	SendCoinsFromModuleToAccount(ctx sdk.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error
+	SendCoinsFromAccountToModule(ctx sdk.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error
 }

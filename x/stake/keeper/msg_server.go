@@ -4,7 +4,8 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stakebird/x/stake/types"
+	curatingtypes "github.com/public-awesome/stargaze/x/curating/types"
+	"github.com/public-awesome/stargaze/x/stake/types"
 )
 
 type msgServer struct {
@@ -19,17 +20,17 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 
 func (k msgServer) Stake(goCtx context.Context, msg *types.MsgStake) (*types.MsgStakeResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	postID, err := postIDBytes(msg.PostID)
-	if err != nil {
-		return nil, err
-	}
-
 	delegator, err := sdk.AccAddressFromBech32(msg.Delegator)
 	if err != nil {
 		return nil, err
 	}
 
 	validator, err := sdk.ValAddressFromBech32(msg.Validator)
+	if err != nil {
+		return nil, err
+	}
+
+	postID, err := curatingtypes.PostIDFromString(msg.PostID)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +54,8 @@ func (k msgServer) Stake(goCtx context.Context, msg *types.MsgStake) (*types.Msg
 
 func (k msgServer) Unstake(goCtx context.Context, msg *types.MsgUnstake) (*types.MsgUnstakeResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	postID, err := postIDBytes(msg.PostID)
+
+	postID, err := curatingtypes.PostIDFromString(msg.PostID)
 	if err != nil {
 		return nil, err
 	}
@@ -69,4 +71,76 @@ func (k msgServer) Unstake(goCtx context.Context, msg *types.MsgUnstake) (*types
 	}
 
 	return &types.MsgUnstakeResponse{}, nil
+}
+
+func (k msgServer) BuyCreatorCoin(
+	goCtx context.Context,
+	msg *types.MsgBuyCreatorCoin) (*types.MsgBuyCreatorCoinResponse, error) {
+
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, err
+	}
+
+	buyer, err := sdk.AccAddressFromBech32(msg.Buyer)
+	if err != nil {
+		return nil, err
+	}
+
+	validator, err := sdk.ValAddressFromBech32(msg.Validator)
+	if err != nil {
+		return nil, err
+	}
+
+	err = k.PerformBuyCreatorCoin(ctx, msg.Username, creator, buyer, validator, msg.Amount)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Buyer),
+		),
+	})
+
+	return &types.MsgBuyCreatorCoinResponse{}, nil
+}
+
+func (k msgServer) SellCreatorCoin(
+	goCtx context.Context,
+	msg *types.MsgSellCreatorCoin) (*types.MsgSellCreatorCoinResponse, error) {
+
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, err
+	}
+
+	seller, err := sdk.AccAddressFromBech32(msg.Seller)
+	if err != nil {
+		return nil, err
+	}
+
+	validator, err := sdk.ValAddressFromBech32(msg.Validator)
+	if err != nil {
+		return nil, err
+	}
+
+	err = k.PerformSellCreatorCoin(ctx, msg.Username, creator, seller, validator, msg.Amount)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Seller),
+		),
+	})
+
+	return &types.MsgSellCreatorCoinResponse{}, nil
 }

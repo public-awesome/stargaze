@@ -2,7 +2,7 @@ package simapp
 
 import (
 	"github.com/cosmos/cosmos-sdk/std"
-	"github.com/public-awesome/stakebird/simapp/params"
+	"github.com/public-awesome/stargaze/simapp/params"
 )
 
 // MakeEncodingConfig creates an EncodingConfig for testing

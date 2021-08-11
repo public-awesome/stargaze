@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	curatingtypes "github.com/public-awesome/stargaze/x/curating/types"
 )
 
 const (
@@ -26,13 +27,13 @@ var (
 )
 
 // PostKey is the key used to store stakes for a post
-func PostKey(vendorID uint32, postID []byte) []byte {
+func PostKey(vendorID uint32, postID curatingtypes.PostID) []byte {
 	vendorIDBz := uint32ToBigEndian(vendorID)
-	return append(KeyPrefixStake, append(vendorIDBz, postID...)...)
+	return append(KeyPrefixStake, append(vendorIDBz, postID.Bytes()...)...)
 }
 
 // StakeKey is the key used to store a stake
-func StakeKey(vendorID uint32, postID []byte, delegator sdk.AccAddress) []byte {
+func StakeKey(vendorID uint32, postID curatingtypes.PostID, delegator sdk.AccAddress) []byte {
 	return append(PostKey(vendorID, postID), delegator.Bytes()...)
 }
 

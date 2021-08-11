@@ -66,10 +66,6 @@ func (msg MsgPost) ValidateBasic() error {
 	if strings.TrimSpace(msg.PostID) == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty post_id")
 	}
-	if msg.VendorID < 1 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid vendor_id")
-	}
-
 	return nil
 }
 
@@ -112,12 +108,8 @@ func (msg MsgUpvote) ValidateBasic() error {
 	if strings.TrimSpace(msg.PostID) == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty post_id")
 	}
-	if msg.VendorID < 1 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid vendor_id")
-	}
 	if msg.VoteNum < 1 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid vote_num")
 	}
-
 	return nil
 }

@@ -1,13 +1,12 @@
 package keeper_test
 
 import (
-	"fmt"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/public-awesome/stakebird/simapp"
-	"github.com/public-awesome/stakebird/x/curating/types"
+	"github.com/public-awesome/stargaze/simapp"
+	"github.com/public-awesome/stargaze/x/curating/types"
 	"github.com/stretchr/testify/require"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
@@ -21,7 +20,7 @@ func TestInflateRewards(t *testing.T) {
 	blockInflation := app.BankKeeper.GetBalance(ctx, blockInflationAddr, types.DefaultStakeDenom)
 	require.True(t, blockInflation.Amount.IsZero())
 
-	fakeInflationCoin := sdk.NewInt64Coin("ustb", 1000000)
+	fakeInflationCoin := sdk.NewInt64Coin("ustarx", 1000000)
 	err := app.BankKeeper.SetBalance(ctx, blockInflationAddr, fakeInflationCoin)
 	app.AccountKeeper.SetModuleAccount(ctx, blockInflationAcct)
 	require.NoError(t, err)
@@ -58,7 +57,6 @@ func TestInflateRewardsNonDefault(t *testing.T) {
 
 	rewardPoolAddr := app.AccountKeeper.GetModuleAccount(ctx, types.RewardPoolName).GetAddress()
 
-	fmt.Println(app.BankKeeper.GetAllBalances(ctx, rewardPoolAddr))
 	rewardPool := app.BankKeeper.GetBalance(ctx, rewardPoolAddr, fakedenom)
 	require.Equal(t, "21000000500000", rewardPool.Amount.String())
 }

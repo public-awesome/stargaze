@@ -27,7 +27,7 @@ const (
 	VotingPoolName = "voting_pool"
 
 	// DefaultStakeDenom is the staking denom for the zone
-	DefaultStakeDenom = "ustb"
+	DefaultStakeDenom = "ustarx"
 
 	// DefaultVoteDenom is the denom for quadratic voting
 	DefaultVoteDenom = "ucredits"
@@ -42,6 +42,9 @@ var (
 
 	// KeyPrefixCurationQueue 0x02 | format(curation_end_time) -> []VPPair
 	KeyPrefixCurationQueue = []byte{0x02}
+
+	// PostIDKey for native posts (vendor = 0)
+	PostIDKey = []byte{0x03}
 )
 
 // PostsKey is an index on all posts for a vendor
@@ -51,25 +54,37 @@ func PostsKey(vendorID uint32) []byte {
 }
 
 // PostKey is the key used to store a post
-func PostKey(vendorID uint32, postIDBz []byte) []byte {
+func PostKey(vendorID uint32, postID PostID) []byte {
 	vendorIDBz := uint32ToBigEndian(vendorID)
-	return append(KeyPrefixPost, append(vendorIDBz, postIDBz...)...)
+	return append(KeyPrefixPost, append(vendorIDBz, postID.Bytes()...)...)
 }
 
 // UpvoteKey key is the key used to store an upvote
-func UpvoteKey(vendorID uint32, postIDBz []byte, curator sdk.AccAddress) []byte {
-	return append(UpvotePrefixKey(vendorID, postIDBz), curator.Bytes()...)
+func UpvoteKey(vendorID uint32, postID PostID, curator sdk.AccAddress) []byte {
+	return append(UpvotePrefixKey(vendorID, postID), curator.Bytes()...)
 }
 
 // UpvotePrefixKey 0x01|vendorID|postID|...
-func UpvotePrefixKey(vendorID uint32, postIDBz []byte) []byte {
+func UpvotePrefixKey(vendorID uint32, postID PostID) []byte {
 	vendorIDBz := uint32ToBigEndian(vendorID)
-	return append(KeyPrefixUpvote, append(vendorIDBz, postIDBz...)...)
+	return append(KeyPrefixUpvote, append(vendorIDBz, postID.Bytes()...)...)
 }
 
 // CurationQueueByTimeKey gets the curation queue key by curation end time
 func CurationQueueByTimeKey(curationEndTime time.Time) []byte {
 	return append(KeyPrefixCurationQueue, sdk.FormatTimeBytes(curationEndTime)...)
+}
+
+// GetPostIDBytes returns the byte representation of the postlID
+func GetPostIDBytes(postID uint64) (postIDBz []byte) {
+	postIDBz = make([]byte, 8)
+	binary.BigEndian.PutUint64(postIDBz, postID)
+	return
+}
+
+// GetPostIDFromBytes returns postID in uint64 format from a byte array
+func GetPostIDFromBytes(bz []byte) (postID uint64) {
+	return binary.BigEndian.Uint64(bz)
 }
 
 // Uint32ToBigEndian - marshals uint32 to a bigendian byte slice so it can be sorted
