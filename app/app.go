@@ -324,6 +324,17 @@ func NewStargazeApp(
 	)
 	app.upgradeKeeper = upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec, homePath)
 	app.registerUpgradeHandlers()
+
+	// register the staking hooks
+	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
+	app.stakingKeeper = *stakingKeeper.SetHooks(
+		stakingtypes.NewMultiStakingHooks(
+			app.distrKeeper.Hooks(),
+			app.slashingKeeper.Hooks(),
+			app.claimKeeper.Hooks(),
+		),
+	)
+
 	// Create IBC Keeper
 	app.ibcKeeper = ibcKeeper.NewKeeper(
 		appCodec, keys[ibchost.StoreKey], app.getSubspace(ibchost.ModuleName), app.stakingKeeper, scopedibcKeeper,
@@ -344,16 +355,6 @@ func NewStargazeApp(
 		app.bankKeeper,
 		stakingKeeper,
 		app.distrKeeper,
-	)
-
-	// register the staking hooks
-	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
-	app.stakingKeeper = *stakingKeeper.SetHooks(
-		stakingtypes.NewMultiStakingHooks(
-			app.distrKeeper.Hooks(),
-			app.slashingKeeper.Hooks(),
-			app.claimKeeper.Hooks(),
-		),
 	)
 
 	// Create Transfer Keepers
