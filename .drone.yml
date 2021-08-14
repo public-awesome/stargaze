@@ -129,7 +129,7 @@ type: docker
 name: ibc-integration-test
 
 steps:
-  - name: gaiad
+  - name: gaia
     image: golang:1.16.6
     detach: true
     commands:
@@ -156,6 +156,6 @@ trigger:
 
 ---
 kind: signature
-hmac: 98c84fc065a3fee7f54322883afe7fcf42ba57fe1b754330feae0bbc5f2502a0
+hmac: 706edf8612b96112a9f2265ceb62bb83cd4d36140340f6313dbc56656ccc23fb
 
 ...
