@@ -15,7 +15,7 @@ starsd keys --keyring-backend test add validator
 
 starsd add-genesis-account $(starsd keys --keyring-backend test show validator -a) 100000000000$DENOM,100000000000ucredits
 starsd add-genesis-account $RLYKEY 100000000000$DENOM,100000000000ucredits
-starsd gentx --name validator --keyring-backend test --amount 900000000$DENOM
+starsd gentx validator 900000000$DENOM --keyring-backend test --chain-id stargaze
 starsd collect-gentxs
 
 starsd start --pruning nothing
