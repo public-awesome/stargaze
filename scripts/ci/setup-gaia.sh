@@ -1,22 +1,13 @@
-GAIA_TAG="v5.0.5"
 DENOM=stake
 CHAINID=gaia
 RLYKEY=cosmos10dmk2q0numq3v0s7vwsx20dm4hq040vsa09jqe
-# install gaia
-git clone https://github.com/cosmos/gaia
-cd gaia 
-git fetch --tags origin 
-git checkout $GAIA_TAG
-CGO_ENABLED=0 LEDGER_ENABLED=false make install
 gaiad version --long
-
-
 
 # Setup gaia
 gaiad init --chain-id $CHAINID $CHAINID
-sed -i 's#tcp://127.0.0.1:26657#tcp://0.0.0.0:26657#g' ~/.gaiad/config/config.toml
-sed -i "s/\"stake\"/\"$DENOM\"/g" ~/.gaiad/config/genesis.json
-sed -i 's/pruning = "syncable"/pruning = "nothing"/g' ~/.gaiad/config/app.toml
+sed -i 's#tcp://127.0.0.1:26657#tcp://0.0.0.0:26657#g' ~/.gaia/config/config.toml
+sed -i "s/\"stake\"/\"$DENOM\"/g" ~/.gaia/config/genesis.json
+sed -i 's/pruning = "syncable"/pruning = "nothing"/g' ~/.gaia/config/app.toml
 gaiad keys --keyring-backend test add validator
 
 gaiad add-genesis-account $(gaiad keys --keyring-backend test show validator -a) 100000000000$DENOM
