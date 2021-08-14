@@ -1,7 +1,6 @@
-GAIA_TAG="goz-phase-3"
 DENOM=ustarx
 CHAINID=stargaze
-RLYKEY=stb10dmk2q0numq3v0s7vwsx20dm4hq040vslyu4hy
+RLYKEY=stars12g0xe2ld0k5ws3h7lmxc39d4rpl3fyxp5qys69
 make install
 starsd version --long
 

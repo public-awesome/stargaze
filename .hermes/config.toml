@@ -1,0 +1,35 @@
+[global]
+strategy = 'packets'
+log_level = 'info'
+
+[[chains]]
+id = 'stargaze'
+rpc_addr = 'http://stargaze:26657'
+grpc_addr = 'http://stargaze:9090'
+websocket_addr = 'ws://stargaze:26657/websocket'
+rpc_timeout = '10s'
+account_prefix = 'stars'
+key_name = 'relayer'
+store_prefix = 'ibc'
+max_gas = 2000000
+gas_price = { price = 0.025, denom = 'ustarx' }
+gas_adjustment = 0.1
+clock_drift = '300s'
+trusting_period = '2days'
+trust_threshold = { numerator = '1', denominator = '3' }
+
+[[chains]]
+id = 'gaia'
+rpc_addr = 'http://gaia:26657'
+grpc_addr = 'http://gaia:9090'
+websocket_addr = 'ws://gaia:26657/websocket'
+rpc_timeout = '10s'
+account_prefix = 'cosmos'
+key_name = 'relayer'
+store_prefix = 'ibc'
+max_gas = 2000000
+gas_price = { price = 0.025, denom = 'stake' }
+gas_adjustment = 0.1
+clock_drift = '300s'
+trusting_period = '2days'
+trust_threshold = { numerator = '1', denominator = '3' }

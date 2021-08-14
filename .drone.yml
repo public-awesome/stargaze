@@ -140,15 +140,13 @@ steps:
       GOPROXY: http://goproxy
     detach: true
   - name: relayer
-    image: golang:1.16.6
+    image: publicawesome/hermes:latest
     commands:
       - /bin/bash ./scripts/ci/setup-relayer.sh
-    environment:
-      GOPROXY: http://goproxy
 
 trigger:
   branch:
-    - ibc
+    - cygnusx-1
   event:
     - push
 
@@ -156,6 +154,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: dece428250a26d793910c085de8d381eed42cd96fccb3b63cc0394112950e164
+hmac: d84d9c0834434a1fbcaca588832f77613d3306f449cec4e5383aceab2c57ed5a
 
 ...

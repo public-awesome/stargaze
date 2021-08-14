@@ -1,4 +1,4 @@
-GAIA_TAG="goz-phase-3"
+GAIA_TAG="v5.0.5"
 DENOM=stake
 CHAINID=gaia
 RLYKEY=cosmos10dmk2q0numq3v0s7vwsx20dm4hq040vsa09jqe
