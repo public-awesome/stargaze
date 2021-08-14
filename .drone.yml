@@ -130,7 +130,7 @@ name: ibc-integration-test
 
 steps:
   - name: gaia
-    image: golang:1.16.6
+    image: publicawesome/gaia:5.0.5
     detach: true
     commands:
       - ./scripts/ci/setup-gaia.sh
@@ -156,6 +156,6 @@ trigger:
 
 ---
 kind: signature
-hmac: 706edf8612b96112a9f2265ceb62bb83cd4d36140340f6313dbc56656ccc23fb
+hmac: 7560dd7bf8f2de8867c2e6e7fce9fc8ca99c7f47acb7b0db91f3a876dfa3c783
 
 ...
