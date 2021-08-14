@@ -150,10 +150,8 @@ trigger:
   event:
     - push
 
-depends_on:
-  - default-build
 ---
 kind: signature
-hmac: d84d9c0834434a1fbcaca588832f77613d3306f449cec4e5383aceab2c57ed5a
+hmac: e37ea198275bef4528bae518f84b308d55584aa7f36b782843911ca040b137bc
 
 ...
