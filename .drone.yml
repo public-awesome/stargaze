@@ -118,7 +118,11 @@ steps:
         from_secret: discord_webhook_token
     when:
       status: [success, failure]
-
+trigger:
+  branch:
+    - main
+  event:
+    - push
 ---
 kind: pipeline
 type: docker
@@ -146,12 +150,12 @@ steps:
 
 trigger:
   branch:
-    - cygnusx-1
+    - ibc-test
   event:
     - push
 
 ---
 kind: signature
-hmac: e37ea198275bef4528bae518f84b308d55584aa7f36b782843911ca040b137bc
+hmac: 98c84fc065a3fee7f54322883afe7fcf42ba57fe1b754330feae0bbc5f2502a0
 
 ...
