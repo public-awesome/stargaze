@@ -19,7 +19,7 @@ sed -i "s/\"stake\"/\"$DENOM\"/g" ~/.gaiad/config/genesis.json
 sed -i 's/pruning = "syncable"/pruning = "nothing"/g' ~/.gaiad/config/app.toml
 gaiacli keys --keyring-backend test add validator
 
-gaiad add-genesis-account $(gaiacli keys --keyring-backend test show validator -a) 100000000000$DENOM
+gaiad add-genesis-account $(gaiad keys --keyring-backend test show validator -a) 100000000000$DENOM
 gaiad add-genesis-account $RLYKEY 100000000000$DENOM
 gaiad gentx validator 900000000$DENOM --keyring-backend test --chain-id gaia
 gaiad collect-gentxs
