@@ -17,7 +17,7 @@ gaiad init --chain-id $CHAINID $CHAINID
 sed -i 's#tcp://127.0.0.1:26657#tcp://0.0.0.0:26657#g' ~/.gaiad/config/config.toml
 sed -i "s/\"stake\"/\"$DENOM\"/g" ~/.gaiad/config/genesis.json
 sed -i 's/pruning = "syncable"/pruning = "nothing"/g' ~/.gaiad/config/app.toml
-gaiacli keys --keyring-backend test add validator
+gaiad keys --keyring-backend test add validator
 
 gaiad add-genesis-account $(gaiad keys --keyring-backend test show validator -a) 100000000000$DENOM
 gaiad add-genesis-account $RLYKEY 100000000000$DENOM
