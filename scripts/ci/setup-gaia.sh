@@ -7,7 +7,7 @@ git clone https://github.com/cosmos/gaia
 cd gaia 
 git fetch --tags origin 
 git checkout $GAIA_TAG
-make install
+CGO_ENABLED=0 LEDGER_ENABLED=false make install
 gaiad version --long
 
 
