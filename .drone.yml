@@ -151,12 +151,12 @@ steps:
   - name: relayer-start
     image: publicawesome/hermes:latest
     commands:
-      - hermes start
+      - /bin/bash ./scripts/ci/start-relayer.sh
     detach: true
   - name: relayer-sender
     image: publicawesome/hermes:latest
     commands:
-      - sleep 10
+      - /bin/bash ./scripts/ci/transfer-relayer.sh
 
 trigger:
   branch:
@@ -166,6 +166,6 @@ trigger:
 
 ---
 kind: signature
-hmac: 07dafccfca2032b3b667ce25efd9aeb2225fab86f566326388950adfd7037703
+hmac: 21f6e517c0a51719414819afe694488344ab4c1d9dea90c2cd6067c1d9e99420
 
 ...
