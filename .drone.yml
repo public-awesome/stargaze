@@ -118,11 +118,6 @@ steps:
         from_secret: discord_webhook_token
     when:
       status: [success, failure]
-trigger:
-  branch:
-    - main
-  event:
-    - push
 ---
 kind: pipeline
 type: docker
@@ -177,6 +172,6 @@ trigger:
 
 ---
 kind: signature
-hmac: 0db841f4f090d718df3e1ff15c28a221edcc6d00c1fb896506b5f746fc0fee66
+hmac: 4a57adb11c94e405b5ff1d0962dc1ceb61a2e32e1f43d43b84752803ba2930f3
 
 ...
