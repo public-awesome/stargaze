@@ -157,15 +157,26 @@ steps:
     image: publicawesome/hermes:latest
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
+  - name: discord
+    image: appleboy/drone-discord
+    settings:
+      webhook_id: 
+        from_secret: discord_webhook_id
+      webhook_token: 
+        from_secret: discord_webhook_token
+    when:
+      status: [success, failure]
 
 trigger:
   branch:
     - ibc-test
+    - cygnusx-1
+    - main
   event:
     - push
 
 ---
 kind: signature
-hmac: 21f6e517c0a51719414819afe694488344ab4c1d9dea90c2cd6067c1d9e99420
+hmac: 0db841f4f090d718df3e1ff15c28a221edcc6d00c1fb896506b5f746fc0fee66
 
 ...
