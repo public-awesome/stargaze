@@ -169,9 +169,10 @@ trigger:
     - main
   event:
     - push
-
+depends_on:
+  - default-build
 ---
 kind: signature
-hmac: 4a57adb11c94e405b5ff1d0962dc1ceb61a2e32e1f43d43b84752803ba2930f3
+hmac: c0865423ea97b667d2f2951fe50031db2ef95763c61bacd8eeae95fca13c5453
 
 ...
