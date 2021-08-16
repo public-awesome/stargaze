@@ -758,4 +758,7 @@ func (app *StargazeApp) registerUpgradeHandlers() {
 	app.upgradeKeeper.SetUpgradeHandler("capability-fix", func(ctx sdk.Context, plan upgradetypes.Plan) {
 		// no bonus this time :( but glad you are reading it
 	})
+	app.upgradeKeeper.SetUpgradeHandler("ibc-fix", func(ctx sdk.Context, plan upgradetypes.Plan) {
+		// ibc fix that prevented connection confirmation, and channel creation
+	})
 }
