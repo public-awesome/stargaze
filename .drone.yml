@@ -148,6 +148,16 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/setup-relayer.sh
 
+  - name: relayer-start
+    image: publicawesome/hermes:latest
+    commands:
+      - hermes start
+    detach: true
+  - name: relayer-sender
+    image: publicawesome/hermes:latest
+    commands:
+      - sleep 10
+
 trigger:
   branch:
     - ibc-test
@@ -156,6 +166,6 @@ trigger:
 
 ---
 kind: signature
-hmac: 7560dd7bf8f2de8867c2e6e7fce9fc8ca99c7f47acb7b0db91f3a876dfa3c783
+hmac: 07dafccfca2032b3b667ce25efd9aeb2225fab86f566326388950adfd7037703
 
 ...
