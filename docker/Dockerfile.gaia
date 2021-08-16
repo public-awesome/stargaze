@@ -1,0 +1,28 @@
+FROM golang:1.16-alpine3.14 AS go-builder
+
+
+# Usage:
+#   docker build . --build-arg TAG=v5.0.5 -t publicawesome/gaia:5.0.5 -f docker/Dockerfile.gaia
+
+RUN set -eux; apk add --no-cache ca-certificates build-base;
+
+RUN apk add git
+
+WORKDIR /code
+
+RUN git clone https://github.com/cosmos/gaia
+RUN cd gaia && git checkout $TAG && CGO_ENABLED=0 LEDGER_ENABLED=false make build
+
+
+
+# --------------------------------------------------------
+FROM alpine:3.14
+
+COPY --from=go-builder /code/gaia/build/gaiad /usr/bin/gaiad
+RUN apk add -U --no-cache ca-certificates
+WORKDIR /home/gaia
+ENV HOME=/home/gaia
+EXPOSE 1317
+EXPOSE 26656
+EXPOSE 26657
+EXPOSE 9090

@@ -118,15 +118,14 @@ steps:
         from_secret: discord_webhook_token
     when:
       status: [success, failure]
-
 ---
 kind: pipeline
 type: docker
 name: ibc-integration-test
 
 steps:
-  - name: gaiad
-    image: golang:1.16.6
+  - name: gaia
+    image: publicawesome/gaia:5.0.5
     detach: true
     commands:
       - ./scripts/ci/setup-gaia.sh
@@ -144,14 +143,35 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/setup-relayer.sh
 
+  - name: relayer-start
+    image: publicawesome/hermes:latest
+    commands:
+      - /bin/bash ./scripts/ci/start-relayer.sh
+    detach: true
+  - name: relayer-sender
+    image: publicawesome/hermes:latest
+    commands:
+      - /bin/bash ./scripts/ci/transfer-relayer.sh
+  - name: discord
+    image: appleboy/drone-discord
+    settings:
+      webhook_id: 
+        from_secret: discord_webhook_id
+      webhook_token: 
+        from_secret: discord_webhook_token
+    when:
+      status: [success, failure]
+
 trigger:
   branch:
+    - ibc-test
     - cygnusx-1
+    - main
   event:
     - push
 
 ---
 kind: signature
-hmac: e37ea198275bef4528bae518f84b308d55584aa7f36b782843911ca040b137bc
+hmac: 4a57adb11c94e405b5ff1d0962dc1ceb61a2e32e1f43d43b84752803ba2930f3
 
 ...
