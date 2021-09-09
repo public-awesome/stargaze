@@ -9,14 +9,14 @@ steps:
     commands:
       - git fetch --tags
   - name: test
-    image: golang:1.16.6
+    image: golang:1.17.0
     commands:
       - apt-get update && apt-get install -y cmake
       - ./scripts/go-test.sh
     environment:
       GOPROXY: http://goproxy
   - name: build
-    image: golang:1.16-alpine3.14
+    image: golang:1.17-alpine3.14
     commands:
       - apk add --no-cache ca-certificates build-base git
       - wget https://github.com/CosmWasm/wasmvm/releases/download/v0.14.0/libwasmvm_muslc.a -O /lib/libwasmvm_muslc.a
@@ -97,7 +97,7 @@ steps:
         - tag
 
   - name: release
-    image: golang:1.16.6
+    image: golang:1.17.0
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -132,7 +132,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: golang:1.16.6
+    image: golang:1.17.0
     commands:
       - ./scripts/ci/setup-stargaze.sh
     environment:
@@ -173,6 +173,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: c0865423ea97b667d2f2951fe50031db2ef95763c61bacd8eeae95fca13c5453
+hmac: 2e8d7d19519b567fb519b63c592acc519de9d53920bc343728cd0484c4d17db1
 
 ...
