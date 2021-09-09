@@ -1,8 +1,8 @@
-GAIA_TAG="goz-phase-3"
+set -ex
 DENOM=ustarx
 CHAINID=stargaze
-RLYKEY=stb10dmk2q0numq3v0s7vwsx20dm4hq040vslyu4hy
-make install
+RLYKEY=stars12g0xe2ld0k5ws3h7lmxc39d4rpl3fyxp5qys69
+LEDGER_ENABLED=false make install
 starsd version --long
 
 
@@ -16,7 +16,7 @@ starsd keys --keyring-backend test add validator
 
 starsd add-genesis-account $(starsd keys --keyring-backend test show validator -a) 100000000000$DENOM,100000000000ucredits
 starsd add-genesis-account $RLYKEY 100000000000$DENOM,100000000000ucredits
-starsd gentx --name validator --keyring-backend test --amount 900000000$DENOM
+starsd gentx validator 900000000$DENOM --keyring-backend test --chain-id stargaze
 starsd collect-gentxs
 
 starsd start --pruning nothing

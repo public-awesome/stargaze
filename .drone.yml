@@ -9,14 +9,14 @@ steps:
     commands:
       - git fetch --tags
   - name: test
-    image: golang:1.16.6
+    image: golang:1.17.0
     commands:
       - apt-get update && apt-get install -y cmake
       - ./scripts/go-test.sh
     environment:
       GOPROXY: http://goproxy
   - name: build
-    image: golang:1.16-alpine3.14
+    image: golang:1.17-alpine3.14
     commands:
       - apk add --no-cache ca-certificates build-base git
       - wget https://github.com/CosmWasm/wasmvm/releases/download/v0.14.0/libwasmvm_muslc.a -O /lib/libwasmvm_muslc.a
@@ -97,7 +97,7 @@ steps:
         - tag
 
   - name: release
-    image: golang:1.16.6
+    image: golang:1.17.0
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -118,44 +118,60 @@ steps:
         from_secret: discord_webhook_token
     when:
       status: [success, failure]
-
 ---
 kind: pipeline
 type: docker
 name: ibc-integration-test
 
 steps:
-  - name: gaiad
-    image: golang:1.16.6
+  - name: gaia
+    image: publicawesome/gaia:5.0.5
     detach: true
     commands:
       - ./scripts/ci/setup-gaia.sh
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: golang:1.16.6
+    image: golang:1.17.0
     commands:
       - ./scripts/ci/setup-stargaze.sh
     environment:
       GOPROXY: http://goproxy
     detach: true
   - name: relayer
-    image: golang:1.16.6
+    image: publicawesome/hermes:latest
     commands:
       - /bin/bash ./scripts/ci/setup-relayer.sh
-    environment:
-      GOPROXY: http://goproxy
+
+  - name: relayer-start
+    image: publicawesome/hermes:latest
+    commands:
+      - /bin/bash ./scripts/ci/start-relayer.sh
+    detach: true
+  - name: relayer-sender
+    image: publicawesome/hermes:latest
+    commands:
+      - /bin/bash ./scripts/ci/transfer-relayer.sh
+  - name: discord
+    image: appleboy/drone-discord
+    settings:
+      webhook_id: 
+        from_secret: discord_webhook_id
+      webhook_token: 
+        from_secret: discord_webhook_token
+    when:
+      status: [success, failure]
 
 trigger:
   branch:
-    - ibc
+    - main
   event:
+    - pull_request
     - push
-
 depends_on:
   - default-build
 ---
 kind: signature
-hmac: dece428250a26d793910c085de8d381eed42cd96fccb3b63cc0394112950e164
+hmac: 332ec5f05ced7f894012d0075cd44bfd46f6e1ac255147928b829a3af694d513
 
 ...

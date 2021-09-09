@@ -1,4 +1,4 @@
-// +build !test_amino
+//go:build !test_amino
 
 package params
 
