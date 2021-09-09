@@ -164,15 +164,14 @@ steps:
 
 trigger:
   branch:
-    - ibc-test
-    - cygnusx-1
     - main
   event:
+    - pull_request
     - push
 depends_on:
   - default-build
 ---
 kind: signature
-hmac: 2e8d7d19519b567fb519b63c592acc519de9d53920bc343728cd0484c4d17db1
+hmac: 332ec5f05ced7f894012d0075cd44bfd46f6e1ac255147928b829a3af694d513
 
 ...
