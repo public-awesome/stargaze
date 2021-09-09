@@ -1,4 +1,4 @@
-//+build !faucet
+//go:build !faucet
 
 package faucet
 
