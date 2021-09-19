@@ -30,7 +30,7 @@ starsd q wasm contract-state smart $CONTRACT '{"num_tokens":{}}'
 starsd q wasm contract-state smart $CONTRACT '{"contract_info":{}}'
 
 # execute a mint operation
-MINT="{\"mint\":{\"token_id\":\"1\",\"owner\":\"$INVESTOR\",\"name\":\"bobo\"}}"
+MINT="{\"mint\":{\"token_id\":\"1\",\"owner\":\"$INVESTOR\",\"name\":\"bobo\",\"image\":\"https://lh3.googleusercontent.com/Xv5i9YaUJO73claDwpJ-cqkx6-xhrrZnF9QAD_Qn4aPJHSxklQp4anlJuV-GABs4ZkB1lIsmkodUT3V8ER0wivNrwBswUHZzrpVOaQ=h1328\"}}"
 starsd tx wasm execute $CONTRACT $MINT --from creator $TXFLAG
 
 # query contract
