@@ -9,9 +9,8 @@ steps:
     commands:
       - git fetch --tags
   - name: test
-    image: golang:1.17.0
+    image: publicawesome/golang:1.17.0-devtooling
     commands:
-      - apt-get update && apt-get install -y cmake
       - ./scripts/go-test.sh
     environment:
       GOPROXY: http://goproxy
@@ -132,7 +131,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: golang:1.17.0
+    image: publicawesome/golang:1.17.0-devtooling
     commands:
       - ./scripts/ci/setup-stargaze.sh
     environment:
@@ -172,6 +171,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: 332ec5f05ced7f894012d0075cd44bfd46f6e1ac255147928b829a3af694d513
+hmac: 9f80aabb49e4699dd1ef0a501ab85c994fb12c8bbe6ef5e6aa6c0b15946ef8fe
 
 ...
