@@ -9,7 +9,7 @@ INVESTOR=$(starsd keys show investor -a)
 starsd q wasm list-code
 
 # download cw20-bonding contract code
-curl -LO https://github.com/CosmWasm/cosmwasm-plus/releases/download/v0.6.2/cw20_bonding.wasm
+curl -LO https://github.com/CosmWasm/cosmwasm-plus/releases/download/v0.9.0/cw20_bonding.wasm
 
 # upload contract code
 starsd tx wasm store cw20_bonding.wasm --from validator $TXFLAG
