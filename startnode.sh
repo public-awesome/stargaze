@@ -16,6 +16,16 @@ FUNDER=$(starsd keys show funder -a)
 
 # setup chain
 starsd init stargaze --stake-denom ustarx --chain-id localnet-1
+
+# modify config for development
+config="$HOME/.starsd/config/config.toml"
+if [ "$(uname)" = "Linux" ]; then
+  sed -i "s/cors_allowed_origins = \[\]/cors_allowed_origins = [\"*\"]/g" $config
+else
+  sed -i '' "s/cors_allowed_origins = \[\]/cors_allowed_origins = [\"*\"]/g" $config
+fi
+
+# start
 starsd add-genesis-account $VALIDATOR 10000000000000000ustarx
 starsd add-genesis-account $CREATOR 10000000000000000ustarx
 starsd add-genesis-account $INVESTOR 10000000000000000ustarx
