@@ -1,5 +1,5 @@
 syntax = "proto3";
-package stargaze.claim.v1beta1;
+package publicawesome.stargaze.claim.v1beta1;
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/duration.proto";

@@ -1,5 +1,5 @@
 syntax = "proto3";
-package publicaawesome.stargaze.claim;
+package publicawesome.stargaze.claim.v1beta1;
 
 // this line is used by starport scaffolding # proto/tx/import
 
