@@ -1,4 +1,4 @@
-
+.PHONY: build proto
 #!/usr/bin/make -f
 
 PACKAGES_SIMTEST=$(shell go list ./... | grep '/simulation')
@@ -136,3 +136,6 @@ proto-check-breaking:
 
 ci-sign: 
 	drone sign public-awesome/stargaze --save
+	
+proto:
+	starport generate proto-go

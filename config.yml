@@ -23,3 +23,5 @@ genesis:
     staking:
       params:
         bond_denom: "ustarx"
+init:
+  home: "$HOME/.starsd"
