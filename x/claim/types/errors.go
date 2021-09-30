@@ -8,6 +8,5 @@ import (
 
 // x/claim module sentinel errors
 var (
-	ErrIncorrectModuleAccountBalance = sdkerrors.Register(ModuleName, 1100,
-		"claim module account balance != sum of all claim record InitialClaimableAmounts")
+	ErrSample = sdkerrors.Register(ModuleName, 1100, "sample error")
 )

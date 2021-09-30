@@ -10,35 +10,35 @@ import (
 	"github.com/public-awesome/stargaze/x/claim/types"
 )
 
-// Keeper struct
-type Keeper struct {
-	cdc           codec.Marshaler
-	storeKey      sdk.StoreKey
-	accountKeeper types.AccountKeeper
-	bankKeeper    types.BankKeeper
-	stakingKeeper types.StakingKeeper
-	distrKeeper   types.DistrKeeper
-}
+type (
+	Keeper struct {
+		cdc      codec.BinaryCodec
+		storeKey sdk.StoreKey
+		memKey   sdk.StoreKey
 
-// NewKeeper returns keeper
+		accountKeeper types.AccountKeeper
+		bankKeeper    types.BankKeeper
+		stakingKeeper types.StakingKeeper
+		distrKeeper   types.DistrKeeper
+	}
+)
+
 func NewKeeper(
-	cdc codec.Marshaler,
-	storeKey sdk.StoreKey,
-	ak types.AccountKeeper,
-	bk types.BankKeeper,
-	sk types.StakingKeeper,
-	dk types.DistrKeeper) *Keeper {
+	cdc codec.BinaryCodec,
+	storeKey,
+	memKey sdk.StoreKey,
+
+	accountKeeper types.AccountKeeper, bankKeeper types.BankKeeper, stakingKeeper types.StakingKeeper, distrKeeper types.DistrKeeper,
+) *Keeper {
 	return &Keeper{
-		cdc:           cdc,
-		storeKey:      storeKey,
-		accountKeeper: ak,
-		bankKeeper:    bk,
-		stakingKeeper: sk,
-		distrKeeper:   dk,
+		cdc:      cdc,
+		storeKey: storeKey,
+		memKey:   memKey,
+
+		accountKeeper: accountKeeper, bankKeeper: bankKeeper, stakingKeeper: stakingKeeper, distrKeeper: distrKeeper,
 	}
 }
 
-// Logger returns logger
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }

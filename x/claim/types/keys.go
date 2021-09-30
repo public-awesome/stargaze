@@ -13,12 +13,10 @@ const (
 	// QuerierRoute defines the module's query routing key
 	QuerierRoute = ModuleName
 
-	// ClaimRecordsStorePrefix defines the store prefix for the claim records
-	ClaimRecordsStorePrefix = "claimrecords"
-
-	// ParamsKey defines the store key for claim module parameters
-	ParamsKey = "params"
-
-	// ActionKey defines the store key to store user accomplished actions
-	ActionKey = "action"
+	// MemStoreKey defines the in-memory store key
+	MemStoreKey = "mem_claim"
 )
+
+func KeyPrefix(p string) []byte {
+	return []byte(p)
+}

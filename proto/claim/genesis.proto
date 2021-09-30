@@ -1,0 +1,11 @@
+syntax = "proto3";
+package publicaawesome.stargaze.claim;
+
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "github.com/public-awesome/stargaze/x/claim/types";
+
+// GenesisState defines the claim module's genesis state.
+message GenesisState {
+    // this line is used by starport scaffolding # genesis/proto/state
+}
