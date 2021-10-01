@@ -1,17 +1,26 @@
 package types
 
+import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+)
+
 type AccountKeeper interface {
-	// Methods imported from account should be defined here
+	GetModuleAddress(name string) sdk.AccAddress
+	SetModuleAccount(ctx sdk.Context, macc authtypes.ModuleAccountI)
 }
 
 type BankKeeper interface {
-	// Methods imported from bank should be defined here
+	SendCoinsFromModuleToAccount(ctx sdk.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error
+	SendCoinsFromModuleToModule(ctx sdk.Context, senderPool, recipientPool string, amt sdk.Coins) error
+	GetBalance(ctx sdk.Context, addr sdk.AccAddress, denom string) sdk.Coin
+	MintCoins(ctx sdk.Context, moduleName string, amt sdk.Coins) error
 }
 
 type StakingKeeper interface {
-	// Methods imported from staking should be defined here
+	BondDenom(sdk.Context) string
 }
 
 type DistrKeeper interface {
-	// Methods imported from distr should be defined here
+	FundCommunityPool(ctx sdk.Context, amount sdk.Coins, sender sdk.AccAddress) error
 }

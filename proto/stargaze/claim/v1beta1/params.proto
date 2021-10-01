@@ -31,4 +31,10 @@ message Params {
   
   // denom of claimable asset
   string claim_denom = 5;
+
+  repeated string allowed_contracts = 6 [
+    (gogoproto.nullable) = false,
+    (gogoproto.jsontag) = "allowed_contracts",
+    (gogoproto.moretags) = "yaml:\"allowed_contracts\""
+  ];
 }
