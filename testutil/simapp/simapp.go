@@ -15,7 +15,7 @@ import (
 )
 
 // New creates application instance with in-memory database and disabled logging.
-func New(dir string) cosmoscmd.App {
+func New(dir string) *app.App {
 	db := tmdb.NewMemDB()
 	logger := log.NewNopLogger()
 
@@ -28,7 +28,7 @@ func New(dir string) cosmoscmd.App {
 		ConsensusParams: defaultConsensusParams,
 		AppStateBytes:   []byte("{}"),
 	})
-	return a
+	return a.(*app.App)
 }
 
 var defaultConsensusParams = &abci.ConsensusParams{
