@@ -8,6 +8,22 @@ steps:
     image: alpine/git
     commands:
       - git fetch --tags
+  - name: restore-cache
+    image: meltwater/drone-cache:dev
+    environment:
+      AWS_ACCESS_KEY_ID:
+        from_secret: minio_key_id
+      AWS_SECRET_ACCESS_KEY:
+        from_secret: minio_secret_key
+    pull: true
+    settings:
+      restore: true
+      bucket:
+        from_secret: minio_bucket
+      region: us-east-1
+      mount:
+        - '/go/pkg/mod'
+
   - name: test
     image: publicawesome/golang:1.17.0-devtooling
     commands:
@@ -107,7 +123,21 @@ steps:
     when:
       event:
         - tag
-
+  - name: rebuild-cache
+    image: meltwater/drone-cache:dev
+    environment:
+      AWS_ACCESS_KEY_ID:
+        from_secret: minio_key_id
+      AWS_SECRET_ACCESS_KEY:
+        from_secret: minio_secret_key
+    pull: true
+    settings:
+      rebuild: true
+      bucket:
+        from_secret: minio_bucket
+      region: us-east-1
+      mount:
+        - '/go/pkg/mod'
   - name: discord
     image: appleboy/drone-discord
     settings:
@@ -171,6 +201,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: 9f80aabb49e4699dd1ef0a501ab85c994fb12c8bbe6ef5e6aa6c0b15946ef8fe
+hmac: bbaa08181ebfd95ac43e622081f8ba8a9aaf883fa93efaef7f496b5c0da66c3c
 
 ...
