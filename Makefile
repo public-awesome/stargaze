@@ -105,7 +105,7 @@ docker-test: build-linux
 
 
 test:
-	go test github.com/public-awesome/stargaze/x/...
+	go test -v -race github.com/public-awesome/stargaze/x/...
 
 .PHONY: test build-linux docker-test lint build install
 
