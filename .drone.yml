@@ -8,7 +8,7 @@ steps:
     image: alpine/git
     commands:
       - git fetch --tags
-      - mkdir -p /drone/go
+      - mkdir -p /drone/src/go
   - name: restore-cache
     image: meltwater/drone-cache:dev
     environment:
@@ -23,7 +23,7 @@ steps:
         from_secret: minio_bucket
       region: us-east-1
       mount:
-        - '/drone/go/pkg/mod'
+        - '/drone/src/go/pkg/mod'
 
   - name: test
     image: publicawesome/golang:1.17.0-devtooling
@@ -31,7 +31,7 @@ steps:
       - ./scripts/go-test.sh
     environment:
       GOPROXY: http://goproxy
-      GOPATH: /drone/go
+      GOPATH: /drone/src/go
   - name: build
     image: golang:1.17-alpine3.14
     commands:
@@ -41,7 +41,7 @@ steps:
       - FAUCET_ENABLED=true LEDGER_ENABLED=false BUILD_TAGS=muslc make build
     environment:
       GOPROXY: http://goproxy
-      GOPATH: /drone/go
+      GOPATH: /drone/src/go
   - name: coverage
     image: plugins/codecov
     settings:
@@ -123,7 +123,7 @@ steps:
       - curl -sL https://git.io/goreleaser | bash
     environment:
       GOPROXY: http://goproxy
-      GOPATH: /drone/go
+      GOPATH: /drone/src/go
     when:
       event:
         - tag
@@ -141,7 +141,7 @@ steps:
         from_secret: minio_bucket
       region: us-east-1
       mount:
-        - '/drone/go/pkg/mod'
+        - '/drone/src/go/pkg/mod'
   - name: discord
     image: appleboy/drone-discord
     settings:
@@ -205,6 +205,6 @@ depends_on:
   - default-build
 ---
 kind: signature
-hmac: a17899056d23fc6c055e1fb6541e5ff79d70423325c68e9d42d16140b37ea039
+hmac: 34de9866e3c6d1d9cb9bc1b81cd09f44274bfdb6d6910321338d8f99b1076fbf
 
 ...
