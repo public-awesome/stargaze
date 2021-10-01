@@ -2,7 +2,6 @@ package keeper_test
 
 import (
 	"fmt"
-	"os"
 	"testing"
 	"time"
 
@@ -21,7 +20,7 @@ type KeeperTestSuite struct {
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
-	suite.app = simapp.New(os.TempDir())
+	suite.app = simapp.New(suite.T().TempDir())
 	suite.ctx = suite.app.BaseApp.NewContext(false, tmproto.Header{Height: 1, ChainID: "stargaze-1", Time: time.Now().UTC()})
 	suite.app.ClaimKeeper.CreateModuleAccount(suite.ctx, sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000000)))
 }
