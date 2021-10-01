@@ -1,6 +1,7 @@
 
 #!/usr/bin/env bash
 
+echo "go path $GOPATH"
 set -e
 echo "" > coverage.txt
 
