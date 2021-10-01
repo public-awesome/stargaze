@@ -23,9 +23,18 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.app = simapp.New(suite.T().TempDir())
 	suite.ctx = suite.app.BaseApp.NewContext(false, tmproto.Header{Height: 1, ChainID: "stargaze-1", Time: time.Now().UTC()})
 	suite.app.ClaimKeeper.CreateModuleAccount(suite.ctx, sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000000)))
+	startTime := time.Now()
+
+	suite.app.ClaimKeeper.SetParams(suite.ctx, types.Params{
+		AirdropStartTime:   startTime,
+		DurationUntilDecay: types.DefaultDurationUntilDecay,
+		DurationOfDecay:    types.DefaultDurationOfDecay,
+		ClaimDenom:         sdk.DefaultBondDenom,
+	})
+	suite.ctx = suite.ctx.WithBlockTime(startTime)
 }
 
-func (s *KeeperTestSuite) TestKeeper() {
+func (s *KeeperTestSuite) TestModuleAccountCreated() {
 	app, ctx := s.app, s.ctx
 	moduleAddress := app.AccountKeeper.GetModuleAddress(types.ModuleName)
 	balance := app.BankKeeper.GetBalance(ctx, moduleAddress, sdk.DefaultBondDenom)
