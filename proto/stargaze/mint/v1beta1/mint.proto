@@ -1,7 +1,7 @@
 syntax = "proto3";
-package cosmos.mint.v1beta1;
+package stargaze.mint.v1beta1;
 
-option go_package = "github.com/cosmos/cosmos-sdk/x/mint/types";
+option go_package = "github.com/public-awesome/stargaze/x/mint/types";
 
 import "gogoproto/gogo.proto";
 
