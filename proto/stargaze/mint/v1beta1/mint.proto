@@ -31,12 +31,18 @@ message Params {
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"genesis_time\""
   ];
+  // the starting inflation
+  string genesis_inflation = 3 [
+    (gogoproto.moretags)   = "yaml:\"genesis_inflation\"",
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.nullable)   = false
+  ];
   // factor to reduce inflation by each year
-  string reduction_factor = 3 [
+  string reduction_factor = 4 [
     (gogoproto.moretags)   = "yaml:\"reduction_factor\"",
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
     (gogoproto.nullable)   = false
   ];
   // expected blocks per year
-  uint64 blocks_per_year = 6 [(gogoproto.moretags) = "yaml:\"blocks_per_year\""];
+  uint64 blocks_per_year = 5 [(gogoproto.moretags) = "yaml:\"blocks_per_year\""];
 }
