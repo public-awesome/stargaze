@@ -4,6 +4,7 @@ package stargaze.mint.v1beta1;
 option go_package = "github.com/public-awesome/stargaze/x/mint/types";
 
 import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
 
 // Minter represents the minting state.
 message Minter {
@@ -24,27 +25,15 @@ message Params {
 
   // type of coin to mint
   string mint_denom = 1;
-  // maximum annual change in inflation rate
-  string inflation_rate_change = 2 [
-    (gogoproto.moretags)   = "yaml:\"inflation_rate_change\"",
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
-    (gogoproto.nullable)   = false
+  // the time the chain starts
+  google.protobuf.Timestamp genesis_time = 2 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"genesis_time\""
   ];
-  // maximum inflation rate
-  string inflation_max = 3 [
-    (gogoproto.moretags)   = "yaml:\"inflation_max\"",
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
-    (gogoproto.nullable)   = false
-  ];
-  // minimum inflation rate
-  string inflation_min = 4 [
-    (gogoproto.moretags)   = "yaml:\"inflation_min\"",
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
-    (gogoproto.nullable)   = false
-  ];
-  // goal of percent bonded atoms
-  string goal_bonded = 5 [
-    (gogoproto.moretags)   = "yaml:\"goal_bonded\"",
+  // factor to reduce inflation by each year
+  string reduction_factor = 3 [
+    (gogoproto.moretags)   = "yaml:\"reduction_factor\"",
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
     (gogoproto.nullable)   = false
   ];
