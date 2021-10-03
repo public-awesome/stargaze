@@ -3,6 +3,7 @@ package types
 import (
 	"math/rand"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 
@@ -52,6 +53,12 @@ func TestNextInflation(t *testing.T) {
 		require.True(t, diffInflation.Equal(tc.expChange),
 			"Test Index: %v\nDiff:  %v\nExpected: %v\n", i, diffInflation, tc.expChange)
 	}
+}
+
+func TestYear(t *testing.T) {
+	minter := DefaultInitialMinter()
+	actualYear := minter.CurrentYear(time.Now())
+	require.Equal(t, int64(2), actualYear)
 }
 
 func TestBlockProvision(t *testing.T) {

@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -42,12 +43,6 @@ func ValidateMinter(minter Minter) error {
 
 // NextInflationRate returns the new inflation rate for the next hour.
 func (m Minter) NextInflationRate(params Params, bondedRatio sdk.Dec) sdk.Dec {
-	// The target annual inflation rate is recalculated for each previsions cycle. The
-	// inflation is also subject to a rate change (positive or negative) depending on
-	// the distance from the desired ratio (67%). The maximum rate change possible is
-	// defined to be 13% per year, however the annual inflation is capped as between
-	// 7% and 20%.
-
 	// (1 - bondedRatio/GoalBonded) * InflationRateChange
 	inflationRateChangePerYear := sdk.OneDec().
 		Sub(bondedRatio.Quo(params.GoalBonded)).
@@ -64,6 +59,16 @@ func (m Minter) NextInflationRate(params Params, bondedRatio sdk.Dec) sdk.Dec {
 	}
 
 	return inflation
+	// panic("kadsjf")
+}
+
+func (m Minter) CurrentYear(blockTime time.Time) int64 {
+	genesisTime := time.Now().AddDate(-2, 0, 0)
+	diff := blockTime.Sub(genesisTime)
+	nsPerYear := 365 * 24 * time.Hour
+	year := (diff / nsPerYear)
+
+	return int64(year)
 }
 
 // NextAnnualProvisions returns the annual provisions based on current total
