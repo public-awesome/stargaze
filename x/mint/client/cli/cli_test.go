@@ -14,8 +14,8 @@ import (
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	testnet "github.com/cosmos/cosmos-sdk/testutil/network"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/mint/client/cli"
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+	"github.com/public-awesome/stargaze/x/mint/client/cli"
+	minttypes "github.com/public-awesome/stargaze/x/mint/types"
 )
 
 type IntegrationTestSuite struct {
