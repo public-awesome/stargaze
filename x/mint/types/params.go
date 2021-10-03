@@ -44,7 +44,7 @@ func DefaultParams() Params {
 	return Params{
 		MintDenom:        sdk.DefaultBondDenom,
 		GenesisTime:      time.Time{},
-		GenesisInflation: sdk.NewDecWithPrec(100, 2),
+		GenesisInflation: sdk.NewDec(1),
 		ReductionFactor:  sdk.NewDecWithPrec(33, 2),
 		BlocksPerYear:    uint64(60 * 60 * 8766 / 5), // assuming 5 second block times
 	}

@@ -15,15 +15,16 @@ func TestNextInflation(t *testing.T) {
 	params := DefaultParams()
 
 	tests := []struct {
-		bondedRatio, expInflation sdk.Dec
+		blockTime    time.Time
+		expInflation sdk.Dec
 	}{
 		// year 1, inflation 100%
-		// {sdk.ZeroDec(), sdk.NewDecWithPrec(100, 2)},
+		{time.Now(), sdk.NewDecWithPrec(100, 2)},
 		// year 2, inflation 67%
-		{sdk.ZeroDec(), sdk.NewDecWithPrec(67, 2)},
+		{time.Now(), sdk.NewDecWithPrec(67, 2)},
 	}
 	for i, tc := range tests {
-		inflation := minter.NextInflationRate(params, tc.bondedRatio)
+		inflation := minter.NextInflationRate(tc.blockTime, params)
 
 		require.True(t, inflation.Equal(tc.expInflation),
 			"Test Index: %v\nInflation:  %v\nExpected: %v\n", i, inflation, tc.expInflation)
@@ -106,19 +107,19 @@ func BenchmarkBlockProvision(b *testing.B) {
 	}
 }
 
-// Next inflation benchmarking
-// BenchmarkNextInflation-4 1000000 1828 ns/op
-func BenchmarkNextInflation(b *testing.B) {
-	minter := InitialMinter(sdk.NewDecWithPrec(1, 1))
-	params := DefaultParams()
-	bondedRatio := sdk.NewDecWithPrec(1, 1)
+// // Next inflation benchmarking
+// // BenchmarkNextInflation-4 1000000 1828 ns/op
+// func BenchmarkNextInflation(b *testing.B) {
+// 	minter := InitialMinter(sdk.NewDecWithPrec(1, 1))
+// 	params := DefaultParams()
+// 	bondedRatio := sdk.NewDecWithPrec(1, 1)
 
-	// run the NextInflationRate function b.N times
-	for n := 0; n < b.N; n++ {
-		minter.NextInflationRate(params, bondedRatio)
-	}
+// 	// run the NextInflationRate function b.N times
+// 	for n := 0; n < b.N; n++ {
+// 		minter.NextInflationRate(params, bondedRatio)
+// 	}
 
-}
+// }
 
 // Next annual provisions benchmarking
 // BenchmarkNextAnnualProvisions-4 5000000 251 ns/op
