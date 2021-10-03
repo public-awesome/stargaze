@@ -43,32 +43,22 @@ func ValidateMinter(minter Minter) error {
 
 // NextInflationRate returns the new inflation rate for the next hour.
 func (m Minter) NextInflationRate(params Params, bondedRatio sdk.Dec) sdk.Dec {
-	// (1 - bondedRatio/GoalBonded) * InflationRateChange
-	inflationRateChangePerYear := sdk.OneDec().
-		Sub(bondedRatio.Quo(params.GoalBonded)).
-		Mul(params.InflationRateChange)
-	inflationRateChange := inflationRateChangePerYear.Quo(sdk.NewDec(int64(params.BlocksPerYear)))
-
-	// adjust the new annual inflation for this next cycle
-	inflation := m.Inflation.Add(inflationRateChange) // note inflationRateChange may be negative
-	if inflation.GT(params.InflationMax) {
-		inflation = params.InflationMax
-	}
-	if inflation.LT(params.InflationMin) {
-		inflation = params.InflationMin
-	}
+	blockTime := time.Now()
+	// genesisTime := time.Now().AddDate(-1, 0, 0)
+	genesisTime := time.Now().AddDate(-2, 0, 0)
+	year := m.CurrentYear(blockTime, genesisTime)
+	reductionFactor := sdk.OneDec().Sub(sdk.NewDecWithPrec(33, 2))
+	inflation := reductionFactor.Power(year)
 
 	return inflation
-	// panic("kadsjf")
 }
 
-func (m Minter) CurrentYear(blockTime time.Time) int64 {
-	genesisTime := time.Now().AddDate(-2, 0, 0)
+func (m Minter) CurrentYear(blockTime time.Time, genesisTime time.Time) uint64 {
 	diff := blockTime.Sub(genesisTime)
 	nsPerYear := 365 * 24 * time.Hour
 	year := (diff / nsPerYear)
 
-	return int64(year)
+	return uint64(year - 1)
 }
 
 // NextAnnualProvisions returns the annual provisions based on current total
