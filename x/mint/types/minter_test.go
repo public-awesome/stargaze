@@ -19,9 +19,15 @@ func TestNextInflation(t *testing.T) {
 		expInflation sdk.Dec
 	}{
 		// year 1, inflation 100%
-		{time.Now(), sdk.NewDecWithPrec(100, 2)},
+		{time.Now().AddDate(0, 6, 0), sdk.NewDecWithPrec(100, 2)},
 		// year 2, inflation 67%
-		{time.Now(), sdk.NewDecWithPrec(67, 2)},
+		{time.Now().AddDate(1, 0, 0), sdk.NewDecWithPrec(67, 2)},
+		// year 3, inflation 44%
+		{time.Now().AddDate(2, 0, 0), sdk.NewDecWithPrec(4489, 4)},
+		// year 4, inflation 30%
+		{time.Now().AddDate(3, 0, 0), sdk.NewDecWithPrec(300763, 6)},
+		// year 5, inflation 20%
+		{time.Now().AddDate(4, 0, 0), sdk.NewDecWithPrec(20151121, 8)},
 	}
 	for i, tc := range tests {
 		inflation := minter.NextInflationRate(tc.blockTime, params)
@@ -31,32 +37,28 @@ func TestNextInflation(t *testing.T) {
 	}
 }
 
-func TestYear(t *testing.T) {
-	minter := DefaultInitialMinter()
-	genesisTime := time.Now().AddDate(-2, 0, 0)
-	actualYear := minter.CurrentYear(time.Now(), genesisTime)
-	require.Equal(t, int64(2), actualYear)
+func TestCurrentYear(t *testing.T) {
+	genesisTime := time.Now()
+	actualYear := currentYear(time.Now().AddDate(0, 1, 0), genesisTime)
+	require.Equal(t, uint64(0), actualYear)
 }
 
-func TestYearBoundry(t *testing.T) {
-	minter := DefaultInitialMinter()
-	genesisTime := time.Now().AddDate(-2, -11, 0)
-	actualYear := minter.CurrentYear(time.Now(), genesisTime)
-	require.Equal(t, int64(2), actualYear)
+func TestCurrentYear1(t *testing.T) {
+	genesisTime := time.Now()
+	actualYear := currentYear(time.Now().AddDate(2, 1, 0), genesisTime)
+	require.Equal(t, uint64(2), actualYear)
 }
 
-func TestYearBoundry1(t *testing.T) {
-	minter := DefaultInitialMinter()
-	genesisTime := time.Now().AddDate(-2, 0, 2)
-	actualYear := minter.CurrentYear(time.Now(), genesisTime)
-	require.Equal(t, int64(2), actualYear)
+func TestCurrentYear2(t *testing.T) {
+	genesisTime := time.Now()
+	actualYear := currentYear(time.Now().AddDate(2, 0, 2), genesisTime)
+	require.Equal(t, uint64(2), actualYear)
 }
 
-func TestYearBoundry2(t *testing.T) {
-	minter := DefaultInitialMinter()
-	genesisTime := time.Now().AddDate(-1, -1, 0)
-	actualYear := minter.CurrentYear(time.Now(), genesisTime)
-	require.Equal(t, int64(1), actualYear)
+func TestCurrentYear3(t *testing.T) {
+	genesisTime := time.Now()
+	actualYear := currentYear(time.Now().AddDate(1, 1, 0), genesisTime)
+	require.Equal(t, uint64(1), actualYear)
 }
 
 func TestBlockProvision(t *testing.T) {

@@ -43,19 +43,19 @@ func ValidateMinter(minter Minter) error {
 
 // NextInflationRate returns the new inflation rate for the next hour.
 func (m Minter) NextInflationRate(blockTime time.Time, params Params) sdk.Dec {
-	year := m.CurrentYear(blockTime, params.GenesisTime)
-	reductionMultiplier := params.GenesisInflation.Sub(params.ReductionFactor)
-	inflation := reductionMultiplier.Power(year)
+	year := currentYear(blockTime, params.GenesisTime)
+	reductionMultiplier := sdk.OneDec().Sub(params.ReductionFactor)
+	inflation := reductionMultiplier.Power(year).Mul(params.GenesisInflation)
 
 	return inflation
 }
 
-func (m Minter) CurrentYear(blockTime time.Time, genesisTime time.Time) uint64 {
-	diff := blockTime.Sub(genesisTime)
+func currentYear(blockTime time.Time, genesisTime time.Time) uint64 {
+	delta := blockTime.Sub(genesisTime)
 	nsPerYear := 365 * 24 * time.Hour
-	year := (diff / nsPerYear)
+	year := (delta / nsPerYear)
 
-	return uint64(year - 1)
+	return uint64(year)
 }
 
 // NextAnnualProvisions returns the annual provisions based on current total
