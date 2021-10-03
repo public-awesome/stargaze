@@ -6,19 +6,20 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/rand"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/public-awesome/stargaze/x/mint/types"
 )
 
 // Simulation parameter constants
 const (
-	Inflation           = "inflation"
-	InflationRateChange = "inflation_rate_change"
-	InflationMax        = "inflation_max"
-	InflationMin        = "inflation_min"
-	GoalBonded          = "goal_bonded"
+	Inflation        = "inflation"
+	GenesisTime      = "genesis_time"
+	GenesisInflation = "genesis_inflation"
+	ReductionFactor  = "reduction_factor"
 )
 
 // GenInflation randomized Inflation
@@ -26,24 +27,19 @@ func GenInflation(r *rand.Rand) sdk.Dec {
 	return sdk.NewDecWithPrec(int64(r.Intn(99)), 2)
 }
 
-// GenInflationRateChange randomized InflationRateChange
-func GenInflationRateChange(r *rand.Rand) sdk.Dec {
+// GenGenesisTime randomized genesis time
+func GenGenesisTime(r *rand.Rand) time.Time {
+	return simtypes.RandTimestamp(r)
+}
+
+// GenGenesisInflation randomized GenesisInflation
+func GenGenesisInflation(r *rand.Rand) sdk.Dec {
 	return sdk.NewDecWithPrec(int64(r.Intn(99)), 2)
 }
 
-// GenInflationMax randomized InflationMax
-func GenInflationMax(r *rand.Rand) sdk.Dec {
-	return sdk.NewDecWithPrec(20, 2)
-}
-
-// GenInflationMin randomized InflationMin
-func GenInflationMin(r *rand.Rand) sdk.Dec {
-	return sdk.NewDecWithPrec(7, 2)
-}
-
-// GenGoalBonded randomized GoalBonded
-func GenGoalBonded(r *rand.Rand) sdk.Dec {
-	return sdk.NewDecWithPrec(67, 2)
+// GenReductionFactor randomized InflationMax
+func GenReductionFactor(r *rand.Rand) sdk.Dec {
+	return sdk.NewDecWithPrec(int64(r.Intn(99)), 2)
 }
 
 // RandomizedGenState generates a random GenesisState for mint
@@ -56,33 +52,27 @@ func RandomizedGenState(simState *module.SimulationState) {
 	)
 
 	// params
-	var inflationRateChange sdk.Dec
+	var genesisTime time.Time
 	simState.AppParams.GetOrGenerate(
-		simState.Cdc, InflationRateChange, &inflationRateChange, simState.Rand,
-		func(r *rand.Rand) { inflationRateChange = GenInflationRateChange(r) },
+		simState.Cdc, GenesisTime, &genesisTime, simState.Rand,
+		func(r *rand.Rand) { genesisTime = GenGenesisTime(r) },
 	)
 
-	var inflationMax sdk.Dec
+	var genesisInflation sdk.Dec
 	simState.AppParams.GetOrGenerate(
-		simState.Cdc, InflationMax, &inflationMax, simState.Rand,
-		func(r *rand.Rand) { inflationMax = GenInflationMax(r) },
+		simState.Cdc, GenesisInflation, &genesisInflation, simState.Rand,
+		func(r *rand.Rand) { genesisInflation = GenGenesisInflation(r) },
 	)
 
-	var inflationMin sdk.Dec
+	var reductionFactor sdk.Dec
 	simState.AppParams.GetOrGenerate(
-		simState.Cdc, InflationMin, &inflationMin, simState.Rand,
-		func(r *rand.Rand) { inflationMin = GenInflationMin(r) },
-	)
-
-	var goalBonded sdk.Dec
-	simState.AppParams.GetOrGenerate(
-		simState.Cdc, GoalBonded, &goalBonded, simState.Rand,
-		func(r *rand.Rand) { goalBonded = GenGoalBonded(r) },
+		simState.Cdc, ReductionFactor, &reductionFactor, simState.Rand,
+		func(r *rand.Rand) { reductionFactor = GenReductionFactor(r) },
 	)
 
 	mintDenom := sdk.DefaultBondDenom
 	blocksPerYear := uint64(60 * 60 * 8766 / 5)
-	params := types.NewParams(mintDenom, inflationRateChange, inflationMax, inflationMin, goalBonded, blocksPerYear)
+	params := types.NewParams(mintDenom, genesisTime, genesisInflation, reductionFactor, blocksPerYear)
 
 	mintGenesis := types.NewGenesisState(types.InitialMinter(inflation), params)
 

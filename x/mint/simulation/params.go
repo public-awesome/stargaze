@@ -13,34 +13,28 @@ import (
 )
 
 const (
-	keyInflationRateChange = "InflationRateChange"
-	keyInflationMax        = "InflationMax"
-	keyInflationMin        = "InflationMin"
-	keyGoalBonded          = "GoalBonded"
+	keyGenesisTime      = "GenesisTime"
+	keyGenesisInflation = "GenesisInflation"
+	keyReductionFactor  = "ReductionFactor"
 )
 
 // ParamChanges defines the parameters that can be modified by param change proposals
 // on the simulation
 func ParamChanges(r *rand.Rand) []simtypes.ParamChange {
 	return []simtypes.ParamChange{
-		simulation.NewSimParamChange(types.ModuleName, keyInflationRateChange,
+		simulation.NewSimParamChange(types.ModuleName, keyGenesisTime,
 			func(r *rand.Rand) string {
-				return fmt.Sprintf("\"%s\"", GenInflationRateChange(r))
+				return fmt.Sprintf("\"%s\"", GenGenesisTime(r))
 			},
 		),
-		simulation.NewSimParamChange(types.ModuleName, keyInflationMax,
+		simulation.NewSimParamChange(types.ModuleName, keyGenesisInflation,
 			func(r *rand.Rand) string {
-				return fmt.Sprintf("\"%s\"", GenInflationMax(r))
+				return fmt.Sprintf("\"%s\"", GenGenesisInflation(r))
 			},
 		),
-		simulation.NewSimParamChange(types.ModuleName, keyInflationMin,
+		simulation.NewSimParamChange(types.ModuleName, keyReductionFactor,
 			func(r *rand.Rand) string {
-				return fmt.Sprintf("\"%s\"", GenInflationMin(r))
-			},
-		),
-		simulation.NewSimParamChange(types.ModuleName, keyGoalBonded,
-			func(r *rand.Rand) string {
-				return fmt.Sprintf("\"%s\"", GenGoalBonded(r))
+				return fmt.Sprintf("\"%s\"", GenReductionFactor(r))
 			},
 		),
 	}
