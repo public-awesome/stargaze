@@ -22,7 +22,7 @@ func DefaultGenesis() *GenesisState {
 			DurationUntilDecay: DefaultDurationUntilDecay,
 			DurationOfDecay:    DefaultDurationOfDecay,
 			ClaimDenom:         DefaultClaimDenom,
-			AllowedClaimers:    []ClaimAllowance{},
+			AllowedClaimers:    []ClaimAuthorization{},
 		},
 		ClaimRecords: []ClaimRecord{},
 	}

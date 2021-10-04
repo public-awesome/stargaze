@@ -9,7 +9,7 @@ import "stargaze/claim/v1beta1/claim_record.proto";
 option go_package = "github.com/public-awesome/stargaze/x/claim/types";
 
 
-message ClaimAllowance {
+message ClaimAuthorization {
   string contract_address = 1 [
     (gogoproto.moretags) = "yaml:\"contract_address\""
   ];
@@ -43,7 +43,8 @@ message Params {
   // denom of claimable asset
   string claim_denom = 5;
 
-  repeated ClaimAllowance allowed_claimers = 6 [
+  // list of contracts and their allowed claim actions
+  repeated ClaimAuthorization allowed_claimers = 6 [
     (gogoproto.nullable) = false,
     (gogoproto.jsontag) = "allowed_claimers",
     (gogoproto.moretags) = "yaml:\"allowed_claimers\""
