@@ -15,6 +15,7 @@ const DefaultIndex uint64 = 1
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		// this line is used by starport scaffolding # genesis/types/default
+		ModuleAccountBalance: sdk.NewCoin(sdk.DefaultBondDenom, sdk.ZeroInt()),
 		Params: Params{
 			AirdropEnabled:     true,
 			AirdropStartTime:   time.Time{},
