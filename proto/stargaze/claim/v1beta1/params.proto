@@ -4,8 +4,19 @@ package publicawesome.stargaze.claim.v1beta1;
 import "gogoproto/gogo.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
+import "stargaze/claim/v1beta1/claim_record.proto";
 
 option go_package = "github.com/public-awesome/stargaze/x/claim/types";
+
+
+message ClaimAllowance {
+  string contract_address = 1 [
+    (gogoproto.moretags) = "yaml:\"contract_address\""
+  ];
+  Action action = 2 [
+    (gogoproto.moretags) = "yaml:\"action\""
+  ];
+}
 
 // Params defines the claim module's parameters.
 message Params {
@@ -32,9 +43,9 @@ message Params {
   // denom of claimable asset
   string claim_denom = 5;
 
-  repeated string allowed_contracts = 6 [
+  repeated ClaimAllowance allowed_claimers = 6 [
     (gogoproto.nullable) = false,
-    (gogoproto.jsontag) = "allowed_contracts",
-    (gogoproto.moretags) = "yaml:\"allowed_contracts\""
+    (gogoproto.jsontag) = "allowed_claimers",
+    (gogoproto.moretags) = "yaml:\"allowed_claimers\""
   ];
 }
