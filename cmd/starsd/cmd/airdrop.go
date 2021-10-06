@@ -10,7 +10,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/server"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/spf13/cobra"
@@ -84,7 +83,7 @@ Example:
 
 			config.SetRoot(clientCtx.HomeDir)
 
-			denom := args[0]
+			// denom := args[0]
 			genesisFile := args[1]
 			snapshotOutput := args[2]
 
@@ -108,50 +107,50 @@ Example:
 				return fmt.Errorf("failed to unmarshal genesis state: %w", err)
 			}
 
-			moduleAccountsToSkip := map[string]bool{
-				"cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta": true,
-				"cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn": true,
-				"cosmos1jv65s3grqf6v6jl3dp4t6c9t9rk99cd88lyufl": true,
-				"cosmos1fl48vsnmsdzcv85q5d2q4z5ajdha8yu34mf0eh": true,
-				"cosmos1tygms3xhhs3yv487phx3dw4a95jn7t7lpm470r": true,
-				"cosmos1m3h30wlvsf8llruxtpukdvsy0km2kum8g38c8q": true,
-			}
+			// moduleAccountsToSkip := map[string]bool{
+			// 	"cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta": true,
+			// 	"cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn": true,
+			// 	"cosmos1jv65s3grqf6v6jl3dp4t6c9t9rk99cd88lyufl": true,
+			// 	"cosmos1fl48vsnmsdzcv85q5d2q4z5ajdha8yu34mf0eh": true,
+			// 	"cosmos1tygms3xhhs3yv487phx3dw4a95jn7t7lpm470r": true,
+			// 	"cosmos1m3h30wlvsf8llruxtpukdvsy0km2kum8g38c8q": true,
+			// }
 
-			bankGenState := banktypes.GetGenesisStateFromAppState(cdc, appState)
-			for _, account := range bankGenState.Balances {
-				balance := account.Coins.AmountOf(denom)
-				totalAtomBalance = totalAtomBalance.Add(balance)
+			// bankGenState := banktypes.GetGenesisStateFromAppState(cdc, appState)
+			// for _, account := range bankGenState.Balances {
+			// 	balance := account.Coins.AmountOf(denom)
+			// 	totalAtomBalance = totalAtomBalance.Add(balance)
 
-				if _, ok := moduleAccountsToSkip[account.Address]; ok {
-					continue
-				}
+			// 	if _, ok := moduleAccountsToSkip[account.Address]; ok {
+			// 		continue
+			// 	}
 
-				snapshotAccs[account.Address] = SnapshotAccount{
-					AtomAddress:         account.Address,
-					AtomBalance:         balance,
-					AtomUnstakedBalance: balance,
-					AtomStakedBalance:   sdk.ZeroInt(),
-				}
-			}
+			// 	snapshotAccs[account.Address] = SnapshotAccount{
+			// 		AtomAddress:         account.Address,
+			// 		AtomBalance:         balance,
+			// 		AtomUnstakedBalance: balance,
+			// 		AtomStakedBalance:   sdk.ZeroInt(),
+			// 	}
+			// }
 
 			stakingGenState := stakingtypes.GetGenesisStateFromAppState(cdc, appState)
-			for _, unbonding := range stakingGenState.UnbondingDelegations {
-				address := unbonding.DelegatorAddress
-				acc, ok := snapshotAccs[address]
-				if !ok {
-					panic("no account found for unbonding")
-				}
+			// for _, unbonding := range stakingGenState.UnbondingDelegations {
+			// 	address := unbonding.DelegatorAddress
+			// 	acc, ok := snapshotAccs[address]
+			// 	if !ok {
+			// 		panic("no account found for unbonding")
+			// 	}
 
-				unbondingAtoms := sdk.NewInt(0)
-				for _, entry := range unbonding.Entries {
-					unbondingAtoms = unbondingAtoms.Add(entry.Balance)
-				}
+			// 	unbondingAtoms := sdk.NewInt(0)
+			// 	for _, entry := range unbonding.Entries {
+			// 		unbondingAtoms = unbondingAtoms.Add(entry.Balance)
+			// 	}
 
-				acc.AtomBalance = acc.AtomBalance.Add(unbondingAtoms)
-				acc.AtomUnstakedBalance = acc.AtomUnstakedBalance.Add(unbondingAtoms)
+			// 	acc.AtomBalance = acc.AtomBalance.Add(unbondingAtoms)
+			// 	acc.AtomUnstakedBalance = acc.AtomUnstakedBalance.Add(unbondingAtoms)
 
-				snapshotAccs[address] = acc
-			}
+			// 	snapshotAccs[address] = acc
+			// }
 
 			// Make a map from validator operator address to the validator type
 			validators := make(map[string]stakingtypes.Validator)
@@ -161,6 +160,13 @@ Example:
 
 			for _, delegation := range stakingGenState.Delegations {
 				address := delegation.DelegatorAddress
+
+				snapshotAccs[address] = SnapshotAccount{
+					AtomAddress:         address,
+					AtomBalance:         sdk.ZeroInt(),
+					AtomUnstakedBalance: sdk.ZeroInt(),
+					AtomStakedBalance:   sdk.ZeroInt(),
+				}
 
 				acc, ok := snapshotAccs[address]
 				if !ok {
