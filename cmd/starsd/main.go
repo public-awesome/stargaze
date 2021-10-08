@@ -21,7 +21,9 @@ func main() {
 		cosmoscmd.AddSubCmd(cmd.TestnetCmd(app.ModuleBasics)),
 		// this line is used by starport scaffolding # root/arguments
 	)
-	rootCmd.AddCommand(airdrop.ExportAirdropSnapshotCmd())
+	rootCmd.AddCommand(airdrop.ExportHubSnapshotCmd())
+	rootCmd.AddCommand(airdrop.ExportOsmosisSnapshotCmd())
+	rootCmd.AddCommand(airdrop.ExportRegenSnapshotCmd())
 	if err := svrcmd.Execute(rootCmd, app.DefaultNodeHome); err != nil {
 		os.Exit(1)
 	}

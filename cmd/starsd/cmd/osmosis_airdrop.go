@@ -15,25 +15,24 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type Snapshot struct {
-	TotalAtomAmount         sdk.Int `json:"total_atom_amount"`
-	TotalStarsAirdropAmount sdk.Int `json:"total_stars_amount"`
-	NumberAccounts          uint64  `json:"num_accounts"`
-
-	Accounts           map[string]SnapshotAccount `json:"accounts"`
-	StargazeDelegators map[string]sdk.Int         `json:"stargaze_delegators"`
+type OsmosisSnapshot struct {
+	TotalOsmoAmount         sdk.Int                       `json:"total_osmo_amount"`
+	TotalStarsAirdropAmount sdk.Int                       `json:"total_stars_amount"`
+	NumberAccounts          uint64                        `json:"num_accounts"`
+	Accounts                map[string]HubSnapshotAccount `json:"accounts"`
+	StargazeDelegators      map[string]sdk.Int            `json:"stargaze_delegators"`
 }
 
-// SnapshotAccount provide fields of snapshot per account
-type SnapshotAccount struct {
-	AtomAddress string `json:"atom_address"` // Atom Balance = AtomStakedBalance + AtomUnstakedBalance
+// OsmosisSnapshotAccount provide fields of snapshot per account
+type OsmosisSnapshotAccount struct {
+	OsmoAddress string `json:"osmo_address"` // Atom Balance = AtomStakedBalance + AtomUnstakedBalance
 
-	AtomBalance          sdk.Int `json:"atom_balance"`
-	AtomOwnershipPercent sdk.Dec `json:"atom_ownership_percent"`
+	OsmoBalance          sdk.Int `json:"osmo_balance"`
+	OsmoOwnershipPercent sdk.Dec `json:"osmo_ownership_percent"`
 
-	AtomStakedBalance   sdk.Int `json:"atom_staked_balance"`
-	AtomUnstakedBalance sdk.Int `json:"atom_unstaked_balance"` // AtomStakedPercent = AtomStakedBalance / AtomBalance
-	AtomStakedPercent   sdk.Dec `json:"atom_staked_percent"`
+	OsmoStakedBalance   sdk.Int `json:"osmo_staked_balance"`
+	OsmoUnstakedBalance sdk.Int `json:"osmo_unstaked_balance"` // AtomStakedPercent = AtomStakedBalance / AtomBalance
+	OsmoStakedPercent   sdk.Dec `json:"osmo_staked_percent"`
 
 	// StarsBalance = sqrt( AtomBalance ) * (1 + 1.5 * atom staked percent)
 	StarsBalance sdk.Int `json:"stars_balance"`
@@ -47,29 +46,14 @@ type SnapshotAccount struct {
 	StargazeDelegator bool `json:"stargaze_delegator"`
 }
 
-// setCosmosBech32Prefixes set config for cosmos address system
-func setCosmosBech32Prefixes() {
-	defaultConfig := sdk.NewConfig()
-	config := sdk.GetConfig()
-	config.SetBech32PrefixForAccount(defaultConfig.GetBech32AccountAddrPrefix(), defaultConfig.GetBech32AccountPubPrefix())
-	config.SetBech32PrefixForValidator(
-		defaultConfig.GetBech32ValidatorAddrPrefix(),
-		defaultConfig.GetBech32ValidatorPubPrefix(),
-	)
-	config.SetBech32PrefixForConsensusNode(
-		defaultConfig.GetBech32ConsensusAddrPrefix(),
-		defaultConfig.GetBech32ConsensusPubPrefix(),
-	)
-}
-
-// ExportAirdropSnapshotCmd generates a snapshot.json from a provided Cosmos Hub genesis export.
-func ExportAirdropSnapshotCmd() *cobra.Command {
+// ExportOsmosisSnapshotCmd generates a snapshot.json from a provided Cosmos Hub genesis export.
+func ExportOsmosisSnapshotCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "export-airdrop-snapshot [airdrop-to-denom] [input-genesis-file] [output-snapshot-json]",
-		Short: "Export snapshot from a provided Cosmos Hub genesis export",
-		Long: `Export snapshot from a provided Cosmos Hub genesis export
+		Use:   "export-osmosis-snapshot [airdrop-to-denom] [input-genesis-file] [output-snapshot-json]",
+		Short: "Export snapshot from a provided Osmosis genesis export",
+		Long: `Export snapshot from a provided Osmosis genesis export
 Example:
-	starsd export-airdrop-snapshot uatom genesis.json snapshot.json
+	starsd export-osmosis-snapshot uosmo genesis.json snapshot.json
 `,
 		Args: cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -80,7 +64,6 @@ Example:
 
 			config.SetRoot(clientCtx.HomeDir)
 
-			// denom := args[0]
 			genesisFile := args[1]
 			snapshotOutput := args[2]
 
@@ -94,7 +77,7 @@ Example:
 			// setCosmosBech32Prefixes()
 
 			// Produce the map of address to total atom balance, both staked and unstaked
-			snapshotAccs := make(map[string]SnapshotAccount)
+			snapshotAccs := make(map[string]HubSnapshotAccount)
 			totalAtomBalance := sdk.NewInt(0)
 
 			cdc := clientCtx.Codec
@@ -117,7 +100,7 @@ Example:
 			for _, delegation := range stakingGenState.Delegations {
 				address := delegation.DelegatorAddress
 
-				snapshotAccs[address] = SnapshotAccount{
+				snapshotAccs[address] = HubSnapshotAccount{
 					AtomAddress:         address,
 					AtomBalance:         sdk.ZeroInt(),
 					AtomUnstakedBalance: sdk.ZeroInt(),
@@ -194,7 +177,7 @@ Example:
 				snapshotAccs[address] = acc
 			}
 
-			snapshot := Snapshot{
+			snapshot := HubSnapshot{
 				TotalAtomAmount:         totalAtomBalance,
 				TotalStarsAirdropAmount: totalStarsBalance,
 				NumberAccounts:          uint64(len(snapshotAccs)),
