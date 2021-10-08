@@ -88,7 +88,7 @@ Example:
 			}
 			defer genesisJSON.Close()
 
-			setCosmosBech32Prefixes()
+			// setCosmosBech32Prefixes()
 
 			// Produce the map of address to total atom balance, both staked and unstaked
 			snapshotAccs := make(map[string]SnapshotAccount)
@@ -182,7 +182,7 @@ Example:
 			for address, acc := range snapshotAccs {
 				allAtoms := acc.AtomBalance.ToDec()
 
-				acc.AtomOwnershipPercent = allAtoms.QuoInt(totalAtomBalance)
+				// acc.AtomOwnershipPercent = allAtoms.QuoInt(totalAtomBalance)
 
 				if allAtoms.IsZero() {
 					acc.AtomStakedPercent = sdk.ZeroDec()
@@ -234,7 +234,7 @@ Example:
 				Accounts:                snapshotAccs,
 			}
 
-			fmt.Printf("# accounts: %d\n", len(snapshotAccs))
+			fmt.Printf("num accounts: %d\n", len(snapshotAccs))
 			fmt.Printf("atomTotalSupply: %s\n", totalAtomBalance.String())
 			fmt.Printf("starsTotalSupply: %s\n", totalStarsBalance.String())
 
