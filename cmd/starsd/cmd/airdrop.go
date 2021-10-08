@@ -59,20 +59,14 @@ func setCosmosBech32Prefixes() {
 	)
 }
 
-// ExportAirdropSnapshotCmd generates a snapshot.json from a provided cosmos-sdk v0.36 genesis export.
+// ExportAirdropSnapshotCmd generates a snapshot.json from a provided cosmos-sdk genesis export.
 func ExportAirdropSnapshotCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "export-airdrop-snapshot [airdrop-to-denom] [input-genesis-file] [output-snapshot-json]",
-		Short: "Export a quadratic fairdrop snapshot from a provided cosmos-sdk genesis export",
-		Long: `Export a quadratic fairdrop snapshot from a provided cosmos-sdk genesis export
-Sample genesis file:
-	https://raw.githubusercontent.com/cephalopodequipment/cosmoshub-3/master/genesis.json
+		Short: "Export snapshot from a provided cosmos-sdk genesis export",
+		Long: `Export snapshot from a provided cosmos-sdk genesis export
 Example:
-	starsd export-airdrop-snapshot uatom ~/.gaiad/config/genesis.json ../snapshot.json
-	- Check input genesis:
-		file is at ~/.gaiad/config/genesis.json
-	- Snapshot
-		file is at "../snapshot.json"
+	starsd export-airdrop-snapshot uatom genesis.json snapshot.json
 `,
 		Args: cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
