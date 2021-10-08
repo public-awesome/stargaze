@@ -20,7 +20,8 @@ type Snapshot struct {
 	TotalStarsAirdropAmount sdk.Int `json:"total_stars_amount"`
 	NumberAccounts          uint64  `json:"num_accounts"`
 
-	Accounts map[string]SnapshotAccount `json:"accounts"`
+	Accounts           map[string]SnapshotAccount `json:"accounts"`
+	StargazeDelegators map[string]sdk.Int         `json:"stargaze_delegators"`
 }
 
 // SnapshotAccount provide fields of snapshot per account
@@ -42,6 +43,8 @@ type SnapshotAccount struct {
 	StarsBalanceBonus sdk.Int `json:"stars_balance_bonus"`
 	// StarsPercent = OsmoNormalizedBalance / TotalStarsupply
 	StarsPercent sdk.Dec `json:"stars_ownership_percent"`
+
+	StargazeDelegator bool `json:"stargaze_delegator"`
 }
 
 // setCosmosBech32Prefixes set config for cosmos address system
@@ -152,6 +155,8 @@ Example:
 				validators[validator.OperatorAddress] = validator
 			}
 
+			stargazeDelegators := make(map[string]sdk.Int)
+
 			for _, delegation := range stakingGenState.Delegations {
 				address := delegation.DelegatorAddress
 
@@ -172,6 +177,11 @@ Example:
 
 				acc.AtomBalance = acc.AtomBalance.Add(stakedAtoms)
 				acc.AtomStakedBalance = acc.AtomStakedBalance.Add(stakedAtoms)
+
+				if delegation.ValidatorAddress == "cosmosvaloper1et77usu8q2hargvyusl4qzryev8x8t9wwqkxfs" {
+					stargazeDelegators[address] = stakedAtoms
+					acc.StargazeDelegator = true
+				}
 
 				snapshotAccs[address] = acc
 			}
@@ -232,11 +242,13 @@ Example:
 				TotalStarsAirdropAmount: totalStarsBalance,
 				NumberAccounts:          uint64(len(snapshotAccs)),
 				Accounts:                snapshotAccs,
+				StargazeDelegators:      stargazeDelegators,
 			}
 
 			fmt.Printf("num accounts: %d\n", len(snapshotAccs))
 			fmt.Printf("atomTotalSupply: %s\n", totalAtomBalance.String())
 			fmt.Printf("starsTotalSupply: %s\n", totalStarsBalance.String())
+			fmt.Printf("num Stargaze delegators: %d\n", len(snapshot.StargazeDelegators))
 
 			// export snapshot json
 			snapshotJSON, err := json.MarshalIndent(snapshot, "", "    ")
