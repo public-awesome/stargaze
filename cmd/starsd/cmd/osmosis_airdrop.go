@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -22,6 +23,7 @@ type OsmosisSnapshot struct {
 	NumberAccounts          uint64                            `json:"num_accounts"`
 	Accounts                map[string]OsmosisSnapshotAccount `json:"accounts"`
 	StargazeDelegators      map[string]sdk.Int                `json:"stargaze_delegators"`
+	LiquidityProviderCount  uint64                            `json:"lp_count"`
 }
 
 // OsmosisSnapshotAccount provide fields of snapshot per account
@@ -79,8 +81,8 @@ Example:
 			// setCosmosBech32Prefixes()
 
 			// Produce the map of address to total atom balance, both staked and unstaked
-			snapshotAccs := make(map[string]HubSnapshotAccount)
-			totalAtomBalance := sdk.NewInt(0)
+			snapshotAccs := make(map[string]OsmosisSnapshotAccount)
+			totalOsmoBalance := sdk.NewInt(0)
 
 			cdc := clientCtx.Codec
 
@@ -89,18 +91,33 @@ Example:
 				return fmt.Errorf("failed to unmarshal genesis state: %w", err)
 			}
 
+			LPCount := 0
+
 			bankGenState := banktypes.GetGenesisStateFromAppState(cdc, appState)
 			for _, account := range bankGenState.Balances {
-				// account.Coins.
-				balance := account.Coins.AmountOf("gamm/...")
-				totalAtomBalance = totalAtomBalance.Add(balance)
+				isLP := false
+				numCoins := len(account.Coins)
+				for i := 0; i < numCoins; i++ {
+					denom := account.Coins.GetDenomByIndex(i)
+					if strings.HasPrefix(denom, "gamm") {
+						isLP = true
+						// fmt.Println(denom)
+					}
+				}
+				balance := account.Coins.AmountOf("uosmo")
+				totalOsmoBalance = totalOsmoBalance.Add(balance)
 
-				// snapshotAccs[account.Address] = OsmosisSnapshotAccount{
-				// 	AtomAddress:         account.Address,
-				// 	AtomBalance:         balance,
-				// 	AtomUnstakedBalance: balance,
-				// 	AtomStakedBalance:   sdk.ZeroInt(),
-				// }
+				if isLP {
+					LPCount++
+				}
+
+				snapshotAccs[account.Address] = OsmosisSnapshotAccount{
+					OsmoAddress:         account.Address,
+					OsmoBalance:         balance,
+					OsmoUnstakedBalance: balance,
+					OsmoStakedBalance:   sdk.ZeroInt(),
+					LiquidityProvider:   isLP,
+				}
 			}
 
 			stakingGenState := stakingtypes.GetGenesisStateFromAppState(cdc, appState)
@@ -116,13 +133,6 @@ Example:
 			for _, delegation := range stakingGenState.Delegations {
 				address := delegation.DelegatorAddress
 
-				snapshotAccs[address] = HubSnapshotAccount{
-					AtomAddress:         address,
-					AtomBalance:         sdk.ZeroInt(),
-					AtomUnstakedBalance: sdk.ZeroInt(),
-					AtomStakedBalance:   sdk.ZeroInt(),
-				}
-
 				acc, ok := snapshotAccs[address]
 				if !ok {
 					panic("no account found for delegation")
@@ -131,8 +141,8 @@ Example:
 				val := validators[delegation.ValidatorAddress]
 				stakedAtoms := delegation.Shares.MulInt(val.Tokens).Quo(val.DelegatorShares).RoundInt()
 
-				acc.AtomBalance = acc.AtomBalance.Add(stakedAtoms)
-				acc.AtomStakedBalance = acc.AtomStakedBalance.Add(stakedAtoms)
+				acc.OsmoBalance = acc.OsmoBalance.Add(stakedAtoms)
+				acc.OsmoStakedBalance = acc.OsmoStakedBalance.Add(stakedAtoms)
 
 				if delegation.ValidatorAddress == "cosmosvaloper1et77usu8q2hargvyusl4qzryev8x8t9wwqkxfs" {
 					stargazeDelegators[address] = stakedAtoms
@@ -146,12 +156,12 @@ Example:
 			onePointFive := sdk.MustNewDecFromStr("1.5")
 
 			for address, acc := range snapshotAccs {
-				allAtoms := acc.AtomBalance.ToDec()
+				allOsmos := acc.OsmoBalance.ToDec()
 
 				// acc.AtomOwnershipPercent = allAtoms.QuoInt(totalAtomBalance)
 
-				if allAtoms.IsZero() {
-					acc.AtomStakedPercent = sdk.ZeroDec()
+				if allOsmos.IsZero() {
+					acc.OsmoStakedPercent = sdk.ZeroDec()
 					acc.StarsBalanceBase = sdk.ZeroInt()
 					acc.StarsBalanceBonus = sdk.ZeroInt()
 					acc.StarsBalance = sdk.ZeroInt()
@@ -159,11 +169,11 @@ Example:
 					continue
 				}
 
-				stakedAtoms := acc.AtomStakedBalance.ToDec()
-				stakedPercent := stakedAtoms.Quo(allAtoms)
-				acc.AtomStakedPercent = stakedPercent
+				stakedOsmos := acc.OsmoStakedBalance.ToDec()
+				stakedPercent := stakedOsmos.Quo(allOsmos)
+				acc.OsmoStakedPercent = stakedPercent
 
-				baseStars, error := allAtoms.ApproxSqrt()
+				baseStars, error := allOsmos.ApproxSqrt()
 				if error != nil {
 					panic(fmt.Sprintf("failed to root atom balance: %s", err))
 				}
@@ -176,7 +186,7 @@ Example:
 				// StarsBalance = sqrt( all atoms) * (1 + 1.5) * (staked atom percent) =
 				acc.StarsBalance = allStars.RoundInt()
 
-				if allAtoms.LTE(sdk.NewDec(1000000)) {
+				if allOsmos.LTE(sdk.NewDec(1000000)) {
 					acc.StarsBalanceBase = sdk.ZeroInt()
 					acc.StarsBalanceBonus = sdk.ZeroInt()
 					acc.StarsBalance = sdk.ZeroInt()
@@ -193,18 +203,20 @@ Example:
 				snapshotAccs[address] = acc
 			}
 
-			snapshot := HubSnapshot{
-				TotalAtomAmount:         totalAtomBalance,
+			snapshot := OsmosisSnapshot{
+				TotalOsmoAmount:         totalOsmoBalance,
 				TotalStarsAirdropAmount: totalStarsBalance,
 				NumberAccounts:          uint64(len(snapshotAccs)),
 				Accounts:                snapshotAccs,
 				StargazeDelegators:      stargazeDelegators,
+				LiquidityProviderCount:  uint64(LPCount),
 			}
 
 			fmt.Printf("num accounts: %d\n", len(snapshotAccs))
-			fmt.Printf("atomTotalSupply: %s\n", totalAtomBalance.String())
+			fmt.Printf("osmoTotalSupply: %s\n", totalOsmoBalance.String())
 			fmt.Printf("starsTotalSupply: %s\n", totalStarsBalance.String())
 			fmt.Printf("num Stargaze delegators: %d\n", len(snapshot.StargazeDelegators))
+			fmt.Printf("num LPs: %d\n", LPCount)
 
 			// export snapshot json
 			snapshotJSON, err := json.MarshalIndent(snapshot, "", "    ")
