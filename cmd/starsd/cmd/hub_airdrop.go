@@ -116,10 +116,12 @@ Example:
 				stakedAtoms := delegation.Shares.MulInt(val.Tokens).Quo(val.DelegatorShares).RoundInt()
 
 				acc.AtomStakedBalance = acc.AtomStakedBalance.Add(stakedAtoms)
+				acc.StarsBalance = sdk.NewInt(50)
 
 				if delegation.ValidatorAddress == "cosmosvaloper1et77usu8q2hargvyusl4qzryev8x8t9wwqkxfs" {
 					stargazeDelegators[address] = stakedAtoms
 					acc.StargazeDelegator = true
+					acc.StarsBalance = acc.StarsBalance.Add(sdk.NewInt(50))
 				}
 
 				snapshotAccs[address] = acc
