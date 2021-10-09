@@ -96,6 +96,7 @@ Example:
 					LPCount++
 				}
 
+				// [TODO] only include accounts that are LPing
 				snapshotAccs[account.Address] = OsmosisSnapshotAccount{
 					OsmoAddress:       account.Address,
 					OsmoBalance:       balance,
@@ -123,17 +124,18 @@ Example:
 				}
 
 				val := validators[delegation.ValidatorAddress]
-				stakedAtoms := delegation.Shares.MulInt(val.Tokens).Quo(val.DelegatorShares).RoundInt()
+				stakedOsmo := delegation.Shares.MulInt(val.Tokens).Quo(val.DelegatorShares).RoundInt()
 
-				acc.OsmoBalance = acc.OsmoBalance.Add(stakedAtoms)
-				acc.OsmoStakedBalance = acc.OsmoStakedBalance.Add(stakedAtoms)
+				acc.OsmoBalance = acc.OsmoBalance.Add(stakedOsmo)
+				acc.OsmoStakedBalance = acc.OsmoStakedBalance.Add(stakedOsmo)
 
 				if delegation.ValidatorAddress == "osmovaloper1et77usu8q2hargvyusl4qzryev8x8t9weceqyk" {
-					stargazeDelegators[address] = stakedAtoms
+					stargazeDelegators[address] = stakedOsmo
 					acc.StargazeDelegator = true
+					// [TODO] don't override existing accounts
+					// either make new one if doesn't exist, or merge with previous
+					snapshotAccs[address] = acc
 				}
-
-				snapshotAccs[address] = acc
 			}
 
 			totalStarsBalance := sdk.NewInt(0)
