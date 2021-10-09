@@ -10,17 +10,18 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/server"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	stakingtypes "github.com/public-awesome/stargaze/x/staking/types"
 	"github.com/spf13/cobra"
 )
 
 type OsmosisSnapshot struct {
-	TotalOsmoAmount         sdk.Int                       `json:"total_osmo_amount"`
-	TotalStarsAirdropAmount sdk.Int                       `json:"total_stars_amount"`
-	NumberAccounts          uint64                        `json:"num_accounts"`
-	Accounts                map[string]HubSnapshotAccount `json:"accounts"`
-	StargazeDelegators      map[string]sdk.Int            `json:"stargaze_delegators"`
+	TotalOsmoAmount         sdk.Int                           `json:"total_osmo_amount"`
+	TotalStarsAirdropAmount sdk.Int                           `json:"total_stars_amount"`
+	NumberAccounts          uint64                            `json:"num_accounts"`
+	Accounts                map[string]OsmosisSnapshotAccount `json:"accounts"`
+	StargazeDelegators      map[string]sdk.Int                `json:"stargaze_delegators"`
 }
 
 // OsmosisSnapshotAccount provide fields of snapshot per account
@@ -44,6 +45,7 @@ type OsmosisSnapshotAccount struct {
 	StarsPercent sdk.Dec `json:"stars_ownership_percent"`
 
 	StargazeDelegator bool `json:"stargaze_delegator"`
+	LiquidityProvider bool `json:"liquidity_provider"`
 }
 
 // ExportOsmosisSnapshotCmd generates a snapshot.json from a provided Cosmos Hub genesis export.
@@ -85,6 +87,20 @@ Example:
 			appState, _, error := genutiltypes.GenesisStateFromGenFile(genesisFile)
 			if error != nil {
 				return fmt.Errorf("failed to unmarshal genesis state: %w", err)
+			}
+
+			bankGenState := banktypes.GetGenesisStateFromAppState(cdc, appState)
+			for _, account := range bankGenState.Balances {
+				// account.Coins.
+				balance := account.Coins.AmountOf("gamm/...")
+				totalAtomBalance = totalAtomBalance.Add(balance)
+
+				// snapshotAccs[account.Address] = OsmosisSnapshotAccount{
+				// 	AtomAddress:         account.Address,
+				// 	AtomBalance:         balance,
+				// 	AtomUnstakedBalance: balance,
+				// 	AtomStakedBalance:   sdk.ZeroInt(),
+				// }
 			}
 
 			stakingGenState := stakingtypes.GetGenesisStateFromAppState(cdc, appState)
