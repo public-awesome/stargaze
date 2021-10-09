@@ -144,7 +144,7 @@ Example:
 				acc.OsmoBalance = acc.OsmoBalance.Add(stakedAtoms)
 				acc.OsmoStakedBalance = acc.OsmoStakedBalance.Add(stakedAtoms)
 
-				if delegation.ValidatorAddress == "cosmosvaloper1et77usu8q2hargvyusl4qzryev8x8t9wwqkxfs" {
+				if delegation.ValidatorAddress == "osmovaloper1et77usu8q2hargvyusl4qzryev8x8t9weceqyk" {
 					stargazeDelegators[address] = stakedAtoms
 					acc.StargazeDelegator = true
 				}
