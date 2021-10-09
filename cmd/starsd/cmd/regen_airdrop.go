@@ -16,34 +16,21 @@ import (
 )
 
 type RegenSnapshot struct {
-	TotalAtomAmount         sdk.Int                       `json:"total_atom_amount"`
-	TotalStarsAirdropAmount sdk.Int                       `json:"total_stars_amount"`
-	NumberAccounts          uint64                        `json:"num_accounts"`
-	Accounts                map[string]HubSnapshotAccount `json:"accounts"`
-	StargazeDelegators      map[string]sdk.Int            `json:"stargaze_delegators"`
+	TotalRegenAmount        sdk.Int                         `json:"total_regen_amount"`
+	TotalStarsAirdropAmount sdk.Int                         `json:"total_stars_amount"`
+	NumStakers              uint64                          `json:"num_stakers"`
+	Stakers                 map[string]RegenSnapshotAccount `json:"stakers"`
+	StargazeDelegators      map[string]sdk.Int              `json:"stargaze_delegators"`
 }
 
 // HubSnapshotAccount provide fields of snapshot per account
 type RegenSnapshotAccount struct {
-	AtomAddress string `json:"atom_address"` // Atom Balance = AtomStakedBalance + AtomUnstakedBalance
+	RegenAddress string `json:"atom_address"` // Atom Balance = AtomStakedBalance + AtomUnstakedBalance
 
-	AtomBalance          sdk.Int `json:"atom_balance"`
-	AtomOwnershipPercent sdk.Dec `json:"atom_ownership_percent"`
-
-	AtomStakedBalance   sdk.Int `json:"atom_staked_balance"`
-	AtomUnstakedBalance sdk.Int `json:"atom_unstaked_balance"` // AtomStakedPercent = AtomStakedBalance / AtomBalance
-	AtomStakedPercent   sdk.Dec `json:"atom_staked_percent"`
-
-	// StarsBalance = sqrt( AtomBalance ) * (1 + 1.5 * atom staked percent)
-	StarsBalance sdk.Int `json:"stars_balance"`
-	// StarsBalanceBase = sqrt(atom balance)
-	StarsBalanceBase sdk.Int `json:"stars_balance_base"`
-	// StarsBalanceBonus = StarsBalanceBase * (1.5 * atom staked percent)
-	StarsBalanceBonus sdk.Int `json:"stars_balance_bonus"`
-	// StarsPercent = OsmoNormalizedBalance / TotalStarsupply
-	StarsPercent sdk.Dec `json:"stars_ownership_percent"`
-
-	StargazeDelegator bool `json:"stargaze_delegator"`
+	RegenBalance       sdk.Int `json:"regen_balance"`
+	RegenStakedBalance sdk.Int `json:"regen_staked_balance"`
+	StarsBalance       sdk.Int `json:"stars_balance"`
+	StargazeDelegator  bool    `json:"stargaze_delegator"`
 }
 
 // ExportHubSnapshotCmd generates a snapshot.json from a provided Cosmos Hub genesis export.
@@ -78,7 +65,7 @@ Example:
 			// setCosmosBech32Prefixes()
 
 			// Produce the map of address to total atom balance, both staked and unstaked
-			snapshotAccs := make(map[string]HubSnapshotAccount)
+			snapshotAccs := make(map[string]RegenSnapshotAccount)
 			totalAtomBalance := sdk.NewInt(0)
 
 			cdc := clientCtx.Codec
@@ -101,11 +88,10 @@ Example:
 			for _, delegation := range stakingGenState.Delegations {
 				address := delegation.DelegatorAddress
 
-				snapshotAccs[address] = HubSnapshotAccount{
-					AtomAddress:         address,
-					AtomBalance:         sdk.ZeroInt(),
-					AtomUnstakedBalance: sdk.ZeroInt(),
-					AtomStakedBalance:   sdk.ZeroInt(),
+				snapshotAccs[address] = RegenSnapshotAccount{
+					RegenAddress:       address,
+					RegenBalance:       sdk.ZeroInt(),
+					RegenStakedBalance: sdk.ZeroInt(),
 				}
 
 				acc, ok := snapshotAccs[address]
@@ -116,8 +102,8 @@ Example:
 				val := validators[delegation.ValidatorAddress]
 				stakedAtoms := delegation.Shares.MulInt(val.Tokens).Quo(val.DelegatorShares).RoundInt()
 
-				acc.AtomBalance = acc.AtomBalance.Add(stakedAtoms)
-				acc.AtomStakedBalance = acc.AtomStakedBalance.Add(stakedAtoms)
+				acc.RegenBalance = acc.RegenBalance.Add(stakedAtoms)
+				acc.RegenStakedBalance = acc.RegenStakedBalance.Add(stakedAtoms)
 
 				if delegation.ValidatorAddress == "cosmosvaloper1et77usu8q2hargvyusl4qzryev8x8t9wwqkxfs" {
 					stargazeDelegators[address] = stakedAtoms
@@ -131,39 +117,29 @@ Example:
 			onePointFive := sdk.MustNewDecFromStr("1.5")
 
 			for address, acc := range snapshotAccs {
-				allAtoms := acc.AtomBalance.ToDec()
-
-				// acc.AtomOwnershipPercent = allAtoms.QuoInt(totalAtomBalance)
+				allAtoms := acc.RegenBalance.ToDec()
 
 				if allAtoms.IsZero() {
-					acc.AtomStakedPercent = sdk.ZeroDec()
-					acc.StarsBalanceBase = sdk.ZeroInt()
-					acc.StarsBalanceBonus = sdk.ZeroInt()
 					acc.StarsBalance = sdk.ZeroInt()
 					snapshotAccs[address] = acc
 					continue
 				}
 
-				stakedAtoms := acc.AtomStakedBalance.ToDec()
+				stakedAtoms := acc.RegenStakedBalance.ToDec()
 				stakedPercent := stakedAtoms.Quo(allAtoms)
-				acc.AtomStakedPercent = stakedPercent
 
 				baseStars, error := allAtoms.ApproxSqrt()
 				if error != nil {
 					panic(fmt.Sprintf("failed to root atom balance: %s", err))
 				}
-				acc.StarsBalanceBase = baseStars.RoundInt()
 
 				bonusStars := baseStars.Mul(onePointFive).Mul(stakedPercent)
-				acc.StarsBalanceBonus = bonusStars.RoundInt()
 
 				allStars := baseStars.Add(bonusStars)
 				// StarsBalance = sqrt( all atoms) * (1 + 1.5) * (staked atom percent) =
 				acc.StarsBalance = allStars.RoundInt()
 
 				if allAtoms.LTE(sdk.NewDec(1000000)) {
-					acc.StarsBalanceBase = sdk.ZeroInt()
-					acc.StarsBalanceBonus = sdk.ZeroInt()
 					acc.StarsBalance = sdk.ZeroInt()
 				}
 
@@ -172,22 +148,16 @@ Example:
 				snapshotAccs[address] = acc
 			}
 
-			// iterate to find Stars ownership percentage per account
-			for address, acc := range snapshotAccs {
-				acc.StarsPercent = acc.StarsBalance.ToDec().Quo(totalStarsBalance.ToDec())
-				snapshotAccs[address] = acc
-			}
-
-			snapshot := HubSnapshot{
-				TotalAtomAmount:         totalAtomBalance,
+			snapshot := RegenSnapshot{
+				TotalRegenAmount:        totalAtomBalance,
 				TotalStarsAirdropAmount: totalStarsBalance,
-				NumberAccounts:          uint64(len(snapshotAccs)),
-				Accounts:                snapshotAccs,
+				NumStakers:              uint64(len(snapshotAccs)),
+				Stakers:                 snapshotAccs,
 				StargazeDelegators:      stargazeDelegators,
 			}
 
 			fmt.Printf("num accounts: %d\n", len(snapshotAccs))
-			fmt.Printf("atomTotalSupply: %s\n", totalAtomBalance.String())
+			fmt.Printf("regenTotalSupply: %s\n", totalAtomBalance.String())
 			fmt.Printf("starsTotalSupply: %s\n", totalStarsBalance.String())
 			fmt.Printf("num Stargaze delegators: %d\n", len(snapshot.StargazeDelegators))
 
