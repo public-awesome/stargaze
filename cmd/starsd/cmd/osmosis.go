@@ -28,26 +28,12 @@ type OsmosisSnapshot struct {
 
 // OsmosisSnapshotAccount provide fields of snapshot per account
 type OsmosisSnapshotAccount struct {
-	OsmoAddress string `json:"osmo_address"` // Atom Balance = AtomStakedBalance + AtomUnstakedBalance
-
-	OsmoBalance          sdk.Int `json:"osmo_balance"`
-	OsmoOwnershipPercent sdk.Dec `json:"osmo_ownership_percent"`
-
-	OsmoStakedBalance   sdk.Int `json:"osmo_staked_balance"`
-	OsmoUnstakedBalance sdk.Int `json:"osmo_unstaked_balance"` // AtomStakedPercent = AtomStakedBalance / AtomBalance
-	OsmoStakedPercent   sdk.Dec `json:"osmo_staked_percent"`
-
-	// StarsBalance = sqrt( AtomBalance ) * (1 + 1.5 * atom staked percent)
-	StarsBalance sdk.Int `json:"stars_balance"`
-	// StarsBalanceBase = sqrt(atom balance)
-	StarsBalanceBase sdk.Int `json:"stars_balance_base"`
-	// StarsBalanceBonus = StarsBalanceBase * (1.5 * atom staked percent)
-	StarsBalanceBonus sdk.Int `json:"stars_balance_bonus"`
-	// StarsPercent = OsmoNormalizedBalance / TotalStarsupply
-	StarsPercent sdk.Dec `json:"stars_ownership_percent"`
-
-	StargazeDelegator bool `json:"stargaze_delegator"`
-	LiquidityProvider bool `json:"liquidity_provider"`
+	OsmoAddress       string  `json:"osmo_address"`
+	OsmoBalance       sdk.Int `json:"osmo_balance"`
+	OsmoStakedBalance sdk.Int `json:"osmo_staked_balance"`
+	StarsBalance      sdk.Int `json:"stars_balance"`
+	StargazeDelegator bool    `json:"stargaze_delegator"`
+	LiquidityProvider bool    `json:"liquidity_provider"`
 }
 
 // ExportOsmosisSnapshotCmd generates a snapshot.json from a provided Cosmos Hub genesis export.
@@ -101,7 +87,6 @@ Example:
 					denom := account.Coins.GetDenomByIndex(i)
 					if strings.HasPrefix(denom, "gamm") {
 						isLP = true
-						// fmt.Println(denom)
 					}
 				}
 				balance := account.Coins.AmountOf("uosmo")
@@ -112,11 +97,10 @@ Example:
 				}
 
 				snapshotAccs[account.Address] = OsmosisSnapshotAccount{
-					OsmoAddress:         account.Address,
-					OsmoBalance:         balance,
-					OsmoUnstakedBalance: balance,
-					OsmoStakedBalance:   sdk.ZeroInt(),
-					LiquidityProvider:   isLP,
+					OsmoAddress:       account.Address,
+					OsmoBalance:       balance,
+					OsmoStakedBalance: sdk.ZeroInt(),
+					LiquidityProvider: isLP,
 				}
 			}
 
@@ -158,12 +142,7 @@ Example:
 			for address, acc := range snapshotAccs {
 				allOsmos := acc.OsmoBalance.ToDec()
 
-				// acc.AtomOwnershipPercent = allAtoms.QuoInt(totalAtomBalance)
-
 				if allOsmos.IsZero() {
-					acc.OsmoStakedPercent = sdk.ZeroDec()
-					acc.StarsBalanceBase = sdk.ZeroInt()
-					acc.StarsBalanceBonus = sdk.ZeroInt()
 					acc.StarsBalance = sdk.ZeroInt()
 					snapshotAccs[address] = acc
 					continue
@@ -171,35 +150,23 @@ Example:
 
 				stakedOsmos := acc.OsmoStakedBalance.ToDec()
 				stakedPercent := stakedOsmos.Quo(allOsmos)
-				acc.OsmoStakedPercent = stakedPercent
 
 				baseStars, error := allOsmos.ApproxSqrt()
 				if error != nil {
 					panic(fmt.Sprintf("failed to root atom balance: %s", err))
 				}
-				acc.StarsBalanceBase = baseStars.RoundInt()
 
 				bonusStars := baseStars.Mul(onePointFive).Mul(stakedPercent)
-				acc.StarsBalanceBonus = bonusStars.RoundInt()
 
 				allStars := baseStars.Add(bonusStars)
-				// StarsBalance = sqrt( all atoms) * (1 + 1.5) * (staked atom percent) =
 				acc.StarsBalance = allStars.RoundInt()
 
 				if allOsmos.LTE(sdk.NewDec(1000000)) {
-					acc.StarsBalanceBase = sdk.ZeroInt()
-					acc.StarsBalanceBonus = sdk.ZeroInt()
 					acc.StarsBalance = sdk.ZeroInt()
 				}
 
 				totalStarsBalance = totalStarsBalance.Add(acc.StarsBalance)
 
-				snapshotAccs[address] = acc
-			}
-
-			// iterate to find Stars ownership percentage per account
-			for address, acc := range snapshotAccs {
-				acc.StarsPercent = acc.StarsBalance.ToDec().Quo(totalStarsBalance.ToDec())
 				snapshotAccs[address] = acc
 			}
 
