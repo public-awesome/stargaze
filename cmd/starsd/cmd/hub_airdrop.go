@@ -121,6 +121,7 @@ Example:
 					AtomBalance:         sdk.ZeroInt(),
 					AtomUnstakedBalance: sdk.ZeroInt(),
 					AtomStakedBalance:   sdk.ZeroInt(),
+					StargazeDelegator:   false,
 				}
 
 				acc, ok := snapshotAccs[address]
@@ -201,9 +202,9 @@ Example:
 				StargazeDelegators:      stargazeDelegators,
 			}
 
-			fmt.Printf("num accounts: %d\n", len(snapshotAccs))
-			fmt.Printf("atomTotalSupply: %s\n", totalAtomBalance.String())
-			fmt.Printf("starsTotalSupply: %s\n", totalStarsBalance.String())
+			fmt.Printf("num stakers: %d\n", len(snapshotAccs))
+			// fmt.Printf("atomTotalSupply: %s\n", totalAtomBalance.String())
+			// fmt.Printf("starsTotalSupply: %s\n", totalStarsBalance.String())
 			fmt.Printf("num Stargaze delegators: %d\n", len(snapshot.StargazeDelegators))
 
 			// export snapshot json
