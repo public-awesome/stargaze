@@ -9,41 +9,20 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/server"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/spf13/cobra"
 )
 
 type HubSnapshot struct {
-	TotalAtomAmount         sdk.Int                       `json:"total_atom_amount"`
-	TotalStarsAirdropAmount sdk.Int                       `json:"total_stars_amount"`
-	NumStakers              uint64                        `json:"num_stakers"`
-	Stakers                 map[string]HubSnapshotAccount `json:"accounts"`
-	StargazeDelegators      map[string]sdk.Int            `json:"stargaze_delegators"`
+	Accounts map[string]HubSnapshotAccount `json:"accounts"`
 }
 
 // HubSnapshotAccount provide fields of snapshot per account
 type HubSnapshotAccount struct {
-	AtomAddress       string  `json:"atom_address"`
-	AtomStakedBalance sdk.Int `json:"atom_staked_balance"`
-	StarsBalance      sdk.Int `json:"stars_balance"`
-	StargazeDelegator bool    `json:"stargaze_delegator"`
-}
-
-// setCosmosBech32Prefixes set config for cosmos address system
-func setCosmosBech32Prefixes() {
-	defaultConfig := sdk.NewConfig()
-	config := sdk.GetConfig()
-	config.SetBech32PrefixForAccount(defaultConfig.GetBech32AccountAddrPrefix(), defaultConfig.GetBech32AccountPubPrefix())
-	config.SetBech32PrefixForValidator(
-		defaultConfig.GetBech32ValidatorAddrPrefix(),
-		defaultConfig.GetBech32ValidatorPubPrefix(),
-	)
-	config.SetBech32PrefixForConsensusNode(
-		defaultConfig.GetBech32ConsensusAddrPrefix(),
-		defaultConfig.GetBech32ConsensusPubPrefix(),
-	)
+	AtomAddress       string `json:"atom_address"`
+	AtomStaker        bool   `json:"atom_staker"`
+	StargazeDelegator bool   `json:"stargaze_delegator"`
 }
 
 // ExportHubSnapshotCmd generates a snapshot.json from a provided Cosmos Hub genesis export.
@@ -53,9 +32,9 @@ func ExportHubSnapshotCmd() *cobra.Command {
 		Short: "Export snapshot from a provided Cosmos Hub genesis export",
 		Long: `Export snapshot from a provided Cosmos Hub genesis export
 Example:
-	starsd export-hub-snapshot uatom genesis.json snapshot.json
+	starsd export-hub-snapshot genesis.json hub-snapshot.json
 `,
-		Args: cobra.ExactArgs(3),
+		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
@@ -64,9 +43,8 @@ Example:
 
 			config.SetRoot(clientCtx.HomeDir)
 
-			// denom := args[0]
-			genesisFile := args[1]
-			snapshotOutput := args[2]
+			genesisFile := args[0]
+			snapshotOutput := args[1]
 
 			// Read genesis file
 			genesisJSON, err := os.Open(genesisFile)
@@ -75,11 +53,8 @@ Example:
 			}
 			defer genesisJSON.Close()
 
-			// setCosmosBech32Prefixes()
-
 			// Produce the map of address to total atom balance, both staked and unstaked
 			snapshotAccs := make(map[string]HubSnapshotAccount)
-			totalAtomBalance := sdk.NewInt(0)
 
 			cdc := clientCtx.Codec
 
@@ -96,54 +71,38 @@ Example:
 				validators[validator.OperatorAddress] = validator
 			}
 
-			stargazeDelegators := make(map[string]sdk.Int)
-
 			for _, delegation := range stakingGenState.Delegations {
 				address := delegation.DelegatorAddress
 
 				snapshotAccs[address] = HubSnapshotAccount{
 					AtomAddress:       address,
-					AtomStakedBalance: sdk.ZeroInt(),
+					AtomStaker:        true,
 					StargazeDelegator: false,
 				}
 
-				acc, ok := snapshotAccs[address]
-				if !ok {
-					panic("no account found for delegation")
-				}
-
-				val := validators[delegation.ValidatorAddress]
-				stakedAtoms := delegation.Shares.MulInt(val.Tokens).Quo(val.DelegatorShares).RoundInt()
-
-				acc.AtomStakedBalance = acc.AtomStakedBalance.Add(stakedAtoms)
-				acc.StarsBalance = sdk.NewInt(50)
-
 				if delegation.ValidatorAddress == "cosmosvaloper1et77usu8q2hargvyusl4qzryev8x8t9wwqkxfs" {
-					stargazeDelegators[address] = stakedAtoms
-					acc.StargazeDelegator = true
-					acc.StarsBalance = acc.StarsBalance.Add(sdk.NewInt(50))
+					acc, ok := snapshotAccs[address]
+					if !ok {
+						// account does not exist
+						snapshotAccs[address] = HubSnapshotAccount{
+							AtomAddress:       address,
+							AtomStaker:        false,
+							StargazeDelegator: true,
+						}
+					} else {
+						// account exists
+						acc.StargazeDelegator = true
+						snapshotAccs[address] = acc
+					}
+					snapshotAccs[address] = acc
 				}
-
-				snapshotAccs[address] = acc
-			}
-
-			totalStarsBalance := sdk.NewInt(0)
-			for _, acc := range snapshotAccs {
-				totalStarsBalance = totalStarsBalance.Add(acc.StarsBalance)
 			}
 
 			snapshot := HubSnapshot{
-				TotalAtomAmount:         totalAtomBalance,
-				TotalStarsAirdropAmount: totalStarsBalance,
-				NumStakers:              uint64(len(snapshotAccs)),
-				Stakers:                 snapshotAccs,
-				StargazeDelegators:      stargazeDelegators,
+				Accounts: snapshotAccs,
 			}
 
-			fmt.Printf("num stakers: %d\n", len(snapshotAccs))
-			// fmt.Printf("atomTotalSupply: %s\n", totalAtomBalance.String())
-			// fmt.Printf("starsTotalSupply: %s\n", totalStarsBalance.String())
-			fmt.Printf("num Stargaze delegators: %d\n", len(snapshot.StargazeDelegators))
+			fmt.Printf("accounts: %d\n", len(snapshotAccs))
 
 			// export snapshot json
 			snapshotJSON, err := json.MarshalIndent(snapshot, "", "    ")
