@@ -142,6 +142,8 @@ Example:
 				snapshotAccs[addr] = acct
 			}
 
+			average := airdropSupply.QuoRaw(int64(len(snapshotAccs))) // 2,104,539,491
+
 			snapshot := Snapshot{
 				TotalStarsAirdropAmount: sdk.Int{},
 				Accounts:                snapshotAccs,
@@ -150,6 +152,7 @@ Example:
 			fmt.Printf("accounts: %d\n", len(snapshotAccs))
 			fmt.Printf("num rewards: %d\n", numRewards)
 			fmt.Printf("base reward: %d\n", baseReward.Int64())
+			fmt.Printf("average reward: %d\n", average.Int64())
 
 			// export snapshot json
 			snapshotJSON, err := json.MarshalIndent(snapshot, "", "    ")
