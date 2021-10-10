@@ -59,7 +59,7 @@ Example:
 
 			hubSnapshot := HubSnapshot{}
 			json.Unmarshal([]byte(hubJSON), &hubSnapshot)
-			for _, staker := range hubSnapshot.Stakers {
+			for _, staker := range hubSnapshot.Accounts {
 				starsAddr, _ := ConvertCosmosAddressToStargaze(staker.AtomAddress)
 				snapshotAcc := SnapshotAccount{
 					AtomAddress:              staker.AtomAddress,
@@ -118,9 +118,7 @@ Example:
 }
 
 func ConvertCosmosAddressToStargaze(address string) (sdk.AccAddress, error) {
-
 	config := sdk.GetConfig()
-
 	starsPrefix := config.GetBech32AccountAddrPrefix()
 
 	_, bytes, err := bech32.DecodeAndConvert(address)
@@ -132,7 +130,6 @@ func ConvertCosmosAddressToStargaze(address string) (sdk.AccAddress, error) {
 	if err != nil {
 		return nil, err
 	}
-	// fmt.Println(newAddr)
 
 	sdkAddr, err := sdk.AccAddressFromBech32(newAddr)
 	if err != nil {
