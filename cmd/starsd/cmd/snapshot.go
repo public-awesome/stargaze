@@ -19,14 +19,15 @@ type Snapshot struct {
 }
 
 type SnapshotAccount struct {
-	AtomAddress              string `json:"atom_address"`
-	OsmoAddress              string `json:"osmo_address"`
-	RegenAddress             string `json:"regen_address"`
-	StargazeHubDelegator     bool   `json:"sg_hub_delegator"`
-	StargazeOsmosisDelegator bool   `json:"sg_osmosis_delegator"`
-	StargazeRegenDelegator   bool   `json:"sg_regen_delegator"`
-	AtomStaker               bool   `json:"atom_staker"`
-	OsmosisLiquidityProvider bool   `json:"osmosis_lp"`
+	AtomAddress              string  `json:"atom_address"`
+	OsmoAddress              string  `json:"osmo_address"`
+	RegenAddress             string  `json:"regen_address"`
+	StargazeHubDelegator     bool    `json:"sg_hub_delegator"`
+	StargazeOsmosisDelegator bool    `json:"sg_osmosis_delegator"`
+	StargazeRegenDelegator   bool    `json:"sg_regen_delegator"`
+	AtomStaker               bool    `json:"atom_staker"`
+	OsmosisLiquidityProvider bool    `json:"osmosis_lp"`
+	AirdropAmount            sdk.Int `json:"airdrop_amount"`
 }
 
 func ExportSnapshotCmd() *cobra.Command {
@@ -61,6 +62,7 @@ Example:
 			json.Unmarshal([]byte(hubJSON), &hubSnapshot)
 			for _, staker := range hubSnapshot.Accounts {
 				starsAddr, _ := ConvertCosmosAddressToStargaze(staker.AtomAddress)
+				// create account for the first time
 				snapshotAcc := SnapshotAccount{
 					AtomAddress:              staker.AtomAddress,
 					OsmoAddress:              "",
@@ -78,13 +80,14 @@ Example:
 			json.Unmarshal([]byte(osmoJSON), &osmosisSnapshot)
 			for _, acct := range osmosisSnapshot.Accounts {
 				starsAddr, _ := ConvertCosmosAddressToStargaze(acct.OsmoAddress)
-
 				if acc, ok := snapshotAccs[starsAddr.String()]; ok {
+					// account exists
 					acc.OsmoAddress = acct.OsmoAddress
 					acc.StargazeOsmosisDelegator = acct.StargazeDelegator
 					acc.OsmosisLiquidityProvider = acct.LiquidityProvider
 					snapshotAccs[starsAddr.String()] = acc
 				} else {
+					// account does not exist, create it
 					snapshotAcc := SnapshotAccount{
 						OsmoAddress:              acct.OsmoAddress,
 						StargazeOsmosisDelegator: acct.StargazeDelegator,
@@ -94,12 +97,59 @@ Example:
 				}
 			}
 
+			// calculate number of rewards
+			numRewards := 0
+			for _, acct := range snapshotAccs {
+				if acct.StargazeHubDelegator {
+					numRewards++
+				}
+				if acct.StargazeOsmosisDelegator {
+					numRewards++
+				}
+				if acct.StargazeRegenDelegator {
+					numRewards++
+				}
+				if acct.AtomStaker {
+					numRewards++
+				}
+				if acct.OsmosisLiquidityProvider {
+					numRewards++
+				}
+			}
+
+			airdropSupply := sdk.NewInt(300_000_000_000_000)      // 300,000,000 STARS in ustars
+			baseReward := airdropSupply.QuoRaw(int64(numRewards)) // 2,052,615,374 ~= 2,000 STARS per reward
+
+			// calculate airdrop amount
+			for addr, acct := range snapshotAccs {
+				amt := sdk.ZeroInt()
+				if acct.StargazeHubDelegator {
+					amt = amt.Add(baseReward)
+				}
+				if acct.StargazeOsmosisDelegator {
+					amt = amt.Add(baseReward)
+				}
+				if acct.StargazeRegenDelegator {
+					amt = amt.Add(baseReward)
+				}
+				if acct.AtomStaker {
+					amt = amt.Add(baseReward)
+				}
+				if acct.OsmosisLiquidityProvider {
+					amt = amt.Add(baseReward)
+				}
+				acct.AirdropAmount = amt
+				snapshotAccs[addr] = acct
+			}
+
 			snapshot := Snapshot{
 				TotalStarsAirdropAmount: sdk.Int{},
 				Accounts:                snapshotAccs,
 			}
 
 			fmt.Printf("accounts: %d\n", len(snapshotAccs))
+			fmt.Printf("num rewards: %d\n", numRewards)
+			fmt.Printf("base reward: %d\n", baseReward.Int64())
 
 			// export snapshot json
 			snapshotJSON, err := json.MarshalIndent(snapshot, "", "    ")
