@@ -92,7 +92,6 @@ Example:
 					} else {
 						// account exists
 						acc.StargazeDelegator = true
-						snapshotAccs[address] = acc
 					}
 					snapshotAccs[address] = acc
 				}
