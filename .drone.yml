@@ -210,6 +210,13 @@ steps:
     environment:
       GOPROXY: http://goproxy
     detach: true
+  - name: readiness
+    image: publicawesome/stargaze-readiness-checker:latest
+    settings:
+      timeout: 300
+      chain_list:
+        - http://stargaze:26657
+        - http://gaia:26657
   - name: relayer
     image: publicawesome/hermes:latest
     commands:
@@ -246,6 +253,6 @@ volumes:
   temp: {}
 ---
 kind: signature
-hmac: 5a8fa84587cec13abddd12757c3101880a826582c5ba037e49860a16ceefb298
+hmac: d81b6e78729ac2f41c12e3a1bddd10a71003c18ef7739ab68074eab747c23aae
 
 ...
