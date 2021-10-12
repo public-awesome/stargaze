@@ -29,16 +29,16 @@ func waitFor(timeout time.Duration, url string, ch chan<- error) {
 				err = json.NewDecoder(resp.Body).Decode(&status)
 				_ = resp.Body.Close()
 				if err != nil {
-					log.Printf("error decoding response %s\n", err.Error())
+					log.Printf("%s: error decoding response %s\n", url, err.Error())
 					continue
 				}
 
-				if block, err := strconv.Atoi(status.Result.SyncInfo.LatestBlockHeight); err == nil && block > 10 {
-					log.Printf("chain %s is ready \n", url)
+				if block, err := strconv.Atoi(status.Result.SyncInfo.LatestBlockHeight); err == nil && block > 5 {
+					log.Printf("%s: chain is ready \n", url)
 					ch <- nil
 					return
 				}
-				log.Println("latest block: ", status.Result.SyncInfo.LatestBlockHeight)
+				log.Printf("%s latest block: %s \n", url, status.Result.SyncInfo.LatestBlockHeight)
 			}
 		case <-end:
 			ch <- fmt.Errorf("timed out waiting for %s", url)
