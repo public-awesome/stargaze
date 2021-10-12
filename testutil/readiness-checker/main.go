@@ -24,6 +24,7 @@ func waitFor(timeout time.Duration, url string, ch chan<- error) {
 				continue
 			}
 			if resp.StatusCode == 200 {
+				log.Printf("chain %s is ready \n", url)
 				ch <- nil
 				return
 			}
