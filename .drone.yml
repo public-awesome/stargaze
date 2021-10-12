@@ -175,8 +175,26 @@ type: docker
 name: ibc-integration-test
 
 steps:
+  - name: restore-cache
+    image: meltwater/drone-cache:dev
+    volumes:
+      - name: cache
+        path: /go
+    environment:
+      AWS_ACCESS_KEY_ID:
+        from_secret: minio_key_id
+      AWS_SECRET_ACCESS_KEY:
+        from_secret: minio_secret_key
+    pull: true
+    settings:
+      restore: true
+      bucket:
+        from_secret: minio_bucket
+      region: us-east-1
+      mount:
+        - '/go/pkg/mod'
   - name: gaia
-    image: publicawesome/gaia:5.0.5
+    image: publicawesome/gaia:5.0.7
     detach: true
     commands:
       - ./scripts/ci/setup-gaia.sh
@@ -184,6 +202,9 @@ steps:
       GOPROXY: http://goproxy
   - name: stargaze
     image: publicawesome/golang:1.17.0-devtooling
+    volumes:
+      - name: cache
+        path: /go
     commands:
       - ./scripts/ci/setup-stargaze.sh
     environment:
@@ -216,13 +237,15 @@ steps:
 trigger:
   branch:
     - main
+    - feature/v44-upgrade
   event:
     - pull_request
     - push
-depends_on:
-  - default-build
+volumes:
+- name: cache
+  temp: {}
 ---
 kind: signature
-hmac: f7cbdb2322ad2a5e8a9872926b42fcede56efaa0cbedb8285037a00c848f3930
+hmac: 5a8fa84587cec13abddd12757c3101880a826582c5ba037e49860a16ceefb298
 
 ...
