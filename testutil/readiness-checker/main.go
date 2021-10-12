@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -18,15 +19,26 @@ func waitFor(timeout time.Duration, url string, ch chan<- error) {
 	for {
 		select {
 		case <-time.After(time.Second * 5):
-			resp, err := cli.Get(url)
+			resp, err := cli.Get(fmt.Sprintf("%s/status", url))
 			if err != nil {
 				log.Printf("%s\n", err.Error())
 				continue
 			}
-			if resp.StatusCode == 200 {
-				log.Printf("chain %s is ready \n", url)
-				ch <- nil
-				return
+			if resp.StatusCode == http.StatusOK {
+				status := &ChainStatus{}
+				err = json.NewDecoder(resp.Body).Decode(&status)
+				_ = resp.Body.Close()
+				if err != nil {
+					log.Printf("error decoding response %s\n", err.Error())
+					continue
+				}
+
+				if block, err := strconv.Atoi(status.Result.SyncInfo.LatestBlockHeight); err == nil && block > 10 {
+					log.Printf("chain %s is ready \n", url)
+					ch <- nil
+					return
+				}
+				log.Println("latest block: ", status.Result.SyncInfo.LatestBlockHeight)
 			}
 		case <-end:
 			ch <- fmt.Errorf("timed out waiting for %s", url)
