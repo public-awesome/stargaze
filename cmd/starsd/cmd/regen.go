@@ -32,7 +32,7 @@ func ExportRegenSnapshotCmd() *cobra.Command {
 Example:
 	starsd export-regen-snapshot genesis.json regen-snapshot.json
 `,
-		Args: cobra.ExactArgs(3),
+		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
@@ -77,7 +77,7 @@ Example:
 					StargazeDelegator: false,
 				}
 
-				if delegation.ValidatorAddress == "cosmosvaloper1et77usu8q2hargvyusl4qzryev8x8t9wwqkxfs" {
+				if delegation.ValidatorAddress == "regenvaloper1me6xrxj80cp4smrmy2mwaan67spnsen9n2sjxq" {
 					acc, ok := snapshotAccs[address]
 					if !ok {
 						// account does not exist

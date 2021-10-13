@@ -49,12 +49,12 @@ Example:
 
 			hubSnapshotFile := args[0]
 			osmoSnapshotFile := args[1]
-			// regenSnapshotFile := args[2]
+			regenSnapshotFile := args[2]
 			snapshotOutput := args[3]
 
 			hubJSON, _ := ioutil.ReadFile(hubSnapshotFile)
 			osmoJSON, _ := ioutil.ReadFile(osmoSnapshotFile)
-			// regenJSON, _ := ioutil.ReadFile(regenSnapshotFile)
+			regenJSON, _ := ioutil.ReadFile(regenSnapshotFile)
 
 			snapshotAccs := make(map[string]SnapshotAccount)
 
@@ -92,6 +92,25 @@ Example:
 						OsmoAddress:              acct.OsmoAddress,
 						StargazeOsmosisDelegator: acct.StargazeDelegator,
 						OsmosisLiquidityProvider: acct.LiquidityProvider,
+					}
+					snapshotAccs[starsAddr.String()] = snapshotAcc
+				}
+			}
+
+			regenSnapshot := RegenSnapshot{}
+			json.Unmarshal([]byte(regenJSON), &regenSnapshot)
+			for _, acct := range regenSnapshot.Accounts {
+				starsAddr, _ := ConvertCosmosAddressToStargaze(acct.RegenAddress)
+				if acc, ok := snapshotAccs[starsAddr.String()]; ok {
+					// account exists
+					acc.RegenAddress = acct.RegenAddress
+					acc.StargazeRegenDelegator = acct.StargazeDelegator
+					snapshotAccs[starsAddr.String()] = acc
+				} else {
+					// account does not exist, create it
+					snapshotAcc := SnapshotAccount{
+						RegenAddress:           acct.RegenAddress,
+						StargazeRegenDelegator: acct.StargazeDelegator,
 					}
 					snapshotAccs[starsAddr.String()] = snapshotAcc
 				}
