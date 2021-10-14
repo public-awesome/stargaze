@@ -15,8 +15,8 @@ sed -i 's/pruning = "syncable"/pruning = "nothing"/g' ~/.starsd/config/app.toml
 sed -i 's/enable = false/enable = true/g' ~/.starsd/config/app.toml
 starsd keys --keyring-backend test add validator
 
-starsd add-genesis-account $(starsd keys --keyring-backend test show validator -a) 100000000000$DENOM,100000000000ucredits
-starsd add-genesis-account $RLYKEY 100000000000$DENOM,100000000000ucredits
+starsd add-genesis-account $(starsd keys --keyring-backend test show validator -a) 100000000000$DENOM
+starsd add-genesis-account $RLYKEY 100000000000$DENOM
 starsd gentx validator 900000000$DENOM --keyring-backend test --chain-id stargaze
 starsd collect-gentxs
 
