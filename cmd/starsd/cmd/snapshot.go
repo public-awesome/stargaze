@@ -161,7 +161,7 @@ Example:
 				snapshotAccs[addr] = acct
 			}
 
-			average := airdropSupply.QuoRaw(int64(len(snapshotAccs))) // 2,104,539,491
+			average := airdropSupply.QuoRaw(int64(len(snapshotAccs))) // 1,984,284,467
 
 			snapshot := Snapshot{
 				TotalStarsAirdropAmount: sdk.Int{},
