@@ -72,11 +72,6 @@ Example:
 			for _, delegation := range stakingGenState.Delegations {
 				address := delegation.DelegatorAddress
 
-				snapshotAccs[address] = RegenSnapshotAccount{
-					RegenAddress:      address,
-					StargazeDelegator: false,
-				}
-
 				if delegation.ValidatorAddress == "regenvaloper1me6xrxj80cp4smrmy2mwaan67spnsen9n2sjxq" {
 					acc, ok := snapshotAccs[address]
 					if !ok {
