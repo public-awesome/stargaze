@@ -11,16 +11,17 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
+	claimtypes "github.com/public-awesome/stargaze/x/claim/types"
 	"github.com/spf13/cobra"
 )
 
 const Denom = "stars"
 
-func AddAirdrop() *cobra.Command {
+func AddAirdropCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "add-airdrop [airdrop-snapshot-file]",
 		Short: "Add balances of accounts to claim module.",
-		Args:  cobra.ExactArgs(3),
+		Args:  cobra.ExactArgs(1),
 		Long: fmt.Sprintf(`Add balances of accounts to claim module.
 Example:
 $ %s add-airdrop /path/to/snapshot.json
@@ -37,7 +38,7 @@ $ %s add-airdrop /path/to/snapshot.json
 			config.SetRoot(clientCtx.HomeDir)
 
 			// read snapshot
-			snapshotFile := args[1]
+			snapshotFile := args[0]
 			snapshotJSON, _ := ioutil.ReadFile(snapshotFile)
 			snapshot := Snapshot{}
 			json.Unmarshal([]byte(snapshotJSON), &snapshot)
@@ -51,18 +52,35 @@ $ %s add-airdrop /path/to/snapshot.json
 
 			fmt.Printf("Accounts %d\n", len(snapshot.Accounts))
 
-			for address, acc := range snapshot.Accounts {
+			claimGenState := claimtypes.GetGenesisStateFromAppState(cdc, appState)
 
+			// [TODO] add claim genesis params
+			// [TODO] change denom to stars
+			// [TODO] module account balance?
+			// [TODO] remove denom in claim?
+
+			for address, acc := range snapshot.Accounts {
 				// empty account check
 				if acc.AirdropAmount.LTE(sdk.NewInt(0)) {
 					panic("Empty account")
 				}
 
-				addr, _ := sdk.AccAddressFromBech32(address)
-
 				coin := sdk.NewCoin(Denom, acc.AirdropAmount)
 				coins := sdk.NewCoins(coin)
+
+				record := claimtypes.ClaimRecord{
+					Address:                address,
+					InitialClaimableAmount: coins,
+					ActionCompleted:        []bool{false, false, false, false},
+				}
+				claimGenState.ClaimRecords = append(claimGenState.ClaimRecords, record)
 			}
+			// claimGenState.Params = genesisParams.ClaimParams
+			claimGenStateBz, err := cdc.MarshalJSON(claimGenState)
+			if err != nil {
+				return fmt.Errorf("failed to marshal claim genesis state: %w", err)
+			}
+			appState[claimtypes.ModuleName] = claimGenStateBz
 
 			appStateJSON, err := json.Marshal(appState)
 			if err != nil {
