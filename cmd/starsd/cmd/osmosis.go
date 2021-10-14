@@ -14,6 +14,8 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	stakingtypes "github.com/public-awesome/stargaze/x/staking/types"
+
+	// locktypes "github.com/public-awesome/stargaze/x/l/types"
 	"github.com/spf13/cobra"
 )
 
@@ -112,6 +114,8 @@ Example:
 					}
 				}
 			}
+
+			// lockGenState :
 
 			snapshot := OsmosisSnapshot{
 				Accounts:               snapshotAccs,
