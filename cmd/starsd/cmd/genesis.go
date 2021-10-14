@@ -3,6 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -16,6 +17,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
+
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
@@ -71,7 +74,7 @@ Examples include:
 	- Setting module initial params
 	- Setting denom metadata
 Example:
-	starsd prepare-genesis mainnet stargaze-1
+	starsd prepare-genesis stargaze-1 snapshot.json
 	- Check input genesis:
 		file is at ~/.starsd/config/genesis.json
 `,
@@ -90,22 +93,19 @@ Example:
 			}
 
 			// get genesis params
-			var genesisParams GenesisParams
-			network := args[0]
-			switch network {
-			case "testnet":
-				genesisParams = TestnetGenesisParams()
-			case "mainnet":
-				genesisParams = MainnetGenesisParams()
-			default:
-				return fmt.Errorf("please choose 'mainnet' or 'testnet'")
-			}
+			genesisParams := MainnetGenesisParams()
 
 			// get genesis params
-			chainID := args[1]
+			chainID := args[0]
+
+			// read snapshot
+			snapshotFile := args[1]
+			snapshotJSON, _ := ioutil.ReadFile(snapshotFile)
+			snapshot := Snapshot{}
+			json.Unmarshal([]byte(snapshotJSON), &snapshot)
 
 			// run Prepare Genesis
-			appState, genDoc, err = PrepareGenesis(clientCtx, appState, genDoc, genesisParams, chainID)
+			appState, genDoc, err = PrepareGenesis(clientCtx, appState, genDoc, genesisParams, chainID, snapshot)
 			if err != nil {
 				return fmt.Errorf("failed to prepare genesis: %w", err)
 			}
@@ -139,6 +139,7 @@ func PrepareGenesis(
 	genDoc *tmtypes.GenesisDoc,
 	genesisParams GenesisParams,
 	chainID string,
+	snapshot Snapshot,
 ) (map[string]json.RawMessage, *tmtypes.GenesisDoc, error) {
 	cdc := clientCtx.Codec
 
@@ -147,9 +148,49 @@ func PrepareGenesis(
 	genDoc.ChainID = chainID
 	genDoc.ConsensusParams = genesisParams.ConsensusParams
 
+	// write accounts
+	authGenState := authtypes.DefaultGenesisState()
+	accs, err := authtypes.UnpackAccounts(authGenState.Accounts)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to get accounts from any: %w", err)
+	}
+
+	bankGenState := banktypes.GetGenesisStateFromAppState(cdc, appState)
+
+	for addr, acc := range snapshot.Accounts {
+		// write 20% of airdrop to bank
+		initialAlloc := sdk.NewDecWithPrec(2, 2)
+		initialAmount := acc.AirdropAmount.ToDec().MulTruncate(initialAlloc).RoundInt()
+		coin := sdk.NewCoin(genesisParams.NativeCoinMetadatas[0].Base, initialAmount)
+		coins := sdk.NewCoins(coin)
+		balances := banktypes.Balance{Address: addr, Coins: coins.Sort()}
+
+		address, _ := sdk.AccAddressFromBech32(addr)
+		genAccount := authtypes.NewBaseAccount(address, nil, 0, 0)
+		accs = append(accs, genAccount)
+
+		bankGenState.Balances = append(bankGenState.Balances, balances)
+	}
+
+	accs = authtypes.SanitizeGenesisAccounts(accs)
+	bankGenState.Balances = banktypes.SanitizeGenesisBalances(bankGenState.Balances)
+
+	genAccs, err := authtypes.PackAccounts(accs)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to convert accounts into any's: %w", err)
+	}
+	authGenState.Accounts = genAccs
+
+	authGenStateBz, err := cdc.MarshalJSON(authGenState)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to marshal auth genesis state: %w", err)
+	}
+	appState[authtypes.ModuleName] = authGenStateBz
+
+	// [TODO] write 80% in claims module
+
 	// ---
 	// bank module genesis
-	bankGenState := banktypes.DefaultGenesisState()
 	bankGenState.Params.DefaultSendEnabled = true
 	bankGenStateBz, err := cdc.MarshalJSON(bankGenState)
 	if err != nil {
@@ -168,7 +209,6 @@ func PrepareGenesis(
 	appState[ibctransfertypes.ModuleName] = ibcGenStateBz
 
 	// mint module genesis
-
 	mintGenState := minttypes.DefaultGenesisState()
 	mintGenState.Params = genesisParams.MintParams
 
@@ -273,11 +313,6 @@ func MainnetGenesisParams() GenesisParams {
 		},
 	}
 
-	// [TODO] read snapshot
-	// [TODO] write accounts
-	// [TODO] write 20% of airdrop to bank
-	// [TODO] write 80% in claims module
-
 	// mint
 	genParams.MintParams = minttypes.DefaultParams()
 	genParams.MintParams.InflationMax = sdk.NewDecWithPrec(40, 2) // Max 40%
@@ -333,29 +368,6 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.ConsensusParams.Evidence.MaxAgeDuration = genParams.StakingParams.UnbondingTime
 	genParams.ConsensusParams.Evidence.MaxAgeNumBlocks = int64(genParams.StakingParams.UnbondingTime.Seconds()) / 3
 	genParams.ConsensusParams.Version.AppVersion = 1
-
-	return genParams
-}
-
-func TestnetGenesisParams() GenesisParams {
-
-	genParams := MainnetGenesisParams()
-
-	// genParams.GenesisTime = time.Now()
-	genParams.GenesisTime = time.Date(2021, 7, 19, 17, 0, 0, 0, time.UTC) // Jul 19, 2021 - 17:00 UTC
-
-	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 3 // 3 days
-
-	genParams.GovParams.DepositParams.MinDeposit = sdk.NewCoins(sdk.NewCoin(
-		genParams.NativeCoinMetadatas[0].Base,
-		sdk.NewInt(1_000_000), // 1 STARS
-	))
-
-	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.1") // 10%
-	genParams.GovParams.VotingParams.VotingPeriod = time.Hour * 24 * 1    // 1 day
-
-	genParams.ClaimParams.DurationUntilDecay = time.Hour * 24 * 5 // 5 days
-	genParams.ClaimParams.DurationOfDecay = time.Hour * 24 * 5    // 5 days
 
 	return genParams
 }
