@@ -9,13 +9,12 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/server"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
+	lockuptypes "github.com/osmosis-labs/osmosis/x/lockup/types"
 	stakingtypes "github.com/public-awesome/stargaze/x/staking/types"
-
-	// locktypes "github.com/public-awesome/stargaze/x/l/types"
 	"github.com/spf13/cobra"
 )
 
@@ -59,9 +58,8 @@ Example:
 			}
 			defer genesisJSON.Close()
 
-			// Produce the map of address to total atom balance, both staked and unstaked
+			// Produce the map of address
 			snapshotAccs := make(map[string]OsmosisSnapshotAccount)
-			totalOsmoBalance := sdk.NewInt(0)
 
 			cdc := clientCtx.Codec
 
@@ -72,6 +70,7 @@ Example:
 
 			LPCount := 0
 
+			// case1: LP token holders
 			bankGenState := banktypes.GetGenesisStateFromAppState(cdc, appState)
 			for _, account := range bankGenState.Balances {
 				isLP := false
@@ -82,8 +81,6 @@ Example:
 						isLP = true
 					}
 				}
-				balance := account.Coins.AmountOf("uosmo")
-				totalOsmoBalance = totalOsmoBalance.Add(balance)
 
 				if isLP {
 					LPCount++
@@ -94,6 +91,28 @@ Example:
 				}
 			}
 
+			// case 2: accounts with locked LP tokens
+			lockupGenState := GetLockupGenesisStateFromAppState(cdc, appState)
+			for _, lock := range lockupGenState.Locks {
+				addr := lock.Owner
+				acc, ok := snapshotAccs[addr]
+				if !ok {
+					// account does not exist
+					snapshotAccs[addr] = OsmosisSnapshotAccount{
+						OsmoAddress:       addr,
+						LiquidityProvider: true,
+						StargazeDelegator: false,
+					}
+					LPCount++
+				} else {
+					// account exists
+					acc.LiquidityProvider = true
+					snapshotAccs[addr] = acc
+				}
+			}
+
+			delegatorCount := 0
+			// case 3: delegators to stargaze
 			stakingGenState := stakingtypes.GetGenesisStateFromAppState(cdc, appState)
 			for _, delegation := range stakingGenState.Delegations {
 				address := delegation.DelegatorAddress
@@ -112,10 +131,9 @@ Example:
 						acc.StargazeDelegator = true
 						snapshotAccs[address] = acc
 					}
+					delegatorCount++
 				}
 			}
-
-			// lockGenState :
 
 			snapshot := OsmosisSnapshot{
 				Accounts:               snapshotAccs,
@@ -124,6 +142,7 @@ Example:
 
 			fmt.Printf("num accounts: %d\n", len(snapshotAccs))
 			fmt.Printf("num LPs: %d\n", LPCount)
+			fmt.Printf("num delegators: %d\n", delegatorCount)
 
 			// export snapshot json
 			snapshotJSON, err := json.MarshalIndent(snapshot, "", "    ")
@@ -139,4 +158,14 @@ Example:
 	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd
+}
+
+func GetLockupGenesisStateFromAppState(cdc codec.JSONCodec, appState map[string]json.RawMessage) *lockuptypes.GenesisState {
+	var genesisState lockuptypes.GenesisState
+
+	if appState["lockup"] != nil {
+		cdc.MustUnmarshalJSON(appState["lockup"], &genesisState)
+	}
+
+	return &genesisState
 }
