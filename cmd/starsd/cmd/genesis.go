@@ -272,6 +272,12 @@ func MainnetGenesisParams() GenesisParams {
 			Display: HumanCoinUnit,
 		},
 	}
+
+	// [TODO] read snapshot
+	// [TODO] write accounts
+	// [TODO] write 20% of airdrop to bank
+	// [TODO] write 80% in claims module
+
 	// mint
 	genParams.MintParams = minttypes.DefaultParams()
 	genParams.MintParams.InflationMax = sdk.NewDecWithPrec(40, 2) // Max 40%
