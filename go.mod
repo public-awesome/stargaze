@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/cosmos/cosmos-sdk v0.44.2
-	github.com/cosmos/ibc-go v1.2.1
+	github.com/cosmos/ibc-go v1.2.2
 	github.com/gogo/protobuf v1.3.3
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/gorilla/mux v1.8.0
