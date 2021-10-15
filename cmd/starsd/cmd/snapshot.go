@@ -26,6 +26,7 @@ type SnapshotAccount struct {
 	StargazeOsmosisDelegator bool    `json:"sg_osmosis_delegator"`
 	StargazeRegenDelegator   bool    `json:"sg_regen_delegator"`
 	AtomStaker               bool    `json:"atom_staker"`
+	OsmoStaker               bool    `json:"osmo_staker"`
 	OsmosisLiquidityProvider bool    `json:"osmosis_lp"`
 	AirdropAmount            sdk.Int `json:"airdrop_amount"`
 }
@@ -70,7 +71,8 @@ Example:
 					StargazeHubDelegator:     staker.StargazeDelegator,
 					StargazeOsmosisDelegator: false,
 					StargazeRegenDelegator:   false,
-					AtomStaker:               true,
+					AtomStaker:               staker.AtomStaker,
+					OsmoStaker:               false,
 					OsmosisLiquidityProvider: false,
 				}
 				snapshotAccs[starsAddr.String()] = snapshotAcc
@@ -83,6 +85,7 @@ Example:
 				if acc, ok := snapshotAccs[starsAddr.String()]; ok {
 					// account exists
 					acc.OsmoAddress = acct.OsmoAddress
+					acc.OsmoStaker = acct.OsmoStaker
 					acc.StargazeOsmosisDelegator = acct.StargazeDelegator
 					acc.OsmosisLiquidityProvider = acct.LiquidityProvider
 					snapshotAccs[starsAddr.String()] = acc
@@ -90,6 +93,7 @@ Example:
 					// account does not exist, create it
 					snapshotAcc := SnapshotAccount{
 						OsmoAddress:              acct.OsmoAddress,
+						OsmoStaker:               acct.OsmoStaker,
 						StargazeOsmosisDelegator: acct.StargazeDelegator,
 						OsmosisLiquidityProvider: acct.LiquidityProvider,
 					}
@@ -128,7 +132,7 @@ Example:
 				if acct.StargazeRegenDelegator {
 					numRewards++
 				}
-				if acct.AtomStaker {
+				if acct.AtomStaker || acct.OsmoStaker {
 					numRewards++
 				}
 				if acct.OsmosisLiquidityProvider {
@@ -151,7 +155,7 @@ Example:
 				if acct.StargazeRegenDelegator {
 					amt = amt.Add(baseReward)
 				}
-				if acct.AtomStaker {
+				if acct.AtomStaker || acct.OsmoStaker {
 					amt = amt.Add(baseReward)
 				}
 				if acct.OsmosisLiquidityProvider {

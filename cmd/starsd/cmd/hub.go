@@ -81,18 +81,8 @@ Example:
 				}
 
 				if delegation.ValidatorAddress == "cosmosvaloper1et77usu8q2hargvyusl4qzryev8x8t9wwqkxfs" {
-					acc, ok := snapshotAccs[address]
-					if !ok {
-						// account does not exist
-						snapshotAccs[address] = HubSnapshotAccount{
-							AtomAddress:       address,
-							AtomStaker:        false,
-							StargazeDelegator: true,
-						}
-					} else {
-						// account exists
-						acc.StargazeDelegator = true
-					}
+					acc := snapshotAccs[address]
+					acc.StargazeDelegator = true
 					snapshotAccs[address] = acc
 				}
 			}

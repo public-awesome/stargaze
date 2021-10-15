@@ -26,6 +26,7 @@ type OsmosisSnapshot struct {
 // OsmosisSnapshotAccount provide fields of snapshot per account
 type OsmosisSnapshotAccount struct {
 	OsmoAddress       string `json:"osmo_address"`
+	OsmoStaker        bool   `json:"osmo_staker"`
 	StargazeDelegator bool   `json:"stargaze_delegator"`
 	LiquidityProvider bool   `json:"liquidity_provider"`
 }
@@ -111,26 +112,32 @@ Example:
 				}
 			}
 
+			stakerCount := 0
 			delegatorCount := 0
-			// case 3: delegators to stargaze
+			// case 3: stakers + delegators to stargaze
 			stakingGenState := stakingtypes.GetGenesisStateFromAppState(cdc, appState)
 			for _, delegation := range stakingGenState.Delegations {
 				address := delegation.DelegatorAddress
 
-				if delegation.ValidatorAddress == "osmovaloper1et77usu8q2hargvyusl4qzryev8x8t9weceqyk" {
-					acc, ok := snapshotAccs[address]
-					if !ok {
-						// account does not exist
-						snapshotAccs[address] = OsmosisSnapshotAccount{
-							OsmoAddress:       address,
-							LiquidityProvider: false,
-							StargazeDelegator: true,
-						}
-					} else {
-						// account exists
-						acc.StargazeDelegator = true
-						snapshotAccs[address] = acc
+				acc, ok := snapshotAccs[address]
+				if !ok {
+					// account does not exist
+					snapshotAccs[address] = OsmosisSnapshotAccount{
+						OsmoAddress:       address,
+						OsmoStaker:        true,
+						LiquidityProvider: false,
+						StargazeDelegator: false,
 					}
+				} else {
+					// account exists
+					acc.OsmoStaker = true
+					snapshotAccs[address] = acc
+				}
+				stakerCount++
+
+				if delegation.ValidatorAddress == "osmovaloper1et77usu8q2hargvyusl4qzryev8x8t9weceqyk" {
+					acc.StargazeDelegator = true
+					snapshotAccs[address] = acc
 					delegatorCount++
 				}
 			}
@@ -142,7 +149,8 @@ Example:
 
 			fmt.Printf("num accounts: %d\n", len(snapshotAccs))
 			fmt.Printf("num LPs: %d\n", LPCount)
-			fmt.Printf("num delegators: %d\n", delegatorCount)
+			fmt.Printf("num Stargaze delegators: %d\n", delegatorCount)
+			fmt.Printf("num Osmo stakers: %d\n", stakerCount)
 
 			// export snapshot json
 			snapshotJSON, err := json.MarshalIndent(snapshot, "", "    ")
