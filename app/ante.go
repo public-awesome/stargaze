@@ -5,6 +5,8 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	channelkeeper "github.com/cosmos/ibc-go/modules/core/04-channel/keeper"
+	ibcante "github.com/cosmos/ibc-go/modules/core/ante"
 )
 
 type MinCommissionDecorator struct{}
@@ -40,7 +42,7 @@ func (MinCommissionDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bo
 // NewAnteHandler returns an AnteHandler that checks and increments sequence
 // numbers, checks signatures & account numbers, and deducts fees from the first
 // signer.
-func NewAnteHandler(options ante.HandlerOptions) (sdk.AnteHandler, error) {
+func NewAnteHandler(options ante.HandlerOptions, channelKeeper channelkeeper.Keeper) (sdk.AnteHandler, error) {
 	if options.AccountKeeper == nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "account keeper is required for ante builder")
 	}
@@ -73,6 +75,7 @@ func NewAnteHandler(options ante.HandlerOptions) (sdk.AnteHandler, error) {
 		ante.NewSigGasConsumeDecorator(options.AccountKeeper, sigGasConsumer),
 		ante.NewSigVerificationDecorator(options.AccountKeeper, options.SignModeHandler),
 		ante.NewIncrementSequenceDecorator(options.AccountKeeper),
+		ibcante.NewAnteDecorator(channelKeeper),
 	}
 
 	return sdk.ChainAnteDecorators(anteDecorators...), nil

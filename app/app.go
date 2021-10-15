@@ -496,6 +496,7 @@ func New(
 			FeegrantKeeper:  app.FeeGrantKeeper,
 			SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
 		},
+		app.IBCKeeper.ChannelKeeper,
 	)
 	if err != nil {
 		panic(err)
