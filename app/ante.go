@@ -9,6 +9,14 @@ import (
 	ibcante "github.com/cosmos/ibc-go/modules/core/ante"
 )
 
+// HandlerOptions extend the SDK's AnteHandler options by requiring the IBC
+// channel keeper.
+type HandlerOptions struct {
+	ante.HandlerOptions
+
+	IBCChannelkeeper channelkeeper.Keeper
+}
+
 type MinCommissionDecorator struct{}
 
 func NewMinCommissionDecorator() MinCommissionDecorator {
@@ -42,7 +50,7 @@ func (MinCommissionDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bo
 // NewAnteHandler returns an AnteHandler that checks and increments sequence
 // numbers, checks signatures & account numbers, and deducts fees from the first
 // signer.
-func NewAnteHandler(options ante.HandlerOptions, channelKeeper channelkeeper.Keeper) (sdk.AnteHandler, error) {
+func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 	if options.AccountKeeper == nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "account keeper is required for ante builder")
 	}
@@ -75,7 +83,7 @@ func NewAnteHandler(options ante.HandlerOptions, channelKeeper channelkeeper.Kee
 		ante.NewSigGasConsumeDecorator(options.AccountKeeper, sigGasConsumer),
 		ante.NewSigVerificationDecorator(options.AccountKeeper, options.SignModeHandler),
 		ante.NewIncrementSequenceDecorator(options.AccountKeeper),
-		ibcante.NewAnteDecorator(channelKeeper),
+		ibcante.NewAnteDecorator(options.IBCChannelkeeper),
 	}
 
 	return sdk.ChainAnteDecorators(anteDecorators...), nil

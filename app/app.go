@@ -489,14 +489,14 @@ func New(
 	app.SetBeginBlocker(app.BeginBlocker)
 
 	anteHandler, err := NewAnteHandler(
-		ante.HandlerOptions{
-			AccountKeeper:   app.AccountKeeper,
-			BankKeeper:      app.BankKeeper,
-			SignModeHandler: encodingConfig.TxConfig.SignModeHandler(),
-			FeegrantKeeper:  app.FeeGrantKeeper,
-			SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
+		HandlerOptions{
+			HandlerOptions: ante.HandlerOptions{AccountKeeper: app.AccountKeeper,
+				BankKeeper:      app.BankKeeper,
+				SignModeHandler: encodingConfig.TxConfig.SignModeHandler(),
+				FeegrantKeeper:  app.FeeGrantKeeper,
+				SigGasConsumer:  ante.DefaultSigVerificationGasConsumer},
+			IBCChannelkeeper: app.IBCKeeper.ChannelKeeper,
 		},
-		app.IBCKeeper.ChannelKeeper,
 	)
 	if err != nil {
 		panic(err)
