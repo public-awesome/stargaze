@@ -64,21 +64,22 @@ steps:
       event:
         - push
         - pull_request
-  - name: publish-test
+  - name: publish-upgrade
     image: plugins/docker:18
     settings:
-      dockerfile: docker/Dockerfile.test
-      repo: rocketprotocol/rocketzone-relayer-test
+      dockerfile: docker/Dockerfile
+      repo: publicawesome/stargaze
       username:
         from_secret: docker_username
       password:
         from_secret: docker_password
       tags:
-        - latest
+        - upgrade
     when:
       event:
         - push
-      branch: ibc
+      branch:
+        - feature/v44-upgrade
   - name: publish-docker
     image: plugins/docker:18
     settings:
