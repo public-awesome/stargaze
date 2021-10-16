@@ -11,6 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/server"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	lockuptypes "github.com/osmosis-labs/osmosis/x/lockup/types"
@@ -116,8 +117,25 @@ Example:
 			delegatorCount := 0
 			// case 3: stakers + delegators to stargaze
 			stakingGenState := stakingtypes.GetGenesisStateFromAppState(cdc, appState)
+
+			// Make a map from validator operator address to the validator type
+			validators := make(map[string]stakingtypes.Validator)
+			for _, validator := range stakingGenState.Validators {
+				validators[validator.OperatorAddress] = validator
+			}
+
 			for _, delegation := range stakingGenState.Delegations {
+				val, ok := validators[delegation.ValidatorAddress]
+				if !ok {
+					panic(fmt.Sprintf("missing validator %s ", delegation.GetValidatorAddr()))
+				}
+
 				address := delegation.DelegatorAddress
+				delegationAmount := val.TokensFromShares(delegation.Shares).Quo(sdk.NewDec(1_000_000))
+				// MIN 1 OSMO
+				if delegationAmount.LT(sdk.NewDec(1)) {
+					continue
+				}
 
 				acc, ok := snapshotAccs[address]
 				if !ok {

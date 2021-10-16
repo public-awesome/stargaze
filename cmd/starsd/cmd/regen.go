@@ -9,6 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/server"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/spf13/cobra"
@@ -70,7 +71,17 @@ Example:
 			}
 
 			for _, delegation := range stakingGenState.Delegations {
+				val, ok := validators[delegation.ValidatorAddress]
+				if !ok {
+					panic(fmt.Sprintf("missing validator %s ", delegation.GetValidatorAddr()))
+				}
+
 				address := delegation.DelegatorAddress
+				delegationAmount := val.TokensFromShares(delegation.Shares).Quo(sdk.NewDec(1_000_000))
+				// MIN 1REGEN
+				if delegationAmount.LT(sdk.NewDec(0)) {
+					continue
+				}
 
 				if delegation.ValidatorAddress == "regenvaloper1me6xrxj80cp4smrmy2mwaan67spnsen9n2sjxq" {
 					acc, ok := snapshotAccs[address]
