@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -41,29 +42,20 @@ func ValidateMinter(minter Minter) error {
 }
 
 // NextInflationRate returns the new inflation rate for the next hour.
-func (m Minter) NextInflationRate(params Params, bondedRatio sdk.Dec) sdk.Dec {
-	// The target annual inflation rate is recalculated for each previsions cycle. The
-	// inflation is also subject to a rate change (positive or negative) depending on
-	// the distance from the desired ratio (67%). The maximum rate change possible is
-	// defined to be 13% per year, however the annual inflation is capped as between
-	// 7% and 20%.
-
-	// (1 - bondedRatio/GoalBonded) * InflationRateChange
-	inflationRateChangePerYear := sdk.OneDec().
-		Sub(bondedRatio.Quo(params.GoalBonded)).
-		Mul(params.InflationRateChange)
-	inflationRateChange := inflationRateChangePerYear.Quo(sdk.NewDec(int64(params.BlocksPerYear)))
-
-	// adjust the new annual inflation for this next cycle
-	inflation := m.Inflation.Add(inflationRateChange) // note inflationRateChange may be negative
-	if inflation.GT(params.InflationMax) {
-		inflation = params.InflationMax
-	}
-	if inflation.LT(params.InflationMin) {
-		inflation = params.InflationMin
-	}
+func (m Minter) NextInflationRate(blockTime time.Time, params Params) sdk.Dec {
+	year := currentYear(blockTime, params.GenesisTime)
+	reductionMultiplier := sdk.OneDec().Sub(params.ReductionFactor)
+	inflation := reductionMultiplier.Power(year).Mul(params.GenesisInflation)
 
 	return inflation
+}
+
+func currentYear(blockTime time.Time, genesisTime time.Time) uint64 {
+	delta := blockTime.Sub(genesisTime)
+	nsPerYear := 365 * 24 * time.Hour
+	year := (delta / nsPerYear)
+
+	return uint64(year)
 }
 
 // NextAnnualProvisions returns the annual provisions based on current total
