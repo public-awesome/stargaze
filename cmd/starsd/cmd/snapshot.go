@@ -62,7 +62,10 @@ Example:
 			hubSnapshot := HubSnapshot{}
 			json.Unmarshal([]byte(hubJSON), &hubSnapshot)
 			for _, staker := range hubSnapshot.Accounts {
-				starsAddr, _ := ConvertCosmosAddressToStargaze(staker.AtomAddress)
+				starsAddr, err := ConvertCosmosAddressToStargaze(staker.AtomAddress)
+				if err != nil {
+					panic(err)
+				}
 				// create account for the first time
 				snapshotAcc := SnapshotAccount{
 					AtomAddress:              staker.AtomAddress,
@@ -81,7 +84,11 @@ Example:
 			osmosisSnapshot := OsmosisSnapshot{}
 			json.Unmarshal([]byte(osmoJSON), &osmosisSnapshot)
 			for _, acct := range osmosisSnapshot.Accounts {
-				starsAddr, _ := ConvertCosmosAddressToStargaze(acct.OsmoAddress)
+
+				starsAddr, err := ConvertCosmosAddressToStargaze(acct.OsmoAddress)
+				if err != nil {
+					panic(err)
+				}
 				if acc, ok := snapshotAccs[starsAddr.String()]; ok {
 					// account exists
 					acc.OsmoAddress = acct.OsmoAddress
@@ -104,7 +111,10 @@ Example:
 			regenSnapshot := RegenSnapshot{}
 			json.Unmarshal([]byte(regenJSON), &regenSnapshot)
 			for _, acct := range regenSnapshot.Accounts {
-				starsAddr, _ := ConvertCosmosAddressToStargaze(acct.RegenAddress)
+				starsAddr, err := ConvertCosmosAddressToStargaze(acct.RegenAddress)
+				if err != nil {
+					panic(err)
+				}
 				if acc, ok := snapshotAccs[starsAddr.String()]; ok {
 					// account exists
 					acc.RegenAddress = acct.RegenAddress
@@ -140,7 +150,7 @@ Example:
 				}
 			}
 
-			airdropSupply := sdk.NewInt(300_000_000_000_000)      // 300,000,000 STARS in ustars
+			airdropSupply := sdk.NewInt(150_000_000_000_000)      // 150,000,000 STARS in ustars
 			baseReward := airdropSupply.QuoRaw(int64(numRewards)) // 2,052,615,374 ~= 2,000 STARS per reward
 
 			// calculate airdrop amount

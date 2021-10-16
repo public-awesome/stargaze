@@ -81,7 +81,7 @@ Example:
 				address := delegation.DelegatorAddress
 				delegationAmount := val.TokensFromShares(delegation.Shares).Quo(sdk.NewDec(1_000_000))
 				// MIN 1ATOM
-				if delegationAmount.LT(sdk.NewDec(1)) {
+				if delegationAmount.LT(sdk.NewDec(5)) {
 					continue
 				}
 				snapshotAccs[address] = HubSnapshotAccount{

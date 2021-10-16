@@ -133,14 +133,14 @@ Example:
 				address := delegation.DelegatorAddress
 				delegationAmount := val.TokensFromShares(delegation.Shares).Quo(sdk.NewDec(1_000_000))
 				// MIN 1 OSMO
-				if delegationAmount.LT(sdk.NewDec(1)) {
+				if delegationAmount.LT(sdk.NewDec(5)) {
 					continue
 				}
 
 				acc, ok := snapshotAccs[address]
 				if !ok {
 					// account does not exist
-					snapshotAccs[address] = OsmosisSnapshotAccount{
+					acc = OsmosisSnapshotAccount{
 						OsmoAddress:       address,
 						OsmoStaker:        true,
 						LiquidityProvider: false,
@@ -149,15 +149,13 @@ Example:
 				} else {
 					// account exists
 					acc.OsmoStaker = true
-					snapshotAccs[address] = acc
 				}
 				stakerCount++
-
 				if delegation.ValidatorAddress == "osmovaloper1et77usu8q2hargvyusl4qzryev8x8t9weceqyk" {
 					acc.StargazeDelegator = true
-					snapshotAccs[address] = acc
 					delegatorCount++
 				}
+				snapshotAccs[address] = acc
 			}
 
 			snapshot := OsmosisSnapshot{
