@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/suite"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+	// tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	"github.com/cosmos/cosmos-sdk/baseapp"
+	// "github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/public-awesome/stargaze/x/mint/types"
@@ -21,19 +21,19 @@ type MintTestSuite struct {
 	queryClient types.QueryClient
 }
 
-func (suite *MintTestSuite) SetupTest() {
-	app := simapp.Setup(false)
-	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
+// func (suite *MintTestSuite) SetupTest() {
+// 	app := simapp.Setup(false)
+// 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
-	queryHelper := baseapp.NewQueryServerTestHelper(ctx, app.InterfaceRegistry())
-	types.RegisterQueryServer(queryHelper, app.MintKeeper)
-	queryClient := types.NewQueryClient(queryHelper)
+// 	queryHelper := baseapp.NewQueryServerTestHelper(ctx, app.InterfaceRegistry())
+// 	types.RegisterQueryServer(queryHelper, app.MintKeeper)
+// 	queryClient := types.NewQueryClient(queryHelper)
 
-	suite.app = app
-	suite.ctx = ctx
+// 	suite.app = app
+// 	suite.ctx = ctx
 
-	suite.queryClient = queryClient
-}
+// 	suite.queryClient = queryClient
+// }
 
 func (suite *MintTestSuite) TestGRPCParams() {
 	app, ctx, queryClient := suite.app, suite.ctx, suite.queryClient
