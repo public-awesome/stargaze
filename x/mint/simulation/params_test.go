@@ -19,14 +19,13 @@ func TestParamChangest(t *testing.T) {
 		simValue    string
 		subspace    string
 	}{
-		{"mint/InflationRateChange", "InflationRateChange", "\"0.230000000000000000\"", "mint"},
-		{"mint/InflationMax", "InflationMax", "\"0.200000000000000000\"", "mint"},
-		{"mint/InflationMin", "InflationMin", "\"0.070000000000000000\"", "mint"},
-		{"mint/GoalBonded", "GoalBonded", "\"0.670000000000000000\"", "mint"},
+		{"mint/GenesisTime", "GenesisTime", "\"2126-05-08 15:36:50 -0400 EDT\"", "mint"},
+		{"mint/GenesisInflation", "GenesisInflation", "\"0.780000000000000000\"", "mint"},
+		{"mint/ReductionFactor", "ReductionFactor", "\"0.200000000000000000\"", "mint"},
 	}
 
 	paramChanges := simulation.ParamChanges(r)
-	require.Len(t, paramChanges, 4)
+	require.Len(t, paramChanges, 3)
 
 	for i, p := range paramChanges {
 		require.Equal(t, expected[i].composedKey, p.ComposedKey())
