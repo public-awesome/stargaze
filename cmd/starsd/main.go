@@ -26,6 +26,7 @@ func main() {
 	rootCmd.AddCommand(airdrop.ExportRegenSnapshotCmd())
 	rootCmd.AddCommand(airdrop.ExportSnapshotCmd())
 	rootCmd.AddCommand(airdrop.AddAirdropCmd())
+	rootCmd.AddCommand(airdrop.PrepareGenesisCmd(app.DefaultNodeHome, app.ModuleBasics))
 	if err := svrcmd.Execute(rootCmd, app.DefaultNodeHome); err != nil {
 		os.Exit(1)
 	}

@@ -15,7 +15,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const Denom = "stars"
+const Denom = "ustarx"
 
 func AddAirdropCmd() *cobra.Command {
 	cmd := &cobra.Command{
@@ -54,11 +54,7 @@ $ %s add-airdrop /path/to/snapshot.json
 
 			claimGenState := claimtypes.GetGenesisStateFromAppState(cdc, appState)
 
-			// [TODO] add claim genesis params
-			// [TODO] change denom to stars
-			// [TODO] module account balance?
-			// [TODO] remove denom in claim?
-
+			totalClaimedAmount := sdk.NewInt64Coin(Denom, 0)
 			for address, acc := range snapshot.Accounts {
 				// empty account check
 				if acc.AirdropAmount.LTE(sdk.NewInt(0)) {
@@ -74,8 +70,10 @@ $ %s add-airdrop /path/to/snapshot.json
 					ActionCompleted:        []bool{false, false, false, false},
 				}
 				claimGenState.ClaimRecords = append(claimGenState.ClaimRecords, record)
+				totalClaimedAmount = totalClaimedAmount.Add(coin)
 			}
-			// claimGenState.Params = genesisParams.ClaimParams
+
+			claimGenState.ModuleAccountBalance = totalClaimedAmount
 			claimGenStateBz, err := cdc.MarshalJSON(claimGenState)
 			if err != nil {
 				return fmt.Errorf("failed to marshal claim genesis state: %w", err)

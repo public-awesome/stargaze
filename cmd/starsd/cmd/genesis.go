@@ -3,7 +3,6 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -17,8 +16,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
-
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
@@ -98,14 +95,8 @@ Example:
 			// get genesis params
 			chainID := args[0]
 
-			// read snapshot
-			snapshotFile := args[1]
-			snapshotJSON, _ := ioutil.ReadFile(snapshotFile)
-			snapshot := Snapshot{}
-			json.Unmarshal([]byte(snapshotJSON), &snapshot)
-
 			// run Prepare Genesis
-			appState, genDoc, err = PrepareGenesis(clientCtx, appState, genDoc, genesisParams, chainID, snapshot)
+			appState, genDoc, err = PrepareGenesis(clientCtx, appState, genDoc, genesisParams, chainID)
 			if err != nil {
 				return fmt.Errorf("failed to prepare genesis: %w", err)
 			}
@@ -139,7 +130,6 @@ func PrepareGenesis(
 	genDoc *tmtypes.GenesisDoc,
 	genesisParams GenesisParams,
 	chainID string,
-	snapshot Snapshot,
 ) (map[string]json.RawMessage, *tmtypes.GenesisDoc, error) {
 	cdc := clientCtx.Codec
 
@@ -148,49 +138,9 @@ func PrepareGenesis(
 	genDoc.ChainID = chainID
 	genDoc.ConsensusParams = genesisParams.ConsensusParams
 
-	// write accounts
-	authGenState := authtypes.DefaultGenesisState()
-	accs, err := authtypes.UnpackAccounts(authGenState.Accounts)
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to get accounts from any: %w", err)
-	}
-
-	bankGenState := banktypes.GetGenesisStateFromAppState(cdc, appState)
-
-	for addr, acc := range snapshot.Accounts {
-		// write 20% of airdrop to bank
-		initialAlloc := sdk.NewDecWithPrec(2, 2)
-		initialAmount := acc.AirdropAmount.ToDec().MulTruncate(initialAlloc).RoundInt()
-		coin := sdk.NewCoin(genesisParams.NativeCoinMetadatas[0].Base, initialAmount)
-		coins := sdk.NewCoins(coin)
-		balances := banktypes.Balance{Address: addr, Coins: coins.Sort()}
-
-		address, _ := sdk.AccAddressFromBech32(addr)
-		genAccount := authtypes.NewBaseAccount(address, nil, 0, 0)
-		accs = append(accs, genAccount)
-
-		bankGenState.Balances = append(bankGenState.Balances, balances)
-	}
-
-	accs = authtypes.SanitizeGenesisAccounts(accs)
-	bankGenState.Balances = banktypes.SanitizeGenesisBalances(bankGenState.Balances)
-
-	genAccs, err := authtypes.PackAccounts(accs)
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to convert accounts into any's: %w", err)
-	}
-	authGenState.Accounts = genAccs
-
-	authGenStateBz, err := cdc.MarshalJSON(authGenState)
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal auth genesis state: %w", err)
-	}
-	appState[authtypes.ModuleName] = authGenStateBz
-
-	// [TODO] write 80% in claims module
-
 	// ---
 	// bank module genesis
+	bankGenState := banktypes.GetGenesisStateFromAppState(cdc, appState)
 	bankGenState.Params.DefaultSendEnabled = true
 	bankGenStateBz, err := cdc.MarshalJSON(bankGenState)
 	if err != nil {
