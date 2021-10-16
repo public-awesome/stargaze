@@ -36,8 +36,8 @@ func (s *IntegrationTestSuite) SetupSuite() {
 
 	inflation := sdk.MustNewDecFromStr("1.0")
 	mintData.Minter.Inflation = inflation
-	mintData.Params.InflationMin = inflation
-	mintData.Params.InflationMax = inflation
+	// mintData.Params.InflationMin = inflation
+	// mintData.Params.InflationMax = inflation
 
 	mintDataBz, err := s.cfg.Codec.MarshalJSON(&mintData)
 	s.Require().NoError(err)
