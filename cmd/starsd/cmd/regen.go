@@ -79,7 +79,7 @@ Example:
 				address := delegation.DelegatorAddress
 				delegationAmount := val.TokensFromShares(delegation.Shares).Quo(sdk.NewDec(1_000_000))
 				// MIN 1REGEN
-				if delegationAmount.LT(sdk.NewDec(0)) {
+				if delegationAmount.LT(sdk.NewDec(1)) {
 					continue
 				}
 
