@@ -232,4 +232,5 @@ func (k Keeper) clearInitialClaimables(ctx sdk.Context) {
 		key := iterator.Key()
 		store.Delete(key)
 	}
+	iterator.Close()
 }

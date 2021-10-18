@@ -16,15 +16,19 @@ func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		// this line is used by starport scaffolding # genesis/types/default
 		ModuleAccountBalance: sdk.NewCoin(sdk.DefaultBondDenom, sdk.ZeroInt()),
-		Params: Params{
-			AirdropEnabled:     true,
-			AirdropStartTime:   time.Time{},
-			DurationUntilDecay: DefaultDurationUntilDecay,
-			DurationOfDecay:    DefaultDurationOfDecay,
-			ClaimDenom:         DefaultClaimDenom,
-			AllowedClaimers:    []ClaimAuthorization{},
-		},
-		ClaimRecords: []ClaimRecord{},
+		Params:               DefaultParams(),
+		ClaimRecords:         []ClaimRecord{},
+	}
+}
+
+func DefaultParams() Params {
+	return Params{
+		AirdropEnabled:     true,
+		AirdropStartTime:   time.Time{},
+		DurationUntilDecay: DefaultDurationUntilDecay,
+		DurationOfDecay:    DefaultDurationOfDecay,
+		ClaimDenom:         DefaultClaimDenom,
+		AllowedClaimers:    []ClaimAuthorization{},
 	}
 }
 

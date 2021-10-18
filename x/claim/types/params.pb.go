@@ -77,7 +77,7 @@ func (m *ClaimAuthorization) GetAction() Action {
 	if m != nil {
 		return m.Action
 	}
-	return ActionMintSocialToken
+	return ActionInitialClaim
 }
 
 // Params defines the claim module's parameters.

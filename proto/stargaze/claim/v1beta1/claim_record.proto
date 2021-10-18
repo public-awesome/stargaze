@@ -10,7 +10,7 @@ option go_package = "github.com/public-awesome/stargaze/x/claim/types";
 enum Action {
   option (gogoproto.goproto_enum_prefix) = false;
 
-  ActionMintSocialToken = 0;
+  ActionInitialClaim = 0;
   ActionBuySocialToken = 1;
   ActionMintNFT = 2;
   ActionVote = 3;
