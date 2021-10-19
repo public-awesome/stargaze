@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/simapp"
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/cosmos/cosmos-sdk/std"
+	"github.com/tendermint/spm/cosmoscmd"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -32,10 +34,11 @@ var DefaultConsensusParams = &abci.ConsensusParams{
 
 func setup(withGenesis bool, invCheckPeriod uint) (*App, GenesisState) {
 	db := dbm.NewMemDB()
-	encCdc := MakeTestEncodingConfig()
-	app := NewStargazeApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, DefaultNodeHome, invCheckPeriod, encCdc, EmptyAppOptions{})
+	encoding := cosmoscmd.MakeEncodingConfig(ModuleBasics)
+
+	app := NewStargazeApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, DefaultNodeHome, invCheckPeriod, encoding, simapp.EmptyAppOptions{})
 	if withGenesis {
-		return app, NewDefaultGenesisState(encCdc.Marshaler)
+		return app, NewDefaultGenesisState(encoding.Marshaler)
 	}
 	return app, GenesisState{}
 }
