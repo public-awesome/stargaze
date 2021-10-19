@@ -224,8 +224,8 @@ type App struct {
 	mm *module.Manager
 }
 
-// New returns a reference to an initialized Gaia.
-func New(
+// NewStargazeApp returns a reference to an initialized Gaia.
+func NewStargazeApp(
 	logger log.Logger,
 	db dbm.DB,
 	traceStore io.Writer,

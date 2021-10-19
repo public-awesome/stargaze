@@ -22,7 +22,7 @@ func New(dir string) *app.App {
 
 	encoding := cosmoscmd.MakeEncodingConfig(app.ModuleBasics)
 
-	a := app.New(logger, db, nil, true, map[int64]bool{}, dir, 0, encoding,
+	a := app.NewStargazeApp(logger, db, nil, true, map[int64]bool{}, dir, 0, encoding,
 		simapp.EmptyAppOptions{})
 
 	stateBytes, err := json.MarshalIndent(app.ModuleBasics.DefaultGenesis(encoding.Marshaler), "", " ")
