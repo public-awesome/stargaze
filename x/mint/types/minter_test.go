@@ -19,11 +19,11 @@ func TestNextInflation(t *testing.T) {
 		expInflation sdk.Dec
 	}{
 		// inflation start time = in 1 year from now
-		// { block time, inflation }
+		// { blockTime, inflation }
 		// before inflation start time
 		{time.Now(), sdk.ZeroDec()},
 		// year 1 after start, inflation 100%
-		{time.Now().AddDate(1, 6, 0), sdk.NewDecWithPrec(100, 2)},
+		{time.Now().AddDate(1, 0, 0), sdk.NewDecWithPrec(100, 2)},
 		// year 2 after start, inflation 67%
 		{time.Now().AddDate(2, 0, 0), sdk.NewDecWithPrec(67, 2)},
 		// year 3 after start, inflation 44%
