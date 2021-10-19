@@ -44,10 +44,10 @@ func NewParams(
 func DefaultParams() Params {
 	return Params{
 		MintDenom:       sdk.DefaultBondDenom,
-		StartTime:       time.Now(),
-		StartInflation:  sdk.NewDec(1),
-		ReductionFactor: sdk.NewDecWithPrec(33, 2),
-		BlocksPerYear:   uint64(60 * 60 * 8766 / 5), // assuming 5 second block times
+		StartTime:       time.Now().AddDate(1, 0, 0), // 1 year from now
+		StartInflation:  sdk.NewDecWithPrec(100, 2),  // 100%
+		ReductionFactor: sdk.NewDecWithPrec(33, 2),   // 33%
+		BlocksPerYear:   uint64(60 * 60 * 8766 / 5),  // assuming 5 second block times
 	}
 }
 

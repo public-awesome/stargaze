@@ -18,16 +18,20 @@ func TestNextInflation(t *testing.T) {
 		blockTime    time.Time
 		expInflation sdk.Dec
 	}{
-		// year 1, inflation 100%
-		{time.Now().AddDate(0, 6, 0), sdk.NewDecWithPrec(100, 2)},
-		// year 2, inflation 67%
-		{time.Now().AddDate(1, 0, 0), sdk.NewDecWithPrec(67, 2)},
-		// year 3, inflation 44%
-		{time.Now().AddDate(2, 0, 0), sdk.NewDecWithPrec(4489, 4)},
-		// year 4, inflation 30%
-		{time.Now().AddDate(3, 0, 0), sdk.NewDecWithPrec(300763, 6)},
-		// year 5, inflation 20%
-		{time.Now().AddDate(4, 0, 0), sdk.NewDecWithPrec(20151121, 8)},
+		// inflation start time = in 1 year from now
+		// { block time, inflation }
+		// before inflation start time
+		{time.Now(), sdk.ZeroDec()},
+		// year 1 after start, inflation 100%
+		{time.Now().AddDate(1, 6, 0), sdk.NewDecWithPrec(100, 2)},
+		// year 2 after start, inflation 67%
+		{time.Now().AddDate(2, 0, 0), sdk.NewDecWithPrec(67, 2)},
+		// year 3 after start, inflation 44%
+		{time.Now().AddDate(3, 0, 0), sdk.NewDecWithPrec(4489, 4)},
+		// year 4 after start, inflation 30%
+		{time.Now().AddDate(4, 0, 0), sdk.NewDecWithPrec(300763, 6)},
+		// year 5 after start, inflation 20%
+		{time.Now().AddDate(5, 0, 0), sdk.NewDecWithPrec(20151121, 8)},
 	}
 	for i, tc := range tests {
 		inflation := minter.NextInflationRate(tc.blockTime, params)
