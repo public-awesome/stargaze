@@ -41,11 +41,11 @@ func ValidateMinter(minter Minter) error {
 	return nil
 }
 
-// NextInflationRate returns the new inflation rate for the next hour.
+// NextInflationRate returns the new inflation rate
 func (m Minter) NextInflationRate(blockTime time.Time, params Params) sdk.Dec {
-	year := currentYear(blockTime, params.GenesisTime)
+	year := currentYear(blockTime, params.StartTime)
 	reductionMultiplier := sdk.OneDec().Sub(params.ReductionFactor)
-	inflation := reductionMultiplier.Power(year).Mul(params.GenesisInflation)
+	inflation := reductionMultiplier.Power(year).Mul(params.StartInflation)
 
 	return inflation
 }

@@ -26,14 +26,14 @@ message Params {
   // type of coin to mint
   string mint_denom = 1;
   // the time the chain starts
-  google.protobuf.Timestamp genesis_time = 2 [
+  google.protobuf.Timestamp start_time = 2 [
     (gogoproto.stdtime) = true,
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"genesis_time\""
+    (gogoproto.moretags) = "yaml:\"start_time\""
   ];
   // the starting inflation
-  string genesis_inflation = 3 [
-    (gogoproto.moretags)   = "yaml:\"genesis_inflation\"",
+  string start_inflation = 3 [
+    (gogoproto.moretags)   = "yaml:\"start_inflation\"",
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
     (gogoproto.nullable)   = false
   ];

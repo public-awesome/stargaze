@@ -15,8 +15,9 @@ import (
 // Parameter store keys
 var (
 	KeyMintDenom        = []byte("MintDenom")
-	KeyGenesisTime      = []byte("GenesisTime")
+	KeyStartTime        = []byte("StartTime")
 	KeyGenesisInflation = []byte("GenesisInflation")
+	KeyStarTime         = []byte("StartTime")
 	KeyReductionFactor  = []byte("ReductionFactor")
 	KeyBlocksPerYear    = []byte("BlocksPerYear")
 )
@@ -27,26 +28,26 @@ func ParamKeyTable() paramtypes.KeyTable {
 }
 
 func NewParams(
-	mintDenom string, genesisTime time.Time, genesisInflation, reductionFactor sdk.Dec, blocksPerYear uint64,
+	mintDenom string, startTime time.Time, startInflation, reductionFactor sdk.Dec, blocksPerYear uint64,
 ) Params {
 
 	return Params{
-		MintDenom:        mintDenom,
-		GenesisTime:      genesisTime,
-		GenesisInflation: genesisInflation,
-		ReductionFactor:  reductionFactor,
-		BlocksPerYear:    blocksPerYear,
+		MintDenom:       mintDenom,
+		StartTime:       startTime,
+		StartInflation:  startInflation,
+		ReductionFactor: reductionFactor,
+		BlocksPerYear:   blocksPerYear,
 	}
 }
 
 // default minting module parameters
 func DefaultParams() Params {
 	return Params{
-		MintDenom:        sdk.DefaultBondDenom,
-		GenesisTime:      time.Now(),
-		GenesisInflation: sdk.NewDec(1),
-		ReductionFactor:  sdk.NewDecWithPrec(33, 2),
-		BlocksPerYear:    uint64(60 * 60 * 8766 / 5), // assuming 5 second block times
+		MintDenom:       sdk.DefaultBondDenom,
+		StartTime:       time.Now(),
+		StartInflation:  sdk.NewDec(1),
+		ReductionFactor: sdk.NewDecWithPrec(33, 2),
+		BlocksPerYear:   uint64(60 * 60 * 8766 / 5), // assuming 5 second block times
 	}
 }
 
@@ -55,10 +56,10 @@ func (p Params) Validate() error {
 	if err := validateMintDenom(p.MintDenom); err != nil {
 		return err
 	}
-	if err := validateGenesisTime(p.GenesisTime); err != nil {
+	if err := validateStartTime(p.StartTime); err != nil {
 		return err
 	}
-	if err := validateGenesisInflation(p.GenesisInflation); err != nil {
+	if err := validateStartInflation(p.StartInflation); err != nil {
 		return err
 	}
 	if err := validateReductionFactor(p.ReductionFactor); err != nil {
@@ -82,8 +83,8 @@ func (p Params) String() string {
 func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
 		paramtypes.NewParamSetPair(KeyMintDenom, &p.MintDenom, validateMintDenom),
-		paramtypes.NewParamSetPair(KeyGenesisTime, &p.GenesisTime, validateGenesisTime),
-		paramtypes.NewParamSetPair(KeyGenesisInflation, &p.GenesisInflation, validateGenesisInflation),
+		paramtypes.NewParamSetPair(KeyStartTime, &p.StartTime, validateStartTime),
+		paramtypes.NewParamSetPair(KeyGenesisInflation, &p.StartInflation, validateStartInflation),
 		paramtypes.NewParamSetPair(KeyReductionFactor, &p.ReductionFactor, validateReductionFactor),
 		paramtypes.NewParamSetPair(KeyBlocksPerYear, &p.BlocksPerYear, validateBlocksPerYear),
 	}
@@ -105,27 +106,27 @@ func validateMintDenom(i interface{}) error {
 	return nil
 }
 
-func validateGenesisTime(i interface{}) error {
+func validateStartTime(i interface{}) error {
 	v, ok := i.(time.Time)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
 	}
 
 	if v.IsZero() {
-		return fmt.Errorf("genesis time cannot be zero value: %s", v)
+		return fmt.Errorf("start time cannot be zero value: %s", v)
 	}
 
 	return nil
 }
 
-func validateGenesisInflation(i interface{}) error {
+func validateStartInflation(i interface{}) error {
 	v, ok := i.(sdk.Dec)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
 	}
 
 	if v.IsNegative() {
-		return fmt.Errorf("genesis inflation cannot be negative: %s", v)
+		return fmt.Errorf("start inflation cannot be negative: %s", v)
 	}
 
 	return nil
