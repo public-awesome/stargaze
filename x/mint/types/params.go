@@ -46,7 +46,7 @@ func DefaultParams() Params {
 		MintDenom:       sdk.DefaultBondDenom,
 		StartTime:       time.Now().AddDate(1, 0, 0), // 1 year from now
 		StartInflation:  sdk.NewDecWithPrec(100, 2),  // 100%
-		ReductionFactor: sdk.NewDecWithPrec(33, 2),   // 33%
+		ReductionFactor: sdk.NewDec(2).QuoInt64(3),   // 2/3
 		BlocksPerYear:   uint64(60 * 60 * 8766 / 5),  // assuming 5 second block times
 	}
 }
