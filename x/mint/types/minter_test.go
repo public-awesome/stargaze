@@ -113,19 +113,17 @@ func BenchmarkBlockProvision(b *testing.B) {
 	}
 }
 
-// // Next inflation benchmarking
-// // BenchmarkNextInflation-4 1000000 1828 ns/op
-// func BenchmarkNextInflation(b *testing.B) {
-// 	minter := InitialMinter(sdk.NewDecWithPrec(1, 1))
-// 	params := DefaultParams()
-// 	bondedRatio := sdk.NewDecWithPrec(1, 1)
+// Next inflation benchmarking
+// BenchmarkNextInflation-4 1000000 1828 ns/op
+func BenchmarkNextInflation(b *testing.B) {
+	minter := InitialMinter(sdk.NewDecWithPrec(1, 1))
+	params := DefaultParams()
 
-// 	// run the NextInflationRate function b.N times
-// 	for n := 0; n < b.N; n++ {
-// 		minter.NextInflationRate(params, bondedRatio)
-// 	}
-
-// }
+	// run the NextInflationRate function b.N times
+	for n := 0; n < b.N; n++ {
+		minter.NextInflationRate(time.Now(), params)
+	}
+}
 
 // Next annual provisions benchmarking
 // BenchmarkNextAnnualProvisions-4 5000000 251 ns/op
