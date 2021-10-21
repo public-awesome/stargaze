@@ -74,7 +74,7 @@ func RandomizedGenState(simState *module.SimulationState) {
 	blocksPerYear := uint64(60 * 60 * 8766 / 5)
 	params := types.NewParams(mintDenom, genesisTime, genesisInflation, reductionFactor, blocksPerYear)
 
-	mintGenesis := types.NewGenesisState(types.InitialMinter(inflation), params)
+	mintGenesis := types.NewGenesisState(types.InitialMinter(), params)
 
 	bz, err := json.MarshalIndent(&mintGenesis, "", " ")
 	if err != nil {

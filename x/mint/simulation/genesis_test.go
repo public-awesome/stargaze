@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"math/rand"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/public-awesome/stargaze/x/mint/simulation"
@@ -40,19 +40,10 @@ func TestRandomizedGenState(t *testing.T) {
 	var mintGenesis types.GenesisState
 	simState.Cdc.MustUnmarshalJSON(simState.GenState[types.ModuleName], &mintGenesis)
 
-	// dec1, _ := sdk.NewDecFromStr("0.670000000000000000")
-	// dec2, _ := sdk.NewDecFromStr("0.200000000000000000")
-	// dec3, _ := sdk.NewDecFromStr("0.070000000000000000")
-
 	require.Equal(t, uint64(6311520), mintGenesis.Params.BlocksPerYear)
-	// require.Equal(t, dec1, mintGenesis.Params.GoalBonded)
-	// require.Equal(t, dec2, mintGenesis.Params.InflationMax)
-	// require.Equal(t, dec3, mintGenesis.Params.InflationMin)
 	require.Equal(t, "stake", mintGenesis.Params.MintDenom)
 	require.Equal(t, "0stake", mintGenesis.Minter.BlockProvision(mintGenesis.Params).String())
-	require.Equal(t, "0.170000000000000000", mintGenesis.Minter.NextAnnualProvisions(mintGenesis.Params, sdk.OneInt()).String())
-	// require.Equal(t, "0.169999926644441493", mintGenesis.Minter.NextInflationRate(mintGenesis.Params, sdk.OneDec()).String())
-	require.Equal(t, "0.170000000000000000", mintGenesis.Minter.Inflation.String())
+	require.Equal(t, "0.000000000000000000", mintGenesis.Minter.NextAnnualProvisions(time.Time{}, mintGenesis.Params).String())
 	require.Equal(t, "0.000000000000000000", mintGenesis.Minter.AnnualProvisions.String())
 }
 

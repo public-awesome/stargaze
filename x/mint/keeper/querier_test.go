@@ -27,9 +27,6 @@ func TestNewQuerier(t *testing.T) {
 	_, err := querier(ctx, []string{types.QueryParameters}, query)
 	require.NoError(t, err)
 
-	_, err = querier(ctx, []string{types.QueryInflation}, query)
-	require.NoError(t, err)
-
 	_, err = querier(ctx, []string{types.QueryAnnualProvisions}, query)
 	require.NoError(t, err)
 
@@ -51,22 +48,6 @@ func TestQueryParams(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, app.MintKeeper.GetParams(ctx), params)
-}
-
-func TestQueryInflation(t *testing.T) {
-	app, ctx := createTestApp(true)
-	legacyQuerierCdc := codec.NewAminoCodec(app.LegacyAmino())
-	querier := keep.NewQuerier(app.MintKeeper, legacyQuerierCdc.LegacyAmino)
-
-	var inflation sdk.Dec
-
-	res, sdkErr := querier(ctx, []string{types.QueryInflation}, abci.RequestQuery{})
-	require.NoError(t, sdkErr)
-
-	err := app.LegacyAmino().UnmarshalJSON(res, &inflation)
-	require.NoError(t, err)
-
-	require.Equal(t, app.MintKeeper.GetMinter(ctx).Inflation, inflation)
 }
 
 func TestQueryAnnualProvisions(t *testing.T) {

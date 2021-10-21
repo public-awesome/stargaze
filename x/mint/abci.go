@@ -17,8 +17,9 @@ func BeginBlocker(ctx sdk.Context, k keeper.Keeper) {
 	minter := k.GetMinter(ctx)
 	params := k.GetParams(ctx)
 
-	// recalculate inflation rate
+	// recalculate annual provision
 	minter.AnnualProvisions = minter.NextAnnualProvisions(ctx.BlockTime(), params)
+	k.Logger(ctx).Info(minter.AnnualProvisions.String())
 	k.SetMinter(ctx, minter)
 
 	// mint coins, update supply

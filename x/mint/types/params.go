@@ -34,7 +34,6 @@ func NewParams(
 	return Params{
 		MintDenom:       mintDenom,
 		StartTime:       startTime,
-		StartInflation:  startInflation,
 		ReductionFactor: reductionFactor,
 		BlocksPerYear:   blocksPerYear,
 	}
@@ -45,7 +44,6 @@ func DefaultParams() Params {
 	return Params{
 		MintDenom:       sdk.DefaultBondDenom,
 		StartTime:       time.Now().AddDate(1, 0, 0), // 1 year from now
-		StartInflation:  sdk.NewDecWithPrec(100, 2),  // 100%
 		ReductionFactor: sdk.NewDec(2).QuoInt64(3),   // 2/3
 		BlocksPerYear:   uint64(60 * 60 * 8766 / 5),  // assuming 5 second block times
 	}
@@ -57,9 +55,6 @@ func (p Params) Validate() error {
 		return err
 	}
 	if err := validateStartTime(p.StartTime); err != nil {
-		return err
-	}
-	if err := validateStartInflation(p.StartInflation); err != nil {
 		return err
 	}
 	if err := validateReductionFactor(p.ReductionFactor); err != nil {
@@ -84,7 +79,6 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
 		paramtypes.NewParamSetPair(KeyMintDenom, &p.MintDenom, validateMintDenom),
 		paramtypes.NewParamSetPair(KeyStartTime, &p.StartTime, validateStartTime),
-		paramtypes.NewParamSetPair(KeyGenesisInflation, &p.StartInflation, validateStartInflation),
 		paramtypes.NewParamSetPair(KeyReductionFactor, &p.ReductionFactor, validateReductionFactor),
 		paramtypes.NewParamSetPair(KeyBlocksPerYear, &p.BlocksPerYear, validateBlocksPerYear),
 	}
@@ -114,19 +108,6 @@ func validateStartTime(i interface{}) error {
 
 	if v.IsZero() {
 		return fmt.Errorf("start time cannot be zero value: %s", v)
-	}
-
-	return nil
-}
-
-func validateStartInflation(i interface{}) error {
-	v, ok := i.(sdk.Dec)
-	if !ok {
-		return fmt.Errorf("invalid parameter type: %T", i)
-	}
-
-	if v.IsNegative() {
-		return fmt.Errorf("start inflation cannot be negative: %s", v)
 	}
 
 	return nil

@@ -16,9 +16,6 @@ func NewQuerier(k Keeper, legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
 		case types.QueryParameters:
 			return queryParams(ctx, k, legacyQuerierCdc)
 
-		case types.QueryInflation:
-			return queryInflation(ctx, k, legacyQuerierCdc)
-
 		case types.QueryAnnualProvisions:
 			return queryAnnualProvisions(ctx, k, legacyQuerierCdc)
 
@@ -32,17 +29,6 @@ func queryParams(ctx sdk.Context, k Keeper, legacyQuerierCdc *codec.LegacyAmino)
 	params := k.GetParams(ctx)
 
 	res, err := codec.MarshalJSONIndent(legacyQuerierCdc, params)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
-	}
-
-	return res, nil
-}
-
-func queryInflation(ctx sdk.Context, k Keeper, legacyQuerierCdc *codec.LegacyAmino) ([]byte, error) {
-	minter := k.GetMinter(ctx)
-
-	res, err := codec.MarshalJSONIndent(legacyQuerierCdc, minter.Inflation)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}

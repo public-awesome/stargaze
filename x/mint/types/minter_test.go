@@ -10,37 +10,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func TestNextInflation(t *testing.T) {
-	minter := DefaultInitialMinter()
-	params := DefaultParams()
-
-	tests := []struct {
-		blockTime    time.Time
-		expInflation sdk.Dec
-	}{
-		// inflation start time = in 1 year from now
-		// { blockTime, inflation }
-		// before inflation start time
-		{time.Now(), sdk.ZeroDec()},
-		// year 1 after start, inflation 100%
-		{time.Now().AddDate(1, 0, 0), sdk.NewDecWithPrec(100, 2)},
-		// year 2 after start, inflation 67%
-		{time.Now().AddDate(2, 0, 0), sdk.NewDecWithPrec(67, 2)},
-		// year 3 after start, inflation 44%
-		{time.Now().AddDate(3, 0, 0), sdk.NewDecWithPrec(4489, 4)},
-		// year 4 after start, inflation 30%
-		{time.Now().AddDate(4, 0, 0), sdk.NewDecWithPrec(300763, 6)},
-		// year 5 after start, inflation 20%
-		{time.Now().AddDate(5, 0, 0), sdk.NewDecWithPrec(20151121, 8)},
-	}
-	for i, tc := range tests {
-		inflation := minter.NextInflationRate(tc.blockTime, params)
-
-		require.True(t, inflation.Equal(tc.expInflation),
-			"Test Index: %v\nInflation:  %v\nExpected: %v\n", i, inflation, tc.expInflation)
-	}
-}
-
 func TestCurrentYear(t *testing.T) {
 	genesisTime := time.Now()
 	actualYear := currentYear(time.Now().AddDate(0, 1, 0), genesisTime)
@@ -66,7 +35,7 @@ func TestCurrentYear3(t *testing.T) {
 }
 
 func TestBlockProvision(t *testing.T) {
-	minter := InitialMinter(sdk.NewDecWithPrec(1, 1))
+	minter := InitialMinter()
 	params := DefaultParams()
 
 	secondsPerYear := int64(60 * 60 * 8766)
@@ -100,7 +69,7 @@ func TestBlockProvision(t *testing.T) {
 // using sdk.Dec operations: (current implementation)
 // BenchmarkBlockProvision-4 3000000 429 ns/op
 func BenchmarkBlockProvision(b *testing.B) {
-	minter := InitialMinter(sdk.NewDecWithPrec(1, 1))
+	minter := InitialMinter()
 	params := DefaultParams()
 
 	s1 := rand.NewSource(100)
@@ -113,28 +82,15 @@ func BenchmarkBlockProvision(b *testing.B) {
 	}
 }
 
-// Next inflation benchmarking
-// BenchmarkNextInflation-4 1000000 1828 ns/op
-func BenchmarkNextInflation(b *testing.B) {
-	minter := InitialMinter(sdk.NewDecWithPrec(1, 1))
-	params := DefaultParams()
-
-	// run the NextInflationRate function b.N times
-	for n := 0; n < b.N; n++ {
-		minter.NextInflationRate(time.Now(), params)
-	}
-}
-
 // Next annual provisions benchmarking
 // BenchmarkNextAnnualProvisions-4 5000000 251 ns/op
 func BenchmarkNextAnnualProvisions(b *testing.B) {
-	minter := InitialMinter(sdk.NewDecWithPrec(1, 1))
+	minter := InitialMinter()
 	params := DefaultParams()
-	totalSupply := sdk.NewInt(100000000000000)
 
 	// run the NextAnnualProvisions function b.N times
 	for n := 0; n < b.N; n++ {
-		minter.NextAnnualProvisions(params, totalSupply)
+		minter.NextAnnualProvisions(time.Time{}, params)
 	}
 
 }
