@@ -19815,3 +19815,5 @@ definitions:
       and
 
       freezing clients
+  publicawesome.stargaze.alloc.MsgCreateVestingAccountResponse:
+    type: object
