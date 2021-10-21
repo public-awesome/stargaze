@@ -8,7 +8,7 @@ import "cosmos/base/v1beta1/coin.proto";
 
 option go_package = "github.com/public-awesome/stargaze/x/alloc/types";
 
-// Msg defines the bank Msg service.
+// Msg defines the alloc Msg service.
 service Msg {
     // CreateVestingAccount defines a method that enables creating a vesting
     // account.
