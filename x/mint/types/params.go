@@ -14,12 +14,11 @@ import (
 
 // Parameter store keys
 var (
-	KeyMintDenom        = []byte("MintDenom")
-	KeyStartTime        = []byte("StartTime")
-	KeyGenesisInflation = []byte("GenesisInflation")
-	KeyStarTime         = []byte("StartTime")
-	KeyReductionFactor  = []byte("ReductionFactor")
-	KeyBlocksPerYear    = []byte("BlocksPerYear")
+	KeyMintDenom       = []byte("MintDenom")
+	KeyStartTime       = []byte("StartTime")
+	KeyStartProvisions = []byte("StartProvisions")
+	KeyReductionFactor = []byte("ReductionFactor")
+	KeyBlocksPerYear   = []byte("BlocksPerYear")
 )
 
 // ParamTable for minting module.
@@ -28,12 +27,13 @@ func ParamKeyTable() paramtypes.KeyTable {
 }
 
 func NewParams(
-	mintDenom string, startTime time.Time, startInflation, reductionFactor sdk.Dec, blocksPerYear uint64,
+	mintDenom string, startTime time.Time, startProvisions, reductionFactor sdk.Dec, blocksPerYear uint64,
 ) Params {
 
 	return Params{
 		MintDenom:       mintDenom,
 		StartTime:       startTime,
+		StartProvisions: startProvisions,
 		ReductionFactor: reductionFactor,
 		BlocksPerYear:   blocksPerYear,
 	}
@@ -43,9 +43,10 @@ func NewParams(
 func DefaultParams() Params {
 	return Params{
 		MintDenom:       sdk.DefaultBondDenom,
-		StartTime:       time.Now().AddDate(1, 0, 0), // 1 year from now
-		ReductionFactor: sdk.NewDec(2).QuoInt64(3),   // 2/3
-		BlocksPerYear:   uint64(60 * 60 * 8766 / 5),  // assuming 5 second block times
+		StartTime:       time.Now().AddDate(1, 0, 0),                     // 1 year from now
+		StartProvisions: sdk.NewDec(1_000_000_000_000_000).QuoInt64(365), // 1B * 10^6 / 365 = ~2,739,726.0274 * 10^6,
+		ReductionFactor: sdk.NewDec(2).QuoInt64(3),                       // 2/3
+		BlocksPerYear:   uint64(60 * 60 * 8766 / 5),                      // assuming 5 second block times
 	}
 }
 
@@ -55,6 +56,9 @@ func (p Params) Validate() error {
 		return err
 	}
 	if err := validateStartTime(p.StartTime); err != nil {
+		return err
+	}
+	if err := validateStartProvisions(p.StartProvisions); err != nil {
 		return err
 	}
 	if err := validateReductionFactor(p.ReductionFactor); err != nil {
@@ -79,6 +83,7 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
 		paramtypes.NewParamSetPair(KeyMintDenom, &p.MintDenom, validateMintDenom),
 		paramtypes.NewParamSetPair(KeyStartTime, &p.StartTime, validateStartTime),
+		paramtypes.NewParamSetPair(KeyStartProvisions, &p.StartProvisions, validateStartProvisions),
 		paramtypes.NewParamSetPair(KeyReductionFactor, &p.ReductionFactor, validateReductionFactor),
 		paramtypes.NewParamSetPair(KeyBlocksPerYear, &p.BlocksPerYear, validateBlocksPerYear),
 	}
@@ -108,6 +113,19 @@ func validateStartTime(i interface{}) error {
 
 	if v.IsZero() {
 		return fmt.Errorf("start time cannot be zero value: %s", v)
+	}
+
+	return nil
+}
+
+func validateStartProvisions(i interface{}) error {
+	v, ok := i.(sdk.Dec)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
+	if v.IsNegative() {
+		return fmt.Errorf("start provisions cannot be negative")
 	}
 
 	return nil

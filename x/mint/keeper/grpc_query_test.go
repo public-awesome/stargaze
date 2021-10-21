@@ -9,20 +9,20 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	simapp "github.com/public-awesome/stargaze/app"
+	"github.com/public-awesome/stargaze/app"
 	"github.com/public-awesome/stargaze/x/mint/types"
 )
 
 type MintTestSuite struct {
 	suite.Suite
 
-	app         *simapp.App
+	app         *app.App
 	ctx         sdk.Context
 	queryClient types.QueryClient
 }
 
 func (suite *MintTestSuite) SetupTest() {
-	app := simapp.Setup(false)
+	app := setup(false)
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
 	queryHelper := baseapp.NewQueryServerTestHelper(ctx, app.InterfaceRegistry())
