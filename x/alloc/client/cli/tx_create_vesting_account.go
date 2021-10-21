@@ -55,7 +55,10 @@ timestamp.`,
 				return err
 			}
 
-			delayed, _ := cmd.Flags().GetBool(FlagDelayed)
+			delayed, err := cmd.Flags().GetBool(FlagDelayed)
+			if err != nil {
+				return err
+			}
 			msg := types.NewMsgCreateVestingAccount(
 				clientCtx.GetFromAddress(),
 				toAddr,
