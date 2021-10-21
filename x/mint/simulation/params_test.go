@@ -19,8 +19,8 @@ func TestParamChangest(t *testing.T) {
 		simValue    string
 		subspace    string
 	}{
-		{"mint/GenesisTime", "GenesisTime", "\"2126-05-08 15:36:50 -0400 EDT\"", "mint"},
-		{"mint/GenesisInflation", "GenesisInflation", "\"0.780000000000000000\"", "mint"},
+		{"mint/StartTime", "StartTime", "\"2126-05-08 15:36:50 -0400 EDT\"", "mint"},
+		{"mint/StartProvisions", "StartProvisions", "\"0.780000000000000000\"", "mint"},
 		{"mint/ReductionFactor", "ReductionFactor", "\"0.200000000000000000\"", "mint"},
 	}
 

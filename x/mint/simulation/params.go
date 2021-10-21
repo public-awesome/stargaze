@@ -13,23 +13,23 @@ import (
 )
 
 const (
-	keyGenesisTime      = "GenesisTime"
-	keyGenesisInflation = "GenesisInflation"
-	keyReductionFactor  = "ReductionFactor"
+	keyStartTime       = "StartTime"
+	keyStartProvisions = "StartProvisions"
+	keyReductionFactor = "ReductionFactor"
 )
 
 // ParamChanges defines the parameters that can be modified by param change proposals
 // on the simulation
 func ParamChanges(r *rand.Rand) []simtypes.ParamChange {
 	return []simtypes.ParamChange{
-		simulation.NewSimParamChange(types.ModuleName, keyGenesisTime,
+		simulation.NewSimParamChange(types.ModuleName, keyStartTime,
 			func(r *rand.Rand) string {
-				return fmt.Sprintf("\"%s\"", GenGenesisTime(r))
+				return fmt.Sprintf("\"%s\"", GenStartTime(r))
 			},
 		),
-		simulation.NewSimParamChange(types.ModuleName, keyGenesisInflation,
+		simulation.NewSimParamChange(types.ModuleName, keyStartProvisions,
 			func(r *rand.Rand) string {
-				return fmt.Sprintf("\"%s\"", GenGenesisInflation(r))
+				return fmt.Sprintf("\"%s\"", GenStartProvisions(r))
 			},
 		),
 		simulation.NewSimParamChange(types.ModuleName, keyReductionFactor,

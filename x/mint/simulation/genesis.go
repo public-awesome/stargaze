@@ -16,24 +16,18 @@ import (
 
 // Simulation parameter constants
 const (
-	Inflation        = "inflation"
-	GenesisTime      = "genesis_time"
-	GenesisInflation = "genesis_inflation"
-	ReductionFactor  = "reduction_factor"
+	StartTime       = "start_time"
+	StartProvisions = "start_provisions"
+	ReductionFactor = "reduction_factor"
 )
 
-// GenInflation randomized Inflation
-func GenInflation(r *rand.Rand) sdk.Dec {
-	return sdk.NewDecWithPrec(int64(r.Intn(99)), 2)
-}
-
-// GenGenesisTime randomized genesis time
-func GenGenesisTime(r *rand.Rand) time.Time {
+// GenStartTime randomized start time
+func GenStartTime(r *rand.Rand) time.Time {
 	return simtypes.RandTimestamp(r)
 }
 
-// GenGenesisInflation randomized GenesisInflation
-func GenGenesisInflation(r *rand.Rand) sdk.Dec {
+// GenStartProvisions randomized StartProvisions
+func GenStartProvisions(r *rand.Rand) sdk.Dec {
 	return sdk.NewDecWithPrec(int64(r.Intn(99)), 2)
 }
 
@@ -44,24 +38,17 @@ func GenReductionFactor(r *rand.Rand) sdk.Dec {
 
 // RandomizedGenState generates a random GenesisState for mint
 func RandomizedGenState(simState *module.SimulationState) {
-	// minter
-	var inflation sdk.Dec
-	simState.AppParams.GetOrGenerate(
-		simState.Cdc, Inflation, &inflation, simState.Rand,
-		func(r *rand.Rand) { inflation = GenInflation(r) },
-	)
-
 	// params
-	var genesisTime time.Time
+	var startTime time.Time
 	simState.AppParams.GetOrGenerate(
-		simState.Cdc, GenesisTime, &genesisTime, simState.Rand,
-		func(r *rand.Rand) { genesisTime = GenGenesisTime(r) },
+		simState.Cdc, StartTime, &startTime, simState.Rand,
+		func(r *rand.Rand) { startTime = GenStartTime(r) },
 	)
 
-	var genesisInflation sdk.Dec
+	var startProvisions sdk.Dec
 	simState.AppParams.GetOrGenerate(
-		simState.Cdc, GenesisInflation, &genesisInflation, simState.Rand,
-		func(r *rand.Rand) { genesisInflation = GenGenesisInflation(r) },
+		simState.Cdc, StartProvisions, &startProvisions, simState.Rand,
+		func(r *rand.Rand) { startProvisions = GenStartProvisions(r) },
 	)
 
 	var reductionFactor sdk.Dec
@@ -72,7 +59,7 @@ func RandomizedGenState(simState *module.SimulationState) {
 
 	mintDenom := sdk.DefaultBondDenom
 	blocksPerYear := uint64(60 * 60 * 8766 / 5)
-	params := types.NewParams(mintDenom, genesisTime, genesisInflation, reductionFactor, blocksPerYear)
+	params := types.NewParams(mintDenom, startTime, startProvisions, reductionFactor, blocksPerYear)
 
 	mintGenesis := types.NewGenesisState(types.InitialMinter(), params)
 
