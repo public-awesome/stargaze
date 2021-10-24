@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func waitFor(timeout time.Duration, url string, ch chan<- error) {
+func waitFor(timeout time.Duration, blocks int, url string, ch chan<- error) {
 	cli := http.Client{
 		Timeout: time.Second * 1,
 	}
@@ -33,7 +33,7 @@ func waitFor(timeout time.Duration, url string, ch chan<- error) {
 					continue
 				}
 
-				if block, err := strconv.Atoi(status.Result.SyncInfo.LatestBlockHeight); err == nil && block > 5 {
+				if block, err := strconv.Atoi(status.Result.SyncInfo.LatestBlockHeight); err == nil && block > blocks {
 					log.Printf("%s: chain is ready \n", url)
 					ch <- nil
 					return
@@ -60,11 +60,17 @@ func main() {
 	if err != nil {
 		log.Fatal("must provide a valid timeout")
 	}
+
+	numBlocks, err := strconv.Atoi(os.Getenv("PLUGIN_BLOCKS"))
+	if err != nil || numBlocks < 5 {
+		numBlocks = 5
+	}
+
 	ch := make(chan error, len(chains))
 
 	for _, c := range chains {
 		log.Printf("wait for %s %d", c, timeout)
-		go waitFor(time.Duration(timeout)*time.Second, c, ch)
+		go waitFor(time.Duration(timeout)*time.Second, numBlocks, c, ch)
 	}
 
 	jobs := len(chains)

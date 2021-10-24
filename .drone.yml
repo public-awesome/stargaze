@@ -215,6 +215,7 @@ steps:
     image: publicawesome/stargaze-readiness-checker:latest
     settings:
       timeout: 300
+      blocks: 10
       chain_list:
         - http://stargaze:26657
         - http://gaia:26657
@@ -254,6 +255,6 @@ volumes:
   temp: {}
 ---
 kind: signature
-hmac: 16ea9c080be972329e5abf524c5c16cd544ee5fe2e73eec9d59329f606d353f0
+hmac: 348fa6d681737defd044cc4fd55eb41acfb23c0501f9a2c1e741626eeef73926
 
 ...
