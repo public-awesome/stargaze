@@ -396,6 +396,7 @@ func New(
 		app.BankKeeper,
 		app.StakingKeeper,
 		app.DistrKeeper,
+		app.GetSubspace(allocmoduletypes.ModuleName),
 	)
 	allocModule := allocmodule.NewAppModule(appCodec, app.AllocKeeper)
 

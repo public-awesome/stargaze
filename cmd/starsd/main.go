@@ -11,7 +11,7 @@ import (
 
 func main() {
 	rootCmd, _ := cosmoscmd.NewRootCmd(
-		app.Name,
+		"stars",
 		app.AccountAddressPrefix,
 		app.DefaultNodeHome,
 		app.Name,
