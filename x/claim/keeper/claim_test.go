@@ -117,6 +117,11 @@ func (suite *KeeperTestSuite) TestAirdropDisabled() {
 	// Now, it is before starting air drop, so claim module should not send the balances to the user after delegate.
 	suite.True(balances.Empty())
 
+	suite.app.ClaimKeeper.AfterProposalVote(suite.ctx, 1, addr1)
+	balances = suite.app.BankKeeper.GetAllBalances(suite.ctx, addr1)
+	// Now, it is before starting air drop, so claim module should not send the balances to the user after vote.
+	suite.True(balances.Empty())
+
 	// set airdrop enabled but with invalid date
 	suite.app.ClaimKeeper.SetParams(suite.ctx, types.Params{
 		AirdropEnabled:     true,
@@ -130,6 +135,11 @@ func (suite *KeeperTestSuite) TestAirdropDisabled() {
 	// Now airdrop is enabled but a potential misconfiguraion on start time
 	suite.True(balances.Empty())
 
+	suite.app.ClaimKeeper.AfterProposalVote(suite.ctx, 1, addr1)
+	balances = suite.app.BankKeeper.GetAllBalances(suite.ctx, addr1)
+	// Now airdrop is enabled but a potential misconfiguraion on start time, so claim module should not send the balances to the user after vote.
+	suite.True(balances.Empty())
+
 	// set airdrop enabled but with date in the future
 	suite.app.ClaimKeeper.SetParams(suite.ctx, types.Params{
 		AirdropEnabled:     true,
@@ -140,6 +150,11 @@ func (suite *KeeperTestSuite) TestAirdropDisabled() {
 	})
 
 	suite.app.ClaimKeeper.AfterDelegationModified(suite.ctx, addr1, sdk.ValAddress(addr1))
+	balances = suite.app.BankKeeper.GetAllBalances(suite.ctx, addr1)
+	// Now airdrop is enabled  and date is not empty but block time still behid
+	suite.True(balances.Empty())
+
+	suite.app.ClaimKeeper.AfterProposalVote(suite.ctx, 1, addr1)
 	balances = suite.app.BankKeeper.GetAllBalances(suite.ctx, addr1)
 	// Now airdrop is enabled  and date is not empty but block time still behid
 	suite.True(balances.Empty())
