@@ -205,6 +205,48 @@ func (suite *KeeperTestSuite) TestDuplicatedActionNotWithdrawRepeatedly() {
 	suite.Require().Equal(claimedCoins.AmountOf(types.DefaultClaimDenom), claimRecords[0].InitialClaimableAmount.AmountOf(types.DefaultClaimDenom).Quo(sdk.NewInt(5)))
 }
 
+func (suite *KeeperTestSuite) TestNotRunningGenesisBlock() {
+	suite.ctx = suite.ctx.WithBlockHeight(1)
+	suite.app.ClaimKeeper.CreateModuleAccount(suite.ctx, sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000000)))
+	// set airdrop enabled but with date in the future
+	suite.app.ClaimKeeper.SetParams(suite.ctx, types.Params{
+		AirdropEnabled:     true,
+		AirdropStartTime:   time.Now().Add(time.Hour * -1),
+		ClaimDenom:         sdk.DefaultBondDenom,
+		DurationUntilDecay: time.Hour,
+		DurationOfDecay:    time.Hour * 4,
+		AllowedClaimers:    make([]types.ClaimAuthorization, 0),
+	})
+
+	pub1 := secp256k1.GenPrivKey().PubKey()
+	addr1 := sdk.AccAddress(pub1.Address())
+
+	claimRecords := []types.ClaimRecord{
+		{
+			Address:                addr1.String(),
+			InitialClaimableAmount: sdk.NewCoins(sdk.NewInt64Coin(types.DefaultClaimDenom, 2000)),
+			ActionCompleted:        []bool{false, false, false, false, false},
+		},
+	}
+	suite.app.AccountKeeper.SetAccount(suite.ctx, authtypes.NewBaseAccount(addr1, nil, 0, 0))
+
+	err := suite.app.ClaimKeeper.SetClaimRecords(suite.ctx, claimRecords)
+	suite.Require().NoError(err)
+
+	coins1, err := suite.app.ClaimKeeper.GetUserTotalClaimable(suite.ctx, addr1)
+	suite.Require().NoError(err)
+	suite.Require().Equal(coins1, claimRecords[0].InitialClaimableAmount)
+
+	suite.app.ClaimKeeper.AfterDelegationModified(suite.ctx, addr1, sdk.ValAddress(addr1))
+	claim, err := suite.app.ClaimKeeper.ClaimRecord(suite.ctx, addr1)
+	suite.NoError(err)
+	suite.False(claim.ActionCompleted[types.ActionDelegateStake])
+
+	coins1, err = suite.app.ClaimKeeper.GetUserTotalClaimable(suite.ctx, addr1)
+	suite.Require().NoError(err)
+	suite.Require().Equal(coins1, claimRecords[0].InitialClaimableAmount)
+
+}
 func (suite *KeeperTestSuite) TestDelegationAutoWithdrawAndDelegateMore() {
 	suite.SetupTest()
 	suite.app.ClaimKeeper.CreateModuleAccount(suite.ctx, sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000000)))
