@@ -332,6 +332,7 @@ func New(
 		app.BankKeeper,
 		&stakingKeeper,
 		app.DistrKeeper,
+		app.GetSubspace(claimmoduletypes.ModuleName),
 	)
 	claimModule := claimmodule.NewAppModule(appCodec, app.ClaimKeeper)
 	// register the staking hooks
@@ -447,6 +448,7 @@ func New(
 	// NOTE: staking module is required if HistoricalEntries param > 0
 	app.mm.SetOrderBeginBlockers(
 		upgradetypes.ModuleName, capabilitytypes.ModuleName, minttypes.ModuleName,
+		allocmoduletypes.ModuleName, // must run before distribution begin blocker
 		distrtypes.ModuleName, slashingtypes.ModuleName,
 		evidencetypes.ModuleName, stakingtypes.ModuleName, ibchost.ModuleName,
 		feegrant.ModuleName,

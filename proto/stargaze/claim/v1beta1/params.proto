@@ -20,6 +20,7 @@ message ClaimAuthorization {
 
 // Params defines the claim module's parameters.
 message Params {
+  option (gogoproto.goproto_stringer) = false;
   bool airdrop_enabled = 1;
 
   google.protobuf.Timestamp airdrop_start_time = 2 [

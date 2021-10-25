@@ -8,31 +8,18 @@ import (
 )
 
 func (k Keeper) AfterProposalVote(ctx sdk.Context, proposalID uint64, voterAddr sdk.AccAddress) {
-	params, err := k.Params(ctx)
-	if err != nil {
-		panic(err.Error())
-	}
-	if !params.AirdropEnabled {
-		return
-	}
-	_, err = k.ClaimCoinsForAction(ctx, voterAddr, types.ActionVote)
+	_, err := k.ClaimCoinsForAction(ctx, voterAddr, types.ActionVote)
 	if err != nil {
 		panic(err.Error())
 	}
 }
 
 func (k Keeper) AfterDelegationModified(ctx sdk.Context, delAddr sdk.AccAddress, valAddr sdk.ValAddress) {
-	if ctx.BlockHeight() <= 1 {
+	params := k.GetParams(ctx)
+	if !params.IsAirdropEnabled(ctx.BlockTime()) {
 		return
 	}
-	params, err := k.Params(ctx)
-	if err != nil {
-		panic(err.Error())
-	}
-	if !params.AirdropEnabled {
-		return
-	}
-	_, err = k.ClaimCoinsForAction(ctx, delAddr, types.ActionDelegateStake)
+	_, err := k.ClaimCoinsForAction(ctx, delAddr, types.ActionDelegateStake)
 	if err != nil {
 		panic(err.Error())
 	}

@@ -114,6 +114,7 @@ test:
 ###############################################################################
 proto-gen:
 	starport generate proto-go
+	go mod tidy
 
 ci-sign: 
 	drone sign public-awesome/stargaze --save

@@ -15,9 +15,9 @@ const DefaultIndex uint64 = 1
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		// this line is used by starport scaffolding # genesis/types/default
-		ModuleAccountBalance: sdk.NewCoin(sdk.DefaultBondDenom, sdk.ZeroInt()),
+		ModuleAccountBalance: sdk.NewCoin(DefaultClaimDenom, sdk.ZeroInt()),
 		Params:               DefaultParams(),
-		ClaimRecords:         []ClaimRecord{},
+		ClaimRecords:         make([]ClaimRecord, 0),
 	}
 }
 
@@ -28,7 +28,6 @@ func DefaultParams() Params {
 		DurationUntilDecay: DefaultDurationUntilDecay,
 		DurationOfDecay:    DefaultDurationOfDecay,
 		ClaimDenom:         DefaultClaimDenom,
-		AllowedClaimers:    []ClaimAuthorization{},
 	}
 }
 

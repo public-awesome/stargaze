@@ -16,9 +16,6 @@ const (
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_claim"
 
-	// ClaimRecordsStorePrefix defines the store prefix for the claim records
-	ClaimRecordsStorePrefix = "claimrecords"
-
 	// ParamsKey defines the store key for claim module parameters
 	ParamsKey = "params"
 
@@ -26,6 +23,8 @@ const (
 	ActionKey = "action"
 )
 
-func KeyPrefix(p string) []byte {
-	return []byte(p)
-}
+// KVStore keys
+var (
+	// ClaimRecordsStorePrefix defines the store prefix for the claim records
+	ClaimRecordsStorePrefix = []byte{0x01}
+)

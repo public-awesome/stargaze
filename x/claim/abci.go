@@ -7,12 +7,8 @@ import (
 
 // EndBlocker called every block, process inflation, update validator set.
 func EndBlocker(ctx sdk.Context, k keeper.Keeper) {
-	params, err := k.Params(ctx)
-	if err != nil {
-		panic(err)
-	}
-
-	if !params.AirdropEnabled {
+	params := k.GetParams(ctx)
+	if !params.AirdropEnabled || ctx.BlockTime().Before(params.AirdropStartTime) {
 		return
 	}
 	// End Airdrop
