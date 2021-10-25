@@ -15,6 +15,10 @@ func (k Keeper) AfterProposalVote(ctx sdk.Context, proposalID uint64, voterAddr 
 }
 
 func (k Keeper) AfterDelegationModified(ctx sdk.Context, delAddr sdk.AccAddress, valAddr sdk.ValAddress) {
+	// must not run on genesis
+	if ctx.BlockHeight() <= 1 {
+		return
+	}
 	_, err := k.ClaimCoinsForAction(ctx, delAddr, types.ActionDelegateStake)
 	if err != nil {
 		panic(err.Error())
