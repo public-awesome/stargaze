@@ -47,8 +47,8 @@ func (m Minter) BlockProvision(params Params) sdk.Coin {
 	return sdk.NewCoin(params.MintDenom, provisionAmt.TruncateInt())
 }
 
-func currentYear(blockTime time.Time, genesisTime time.Time) uint64 {
-	delta := blockTime.Sub(genesisTime)
+func currentYear(blockTime time.Time, startTime time.Time) uint64 {
+	delta := blockTime.Sub(startTime)
 	nsPerYear := 365.25 * 24 * time.Hour
 	year := (delta / nsPerYear)
 
