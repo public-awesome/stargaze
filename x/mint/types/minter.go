@@ -36,7 +36,7 @@ func (m Minter) NextAnnualProvisions(blockTime time.Time, params Params) sdk.Dec
 		return sdk.ZeroDec()
 	}
 
-	return params.StartProvisions.
+	return params.InitialAnnualProvisions.
 		Mul(params.ReductionFactor.Power(currentYear(blockTime, params.StartTime)))
 }
 

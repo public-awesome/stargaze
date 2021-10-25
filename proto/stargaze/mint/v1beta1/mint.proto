@@ -28,9 +28,9 @@ message Params {
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"start_time\""
   ];
-  // starting provisions
-  string start_provisions = 3 [
-    (gogoproto.moretags) = "yaml:\"genesis_provisions\"",
+  // initial annual provisions
+  string initial_annual_provisions = 3 [
+    (gogoproto.moretags) = "yaml:\"initial_annual_provisions\"",
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
     (gogoproto.nullable) = false
   ];
