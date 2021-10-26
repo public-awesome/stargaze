@@ -9,4 +9,5 @@ sleep 30
 export GAIA_ADDRESS=cosmos1wt3khka7cmn5zd592x430ph4zmlhf5gfztgha6
 export STARGAZE_ADDRESS=stars12g0xe2ld0k5ws3h7lmxc39d4rpl3fyxp5qys69
 curl -s http://gaia:1317/bank/balances/$GAIA_ADDRESS | jq '.'
+curl  http://stargaze:1317/bank/balances/$STARGAZE_ADDRESS
 curl -s http://stargaze:1317/bank/balances/$STARGAZE_ADDRESS | jq '.'

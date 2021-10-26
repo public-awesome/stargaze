@@ -1,4 +1,4 @@
-
+.PHONY: build proto
 #!/usr/bin/make -f
 
 PACKAGES_SIMTEST=$(shell go list ./... | grep '/simulation')
@@ -105,34 +105,22 @@ docker-test: build-linux
 
 
 test:
-	go test github.com/public-awesome/stargaze/x/...
+	go test -v -race github.com/public-awesome/stargaze/x/...
 
 .PHONY: test build-linux docker-test lint build install
 
 ###############################################################################
 ###                                Protobuf                                 ###
 ###############################################################################
-proto-all: proto-gen proto-lint proto-check-breaking
-
-
 proto-gen:
-	@echo "Generating Protobuf files"
-	$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace tendermintdev/sdk-proto-gen sh ./scripts/protocgen.sh
-
-proto-format:
-	@echo "Formatting Protobuf files"
-	$(DOCKER) run --rm -v $(CURDIR):/workspace \
-	--workdir /workspace tendermintdev/docker-build-proto \
-	find ./ -not -path "./third_party/*" -name *.proto -exec clang-format -i {} \;
-
-
-proto-lint:
-	@buf check lint --error-format=json
-
-proto-check-breaking:
-	@buf check breaking --against-input '.git#branch=master'
-
-.PHONY: proto-all proto-gen proto-lint proto-check-breaking
+	starport generate proto-go
+	go mod tidy
 
 ci-sign: 
 	drone sign public-awesome/stargaze --save
+
+.PHONY: build-readiness-checker
+
+build-readiness-checker:
+	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -o bin/readiness-checker github.com/public-awesome/stargaze/testutil/readiness-checker
+	docker build -t publicawesome/stargaze-readiness-checker -f docker/Dockerfile.readiness .

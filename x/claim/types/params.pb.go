@@ -28,20 +28,74 @@ var _ = time.Kitchen
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// Params defines the claim module's parameters.
-type Params struct {
-	AirdropStartTime   time.Time     `protobuf:"bytes,1,opt,name=airdrop_start_time,json=airdropStartTime,proto3,stdtime" json:"airdrop_start_time" yaml:"airdrop_start_time"`
-	DurationUntilDecay time.Duration `protobuf:"bytes,2,opt,name=duration_until_decay,json=durationUntilDecay,proto3,stdduration" json:"duration_until_decay,omitempty" yaml:"duration_until_decay"`
-	DurationOfDecay    time.Duration `protobuf:"bytes,3,opt,name=duration_of_decay,json=durationOfDecay,proto3,stdduration" json:"duration_of_decay,omitempty" yaml:"duration_of_decay"`
-	// denom of claimable asset
-	ClaimDenom string `protobuf:"bytes,4,opt,name=claim_denom,json=claimDenom,proto3" json:"claim_denom,omitempty"`
+type ClaimAuthorization struct {
+	ContractAddress string `protobuf:"bytes,1,opt,name=contract_address,json=contractAddress,proto3" json:"contract_address,omitempty" yaml:"contract_address"`
+	Action          Action `protobuf:"varint,2,opt,name=action,proto3,enum=publicawesome.stargaze.claim.v1beta1.Action" json:"action,omitempty" yaml:"action"`
 }
 
-func (m *Params) Reset()         { *m = Params{} }
-func (m *Params) String() string { return proto.CompactTextString(m) }
-func (*Params) ProtoMessage()    {}
-func (*Params) Descriptor() ([]byte, []int) {
+func (m *ClaimAuthorization) Reset()         { *m = ClaimAuthorization{} }
+func (m *ClaimAuthorization) String() string { return proto.CompactTextString(m) }
+func (*ClaimAuthorization) ProtoMessage()    {}
+func (*ClaimAuthorization) Descriptor() ([]byte, []int) {
 	return fileDescriptor_c219c2c72539a013, []int{0}
+}
+func (m *ClaimAuthorization) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ClaimAuthorization) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ClaimAuthorization.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *ClaimAuthorization) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ClaimAuthorization.Merge(m, src)
+}
+func (m *ClaimAuthorization) XXX_Size() int {
+	return m.Size()
+}
+func (m *ClaimAuthorization) XXX_DiscardUnknown() {
+	xxx_messageInfo_ClaimAuthorization.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ClaimAuthorization proto.InternalMessageInfo
+
+func (m *ClaimAuthorization) GetContractAddress() string {
+	if m != nil {
+		return m.ContractAddress
+	}
+	return ""
+}
+
+func (m *ClaimAuthorization) GetAction() Action {
+	if m != nil {
+		return m.Action
+	}
+	return ActionInitialClaim
+}
+
+// Params defines the claim module's parameters.
+type Params struct {
+	AirdropEnabled     bool          `protobuf:"varint,1,opt,name=airdrop_enabled,json=airdropEnabled,proto3" json:"airdrop_enabled,omitempty"`
+	AirdropStartTime   time.Time     `protobuf:"bytes,2,opt,name=airdrop_start_time,json=airdropStartTime,proto3,stdtime" json:"airdrop_start_time" yaml:"airdrop_start_time"`
+	DurationUntilDecay time.Duration `protobuf:"bytes,3,opt,name=duration_until_decay,json=durationUntilDecay,proto3,stdduration" json:"duration_until_decay,omitempty" yaml:"duration_until_decay"`
+	DurationOfDecay    time.Duration `protobuf:"bytes,4,opt,name=duration_of_decay,json=durationOfDecay,proto3,stdduration" json:"duration_of_decay,omitempty" yaml:"duration_of_decay"`
+	// denom of claimable asset
+	ClaimDenom string `protobuf:"bytes,5,opt,name=claim_denom,json=claimDenom,proto3" json:"claim_denom,omitempty"`
+	// list of contracts and their allowed claim actions
+	AllowedClaimers []ClaimAuthorization `protobuf:"bytes,6,rep,name=allowed_claimers,json=allowedClaimers,proto3" json:"allowed_claimers" yaml:"allowed_claimers"`
+}
+
+func (m *Params) Reset()      { *m = Params{} }
+func (*Params) ProtoMessage() {}
+func (*Params) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c219c2c72539a013, []int{1}
 }
 func (m *Params) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -69,6 +123,13 @@ func (m *Params) XXX_DiscardUnknown() {
 }
 
 var xxx_messageInfo_Params proto.InternalMessageInfo
+
+func (m *Params) GetAirdropEnabled() bool {
+	if m != nil {
+		return m.AirdropEnabled
+	}
+	return false
+}
 
 func (m *Params) GetAirdropStartTime() time.Time {
 	if m != nil {
@@ -98,8 +159,16 @@ func (m *Params) GetClaimDenom() string {
 	return ""
 }
 
+func (m *Params) GetAllowedClaimers() []ClaimAuthorization {
+	if m != nil {
+		return m.AllowedClaimers
+	}
+	return nil
+}
+
 func init() {
-	proto.RegisterType((*Params)(nil), "stargaze.claim.v1beta1.Params")
+	proto.RegisterType((*ClaimAuthorization)(nil), "publicawesome.stargaze.claim.v1beta1.ClaimAuthorization")
+	proto.RegisterType((*Params)(nil), "publicawesome.stargaze.claim.v1beta1.Params")
 }
 
 func init() {
@@ -107,32 +176,78 @@ func init() {
 }
 
 var fileDescriptor_c219c2c72539a013 = []byte{
-	// 400 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x92, 0x31, 0x6b, 0xdb, 0x40,
-	0x14, 0xc7, 0x75, 0x75, 0x31, 0x54, 0x1e, 0xda, 0x0a, 0x53, 0x64, 0x1b, 0x4e, 0x46, 0xa5, 0xe0,
-	0xa1, 0xd5, 0xd5, 0xed, 0xd6, 0xd1, 0xf5, 0xd2, 0x2e, 0x2d, 0x4e, 0xb2, 0x64, 0x11, 0x27, 0xe9,
-	0xac, 0x1c, 0xe8, 0x7c, 0x42, 0x3a, 0x25, 0x51, 0x3e, 0x42, 0x26, 0x4f, 0x21, 0x1f, 0x27, 0xa3,
-	0x47, 0x8f, 0x99, 0x94, 0x60, 0x6f, 0x19, 0xfd, 0x09, 0xc2, 0x9d, 0x24, 0x43, 0x6c, 0x43, 0x36,
-	0xe9, 0xfd, 0x7f, 0xef, 0xbd, 0xdf, 0xc1, 0xd3, 0x3f, 0xa7, 0x02, 0x27, 0x21, 0xbe, 0x22, 0xc8,
-	0x8f, 0x30, 0x65, 0xe8, 0x7c, 0xe8, 0x11, 0x81, 0x87, 0x28, 0xc6, 0x09, 0x66, 0xa9, 0x13, 0x27,
-	0x5c, 0x70, 0xe3, 0x53, 0x0d, 0x39, 0x0a, 0x72, 0x2a, 0xa8, 0xdb, 0x0e, 0x79, 0xc8, 0x15, 0x82,
-	0xe4, 0x57, 0x49, 0x77, 0x61, 0xc8, 0x79, 0x18, 0x11, 0xa4, 0xfe, 0xbc, 0x6c, 0x8a, 0x82, 0x2c,
-	0xc1, 0x82, 0xf2, 0x59, 0x95, 0x5b, 0xbb, 0xb9, 0xa0, 0x8c, 0xa4, 0x02, 0xb3, 0xb8, 0x04, 0xec,
-	0xbb, 0x86, 0xde, 0xfc, 0xaf, 0xf6, 0x1b, 0x5c, 0x37, 0x30, 0x4d, 0x82, 0x84, 0xc7, 0xae, 0x74,
-	0x10, 0xae, 0x64, 0x4d, 0xd0, 0x07, 0x83, 0xd6, 0x8f, 0xae, 0x53, 0x0e, 0x72, 0xea, 0x41, 0xce,
-	0x71, 0x3d, 0x68, 0xf4, 0x65, 0x51, 0x58, 0xda, 0xa6, 0xb0, 0x3a, 0x39, 0x66, 0xd1, 0x2f, 0x7b,
-	0x7f, 0x86, 0x3d, 0x7f, 0xb0, 0xc0, 0xe4, 0x43, 0x15, 0x1c, 0xc9, 0xba, 0xec, 0x36, 0x6e, 0x80,
-	0xde, 0xae, 0x7d, 0xdd, 0x6c, 0x26, 0x68, 0xe4, 0x06, 0xc4, 0xc7, 0xb9, 0xf9, 0x46, 0xed, 0xec,
-	0xec, 0xed, 0x1c, 0x57, 0xf0, 0xe8, 0x8f, 0x5c, 0xf9, 0x54, 0x58, 0xf0, 0x50, 0xfb, 0x57, 0xce,
-	0xa8, 0x20, 0x2c, 0x16, 0xf9, 0xa6, 0xb0, 0x7a, 0xa5, 0xd4, 0x21, 0xce, 0xbe, 0x95, 0x5a, 0x46,
-	0x1d, 0x9d, 0xc8, 0x64, 0x2c, 0x03, 0xe3, 0x1a, 0xe8, 0x1f, 0xb7, 0x1d, 0x7c, 0x5a, 0x59, 0x35,
-	0x5e, 0xb3, 0xfa, 0x5d, 0x59, 0xf5, 0xf6, 0x7a, 0x5f, 0x28, 0x99, 0x3b, 0x4a, 0x35, 0x54, 0xfa,
-	0xbc, 0xaf, 0xeb, 0xff, 0xa6, 0xa5, 0x8c, 0xa5, 0xb7, 0xd4, 0x25, 0xb8, 0x01, 0x99, 0x71, 0x66,
-	0xbe, 0xed, 0x83, 0xc1, 0xbb, 0x89, 0xae, 0x4a, 0x63, 0x59, 0x19, 0xfd, 0x5d, 0xac, 0x20, 0x58,
-	0xae, 0x20, 0x78, 0x5c, 0x41, 0x30, 0x5f, 0x43, 0x6d, 0xb9, 0x86, 0xda, 0xfd, 0x1a, 0x6a, 0xa7,
-	0xdf, 0x43, 0x2a, 0xce, 0x32, 0xcf, 0xf1, 0x39, 0x43, 0x71, 0xe6, 0x45, 0xd4, 0xff, 0x86, 0x2f,
-	0x48, 0xca, 0x19, 0x41, 0xdb, 0x53, 0xbc, 0xac, 0x8e, 0x51, 0xe4, 0x31, 0x49, 0xbd, 0xa6, 0x7a,
-	0xd5, 0xcf, 0xe7, 0x00, 0x00, 0x00, 0xff, 0xff, 0xf2, 0x8c, 0xc3, 0x15, 0xab, 0x02, 0x00, 0x00,
+	// 571 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x93, 0xbf, 0x6e, 0xd3, 0x50,
+	0x14, 0xc6, 0x63, 0xda, 0x46, 0x70, 0x23, 0x9a, 0xd4, 0xaa, 0x84, 0x9b, 0x48, 0x76, 0x64, 0x40,
+	0x04, 0xa9, 0xd8, 0x34, 0x5d, 0x50, 0xb7, 0x38, 0x01, 0x09, 0x16, 0x90, 0x01, 0x21, 0xb1, 0x58,
+	0xd7, 0xf6, 0x8d, 0x6b, 0xc9, 0xce, 0xb5, 0xae, 0xaf, 0x29, 0xe9, 0x23, 0x74, 0xea, 0x84, 0x32,
+	0xf2, 0x12, 0xbc, 0x43, 0xc7, 0x8e, 0x4c, 0x06, 0x25, 0x1b, 0x63, 0x9e, 0x00, 0xdd, 0x3f, 0x2e,
+	0x22, 0x29, 0xa2, 0x5b, 0xfc, 0x9d, 0xf3, 0x9d, 0xf3, 0xcb, 0xe7, 0x63, 0x70, 0x3f, 0xa7, 0x90,
+	0x44, 0xf0, 0x14, 0xd9, 0x41, 0x02, 0xe3, 0xd4, 0xfe, 0x74, 0xe0, 0x23, 0x0a, 0x0f, 0xec, 0x0c,
+	0x12, 0x98, 0xe6, 0x56, 0x46, 0x30, 0xc5, 0xea, 0x83, 0xac, 0xf0, 0x93, 0x38, 0x80, 0x27, 0x28,
+	0xc7, 0x29, 0xb2, 0x2a, 0x8b, 0xc5, 0x2d, 0x96, 0xb4, 0xb4, 0x77, 0x23, 0x1c, 0x61, 0x6e, 0xb0,
+	0xd9, 0x2f, 0xe1, 0x6d, 0xeb, 0x11, 0xc6, 0x51, 0x82, 0x6c, 0xfe, 0xe4, 0x17, 0x63, 0x3b, 0x2c,
+	0x08, 0xa4, 0x31, 0x9e, 0xc8, 0xba, 0xb1, 0x5a, 0xa7, 0x71, 0x8a, 0x72, 0x0a, 0xd3, 0x4c, 0x36,
+	0x3c, 0xfe, 0x07, 0x21, 0x7f, 0xf2, 0x08, 0x0a, 0x30, 0x09, 0x45, 0xab, 0xf9, 0x4d, 0x01, 0xea,
+	0x90, 0xc9, 0x83, 0x82, 0x1e, 0x63, 0x12, 0x9f, 0xf2, 0x45, 0xea, 0x0b, 0xd0, 0x0a, 0xf0, 0x84,
+	0x12, 0x18, 0x50, 0x0f, 0x86, 0x21, 0x41, 0x79, 0xae, 0x29, 0x5d, 0xa5, 0x77, 0xc7, 0xe9, 0x2c,
+	0x4b, 0xe3, 0xde, 0x14, 0xa6, 0xc9, 0x91, 0xb9, 0xda, 0x61, 0xba, 0xcd, 0x4a, 0x1a, 0x08, 0x45,
+	0xfd, 0x00, 0xea, 0x30, 0x60, 0x13, 0xb5, 0x5b, 0x5d, 0xa5, 0xb7, 0xdd, 0xdf, 0xb7, 0x6e, 0x92,
+	0x8b, 0x35, 0xe0, 0x1e, 0x67, 0x67, 0x59, 0x1a, 0x77, 0xc5, 0x2e, 0x31, 0xc5, 0x74, 0xe5, 0x38,
+	0xf3, 0x6c, 0x0b, 0xd4, 0xdf, 0xf0, 0xc0, 0xd5, 0x47, 0xa0, 0x09, 0x63, 0x12, 0x12, 0x9c, 0x79,
+	0x68, 0x02, 0xfd, 0x04, 0x85, 0x1c, 0xf5, 0xb6, 0xbb, 0x2d, 0xe5, 0xe7, 0x42, 0x55, 0x31, 0x50,
+	0xab, 0x46, 0xb6, 0x97, 0x7a, 0x2c, 0x37, 0x0e, 0xd6, 0xe8, 0xb7, 0x2d, 0x11, 0xaa, 0x55, 0x85,
+	0x6a, 0xbd, 0xab, 0x42, 0x75, 0x1e, 0x5e, 0x94, 0x46, 0x6d, 0x59, 0x1a, 0x7b, 0x12, 0x65, 0x6d,
+	0x86, 0x79, 0xfe, 0xc3, 0x50, 0xdc, 0x96, 0x2c, 0xbc, 0x65, 0x3a, 0x73, 0xab, 0x5f, 0x14, 0xb0,
+	0x5b, 0xbd, 0x3b, 0xaf, 0x98, 0xd0, 0x38, 0xf1, 0x42, 0x14, 0xc0, 0xa9, 0xb6, 0xc1, 0x77, 0xee,
+	0xad, 0xed, 0x1c, 0xc9, 0x66, 0xe7, 0x25, 0x5b, 0xf9, 0xab, 0x34, 0xf4, 0xeb, 0xec, 0xfb, 0x38,
+	0x8d, 0x29, 0x4a, 0x33, 0x3a, 0x5d, 0x96, 0x46, 0x47, 0x40, 0x5d, 0xd7, 0x67, 0xce, 0x18, 0x96,
+	0x5a, 0x95, 0xde, 0xb3, 0xca, 0x88, 0x15, 0xd4, 0x33, 0x05, 0xec, 0x5c, 0x39, 0xf0, 0x58, 0x52,
+	0x6d, 0xfe, 0x8f, 0x6a, 0x28, 0xa9, 0x3a, 0x6b, 0xde, 0xbf, 0x90, 0xb4, 0x15, 0xa4, 0xaa, 0x49,
+	0xf0, 0x34, 0x2b, 0xfd, 0xf5, 0x58, 0xc0, 0x18, 0xa0, 0x21, 0x0e, 0x33, 0x44, 0x13, 0x9c, 0x6a,
+	0x5b, 0xec, 0xcc, 0x5c, 0xc0, 0xa5, 0x11, 0x53, 0xd4, 0x99, 0x02, 0x5a, 0x30, 0x49, 0xf0, 0x09,
+	0x0a, 0x3d, 0x2e, 0x23, 0x92, 0x6b, 0xf5, 0xee, 0x46, 0xaf, 0xd1, 0x7f, 0x76, 0xb3, 0x7b, 0x5a,
+	0xbf, 0x70, 0xe7, 0x50, 0xfe, 0x97, 0xb5, 0xc9, 0x7f, 0xee, 0x7b, 0xb5, 0x62, 0xba, 0x4d, 0x29,
+	0x0d, 0xa5, 0x72, 0xb4, 0x39, 0xfb, 0x6a, 0xd4, 0x9c, 0x57, 0x17, 0x73, 0x5d, 0xb9, 0x9c, 0xeb,
+	0xca, 0xcf, 0xb9, 0xae, 0x9c, 0x2f, 0xf4, 0xda, 0xe5, 0x42, 0xaf, 0x7d, 0x5f, 0xe8, 0xb5, 0x8f,
+	0x4f, 0xa3, 0x98, 0x1e, 0x17, 0xbe, 0x15, 0xe0, 0xd4, 0x16, 0xa4, 0x4f, 0x24, 0xaa, 0x7d, 0xf5,
+	0x8d, 0x7e, 0x96, 0x5f, 0x29, 0x9d, 0x66, 0x28, 0xf7, 0xeb, 0x3c, 0xf6, 0xc3, 0xdf, 0x01, 0x00,
+	0x00, 0xff, 0xff, 0xf1, 0x4e, 0xdb, 0xe4, 0x66, 0x04, 0x00, 0x00,
+}
+
+func (m *ClaimAuthorization) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ClaimAuthorization) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ClaimAuthorization) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Action != 0 {
+		i = encodeVarintParams(dAtA, i, uint64(m.Action))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.ContractAddress) > 0 {
+		i -= len(m.ContractAddress)
+		copy(dAtA[i:], m.ContractAddress)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.ContractAddress)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *Params) Marshal() (dAtA []byte, err error) {
@@ -155,12 +270,26 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.AllowedClaimers) > 0 {
+		for iNdEx := len(m.AllowedClaimers) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.AllowedClaimers[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintParams(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x32
+		}
+	}
 	if len(m.ClaimDenom) > 0 {
 		i -= len(m.ClaimDenom)
 		copy(dAtA[i:], m.ClaimDenom)
 		i = encodeVarintParams(dAtA, i, uint64(len(m.ClaimDenom)))
 		i--
-		dAtA[i] = 0x22
+		dAtA[i] = 0x2a
 	}
 	n1, err1 := github_com_gogo_protobuf_types.StdDurationMarshalTo(m.DurationOfDecay, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdDuration(m.DurationOfDecay):])
 	if err1 != nil {
@@ -169,7 +298,7 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i -= n1
 	i = encodeVarintParams(dAtA, i, uint64(n1))
 	i--
-	dAtA[i] = 0x1a
+	dAtA[i] = 0x22
 	n2, err2 := github_com_gogo_protobuf_types.StdDurationMarshalTo(m.DurationUntilDecay, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdDuration(m.DurationUntilDecay):])
 	if err2 != nil {
 		return 0, err2
@@ -177,7 +306,7 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i -= n2
 	i = encodeVarintParams(dAtA, i, uint64(n2))
 	i--
-	dAtA[i] = 0x12
+	dAtA[i] = 0x1a
 	n3, err3 := github_com_gogo_protobuf_types.StdTimeMarshalTo(m.AirdropStartTime, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(m.AirdropStartTime):])
 	if err3 != nil {
 		return 0, err3
@@ -185,7 +314,17 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i -= n3
 	i = encodeVarintParams(dAtA, i, uint64(n3))
 	i--
-	dAtA[i] = 0xa
+	dAtA[i] = 0x12
+	if m.AirdropEnabled {
+		i--
+		if m.AirdropEnabled {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x8
+	}
 	return len(dAtA) - i, nil
 }
 
@@ -200,12 +339,31 @@ func encodeVarintParams(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
+func (m *ClaimAuthorization) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.ContractAddress)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
+	if m.Action != 0 {
+		n += 1 + sovParams(uint64(m.Action))
+	}
+	return n
+}
+
 func (m *Params) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
+	if m.AirdropEnabled {
+		n += 2
+	}
 	l = github_com_gogo_protobuf_types.SizeOfStdTime(m.AirdropStartTime)
 	n += 1 + l + sovParams(uint64(l))
 	l = github_com_gogo_protobuf_types.SizeOfStdDuration(m.DurationUntilDecay)
@@ -216,6 +374,12 @@ func (m *Params) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovParams(uint64(l))
 	}
+	if len(m.AllowedClaimers) > 0 {
+		for _, e := range m.AllowedClaimers {
+			l = e.Size()
+			n += 1 + l + sovParams(uint64(l))
+		}
+	}
 	return n
 }
 
@@ -224,6 +388,107 @@ func sovParams(x uint64) (n int) {
 }
 func sozParams(x uint64) (n int) {
 	return sovParams(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *ClaimAuthorization) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowParams
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ClaimAuthorization: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ClaimAuthorization: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ContractAddress", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ContractAddress = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Action", wireType)
+			}
+			m.Action = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Action |= Action(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipParams(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthParams
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
 }
 func (m *Params) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -255,6 +520,26 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AirdropEnabled", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.AirdropEnabled = bool(v != 0)
+		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field AirdropStartTime", wireType)
 			}
@@ -287,7 +572,7 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 2:
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DurationUntilDecay", wireType)
 			}
@@ -320,7 +605,7 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 3:
+		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DurationOfDecay", wireType)
 			}
@@ -353,7 +638,7 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 4:
+		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ClaimDenom", wireType)
 			}
@@ -384,6 +669,40 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.ClaimDenom = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AllowedClaimers", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AllowedClaimers = append(m.AllowedClaimers, ClaimAuthorization{})
+			if err := m.AllowedClaimers[len(m.AllowedClaimers)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

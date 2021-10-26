@@ -3,28 +3,59 @@ kind: pipeline
 type: docker
 name: default-build
 
+workspace:
+  path: /stargaze
+
 steps:
   - name: fetch
     image: alpine/git
     commands:
       - git fetch --tags
+  - name: restore-cache
+    image: meltwater/drone-cache:dev
+    volumes:
+      - name: cache
+        path: /go
+    environment:
+      AWS_ACCESS_KEY_ID:
+        from_secret: minio_key_id
+      AWS_SECRET_ACCESS_KEY:
+        from_secret: minio_secret_key
+    pull: true
+    settings:
+      restore: true
+      bucket:
+        from_secret: minio_bucket
+      region: us-east-1
+      mount:
+        - '/go/pkg/mod'
+
   - name: test
     image: publicawesome/golang:1.17.0-devtooling
+    volumes:
+      - name: cache
+        path: /go
     commands:
       - ./scripts/go-test.sh
     environment:
       GOPROXY: http://goproxy
   - name: build
     image: golang:1.17-alpine3.14
+    volumes:
+      - name: cache
+        path: /go
     commands:
       - apk add --no-cache ca-certificates build-base git
-      - wget https://github.com/CosmWasm/wasmvm/releases/download/v0.14.0/libwasmvm_muslc.a -O /lib/libwasmvm_muslc.a
-      - sha256sum /lib/libwasmvm_muslc.a | grep 220b85158d1ae72008f099a7ddafe27f6374518816dd5873fd8be272c5418026
-      - FAUCET_ENABLED=true LEDGER_ENABLED=false BUILD_TAGS=muslc make build
+      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0-beta/libwasmvm_muslc.a -O /lib/libwasmvm_muslc.a
+      - sha256sum /lib/libwasmvm_muslc.a | grep 2ea10ad5e489b5ede1aa4061d4afa8b2ddd39718ba7b8689690b9c07a41d678e
+      - LEDGER_ENABLED=false BUILD_TAGS=muslc make build
     environment:
-      GOPROXY: http://goproxy   
+      GOPROXY: http://goproxy
   - name: coverage
     image: plugins/codecov
+    volumes:
+      - name: cache
+        path: /go
     settings:
       required: true
       token:
@@ -33,21 +64,22 @@ steps:
       event:
         - push
         - pull_request
-  - name: publish-test
+  - name: publish-beta
     image: plugins/docker:18
     settings:
-      dockerfile: docker/Dockerfile.test
-      repo: rocketprotocol/rocketzone-relayer-test
+      dockerfile: docker/Dockerfile
+      repo: publicawesome/stargaze
       username:
         from_secret: docker_username
       password:
         from_secret: docker_password
       tags:
-        - latest
+        - beta
     when:
       event:
         - push
-      branch: ibc
+      branch:
+        - main
   - name: publish-docker
     image: plugins/docker:18
     settings:
@@ -107,7 +139,24 @@ steps:
     when:
       event:
         - tag
-
+  - name: rebuild-cache
+    image: meltwater/drone-cache:dev
+    volumes:
+      - name: cache
+        path: /go
+    environment:
+      AWS_ACCESS_KEY_ID:
+        from_secret: minio_key_id
+      AWS_SECRET_ACCESS_KEY:
+        from_secret: minio_secret_key
+    pull: true
+    settings:
+      rebuild: true
+      bucket:
+        from_secret: minio_bucket
+      region: us-east-1
+      mount:
+        - '/go/pkg/mod'
   - name: discord
     image: appleboy/drone-discord
     settings:
@@ -117,12 +166,34 @@ steps:
         from_secret: discord_webhook_token
     when:
       status: [success, failure]
+
+volumes:
+- name: cache
+  temp: {}
 ---
 kind: pipeline
 type: docker
 name: ibc-integration-test
 
 steps:
+  - name: restore-cache
+    image: meltwater/drone-cache:dev
+    volumes:
+      - name: cache
+        path: /go
+    environment:
+      AWS_ACCESS_KEY_ID:
+        from_secret: minio_key_id
+      AWS_SECRET_ACCESS_KEY:
+        from_secret: minio_secret_key
+    pull: true
+    settings:
+      restore: true
+      bucket:
+        from_secret: minio_bucket
+      region: us-east-1
+      mount:
+        - '/go/pkg/mod'
   - name: gaia
     image: publicawesome/gaia:5.0.5
     detach: true
@@ -132,11 +203,22 @@ steps:
       GOPROXY: http://goproxy
   - name: stargaze
     image: publicawesome/golang:1.17.0-devtooling
+    volumes:
+      - name: cache
+        path: /go
     commands:
       - ./scripts/ci/setup-stargaze.sh
     environment:
       GOPROXY: http://goproxy
     detach: true
+  - name: readiness
+    image: publicawesome/stargaze-readiness-checker:latest
+    settings:
+      timeout: 300
+      blocks: 10
+      chain_list:
+        - http://stargaze:26657
+        - http://gaia:26657
   - name: relayer
     image: publicawesome/hermes:latest
     commands:
@@ -167,10 +249,11 @@ trigger:
   event:
     - pull_request
     - push
-depends_on:
-  - default-build
+volumes:
+- name: cache
+  temp: {}
 ---
 kind: signature
-hmac: 9f80aabb49e4699dd1ef0a501ab85c994fb12c8bbe6ef5e6aa6c0b15946ef8fe
+hmac: 7cd70baa94079edbf191d96a2c9f31d474245ec80ae0cafe621c53f2e5571f63
 
 ...

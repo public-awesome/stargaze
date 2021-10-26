@@ -13,7 +13,11 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/public-awesome/stargaze/app"
+	"github.com/cosmos/cosmos-sdk/codec"
+	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+	claimtypes "github.com/public-awesome/stargaze/x/claim/types"
 	"github.com/spf13/cobra"
 	tmconfig "github.com/tendermint/tendermint/config"
 	tmos "github.com/tendermint/tendermint/libs/os"
@@ -36,7 +40,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	curatingtypes "github.com/public-awesome/stargaze/x/curating/types"
 )
 
 var (
@@ -45,69 +48,48 @@ var (
 	flagOutputDir            = "output-dir"
 	flagNodeDaemonHome       = "node-daemon-home"
 	flagStartingIPAddress    = "starting-ip-address"
+	flagDockerTag            = "docker-tag"
+	flagStakeDenom           = "stake-denom"
+	flagUnbondingPeriod      = "unbonding-period"
 	flagInitialCoins         = "coins"
 	flagInitialStakingAmount = "initial-staking-amount"
-	flagCurationWindow       = "curation-window"
-	defaultKeyringBackend    = "test"
-	flagDockerTag            = "docker-tag"
+
+	defaultBondDenom = "ustarx"
 )
 
 // get cmd to initialize all files for tendermint testnet and application
-func testnetCmd(mbm module.BasicManager, genBalIterator banktypes.GenesisBalancesIterator) *cobra.Command {
+func TestnetCmd(mbm module.BasicManager) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "testnet",
 		Short: "Initialize files for a simapp testnet",
 		Long: `testnet will create "v" number of directories and populate each with
 necessary files (private validator, genesis, config, etc.).
+
 Note, strict routability for addresses is turned off in the config file.
+
 Example:
-	starsd testnet --v 4 --output-dir ./output --starting-ip-address 192.168.10.2
+	gaiad testnet --v 4 --output-dir ./output --starting-ip-address 192.168.10.2
 	`,
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
-
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 			serverCtx := server.GetServerContextFromCmd(cmd)
 			config := serverCtx.Config
 
-			outputDir, err := cmd.Flags().GetString(flagOutputDir)
-			if err != nil {
-				return err
-			}
-			keyringBackend, err := cmd.Flags().GetString(flags.FlagKeyringBackend)
-			if err != nil {
-				return err
-			}
-			chainID, err := cmd.Flags().GetString(flags.FlagChainID)
-			if err != nil {
-				return err
-			}
-			minGasPrices, err := cmd.Flags().GetString(server.FlagMinGasPrices)
-			if err != nil {
-				return err
-			}
-			nodeDirPrefix, err := cmd.Flags().GetString(flagNodeDirPrefix)
-			if err != nil {
-				return err
-			}
-			nodeDaemonHome, err := cmd.Flags().GetString(flagNodeDaemonHome)
-			if err != nil {
-				return err
-			}
-			startingIPAddress, err := cmd.Flags().GetString(flagStartingIPAddress)
-			if err != nil {
-				return err
-			}
-			numValidators, err := cmd.Flags().GetInt(flagNumValidators)
-			if err != nil {
-				return err
-			}
-			algo, err := cmd.Flags().GetString(flags.FlagKeyAlgorithm)
-			if err != nil {
-				return err
-			}
+			outputDir, _ := cmd.Flags().GetString(flagOutputDir)
+			keyringBackend, _ := cmd.Flags().GetString(flags.FlagKeyringBackend)
+			chainID, _ := cmd.Flags().GetString(flags.FlagChainID)
+			minGasPrices, _ := cmd.Flags().GetString(server.FlagMinGasPrices)
+			nodeDirPrefix, _ := cmd.Flags().GetString(flagNodeDirPrefix)
+			nodeDaemonHome, _ := cmd.Flags().GetString(flagNodeDaemonHome)
+			startingIPAddress, _ := cmd.Flags().GetString(flagStartingIPAddress)
+			numValidators, _ := cmd.Flags().GetInt(flagNumValidators)
+			algo, _ := cmd.Flags().GetString(flags.FlagKeyAlgorithm)
 
 			return InitTestnet(
-				clientCtx, cmd, config, mbm, genBalIterator, outputDir, chainID, minGasPrices,
+				clientCtx, cmd, config, mbm, banktypes.GenesisBalancesIterator{}, outputDir, chainID, minGasPrices,
 				nodeDirPrefix, nodeDaemonHome, startingIPAddress, keyringBackend, algo, numValidators,
 			)
 		},
@@ -115,39 +97,27 @@ Example:
 
 	cmd.Flags().Int(flagNumValidators, 4, "Number of validators to initialize the testnet with")
 	cmd.Flags().StringP(flagOutputDir, "o", "./mytestnet", "Directory to store initialization data for the testnet")
-	cmd.Flags().String(flagNodeDirPrefix, "node",
-		"Prefix the directory name for each node with (node results in node0, node1, ...)")
+	cmd.Flags().String(flagNodeDirPrefix, "node", "Prefix the directory name for each node with (node results in node0, node1, ...)")
 	cmd.Flags().String(flagNodeDaemonHome, "starsd", "Home directory of the node's daemon configuration")
-	cmd.Flags().String(
-		flagStartingIPAddress,
-		"192.168.0.1",
-		"Starting IP address"+
-			"(192.168.0.1 results in persistent peers list ID0@192.168.0.1:46656, ID1@192.168.0.2:46656, ...)",
-	)
+	cmd.Flags().String(flagStartingIPAddress, "192.168.0.1", "Starting IP address (192.168.0.1 results in persistent peers list ID0@192.168.0.1:46656, ID1@192.168.0.2:46656, ...)")
 	cmd.Flags().String(flags.FlagChainID, "", "genesis file chain-id, if left blank will be randomly created")
-	cmd.Flags().String(
-		server.FlagMinGasPrices,
-		fmt.Sprintf("0.000006%s", sdk.DefaultBondDenom),
-		"Minimum gas prices to accept for transactions; "+
-			"All fees in a tx must meet this minimum (e.g. 0.01photino,0.001stake)",
-	)
-	cmd.Flags().String(flags.FlagKeyringBackend, defaultKeyringBackend, "Select keyring's backend (os|file|test)")
+	cmd.Flags().String(server.FlagMinGasPrices, fmt.Sprintf("0.000006%s", defaultBondDenom), "Minimum gas prices to accept for transactions; All fees in a tx must meet this minimum (e.g. 0.01photino,0.001stake)")
+	cmd.Flags().String(flags.FlagKeyringBackend, flags.DefaultKeyringBackend, "Select keyring's backend (os|file|test)")
 	cmd.Flags().String(flags.FlagKeyAlgorithm, string(hd.Secp256k1Type), "Key signing algorithm to generate keys for")
-	cmd.Flags().String(flagInitialCoins, fmt.Sprintf("1000000000%s", app.DefaultStakeDenom),
-		"Validator genesis coins: 100000ustarx,1000000ucredits")
+	cmd.Flags().String(flagStakeDenom, defaultBondDenom, "app's stake denom")
 	cmd.Flags().Int64(flagInitialStakingAmount, 100000000,
 		"Flag initial staking amount: 100000000")
-	cmd.Flags().String(flagStakeDenom, app.DefaultStakeDenom, "app's stake denom")
-	cmd.Flags().String(flagUnbondingPeriod, app.DefaultUnbondingPeriod, "app's unbonding period")
-	cmd.Flags().String(flagCurationWindow, "72h",
-		"Curation Window for post expiration: 72h, 3h, 90m")
+	cmd.Flags().String(flagInitialCoins, fmt.Sprintf("1000000000%s", defaultBondDenom),
+		"Validator genesis coins: 100000ustarx")
 	cmd.Flags().String(flagDockerTag, "latest", "docker tag for testnet command")
+	cmd.Flags().String(flagUnbondingPeriod, "72h", "app's unbonding period")
+
 	return cmd
 }
 
 const nodeDirPerm = 0755
 
-// InitTestnet the testnet
+// Initialize the testnet
 func InitTestnet(
 	clientCtx client.Context,
 	cmd *cobra.Command,
@@ -172,18 +142,18 @@ func InitTestnet(
 	nodeIDs := make([]string, numValidators)
 	valPubKeys := make([]cryptotypes.PubKey, numValidators)
 
-	appConfig := srvconfig.DefaultConfig()
-	appConfig.MinGasPrices = minGasPrices
-	appConfig.API.Enable = true
-	appConfig.Telemetry.Enabled = true
-	appConfig.Telemetry.PrometheusRetentionTime = 60
-	appConfig.Telemetry.EnableHostnameLabel = false
-	appConfig.Telemetry.GlobalLabels = [][]string{{"chain_id", chainID}}
+	simappConfig := srvconfig.DefaultConfig()
+	simappConfig.MinGasPrices = minGasPrices
+	simappConfig.API.Enable = true
+	simappConfig.Telemetry.Enabled = true
+	simappConfig.Telemetry.PrometheusRetentionTime = 60
+	simappConfig.Telemetry.EnableHostnameLabel = false
+	simappConfig.Telemetry.GlobalLabels = [][]string{{"chain_id", chainID}}
 
 	var (
-		genAccounts = make([]authtypes.GenesisAccount, 0)
-		genBalances = make([]banktypes.Balance, 0)
-		genFiles    = make([]string, 0)
+		genAccounts []authtypes.GenesisAccount
+		genBalances []banktypes.Balance
+		genFiles    []string
 	)
 
 	inBuf := bufio.NewReader(cmd.InOrStdin())
@@ -191,6 +161,23 @@ func InitTestnet(
 	initialPort := 26656
 	allocatedPorts := 4
 	nodes := make([]TestnetNode, 0)
+	stakeDenom, err := cmd.Flags().GetString(flagStakeDenom)
+	if err != nil {
+		return err
+	}
+
+	initialCoins, err := cmd.Flags().GetString(flagInitialCoins)
+	if err != nil {
+		return err
+	}
+	valCoins, err := sdk.ParseCoinsNormalized(initialCoins)
+	if err != nil {
+		return err
+	}
+	unbondingPeriod, err := cmd.Flags().GetString(flagUnbondingPeriod)
+	if err != nil {
+		return err
+	}
 
 	// generate private keys, node IDs, and initial transactions
 	for i := 0; i < numValidators; i++ {
@@ -198,6 +185,7 @@ func InitTestnet(
 		nodeDir := filepath.Join(outputDir, nodeDirName, nodeDaemonHome)
 		gentxsDir := filepath.Join(outputDir, "gentxs")
 
+		// for docker
 		endPort := initialPort + allocatedPorts
 		testnetNode := TestnetNode{
 			Name:             nodeDirName,
@@ -253,21 +241,7 @@ func InitTestnet(
 		}
 
 		// save private key seed words
-		err = writeFile(fmt.Sprintf("%v.json", "key_seed"), nodeDir, cliPrint)
-		if err != nil {
-			return err
-		}
-
-		stakeDenom, err := cmd.Flags().GetString(flagStakeDenom)
-		if err != nil {
-			return err
-		}
-		initialCoins, err := cmd.Flags().GetString(flagInitialCoins)
-		if err != nil {
-			return err
-		}
-		valCoins, err := sdk.ParseCoinsNormalized(initialCoins)
-		if err != nil {
+		if err := writeFile(fmt.Sprintf("%v.json", "key_seed"), nodeDir, cliPrint); err != nil {
 			return err
 		}
 
@@ -291,8 +265,7 @@ func InitTestnet(
 		}
 
 		txBuilder := clientCtx.TxConfig.NewTxBuilder()
-		err = txBuilder.SetMsgs(createValMsg)
-		if err != nil {
+		if err := txBuilder.SetMsgs(createValMsg); err != nil {
 			return err
 		}
 
@@ -305,9 +278,7 @@ func InitTestnet(
 			WithKeybase(kb).
 			WithTxConfig(clientCtx.TxConfig)
 
-		err = tx.Sign(txFactory, nodeDirName, txBuilder, true)
-
-		if err != nil {
+		if err := tx.Sign(txFactory, nodeDirName, txBuilder, true); err != nil {
 			return err
 		}
 
@@ -316,25 +287,17 @@ func InitTestnet(
 			return err
 		}
 
-		err = writeFile(fmt.Sprintf("%v.json", nodeDirName), gentxsDir, txBz)
-		if err != nil {
+		if err := writeFile(fmt.Sprintf("%v.json", nodeDirName), gentxsDir, txBz); err != nil {
 			return err
 		}
-		srvconfig.WriteConfigFile(filepath.Join(nodeDir, "config/app.toml"), appConfig)
-	}
-	stakeDenom, err := cmd.Flags().GetString(flagStakeDenom)
-	if err != nil {
-		return err
-	}
-	unbondingPeriod, err := cmd.Flags().GetString(flagUnbondingPeriod)
-	if err != nil {
-		return err
+
+		srvconfig.WriteConfigFile(filepath.Join(nodeDir, "config/app.toml"), simappConfig)
 	}
 
-	if initErr := initGenFiles(cmd, clientCtx, mbm,
-		chainID,
-		stakeDenom, unbondingPeriod,
-		genAccounts, genBalances, genFiles, numValidators); initErr != nil {
+	genAccounts = authtypes.SanitizeGenesisAccounts(genAccounts)
+	genBalances = banktypes.SanitizeGenesisBalances(genBalances)
+
+	if err := initGenFiles(clientCtx, mbm, chainID, stakeDenom, unbondingPeriod, genAccounts, genBalances, genFiles, numValidators); err != nil {
 		return err
 	}
 
@@ -365,17 +328,16 @@ func InitTestnet(
 }
 
 func initGenFiles(
-	cmd *cobra.Command,
 	clientCtx client.Context, mbm module.BasicManager, chainID, stakeDenom, unbondingPeriod string,
 	genAccounts []authtypes.GenesisAccount, genBalances []banktypes.Balance,
 	genFiles []string, numValidators int,
 ) error {
 
-	appGenState := mbm.DefaultGenesis(clientCtx.JSONMarshaler)
+	appGenState := mbm.DefaultGenesis(clientCtx.Codec)
 
 	// set the accounts in the genesis state
 	var authGenState authtypes.GenesisState
-	clientCtx.JSONMarshaler.MustUnmarshalJSON(appGenState[authtypes.ModuleName], &authGenState)
+	clientCtx.Codec.MustUnmarshalJSON(appGenState[authtypes.ModuleName], &authGenState)
 
 	accounts, err := authtypes.PackAccounts(genAccounts)
 	if err != nil {
@@ -383,29 +345,14 @@ func initGenFiles(
 	}
 
 	authGenState.Accounts = accounts
-	appGenState[authtypes.ModuleName] = clientCtx.JSONMarshaler.MustMarshalJSON(&authGenState)
+	appGenState[authtypes.ModuleName] = clientCtx.Codec.MustMarshalJSON(&authGenState)
 
 	// set the balances in the genesis state
 	var bankGenState banktypes.GenesisState
-	clientCtx.JSONMarshaler.MustUnmarshalJSON(appGenState[banktypes.ModuleName], &bankGenState)
+	clientCtx.Codec.MustUnmarshalJSON(appGenState[banktypes.ModuleName], &bankGenState)
 
 	bankGenState.Balances = genBalances
-	appGenState[banktypes.ModuleName] = clientCtx.JSONMarshaler.MustMarshalJSON(&bankGenState)
-
-	// curating module
-	curationWindow, err := cmd.Flags().GetString(flagCurationWindow)
-	if err != nil {
-		return err
-	}
-	curationWindowDuration, err := time.ParseDuration(curationWindow)
-	if err != nil {
-		return err
-	}
-
-	var curatingGenState curatingtypes.GenesisState
-	clientCtx.JSONMarshaler.MustUnmarshalJSON(appGenState[curatingtypes.ModuleName], &curatingGenState)
-	curatingGenState.Params.CurationWindow = curationWindowDuration
-	appGenState[curatingtypes.ModuleName] = clientCtx.JSONMarshaler.MustMarshalJSON(&curatingGenState)
+	appGenState[banktypes.ModuleName] = clientCtx.Codec.MustMarshalJSON(&bankGenState)
 
 	appGenStateJSON, err := json.MarshalIndent(appGenState, "", "  ")
 	if err != nil {
@@ -417,7 +364,7 @@ func initGenFiles(
 		AppState:   appGenStateJSON,
 		Validators: nil,
 	}
-	genDoc.AppState, err = initGenesis(clientCtx.JSONMarshaler, &genDoc, stakeDenom, unbondingPeriod)
+	genDoc.AppState, err = initGenesis(clientCtx.Codec, &genDoc, stakeDenom, unbondingPeriod)
 	if err != nil {
 		return err
 	}
@@ -456,8 +403,7 @@ func collectGenFiles(
 			return err
 		}
 
-		nodeAppState, err := genutil.GenAppStateFromConfig(clientCtx.JSONMarshaler, clientCtx.TxConfig,
-			nodeConfig, initCfg, *genDoc, genBalIterator)
+		nodeAppState, err := genutil.GenAppStateFromConfig(clientCtx.Codec, clientCtx.TxConfig, nodeConfig, initCfg, *genDoc, genBalIterator)
 		if err != nil {
 			return err
 		}
@@ -536,4 +482,82 @@ func docker(nodes []TestnetNode, tag string) (string, error) {
 		return "", err
 	}
 	return buf.String(), nil
+}
+
+func initGenesis(
+	cdc codec.JSONCodec,
+	genDoc *types.GenesisDoc,
+	stakeDenom,
+	unbondingPeriod string,
+) (json.RawMessage, error) {
+	appState := make(map[string]json.RawMessage)
+	if err := json.Unmarshal(genDoc.AppState, &appState); err != nil {
+		return nil, fmt.Errorf("failed to JSON unmarshal initial genesis state %w", err)
+	}
+	// migrate staking state
+	if appState[stakingtypes.ModuleName] != nil {
+		var stakingGenState stakingtypes.GenesisState
+		err := cdc.UnmarshalJSON(appState[stakingtypes.ModuleName], &stakingGenState)
+		if err != nil {
+			return nil, err
+		}
+
+		stakingGenState.Params.BondDenom = stakeDenom
+
+		d, err := time.ParseDuration(unbondingPeriod)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse unbonding period %w", err)
+		}
+		stakingGenState.Params.UnbondingTime = d
+
+		appState[stakingtypes.ModuleName] = cdc.MustMarshalJSON(&stakingGenState)
+	}
+
+	// migrate crisis state
+	if appState[crisistypes.ModuleName] != nil {
+		var crisisGenState crisistypes.GenesisState
+		err := cdc.UnmarshalJSON(appState[crisistypes.ModuleName], &crisisGenState)
+		if err != nil {
+			return nil, err
+		}
+		crisisGenState.ConstantFee.Denom = stakeDenom
+		appState[crisistypes.ModuleName] = cdc.MustMarshalJSON(&crisisGenState)
+	}
+
+	// migrate gov state
+	if appState[govtypes.ModuleName] != nil {
+		var govGenState govtypes.GenesisState
+		err := cdc.UnmarshalJSON(appState[govtypes.ModuleName], &govGenState)
+		if err != nil {
+			return nil, err
+		}
+		minDeposit := sdk.NewInt64Coin(stakeDenom, 10_000_000)
+		govGenState.DepositParams.MinDeposit = sdk.NewCoins(minDeposit)
+		appState[govtypes.ModuleName] = cdc.MustMarshalJSON(&govGenState)
+	}
+	// migrate mint state
+	if appState[minttypes.ModuleName] != nil {
+		var mintGenState minttypes.GenesisState
+		err := cdc.UnmarshalJSON(appState[minttypes.ModuleName], &mintGenState)
+		if err != nil {
+			return nil, err
+		}
+		mintGenState.Params.MintDenom = stakeDenom
+		appState[minttypes.ModuleName] = cdc.MustMarshalJSON(&mintGenState)
+	}
+
+	// claim
+
+	if appState[claimtypes.ModuleName] != nil {
+		var claimGenState claimtypes.GenesisState
+		err := cdc.UnmarshalJSON(appState[claimtypes.ModuleName], &claimGenState)
+		if err != nil {
+			return nil, err
+		}
+		claimGenState.ModuleAccountBalance = sdk.NewCoin(stakeDenom, claimGenState.ModuleAccountBalance.Amount)
+		claimGenState.Params.ClaimDenom = stakeDenom
+		appState[claimtypes.ModuleName] = cdc.MustMarshalJSON(&claimGenState)
+	}
+
+	return json.Marshal(appState)
 }

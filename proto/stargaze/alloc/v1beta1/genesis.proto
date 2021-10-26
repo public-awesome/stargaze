@@ -1,0 +1,14 @@
+syntax = "proto3";
+package publicawesome.stargaze.alloc.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "stargaze/alloc/v1beta1/params.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "github.com/public-awesome/stargaze/x/alloc/types";
+
+// GenesisState defines the alloc module's genesis state.
+message GenesisState {
+    // this line is used by starport scaffolding # genesis/proto/state
+    Params params = 1 [ (gogoproto.nullable) = false ];
+}

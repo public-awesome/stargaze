@@ -2,30 +2,10 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/public-awesome/stargaze/x/claim/types"
 )
-
-func (k Keeper) AfterMintSocialToken(ctx sdk.Context, sender sdk.AccAddress) {
-	_, err := k.ClaimCoinsForAction(ctx, sender, types.ActionMintSocialToken)
-	if err != nil {
-		panic(err.Error())
-	}
-}
-
-func (k Keeper) AfterBuySocialToken(ctx sdk.Context, sender sdk.AccAddress) {
-	_, err := k.ClaimCoinsForAction(ctx, sender, types.ActionBuySocialToken)
-	if err != nil {
-		panic(err.Error())
-	}
-}
-
-func (k Keeper) AfterMintNFT(ctx sdk.Context, sender sdk.AccAddress) {
-	_, err := k.ClaimCoinsForAction(ctx, sender, types.ActionMintNFT)
-	if err != nil {
-		panic(err.Error())
-	}
-}
 
 func (k Keeper) AfterProposalVote(ctx sdk.Context, proposalID uint64, voterAddr sdk.AccAddress) {
 	_, err := k.ClaimCoinsForAction(ctx, voterAddr, types.ActionVote)
@@ -35,6 +15,10 @@ func (k Keeper) AfterProposalVote(ctx sdk.Context, proposalID uint64, voterAddr 
 }
 
 func (k Keeper) AfterDelegationModified(ctx sdk.Context, delAddr sdk.AccAddress, valAddr sdk.ValAddress) {
+	// must not run on genesis
+	if ctx.BlockHeight() <= 1 {
+		return
+	}
 	_, err := k.ClaimCoinsForAction(ctx, delAddr, types.ActionDelegateStake)
 	if err != nil {
 		panic(err.Error())
@@ -48,6 +32,7 @@ type Hooks struct {
 	k Keeper
 }
 
+var _ govtypes.GovHooks = Hooks{}
 var _ stakingtypes.StakingHooks = Hooks{}
 
 // Return the wrapper struct
@@ -66,6 +51,9 @@ func (h Hooks) AfterProposalVote(ctx sdk.Context, proposalID uint64, voterAddr s
 
 func (h Hooks) AfterProposalInactive(ctx sdk.Context, proposalID uint64) {}
 func (h Hooks) AfterProposalActive(ctx sdk.Context, proposalID uint64)   {}
+
+func (h Hooks) AfterProposalFailedMinDeposit(ctx sdk.Context, proposalID uint64)  {}
+func (h Hooks) AfterProposalVotingPeriodEnded(ctx sdk.Context, proposalID uint64) {}
 
 // staking hooks
 func (h Hooks) AfterValidatorCreated(ctx sdk.Context, valAddr sdk.ValAddress)   {}
