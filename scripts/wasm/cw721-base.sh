@@ -8,7 +8,7 @@ INVESTOR=$(starsd keys show investor -a)
 # see contracts code that have been uploaded
 starsd q wasm list-code
 
-curl -LO https://github.com/CosmWasm/cosmwasm-plus/releases/download/v0.6.2/cw721_base.wasm
+curl -LO https://github.com/CosmWasm/cosmwasm-plus/releases/download/v0.9.0/cw721_base.wasm
 
 # upload contract code
 starsd tx wasm store cw721_base.wasm --from validator $TXFLAG
