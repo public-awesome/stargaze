@@ -54,7 +54,7 @@ func exists(path string) bool {
 }
 
 func main() {
-	checkFile := os.Getenv("PULGIN_CHECK_FILE")
+	checkFile := os.Getenv("PLUGIN_CHECK_FILE")
 	if checkFile != "" && !exists(checkFile) {
 		log.Fatal("check file doesn't exists")
 	}
