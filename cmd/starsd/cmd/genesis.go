@@ -230,7 +230,7 @@ func PrepareGenesis(
 	// claim module genesis
 	claimGenState := claimtypes.GetGenesisStateFromAppState(cdc, appState)
 	claimGenState.Params = genesisParams.ClaimParams
-	claimRecords := make([]claimtypes.ClaimRecord, len(snapshot.Accounts))
+	var claimRecords []claimtypes.ClaimRecord
 	claimsTotal := sdk.ZeroInt()
 	for addr, acc := range snapshot.Accounts {
 		claimRecord := claimtypes.ClaimRecord{
@@ -248,6 +248,15 @@ func PrepareGenesis(
 		return nil, nil, fmt.Errorf("failed to marshal claim genesis state: %w", err)
 	}
 	appState[claimtypes.ModuleName] = claimGenStateBz
+
+	// alloc module genesis
+	allocGenState := alloctypes.GetGenesisStateFromAppState(cdc, appState)
+	allocGenState.Params = genesisParams.AllocParams
+	allocGenStateBz, err := cdc.MarshalJSON(allocGenState)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to marshal alloc genesis state: %w", err)
+	}
+	appState[alloctypes.ModuleName] = allocGenStateBz
 
 	// wasmGenState := &wasmtypes.GenesisState{
 	// 	Params: genesisParams.WasmParams,
