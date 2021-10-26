@@ -79,7 +79,7 @@ Example:
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
-			cdc := clientCtx.Codec
+			// cdc := clientCtx.Codec
 			serverCtx := server.GetServerContextFromCmd(cmd)
 			config := serverCtx.Config
 
@@ -93,7 +93,7 @@ Example:
 			// [TODO] bring back testnet
 
 			// read snapshot.json and parse into struct
-			snapshotFile, _ := ioutil.ReadFile("test.json")
+			snapshotFile, _ := ioutil.ReadFile(args[1])
 			snapshot := Snapshot{}
 			_ = json.Unmarshal([]byte(snapshotFile), &snapshot)
 
@@ -111,10 +111,10 @@ Example:
 				return fmt.Errorf("failed to prepare genesis: %w", err)
 			}
 
-			// validate genesis state
-			if err = mbm.ValidateGenesis(cdc, clientCtx.TxConfig, appState); err != nil {
-				return fmt.Errorf("error validating genesis file: %s", err.Error())
-			}
+			// // validate genesis state
+			// if err = mbm.ValidateGenesis(cdc, clientCtx.TxConfig, appState); err != nil {
+			// 	return fmt.Errorf("error validating genesis file: %s", err.Error())
+			// }
 
 			// save genesis
 			appStateJSON, err := json.Marshal(appState)
@@ -230,15 +230,20 @@ func PrepareGenesis(
 	// claim module genesis
 	claimGenState := claimtypes.GetGenesisStateFromAppState(cdc, appState)
 	claimGenState.Params = genesisParams.ClaimParams
+	claimRecords := make([]claimtypes.ClaimRecord, len(snapshot.Accounts))
+	for addr, acc := range snapshot.Accounts {
+		claimRecord := claimtypes.ClaimRecord{
+			Address:                addr,
+			InitialClaimableAmount: []sdk.Coin{},
+			ActionCompleted:        []bool{false, false, false, false},
+		}
+		claimRecords = append(claimRecords, claimRecord)
+	}
+	claimGenState.ClaimRecords = claimRecords
 	claimGenStateBz, err := cdc.MarshalJSON(claimGenState)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to marshal claim genesis state: %w", err)
 	}
-
-	for _, acc := range snapshot.Accounts {
-		fmt.Println(acc.AtomAddress)
-	}
-
 	appState[claimtypes.ModuleName] = claimGenStateBz
 
 	// wasmGenState := &wasmtypes.GenesisState{
