@@ -117,7 +117,10 @@ Example:
 			// read snapshot.json and parse into struct
 			snapshotFile, _ := ioutil.ReadFile(args[1])
 			snapshot := Snapshot{}
-			json.Unmarshal([]byte(snapshotFile), &snapshot)
+			err = json.Unmarshal(snapshotFile, &snapshot)
+			if err != nil {
+				panic(err)
+			}
 
 			// run Prepare Genesis
 			appState, genDoc, err = PrepareGenesis(clientCtx, appState, genDoc, genesisParams, chainID, snapshot)
