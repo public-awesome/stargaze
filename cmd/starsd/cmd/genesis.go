@@ -30,6 +30,7 @@ import (
 
 	// wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	// appParams "github.com/public-awesome/stargaze/app/params"
+	alloctypes "github.com/public-awesome/stargaze/x/alloc/types"
 	claimtypes "github.com/public-awesome/stargaze/x/claim/types"
 )
 
@@ -58,6 +59,7 @@ type GenesisParams struct {
 
 	SlashingParams slashingtypes.Params
 
+	AllocParams alloctypes.Params
 	ClaimParams claimtypes.Params
 	MintParams  minttypes.Params
 	// WasmParams  wasmtypes.Params
@@ -285,6 +287,10 @@ func MainnetGenesisParams() GenesisParams {
 		},
 	}
 
+	// alloc
+	genParams.AllocParams = alloctypes.DefaultParams()
+	// [TODO] add weighted developer allocations
+
 	// mint
 	genParams.MintParams = minttypes.DefaultParams()
 	genParams.MintParams.MintDenom = BaseCoinUnit
@@ -300,7 +306,7 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
 	genParams.StakingParams.MaxValidators = 100
 	genParams.StakingParams.BondDenom = genParams.NativeCoinMetadatas[0].Base
-	// genParams.StakingParams.MinCommissionRate = sdk.MustNewDecFromStr("0.05")
+	// MinCommissionRate is enforced in ante-handler
 
 	genParams.DistributionParams = distributiontypes.DefaultParams()
 	genParams.DistributionParams.BaseProposerReward = sdk.MustNewDecFromStr("0.01")
@@ -331,7 +337,7 @@ func MainnetGenesisParams() GenesisParams {
 
 	genParams.ClaimParams = claimtypes.Params{
 		AirdropStartTime:   genParams.GenesisTime.Add(time.Hour * 24 * 365), // 1 year (will be changed by gov)
-		DurationUntilDecay: time.Hour * 24 * 183,                            // 183 days = ~6 months
+		DurationUntilDecay: time.Hour * 24 * 120,                            // 120 days = ~4 months
 		DurationOfDecay:    time.Hour * 24 * 120,                            // 120 days = ~4 months
 		ClaimDenom:         genParams.NativeCoinMetadatas[0].Base,
 	}
