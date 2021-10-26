@@ -64,7 +64,7 @@ steps:
       event:
         - push
         - pull_request
-  - name: publish-upgrade
+  - name: publish-beta
     image: plugins/docker:18
     settings:
       dockerfile: docker/Dockerfile
@@ -74,12 +74,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - upgrade
+        - beta
     when:
       event:
         - push
       branch:
-        - feature/v44-upgrade
+        - main
   - name: publish-docker
     image: plugins/docker:18
     settings:
@@ -254,6 +254,6 @@ volumes:
   temp: {}
 ---
 kind: signature
-hmac: b6d8804d7b949ef917be76621d6a77c34a437ad59480a0e122383e2702382cc3
+hmac: 7cd70baa94079edbf191d96a2c9f31d474245ec80ae0cafe621c53f2e5571f63
 
 ...
