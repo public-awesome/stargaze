@@ -46,7 +46,8 @@ func DefaultParams() Params {
 		StartTime:               time.Now().AddDate(1, 0, 0),       // 1 year from now
 		InitialAnnualProvisions: sdk.NewDec(1_000_000_000_000_000), // 1B
 		ReductionFactor:         sdk.NewDec(2).QuoInt64(3),         // 2/3
-		BlocksPerYear:           uint64(60 * 60 * 8766 / 5),        // assuming 5 second block times
+		BlocksPerYear:           uint64(6311520),        // 60 * 60 * 8766 / 5 = 6,311,520
+ assuming 5 second block times
 	}
 }
 
