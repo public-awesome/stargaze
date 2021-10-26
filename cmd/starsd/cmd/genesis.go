@@ -89,6 +89,12 @@ Example:
 				return fmt.Errorf("failed to unmarshal genesis state: %w", err)
 			}
 
+			// [TODO] bring back testnet
+
+			// [TODO] read snapshot.json and parse into struct
+
+			// pass struct into prepare-genesis
+
 			// get genesis params
 			genesisParams := MainnetGenesisParams()
 
@@ -124,6 +130,7 @@ Example:
 	return cmd
 }
 
+// fill with data
 func PrepareGenesis(
 	clientCtx client.Context,
 	appState map[string]json.RawMessage,
@@ -237,6 +244,7 @@ func PrepareGenesis(
 	return appState, genDoc, nil
 }
 
+// params only
 func MainnetGenesisParams() GenesisParams {
 	genParams := GenesisParams{}
 
