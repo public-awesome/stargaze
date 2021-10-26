@@ -19,6 +19,7 @@ func main() {
 		app.NewStargazeApp,
 		cosmoscmd.AddSubCmd(cmd.TestnetCmd(app.ModuleBasics)),
 		cosmoscmd.AddCustomInitCmd(cmd.InitCmd(app.ModuleBasics, app.DefaultNodeHome)),
+		cosmoscmd.AddSubCmd(cmd.PrepareGenesisCmd(app.DefaultNodeHome, app.ModuleBasics)),
 		// this line is used by starport scaffolding # root/arguments
 	)
 	if err := svrcmd.Execute(rootCmd, app.DefaultNodeHome); err != nil {
