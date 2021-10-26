@@ -246,7 +246,6 @@ steps:
 trigger:
   branch:
     - main
-    - feature/v44-upgrade
   event:
     - pull_request
     - push
@@ -255,6 +254,6 @@ volumes:
   temp: {}
 ---
 kind: signature
-hmac: 348fa6d681737defd044cc4fd55eb41acfb23c0501f9a2c1e741626eeef73926
+hmac: b6d8804d7b949ef917be76621d6a77c34a437ad59480a0e122383e2702382cc3
 
 ...
