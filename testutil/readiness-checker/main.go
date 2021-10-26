@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -47,9 +48,16 @@ func waitFor(timeout time.Duration, blocks int, url string, ch chan<- error) {
 	}
 
 }
+func exists(path string) bool {
+	_, err := os.Stat(path)
+	return !errors.Is(err, os.ErrNotExist)
+}
 
 func main() {
-
+	checkFile := os.Getenv("PULGIN_CHECK_FILE")
+	if checkFile != "" && !exists(checkFile) {
+		log.Fatal("check file doesn't exists")
+	}
 	chains := strings.Split(os.Getenv("PLUGIN_CHAIN_LIST"), ",")
 
 	if len(chains) == 0 || len(os.Getenv("PLUGIN_CHAIN_LIST")) == 0 {
