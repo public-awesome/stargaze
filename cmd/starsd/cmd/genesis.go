@@ -23,10 +23,10 @@ import (
 	distributiontypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	ibctransfertypes "github.com/cosmos/ibc-go/modules/apps/transfer/types"
+	minttypes "github.com/public-awesome/stargaze/x/mint/types"
 
 	// wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	// appParams "github.com/public-awesome/stargaze/app/params"
@@ -79,7 +79,7 @@ Example:
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
-			// cdc := clientCtx.Codec
+			cdc := clientCtx.Codec
 			serverCtx := server.GetServerContextFromCmd(cmd)
 			config := serverCtx.Config
 
@@ -92,18 +92,16 @@ Example:
 
 			// [TODO] bring back testnet
 
-			// read snapshot.json and parse into struct
-			snapshotFile, _ := ioutil.ReadFile(args[1])
-			snapshot := Snapshot{}
-			_ = json.Unmarshal([]byte(snapshotFile), &snapshot)
-
-			// pass struct into prepare-genesis
-
 			// get genesis params
 			genesisParams := MainnetGenesisParams()
 
 			// get genesis params
 			chainID := args[0]
+
+			// read snapshot.json and parse into struct
+			snapshotFile, _ := ioutil.ReadFile(args[1])
+			snapshot := Snapshot{}
+			_ = json.Unmarshal([]byte(snapshotFile), &snapshot)
 
 			// run Prepare Genesis
 			appState, genDoc, err = PrepareGenesis(clientCtx, appState, genDoc, genesisParams, chainID, snapshot)
@@ -111,10 +109,10 @@ Example:
 				return fmt.Errorf("failed to prepare genesis: %w", err)
 			}
 
-			// // validate genesis state
-			// if err = mbm.ValidateGenesis(cdc, clientCtx.TxConfig, appState); err != nil {
-			// 	return fmt.Errorf("error validating genesis file: %s", err.Error())
-			// }
+			// validate genesis state
+			if err = mbm.ValidateGenesis(cdc, clientCtx.TxConfig, appState); err != nil {
+				return fmt.Errorf("error validating genesis file: %s", err.Error())
+			}
 
 			// save genesis
 			appStateJSON, err := json.Marshal(appState)
@@ -234,9 +232,10 @@ func PrepareGenesis(
 	for addr, acc := range snapshot.Accounts {
 		claimRecord := claimtypes.ClaimRecord{
 			Address:                addr,
-			InitialClaimableAmount: []sdk.Coin{},
-			ActionCompleted:        []bool{false, false, false, false},
+			InitialClaimableAmount: sdk.NewCoins(sdk.NewCoin(HumanCoinUnit, acc.AirdropAmount)),
+			ActionCompleted:        []bool{false, false, false, false, false},
 		}
+		// fmt.Println(claimRecord)
 		claimRecords = append(claimRecords, claimRecord)
 	}
 	claimGenState.ClaimRecords = claimRecords
@@ -288,9 +287,11 @@ func MainnetGenesisParams() GenesisParams {
 
 	// mint
 	genParams.MintParams = minttypes.DefaultParams()
-	genParams.MintParams.InflationMax = sdk.NewDecWithPrec(40, 2) // Max 40%
-	genParams.MintParams.InflationRateChange = sdk.NewDec(1)      // 100%
 	genParams.MintParams.MintDenom = BaseCoinUnit
+	genParams.MintParams.StartTime = genParams.GenesisTime.AddDate(1, 0, 0)
+	genParams.MintParams.InitialAnnualProvisions = sdk.NewDec(1_000_000_000_000_000)
+	genParams.MintParams.ReductionFactor = sdk.NewDec(2).QuoInt64(3)
+	genParams.MintParams.BlocksPerYear = uint64(6311520)
 
 	// genParams.WasmParams = wasmtypes.DefaultParams()
 	// genParams.WasmParams.CodeUploadAccess = wasmtypes.AllowNobody
