@@ -28,7 +28,6 @@ import (
 	ibctransfertypes "github.com/cosmos/ibc-go/modules/apps/transfer/types"
 	minttypes "github.com/public-awesome/stargaze/x/mint/types"
 
-	// wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	// appParams "github.com/public-awesome/stargaze/app/params"
 	alloctypes "github.com/public-awesome/stargaze/x/alloc/types"
 	claimtypes "github.com/public-awesome/stargaze/x/claim/types"
@@ -80,7 +79,6 @@ type GenesisParams struct {
 	AllocParams alloctypes.Params
 	ClaimParams claimtypes.Params
 	MintParams  minttypes.Params
-	// WasmParams  wasmtypes.Params
 }
 
 func PrepareGenesisCmd(defaultNodeHome string, mbm module.BasicManager) *cobra.Command {
@@ -110,8 +108,6 @@ Example:
 				return fmt.Errorf("failed to unmarshal genesis state: %w", err)
 			}
 
-			// [TODO] bring back testnet
-
 			// get genesis params
 			genesisParams := MainnetGenesisParams()
 
@@ -121,7 +117,7 @@ Example:
 			// read snapshot.json and parse into struct
 			snapshotFile, _ := ioutil.ReadFile(args[1])
 			snapshot := Snapshot{}
-			_ = json.Unmarshal([]byte(snapshotFile), &snapshot)
+			json.Unmarshal([]byte(snapshotFile), &snapshot)
 
 			// run Prepare Genesis
 			appState, genDoc, err = PrepareGenesis(clientCtx, appState, genDoc, genesisParams, chainID, snapshot)
@@ -248,7 +244,7 @@ func PrepareGenesis(
 	// claim module genesis
 	claimGenState := claimtypes.GetGenesisStateFromAppState(cdc, appState)
 	claimGenState.Params = genesisParams.ClaimParams
-	var claimRecords []claimtypes.ClaimRecord
+	claimRecords := make([]claimtypes.ClaimRecord, 0, len(snapshot.Accounts))
 	claimsTotal := sdk.ZeroInt()
 	for addr, acc := range snapshot.Accounts {
 		claimRecord := claimtypes.ClaimRecord{
@@ -276,16 +272,6 @@ func PrepareGenesis(
 	}
 	appState[alloctypes.ModuleName] = allocGenStateBz
 
-	// wasmGenState := &wasmtypes.GenesisState{
-	// 	Params: genesisParams.WasmParams,
-	// }
-
-	// wasmGenStateBz, err := cdc.MarshalJSON(wasmGenState)
-	// if err != nil {
-	// 	return nil, nil, fmt.Errorf("failed to marshal claim genesis state: %w", err)
-	// }
-	// appState[wasmtypes.ModuleName] = wasmGenStateBz
-	// return appState and genDoc
 	return appState, genDoc, nil
 }
 
@@ -327,9 +313,6 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.MintParams.InitialAnnualProvisions = sdk.NewDec(1_000_000_000_000_000)
 	genParams.MintParams.ReductionFactor = sdk.NewDec(2).QuoInt64(3)
 	genParams.MintParams.BlocksPerYear = uint64(6311520)
-
-	// genParams.WasmParams = wasmtypes.DefaultParams()
-	// genParams.WasmParams.CodeUploadAccess = wasmtypes.AllowNobody
 
 	genParams.StakingParams = stakingtypes.DefaultParams()
 	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
