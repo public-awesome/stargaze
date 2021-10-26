@@ -3,6 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -91,7 +92,10 @@ Example:
 
 			// [TODO] bring back testnet
 
-			// [TODO] read snapshot.json and parse into struct
+			// read snapshot.json and parse into struct
+			snapshotFile, _ := ioutil.ReadFile("test.json")
+			snapshot := Snapshot{}
+			_ = json.Unmarshal([]byte(snapshotFile), &snapshot)
 
 			// pass struct into prepare-genesis
 
@@ -102,7 +106,7 @@ Example:
 			chainID := args[0]
 
 			// run Prepare Genesis
-			appState, genDoc, err = PrepareGenesis(clientCtx, appState, genDoc, genesisParams, chainID)
+			appState, genDoc, err = PrepareGenesis(clientCtx, appState, genDoc, genesisParams, chainID, snapshot)
 			if err != nil {
 				return fmt.Errorf("failed to prepare genesis: %w", err)
 			}
@@ -137,6 +141,7 @@ func PrepareGenesis(
 	genDoc *tmtypes.GenesisDoc,
 	genesisParams GenesisParams,
 	chainID string,
+	snapshot Snapshot,
 ) (map[string]json.RawMessage, *tmtypes.GenesisDoc, error) {
 	cdc := clientCtx.Codec
 
@@ -229,6 +234,11 @@ func PrepareGenesis(
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to marshal claim genesis state: %w", err)
 	}
+
+	for _, acc := range snapshot.Accounts {
+		fmt.Println(acc.AtomAddress)
+	}
+
 	appState[claimtypes.ModuleName] = claimGenStateBz
 
 	// wasmGenState := &wasmtypes.GenesisState{
