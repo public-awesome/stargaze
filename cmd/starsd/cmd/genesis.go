@@ -231,16 +231,18 @@ func PrepareGenesis(
 	claimGenState := claimtypes.GetGenesisStateFromAppState(cdc, appState)
 	claimGenState.Params = genesisParams.ClaimParams
 	claimRecords := make([]claimtypes.ClaimRecord, len(snapshot.Accounts))
+	claimsTotal := sdk.ZeroInt()
 	for addr, acc := range snapshot.Accounts {
 		claimRecord := claimtypes.ClaimRecord{
 			Address:                addr,
 			InitialClaimableAmount: sdk.NewCoins(sdk.NewCoin(HumanCoinUnit, acc.AirdropAmount)),
 			ActionCompleted:        []bool{false, false, false, false, false},
 		}
-		// fmt.Println(claimRecord)
+		claimsTotal = claimsTotal.Add(acc.AirdropAmount)
 		claimRecords = append(claimRecords, claimRecord)
 	}
 	claimGenState.ClaimRecords = claimRecords
+	claimGenState.ModuleAccountBalance = sdk.NewCoin(HumanCoinUnit, claimsTotal)
 	claimGenStateBz, err := cdc.MarshalJSON(claimGenState)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to marshal claim genesis state: %w", err)
