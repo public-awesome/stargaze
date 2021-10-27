@@ -359,7 +359,7 @@ func MainnetGenesisParams() GenesisParams {
 	}
 
 	genParams.ConsensusParams = tmtypes.DefaultConsensusParams()
-	genParams.ConsensusParams.Block.MaxBytes = 5 * 1024 * 1024
+	genParams.ConsensusParams.Block.MaxBytes = 25 * 1024 * 1024 // 26,214,400 for cosmwasm
 	genParams.ConsensusParams.Block.MaxGas = 6_000_000
 	genParams.ConsensusParams.Evidence.MaxAgeDuration = genParams.StakingParams.UnbondingTime
 	genParams.ConsensusParams.Evidence.MaxAgeNumBlocks = int64(genParams.StakingParams.UnbondingTime.Seconds()) / 3
