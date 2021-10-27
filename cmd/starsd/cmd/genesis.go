@@ -352,7 +352,8 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.SlashingParams.SlashFractionDowntime = sdk.ZeroDec()                   // 0% liveness slashing
 
 	genParams.ClaimParams = claimtypes.Params{
-		AirdropStartTime:   genParams.GenesisTime.Add(time.Hour * 24 * 365), // 1 year (will be changed by gov)
+		AirdropEnabled: false, 
+		AirdropStartTime:  genParams.GenesisTime.Add(time.Hour * 24 * 365), // 1 year (will be changed by gov)
 		DurationUntilDecay: time.Hour * 24 * 120,                            // 120 days = ~4 months
 		DurationOfDecay:    time.Hour * 24 * 120,                            // 120 days = ~4 months
 		ClaimDenom:         genParams.NativeCoinMetadatas[0].Base,
