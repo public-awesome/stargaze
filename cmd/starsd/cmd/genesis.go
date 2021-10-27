@@ -345,7 +345,7 @@ func MainnetGenesisParams() GenesisParams {
 	)
 
 	genParams.SlashingParams = slashingtypes.DefaultParams()
-	genParams.SlashingParams.SignedBlocksWindow = int64(30000)                       // ~41 hr at 5 second blocks
+	genParams.SlashingParams.SignedBlocksWindow = int64(25000)                       // ~41 hr at 6 second blocks
 	genParams.SlashingParams.MinSignedPerWindow = sdk.MustNewDecFromStr("0.05")      // 5% minimum liveness
 	genParams.SlashingParams.DowntimeJailDuration = time.Minute                      // 1 minute jail period
 	genParams.SlashingParams.SlashFractionDoubleSign = sdk.MustNewDecFromStr("0.05") // 5% double sign slashing
