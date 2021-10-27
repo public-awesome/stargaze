@@ -73,7 +73,7 @@ timestamp.`,
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
-
+	cmd.Flags().Bool(FlagDelayed, false, "Create a delayed vesting account if true")
 	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd
