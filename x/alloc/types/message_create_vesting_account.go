@@ -17,6 +17,7 @@ func NewMsgCreateVestingAccount(fromAddr, toAddr sdk.AccAddress, amount sdk.Coin
 		FromAddress: fromAddr.String(),
 		ToAddress:   toAddr.String(),
 		Amount:      amount,
+		StartTime:   startTime,
 		EndTime:     endTime,
 		Delayed:     delayed,
 	}
