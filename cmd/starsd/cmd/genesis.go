@@ -35,7 +35,7 @@ import (
 
 const (
 	HumanCoinUnit       = "stars"
-	BaseCoinUnit        = "ustarx"
+	BaseCoinUnit        = "ustars"
 	StarsExponent       = 6
 	Bech32PrefixAccAddr = "stars"
 )
@@ -282,8 +282,8 @@ func PrepareGenesis(
 func MainnetGenesisParams() GenesisParams {
 	genParams := GenesisParams{}
 
-	genParams.AirdropSupply = sdk.NewIntWithDecimal(2, 14)                // 2*10^14 ustars, 2*10^8 (200M STARS)
-	genParams.GenesisTime = time.Date(2021, 7, 29, 17, 0, 0, 0, time.UTC) // Jul 29, 2021 - 17:00 UTC
+	genParams.AirdropSupply = sdk.NewInt(250_000_000_000_000)              // 250M STARS
+	genParams.GenesisTime = time.Date(2021, 10, 29, 17, 0, 0, 0, time.UTC) // Oct 29, 2021 - 17:00 UTC
 
 	genParams.NativeCoinMetadatas = []banktypes.Metadata{
 		{
@@ -324,6 +324,7 @@ func MainnetGenesisParams() GenesisParams {
 	// MinCommissionRate is enforced in ante-handler
 
 	genParams.DistributionParams = distributiontypes.DefaultParams()
+	// [TODO] update these due to alloc module taking up funds?
 	genParams.DistributionParams.BaseProposerReward = sdk.MustNewDecFromStr("0.01")
 	genParams.DistributionParams.BonusProposerReward = sdk.MustNewDecFromStr("0.04")
 	genParams.DistributionParams.CommunityTax = sdk.MustNewDecFromStr("0.05")
@@ -333,7 +334,7 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.GovParams.DepositParams.MaxDepositPeriod = time.Hour * 24 * 14 // 2 weeks
 	genParams.GovParams.DepositParams.MinDeposit = sdk.NewCoins(sdk.NewCoin(
 		genParams.NativeCoinMetadatas[0].Base,
-		sdk.NewInt(2_500_000_000),
+		sdk.NewInt(1_000_000_000),
 	))
 	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.2") // 20%
 	genParams.GovParams.VotingParams.VotingPeriod = time.Hour * 24 * 3    // 3 days
