@@ -22,6 +22,7 @@ type BankKeeper interface {
 	BlockedAddr(addr sdk.AccAddress) bool
 
 	GetBalance(ctx sdk.Context, addr sdk.AccAddress, denom string) sdk.Coin
+	GetAllBalances(ctx sdk.Context, addr sdk.AccAddress) sdk.Coins
 }
 
 type StakingKeeper interface {
