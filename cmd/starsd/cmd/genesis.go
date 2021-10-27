@@ -315,7 +315,7 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.MintParams.StartTime = genParams.GenesisTime.AddDate(1, 0, 0)
 	genParams.MintParams.InitialAnnualProvisions = sdk.NewDec(1_000_000_000_000_000)
 	genParams.MintParams.ReductionFactor = sdk.NewDec(2).QuoInt64(3)
-	genParams.MintParams.BlocksPerYear = uint64(6311520)
+	genParams.MintParams.BlocksPerYear = uint64(5737588)
 
 	genParams.StakingParams = stakingtypes.DefaultParams()
 	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
@@ -341,7 +341,7 @@ func MainnetGenesisParams() GenesisParams {
 
 	genParams.CrisisConstantFee = sdk.NewCoin(
 		genParams.NativeCoinMetadatas[0].Base,
-		sdk.NewInt(500_000_000_000),
+		sdk.NewInt(100_000_000_000),
 	)
 
 	genParams.SlashingParams = slashingtypes.DefaultParams()
@@ -349,11 +349,11 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.SlashingParams.MinSignedPerWindow = sdk.MustNewDecFromStr("0.05")      // 5% minimum liveness
 	genParams.SlashingParams.DowntimeJailDuration = time.Minute                      // 1 minute jail period
 	genParams.SlashingParams.SlashFractionDoubleSign = sdk.MustNewDecFromStr("0.05") // 5% double sign slashing
-	genParams.SlashingParams.SlashFractionDowntime = sdk.ZeroDec()                   // 0% liveness slashing
+	genParams.SlashingParams.SlashFractionDowntime = sdk.MustNewDecFromStr("0.0001") // 0.01% liveness slashing
 
 	genParams.ClaimParams = claimtypes.Params{
-		AirdropEnabled: false, 
-		AirdropStartTime:  genParams.GenesisTime.Add(time.Hour * 24 * 365), // 1 year (will be changed by gov)
+		AirdropEnabled:     false,
+		AirdropStartTime:   genParams.GenesisTime.Add(time.Hour * 24 * 365), // 1 year (will be changed by gov)
 		DurationUntilDecay: time.Hour * 24 * 120,                            // 120 days = ~4 months
 		DurationOfDecay:    time.Hour * 24 * 120,                            // 120 days = ~4 months
 		ClaimDenom:         genParams.NativeCoinMetadatas[0].Base,
@@ -361,7 +361,7 @@ func MainnetGenesisParams() GenesisParams {
 
 	genParams.ConsensusParams = tmtypes.DefaultConsensusParams()
 	genParams.ConsensusParams.Block.MaxBytes = 25 * 1024 * 1024 // 26,214,400 for cosmwasm
-	genParams.ConsensusParams.Block.MaxGas = 6_000_000
+	genParams.ConsensusParams.Block.MaxGas = 10_000_000
 	genParams.ConsensusParams.Evidence.MaxAgeDuration = genParams.StakingParams.UnbondingTime
 	genParams.ConsensusParams.Evidence.MaxAgeNumBlocks = int64(genParams.StakingParams.UnbondingTime.Seconds()) / 3
 	genParams.ConsensusParams.Version.AppVersion = 1
