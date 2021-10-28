@@ -80,7 +80,6 @@ steps:
         - push
       branch:
         - main
-        - testnet-cmd
   - name: publish-docker
     image: plugins/docker:18
     settings:
@@ -255,6 +254,6 @@ volumes:
   temp: {}
 ---
 kind: signature
-hmac: 09eaa1e1f96fefb44204339946f103ac07e3d1254bbae9ea8b13213f9d85b9fd
+hmac: 7cd70baa94079edbf191d96a2c9f31d474245ec80ae0cafe621c53f2e5571f63
 
 ...
