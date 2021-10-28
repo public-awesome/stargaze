@@ -391,7 +391,7 @@ func TestnetGenesisParams() GenesisParams {
 		genParams.NativeCoinMetadatas[0].Base,
 		sdk.NewInt(1),
 	))
-	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.2") // 5%
+	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.2") // 20%
 	genParams.GovParams.VotingParams.VotingPeriod = time.Minute * 15      // 15 min
 
 	return genParams
@@ -411,8 +411,8 @@ func DevnetGenesisParams() GenesisParams {
 		genParams.NativeCoinMetadatas[0].Base,
 		sdk.NewInt(1),
 	))
-	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.1")    // 1%
-	genParams.GovParams.TallyParams.Threshold = sdk.MustNewDecFromStr("0.5") // 5%
+	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.1")    // 10%
+	genParams.GovParams.TallyParams.Threshold = sdk.MustNewDecFromStr("0.5") // 50%
 	genParams.GovParams.VotingParams.VotingPeriod = time.Minute * 5          // 5 min
 
 	return genParams
