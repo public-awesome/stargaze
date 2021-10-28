@@ -46,15 +46,15 @@ func FundModuleAccount(bankKeeper bankkeeper.Keeper, ctx sdk.Context, recipientM
 	return bankKeeper.SendCoinsFromModuleToModule(ctx, minttypes.ModuleName, recipientMod, amounts)
 }
 
-func (suite *KeeperTestSuite) TestDistributionToDAOAndDevs() {
+func (suite *KeeperTestSuite) TestDistribution() {
 	suite.SetupTest()
 
 	denom := suite.app.StakingKeeper.BondDenom(suite.ctx)
 	allocKeeper := suite.app.AllocKeeper
 	params := suite.app.AllocKeeper.GetParams(suite.ctx)
 	devRewardsReceiver := sdk.AccAddress([]byte("addr1---------------"))
-	params.DistributionProportions.NftIncentives = sdk.NewDecWithPrec(40, 2)
-	params.DistributionProportions.DeveloperRewards = sdk.NewDecWithPrec(10, 2)
+	params.DistributionProportions.NftIncentives = sdk.NewDecWithPrec(45, 2)
+	params.DistributionProportions.DeveloperRewards = sdk.NewDecWithPrec(15, 2)
 	params.WeightedDeveloperRewardsReceivers = []types.WeightedAddress{
 		{
 			Address: devRewardsReceiver.String(),
@@ -72,7 +72,7 @@ func (suite *KeeperTestSuite) TestDistributionToDAOAndDevs() {
 		sdk.NewDec(0),
 		feePool.CommunityPool.AmountOf(denom))
 
-	mintCoin := sdk.NewCoin(denom, sdk.NewInt(100000))
+	mintCoin := sdk.NewCoin(denom, sdk.NewInt(100_000))
 	mintCoins := sdk.Coins{mintCoin}
 	feeCollectorAccount := suite.app.AccountKeeper.GetModuleAccount(suite.ctx, authtypes.FeeCollectorName)
 	suite.Require().NotNil(feeCollectorAccount)
@@ -91,16 +91,20 @@ func (suite *KeeperTestSuite) TestDistributionToDAOAndDevs() {
 	allocKeeper.DistributeInflation(suite.ctx)
 
 	feeCollector = suite.app.AccountKeeper.GetModuleAddress(authtypes.FeeCollectorName)
-	feePool = suite.app.DistrKeeper.GetFeePool(suite.ctx)
 	modulePortion := params.DistributionProportions.NftIncentives.
-		Add(params.DistributionProportions.DeveloperRewards)
+		Add(params.DistributionProportions.DeveloperRewards) // 60%
+
+	// remaining going to next module should be 100% - 60% = 40%
 	suite.Equal(
-		mintCoin.Amount.ToDec().Mul(modulePortion).RoundInt().String(),
+		mintCoin.Amount.ToDec().Mul(sdk.NewDecWithPrec(100, 2).Sub(modulePortion)).RoundInt().String(),
 		suite.app.BankKeeper.GetAllBalances(suite.ctx, feeCollector).AmountOf(denom).String())
+
 	suite.Equal(
 		mintCoin.Amount.ToDec().Mul(params.DistributionProportions.DeveloperRewards).TruncateInt(),
 		suite.app.BankKeeper.GetBalance(suite.ctx, devRewardsReceiver, denom).Amount)
-	// since the DAO is not setup yet, funds go into the communtiy pool
+
+	// since the NFT incentives are not setup yet, funds go into the communtiy pool
+	feePool = suite.app.DistrKeeper.GetFeePool(suite.ctx)
 	suite.Equal(
 		mintCoin.Amount.ToDec().Mul(params.DistributionProportions.NftIncentives),
 		feePool.CommunityPool.AmountOf(denom))

@@ -34,8 +34,8 @@ func NewParams(
 func DefaultParams() Params {
 	return Params{
 		DistributionProportions: DistributionProportions{
-			NftIncentives:    sdk.NewDecWithPrec(40, 2), // 40%
-			DeveloperRewards: sdk.NewDecWithPrec(10, 2), // 10%
+			NftIncentives:    sdk.NewDecWithPrec(45, 2), // 45%
+			DeveloperRewards: sdk.NewDecWithPrec(15, 2), // 15%
 		},
 		WeightedDeveloperRewardsReceivers: []WeightedAddress{},
 	}
@@ -69,7 +69,7 @@ func validateDistributionProportions(i interface{}) error {
 	}
 
 	if v.NftIncentives.IsNegative() {
-		return errors.New("pool incentives distribution ratio should not be negative")
+		return errors.New("NFT incentives distribution ratio should not be negative")
 	}
 
 	if v.DeveloperRewards.IsNegative() {
@@ -78,11 +78,11 @@ func validateDistributionProportions(i interface{}) error {
 
 	totalProportions := v.NftIncentives.Add(v.DeveloperRewards)
 
-	// 50% is allocated to this module
-	// 45% validators
+	// 60% is allocated to this module
+	// 35% validators
 	// 5% community pool
-	if !totalProportions.Equal(sdk.NewDecWithPrec(50, 2)) {
-		return errors.New("total distributions ratio should be 50%")
+	if !totalProportions.Equal(sdk.NewDecWithPrec(60, 2)) {
+		return errors.New("total distributions ratio should be 60%")
 	}
 
 	return nil
