@@ -83,23 +83,25 @@ type GenesisParams struct {
 
 func PrepareGenesisCmd(defaultNodeHome string, mbm module.BasicManager) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "prepare-genesis [network] [chainID]",
+		Use:   "prepare-genesis [network] [chainID] [file]",
 		Short: "Prepare a genesis file with initial setup",
 		Long: `Prepare a genesis file with initial setup.
 Examples include:
 	- Setting module initial params
 	- Setting denom metadata
 Example:
-	starsd prepare-genesis stargaze-1 snapshot.json
+	starsd prepare-genesis mainnet stargaze-1 snapshot.json
 	- Check input genesis:
 		file is at ~/.starsd/config/genesis.json
 `,
-		Args: cobra.ExactArgs(2),
+		Args: cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 			cdc := clientCtx.Codec
+
 			serverCtx := server.GetServerContextFromCmd(cmd)
 			config := serverCtx.Config
+			config.SetRoot(clientCtx.HomeDir)
 
 			// read genesis file
 			genFile := config.GenesisFile()
@@ -110,12 +112,14 @@ Example:
 
 			// get genesis params
 			genesisParams := MainnetGenesisParams()
-
+			if args[0] == "testnet" {
+				genesisParams = TestnetGenesisParams()
+			}
 			// get genesis params
-			chainID := args[0]
+			chainID := args[1]
 
 			// read snapshot.json and parse into struct
-			snapshotFile, _ := ioutil.ReadFile(args[1])
+			snapshotFile, _ := ioutil.ReadFile(args[2])
 			snapshot := Snapshot{}
 			err = json.Unmarshal(snapshotFile, &snapshot)
 			if err != nil {
@@ -365,6 +369,27 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.ConsensusParams.Evidence.MaxAgeDuration = genParams.StakingParams.UnbondingTime
 	genParams.ConsensusParams.Evidence.MaxAgeNumBlocks = int64(genParams.StakingParams.UnbondingTime.Seconds()) / 3
 	genParams.ConsensusParams.Version.AppVersion = 1
+
+	return genParams
+}
+
+// params only
+func TestnetGenesisParams() GenesisParams {
+	genParams := MainnetGenesisParams()
+
+	genParams.AirdropSupply = sdk.NewInt(250_000_000_000_000) // 250M STARS
+	genParams.GenesisTime = time.Now()
+
+	// mint
+	genParams.MintParams.StartTime = genParams.GenesisTime.Add(time.Minute * 5)
+
+	genParams.GovParams.DepositParams.MaxDepositPeriod = time.Hour * 24 * 14 // 2 weeks
+	genParams.GovParams.DepositParams.MinDeposit = sdk.NewCoins(sdk.NewCoin(
+		genParams.NativeCoinMetadatas[0].Base,
+		sdk.NewInt(1),
+	))
+	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.5") // 5%
+	genParams.GovParams.VotingParams.VotingPeriod = time.Minute * 15      // 15 min
 
 	return genParams
 }
