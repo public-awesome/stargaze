@@ -18,7 +18,7 @@ func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		Params: Params{
 			DistributionProportions: DistributionProportions{
-				DaoRewards:       sdk.NewDecWithPrec(40, 2), // 40%
+				NftIncentives:    sdk.NewDecWithPrec(40, 2), // 40%
 				DeveloperRewards: sdk.NewDecWithPrec(10, 2), // 10%
 			},
 			WeightedDeveloperRewardsReceivers: []WeightedAddress{},

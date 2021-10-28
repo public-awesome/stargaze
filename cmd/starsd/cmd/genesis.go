@@ -314,6 +314,7 @@ func MainnetGenesisParams() GenesisParams {
 
 	// alloc
 	genParams.AllocParams = alloctypes.DefaultParams()
+	// genParams.AllocParams.DistributionProportions =
 	// [TODO] add weighted developer allocations
 
 	// mint

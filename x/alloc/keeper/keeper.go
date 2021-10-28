@@ -69,7 +69,7 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 	params := k.GetParams(ctx)
 	proportions := params.DistributionProportions
 
-	daoRewardAmount := blockInflationDec.Mul(proportions.DaoRewards)
+	daoRewardAmount := blockInflationDec.Mul(proportions.NftIncentives)
 	daoRewardCoin := sdk.NewCoin(k.stakingKeeper.BondDenom(ctx), daoRewardAmount.TruncateInt())
 	// Distribute DAO incentives to the community pool until StargazeDAO is implemented
 	err := k.distrKeeper.FundCommunityPool(ctx, sdk.NewCoins(daoRewardCoin), blockInflationAddr)

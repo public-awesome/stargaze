@@ -17,9 +17,9 @@ message WeightedAddress {
 }
 
 message DistributionProportions {
-  string dao_rewards = 1 [
+  string nft_incentives = 1 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
-    (gogoproto.moretags) = "yaml:\"dao_rewards\"",
+    (gogoproto.moretags) = "yaml:\"nft_incentives\"",
     (gogoproto.nullable) = false
   ];
   string developer_rewards = 2 [

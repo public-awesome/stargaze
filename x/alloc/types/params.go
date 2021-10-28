@@ -34,7 +34,7 @@ func NewParams(
 func DefaultParams() Params {
 	return Params{
 		DistributionProportions: DistributionProportions{
-			DaoRewards:       sdk.NewDecWithPrec(40, 2), // 40%
+			NftIncentives:    sdk.NewDecWithPrec(40, 2), // 40%
 			DeveloperRewards: sdk.NewDecWithPrec(10, 2), // 10%
 		},
 		WeightedDeveloperRewardsReceivers: []WeightedAddress{},
@@ -68,7 +68,7 @@ func validateDistributionProportions(i interface{}) error {
 		return fmt.Errorf("invalid parameter type: %T", i)
 	}
 
-	if v.DaoRewards.IsNegative() {
+	if v.NftIncentives.IsNegative() {
 		return errors.New("pool incentives distribution ratio should not be negative")
 	}
 
@@ -76,7 +76,7 @@ func validateDistributionProportions(i interface{}) error {
 		return errors.New("developer rewards distribution ratio should not be negative")
 	}
 
-	totalProportions := v.DaoRewards.Add(v.DeveloperRewards)
+	totalProportions := v.NftIncentives.Add(v.DeveloperRewards)
 
 	// 50% is allocated to this module
 	// 45% validators
