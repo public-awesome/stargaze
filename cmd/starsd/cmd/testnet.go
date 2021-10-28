@@ -16,8 +16,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	claimtypes "github.com/public-awesome/stargaze/x/claim/types"
+	minttypes "github.com/public-awesome/stargaze/x/mint/types"
 	"github.com/spf13/cobra"
 	tmconfig "github.com/tendermint/tendermint/config"
 	tmos "github.com/tendermint/tendermint/libs/os"
@@ -543,6 +543,7 @@ func initGenesis(
 			return nil, err
 		}
 		mintGenState.Params.MintDenom = stakeDenom
+		mintGenState.Params.StartTime = time.Now()
 		appState[minttypes.ModuleName] = cdc.MustMarshalJSON(&mintGenState)
 	}
 
