@@ -8,5 +8,6 @@ import (
 
 // x/claim module sentinel errors
 var (
-	ErrIncorrectModuleAccountBalance = sdkerrors.Register(ModuleName, 2, "claim module account balance != sum of all claim record InitialClaimableAmounts")
+	ErrAirdropNotEnabled             = sdkerrors.Register(ModuleName, 2, "airdrop not enabled")
+	ErrIncorrectModuleAccountBalance = sdkerrors.Register(ModuleName, 3, "claim module account balance != sum of all claim record InitialClaimableAmounts")
 )

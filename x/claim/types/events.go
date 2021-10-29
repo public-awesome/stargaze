@@ -1,5 +1,6 @@
 package types
 
 const (
-	EventTypeClaim = "claim"
+	EventTypeClaim         = "claim"
+	AttributeValueCategory = ModuleName
 )

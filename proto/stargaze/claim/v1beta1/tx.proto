@@ -1,13 +1,29 @@
 syntax = "proto3";
 package publicawesome.stargaze.claim.v1beta1;
 
+
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
 // this line is used by starport scaffolding # proto/tx/import
 
 option go_package = "github.com/public-awesome/stargaze/x/claim/types";
 
 // Msg defines the Msg service.
 service Msg {
+    rpc InitialClaim(MsgInitialClaim) returns (MsgInitialClaimResponse);
     // this line is used by starport scaffolding # proto/tx/rpc
 }
 
-// this line is used by starport scaffolding # proto/tx/message
+message MsgInitialClaim {
+string sender = 1;
+}
+
+message MsgInitialClaimResponse {
+    // total initial claimable amount for the user
+  repeated cosmos.base.v1beta1.Coin claimed_amount = 2 [
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"claimed_amount\""
+  ];
+}

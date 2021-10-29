@@ -16,7 +16,7 @@ func (suite *KeeperTestSuite) TestHookOfUnclaimableAccount() {
 	addr1 := sdk.AccAddress(pub1.Address())
 	suite.app.AccountKeeper.SetAccount(suite.ctx, authtypes.NewBaseAccount(addr1, nil, 0, 0))
 
-	claim, err := suite.app.ClaimKeeper.ClaimRecord(suite.ctx, addr1)
+	claim, err := suite.app.ClaimKeeper.GetClaimRecord(suite.ctx, addr1)
 	suite.NoError(err)
 	suite.Equal(types.ClaimRecord{}, claim)
 
@@ -189,7 +189,7 @@ func (suite *KeeperTestSuite) TestDuplicatedActionNotWithdrawRepeatedly() {
 	suite.Require().Equal(coins1, claimRecords[0].InitialClaimableAmount)
 
 	suite.app.ClaimKeeper.AfterDelegationModified(suite.ctx, addr1, sdk.ValAddress(addr1))
-	claim, err := suite.app.ClaimKeeper.ClaimRecord(suite.ctx, addr1)
+	claim, err := suite.app.ClaimKeeper.GetClaimRecord(suite.ctx, addr1)
 	suite.NoError(err)
 	suite.True(claim.ActionCompleted[types.ActionDelegateStake])
 
@@ -197,7 +197,7 @@ func (suite *KeeperTestSuite) TestDuplicatedActionNotWithdrawRepeatedly() {
 	suite.Require().Equal(claimedCoins.AmountOf(types.DefaultClaimDenom), claimRecords[0].InitialClaimableAmount.AmountOf(types.DefaultClaimDenom).Quo(sdk.NewInt(5)))
 
 	suite.app.ClaimKeeper.AfterDelegationModified(suite.ctx, addr1, sdk.ValAddress(addr1))
-	claim, err = suite.app.ClaimKeeper.ClaimRecord(suite.ctx, addr1)
+	claim, err = suite.app.ClaimKeeper.GetClaimRecord(suite.ctx, addr1)
 	suite.NoError(err)
 	suite.True(claim.ActionCompleted[types.ActionDelegateStake])
 
@@ -238,7 +238,7 @@ func (suite *KeeperTestSuite) TestNotRunningGenesisBlock() {
 	suite.Require().Equal(coins1, claimRecords[0].InitialClaimableAmount)
 
 	suite.app.ClaimKeeper.AfterDelegationModified(suite.ctx, addr1, sdk.ValAddress(addr1))
-	claim, err := suite.app.ClaimKeeper.ClaimRecord(suite.ctx, addr1)
+	claim, err := suite.app.ClaimKeeper.GetClaimRecord(suite.ctx, addr1)
 	suite.NoError(err)
 	suite.False(claim.ActionCompleted[types.ActionDelegateStake])
 
@@ -284,7 +284,7 @@ func (suite *KeeperTestSuite) TestDelegationAutoWithdrawAndDelegateMore() {
 	err := suite.app.ClaimKeeper.SetClaimRecords(suite.ctx, claimRecords)
 	suite.Require().NoError(err)
 
-	cr, err := suite.app.ClaimKeeper.ClaimRecord(suite.ctx, addr1)
+	cr, err := suite.app.ClaimKeeper.GetClaimRecord(suite.ctx, addr1)
 	suite.Require().NoError(err)
 	suite.Require().Equal(cr, claimRecords[0])
 	coins1, err := suite.app.ClaimKeeper.GetUserTotalClaimable(suite.ctx, addr1)
@@ -410,7 +410,7 @@ func (suite *KeeperTestSuite) TestEndAirdrop() {
 // 	suite.Require().Equal(coins4.String(), sdk.NewCoins(sdk.NewInt64Coin(types.DefaultClaimDenom, 25)).String()) // 2 = 10.Quo(4)
 
 // 	// get completed activities
-// 	claimRecord, err := suite.app.ClaimKeeper.ClaimRecord(suite.ctx, addr1)
+// 	claimRecord, err := suite.app.ClaimKeeper.GetClaimRecord(suite.ctx, addr1)
 // 	suite.Require().NoError(err)
 // 	for i := range types.Action_name {
 // 		suite.Require().False(claimRecord.ActionCompleted[i])
@@ -421,7 +421,7 @@ func (suite *KeeperTestSuite) TestEndAirdrop() {
 // 	suite.app.ClaimKeeper.AfterSwap(suite.ctx, addr1)
 
 // 	// check that half are completed
-// 	claimRecord, err = suite.app.ClaimKeeper.ClaimRecord(suite.ctx, addr1)
+// 	claimRecord, err = suite.app.ClaimKeeper.GetClaimRecord(suite.ctx, addr1)
 // 	suite.Require().NoError(err)
 // 	suite.Require().True(claimRecord.ActionCompleted[types.ActionAddLiquidity])
 // 	suite.Require().True(claimRecord.ActionCompleted[types.ActionSwap])

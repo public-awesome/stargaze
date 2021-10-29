@@ -72,7 +72,7 @@ func (k Keeper) ClaimRecords(ctx sdk.Context) []types.ClaimRecord {
 }
 
 // ClaimRecord returns the claim record for a specific address
-func (k Keeper) ClaimRecord(ctx sdk.Context, addr sdk.AccAddress) (types.ClaimRecord, error) {
+func (k Keeper) GetClaimRecord(ctx sdk.Context, addr sdk.AccAddress) (types.ClaimRecord, error) {
 	store := ctx.KVStore(k.storeKey)
 	prefixStore := prefix.NewStore(store, types.ClaimRecordsStorePrefix)
 	if !prefixStore.Has(addr) {
@@ -91,7 +91,7 @@ func (k Keeper) ClaimRecord(ctx sdk.Context, addr sdk.AccAddress) (types.ClaimRe
 
 // GetClaimable returns claimable amount for a specific action done by an address
 func (k Keeper) GetClaimableAmountForAction(ctx sdk.Context, addr sdk.AccAddress, action types.Action) (sdk.Coins, error) {
-	claimRecord, err := k.ClaimRecord(ctx, addr)
+	claimRecord, err := k.GetClaimRecord(ctx, addr)
 	if err != nil {
 		return nil, err
 	}
@@ -149,7 +149,7 @@ func (k Keeper) GetClaimableAmountForAction(ctx sdk.Context, addr sdk.AccAddress
 
 // GetClaimable returns claimable amount for a specific action done by an address
 func (k Keeper) GetUserTotalClaimable(ctx sdk.Context, addr sdk.AccAddress) (sdk.Coins, error) {
-	claimRecord, err := k.ClaimRecord(ctx, addr)
+	claimRecord, err := k.GetClaimRecord(ctx, addr)
 	if err != nil {
 		return sdk.Coins{}, err
 	}
@@ -184,7 +184,7 @@ func (k Keeper) ClaimCoinsForAction(ctx sdk.Context, addr sdk.AccAddress, action
 		return claimableAmount, nil
 	}
 
-	claimRecord, err := k.ClaimRecord(ctx, addr)
+	claimRecord, err := k.GetClaimRecord(ctx, addr)
 	if err != nil {
 		return nil, err
 	}
