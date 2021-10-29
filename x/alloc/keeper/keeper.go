@@ -69,14 +69,14 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 	params := k.GetParams(ctx)
 	proportions := params.DistributionProportions
 
-	daoRewardAmount := blockInflationDec.Mul(proportions.DaoRewards)
-	daoRewardCoin := sdk.NewCoin(k.stakingKeeper.BondDenom(ctx), daoRewardAmount.TruncateInt())
-	// Distribute DAO incentives to the community pool until StargazeDAO is implemented
-	err := k.distrKeeper.FundCommunityPool(ctx, sdk.NewCoins(daoRewardCoin), blockInflationAddr)
+	nftIncentiveAmount := blockInflationDec.Mul(proportions.NftIncentives)
+	nftIncentiveCoin := sdk.NewCoin(k.stakingKeeper.BondDenom(ctx), nftIncentiveAmount.TruncateInt())
+	// Distribute NFT incentives to the community pool until a future update
+	err := k.distrKeeper.FundCommunityPool(ctx, sdk.NewCoins(nftIncentiveCoin), blockInflationAddr)
 	if err != nil {
 		return err
 	}
-	k.Logger(ctx).Debug("funded community pool", "amount", daoRewardCoin.String(), "from", blockInflationAddr)
+	k.Logger(ctx).Debug("funded community pool", "amount", nftIncentiveCoin.String(), "from", blockInflationAddr)
 
 	devRewardAmount := blockInflationDec.Mul(proportions.DeveloperRewards)
 	devRewardCoin := sdk.NewCoin(k.stakingKeeper.BondDenom(ctx), devRewardAmount.TruncateInt())

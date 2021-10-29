@@ -367,7 +367,28 @@ func MainnetGenesisParams() GenesisParams {
 
 	// alloc
 	genParams.AllocParams = alloctypes.DefaultParams()
-	// [TODO] add weighted developer allocations
+	genParams.AllocParams.DistributionProportions = alloctypes.DistributionProportions{
+		NftIncentives:    sdk.NewDecWithPrec(45, 2), // 45%
+		DeveloperRewards: sdk.NewDecWithPrec(15, 2), // 15%
+	}
+	genParams.AllocParams.WeightedDeveloperRewardsReceivers = []alloctypes.WeightedAddress{
+		{
+			Address: "stars1xqz6xujjyz0r9uzn7srasle5uynmpa0zkjr5l8",
+			Weight:  sdk.NewDecWithPrec(33, 2),
+		},
+		{
+			Address: "stars15gp36gk6jvfupy8rc4segppa38lhm3helm5f8k",
+			Weight:  sdk.NewDecWithPrec(67, 2).Mul(sdk.NewDecWithPrec(40, 2)),
+		},
+		{
+			Address: "stars168efxgnh55vcgx83x90pw2fves9anw8kmnlsf5",
+			Weight:  sdk.NewDecWithPrec(67, 2).Mul(sdk.NewDecWithPrec(30, 2)),
+		},
+		{
+			Address: "stars139a4n6w6dhwv60dj2clgwm6r0q84gju28z9at0",
+			Weight:  sdk.NewDecWithPrec(67, 2).Mul(sdk.NewDecWithPrec(30, 2)),
+		},
+	}
 
 	// mint
 	genParams.MintParams = minttypes.DefaultParams()
