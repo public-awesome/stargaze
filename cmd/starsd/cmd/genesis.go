@@ -16,6 +16,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/server"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -174,16 +175,6 @@ func PrepareGenesis(
 	genDoc.ChainID = chainID
 	genDoc.ConsensusParams = genesisParams.ConsensusParams
 
-	// ---
-	// bank module genesis
-	bankGenState := banktypes.GetGenesisStateFromAppState(cdc, appState)
-	bankGenState.Params.DefaultSendEnabled = true
-	bankGenStateBz, err := cdc.MarshalJSON(bankGenState)
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal bank genesis state: %w", err)
-	}
-	appState[banktypes.ModuleName] = bankGenStateBz
-
 	// IBC transfer module genesis
 	ibcGenState := ibctransfertypes.DefaultGenesisState()
 	ibcGenState.Params.SendEnabled = true
@@ -251,11 +242,29 @@ func PrepareGenesis(
 	}
 	appState[slashingtypes.ModuleName] = slashingGenStateBz
 
+	// auth accounts
+	authGenState := authtypes.GetGenesisStateFromAppState(cdc, appState)
+	accs, err := authtypes.UnpackAccounts(authGenState.Accounts)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to get accounts from any: %w", err)
+	}
+
+	// ---
+	// bank module genesis
+	bankGenState := banktypes.GetGenesisStateFromAppState(cdc, appState)
+	bankGenState.Params.DefaultSendEnabled = true
+	balances := bankGenState.Balances
+
 	// claim module genesis
 	claimGenState := claimtypes.GetGenesisStateFromAppState(cdc, appState)
 	claimGenState.Params = genesisParams.ClaimParams
 	claimRecords := make([]claimtypes.ClaimRecord, 0, len(snapshot.Accounts))
 	claimsTotal := sdk.ZeroInt()
+	// check from preexisint accounts in genesis
+	preExistingAccounts := make(map[string]bool)
+	for _, b := range balances {
+		preExistingAccounts[b.Address] = true
+	}
 	for addr, acc := range snapshot.Accounts {
 		claimRecord := claimtypes.ClaimRecord{
 			Address:                addr,
@@ -264,6 +273,27 @@ func PrepareGenesis(
 		}
 		claimsTotal = claimsTotal.Add(acc.AirdropAmount)
 		claimRecords = append(claimRecords, claimRecord)
+		// skip account addition if existent
+		exists := preExistingAccounts[addr]
+		if exists {
+			continue
+		}
+		balances = append(balances, banktypes.Balance{
+			Address: addr,
+			Coins:   sdk.NewCoins(sdk.NewInt64Coin(BaseCoinUnit, 1)),
+		})
+
+		address, err := sdk.AccAddressFromBech32(addr)
+		if err != nil {
+			return nil, nil, err
+		}
+		// add base account
+		// Add the new account to the set of genesis accounts
+		baseAccount := authtypes.NewBaseAccount(address, nil, 0, 0)
+		if err := baseAccount.Validate(); err != nil {
+			return nil, nil, fmt.Errorf("failed to validate new genesis account: %w", err)
+		}
+		accs = append(accs, baseAccount)
 	}
 	claimGenState.ClaimRecords = claimRecords
 	claimGenState.ModuleAccountBalance = sdk.NewCoin(BaseCoinUnit, claimsTotal)
@@ -272,6 +302,29 @@ func PrepareGenesis(
 		return nil, nil, fmt.Errorf("failed to marshal claim genesis state: %w", err)
 	}
 	appState[claimtypes.ModuleName] = claimGenStateBz
+
+	// save accounts
+
+	// auth module genesis
+	accs = authtypes.SanitizeGenesisAccounts(accs)
+	genAccs, err := authtypes.PackAccounts(accs)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to convert accounts into any's: %w", err)
+	}
+	authGenState.Accounts = genAccs
+	authGenStateBz, err := cdc.MarshalJSON(&authGenState)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to marshal auth genesis state: %w", err)
+	}
+	appState[authtypes.ModuleName] = authGenStateBz
+
+	// save balances
+	bankGenState.Balances = banktypes.SanitizeGenesisBalances(balances)
+	bankGenStateBz, err := cdc.MarshalJSON(bankGenState)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to marshal bank genesis state: %w", err)
+	}
+	appState[banktypes.ModuleName] = bankGenStateBz
 
 	// alloc module genesis
 	allocGenState := alloctypes.GetGenesisStateFromAppState(cdc, appState)
