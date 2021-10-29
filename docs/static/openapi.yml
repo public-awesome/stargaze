@@ -12501,6 +12501,63 @@ paths:
                         }
       tags:
         - Query
+  /stargaze/alloc/v1beta1/params:
+    get:
+      summary: 'this line is used by starport scaffolding # 2'
+      operationId: PublicawesomeStargazeAllocV1Beta1Params
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params defines the parameters of the module.
+                type: object
+                properties:
+                  distributionProportions:
+                    title: >-
+                      distribution_proportions defines the proportion of the
+                      minted denom
+                    type: object
+                    properties:
+                      daoRewards:
+                        type: string
+                      developerRewards:
+                        type: string
+                  weightedDeveloperRewardsReceivers:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        weight:
+                          type: string
+                    title: address to receive developer rewards
+            description: >-
+              QueryParamsResponse is the response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
 definitions:
   cosmos.authz.v1beta1.Grant:
     type: object
@@ -19815,5 +19872,73 @@ definitions:
       and
 
       freezing clients
-  publicawesome.stargaze.alloc.MsgCreateVestingAccountResponse:
+  publicawesome.stargaze.alloc.v1beta1.DistributionProportions:
+    type: object
+    properties:
+      daoRewards:
+        type: string
+      developerRewards:
+        type: string
+  publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccountResponse:
+    type: object
+    description: >-
+      MsgCreateVestingAccountResponse defines the Msg/CreateVestingAccount
+      response type.
+  publicawesome.stargaze.alloc.v1beta1.Params:
+    type: object
+    properties:
+      distributionProportions:
+        title: distribution_proportions defines the proportion of the minted denom
+        type: object
+        properties:
+          daoRewards:
+            type: string
+          developerRewards:
+            type: string
+      weightedDeveloperRewardsReceivers:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+              type: string
+            weight:
+              type: string
+        title: address to receive developer rewards
+  publicawesome.stargaze.alloc.v1beta1.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        description: params defines the parameters of the module.
+        type: object
+        properties:
+          distributionProportions:
+            title: >-
+              distribution_proportions defines the proportion of the minted
+              denom
+            type: object
+            properties:
+              daoRewards:
+                type: string
+              developerRewards:
+                type: string
+          weightedDeveloperRewardsReceivers:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                weight:
+                  type: string
+            title: address to receive developer rewards
+    description: QueryParamsResponse is the response type for the Query/Params RPC method.
+  publicawesome.stargaze.alloc.v1beta1.WeightedAddress:
+    type: object
+    properties:
+      address:
+        type: string
+      weight:
+        type: string
+  publicawesome.stargaze.claim.MsgInitialClaimResponse:
     type: object

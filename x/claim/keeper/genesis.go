@@ -13,6 +13,10 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.Val
 	if data.Params.AirdropEnabled && data.Params.AirdropStartTime.Equal(time.Time{}) {
 		data.Params.AirdropStartTime = ctx.BlockTime()
 	}
+	err := k.SetClaimRecords(ctx, data.ClaimRecords)
+	if err != nil {
+		panic(err)
+	}
 	k.SetParams(ctx, data.Params)
 	return nil
 }
