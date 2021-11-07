@@ -62,11 +62,8 @@ func (p Params) Validate() error {
 	if err := validateEnabled(p.AirdropEnabled); err != nil {
 		return err
 	}
-	if err := validateDenom(p.ClaimDenom); err != nil {
-		return err
-	}
-
-	return nil
+	err := validateDenom(p.ClaimDenom)
+	return err
 }
 
 func (p Params) IsAirdropEnabled(t time.Time) bool {

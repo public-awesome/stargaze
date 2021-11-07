@@ -65,12 +65,8 @@ func (p Params) Validate() error {
 	if err := validateReductionFactor(p.ReductionFactor); err != nil {
 		return err
 	}
-	if err := validateBlocksPerYear(p.BlocksPerYear); err != nil {
-		return err
-	}
-
-	return nil
-
+	err := validateBlocksPerYear(p.BlocksPerYear)
+	return err
 }
 
 // String implements the Stringer interface.
@@ -99,11 +95,8 @@ func validateMintDenom(i interface{}) error {
 	if strings.TrimSpace(v) == "" {
 		return errors.New("mint denom cannot be blank")
 	}
-	if err := sdk.ValidateDenom(v); err != nil {
-		return err
-	}
-
-	return nil
+	err := sdk.ValidateDenom(v)
+	return err
 }
 
 func validateStartTime(i interface{}) error {
