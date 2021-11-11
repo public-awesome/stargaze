@@ -46,11 +46,8 @@ func (p Params) Validate() error {
 	if err := validateDistributionProportions(p.DistributionProportions); err != nil {
 		return err
 	}
-	if err := validateWeightedDeveloperRewardsReceivers(p.WeightedDeveloperRewardsReceivers); err != nil {
-		return err
-	}
-
-	return nil
+	err := validateWeightedDeveloperRewardsReceivers(p.WeightedDeveloperRewardsReceivers)
+	return err
 }
 
 // Implements params.ParamSet
