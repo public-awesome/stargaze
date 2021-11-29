@@ -36,6 +36,9 @@ Ref: https://keepachangelog.com/en/1.0.0/
 
 ## [Unreleased]
 
+
+## [v1.1.0](https://github.com/public-awesome/stargaze/releases/tag/v1.1.0) - 2021-11-29
+
 * Add tendermint `rollback` command to help operators restore to previous height in case of apphash errors
 * Bump Cosmos SDK to `v0.44.4`
 * Bump ibc-go to `v1.2.3`
