@@ -36,13 +36,14 @@ Ref: https://keepachangelog.com/en/1.0.0/
 
 ## [Unreleased]
 
+- [#511](https://github.com/public-awesome/stargaze/pull/511) Bump Cosmos SDK to `v0.44.5` and ibc-go to `v1.2.5`
 
 ## [v1.1.0](https://github.com/public-awesome/stargaze/releases/tag/v1.1.0) - 2021-11-29
 
-* Add tendermint `rollback` command to help operators restore to previous height in case of apphash errors
-* Bump Cosmos SDK to `v0.44.4`
-* Bump ibc-go to `v1.2.3`
-* Fix CLI output to stdout/stderr preventing integration with tooling like `jq`
+- Add tendermint `rollback` command to help operators restore to previous height in case of apphash errors
+- Bump Cosmos SDK to `v0.44.4`
+- Bump ibc-go to `v1.2.3`
+- Fix CLI output to stdout/stderr preventing integration with tooling like `jq`
 
 ## [v1.0.0](https://github.com/public-awesome/stargaze/releases/tag/v1.0.0) - 2021-10-29
 
