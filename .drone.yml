@@ -220,17 +220,17 @@ steps:
         - http://stargaze:26657
         - http://gaia:26657
   - name: relayer
-    image: publicawesome/hermes:latest
+    image: publicawesome/hermes:0.9.0
     commands:
       - /bin/bash ./scripts/ci/setup-relayer.sh
 
   - name: relayer-start
-    image: publicawesome/hermes:latest
+    image: publicawesome/hermes:0.9.0
     commands:
       - /bin/bash ./scripts/ci/start-relayer.sh
     detach: true
   - name: relayer-sender
-    image: publicawesome/hermes:latest
+    image: publicawesome/hermes:0.9.0
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: discord
@@ -254,6 +254,6 @@ volumes:
   temp: {}
 ---
 kind: signature
-hmac: 9e26a5efdfe82aaccdb7d8a90b060d29092efc18e9a92bc96d7f4f501b978ae8
+hmac: c648de54730119a56e7886ec620254f2c5540fa9a4cffd6f2fff4c67fa379bf8
 
 ...
