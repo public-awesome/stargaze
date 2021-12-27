@@ -1,8 +1,8 @@
-FROM golang:1.16-alpine3.14 AS go-builder
-
+FROM golang:1.17-alpine3.14 AS go-builder
+ARG TAG
 
 # Usage:
-#   docker build . --build-arg TAG=v5.0.5 -t publicawesome/gaia:5.0.5 -f docker/Dockerfile.gaia
+#   docker build . --build-arg TAG=v6.0.0 -t publicawesome/gaia:6.0.0 -f docker/Dockerfile.gaia
 
 RUN set -eux; apk add --no-cache ca-certificates build-base;
 

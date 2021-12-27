@@ -195,7 +195,7 @@ steps:
       mount:
         - '/go/pkg/mod'
   - name: gaia
-    image: publicawesome/gaia:5.0.5
+    image: publicawesome/gaia:6.0.0
     detach: true
     commands:
       - ./scripts/ci/setup-gaia.sh
@@ -254,6 +254,6 @@ volumes:
   temp: {}
 ---
 kind: signature
-hmac: 7cd70baa94079edbf191d96a2c9f31d474245ec80ae0cafe621c53f2e5571f63
+hmac: 9e26a5efdfe82aaccdb7d8a90b060d29092efc18e9a92bc96d7f4f501b978ae8
 
 ...
