@@ -252,8 +252,10 @@ trigger:
 volumes:
 - name: cache
   temp: {}
+node:
+  runner: integration
 ---
 kind: signature
-hmac: c648de54730119a56e7886ec620254f2c5540fa9a4cffd6f2fff4c67fa379bf8
+hmac: 7a401256cf2229558675a58ffdc776135bdafd377c646726f78a972f33058221
 
 ...
