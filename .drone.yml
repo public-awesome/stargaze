@@ -201,7 +201,7 @@ steps:
       - ./scripts/ci/setup-gaia.sh
     environment:
       GOPROXY: http://goproxy
-  - name: gaia
+  - name: osmosis
     image: publicawesome/osmosis:6.0.0
     detach: true
     commands:
@@ -264,6 +264,6 @@ node:
   runner: integration
 ---
 kind: signature
-hmac: 7a401256cf2229558675a58ffdc776135bdafd377c646726f78a972f33058221
+hmac: 10702ab67cbc4054c980fbd81d8bc7a085a28780da1a0746b07f0f6b0221b6a0
 
 ...
