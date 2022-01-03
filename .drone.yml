@@ -201,6 +201,13 @@ steps:
       - ./scripts/ci/setup-gaia.sh
     environment:
       GOPROXY: http://goproxy
+  - name: gaia
+    image: publicawesome/osmosis:6.0.0
+    detach: true
+    commands:
+      - ./scripts/ci/setup-osmosis.sh
+    environment:
+      GOPROXY: http://goproxy
   - name: stargaze
     image: publicawesome/golang:1.17.0-devtooling
     volumes:
@@ -219,6 +226,7 @@ steps:
       chain_list:
         - http://stargaze:26657
         - http://gaia:26657
+        - http://osmosis:26657
   - name: relayer
     image: publicawesome/hermes:0.9.0
     commands:

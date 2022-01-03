@@ -52,3 +52,19 @@ gas_adjustment = 0.1
 clock_drift = '300s'
 trusting_period = '2days'
 trust_threshold = { numerator = '1', denominator = '3' }
+
+[[chains]]
+id = 'osmosis'
+rpc_addr = 'http://osmosis:26657'
+grpc_addr = 'http://osmosis:9090'
+websocket_addr = 'ws://osmosis:26657/websocket'
+rpc_timeout = '10s'
+account_prefix = 'osmosis'
+key_name = 'osmosis'
+store_prefix = 'ibc'
+max_gas = 2000000
+gas_price = { price = 0.025, denom = 'uosmo' }
+gas_adjustment = 0.1
+clock_drift = '300s'
+trusting_period = '2days'
+trust_threshold = { numerator = '1', denominator = '3' }
