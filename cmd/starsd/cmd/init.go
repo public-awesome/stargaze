@@ -93,6 +93,7 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 					"722079345d941cd2da3daedea548c909d9b83ec5@104.248.101.113:36656",
 					"d5fc4f479c4e212c96dff5704bb2468ea03b8ae3@sg-seed.blockpane.com:26656",
 					"babc3f3f7804933265ec9c40ad94f4da8e9e0017@stargaze.seed.rhinostake.com:16656",
+					"1d73521c565b37a53038fc730bcd207a3db361b6@144.91.91.30:26656",
 				}
 			}
 
