@@ -7,8 +7,8 @@ hermes keys add osmosis -f $PWD/scripts/ci/hermes/osmosis.json
 hermes tx raw ft-transfer stargaze gaia transfer channel-0 9999 -d stake -o 1000 -n 2
 hermes tx raw ft-transfer gaia stargaze transfer channel-0 9999 -d ustarx -o 1000 -n 2
 
-hermes tx raw ft-transfer stargaze osmosis transfer channel-0 9999 -d stake -o 1000 -n 2
-hermes tx raw ft-transfer osmosis stargaze transfer channel-1 9999 -d stake -o 1000 -n 2
+hermes tx raw ft-transfer stargaze osmosis transfer channel-0 9999 -d uosmo -o 1000 -n 2
+hermes tx raw ft-transfer osmosis stargaze transfer channel-1 9999 -d ustarx -o 1000 -n 2
 
 sleep 30
 export GAIA_ADDRESS=cosmos1wt3khka7cmn5zd592x430ph4zmlhf5gfztgha6
