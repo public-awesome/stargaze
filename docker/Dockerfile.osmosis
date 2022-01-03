@@ -1,0 +1,28 @@
+FROM golang:1.17-alpine3.14 AS go-builder
+ARG TAG
+
+# Usage:
+#   docker build . --build-arg TAG=v6.0.0 -t publicawesome/osmosis:6.0.0 -f docker/Dockerfile.osmosis
+
+RUN set -eux; apk add --no-cache ca-certificates build-base;
+
+RUN apk add git
+
+WORKDIR /code
+
+RUN git clone https://github.com/osmosis-labs/osmosis
+RUN cd osmosis && git checkout $TAG && CGO_ENABLED=0 LEDGER_ENABLED=false make build
+
+
+
+# --------------------------------------------------------
+FROM alpine:3.14
+
+COPY --from=go-builder /code/osmosis/build/osmosisd /usr/bin/osmosisd
+RUN apk add -U --no-cache ca-certificates
+WORKDIR /home/osmosis
+ENV HOME=/home/osmosis
+EXPOSE 1317
+EXPOSE 26656
+EXPOSE 26657
+EXPOSE 9090
