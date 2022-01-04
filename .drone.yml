@@ -74,7 +74,7 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - alpha
+        - v2-alpha
     when:
       event:
         - push
@@ -264,6 +264,6 @@ node:
   runner: integration
 ---
 kind: signature
-hmac: be216d980cb0d56e2134bc29049c2e49b201996779076f42832f84b34920bea2
+hmac: 18623134b8dd4a0b9a54b9f8800b7d13ac4e640d4854a8538b481573ead9b533
 
 ...
