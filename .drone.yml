@@ -64,7 +64,7 @@ steps:
       event:
         - push
         - pull_request
-  - name: publish-beta
+  - name: publish-alpha
     image: plugins/docker:18
     settings:
       dockerfile: docker/Dockerfile
@@ -74,7 +74,7 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - beta
+        - alpha
     when:
       event:
         - push
@@ -264,6 +264,6 @@ node:
   runner: integration
 ---
 kind: signature
-hmac: 10702ab67cbc4054c980fbd81d8bc7a085a28780da1a0746b07f0f6b0221b6a0
+hmac: be216d980cb0d56e2134bc29049c2e49b201996779076f42832f84b34920bea2
 
 ...
