@@ -36,6 +36,8 @@ Ref: https://keepachangelog.com/en/1.0.0/
 
 ## [Unreleased]
 
+- [#495](https://github.com/public-awesome/stargaze/issues/495) Adds denom metadata as part of the migration
+- [#502](https://github.com/public-awesome/stargaze/issues/502) Upgrades to ibc-go v2
 - [#517](https://github.com/public-awesome/stargaze/pull/517) Fix IBC gov proposals routing
 
 ## [v1.1.1](https://github.com/public-awesome/stargaze/releases/tag/v1.1.1) - 2021-12-30

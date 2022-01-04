@@ -253,6 +253,7 @@ func PrepareGenesis(
 	// bank module genesis
 	bankGenState := banktypes.GetGenesisStateFromAppState(cdc, appState)
 	bankGenState.Params.DefaultSendEnabled = true
+	bankGenState.DenomMetadata = genesisParams.NativeCoinMetadatas
 	balances := bankGenState.Balances
 
 	// claim module genesis
