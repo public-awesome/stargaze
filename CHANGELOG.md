@@ -36,6 +36,10 @@ Ref: https://keepachangelog.com/en/1.0.0/
 
 ## [Unreleased]
 
+## [v1.1.2](https://github.com/public-awesome/stargaze/releases/tag/v1.1.2) - 2022-01-05
+
+- [#519](https://github.com/public-awesome/stargaze/pull/519) Fix missing GRPC Routes for claim and alloc modules
+
 ## [v1.1.1](https://github.com/public-awesome/stargaze/releases/tag/v1.1.1) - 2021-12-30
 
 - [#511](https://github.com/public-awesome/stargaze/pull/511) Bump Cosmos SDK to `v0.44.5` and ibc-go to `v1.2.5`
