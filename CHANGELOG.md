@@ -36,6 +36,7 @@ Ref: https://keepachangelog.com/en/1.0.0/
 
 ## [Unreleased]
 
+- [#519](https://github.com/public-awesome/stargaze/pull/519) Fix missing GRPC Routes for claim and alloc modules
 - [#495](https://github.com/public-awesome/stargaze/issues/495) Adds denom metadata as part of the migration
 - [#502](https://github.com/public-awesome/stargaze/issues/502) Upgrades to ibc-go v2
 - [#517](https://github.com/public-awesome/stargaze/pull/517) Fix IBC gov proposals routing
