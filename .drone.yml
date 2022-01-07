@@ -95,7 +95,7 @@ steps:
       event:
         - push
       branch:
-        - jhernandez/add-wasm
+        - jhernandez/add-wasmd
   - name: trigger
     image: plugins/downstream
     settings:
@@ -398,6 +398,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: f76d96c7e93aa8cad627d7b9b7a27f8f4ce268f5a76a791076e16bd5e3242917
+hmac: f4bf5960a05fa739a558f97d939763dc2fee4bf4e6057d58117a89578d7fbf4e
 
 ...
