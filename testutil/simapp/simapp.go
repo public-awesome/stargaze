@@ -23,7 +23,7 @@ func New(dir string) *app.App {
 
 	encoding := cosmoscmd.MakeEncodingConfig(app.ModuleBasics)
 
-	var emptyWasmOpts []wasm.Option = nil
+	var emptyWasmOpts []wasm.Option
 
 	a := app.NewStargazeApp(logger, db, nil, true, map[int64]bool{}, dir, 0, encoding,
 		simapp.EmptyAppOptions{}, emptyWasmOpts, wasm.DisableAllProposals)
