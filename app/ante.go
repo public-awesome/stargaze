@@ -1,6 +1,8 @@
 package app
 
 import (
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	wasmTypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
@@ -13,8 +15,9 @@ import (
 // channel keeper.
 type HandlerOptions struct {
 	ante.HandlerOptions
-
-	IBCChannelkeeper channelkeeper.Keeper
+	IBCChannelkeeper  channelkeeper.Keeper
+	WasmConfig        *wasmTypes.WasmConfig
+	TXCounterStoreKey sdk.StoreKey
 }
 
 type MinCommissionDecorator struct{}
@@ -65,6 +68,14 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "sign mode handler is required for ante builder")
 	}
 
+	if options.WasmConfig == nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "wasm config is required for ante builder")
+	}
+
+	if options.TXCounterStoreKey == nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "tx counter key is required for ante builder")
+	}
+
 	var sigGasConsumer = options.SigGasConsumer
 	if sigGasConsumer == nil {
 		sigGasConsumer = ante.DefaultSigVerificationGasConsumer
@@ -72,7 +83,10 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 
 	anteDecorators := []sdk.AnteDecorator{
 		ante.NewSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
+		// limit simulation gas
+		wasmkeeper.NewLimitSimulationGasDecorator(options.WasmConfig.SimulationGasLimit),
 		NewMinCommissionDecorator(),
+		wasmkeeper.NewCountTXDecorator(options.TXCounterStoreKey),
 		ante.NewRejectExtensionOptionsDecorator(),
 		ante.NewMempoolFeeDecorator(),
 		ante.NewValidateBasicDecorator(),

@@ -90,12 +90,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - develop
+        - wasm
     when:
       event:
         - push
       branch:
-        - develop
+        - jhernandez/add-wasm
   - name: trigger
     image: plugins/downstream
     settings:
@@ -397,6 +397,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 2afdd67fa7a871d8ff1b9412f304cc7908b029f47f92f184c197e0c4bd0b7efe
+hmac: c6efdf8d583e13d3ac95dcdfc895f3e600c8f068d4e0cef06600b5c2bbcb076c
 
 ...

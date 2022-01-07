@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
@@ -47,6 +48,7 @@ func New(t *testing.T, configs ...network.Config) *network.Network {
 // genesis and single validator. All other parameters are inherited from cosmos-sdk/testutil/network.DefaultConfig
 func DefaultConfig() network.Config {
 	encoding := cosmoscmd.MakeEncodingConfig(app.ModuleBasics)
+	var emptyWasmOpts []wasm.Option = nil
 	return network.Config{
 		Codec:             encoding.Marshaler,
 		TxConfig:          encoding.TxConfig,
@@ -58,6 +60,8 @@ func DefaultConfig() network.Config {
 				val.Ctx.Logger, tmdb.NewMemDB(), nil, true, map[int64]bool{}, val.Ctx.Config.RootDir, 0,
 				encoding,
 				simapp.EmptyAppOptions{},
+				emptyWasmOpts,
+				wasm.DisableAllProposals,
 				baseapp.SetPruning(storetypes.NewPruningOptionsFromString(val.AppConfig.Pruning)),
 				baseapp.SetMinGasPrices(val.AppConfig.MinGasPrices),
 			)

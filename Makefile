@@ -81,7 +81,7 @@ endif
 
 all: install
 
-install: build
+install:
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/starsd
 
 build:
