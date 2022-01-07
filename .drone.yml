@@ -254,7 +254,7 @@ steps:
 trigger:
   branch:
     - main
-    - jhernandez/add-wasm
+    - jhernandez/add-wasmd
   event:
     - pull_request
     - push
@@ -398,6 +398,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: d630fce7cf133710bf529c086d0638e707de3a84fda429c6ec6c302a2b15abc3
+hmac: f76d96c7e93aa8cad627d7b9b7a27f8f4ce268f5a76a791076e16bd5e3242917
 
 ...

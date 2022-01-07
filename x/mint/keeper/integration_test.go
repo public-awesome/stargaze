@@ -3,6 +3,7 @@ package keeper_test
 import (
 	"encoding/json"
 
+	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/tendermint/spm/cosmoscmd"
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -60,7 +61,10 @@ func genApp(withGenesis bool, invCheckPeriod uint) (*stargazeapp.App, stargazeap
 		simapp.DefaultNodeHome,
 		invCheckPeriod,
 		encCdc,
-		simapp.EmptyAppOptions{})
+		simapp.EmptyAppOptions{},
+		nil,
+		wasm.DisableAllProposals,
+	)
 
 	originalApp := app.(*stargazeapp.App)
 
