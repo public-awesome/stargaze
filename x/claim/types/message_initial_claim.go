@@ -18,15 +18,15 @@ func NewMsgInitialClaim(sender string) *MsgInitialClaim {
 	}
 }
 
-func (msg *MsgInitialClaim) Route() string {
+func (msg MsgInitialClaim) Route() string {
 	return RouterKey
 }
 
-func (msg *MsgInitialClaim) Type() string {
+func (msg MsgInitialClaim) Type() string {
 	return TypeMsgInitialClaim
 }
 
-func (msg *MsgInitialClaim) GetSigners() []sdk.AccAddress {
+func (msg MsgInitialClaim) GetSigners() []sdk.AccAddress {
 	sender, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		panic(err)
@@ -34,12 +34,12 @@ func (msg *MsgInitialClaim) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sender}
 }
 
-func (msg *MsgInitialClaim) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
+func (msg MsgInitialClaim) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(&msg)
 	return sdk.MustSortJSON(bz)
 }
 
-func (msg *MsgInitialClaim) ValidateBasic() error {
+func (msg MsgInitialClaim) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid sender address (%s)", err)
