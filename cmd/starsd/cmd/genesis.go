@@ -477,7 +477,8 @@ func DevnetGenesisParams() GenesisParams {
 
 	genParams.AirdropSupply = sdk.NewInt(250_000_000_000_000) // 250M STARS
 	genParams.GenesisTime = time.Now()
-
+	genParams.ClaimParams.AirdropEnabled = true
+	genParams.ClaimParams.AirdropStartTime = genParams.GenesisTime
 	// mint
 	genParams.MintParams.StartTime = genParams.GenesisTime.Add(time.Hour * 10)
 
