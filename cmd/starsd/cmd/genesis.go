@@ -361,8 +361,10 @@ func MainnetGenesisParams() GenesisParams {
 					Aliases:  nil,
 				},
 			},
+			Name:    "Stargaze STARS",
 			Base:    BaseCoinUnit,
 			Display: HumanCoinUnit,
+			Symbol:  "STARS",
 		},
 	}
 
