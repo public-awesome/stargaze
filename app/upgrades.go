@@ -38,6 +38,8 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 			},
 			Base:    BaseCoinUnit,
 			Display: HumanCoinUnit,
+			Name:    "Stargaze STARS",
+			Symbol:  "STARS",
 		}
 
 		app.BankKeeper.SetDenomMetaData(ctx, denomMetadata)
