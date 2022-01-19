@@ -18,9 +18,9 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/public-awesome/stargaze/x/claim/client/cli"
-	"github.com/public-awesome/stargaze/x/claim/keeper"
-	"github.com/public-awesome/stargaze/x/claim/types"
+	"github.com/public-awesome/stargaze/v2/x/claim/client/cli"
+	"github.com/public-awesome/stargaze/v2/x/claim/keeper"
+	"github.com/public-awesome/stargaze/v2/x/claim/types"
 )
 
 var (

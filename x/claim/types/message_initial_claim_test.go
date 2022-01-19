@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/public-awesome/stargaze/v2/testutil/sample"
 	"github.com/stretchr/testify/require"
-	"github.com/public-awesome/stargaze/testutil/sample"
 )
 
 func TestMsgInitialClaim_ValidateBasic(t *testing.T) {

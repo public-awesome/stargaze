@@ -76,9 +76,9 @@ import (
 	ibchost "github.com/cosmos/ibc-go/v2/modules/core/24-host"
 	ibckeeper "github.com/cosmos/ibc-go/v2/modules/core/keeper"
 
-	"github.com/public-awesome/stargaze/x/mint"
-	mintkeeper "github.com/public-awesome/stargaze/x/mint/keeper"
-	minttypes "github.com/public-awesome/stargaze/x/mint/types"
+	"github.com/public-awesome/stargaze/v2/x/mint"
+	mintkeeper "github.com/public-awesome/stargaze/v2/x/mint/keeper"
+	minttypes "github.com/public-awesome/stargaze/v2/x/mint/types"
 	"github.com/spf13/cast"
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmjson "github.com/tendermint/tendermint/libs/json"
@@ -93,13 +93,13 @@ import (
 	"github.com/tendermint/spm/cosmoscmd"
 	"github.com/tendermint/spm/openapiconsole"
 
-	"github.com/public-awesome/stargaze/docs"
-	allocmodule "github.com/public-awesome/stargaze/x/alloc"
-	allocmodulekeeper "github.com/public-awesome/stargaze/x/alloc/keeper"
-	allocmoduletypes "github.com/public-awesome/stargaze/x/alloc/types"
-	claimmodule "github.com/public-awesome/stargaze/x/claim"
-	claimmodulekeeper "github.com/public-awesome/stargaze/x/claim/keeper"
-	claimmoduletypes "github.com/public-awesome/stargaze/x/claim/types"
+	"github.com/public-awesome/stargaze/v2/docs"
+	allocmodule "github.com/public-awesome/stargaze/v2/x/alloc"
+	allocmodulekeeper "github.com/public-awesome/stargaze/v2/x/alloc/keeper"
+	allocmoduletypes "github.com/public-awesome/stargaze/v2/x/alloc/types"
+	claimmodule "github.com/public-awesome/stargaze/v2/x/claim"
+	claimmodulekeeper "github.com/public-awesome/stargaze/v2/x/claim/keeper"
+	claimmoduletypes "github.com/public-awesome/stargaze/v2/x/claim/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 )
 
