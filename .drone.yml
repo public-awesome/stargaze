@@ -96,7 +96,6 @@ steps:
         - push
       branch:
         - develop
-        - shanev/claim-sign-test
   - name: trigger
     image: plugins/downstream
     settings:
@@ -265,6 +264,6 @@ node:
   runner: integration
 ---
 kind: signature
-hmac: ccf5d053e9b658a42562ad5668e457c07decbb298c1032660cf548b405691f2c
+hmac: 18623134b8dd4a0b9a54b9f8800b7d13ac4e640d4854a8538b481573ead9b533
 
 ...
