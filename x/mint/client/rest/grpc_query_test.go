@@ -1,3 +1,4 @@
+//go:build norace
 // +build norace
 
 package rest_test
@@ -14,7 +15,7 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"github.com/cosmos/cosmos-sdk/testutil/network"
-	minttypes "github.com/public-awesome/stargaze/x/mint/types"
+	minttypes "github.com/public-awesome/stargaze/v2/x/mint/types"
 )
 
 type IntegrationTestSuite struct {
