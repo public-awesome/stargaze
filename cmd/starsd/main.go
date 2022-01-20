@@ -4,8 +4,8 @@ import (
 	"os"
 
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
-	"github.com/public-awesome/stargaze/app"
-	"github.com/public-awesome/stargaze/cmd/starsd/cmd"
+	"github.com/public-awesome/stargaze/v2/app"
+	"github.com/public-awesome/stargaze/v2/cmd/starsd/cmd"
 	"github.com/tendermint/spm/cosmoscmd"
 	tmcmds "github.com/tendermint/tendermint/cmd/tendermint/commands"
 )

@@ -27,11 +27,11 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	ibctransfertypes "github.com/cosmos/ibc-go/v2/modules/apps/transfer/types"
-	minttypes "github.com/public-awesome/stargaze/x/mint/types"
+	minttypes "github.com/public-awesome/stargaze/v2/x/mint/types"
 
 	// appParams "github.com/public-awesome/stargaze/app/params"
-	alloctypes "github.com/public-awesome/stargaze/x/alloc/types"
-	claimtypes "github.com/public-awesome/stargaze/x/claim/types"
+	alloctypes "github.com/public-awesome/stargaze/v2/x/alloc/types"
+	claimtypes "github.com/public-awesome/stargaze/v2/x/claim/types"
 )
 
 const (

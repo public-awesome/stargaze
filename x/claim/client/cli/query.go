@@ -16,7 +16,7 @@ import (
 	// "github.com/cosmos/cosmos-sdk/client/flags"
 	// sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/public-awesome/stargaze/x/claim/types"
+	"github.com/public-awesome/stargaze/v2/x/claim/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module
