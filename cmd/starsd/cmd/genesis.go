@@ -114,6 +114,8 @@ Example:
 			// get genesis params
 			genesisParams := MainnetGenesisParams()
 			switch args[0] {
+			case "localnet":
+				genesisParams = LocalnetGenesisParams()
 			case "testnet":
 				genesisParams = TestnetGenesisParams()
 			case "devnet":
@@ -492,6 +494,28 @@ func DevnetGenesisParams() GenesisParams {
 	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.1")    // 10%
 	genParams.GovParams.TallyParams.Threshold = sdk.MustNewDecFromStr("0.5") // 50%
 	genParams.GovParams.VotingParams.VotingPeriod = time.Minute * 5          // 5 min
+
+	return genParams
+}
+
+func LocalnetGenesisParams() GenesisParams {
+	genParams := MainnetGenesisParams()
+
+	genParams.AirdropSupply = sdk.NewInt(250_000_000_000_000) // 250M STARS
+	genParams.GenesisTime = time.Now()
+	genParams.ClaimParams.AirdropEnabled = true
+	genParams.ClaimParams.AirdropStartTime = genParams.GenesisTime
+	// mint
+	genParams.MintParams.StartTime = genParams.GenesisTime.Add(time.Hour * 10)
+
+	genParams.GovParams.DepositParams.MaxDepositPeriod = time.Hour * 1 // 1 hour
+	genParams.GovParams.DepositParams.MinDeposit = sdk.NewCoins(sdk.NewCoin(
+		genParams.NativeCoinMetadatas[0].Base,
+		sdk.NewInt(1),
+	))
+	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.1")    // 10%
+	genParams.GovParams.TallyParams.Threshold = sdk.MustNewDecFromStr("0.5") // 50%
+	genParams.GovParams.VotingParams.VotingPeriod = time.Minute * 1          // 5 min
 
 	return genParams
 }

@@ -93,6 +93,7 @@ import (
 	"github.com/tendermint/spm/cosmoscmd"
 	"github.com/tendermint/spm/openapiconsole"
 
+	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	"github.com/public-awesome/stargaze/v2/docs"
 	allocmodule "github.com/public-awesome/stargaze/v2/x/alloc"
 	allocmodulekeeper "github.com/public-awesome/stargaze/v2/x/alloc/keeper"
@@ -100,7 +101,6 @@ import (
 	claimmodule "github.com/public-awesome/stargaze/v2/x/claim"
 	claimmodulekeeper "github.com/public-awesome/stargaze/v2/x/claim/keeper"
 	claimmoduletypes "github.com/public-awesome/stargaze/v2/x/claim/types"
-	// this line is used by starport scaffolding # stargate/app/moduleImport
 )
 
 const (
@@ -469,17 +469,22 @@ func NewStargazeApp(
 		upgradetypes.ModuleName, capabilitytypes.ModuleName, minttypes.ModuleName,
 		allocmoduletypes.ModuleName, // must run before distribution begin blocker
 		distrtypes.ModuleName, slashingtypes.ModuleName,
-		evidencetypes.ModuleName, stakingtypes.ModuleName, ibchost.ModuleName,
-		feegrant.ModuleName,
+		evidencetypes.ModuleName, stakingtypes.ModuleName,
+		ibchost.ModuleName, ibctransfertypes.ModuleName,
+		authtypes.ModuleName, banktypes.ModuleName, govtypes.ModuleName, crisistypes.ModuleName, genutiltypes.ModuleName,
+		authz.ModuleName, feegrant.ModuleName, claimmoduletypes.ModuleName,
+		paramstypes.ModuleName, vestingtypes.ModuleName,
 	)
 
 	app.mm.SetOrderEndBlockers(
-		crisistypes.ModuleName,
-		govtypes.ModuleName,
-		stakingtypes.ModuleName,
+		crisistypes.ModuleName, govtypes.ModuleName, stakingtypes.ModuleName,
+		capabilitytypes.ModuleName, authtypes.ModuleName, banktypes.ModuleName, distrtypes.ModuleName,
+		slashingtypes.ModuleName, minttypes.ModuleName,
+		genutiltypes.ModuleName, evidencetypes.ModuleName, authz.ModuleName,
 		feegrant.ModuleName,
-		authz.ModuleName,
-		claimmoduletypes.ModuleName,
+		paramstypes.ModuleName, upgradetypes.ModuleName, vestingtypes.ModuleName,
+		ibchost.ModuleName, ibctransfertypes.ModuleName,
+		allocmoduletypes.ModuleName, claimmoduletypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -503,6 +508,7 @@ func NewStargazeApp(
 		ibctransfertypes.ModuleName,
 		feegrant.ModuleName,
 		authz.ModuleName,
+		paramstypes.ModuleName, upgradetypes.ModuleName, vestingtypes.ModuleName,
 		claimmoduletypes.ModuleName,
 		allocmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis

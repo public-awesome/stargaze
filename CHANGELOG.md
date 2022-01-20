@@ -35,7 +35,9 @@ Ref: https://keepachangelog.com/en/1.0.0/
 # Changelog
 
 ## [Unreleased]
-
+- [#524](https://github.com/public-awesome/stargaze/pull/524) Upgrade to Cosmos SDK `V0.45.0` 
+- [#523](https://github.com/public-awesome/stargaze/pull/523) Upgrade Module Version to v2
+- [#522](https://github.com/public-awesome/stargaze/pull/522) Fix Amino for Claim Tx 
 - [#519](https://github.com/public-awesome/stargaze/pull/519) Fix missing GRPC Routes for claim and alloc modules
 - [#495](https://github.com/public-awesome/stargaze/issues/495) Adds denom metadata as part of the migration
 - [#502](https://github.com/public-awesome/stargaze/issues/502) Upgrades to ibc-go v2
