@@ -254,6 +254,7 @@ steps:
 trigger:
   branch:
     - main
+    - jhernandezb/v2-module
   event:
     - pull_request
     - push
@@ -264,6 +265,6 @@ node:
   runner: integration
 ---
 kind: signature
-hmac: 18623134b8dd4a0b9a54b9f8800b7d13ac4e640d4854a8538b481573ead9b533
+hmac: 32cc75f43a3caf948cd17e8ffc98e51ec0eca897bd5d6c68b2ce618ad7102963
 
 ...
