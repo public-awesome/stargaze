@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/testutil"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	claimtypes "github.com/public-awesome/stargaze/v2/x/claim/types"
@@ -227,7 +228,7 @@ func InitTestnet(
 			return err
 		}
 
-		addr, secret, err := server.GenerateSaveCoinKey(kb, nodeDirName, true, algo)
+		addr, secret, err := testutil.GenerateSaveCoinKey(kb, "validator", nodeDirName, true, algo)
 		if err != nil {
 			_ = os.RemoveAll(outputDir)
 			return err
