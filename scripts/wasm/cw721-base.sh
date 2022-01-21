@@ -1,6 +1,6 @@
 #!/bin/sh
 
-TXFLAG="--gas-prices 0.01ustarx --gas auto --gas-adjustment 1.3 -y -b block"
+TXFLAG="--gas-prices 0.01ustars --gas auto --gas-adjustment 1.3 -y -b block"
 
 CREATOR=$(starsd keys show creator -a)
 INVESTOR=$(starsd keys show investor -a)

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-TXFLAG="--gas-prices 0.01ustarx --gas auto --gas-adjustment 1.3 -y -b block"
+TXFLAG="--gas-prices 0.01ustars --gas auto --gas-adjustment 1.3 -y -b block"
 
 CREATOR=$(starsd keys show creator -a)
 INVESTOR=$(starsd keys show investor -a)
@@ -19,7 +19,7 @@ INIT='{
   "name": "sirbobo",
   "symbol": "BOBO",
   "decimals": 2,
-  "reserve_denom": "ustarx",
+  "reserve_denom": "ustars",
   "reserve_decimals": 8,
   "curve_type": { "linear": { "slope": "1", "scale": 1 } }
 }'
@@ -36,7 +36,7 @@ starsd q wasm contract-state smart $CONTRACT "{\"balance\":{\"address\":\"$INVES
 
 # execute a buy order
 BUY='{"buy":{}}'
-starsd tx wasm execute $CONTRACT $BUY --from investor --amount=500000000ustarx $TXFLAG
+starsd tx wasm execute $CONTRACT $BUY --from investor --amount=500000000ustars $TXFLAG
 
 # check balances
 starsd q bank balances $INVESTOR

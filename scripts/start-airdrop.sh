@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DENOM=ustarx
+DENOM=ustars
 CHAIN_ID=localnet-1
 ONE_HOUR=3600
 ONE_DAY=$(($ONE_HOUR * 24))
@@ -63,7 +63,7 @@ starsd add-genesis-account stars1wppujuuqrv52atyg8uw3x779r8w72ehrr5a4yx 50000000
     --vesting-start-time $vesting_start_time \
     --vesting-end-time $vesting_end_time
 
-starsd gentx validator 1000000000000ustarx --chain-id localnet-1 --keyring-backend test
+starsd gentx validator 1000000000000ustars --chain-id localnet-1 --keyring-backend test
 starsd collect-gentxs
 starsd validate-genesis
 starsd start

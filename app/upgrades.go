@@ -28,7 +28,7 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 				{
 					Denom:    BaseCoinUnit,
 					Exponent: 0,
-					Aliases:  nil,
+					Aliases:  []string{"microstars"},
 				},
 				{
 					Denom:    HumanCoinUnit,
