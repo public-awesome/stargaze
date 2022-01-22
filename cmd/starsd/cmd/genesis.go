@@ -360,8 +360,10 @@ func MainnetGenesisParams() GenesisParams {
 					Aliases:  nil,
 				},
 			},
+			Name:    "Stargaze STARS",
 			Base:    BaseCoinUnit,
 			Display: HumanCoinUnit,
+			Symbol:  "STARS",
 		},
 	}
 
@@ -478,7 +480,7 @@ func DevnetGenesisParams() GenesisParams {
 	genParams.GenesisTime = time.Now()
 
 	// mint
-	genParams.MintParams.StartTime = genParams.GenesisTime.Add(time.Hour * 10)
+	genParams.MintParams.StartTime = genParams.GenesisTime
 
 	genParams.GovParams.DepositParams.MaxDepositPeriod = time.Hour * 1 // 1 hour
 	genParams.GovParams.DepositParams.MinDeposit = sdk.NewCoins(sdk.NewCoin(
@@ -489,5 +491,7 @@ func DevnetGenesisParams() GenesisParams {
 	genParams.GovParams.TallyParams.Threshold = sdk.MustNewDecFromStr("0.5") // 50%
 	genParams.GovParams.VotingParams.VotingPeriod = time.Minute * 5          // 5 min
 
+	genParams.ClaimParams.AirdropEnabled = true
+	genParams.ClaimParams.AirdropStartTime = genParams.GenesisTime
 	return genParams
 }
