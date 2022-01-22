@@ -39,7 +39,9 @@ ifeq ($(LEDGER_ENABLED),true)
   endif
 endif
 
-ifeq (cleveldb,$(findstring cleveldb,$(GAIA_BUILD_OPTIONS)))
+ifeq (cleveldb,$(findstring cleveldb,$(STARGAZE_BUILD_OPTIONS)))
+  build_tags += gcc
+else ifeq (rocksdb,$(findstring rocksdb,$(STARGAZE_BUILD_OPTIONS)))
   build_tags += gcc
 endif
 build_tags += $(BUILD_TAGS)
@@ -59,10 +61,12 @@ ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=stargaze \
 		  -X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep)" \
 		  -X github.com/tendermint/tendermint/version.TMCoreSemVer=$(TM_VERSION)
 
-ifeq (cleveldb,$(findstring cleveldb,$(GAIA_BUILD_OPTIONS)))
+ifeq (cleveldb,$(findstring cleveldb,$(STARGAZE_BUILD_OPTIONS)))
   ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=cleveldb
+else ifeq (rocksdb,$(findstring rocksdb,$(STARGAZE_BUILD_OPTIONS)))
+  ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=rocksdb
 endif
-ifeq (,$(findstring nostrip,$(GAIA_BUILD_OPTIONS)))
+ifeq (,$(findstring nostrip,$(STARGAZE_BUILD_OPTIONS)))
   ldflags += -w -s
 endif
 ldflags += $(LDFLAGS)
@@ -70,7 +74,7 @@ ldflags := $(strip $(ldflags))
 
 BUILD_FLAGS := -tags "$(build_tags)" -ldflags '$(ldflags)'
 # check for nostrip option
-ifeq (,$(findstring nostrip,$(GAIA_BUILD_OPTIONS)))
+ifeq (,$(findstring nostrip,$(STARGAZE_BUILD_OPTIONS)))
   BUILD_FLAGS += -trimpath
 endif
 
