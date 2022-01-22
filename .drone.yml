@@ -228,17 +228,17 @@ steps:
         - http://gaia:26657
         - http://osmosis:26657
   - name: relayer
-    image: publicawesome/hermes:0.9.0
+    image: publicawesome/hermes:0.10.0
     commands:
       - /bin/bash ./scripts/ci/setup-relayer.sh
 
   - name: relayer-start
-    image: publicawesome/hermes:0.9.0
+    image: publicawesome/hermes:0.10.0
     commands:
       - /bin/bash ./scripts/ci/start-relayer.sh
     detach: true
   - name: relayer-sender
-    image: publicawesome/hermes:0.9.0
+    image: publicawesome/hermes:0.10.0
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: discord
@@ -319,17 +319,17 @@ steps:
         - http://gaia:26657
         - http://osmosis:26657
   - name: relayer
-    image: publicawesome/hermes:0.9.0
+    image: publicawesome/hermes:0.10.0
     commands:
       - /bin/bash ./scripts/ci/setup-relayer.sh
 
   - name: relayer-start
-    image: publicawesome/hermes:0.9.0
+    image: publicawesome/hermes:0.10.0
     commands:
       - /bin/bash ./scripts/ci/start-relayer.sh
     detach: true
   - name: relayer-sender
-    image: publicawesome/hermes:0.9.0
+    image: publicawesome/hermes:0.10.0
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: proposal
@@ -353,12 +353,12 @@ steps:
         - http://gaia:26657
         - http://osmosis:26657
   - name: relayer-upgrade-start
-    image: publicawesome/hermes:0.9.0
+    image: publicawesome/hermes:0.10.0
     commands:
       - /bin/bash ./scripts/ci/upgrade/start-relayer.sh
     detach: true
   - name: relayer-ugprade-sender
-    image: publicawesome/hermes:0.9.0
+    image: publicawesome/hermes:0.10.0
     commands:
       - /bin/bash ./scripts/ci/upgrade/transfer-relayer.sh
   - name: discord
@@ -373,7 +373,7 @@ steps:
 
 trigger:
   branch:
-    - feature/test-upgrade
+    - feature/upgrade-test
   event:
     - pull_request
     - push
@@ -384,6 +384,6 @@ node:
   runner: integration
 ---
 kind: signature
-hmac: 84372f7ed385db70c6fb68ef386f4b58b7c3cee7d6de87bc1ea0ed35f3524b34
+hmac: 92949f5f6808f267a5c0b9975c6df058bec57ba34e3b5db5fa933e50ab4cc106
 
 ...
