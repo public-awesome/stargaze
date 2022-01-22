@@ -228,17 +228,17 @@ steps:
         - http://gaia:26657
         - http://osmosis:26657
   - name: relayer
-    image: publicawesome/hermes:0.9.0
+    image: publicawesome/hermes:0.10.0
     commands:
       - /bin/bash ./scripts/ci/setup-relayer.sh
 
   - name: relayer-start
-    image: publicawesome/hermes:0.9.0
+    image: publicawesome/hermes:0.10.0
     commands:
       - /bin/bash ./scripts/ci/start-relayer.sh
     detach: true
   - name: relayer-sender
-    image: publicawesome/hermes:0.9.0
+    image: publicawesome/hermes:0.10.0
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: discord
@@ -263,7 +263,127 @@ volumes:
 node:
   runner: integration
 ---
+kind: pipeline
+type: docker
+name: upgrade-integration-test
+workspace:
+  path: /stargaze
+
+steps:
+  - name: restore-cache
+    image: meltwater/drone-cache:dev
+    volumes:
+      - name: cache
+        path: /go
+    environment:
+      AWS_ACCESS_KEY_ID:
+        from_secret: minio_key_id
+      AWS_SECRET_ACCESS_KEY:
+        from_secret: minio_secret_key
+    pull: true
+    settings:
+      restore: true
+      bucket:
+        from_secret: minio_bucket
+      region: us-east-1
+      mount:
+        - '/go/pkg/mod'
+  - name: gaia
+    image: publicawesome/gaia:6.0.0
+    detach: true
+    commands:
+      - ./scripts/ci/setup-gaia.sh
+    environment:
+      GOPROXY: http://goproxy
+  - name: osmosis
+    image: publicawesome/osmosis:6.0.0
+    detach: true
+    commands:
+      - ./scripts/ci/setup-osmosis.sh
+    environment:
+      GOPROXY: http://goproxy
+  - name: stargaze
+    image: publicawesome/stargaze:1.1.2
+    commands:
+      - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
+    environment:
+      GOPROXY: http://goproxy
+    detach: true
+  - name: readiness
+    image: publicawesome/stargaze-readiness-checker:latest
+    settings:
+      timeout: 300
+      blocks: 10
+      chain_list:
+        - http://stargaze:26657
+        - http://gaia:26657
+        - http://osmosis:26657
+  - name: relayer
+    image: publicawesome/hermes:0.10.0
+    commands:
+      - /bin/bash ./scripts/ci/setup-relayer.sh
+
+  - name: relayer-start
+    image: publicawesome/hermes:0.10.0
+    commands:
+      - /bin/bash ./scripts/ci/start-relayer.sh
+    detach: true
+  - name: relayer-sender
+    image: publicawesome/hermes:0.10.0
+    commands:
+      - /bin/bash ./scripts/ci/transfer-relayer.sh
+  - name: proposal
+    image: publicawesome/stargaze:1.1.2
+    commands:
+      - ./scripts/ci/upgrade/proposal.sh
+  - name: stargaze-upgraded
+    image: publicawesome/stargaze:2.0.0-rc.1
+    commands:
+      - ./scripts/ci/upgrade/run-upgrade.sh
+    environment:
+      GOPROXY: http://goproxy
+    detach: true
+  - name: readiness-upgrade
+    image: publicawesome/stargaze-readiness-checker:latest
+    settings:
+      timeout: 300
+      blocks: 10
+      chain_list:
+        - http://stargaze-upgraded:26657
+        - http://gaia:26657
+        - http://osmosis:26657
+  - name: relayer-upgrade-start
+    image: publicawesome/hermes:0.10.0
+    commands:
+      - /bin/bash ./scripts/ci/upgrade/start-relayer.sh
+    detach: true
+  - name: relayer-ugprade-sender
+    image: publicawesome/hermes:0.10.0
+    commands:
+      - /bin/bash ./scripts/ci/upgrade/transfer-relayer.sh
+  - name: discord
+    image: appleboy/drone-discord
+    settings:
+      webhook_id: 
+        from_secret: discord_webhook_id
+      webhook_token: 
+        from_secret: discord_webhook_token
+    when:
+      status: [success, failure]
+
+trigger:
+  branch:
+    - feature/upgrade-test
+  event:
+    - pull_request
+    - push
+volumes:
+- name: cache
+  temp: {}
+node:
+  runner: integration
+---
 kind: signature
-hmac: 18623134b8dd4a0b9a54b9f8800b7d13ac4e640d4854a8538b481573ead9b533
+hmac: 92949f5f6808f267a5c0b9975c6df058bec57ba34e3b5db5fa933e50ab4cc106
 
 ...
