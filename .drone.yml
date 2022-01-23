@@ -288,7 +288,7 @@ steps:
       region: us-east-1
       mount:
         - '/go/pkg/mod'
-  - name: stargaze
+  - name: build-wrapper
     image: publicawesome/golang:1.17.0-devtooling
     volumes:
       - name: cache
@@ -394,6 +394,6 @@ node:
   runner: integration
 ---
 kind: signature
-hmac: 75d81d6fb7db6ce4c4c63957d61298be015a9996c01e72dc7ffa2cb1cf90f83c
+hmac: 623442ce80a75b33859a2e60716464ce0a1fb115fa5f6540c3ff33d483fe6188
 
 ...
