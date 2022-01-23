@@ -295,7 +295,8 @@ steps:
         path: /go
     commands:
       - mkdir -p /stargaze/bin/
-      - go build -o /stargaze/bin/upgrade-watcher ./testutil/watcher/
+      - CGO_ENABLED=0 go build -o /stargaze/bin/upgrade-watcher ./testutil/watcher/
+      - chmod +x /stargaze/bin/upgrade-watcher
     environment:
       GOPROXY: http://goproxy
   - name: gaia
@@ -394,6 +395,6 @@ node:
   runner: integration
 ---
 kind: signature
-hmac: 623442ce80a75b33859a2e60716464ce0a1fb115fa5f6540c3ff33d483fe6188
+hmac: 07360a5db4a53c31edcfa1cc8e68d96a00a3690ad78750c60aabf3dcf2b517be
 
 ...
