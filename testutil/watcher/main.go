@@ -14,7 +14,7 @@ func main() {
 	if len(args) < 2 {
 		log.Fatal("missing arguments")
 	}
-
+	/* #nosec */
 	cmd := exec.Command(args[0], args[1:]...)
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
@@ -27,11 +27,15 @@ func main() {
 		if err != nil {
 			fmt.Println("error killing process", err)
 		}
-		server.Shutdown(r.Context())
+		err = server.Shutdown(r.Context())
+		if err != nil {
+			fmt.Println("error shuting down", err)
+		}
 	})
 	err := server.ListenAndServe()
-	cmd.Process.Kill()
+	_ = cmd.Process.Kill()
 	if err != nil {
+
 		log.Fatal(err)
 	}
 }
