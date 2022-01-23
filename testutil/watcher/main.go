@@ -31,6 +31,8 @@ func main() {
 		if err != nil {
 			fmt.Println("error shuting down", err)
 		}
+		w.Write([]byte(string("OK")))
+		w.WriteHeader(http.StatusAccepted)
 	})
 	err := server.ListenAndServe()
 	_ = cmd.Process.Kill()
