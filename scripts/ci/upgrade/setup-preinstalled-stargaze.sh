@@ -22,4 +22,4 @@ starsd add-genesis-account $RLYKEY 10000000000000$DENOM --home $STARGAZE_HOME
 starsd gentx validator 900000000$DENOM --keyring-backend test --chain-id stargaze --home $STARGAZE_HOME
 starsd collect-gentxs --home $STARGAZE_HOME
 
-starsd start --pruning nothing --home $STARGAZE_HOME
+/stargaze/bin/upgrade-watcher starsd start --pruning nothing --home $STARGAZE_HOME

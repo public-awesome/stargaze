@@ -288,6 +288,16 @@ steps:
       region: us-east-1
       mount:
         - '/go/pkg/mod'
+  - name: stargaze
+    image: publicawesome/golang:1.17.0-devtooling
+    volumes:
+      - name: cache
+        path: /go
+    commands:
+      - mkdir -p /stargaze/bin/
+      - go build -o /stargaze/bin/upgrade-watcher ./testutil/watcher/
+    environment:
+      GOPROXY: http://goproxy
   - name: gaia
     image: publicawesome/gaia:6.0.0
     detach: true
@@ -303,7 +313,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:1.1.2
+    image: publicawesome/stargaze:1.1.3
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
@@ -333,11 +343,11 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: proposal
-    image: publicawesome/stargaze:1.1.2
+    image: publicawesome/stargaze:1.1.3
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
-    image: publicawesome/stargaze:2.0.0-rc.1
+    image: publicawesome/stargaze:2.0.0
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -373,7 +383,7 @@ steps:
 
 trigger:
   branch:
-    - feature/upgrade-test
+    - fix/automated-upgrade-test
   event:
     - pull_request
     - push
@@ -384,6 +394,6 @@ node:
   runner: integration
 ---
 kind: signature
-hmac: 92949f5f6808f267a5c0b9975c6df058bec57ba34e3b5db5fa933e50ab4cc106
+hmac: 75d81d6fb7db6ce4c4c63957d61298be015a9996c01e72dc7ffa2cb1cf90f83c
 
 ...
