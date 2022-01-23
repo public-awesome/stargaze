@@ -4,7 +4,7 @@ DENOM=ustars
 CHAINID=stargaze
 RLYKEY=stars12g0xe2ld0k5ws3h7lmxc39d4rpl3fyxp5qys69
 starsd version --long
-apk add -U --no-cache jq tree
+apk add -U --no-cache jq tree curl wget
 STARGAZE_HOME=/stargaze/starsd
 curl -v http://stargaze:8090/kill
 sleep 10
