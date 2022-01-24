@@ -393,8 +393,10 @@ volumes:
   temp: {}
 node:
   runner: integration
+depends_on:
+  - ibc-integration-test
 ---
 kind: signature
-hmac: e903e6ded5e90cb7f223c04252579c4b53a207ba8b4c1057502ef4da10890efb
+hmac: 2afdd67fa7a871d8ff1b9412f304cc7908b029f47f92f184c197e0c4bd0b7efe
 
 ...
