@@ -384,7 +384,7 @@ steps:
 
 trigger:
   branch:
-    - fix/automated-upgrade-test
+    - main
   event:
     - pull_request
     - push
@@ -395,6 +395,6 @@ node:
   runner: integration
 ---
 kind: signature
-hmac: 07360a5db4a53c31edcfa1cc8e68d96a00a3690ad78750c60aabf3dcf2b517be
+hmac: 27edc34d80c7c39b76bb48976e897c8e2d7ff2ab299e5b577e09223f11124f2d
 
 ...
