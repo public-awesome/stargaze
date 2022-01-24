@@ -31,7 +31,7 @@ steps:
         - '/go/pkg/mod'
 
   - name: test
-    image: publicawesome/golang:1.17.0-devtooling
+    image: publicawesome/golang:1.17.6-devtooling
     volumes:
       - name: cache
         path: /go
@@ -209,7 +209,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/golang:1.17.0-devtooling
+    image: publicawesome/golang:1.17.6-devtooling
     volumes:
       - name: cache
         path: /go
@@ -289,7 +289,7 @@ steps:
       mount:
         - '/go/pkg/mod'
   - name: build-wrapper
-    image: publicawesome/golang:1.17.0-devtooling
+    image: publicawesome/golang:1.17.6-devtooling
     volumes:
       - name: cache
         path: /go
@@ -395,6 +395,6 @@ node:
   runner: integration
 ---
 kind: signature
-hmac: 27edc34d80c7c39b76bb48976e897c8e2d7ff2ab299e5b577e09223f11124f2d
+hmac: e903e6ded5e90cb7f223c04252579c4b53a207ba8b4c1057502ef4da10890efb
 
 ...
