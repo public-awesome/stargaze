@@ -3,7 +3,7 @@
 # Used for running hermes in docker containers
 #
 # Usage:
-#   docker build . --build-arg TAG=v0.9.0 -t publicawesome/hermes:0.9.0 -f docker/Dockerfile.hermes
+#   docker build . --build-arg TAG=v0.10.0 -t publicawesome/hermes:0.10.0 -f docker/Dockerfile.hermes
 
 FROM rust:1.52-buster AS build-env
 

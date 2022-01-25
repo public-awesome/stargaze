@@ -16,10 +16,8 @@ sed -i 's/pruning = "syncable"/pruning = "nothing"/g' $STARGAZE_HOME/config/app.
 sed -i 's/enable = false/enable = true/g' $STARGAZE_HOME/config/app.toml
 sed -i 's/172800s/60s/g'  $STARGAZE_HOME/config/genesis.json
 starsd keys --keyring-backend test add validator --home $STARGAZE_HOME
-tree -L 2 $STARGAZE_HOME
 starsd add-genesis-account $(starsd keys --keyring-backend test show validator -a --home $STARGAZE_HOME) 10000000000000$DENOM --home $STARGAZE_HOME
 starsd add-genesis-account $RLYKEY 10000000000000$DENOM --home $STARGAZE_HOME
 starsd gentx validator 900000000$DENOM --keyring-backend test --chain-id stargaze --home $STARGAZE_HOME
 starsd collect-gentxs --home $STARGAZE_HOME
-
-starsd start --pruning nothing --home $STARGAZE_HOME
+/stargaze/bin/upgrade-watcher starsd start --pruning nothing --home $STARGAZE_HOME

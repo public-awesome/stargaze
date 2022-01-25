@@ -31,7 +31,7 @@ steps:
         - '/go/pkg/mod'
 
   - name: test
-    image: publicawesome/golang:1.17.0-devtooling
+    image: publicawesome/golang:1.17.6-devtooling
     volumes:
       - name: cache
         path: /go
@@ -209,7 +209,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/golang:1.17.0-devtooling
+    image: publicawesome/golang:1.17.6-devtooling
     volumes:
       - name: cache
         path: /go
@@ -288,6 +288,17 @@ steps:
       region: us-east-1
       mount:
         - '/go/pkg/mod'
+  - name: build-wrapper
+    image: publicawesome/golang:1.17.6-devtooling
+    volumes:
+      - name: cache
+        path: /go
+    commands:
+      - mkdir -p /stargaze/bin/
+      - CGO_ENABLED=0 go build -o /stargaze/bin/upgrade-watcher ./testutil/watcher/
+      - chmod +x /stargaze/bin/upgrade-watcher
+    environment:
+      GOPROXY: http://goproxy
   - name: gaia
     image: publicawesome/gaia:6.0.0
     detach: true
@@ -303,7 +314,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:1.1.2
+    image: publicawesome/stargaze:1.1.3
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
@@ -333,11 +344,11 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: proposal
-    image: publicawesome/stargaze:1.1.2
+    image: publicawesome/stargaze:1.1.3
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
-    image: publicawesome/stargaze:2.0.0-rc.1
+    image: publicawesome/stargaze:2.0.0
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -373,7 +384,7 @@ steps:
 
 trigger:
   branch:
-    - feature/upgrade-test
+    - main
   event:
     - pull_request
     - push
@@ -382,8 +393,10 @@ volumes:
   temp: {}
 node:
   runner: integration
+depends_on:
+  - ibc-integration-test
 ---
 kind: signature
-hmac: 92949f5f6808f267a5c0b9975c6df058bec57ba34e3b5db5fa933e50ab4cc106
+hmac: 2afdd67fa7a871d8ff1b9412f304cc7908b029f47f92f184c197e0c4bd0b7efe
 
 ...
