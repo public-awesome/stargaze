@@ -46,7 +46,7 @@ steps:
         path: /go
     commands:
       - apk add --no-cache ca-certificates build-base git
-      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0-beta5/libwasmvm_muslc.a /lib/libwasmvm_muslc.a
+      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0-beta5/libwasmvm_muslc.a -O /lib/libwasmvm_muslc.a
       - sha256sum /lib/libwasmvm_muslc.a | grep d16a2cab22c75dbe8af32265b9346c6266070bdcf9ed5aa9b7b39a7e32e25fe0
       - LEDGER_ENABLED=false BUILD_TAGS=muslc make build
     environment:
@@ -398,6 +398,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: a7c074d89fd973b83ce106930aecd1ed27c35c790b138fec14943d49855eadc9
+hmac: 5a1452b4012f19704a00ecb094d63c7518908e90090a8892669115916467d6df
 
 ...
