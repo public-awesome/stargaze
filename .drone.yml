@@ -10,7 +10,7 @@ steps:
   - name: fetch
     image: alpine/git
     commands:
-      - git fetch --tagsd16a2cab22c75dbe8af32265b9346c6266070bdcf9ed5aa9b7b39a7e32e25fe0
+      - git fetch --tags
   - name: restore-cache
     image: meltwater/drone-cache:dev
     volumes:
@@ -398,6 +398,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 6b10d7afe464958819c87e4c6dfd8b5e85e2a01976c80c1ca41a6df79769435d
+hmac: a7c074d89fd973b83ce106930aecd1ed27c35c790b138fec14943d49855eadc9
 
 ...
