@@ -10,7 +10,7 @@ steps:
   - name: fetch
     image: alpine/git
     commands:
-      - git fetch --tags
+      - git fetch --tagsd16a2cab22c75dbe8af32265b9346c6266070bdcf9ed5aa9b7b39a7e32e25fe0
   - name: restore-cache
     image: meltwater/drone-cache:dev
     volumes:
@@ -40,14 +40,14 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: build
-    image: golang:1.17-alpine3.14
+    image: golang:1.17-alpine3.15
     volumes:
       - name: cache
         path: /go
     commands:
       - apk add --no-cache ca-certificates build-base git
-      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0-beta4/libwasmvm_muslc.a  -O /lib/libwasmvm_muslc.a
-      - sha256sum /lib/libwasmvm_muslc.a | grep bb8bcb7a180b89734872778c1a93c982759118e2e9f08c3f05079f2bf22f8ddb
+      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0-beta5/libwasmvm_muslc.a /lib/libwasmvm_muslc.a
+      - sha256sum /lib/libwasmvm_muslc.a | grep d16a2cab22c75dbe8af32265b9346c6266070bdcf9ed5aa9b7b39a7e32e25fe0
       - LEDGER_ENABLED=false BUILD_TAGS=muslc make build
     environment:
       GOPROXY: http://goproxy
@@ -74,7 +74,7 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - v2-alpha
+        - v3-alpha
     when:
       event:
         - push
@@ -398,6 +398,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: e22cbb52c071099f05133d3414ca0b2f68e948361af8d1aa92b8885255de8879
+hmac: 6b10d7afe464958819c87e4c6dfd8b5e85e2a01976c80c1ca41a6df79769435d
 
 ...
