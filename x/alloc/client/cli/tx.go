@@ -8,7 +8,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	// "github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/public-awesome/stargaze/v2/x/alloc/types"
+	"github.com/public-awesome/stargaze/v3/x/alloc/types"
 )
 
 var (

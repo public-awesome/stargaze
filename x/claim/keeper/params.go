@@ -2,7 +2,7 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v2/x/claim/types"
+	"github.com/public-awesome/stargaze/v3/x/claim/types"
 )
 
 // GetParams returns the total set of claim parameters.
