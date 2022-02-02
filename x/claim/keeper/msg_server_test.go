@@ -6,9 +6,9 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v2/testutil/simapp"
-	"github.com/public-awesome/stargaze/v2/x/claim/keeper"
-	"github.com/public-awesome/stargaze/v2/x/claim/types"
+	"github.com/public-awesome/stargaze/v3/testutil/simapp"
+	"github.com/public-awesome/stargaze/v3/x/claim/keeper"
+	"github.com/public-awesome/stargaze/v3/x/claim/types"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 

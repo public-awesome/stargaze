@@ -8,7 +8,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/public-awesome/stargaze/v2/x/claim/types"
+	"github.com/public-awesome/stargaze/v3/x/claim/types"
 )
 
 func (suite *KeeperTestSuite) TestHookOfUnclaimableAccount() {
