@@ -473,6 +473,19 @@ func TestnetGenesisParams() GenesisParams {
 	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.2") // 20%
 	genParams.GovParams.VotingParams.VotingPeriod = time.Minute * 15      // 15 min
 
+	// alloc
+	genParams.AllocParams = alloctypes.DefaultParams()
+	genParams.AllocParams.DistributionProportions = alloctypes.DistributionProportions{
+		NftIncentives:    sdk.NewDecWithPrec(35, 2), // 35%
+		DeveloperRewards: sdk.NewDecWithPrec(25, 2), // 25%
+	}
+	genParams.AllocParams.WeightedDeveloperRewardsReceivers = []alloctypes.WeightedAddress{
+		// faucet
+		{
+			Address: "stars1qpeu488858wm3uzqfz9e6m76s5jmjjtcuwr8e2",
+			Weight:  sdk.NewDecWithPrec(100, 2),
+		},
+	}
 	return genParams
 }
 
