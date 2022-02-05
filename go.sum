@@ -202,8 +202,8 @@ github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f/go.mod h1:E3G3o1h8I7cfc
 github.com/cosmos/btcutil v1.0.4 h1:n7C2ngKXo7UC9gNyMNLbzqz7Asuf+7Qv4gnX/rOdQ44=
 github.com/cosmos/btcutil v1.0.4/go.mod h1:Ffqc8Hn6TJUdDgHBwIZLtrLQC1KdJ9jGJl/TvgUaxbU=
 github.com/cosmos/cosmos-sdk v0.44.5/go.mod h1:maUA6m2TBxOJZkbwl0eRtEBgTX37kcaiOWU5t1HEGaY=
-github.com/cosmos/cosmos-sdk v0.45.0 h1:DHD+CIRZ+cYgiLXuTEUL/aprnfPsWSwaww/fIZEsZlk=
-github.com/cosmos/cosmos-sdk v0.45.0/go.mod h1:XXS/asyCqWNWkx2rW6pSuen+EVcpAFxq6khrhnZgHaQ=
+github.com/cosmos/cosmos-sdk v0.45.1 h1:PY79YxPea5qlRLExRnzg8/rT1Scc8GGgRs22p7DX99Q=
+github.com/cosmos/cosmos-sdk v0.45.1/go.mod h1:XXS/asyCqWNWkx2rW6pSuen+EVcpAFxq6khrhnZgHaQ=
 github.com/cosmos/go-bip39 v0.0.0-20180819234021-555e2067c45d/go.mod h1:tSxLoYXyBmiFeKpvmq4dzayMdCjCnu8uqmCysIGBT2Y=
 github.com/cosmos/go-bip39 v1.0.0 h1:pcomnQdrdH22njcAatO0yWojsUnCO3y2tNoV1cb6hHY=
 github.com/cosmos/go-bip39 v1.0.0/go.mod h1:RNJv0H/pOIVgxw6KS7QeX2a0Uo0aKUlfhZ4xuwvCdJw=
@@ -789,8 +789,8 @@ github.com/prometheus/procfs v0.7.3 h1:4jVXhlkAyzOScmCkXBTOLRLTz8EeU+eyjrwB/EPq0
 github.com/prometheus/procfs v0.7.3/go.mod h1:cz+aTbrPOrUb4q7XlbU9ygM+/jj0fzG6c1xBZuNvfVA=
 github.com/prometheus/tsdb v0.6.2-0.20190402121629-4f204dcbc150/go.mod h1:qhTCs0VvXwvX/y3TZrWD7rabWM+ijKTux40TwIPHuXU=
 github.com/prometheus/tsdb v0.7.1/go.mod h1:qhTCs0VvXwvX/y3TZrWD7rabWM+ijKTux40TwIPHuXU=
-github.com/public-awesome/spm v0.1.9-stargaze.0.20220120194320-92da222110ff h1:jzf5LvwyMC8SBOxrBxMGOZH+RWnnYwvPZmInu1qEmcA=
-github.com/public-awesome/spm v0.1.9-stargaze.0.20220120194320-92da222110ff/go.mod h1:pUk5pnMVBoSmLtm8iT6Yp6i7X8vePyYXnWxkBOeOYMk=
+github.com/public-awesome/spm v0.1.9-stargaze.0.20220204003814-ae3609c0fda3 h1:hmvJzZO0iqguHUUZXKCprz65mcUBe1oBKWxykWs/O7E=
+github.com/public-awesome/spm v0.1.9-stargaze.0.20220204003814-ae3609c0fda3/go.mod h1:6E+cbuzUHJPPuMbty9wce+OTYPmrns/HS39MKeU7QuI=
 github.com/rakyll/statik v0.1.7 h1:OF3QCZUuyPxuGEP7B4ypUa7sB/iHtqOTDYZXGM8KOdQ=
 github.com/rakyll/statik v0.1.7/go.mod h1:AlZONWzMtEnMs7W4e/1LURLiI49pIMmp6V9Unghqrcc=
 github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a/go.mod h1:bCqnVzQkZxMG4s8nGwiZ5l3QUCyqpo9Y+/ZMZ9VjZe4=
