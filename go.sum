@@ -70,8 +70,8 @@ github.com/BurntSushi/toml v0.4.1/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbi
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d h1:nalkkPQcITbvhmL4+C4cKA87NW0tfm3Kl9VXRoPywFg=
 github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d/go.mod h1:URdX5+vg25ts3aCh8H5IFZybJYKWhJHYMTnf+ULtoC4=
-github.com/CosmWasm/wasmd v0.22.0 h1:6Bn2DDjHvLwZJkYXL+/PRQ9bSll0ReX2IZqRt/BQkhg=
-github.com/CosmWasm/wasmd v0.22.0/go.mod h1:kNDnMAQDJyVek9k6SxCNijMCzOROzzUGBRT8r/vr7oY=
+github.com/CosmWasm/wasmd v0.23.0 h1:yOksa/TORt2BtXjUKKqcJ67d6O+Jv2Y6wT1Ekm1Como=
+github.com/CosmWasm/wasmd v0.23.0/go.mod h1:kNDnMAQDJyVek9k6SxCNijMCzOROzzUGBRT8r/vr7oY=
 github.com/CosmWasm/wasmvm v1.0.0-beta5 h1:38M8z89LB5cFMYB5vfjewMzz9Pr8TB1QBHdjnrWnkas=
 github.com/CosmWasm/wasmvm v1.0.0-beta5/go.mod h1:mtwKxbmsko1zdwpaKiRkRwxijMmIAtnLaX5/UT2nPFk=
 github.com/DataDog/datadog-go v3.2.0+incompatible/go.mod h1:LButxg5PwREeZtORoXG3tL4fMGNddJ+vMq1mwgfaqoQ=
@@ -215,6 +215,7 @@ github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f/go.mod h1:E3G3o1h8I7cfc
 github.com/cosmos/btcutil v1.0.4 h1:n7C2ngKXo7UC9gNyMNLbzqz7Asuf+7Qv4gnX/rOdQ44=
 github.com/cosmos/btcutil v1.0.4/go.mod h1:Ffqc8Hn6TJUdDgHBwIZLtrLQC1KdJ9jGJl/TvgUaxbU=
 github.com/cosmos/cosmos-sdk v0.44.5/go.mod h1:maUA6m2TBxOJZkbwl0eRtEBgTX37kcaiOWU5t1HEGaY=
+github.com/cosmos/cosmos-sdk v0.45.0/go.mod h1:XXS/asyCqWNWkx2rW6pSuen+EVcpAFxq6khrhnZgHaQ=
 github.com/cosmos/cosmos-sdk v0.45.1 h1:PY79YxPea5qlRLExRnzg8/rT1Scc8GGgRs22p7DX99Q=
 github.com/cosmos/cosmos-sdk v0.45.1/go.mod h1:XXS/asyCqWNWkx2rW6pSuen+EVcpAFxq6khrhnZgHaQ=
 github.com/cosmos/go-bip39 v0.0.0-20180819234021-555e2067c45d/go.mod h1:tSxLoYXyBmiFeKpvmq4dzayMdCjCnu8uqmCysIGBT2Y=
@@ -819,8 +820,8 @@ github.com/prometheus/procfs v0.7.3 h1:4jVXhlkAyzOScmCkXBTOLRLTz8EeU+eyjrwB/EPq0
 github.com/prometheus/procfs v0.7.3/go.mod h1:cz+aTbrPOrUb4q7XlbU9ygM+/jj0fzG6c1xBZuNvfVA=
 github.com/prometheus/tsdb v0.6.2-0.20190402121629-4f204dcbc150/go.mod h1:qhTCs0VvXwvX/y3TZrWD7rabWM+ijKTux40TwIPHuXU=
 github.com/prometheus/tsdb v0.7.1/go.mod h1:qhTCs0VvXwvX/y3TZrWD7rabWM+ijKTux40TwIPHuXU=
-github.com/public-awesome/spm v0.1.9-stargaze.0.20220204003814-ae3609c0fda3 h1:hmvJzZO0iqguHUUZXKCprz65mcUBe1oBKWxykWs/O7E=
-github.com/public-awesome/spm v0.1.9-stargaze.0.20220204003814-ae3609c0fda3/go.mod h1:6E+cbuzUHJPPuMbty9wce+OTYPmrns/HS39MKeU7QuI=
+github.com/public-awesome/spm v0.1.9-stargaze.0.20220207190949-c341030bc7e2 h1:R6VDTHUwJe4UDrgfYjyUMyQRSbScLehWDAYkYQ5elRg=
+github.com/public-awesome/spm v0.1.9-stargaze.0.20220207190949-c341030bc7e2/go.mod h1:L9lbOuHY4S1FmsyyW7QT/P7mfoHA9OPHeTlrvBxyCWs=
 github.com/rakyll/statik v0.1.7 h1:OF3QCZUuyPxuGEP7B4ypUa7sB/iHtqOTDYZXGM8KOdQ=
 github.com/rakyll/statik v0.1.7/go.mod h1:AlZONWzMtEnMs7W4e/1LURLiI49pIMmp6V9Unghqrcc=
 github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a/go.mod h1:bCqnVzQkZxMG4s8nGwiZ5l3QUCyqpo9Y+/ZMZ9VjZe4=

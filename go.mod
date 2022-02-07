@@ -3,7 +3,7 @@ module github.com/public-awesome/stargaze/v3
 go 1.17
 
 require (
-	github.com/CosmWasm/wasmd v0.22.0
+	github.com/CosmWasm/wasmd v0.23.0
 	github.com/armon/go-metrics v0.3.10
 	github.com/cosmos/cosmos-sdk v0.45.1
 	github.com/cosmos/go-bip39 v1.0.0
@@ -126,6 +126,6 @@ replace (
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	github.com/tecbot/gorocksdb => github.com/cosmos/gorocksdb v1.2.0
-	github.com/tendermint/spm => github.com/public-awesome/spm v0.1.9-stargaze.0.20220204003814-ae3609c0fda3
+	github.com/tendermint/spm => github.com/public-awesome/spm v0.1.9-stargaze.0.20220207190949-c341030bc7e2
 	google.golang.org/grpc => google.golang.org/grpc v1.33.2
 )
