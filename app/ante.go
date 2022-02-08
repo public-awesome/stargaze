@@ -35,7 +35,7 @@ func (MinCommissionDecorator) AnteHandle(
 		case *stakingtypes.MsgCreateValidator:
 			c := msg.Commission
 			if c.Rate.LT(sdk.NewDecWithPrec(5, 2)) {
-				return ctx, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "commission can't be lower than 5%")
+				return ctx, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "commission can not be lower than 5%")
 			}
 		case *stakingtypes.MsgEditValidator:
 			// if commission rate is nil, it means only other fields gets updated and skip
@@ -43,7 +43,7 @@ func (MinCommissionDecorator) AnteHandle(
 				continue
 			}
 			if msg.CommissionRate.LT(sdk.NewDecWithPrec(5, 2)) {
-				return ctx, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "commission can't be lower than 5%")
+				return ctx, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "commission can not be lower than 5%")
 			}
 		default:
 			continue

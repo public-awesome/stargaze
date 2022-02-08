@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/tendermint/spm/cosmoscmd"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -23,10 +22,8 @@ func New(dir string) *app.App {
 
 	encoding := cosmoscmd.MakeEncodingConfig(app.ModuleBasics)
 
-	var emptyWasmOpts []wasm.Option
-
 	a := app.NewStargazeApp(logger, db, nil, true, map[int64]bool{}, dir, 0, encoding,
-		simapp.EmptyAppOptions{}, emptyWasmOpts, wasm.DisableAllProposals)
+		simapp.EmptyAppOptions{}, app.EmptyWasmOpts, app.GetEnabledProposals())
 
 	stateBytes, err := json.MarshalIndent(app.ModuleBasics.DefaultGenesis(encoding.Marshaler), "", " ")
 	if err != nil {
