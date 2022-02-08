@@ -11,7 +11,7 @@ enum Action {
   option (gogoproto.goproto_enum_prefix) = false;
 
   ActionInitialClaim = 0;
-  ActionBuySocialToken = 1;
+  ActionTradeNFT = 1;
   ActionMintNFT = 2;
   ActionVote = 3;
   ActionDelegateStake = 4;
