@@ -6,12 +6,13 @@
 ../../startnode.sh
 ```
 
-## Upload and test contract
-
-In another terminal window:
+## Upload contracts
 
 ```sh
-./cw20-bonding.sh
-```
+BINARY='starsd'
+DENOM='ustarx'
+CHAIN_ID='localnet-1'
+NODE='http://localhost:26657'
 
-NOTE: Contract scripts can't be run consecutively yet. Please reset and restart the chain between each.
+bash upload-contracts.sh <key-name>
+```
