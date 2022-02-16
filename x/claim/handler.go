@@ -11,6 +11,7 @@ import (
 
 // NewHandler ...
 func NewHandler(k keeper.Keeper) sdk.Handler {
+	// this line is used by starport scaffolding # handler/msgServer
 	msgServer := keeper.NewMsgServerImpl(k)
 	// this line is used by starport scaffolding # handler/msgServer
 
@@ -19,6 +20,9 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		switch msg := msg.(type) {
 		case *types.MsgInitialClaim:
 			res, err := msgServer.InitialClaim(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+		case *types.MsgClaimFor:
+			res, err := msgServer.ClaimFor(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 			// this line is used by starport scaffolding # 1
 		default:

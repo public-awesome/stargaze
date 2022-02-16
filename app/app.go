@@ -98,8 +98,10 @@ import (
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	"github.com/public-awesome/stargaze/v3/docs"
+	swasm "github.com/public-awesome/stargaze/v3/internal/wasm"
 	allocmodule "github.com/public-awesome/stargaze/v3/x/alloc"
 	allocmodulekeeper "github.com/public-awesome/stargaze/v3/x/alloc/keeper"
 	allocmoduletypes "github.com/public-awesome/stargaze/v3/x/alloc/types"
@@ -469,7 +471,8 @@ func NewStargazeApp(
 		wasmDir,
 		wasmConfig,
 		supportedFeatures,
-		wasmOpts...,
+		wasmkeeper.WithMessageEncoders(swasm.MessageEncoders()),
+		wasmkeeper.WithQueryPlugins(nil),
 	)
 
 	// The gov proposal types can be individually enabled
@@ -625,6 +628,7 @@ func NewStargazeApp(
 			IBCChannelkeeper:  app.IBCKeeper.ChannelKeeper,
 			WasmConfig:        &wasmConfig,
 			TXCounterStoreKey: keys[wasm.StoreKey],
+			Codec:             app.appCodec,
 		},
 	)
 	if err != nil {
