@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	store "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -17,7 +18,14 @@ const upgradeName = "v3"
 func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 	app.UpgradeKeeper.SetUpgradeHandler(upgradeName, func(ctx sdk.Context, plan upgradetypes.Plan, vm module.VersionMap) (module.VersionMap, error) {
 		// wasm.InitGenesis(ctx, &app.WasmKeeper, )
-		return app.mm.RunMigrations(ctx, cfg, vm)
+		newVM, err := app.mm.RunMigrations(ctx, cfg, vm)
+		if err != nil {
+			return newVM, err
+		}
+		params := app.WasmKeeper.GetParams(ctx)
+		params.CodeUploadAccess = wasmtypes.AllowNobody
+		app.WasmKeeper.SetParams(ctx, params)
+		return newVM, err
 	})
 
 	upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()

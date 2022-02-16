@@ -47,29 +47,5 @@ func customEncoders(registry *EncoderRegistry) wasm.CustomEncoder {
 			}
 		}
 		return msgs, nil
-		/* if encodeRequest.Route == "distribution" {
-			msg := &DistributionMsg{}
-			err = json.Unmarshal(encodeRequest.MsgData, msg)
-			if err != nil {
-				fmt.Println("route", "err")
-				return nil, err
-			}
-			if msg.FundCommunityPool != nil {
-				amount, err := convertWasmCoinsToSdkCoins(msg.FundCommunityPool.Amount)
-				if err != nil {
-					return nil, err
-				}
-				m := distributiontypes.MsgFundCommunityPool{
-					Amount:    amount,
-					Depositor: sender.String(),
-				}
-				err = m.ValidateBasic()
-				if err != nil {
-					return nil, err
-				}
-				msgs := []sdk.Msg{&m}
-				return msgs, nil
-			}
-		} */
 	}
 }
