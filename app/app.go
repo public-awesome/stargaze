@@ -101,7 +101,7 @@ import (
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	"github.com/public-awesome/stargaze/v3/docs"
-	swasm "github.com/public-awesome/stargaze/v3/internal/wasm"
+	sgwasm "github.com/public-awesome/stargaze/v3/internal/wasm"
 	allocmodule "github.com/public-awesome/stargaze/v3/x/alloc"
 	allocmodulekeeper "github.com/public-awesome/stargaze/v3/x/alloc/keeper"
 	allocmoduletypes "github.com/public-awesome/stargaze/v3/x/alloc/types"
@@ -451,6 +451,10 @@ func NewStargazeApp(
 		panic(fmt.Sprintf("error while reading wasm config: %s", err))
 	}
 
+	// custom messages
+	registry := sgwasm.NewEncoderRegistry()
+	registry.RegisterEncoder(sgwasm.DistributionRoute, sgwasm.CustomDistributionEncoder)
+
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
 	supportedFeatures := "iterator,staking,stargate,stargaze"
@@ -471,7 +475,7 @@ func NewStargazeApp(
 		wasmDir,
 		wasmConfig,
 		supportedFeatures,
-		wasmkeeper.WithMessageEncoders(swasm.MessageEncoders()),
+		wasmkeeper.WithMessageEncoders(sgwasm.MessageEncoders(registry)),
 		wasmkeeper.WithQueryPlugins(nil),
 	)
 
