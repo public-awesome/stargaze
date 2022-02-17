@@ -108,6 +108,7 @@ import (
 	claimmodule "github.com/public-awesome/stargaze/v3/x/claim"
 	claimmodulekeeper "github.com/public-awesome/stargaze/v3/x/claim/keeper"
 	claimmoduletypes "github.com/public-awesome/stargaze/v3/x/claim/types"
+	claimwasm "github.com/public-awesome/stargaze/v3/x/claim/wasm"
 )
 
 const (
@@ -454,6 +455,7 @@ func NewStargazeApp(
 	// custom messages
 	registry := sgwasm.NewEncoderRegistry()
 	registry.RegisterEncoder(sgwasm.DistributionRoute, sgwasm.CustomDistributionEncoder)
+	registry.RegisterEncoder(claimmoduletypes.ModuleName, claimwasm.Encoder)
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks

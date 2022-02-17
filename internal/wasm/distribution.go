@@ -14,6 +14,8 @@ const (
 	DistributionRoute = "distribution"
 )
 
+var _ Encoder = CustomDistributionEncoder
+
 type FundCommunityPool struct {
 	Amount wasmvmtypes.Coins `json:"amount"`
 }
