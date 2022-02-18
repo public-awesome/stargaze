@@ -283,7 +283,7 @@ func PrepareGenesis(
 		}
 		balances = append(balances, banktypes.Balance{
 			Address: addr,
-			Coins:   sdk.NewCoins(sdk.NewInt64Coin(BaseCoinUnit, 1)),
+			Coins:   sdk.NewCoins(sdk.NewInt64Coin(BaseCoinUnit, 1_000_000)),
 		})
 
 		address, err := sdk.AccAddressFromBech32(addr)
@@ -459,8 +459,8 @@ func MainnetGenesisParams() GenesisParams {
 func TestnetGenesisParams() GenesisParams {
 	genParams := MainnetGenesisParams()
 
-	genParams.AirdropSupply = sdk.NewInt(250_000_000_000_000) // 250M STARS
-	genParams.GenesisTime = time.Now()
+	genParams.AirdropSupply = sdk.NewInt(250_000_000_000_000)              // 250M STARS
+	genParams.GenesisTime = time.Date(2022, 02, 17, 17, 0, 0, 0, time.UTC) // Feb 17
 
 	// mint
 	genParams.MintParams.StartTime = genParams.GenesisTime.Add(time.Minute * 5)
@@ -468,22 +468,26 @@ func TestnetGenesisParams() GenesisParams {
 	genParams.GovParams.DepositParams.MaxDepositPeriod = time.Hour * 24 * 14 // 2 weeks
 	genParams.GovParams.DepositParams.MinDeposit = sdk.NewCoins(sdk.NewCoin(
 		genParams.NativeCoinMetadatas[0].Base,
-		sdk.NewInt(1),
+		sdk.NewInt(1_000_000),
 	))
-	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.2") // 20%
+	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.1") // 10%
 	genParams.GovParams.VotingParams.VotingPeriod = time.Minute * 15      // 15 min
 
 	// alloc
 	genParams.AllocParams = alloctypes.DefaultParams()
 	genParams.AllocParams.DistributionProportions = alloctypes.DistributionProportions{
-		NftIncentives:    sdk.NewDecWithPrec(35, 2), // 35%
-		DeveloperRewards: sdk.NewDecWithPrec(25, 2), // 25%
+		NftIncentives:    sdk.NewDecWithPrec(30, 2), // 30%
+		DeveloperRewards: sdk.NewDecWithPrec(30, 2), // 30%
 	}
 	genParams.AllocParams.WeightedDeveloperRewardsReceivers = []alloctypes.WeightedAddress{
 		// faucet
 		{
 			Address: "stars1qpeu488858wm3uzqfz9e6m76s5jmjjtcuwr8e2",
-			Weight:  sdk.NewDecWithPrec(100, 2),
+			Weight:  sdk.NewDecWithPrec(80, 2),
+		},
+		{
+			Address: "stars1fayut6xzyka29zvznsumlgy5pl4vkn4fkmaznc",
+			Weight:  sdk.NewDecWithPrec(20, 2),
 		},
 	}
 	return genParams
