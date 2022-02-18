@@ -42,7 +42,7 @@ CW721_CODE=$($BINARY tx wasm store cw721_metadata_onchain.wasm --from $1 $TXFLAG
 MARKETPLACE_CODE=$($BINARY tx wasm store sg_marketplace.wasm --from $1 $TXFLAG | jq -r '.logs[0].events[-1].attributes[0].value')
 FACTORY_CODE=$($BINARY tx wasm store collection_factory.wasm --from $1 $TXFLAG | jq -r '.logs[0].events[-1].attributes[0].value')
 SG721_CODE=$($BINARY tx wasm store sg721.wasm --from $1 $TXFLAG | jq -r '.logs[0].events[-1].attributes[0].value')
-MINTER_CODE=$($BINARY tx wasm store sg721_sale.wasm --from $1 $TXFLAG | jq -r '.logs[0].events[-1].attributes[0].value')
+MINTER_CODE=$($BINARY tx wasm store minter.wasm --from $1 $TXFLAG | jq -r '.logs[0].events[-1].attributes[0].value')
 CW4_GROUP_CODE=$($BINARY tx wasm store cw4_group.wasm --from $1 $TXFLAG | jq -r '.logs[0].events[-1].attributes[0].value')
 
 # Clean up
