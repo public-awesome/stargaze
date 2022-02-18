@@ -30,6 +30,8 @@ import (
 	minttypes "github.com/public-awesome/stargaze/v3/x/mint/types"
 
 	// appParams "github.com/public-awesome/stargaze/app/params"
+	"github.com/CosmWasm/wasmd/x/wasm"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	alloctypes "github.com/public-awesome/stargaze/v3/x/alloc/types"
 	claimtypes "github.com/public-awesome/stargaze/v3/x/claim/types"
 )
@@ -80,6 +82,8 @@ type GenesisParams struct {
 	AllocParams alloctypes.Params
 	ClaimParams claimtypes.Params
 	MintParams  minttypes.Params
+
+	WasmParams wasmtypes.Params
 }
 
 func PrepareGenesisCmd(defaultNodeHome string, mbm module.BasicManager) *cobra.Command {
@@ -338,6 +342,17 @@ func PrepareGenesis(
 	}
 	appState[alloctypes.ModuleName] = allocGenStateBz
 
+	// wasm
+	// mint module genesis
+	wasmGenState := &wasm.GenesisState{
+		Params: genesisParams.WasmParams,
+	}
+	wasmGenStateBz, err := cdc.MarshalJSON(wasmGenState)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to marshal wasm genesis state: %w", err)
+	}
+	appState[minttypes.ModuleName] = wasmGenStateBz
+
 	return appState, genDoc, nil
 }
 
@@ -452,6 +467,8 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.ConsensusParams.Evidence.MaxAgeNumBlocks = int64(genParams.StakingParams.UnbondingTime.Seconds()) / 3
 	genParams.ConsensusParams.Version.AppVersion = 1
 
+	genParams.WasmParams = wasmtypes.DefaultParams()
+
 	return genParams
 }
 
@@ -490,6 +507,9 @@ func TestnetGenesisParams() GenesisParams {
 			Weight:  sdk.NewDecWithPrec(20, 2),
 		},
 	}
+	genParams.WasmParams.CodeUploadAccess = wasmtypes.AllowEverybody
+	genParams.WasmParams.InstantiateDefaultPermission = wasmtypes.AccessTypeEverybody
+	genParams.WasmParams.MaxWasmCodeSize = 1000 * 1024 * 2 // 1000kb
 	return genParams
 }
 
