@@ -32,7 +32,8 @@ fi
 fetch --repo=$REPO --tag=$TAG --release-asset="collection_factory.wasm" .
 fetch --repo=$REPO --tag=$TAG --release-asset="sg_marketplace.wasm" .
 fetch --repo=$REPO --tag=$TAG --release-asset="sg721.wasm" .
-fetch --repo=$REPO --tag=$TAG --release-asset="sg721_sale.wasm" .
+fetch --repo=$REPO --tag=$TAG --release-asset="minter.wasm" .
+fetch --repo=$REPO --tag=$TAG --release-asset="royalty_group.wasm" .
 fetch --repo=https://github.com/CosmWasm/cw-nfts --tag=v0.11.0 --release-asset="cw721_metadata_onchain.wasm" .
 fetch --repo=https://github.com/CosmWasm/cw-plus --tag=v0.11.1 --release-asset="cw4_group.wasm" .
 
