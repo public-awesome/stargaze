@@ -15,7 +15,7 @@ fi
 TXFLAG="--gas-prices 0.01$DENOM --gas auto --gas-adjustment 1.3 -y -b block --chain-id $CHAIN_ID --node $NODE --output json"
 
 REPO=https://github.com/public-awesome/contracts
-TAG=v0.1.7
+TAG=v0.1.8
 
 if [[ -z "$GITHUB_OAUTH_TOKEN" ]]; then
     echo "Must set GITHUB_OAUTH_TOKEN in environment" 1>&2
