@@ -343,7 +343,7 @@ func PrepareGenesis(
 	appState[alloctypes.ModuleName] = allocGenStateBz
 
 	// wasm
-	// mint module genesis
+	// wasm module genesis
 	wasmGenState := &wasm.GenesisState{
 		Params: genesisParams.WasmParams,
 	}
@@ -351,7 +351,7 @@ func PrepareGenesis(
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to marshal wasm genesis state: %w", err)
 	}
-	appState[minttypes.ModuleName] = wasmGenStateBz
+	appState[wasm.ModuleName] = wasmGenStateBz
 
 	return appState, genDoc, nil
 }
