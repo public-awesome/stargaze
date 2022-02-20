@@ -31,7 +31,7 @@ steps:
         - '/go/pkg/mod'
 
   - name: test
-    image: publicawesome/golang:1.17.6-devtooling
+    image: publicawesome/golang:1.17.7-devtooling
     volumes:
       - name: cache
         path: /go
@@ -46,8 +46,8 @@ steps:
         path: /go
     commands:
       - apk add --no-cache ca-certificates build-base git
-      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0-beta5/libwasmvm_muslc.a -O /lib/libwasmvm_muslc.a
-      - sha256sum /lib/libwasmvm_muslc.a | grep d16a2cab22c75dbe8af32265b9346c6266070bdcf9ed5aa9b7b39a7e32e25fe0
+      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0-beta6/libwasmvm_muslc.a -O /lib/libwasmvm_muslc.a
+      - echo "e9cb9517585ce3477905e2d4e37553d85f6eac29bdc3b9c25c37c8f5e554045c  /lib/libwasmvm_muslc.a" | sha256sum -c
       - LEDGER_ENABLED=false BUILD_TAGS=muslc make build
     environment:
       GOPROXY: http://goproxy
@@ -128,7 +128,7 @@ steps:
         - tag
 
   - name: release
-    image: golang:1.17.0
+    image: golang:1.17.7
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -209,7 +209,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/golang:1.17.6-devtooling
+    image: publicawesome/golang:1.17.7-devtooling
     volumes:
       - name: cache
         path: /go
@@ -290,7 +290,7 @@ steps:
       mount:
         - '/go/pkg/mod'
   - name: build-wrapper
-    image: publicawesome/golang:1.17.6-devtooling
+    image: publicawesome/golang:1.17.7-devtooling
     volumes:
       - name: cache
         path: /go
@@ -398,6 +398,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 91845b4e0b2f0bc30779766bfe43658bc334be10860bed6d83df546a63947da9
+hmac: a361652545fd1121c71d82e8294ae4612c0aef6e8ef3d61dc1f4a9988ea781fb
 
 ...
