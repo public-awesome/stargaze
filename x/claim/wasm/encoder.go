@@ -31,7 +31,7 @@ func (a ClaimAction) ToAction() (claimtypes.Action, error) {
 
 	// rebranding the action
 	if a == ClaimActionBidNFT {
-		return claimtypes.ActionBuySocialToken, nil
+		return claimtypes.ActionBidNFT, nil
 	}
 
 	return 0, fmt.Errorf("invalid action")

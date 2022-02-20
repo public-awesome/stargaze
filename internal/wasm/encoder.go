@@ -8,7 +8,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-// Encoder describes behavior for provenance smart contract message encoding.
+// Encoder describes behavior for Stargaze smart contract message encoding.
 // The contract address must ALWAYS be set as the Msg signer.
 type Encoder func(contract sdk.AccAddress, data json.RawMessage, version string) ([]sdk.Msg, error)
 

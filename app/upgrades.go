@@ -17,7 +17,6 @@ const upgradeName = "v3"
 // RegisterUpgradeHandlers returns upgrade handlers
 func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 	app.UpgradeKeeper.SetUpgradeHandler(upgradeName, func(ctx sdk.Context, plan upgradetypes.Plan, vm module.VersionMap) (module.VersionMap, error) {
-		// wasm.InitGenesis(ctx, &app.WasmKeeper, )
 		newVM, err := app.mm.RunMigrations(ctx, cfg, vm)
 		if err != nil {
 			return newVM, err
