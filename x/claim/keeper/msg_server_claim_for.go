@@ -31,7 +31,7 @@ func (k msgServer) ClaimFor(goCtx context.Context, msg *types.MsgClaimFor) (*typ
 	if !allowed {
 		return nil, types.ErrUnauthorizedClaimer
 	}
-	coins, err := k.Keeper.ClaimCoinsForAction(ctx, address, types.ActionInitialClaim)
+	coins, err := k.Keeper.ClaimCoinsForAction(ctx, address, msg.GetAction())
 	if err != nil {
 		return nil, err
 	}
