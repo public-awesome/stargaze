@@ -356,13 +356,16 @@ steps:
     image: publicawesome/hermes:0.10.0
     commands:
       - /bin/bash ./scripts/ci/upgrade/transfer-relayer.sh
-  - name: stargaze-upgraded
+  - name: stargaze-upgraded-params
     image: publicawesome/stargaze:v3-latest
     commands:
       - echo "BaseApp Params"
       - starsd q params subspace baseapp BlockParams --node http://stargaze-upgraded:26657
       - starsd q params subspace baseapp EvidenceParams --node http://stargaze-upgraded:26657
       - starsd q params subspace baseapp ValidatorParams --node http://stargaze-upgraded:26657
+      - starsd q params subspace wasm uploadAccess --node http://stargaze-upgraded:26657
+      - starsd q params subspace wasm instantiateAccess --node http://stargaze-upgraded:26657
+      - starsd q params subspace wasm maxWasmCodeSize --node http://stargaze-upgraded:26657
     environment:
       GOPROXY: http://goproxy
 
@@ -391,6 +394,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 9d3f98cc4ba4fe5d31d5b91b555283be81116aa04f5f4d2e51f3c1eb89af0a96
+hmac: 642db9774a7e34849a1ff5cfaee7f302ec1e12d482ca2926196c3a79d94aa89f
 
 ...
