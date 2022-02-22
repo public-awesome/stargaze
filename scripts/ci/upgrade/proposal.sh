@@ -9,9 +9,9 @@ STARGAZE_HOME=/stargaze/starsd
 starsd config keyring-backend test --home $STARGAZE_HOME
 
 echo "BaseApp Params"
-starsd q params subspace baseapp BlockParams
-starsd q params subspace baseapp EvidenceParams
-starsd q params subspace baseapp ValidatorParams
+starsd q params subspace baseapp BlockParams --node http://stargaze:26657
+starsd q params subspace baseapp EvidenceParams --node http://stargaze:26657
+starsd q params subspace baseapp ValidatorParams --node http://stargaze:26657
 
 HEIGHT=$(starsd status --node http://stargaze:26657 --home $STARGAZE_HOME | jq .SyncInfo.latest_block_height -r)
 tree -L 2 /stargaze/starsd/
