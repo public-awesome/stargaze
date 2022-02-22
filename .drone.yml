@@ -357,7 +357,7 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/upgrade/transfer-relayer.sh
   - name: stargaze-upgraded-params
-    image: publicawesome/stargaze:v3-latest
+    image: publicawesome/stargaze:3.0.0-rc
     commands:
       - echo "BaseApp Params"
       - starsd q params subspace baseapp BlockParams --node http://stargaze-upgraded:26657
@@ -394,6 +394,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 554fb5bdac926c398fa1bf363c2403137cb9faa82c305a58cbcd56ed4b016824
+hmac: a3d7847bf38e727b0e708af22b5fec4d54be7858c46589a75b15bed58e150938
 
 ...
