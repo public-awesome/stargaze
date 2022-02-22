@@ -95,7 +95,6 @@ steps:
       event:
         - push
       branch:
-        - jhernandez/add-wasmd
   - name: trigger
     image: plugins/downstream
     settings:
@@ -254,7 +253,6 @@ steps:
 trigger:
   branch:
     - main
-    - jhernandez/add-wasmd
   event:
     - pull_request
     - push
@@ -349,7 +347,7 @@ steps:
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
-    image: publicawesome/stargaze:wasm
+    image: publicawesome/stargaze:3.0.0
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -398,6 +396,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: a361652545fd1121c71d82e8294ae4612c0aef6e8ef3d61dc1f4a9988ea781fb
+hmac: f4eff8dd6ff7028f18d35db2e92e28ebb690c308197faec88ab1e83e9f63bbb0
 
 ...

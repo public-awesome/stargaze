@@ -77,7 +77,7 @@ import (
 	ibcporttypes "github.com/cosmos/ibc-go/v2/modules/core/05-port/types"
 	ibchost "github.com/cosmos/ibc-go/v2/modules/core/24-host"
 	ibckeeper "github.com/cosmos/ibc-go/v2/modules/core/keeper"
-
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/public-awesome/stargaze/v3/x/mint"
 	mintkeeper "github.com/public-awesome/stargaze/v3/x/mint/keeper"
 	minttypes "github.com/public-awesome/stargaze/v3/x/mint/types"
@@ -458,6 +458,16 @@ func NewStargazeApp(
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
 	supportedFeatures := "iterator,staking,stargate,stargaze"
+
+	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
+		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
+	}
+
+	wasmOpts = append(
+		wasmOpts,
+		wasmkeeper.WithMessageEncoders(sgwasm.MessageEncoders(registry)),
+		wasmkeeper.WithQueryPlugins(nil),
+	)
 	app.WasmKeeper = wasm.NewKeeper(
 		appCodec,
 		keys[wasm.StoreKey],
@@ -475,8 +485,7 @@ func NewStargazeApp(
 		wasmDir,
 		wasmConfig,
 		supportedFeatures,
-		wasmkeeper.WithMessageEncoders(sgwasm.MessageEncoders(registry)),
-		wasmkeeper.WithQueryPlugins(nil),
+		wasmOpts...,
 	)
 
 	// The gov proposal types can be individually enabled
