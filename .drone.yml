@@ -74,28 +74,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - v3-alpha
+        - v3-latest
     when:
       event:
         - push
       branch:
         - main
-  - name: publish-docker
-    image: plugins/docker:18
-    settings:
-      dockerfile: docker/Dockerfile
-      repo: publicawesome/stargaze
-      username:
-        from_secret: docker_username
-      password:
-        from_secret: docker_password
-      tags:
-        - wasm
-    when:
-      event:
-        - push
-      branch:
-        - jhernandez/add-wasmd
   - name: trigger
     image: plugins/downstream
     settings:
@@ -348,7 +332,7 @@ steps:
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
-    image: publicawesome/stargaze:wasm
+    image: publicawesome/stargaze:3.0.0-rc.1
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -372,6 +356,19 @@ steps:
     image: publicawesome/hermes:0.10.0
     commands:
       - /bin/bash ./scripts/ci/upgrade/transfer-relayer.sh
+  - name: stargaze-upgraded-params
+    image: publicawesome/stargaze:3.0.0-rc.1
+    commands:
+      - echo "BaseApp Params"
+      - starsd q params subspace baseapp BlockParams --node http://stargaze-upgraded:26657
+      - starsd q params subspace baseapp EvidenceParams --node http://stargaze-upgraded:26657
+      - starsd q params subspace baseapp ValidatorParams --node http://stargaze-upgraded:26657
+      - starsd q params subspace wasm uploadAccess --node http://stargaze-upgraded:26657
+      - starsd q params subspace wasm instantiateAccess --node http://stargaze-upgraded:26657
+      - starsd q params subspace wasm maxWasmCodeSize --node http://stargaze-upgraded:26657
+    environment:
+      GOPROXY: http://goproxy
+
   - name: discord
     image: appleboy/drone-discord
     settings:
@@ -397,6 +394,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 06d4eea0c6a7033aed5da61ddce082dade980ef159d33fec40a25db483f9e7ef
+hmac: bbdec9bf173161f2229966c37eab16726eb0412aff497f3f03527254e3035442
 
 ...
