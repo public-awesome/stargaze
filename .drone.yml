@@ -356,6 +356,16 @@ steps:
     image: publicawesome/hermes:0.10.0
     commands:
       - /bin/bash ./scripts/ci/upgrade/transfer-relayer.sh
+  - name: stargaze-upgraded
+    image: publicawesome/stargaze:v3-latest
+    commands:
+      - echo "BaseApp Params"
+      - starsd q params subspace baseapp BlockParams --node http://stargaze-upgraded:26657
+      - starsd q params subspace baseapp EvidenceParams --node http://stargaze-upgraded:26657
+      - starsd q params subspace baseapp ValidatorParams --node http://stargaze-upgraded:26657
+    environment:
+      GOPROXY: http://goproxy
+
   - name: discord
     image: appleboy/drone-discord
     settings:
@@ -381,6 +391,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: f4d3a6ec0f86fb1b06d87978b009530fa660daadf10c8c0915dc99f3c22260e7
+hmac: 9d3f98cc4ba4fe5d31d5b91b555283be81116aa04f5f4d2e51f3c1eb89af0a96
 
 ...

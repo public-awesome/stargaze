@@ -21,9 +21,17 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 		if err != nil {
 			return newVM, err
 		}
-		params := app.WasmKeeper.GetParams(ctx)
-		params.CodeUploadAccess = wasmtypes.AllowNobody
-		app.WasmKeeper.SetParams(ctx, params)
+		// consensus params
+		// increase max gas as part of the upgrade to handle cosmwam
+		consensusParams := app.BaseApp.GetConsensusParams(ctx)
+		consensusParams.Block.MaxGas = 75_000_000 // 75M
+		app.BaseApp.StoreConsensusParams(ctx, consensusParams)
+
+		// wasm params
+		wasmParams := app.WasmKeeper.GetParams(ctx)
+		wasmParams.CodeUploadAccess = wasmtypes.AllowNobody
+		wasmParams.MaxWasmCodeSize = DefaultMaxWasmCodeSize
+		app.WasmKeeper.SetParams(ctx, wasmParams)
 		return newVM, err
 	})
 

@@ -462,12 +462,13 @@ func MainnetGenesisParams() GenesisParams {
 
 	genParams.ConsensusParams = tmtypes.DefaultConsensusParams()
 	genParams.ConsensusParams.Block.MaxBytes = 25 * 1024 * 1024 // 26,214,400 for cosmwasm
-	genParams.ConsensusParams.Block.MaxGas = 10_000_000
+	genParams.ConsensusParams.Block.MaxGas = 100_000_000
 	genParams.ConsensusParams.Evidence.MaxAgeDuration = genParams.StakingParams.UnbondingTime
 	genParams.ConsensusParams.Evidence.MaxAgeNumBlocks = int64(genParams.StakingParams.UnbondingTime.Seconds()) / 3
 	genParams.ConsensusParams.Version.AppVersion = 1
 
 	genParams.WasmParams = wasmtypes.DefaultParams()
+	genParams.WasmParams.MaxWasmCodeSize = 1000 * 1024 * 2 // 2000 KB
 
 	return genParams
 }
@@ -553,6 +554,6 @@ func LocalnetGenesisParams() GenesisParams {
 	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.1")    // 10%
 	genParams.GovParams.TallyParams.Threshold = sdk.MustNewDecFromStr("0.5") // 50%
 	genParams.GovParams.VotingParams.VotingPeriod = time.Minute * 1          // 5 min
-
+	genParams.WasmParams.MaxWasmCodeSize = 1000 * 1024 * 2                   // 2000kb
 	return genParams
 }
