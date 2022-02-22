@@ -1,52 +1,25 @@
 package app
 
 import (
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	wasmTypes "github.com/CosmWasm/wasmd/x/wasm/types"
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	channelkeeper "github.com/cosmos/ibc-go/v2/modules/core/04-channel/keeper"
 	ibcante "github.com/cosmos/ibc-go/v2/modules/core/ante"
+	stargazeante "github.com/public-awesome/stargaze/v3/internal/ante"
 )
 
 // HandlerOptions extend the SDK's AnteHandler options by requiring the IBC
 // channel keeper.
 type HandlerOptions struct {
 	ante.HandlerOptions
-
-	IBCChannelkeeper channelkeeper.Keeper
-}
-
-type MinCommissionDecorator struct{}
-
-func NewMinCommissionDecorator() MinCommissionDecorator {
-	return MinCommissionDecorator{}
-}
-
-func (MinCommissionDecorator) AnteHandle(
-	ctx sdk.Context, tx sdk.Tx,
-	simulate bool, next sdk.AnteHandler) (newCtx sdk.Context, err error) {
-	msgs := tx.GetMsgs()
-	for _, m := range msgs {
-		switch msg := m.(type) {
-		case *stakingtypes.MsgCreateValidator:
-			c := msg.Commission
-			if c.Rate.LT(sdk.NewDecWithPrec(5, 2)) {
-				return ctx, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "commission can't be lower than 5%")
-			}
-		case *stakingtypes.MsgEditValidator:
-			// if commission rate is nil, it means only other fields gets updated and skip
-			if msg.CommissionRate == nil {
-				continue
-			}
-			if msg.CommissionRate.LT(sdk.NewDecWithPrec(5, 2)) {
-				return ctx, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "commission can't be lower than 5%")
-			}
-		default:
-			continue
-		}
-	}
-	return next(ctx, tx, simulate)
+	IBCChannelkeeper  channelkeeper.Keeper
+	WasmConfig        *wasmTypes.WasmConfig
+	TXCounterStoreKey sdk.StoreKey
+	Codec             codec.BinaryCodec
 }
 
 // NewAnteHandler returns an AnteHandler that checks and increments sequence
@@ -65,6 +38,14 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "sign mode handler is required for ante builder")
 	}
 
+	if options.WasmConfig == nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "wasm config is required for ante builder")
+	}
+
+	if options.TXCounterStoreKey == nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "tx counter key is required for ante builder")
+	}
+
 	var sigGasConsumer = options.SigGasConsumer
 	if sigGasConsumer == nil {
 		sigGasConsumer = ante.DefaultSigVerificationGasConsumer
@@ -72,7 +53,10 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 
 	anteDecorators := []sdk.AnteDecorator{
 		ante.NewSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
-		NewMinCommissionDecorator(),
+		// limit simulation gas
+		wasmkeeper.NewLimitSimulationGasDecorator(options.WasmConfig.SimulationGasLimit),
+		stargazeante.NewMinCommissionDecorator(options.Codec),
+		wasmkeeper.NewCountTXDecorator(options.TXCounterStoreKey),
 		ante.NewRejectExtensionOptionsDecorator(),
 		ante.NewMempoolFeeDecorator(),
 		ante.NewValidateBasicDecorator(),

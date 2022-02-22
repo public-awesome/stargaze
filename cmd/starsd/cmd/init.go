@@ -96,6 +96,12 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 				}
 			}
 
+			if chainID == "big-bang-1" {
+				seeds = []string{
+					"69666f77b6a2355fcfc64c9879520a352b62917e@45.55.57.176:36656",
+				}
+			}
+
 			// Override default settings in config.toml
 			config.P2P.Seeds = strings.Join(seeds, ",")
 			config.P2P.MaxNumInboundPeers = 120

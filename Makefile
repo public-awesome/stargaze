@@ -81,7 +81,7 @@ endif
 
 all: install
 
-install: build
+install:
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/starsd
 
 build:
@@ -109,7 +109,7 @@ docker-test: build-linux
 
 
 test:
-	go test -v -race github.com/public-awesome/stargaze/x/...
+	go test -v -race github.com/public-awesome/stargaze/v3/x/...
 
 .PHONY: test build-linux docker-test lint build install
 

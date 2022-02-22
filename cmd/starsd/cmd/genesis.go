@@ -30,6 +30,8 @@ import (
 	minttypes "github.com/public-awesome/stargaze/v3/x/mint/types"
 
 	// appParams "github.com/public-awesome/stargaze/app/params"
+	"github.com/CosmWasm/wasmd/x/wasm"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	alloctypes "github.com/public-awesome/stargaze/v3/x/alloc/types"
 	claimtypes "github.com/public-awesome/stargaze/v3/x/claim/types"
 )
@@ -80,6 +82,8 @@ type GenesisParams struct {
 	AllocParams alloctypes.Params
 	ClaimParams claimtypes.Params
 	MintParams  minttypes.Params
+
+	WasmParams wasmtypes.Params
 }
 
 func PrepareGenesisCmd(defaultNodeHome string, mbm module.BasicManager) *cobra.Command {
@@ -283,7 +287,7 @@ func PrepareGenesis(
 		}
 		balances = append(balances, banktypes.Balance{
 			Address: addr,
-			Coins:   sdk.NewCoins(sdk.NewInt64Coin(BaseCoinUnit, 1)),
+			Coins:   sdk.NewCoins(sdk.NewInt64Coin(BaseCoinUnit, 1_000_000)),
 		})
 
 		address, err := sdk.AccAddressFromBech32(addr)
@@ -337,6 +341,17 @@ func PrepareGenesis(
 		return nil, nil, fmt.Errorf("failed to marshal alloc genesis state: %w", err)
 	}
 	appState[alloctypes.ModuleName] = allocGenStateBz
+
+	// wasm
+	// wasm module genesis
+	wasmGenState := &wasm.GenesisState{
+		Params: genesisParams.WasmParams,
+	}
+	wasmGenStateBz, err := cdc.MarshalJSON(wasmGenState)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to marshal wasm genesis state: %w", err)
+	}
+	appState[wasm.ModuleName] = wasmGenStateBz
 
 	return appState, genDoc, nil
 }
@@ -452,6 +467,8 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.ConsensusParams.Evidence.MaxAgeNumBlocks = int64(genParams.StakingParams.UnbondingTime.Seconds()) / 3
 	genParams.ConsensusParams.Version.AppVersion = 1
 
+	genParams.WasmParams = wasmtypes.DefaultParams()
+
 	return genParams
 }
 
@@ -459,8 +476,8 @@ func MainnetGenesisParams() GenesisParams {
 func TestnetGenesisParams() GenesisParams {
 	genParams := MainnetGenesisParams()
 
-	genParams.AirdropSupply = sdk.NewInt(250_000_000_000_000) // 250M STARS
-	genParams.GenesisTime = time.Now()
+	genParams.AirdropSupply = sdk.NewInt(250_000_000_000_000)              // 250M STARS
+	genParams.GenesisTime = time.Date(2022, 02, 17, 17, 0, 0, 0, time.UTC) // Feb 17
 
 	// mint
 	genParams.MintParams.StartTime = genParams.GenesisTime.Add(time.Minute * 5)
@@ -468,11 +485,31 @@ func TestnetGenesisParams() GenesisParams {
 	genParams.GovParams.DepositParams.MaxDepositPeriod = time.Hour * 24 * 14 // 2 weeks
 	genParams.GovParams.DepositParams.MinDeposit = sdk.NewCoins(sdk.NewCoin(
 		genParams.NativeCoinMetadatas[0].Base,
-		sdk.NewInt(1),
+		sdk.NewInt(1_000_000),
 	))
-	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.2") // 20%
+	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.1") // 10%
 	genParams.GovParams.VotingParams.VotingPeriod = time.Minute * 15      // 15 min
 
+	// alloc
+	genParams.AllocParams = alloctypes.DefaultParams()
+	genParams.AllocParams.DistributionProportions = alloctypes.DistributionProportions{
+		NftIncentives:    sdk.NewDecWithPrec(30, 2), // 30%
+		DeveloperRewards: sdk.NewDecWithPrec(30, 2), // 30%
+	}
+	genParams.AllocParams.WeightedDeveloperRewardsReceivers = []alloctypes.WeightedAddress{
+		// faucet
+		{
+			Address: "stars1qpeu488858wm3uzqfz9e6m76s5jmjjtcuwr8e2",
+			Weight:  sdk.NewDecWithPrec(80, 2),
+		},
+		{
+			Address: "stars1fayut6xzyka29zvznsumlgy5pl4vkn4fkmaznc",
+			Weight:  sdk.NewDecWithPrec(20, 2),
+		},
+	}
+	genParams.WasmParams.CodeUploadAccess = wasmtypes.AllowEverybody
+	genParams.WasmParams.InstantiateDefaultPermission = wasmtypes.AccessTypeEverybody
+	genParams.WasmParams.MaxWasmCodeSize = 1000 * 1024 * 2 // 1000kb
 	return genParams
 }
 

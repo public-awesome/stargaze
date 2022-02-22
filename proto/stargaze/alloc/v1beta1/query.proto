@@ -6,7 +6,7 @@ import "google/api/annotations.proto";
 import "stargaze/alloc/v1beta1/params.proto";
 // this line is used by starport scaffolding # 1
 
-option go_package = "github.com/public-awesome/stargaze/x/alloc/types";
+option go_package = "github.com/public-awesome/stargaze/v3/x/alloc/types";
 
 // QueryParamsRequest is the request type for the Query/Params RPC method.
 message QueryParamsRequest {}
@@ -17,14 +17,12 @@ message QueryParamsResponse {
   Params params = 1 [ (gogoproto.nullable) = false ];
 }
 
-
-
 // Query defines the gRPC querier service.
 service Query {
-    // this line is used by starport scaffolding # 2
-    rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-        option (google.api.http).get = "/stargaze/alloc/v1beta1/params";
-      }
+  // this line is used by starport scaffolding # 2
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/stargaze/alloc/v1beta1/params";
+  }
 }
 
 // this line is used by starport scaffolding # 3

@@ -16,7 +16,7 @@ RUN cd osmosis && git checkout $TAG && CGO_ENABLED=0 LEDGER_ENABLED=false make b
 
 
 # --------------------------------------------------------
-FROM alpine:3.14
+FROM alpine:3.15
 
 COPY --from=go-builder /code/osmosis/build/osmosisd /usr/bin/osmosisd
 RUN apk add -U --no-cache ca-certificates

@@ -31,7 +31,7 @@ steps:
         - '/go/pkg/mod'
 
   - name: test
-    image: publicawesome/golang:1.17.6-devtooling
+    image: publicawesome/golang:1.17.7-devtooling
     volumes:
       - name: cache
         path: /go
@@ -40,14 +40,14 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: build
-    image: golang:1.17-alpine3.14
+    image: golang:1.17-alpine3.15
     volumes:
       - name: cache
         path: /go
     commands:
       - apk add --no-cache ca-certificates build-base git
-      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0-beta/libwasmvm_muslc.a -O /lib/libwasmvm_muslc.a
-      - sha256sum /lib/libwasmvm_muslc.a | grep 2ea10ad5e489b5ede1aa4061d4afa8b2ddd39718ba7b8689690b9c07a41d678e
+      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0-beta6/libwasmvm_muslc.a -O /lib/libwasmvm_muslc.a
+      - echo "e9cb9517585ce3477905e2d4e37553d85f6eac29bdc3b9c25c37c8f5e554045c  /lib/libwasmvm_muslc.a" | sha256sum -c
       - LEDGER_ENABLED=false BUILD_TAGS=muslc make build
     environment:
       GOPROXY: http://goproxy
@@ -74,7 +74,7 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - v2-alpha
+        - v3-alpha
     when:
       event:
         - push
@@ -90,12 +90,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - develop
+        - wasm
     when:
       event:
         - push
       branch:
-        - develop
+        - jhernandez/add-wasmd
   - name: trigger
     image: plugins/downstream
     settings:
@@ -128,7 +128,7 @@ steps:
         - tag
 
   - name: release
-    image: golang:1.17.0
+    image: golang:1.17.7
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -209,7 +209,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/golang:1.17.6-devtooling
+    image: publicawesome/golang:1.17.7-devtooling
     volumes:
       - name: cache
         path: /go
@@ -289,7 +289,7 @@ steps:
       mount:
         - '/go/pkg/mod'
   - name: build-wrapper
-    image: publicawesome/golang:1.17.6-devtooling
+    image: publicawesome/golang:1.17.7-devtooling
     volumes:
       - name: cache
         path: /go
@@ -314,7 +314,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:1.1.3
+    image: publicawesome/stargaze:2.0.0
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
@@ -348,7 +348,7 @@ steps:
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
-    image: publicawesome/stargaze:2.0.0
+    image: publicawesome/stargaze:wasm
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -397,6 +397,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 2afdd67fa7a871d8ff1b9412f304cc7908b029f47f92f184c197e0c4bd0b7efe
+hmac: 06d4eea0c6a7033aed5da61ddce082dade980ef159d33fec40a25db483f9e7ef
 
 ...
