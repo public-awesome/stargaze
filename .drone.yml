@@ -74,28 +74,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - v3-alpha
+        - v3-latest
     when:
       event:
         - push
       branch:
         - main
-  - name: publish-docker
-    image: plugins/docker:18
-    settings:
-      dockerfile: docker/Dockerfile
-      repo: publicawesome/stargaze
-      username:
-        from_secret: docker_username
-      password:
-        from_secret: docker_password
-      tags:
-        - wasm
-    when:
-      event:
-        - push
-      branch:
-        - jhernandez/add-wasmd
   - name: trigger
     image: plugins/downstream
     settings:
@@ -348,7 +332,7 @@ steps:
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
-    image: publicawesome/stargaze:wasm
+    image: publicawesome/stargaze:v3-latest
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -397,6 +381,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 06d4eea0c6a7033aed5da61ddce082dade980ef159d33fec40a25db483f9e7ef
+hmac: f4d3a6ec0f86fb1b06d87978b009530fa660daadf10c8c0915dc99f3c22260e7
 
 ...
