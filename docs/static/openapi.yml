@@ -15133,6 +15133,356 @@ paths:
                         }
       tags:
         - Query
+  /stargaze/alloc/v1beta1/params:
+    get:
+      summary: 'this line is used by starport scaffolding # 2'
+      operationId: PublicawesomeStargazeAllocV1Beta1Params
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params defines the parameters of the module.
+                type: object
+                properties:
+                  distributionProportions:
+                    title: >-
+                      distribution_proportions defines the proportion of the
+                      minted denom
+                    type: object
+                    properties:
+                      nftIncentives:
+                        type: string
+                      developerRewards:
+                        type: string
+                  weightedDeveloperRewardsReceivers:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        weight:
+                          type: string
+                    title: address to receive developer rewards
+            description: >-
+              QueryParamsResponse is the response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  '/stargaze/claim/v1beta1/claim_record/{address}':
+    get:
+      operationId: PublicawesomeStargazeClaimV1Beta1ClaimRecord
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              claimRecord:
+                type: object
+                properties:
+                  address:
+                    type: string
+                    title: address of claim user
+                  initialClaimableAmount:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        Coin defines a token with a denomination and an amount.
+
+
+                        NOTE: The amount field is an Int which implements the
+                        custom method
+
+                        signatures required by gogoproto.
+                    title: total initial claimable amount for the user
+                  actionCompleted:
+                    type: array
+                    items:
+                      type: boolean
+                    title: |-
+                      true if action is completed
+                      index of bool in array refers to action enum #
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  '/stargaze/claim/v1beta1/claimable_for_action/{address}/{action}':
+    get:
+      operationId: PublicawesomeStargazeClaimV1Beta1ClaimableForAction
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              coins:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    denom:
+                      type: string
+                    amount:
+                      type: string
+                  description: >-
+                    Coin defines a token with a denomination and an amount.
+
+
+                    NOTE: The amount field is an Int which implements the custom
+                    method
+
+                    signatures required by gogoproto.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+        - name: action
+          in: path
+          required: true
+          type: string
+          enum:
+            - ActionInitialClaim
+            - ActionBidNFT
+            - ActionMintNFT
+            - ActionVote
+            - ActionDelegateStake
+      tags:
+        - Query
+  /stargaze/claim/v1beta1/module_account_balance:
+    get:
+      summary: 'this line is used by starport scaffolding # 2'
+      operationId: PublicawesomeStargazeClaimV1Beta1ModuleAccountBalance
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              moduleAccountBalance:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    denom:
+                      type: string
+                    amount:
+                      type: string
+                  description: >-
+                    Coin defines a token with a denomination and an amount.
+
+
+                    NOTE: The amount field is an Int which implements the custom
+                    method
+
+                    signatures required by gogoproto.
+                description: params defines the parameters of the module.
+            description: >-
+              QueryParamsResponse is the response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  /stargaze/claim/v1beta1/params:
+    get:
+      operationId: PublicawesomeStargazeClaimV1Beta1Params
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params defines the parameters of the module.
+                type: object
+                properties:
+                  airdropEnabled:
+                    type: boolean
+                  airdropStartTime:
+                    type: string
+                    format: date-time
+                  durationUntilDecay:
+                    type: string
+                  durationOfDecay:
+                    type: string
+                  claimDenom:
+                    type: string
+                    title: denom of claimable asset
+                  allowedClaimers:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        contractAddress:
+                          type: string
+                        action:
+                          type: string
+                          enum:
+                            - ActionInitialClaim
+                            - ActionBidNFT
+                            - ActionMintNFT
+                            - ActionVote
+                            - ActionDelegateStake
+                          default: ActionInitialClaim
+                    title: list of contracts and their allowed claim actions
+            description: >-
+              QueryParamsResponse is the response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  '/stargaze/claim/v1beta1/total_claimable/{address}':
+    get:
+      operationId: PublicawesomeStargazeClaimV1Beta1TotalClaimable
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              coins:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    denom:
+                      type: string
+                    amount:
+                      type: string
+                  description: >-
+                    Coin defines a token with a denomination and an amount.
+
+
+                    NOTE: The amount field is an Int which implements the custom
+                    method
+
+                    signatures required by gogoproto.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
 definitions:
   cosmos.authz.v1beta1.Grant:
     type: object
@@ -23327,5 +23677,319 @@ definitions:
       and
 
       freezing clients
-  publicawesome.stargaze.claim.MsgClaimForResponse:
+  publicawesome.stargaze.alloc.v1beta1.DistributionProportions:
     type: object
+    properties:
+      nftIncentives:
+        type: string
+      developerRewards:
+        type: string
+  publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccountResponse:
+    type: object
+    description: >-
+      MsgCreateVestingAccountResponse defines the Msg/CreateVestingAccount
+      response
+
+      type.
+  publicawesome.stargaze.alloc.v1beta1.Params:
+    type: object
+    properties:
+      distributionProportions:
+        title: distribution_proportions defines the proportion of the minted denom
+        type: object
+        properties:
+          nftIncentives:
+            type: string
+          developerRewards:
+            type: string
+      weightedDeveloperRewardsReceivers:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+              type: string
+            weight:
+              type: string
+        title: address to receive developer rewards
+  publicawesome.stargaze.alloc.v1beta1.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        description: params defines the parameters of the module.
+        type: object
+        properties:
+          distributionProportions:
+            title: >-
+              distribution_proportions defines the proportion of the minted
+              denom
+            type: object
+            properties:
+              nftIncentives:
+                type: string
+              developerRewards:
+                type: string
+          weightedDeveloperRewardsReceivers:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                weight:
+                  type: string
+            title: address to receive developer rewards
+    description: QueryParamsResponse is the response type for the Query/Params RPC method.
+  publicawesome.stargaze.alloc.v1beta1.WeightedAddress:
+    type: object
+    properties:
+      address:
+        type: string
+      weight:
+        type: string
+  publicawesome.stargaze.claim.v1beta1.Action:
+    type: string
+    enum:
+      - ActionInitialClaim
+      - ActionBidNFT
+      - ActionMintNFT
+      - ActionVote
+      - ActionDelegateStake
+    default: ActionInitialClaim
+  publicawesome.stargaze.claim.v1beta1.ClaimAuthorization:
+    type: object
+    properties:
+      contractAddress:
+        type: string
+      action:
+        type: string
+        enum:
+          - ActionInitialClaim
+          - ActionBidNFT
+          - ActionMintNFT
+          - ActionVote
+          - ActionDelegateStake
+        default: ActionInitialClaim
+  publicawesome.stargaze.claim.v1beta1.ClaimRecord:
+    type: object
+    properties:
+      address:
+        type: string
+        title: address of claim user
+      initialClaimableAmount:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+          description: |-
+            Coin defines a token with a denomination and an amount.
+
+            NOTE: The amount field is an Int which implements the custom method
+            signatures required by gogoproto.
+        title: total initial claimable amount for the user
+      actionCompleted:
+        type: array
+        items:
+          type: boolean
+        title: |-
+          true if action is completed
+          index of bool in array refers to action enum #
+  publicawesome.stargaze.claim.v1beta1.MsgClaimForResponse:
+    type: object
+    properties:
+      address:
+        type: string
+      claimedAmount:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+          description: |-
+            Coin defines a token with a denomination and an amount.
+
+            NOTE: The amount field is an Int which implements the custom method
+            signatures required by gogoproto.
+        title: total initial claimable amount for the user
+  publicawesome.stargaze.claim.v1beta1.MsgInitialClaimResponse:
+    type: object
+    properties:
+      claimedAmount:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+          description: |-
+            Coin defines a token with a denomination and an amount.
+
+            NOTE: The amount field is an Int which implements the custom method
+            signatures required by gogoproto.
+        title: total initial claimable amount for the user
+  publicawesome.stargaze.claim.v1beta1.Params:
+    type: object
+    properties:
+      airdropEnabled:
+        type: boolean
+      airdropStartTime:
+        type: string
+        format: date-time
+      durationUntilDecay:
+        type: string
+      durationOfDecay:
+        type: string
+      claimDenom:
+        type: string
+        title: denom of claimable asset
+      allowedClaimers:
+        type: array
+        items:
+          type: object
+          properties:
+            contractAddress:
+              type: string
+            action:
+              type: string
+              enum:
+                - ActionInitialClaim
+                - ActionBidNFT
+                - ActionMintNFT
+                - ActionVote
+                - ActionDelegateStake
+              default: ActionInitialClaim
+        title: list of contracts and their allowed claim actions
+    description: Params defines the claim module's parameters.
+  publicawesome.stargaze.claim.v1beta1.QueryClaimRecordResponse:
+    type: object
+    properties:
+      claimRecord:
+        type: object
+        properties:
+          address:
+            type: string
+            title: address of claim user
+          initialClaimableAmount:
+            type: array
+            items:
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+              description: >-
+                Coin defines a token with a denomination and an amount.
+
+
+                NOTE: The amount field is an Int which implements the custom
+                method
+
+                signatures required by gogoproto.
+            title: total initial claimable amount for the user
+          actionCompleted:
+            type: array
+            items:
+              type: boolean
+            title: |-
+              true if action is completed
+              index of bool in array refers to action enum #
+  publicawesome.stargaze.claim.v1beta1.QueryClaimableForActionResponse:
+    type: object
+    properties:
+      coins:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+          description: |-
+            Coin defines a token with a denomination and an amount.
+
+            NOTE: The amount field is an Int which implements the custom method
+            signatures required by gogoproto.
+  publicawesome.stargaze.claim.v1beta1.QueryModuleAccountBalanceResponse:
+    type: object
+    properties:
+      moduleAccountBalance:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+          description: |-
+            Coin defines a token with a denomination and an amount.
+
+            NOTE: The amount field is an Int which implements the custom method
+            signatures required by gogoproto.
+        description: params defines the parameters of the module.
+    description: QueryParamsResponse is the response type for the Query/Params RPC method.
+  publicawesome.stargaze.claim.v1beta1.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        description: params defines the parameters of the module.
+        type: object
+        properties:
+          airdropEnabled:
+            type: boolean
+          airdropStartTime:
+            type: string
+            format: date-time
+          durationUntilDecay:
+            type: string
+          durationOfDecay:
+            type: string
+          claimDenom:
+            type: string
+            title: denom of claimable asset
+          allowedClaimers:
+            type: array
+            items:
+              type: object
+              properties:
+                contractAddress:
+                  type: string
+                action:
+                  type: string
+                  enum:
+                    - ActionInitialClaim
+                    - ActionBidNFT
+                    - ActionMintNFT
+                    - ActionVote
+                    - ActionDelegateStake
+                  default: ActionInitialClaim
+            title: list of contracts and their allowed claim actions
+    description: QueryParamsResponse is the response type for the Query/Params RPC method.
+  publicawesome.stargaze.claim.v1beta1.QueryTotalClaimableResponse:
+    type: object
+    properties:
+      coins:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+          description: |-
+            Coin defines a token with a denomination and an amount.
+
+            NOTE: The amount field is an Int which implements the custom method
+            signatures required by gogoproto.
