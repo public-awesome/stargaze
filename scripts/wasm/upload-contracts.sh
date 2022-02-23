@@ -31,12 +31,12 @@ then
 fi
 
 # Fetch contract wasm binaries
-fetch --repo=$MARKETPLACE_REPO --tag=$TAG --release-asset="collection_factory.wasm" .
-fetch --repo=$MARKETPLACE_REPO --tag=$TAG --release-asset="sg_marketplace.wasm" .
-fetch --repo=$CONTRACTS_REPO --tag=$TAG --release-asset="sg721.wasm" .
-fetch --repo=$CONTRACTS_REPO --tag=$TAG --release-asset="minter.wasm" .
-fetch --repo=$CONTRACTS_REPO --tag=$TAG --release-asset="whitelist.wasm" .
-fetch --repo=$CONTRACTS_REPO --tag=$TAG --release-asset="royalty_group.wasm" .
+fetch --repo=$MARKETPLACE_REPO --tag=$MARKETPLACE_TAG --release-asset="collection_factory.wasm" .
+fetch --repo=$MARKETPLACE_REPO --tag=$MARKETPLACE_TAG --release-asset="sg_marketplace.wasm" .
+fetch --repo=$CONTRACTS_REPO --tag=$CONTRACTS_TAG --release-asset="sg721.wasm" .
+fetch --repo=$CONTRACTS_REPO --tag=$CONTRACTS_TAG --release-asset="minter.wasm" .
+fetch --repo=$CONTRACTS_REPO --tag=$CONTRACTS_TAG --release-asset="whitelist.wasm" .
+fetch --repo=$CONTRACTS_REPO --tag=$CONTRACTS_TAG --release-asset="royalty_group.wasm" .
 fetch --repo=https://github.com/CosmWasm/cw-nfts --tag=v0.11.0 --release-asset="cw721_metadata_onchain.wasm" .
 fetch --repo=https://github.com/CosmWasm/cw-plus --tag=v0.11.1 --release-asset="cw4_group.wasm" .
 
