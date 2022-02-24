@@ -15,7 +15,7 @@ fi
 TXFLAG="--gas-prices 0.01$DENOM --gas auto --gas-adjustment 1.3 -y -b block --chain-id $CHAIN_ID --node $NODE --output json"
 
 CONTRACTS_REPO=https://github.com/public-awesome/stargaze-contracts
-CONTRACTS_TAG=v0.1.10
+CONTRACTS_TAG=v0.2.0
 MARKETPLACE_REPO=https://github.com/public-awesome/marketplace
 MARKETPLACE_TAG=v0.1.12
 
