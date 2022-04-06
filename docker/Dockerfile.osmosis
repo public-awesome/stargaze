@@ -1,18 +1,19 @@
-FROM golang:1.17-alpine3.14 AS go-builder
+FROM golang:1.17-alpine3.15 AS go-builder
 ARG TAG
 
 # Usage:
-#   docker build . --build-arg TAG=v6.0.0 -t publicawesome/osmosis:6.0.0 -f docker/Dockerfile.osmosis
+#   docker build . --build-arg TAG=v7.1.0 -t publicawesome/osmosis:7.1.0 -f docker/Dockerfile.osmosis
 
 RUN set -eux; apk add --no-cache ca-certificates build-base;
 
-RUN apk add git
+RUN apk add --no-cache ca-certificates build-base git
 
 WORKDIR /code
 
 RUN git clone https://github.com/osmosis-labs/osmosis
-RUN cd osmosis && git checkout $TAG && CGO_ENABLED=0 LEDGER_ENABLED=false make build
-
+ADD https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0-beta7/libwasmvm_muslc.a /lib/libwasmvm_muslc.a
+RUN sha256sum /lib/libwasmvm_muslc.a | grep d0152067a5609bfdfb3f0d5d6c0f2760f79d5f2cd7fd8513cafa9932d22eb350
+RUN cd osmosis && git checkout $TAG && LEDGER_ENABLED=FALSE BUILD_TAGS=muslc make build
 
 
 # --------------------------------------------------------

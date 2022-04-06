@@ -18,7 +18,6 @@ enabled = false
 enabled = true
 clear_interval = 100
 clear_on_start = true
-filter = false
 tx_confirmation = true
 
 [[chains]]
@@ -68,3 +67,9 @@ gas_adjustment = 0.1
 clock_drift = '300s'
 trusting_period = '2days'
 trust_threshold = { numerator = '1', denominator = '3' }
+
+[chains.packet_filter]
+policy = 'deny'
+list = [
+  ['ica*', '*'], # deny relaying on all channels whose port starts with `ica`
+]
