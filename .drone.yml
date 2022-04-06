@@ -212,17 +212,17 @@ steps:
         - http://gaia:26657
         - http://osmosis:26657
   - name: relayer
-    image: publicawesome/hermes:0.10.0
+    image: publicawesome/hermes:0.13.0
     commands:
       - /bin/bash ./scripts/ci/setup-relayer.sh
 
   - name: relayer-start
-    image: publicawesome/hermes:0.10.0
+    image: publicawesome/hermes:0.13.0
     commands:
       - /bin/bash ./scripts/ci/start-relayer.sh
     detach: true
   - name: relayer-sender
-    image: publicawesome/hermes:0.10.0
+    image: publicawesome/hermes:0.13.0
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: discord
@@ -248,6 +248,6 @@ node:
   runner: integration
 ---
 kind: signature
-hmac: 1b70f607f8387bae975b31a970be31042fab27385f31a7fc54b8b90087a6d626
+hmac: 6cebec081b1c51f59a37b3b67b9927d0d661a836f5f48d910c6fad0986455d23
 
 ...
