@@ -6,7 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/public-awesome/stargaze/v3/x/mint/types"
+	"github.com/public-awesome/stargaze/v4/x/mint/types"
 )
 
 // NewQuerier returns a minting Querier handler.
