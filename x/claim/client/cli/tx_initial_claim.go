@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/public-awesome/stargaze/v3/x/claim/types"
+	"github.com/public-awesome/stargaze/v4/x/claim/types"
 )
 
 var _ = strconv.Itoa(0)

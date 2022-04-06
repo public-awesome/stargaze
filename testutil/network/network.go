@@ -18,7 +18,7 @@ import (
 	tmrand "github.com/tendermint/tendermint/libs/rand"
 	tmdb "github.com/tendermint/tm-db"
 
-	"github.com/public-awesome/stargaze/v3/app"
+	"github.com/public-awesome/stargaze/v4/app"
 )
 
 type (

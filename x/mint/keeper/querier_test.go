@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	keep "github.com/public-awesome/stargaze/v3/x/mint/keeper"
-	"github.com/public-awesome/stargaze/v3/x/mint/types"
+	keep "github.com/public-awesome/stargaze/v4/x/mint/keeper"
+	"github.com/public-awesome/stargaze/v4/x/mint/types"
 
 	abci "github.com/tendermint/tendermint/abci/types"
 )

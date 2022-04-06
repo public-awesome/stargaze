@@ -3,7 +3,7 @@ package keeper
 import (
 	"context"
 
-	"github.com/public-awesome/stargaze/v3/x/alloc/types"
+	"github.com/public-awesome/stargaze/v4/x/alloc/types"
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
