@@ -81,7 +81,6 @@ steps:
         - push
       branch:
         - main
-        - jhernandezb/v4-upgrade-handler
   - name: trigger
     image: plugins/downstream
     settings:
@@ -382,6 +381,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: d1083877470e9bd51095b8d1f41cca05bfa6e21b91d286b2711ccd5a704a519b
+hmac: 90ae2c601fcc19fc7b9c54f6ac840aad550971fb5aa68957aa5f951ef9ed6f9b
 
 ...
