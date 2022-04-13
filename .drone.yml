@@ -180,7 +180,7 @@ steps:
       mount:
         - '/go/pkg/mod'
   - name: gaia
-    image: publicawesome/gaia:6.0.0
+    image: publicawesome/gaia:7.0.0
     detach: true
     commands:
       - ./scripts/ci/setup-gaia.sh
@@ -284,7 +284,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: gaia
-    image: publicawesome/gaia:6.0.0
+    image: publicawesome/gaia:7.0.0
     detach: true
     commands:
       - ./scripts/ci/setup-gaia.sh
@@ -381,6 +381,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 90ae2c601fcc19fc7b9c54f6ac840aad550971fb5aa68957aa5f951ef9ed6f9b
+hmac: 124c55968d96a2b87593a539caedc21acd4bd45c3b019e795b554a7c3d310b9d
 
 ...
