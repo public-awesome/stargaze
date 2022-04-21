@@ -15,9 +15,9 @@ fi
 TXFLAG="--gas-prices 0.01$DENOM --gas auto --gas-adjustment 1.3 -y -b block --chain-id $CHAIN_ID --node $NODE --output json"
 
 CONTRACTS_REPO=https://github.com/public-awesome/stargaze-contracts
-CONTRACTS_TAG=v0.1.10
+CONTRACTS_TAG=v0.9.0
 MARKETPLACE_REPO=https://github.com/public-awesome/marketplace
-MARKETPLACE_TAG=v0.1.12
+MARKETPLACE_TAG=v0.5.0
 
 if [[ -z "$GITHUB_OAUTH_TOKEN" ]]; then
     echo "Must set GITHUB_OAUTH_TOKEN in environment" 1>&2
