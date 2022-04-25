@@ -75,29 +75,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - latest
+        - v5
     when:
       event:
         - push
       branch:
-        - main
-  - name: trigger
-    image: plugins/downstream
-    settings:
-      server:
-        from_secret: ci_server
-      token:
-        from_secret: ci_token
-      deploy: deploy-devnet
-      last_successful: true
-      fork: true
-      repositories:
-        from_secret: downstream_repositories
-    when:
-      branch: 
-        - develop
-      event:
-        - push
+        - jhernandezb/upgrade-wasm
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -298,7 +281,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:3.0.0
+    image: publicawesome/stargaze:4.0.0
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
@@ -328,7 +311,7 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: proposal
-    image: publicawesome/stargaze:3.0.0
+    image: publicawesome/stargaze:4.0.0
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
@@ -381,6 +364,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: fb0f928ba2ee7dbf54637efa8a138f7e6236d381334991d4f00b13bc5a5fc468
+hmac: e39ab5fbe810496a72649006489a5a937bc8b6ece561005f3375fd8dae452c8f
 
 ...
