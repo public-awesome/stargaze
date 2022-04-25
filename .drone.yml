@@ -31,7 +31,7 @@ steps:
         - '/go/pkg/mod'
 
   - name: test
-    image: publicawesome/golang:1.18.0-devtooling
+    image: publicawesome/golang:1.18.1-devtooling
     volumes:
       - name: cache
         path: /go
@@ -40,7 +40,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: build
-    image: golang:1.18-alpine3.15
+    image: golang:1.18.1-alpine3.15
     volumes:
       - name: cache
         path: /go
@@ -180,7 +180,7 @@ steps:
       mount:
         - '/go/pkg/mod'
   - name: gaia
-    image: publicawesome/gaia:6.0.0
+    image: publicawesome/gaia:7.0.0
     detach: true
     commands:
       - ./scripts/ci/setup-gaia.sh
@@ -194,7 +194,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/golang:1.18.0-devtooling
+    image: publicawesome/golang:1.18.1-devtooling
     volumes:
       - name: cache
         path: /go
@@ -248,7 +248,139 @@ volumes:
 node:
   runner: integration
 ---
+kind: pipeline
+type: docker
+name: upgrade-integration-test
+workspace:
+  path: /stargaze
+steps:
+  - name: restore-cache
+    image: meltwater/drone-cache:dev
+    volumes:
+      - name: cache
+        path: /go
+    environment:
+      AWS_ACCESS_KEY_ID:
+        from_secret: minio_key_id
+      AWS_SECRET_ACCESS_KEY:
+        from_secret: minio_secret_key
+    pull: true
+    settings:
+      restore: true
+      bucket:
+        from_secret: minio_bucket
+      region: us-east-1
+      mount:
+        - '/go/pkg/mod'
+  - name: build-wrapper
+    image: publicawesome/golang:1.18.1-devtooling
+    volumes:
+      - name: cache
+        path: /go
+    commands:
+      - mkdir -p /stargaze/bin/
+      - CGO_ENABLED=0 go build -o /stargaze/bin/upgrade-watcher ./testutil/watcher/
+      - chmod +x /stargaze/bin/upgrade-watcher
+    environment:
+      GOPROXY: http://goproxy
+  - name: gaia
+    image: publicawesome/gaia:7.0.0
+    detach: true
+    commands:
+      - ./scripts/ci/setup-gaia.sh
+    environment:
+      GOPROXY: http://goproxy
+  - name: osmosis
+    image: publicawesome/osmosis:7.1.0
+    detach: true
+    commands:
+      - ./scripts/ci/setup-osmosis.sh
+    environment:
+      GOPROXY: http://goproxy
+  - name: stargaze
+    image: publicawesome/stargaze:3.0.0
+    commands:
+      - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
+    environment:
+      GOPROXY: http://goproxy
+    detach: true
+  - name: readiness
+    image: publicawesome/stargaze-readiness-checker:latest
+    settings:
+      timeout: 300
+      blocks: 10
+      chain_list:
+        - http://stargaze:26657
+        - http://gaia:26657
+        - http://osmosis:26657
+  - name: relayer
+    image: publicawesome/hermes:0.13.0
+    commands:
+      - /bin/bash ./scripts/ci/setup-relayer.sh
+
+  - name: relayer-start
+    image: publicawesome/hermes:0.13.0
+    commands:
+      - /bin/bash ./scripts/ci/start-relayer.sh
+    detach: true
+  - name: relayer-sender
+    image: publicawesome/hermes:0.13.0
+    commands:
+      - /bin/bash ./scripts/ci/transfer-relayer.sh
+  - name: proposal
+    image: publicawesome/stargaze:3.0.0
+    commands:
+      - ./scripts/ci/upgrade/proposal.sh
+  - name: stargaze-upgraded
+    image: publicawesome/stargaze:latest
+    commands:
+      - ./scripts/ci/upgrade/run-upgrade.sh
+    environment:
+      GOPROXY: http://goproxy
+    detach: true
+  - name: readiness-upgrade
+    image: publicawesome/stargaze-readiness-checker:latest
+    settings:
+      timeout: 300
+      blocks: 10
+      chain_list:
+        - http://stargaze-upgraded:26657
+        - http://gaia:26657
+        - http://osmosis:26657
+  - name: relayer-upgrade-start
+    image: publicawesome/hermes:0.13.0
+    commands:
+      - /bin/bash ./scripts/ci/upgrade/start-relayer.sh
+    detach: true
+  - name: relayer-ugprade-sender
+    image: publicawesome/hermes:0.13.0
+    commands:
+      - /bin/bash ./scripts/ci/upgrade/transfer-relayer.sh
+  - name: discord
+    image: appleboy/drone-discord
+    settings:
+      webhook_id: 
+        from_secret: discord_webhook_id
+      webhook_token: 
+        from_secret: discord_webhook_token
+    when:
+      status: [success, failure]
+
+trigger:
+  branch:
+    - main
+  event:
+    - pull_request
+    - push
+volumes:
+- name: cache
+  temp: {}
+node:
+  runner: integration
+depends_on:
+  - ibc-integration-test
+---
 kind: signature
-hmac: 79fa65281bdbcc548e9581a4af196892a345f4c35e6b68122e76b9f475bb14ea
+hmac: fb0f928ba2ee7dbf54637efa8a138f7e6236d381334991d4f00b13bc5a5fc468
 
 ...
