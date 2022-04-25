@@ -75,7 +75,7 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - v5
+        - v5alpha
     when:
       event:
         - push
@@ -315,7 +315,7 @@ steps:
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
-    image: publicawesome/stargaze:latest
+    image: publicawesome/stargaze:v5alpha
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -364,6 +364,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: e39ab5fbe810496a72649006489a5a937bc8b6ece561005f3375fd8dae452c8f
+hmac: 15fa699b49d20ecef6bdcfb89039d11ea91c8e45777f7d829573d3c4816e68ec
 
 ...
