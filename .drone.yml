@@ -80,7 +80,7 @@ steps:
       event:
         - push
       branch:
-        - jhernandezb/upgrade-wasm
+        - main
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -364,6 +364,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 15fa699b49d20ecef6bdcfb89039d11ea91c8e45777f7d829573d3c4816e68ec
+hmac: 95781a1bd5b1f8c8536a4d4715e99a86877cc67dfd472e566b2df8def9aa1add
 
 ...
