@@ -3,8 +3,8 @@
 ## CONFIG
 BINARY="${BINARY:-starsd}"
 DENOM="${DENOM:-ustars}"
-CHAIN_ID="${CHAIN_ID:-stargaze-devnet-1}"
-NODE="${NODE:-https://rpc.devnet.publicawesome.dev:443}"
+CHAIN_ID="${CHAIN_ID:-double-double-1}"
+NODE="${NODE:-https://rpc.double-double-1.stargaze-apis.com:443}"
 
 if [ "$1" = "" ]
 then
@@ -17,7 +17,7 @@ TXFLAG="--gas-prices 0.01$DENOM --gas auto --gas-adjustment 1.3 -y -b block --ch
 CONTRACTS_REPO=https://github.com/public-awesome/stargaze-contracts
 CONTRACTS_TAG=v0.9.0
 MARKETPLACE_REPO=https://github.com/public-awesome/marketplace
-MARKETPLACE_TAG=v0.5.0
+MARKETPLACE_TAG=v0.5.1
 
 if [[ -z "$GITHUB_OAUTH_TOKEN" ]]; then
     echo "Must set GITHUB_OAUTH_TOKEN in environment" 1>&2
@@ -31,7 +31,6 @@ then
 fi
 
 # Fetch contract wasm binaries
-fetch --repo=$MARKETPLACE_REPO --tag=$MARKETPLACE_TAG --release-asset="collection_factory.wasm" .
 fetch --repo=$MARKETPLACE_REPO --tag=$MARKETPLACE_TAG --release-asset="sg_marketplace.wasm" .
 fetch --repo=$CONTRACTS_REPO --tag=$CONTRACTS_TAG --release-asset="sg721.wasm" .
 fetch --repo=$CONTRACTS_REPO --tag=$CONTRACTS_TAG --release-asset="minter.wasm" .
@@ -43,7 +42,6 @@ fetch --repo=https://github.com/CosmWasm/cw-plus --tag=v0.11.1 --release-asset="
 # Store code on chain
 CW721_CODE=$($BINARY tx wasm store cw721_metadata_onchain.wasm --from $1 $TXFLAG | jq -r '.logs[0].events[-1].attributes[0].value')
 MARKETPLACE_CODE=$($BINARY tx wasm store sg_marketplace.wasm --from $1 $TXFLAG | jq -r '.logs[0].events[-1].attributes[0].value')
-FACTORY_CODE=$($BINARY tx wasm store collection_factory.wasm --from $1 $TXFLAG | jq -r '.logs[0].events[-1].attributes[0].value')
 SG721_CODE=$($BINARY tx wasm store sg721.wasm --from $1 $TXFLAG | jq -r '.logs[0].events[-1].attributes[0].value')
 MINTER_CODE=$($BINARY tx wasm store minter.wasm --from $1 $TXFLAG | jq -r '.logs[0].events[-1].attributes[0].value')
 WHITELIST_CODE=$($BINARY tx wasm store whitelist.wasm --from $1 $TXFLAG | jq -r '.logs[0].events[-1].attributes[0].value')
@@ -51,15 +49,11 @@ ROYALTY_GROUP_CODE=$($BINARY tx wasm store royalty_group.wasm --from $1 $TXFLAG 
 CW4_GROUP_CODE=$($BINARY tx wasm store cw4_group.wasm --from $1 $TXFLAG | jq -r '.logs[0].events[-1].attributes[0].value')
 
 # Clean up
-rm collection_factory.wasm cw721_metadata_onchain.wasm sg_marketplace.wasm sg721.wasm minter.wasm cw4_group.wasm royalty_group.wasm whitelist.wasm
+rm cw721_metadata_onchain.wasm sg_marketplace.wasm sg721.wasm minter.wasm cw4_group.wasm royalty_group.wasm whitelist.wasm
 
 # Instantiate marketplace
-$BINARY tx wasm instantiate $MARKETPLACE_CODE "{}" --from $1 --label "marketplace" $TXFLAG --no-admin
+$BINARY tx wasm instantiate $MARKETPLACE_CODE '{"trading_fee_percent": 2, "ask_expiry": [86400,15552000], "bid_expiry": [86400,15552000], "operators": ["'$($BINARY keys show -a $1)'"]}' --from $1 --label "marketplace" $TXFLAG --no-admin
 MARKET_CONTRACT=$($BINARY q wasm list-contract-by-code $MARKETPLACE_CODE --node $NODE --chain-id $CHAIN_ID --output json | jq -r '.contracts[-1]')
-
-# Instantiate factory
-echo $PASSWORD | $BINARY tx wasm instantiate $FACTORY_CODE "{}" --from $1 --label "factory" $TXFLAG --no-admin
-FACTORY_CONTRACT=$($BINARY q wasm list-contract-by-code $FACTORY_CODE --node $NODE --chain-id $CHAIN_ID --output json | jq -r '.contracts[-1]')
 
 # Print out Code IDs
 printf "\n ------------------------ \n"
@@ -77,4 +71,3 @@ echo "CW4_GROUP_CODE=$CW4_GROUP_CODE"
 printf "\n ------------------------ \n"
 printf "Contracts: \n\n"
 echo "MARKETPLACE_CONTRACT=$MARKET_CONTRACT"
-echo "FACTORY_CONTRACT=$FACTORY_CONTRACT"
