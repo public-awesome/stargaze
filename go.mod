@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/CosmWasm/wasmd v0.26.0
 	github.com/CosmWasm/wasmvm v1.0.0-beta10
-	github.com/armon/go-metrics v0.3.10
+	github.com/armon/go-metrics v0.3.11
 	github.com/cosmos/cosmos-sdk v0.45.4
 	github.com/cosmos/go-bip39 v1.0.0
 	github.com/cosmos/ibc-go/v2 v2.2.0
