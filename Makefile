@@ -112,7 +112,7 @@ docker-test: build-linux
 
 
 test:
-	go test -v -race github.com/public-awesome/stargaze/v4/x/...
+	go test -v -race github.com/public-awesome/stargaze/v5/x/...
 
 .PHONY: test build-linux docker-test lint build install
 
