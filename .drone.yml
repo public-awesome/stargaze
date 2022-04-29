@@ -75,13 +75,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - v5alpha
+        - latest
     when:
       event:
         - push
       branch:
         - main
-        - feature/v5
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -365,6 +364,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 97eded6b88bf16145252c12045be85c2ee70825bf530390f38d8bb6bafda7ad2
+hmac: cbed26a1a5a9a788b56f84fea008ecf153f53ffb20b0755f0c08f9f0ffa707c5
 
 ...
