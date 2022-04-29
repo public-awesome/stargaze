@@ -10,8 +10,8 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	stargazeapp "github.com/public-awesome/stargaze/v4/app"
-	"github.com/public-awesome/stargaze/v4/x/mint/types"
+	stargazeapp "github.com/public-awesome/stargaze/v5/app"
+	"github.com/public-awesome/stargaze/v5/x/mint/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 	dbm "github.com/tendermint/tm-db"
 )

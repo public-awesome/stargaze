@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/public-awesome/stargaze/v4/testutil/sample"
+	"github.com/public-awesome/stargaze/v5/testutil/sample"
 	"github.com/stretchr/testify/require"
 )
 
