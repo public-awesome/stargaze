@@ -81,6 +81,7 @@ steps:
         - push
       branch:
         - main
+        - feature/v5
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -364,6 +365,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 95781a1bd5b1f8c8536a4d4715e99a86877cc67dfd472e566b2df8def9aa1add
+hmac: 97eded6b88bf16145252c12045be85c2ee70825bf530390f38d8bb6bafda7ad2
 
 ...

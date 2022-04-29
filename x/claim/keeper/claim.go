@@ -5,7 +5,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/gogo/protobuf/proto"
-	"github.com/public-awesome/stargaze/v4/x/claim/types"
+	"github.com/public-awesome/stargaze/v5/x/claim/types"
 )
 
 // CreateModuleAccount creates module account of airdrop module

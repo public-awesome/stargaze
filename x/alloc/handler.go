@@ -5,8 +5,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/public-awesome/stargaze/v4/x/alloc/keeper"
-	"github.com/public-awesome/stargaze/v4/x/alloc/types"
+	"github.com/public-awesome/stargaze/v5/x/alloc/keeper"
+	"github.com/public-awesome/stargaze/v5/x/alloc/types"
 )
 
 // NewHandler ...

@@ -4,7 +4,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v4/x/claim/types"
+	"github.com/public-awesome/stargaze/v5/x/claim/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
