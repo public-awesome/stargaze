@@ -30,7 +30,6 @@ func NewDefaultGenesisState(cdc codec.JSONCodec) GenesisState {
 		Params: wasmtypes.Params{
 			CodeUploadAccess:             wasmtypes.AllowNobody,
 			InstantiateDefaultPermission: wasmtypes.AccessTypeEverybody,
-			MaxWasmCodeSize:              DefaultMaxWasmCodeSize,
 		},
 	}
 	genesis[wasm.ModuleName] = cdc.MustMarshalJSON(&wasmGen)
