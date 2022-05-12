@@ -75,12 +75,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - latest
+        - ibc3
     when:
       event:
         - push
       branch:
-        - main
+        - feature/ibc-v3
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -281,7 +281,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:4.0.0
+    image: publicawesome/stargaze:5.0.0
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
@@ -315,7 +315,7 @@ steps:
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
-    image: publicawesome/stargaze:v5alpha
+    image: publicawesome/stargaze:ibc3
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -364,6 +364,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: ef6c33ce1ae435463c7d1948ca03f6ee1a6b605983ed8f993e0945d638a1e6a5
+hmac: 7134f912c4d6559e7007b1bf09603c48ab54f8eadcc9cbd833c42979ba7d21b1
 
 ...
