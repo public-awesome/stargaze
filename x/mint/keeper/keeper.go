@@ -6,7 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/public-awesome/stargaze/v4/x/mint/types"
+	"github.com/public-awesome/stargaze/v5/x/mint/types"
 )
 
 // Keeper of the mint store

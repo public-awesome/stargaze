@@ -1,11 +1,11 @@
-module github.com/public-awesome/stargaze/v4
+module github.com/public-awesome/stargaze/v5
 
 go 1.18
 
 require (
 	github.com/CosmWasm/wasmd v0.26.0
 	github.com/CosmWasm/wasmvm v1.0.0-beta10
-	github.com/armon/go-metrics v0.3.10
+	github.com/armon/go-metrics v0.3.11
 	github.com/cosmos/cosmos-sdk v0.45.4
 	github.com/cosmos/go-bip39 v1.0.0
 	github.com/cosmos/ibc-go/v2 v2.2.0
@@ -14,8 +14,8 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/pkg/errors v0.9.1
-	github.com/prometheus/client_golang v1.12.1
-	github.com/spf13/cast v1.4.1
+	github.com/prometheus/client_golang v1.12.2
+	github.com/spf13/cast v1.5.0
 	github.com/spf13/cobra v1.4.0
 	github.com/stretchr/testify v1.7.1
 	github.com/tendermint/spm v0.1.9
@@ -62,7 +62,6 @@ require (
 	github.com/gogo/gateway v1.1.0 // indirect
 	github.com/golang/snappy v0.0.3 // indirect
 	github.com/google/btree v1.0.0 // indirect
-	github.com/google/go-cmp v0.5.7 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/orderedcode v0.0.1 // indirect
 	github.com/gorilla/handlers v1.5.1 // indirect
@@ -124,8 +123,9 @@ require (
 
 replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76
+	github.com/CosmWasm/wasmd => github.com/public-awesome/wasmd v0.27.0-stargaze.4
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-	github.com/tendermint/spm => github.com/public-awesome/spm v0.1.9-stargaze.0.20220425173224-8cbbf148aa0a
+	github.com/tendermint/spm => github.com/public-awesome/spm v0.1.9-stargaze.0.20220430010344-e2b557708ea2
 	google.golang.org/grpc => google.golang.org/grpc v1.33.2
 )

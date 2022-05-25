@@ -8,9 +8,9 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-	"github.com/public-awesome/stargaze/v4/app"
-	"github.com/public-awesome/stargaze/v4/testutil/simapp"
-	"github.com/public-awesome/stargaze/v4/x/alloc/types"
+	"github.com/public-awesome/stargaze/v5/app"
+	"github.com/public-awesome/stargaze/v5/testutil/simapp"
+	"github.com/public-awesome/stargaze/v5/x/alloc/types"
 	"github.com/stretchr/testify/suite"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
