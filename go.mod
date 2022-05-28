@@ -3,8 +3,8 @@ module github.com/public-awesome/stargaze/v5
 go 1.18
 
 require (
-	github.com/CosmWasm/wasmd v0.27.0-rc0
-	github.com/CosmWasm/wasmvm v1.0.0-rc.0
+	github.com/CosmWasm/wasmd v0.27.0
+	github.com/CosmWasm/wasmvm v1.0.0
 	github.com/armon/go-metrics v0.3.11
 	github.com/cosmos/cosmos-sdk v0.45.4
 	github.com/cosmos/go-bip39 v1.0.0
@@ -126,6 +126,6 @@ replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-	github.com/tendermint/spm => github.com/public-awesome/spm v0.1.9-stargaze.0.20220430010344-e2b557708ea2
+	github.com/tendermint/spm => github.com/public-awesome/spm v0.1.9-stargaze.0.20220528192932-72f3ab3c0545
 	google.golang.org/grpc => google.golang.org/grpc v1.33.2
 )
