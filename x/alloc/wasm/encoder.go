@@ -1,0 +1,42 @@
+package wasm
+
+import (
+	"encoding/json"
+	"fmt"
+
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	sgwasm "github.com/public-awesome/stargaze/v5/internal/wasm"
+)
+
+var _ sgwasm.Encoder = Encoder
+
+type AllocMsg struct {
+	FundFeeCollector *FundFeeCollector `json:"fund_fee_collector,omitempty"`
+}
+
+type FundFeeCollector struct {
+	Amount wasmvmtypes.Coins `json:"amount"`
+}
+
+func (fcp FundFeeCollector) Encode(contract sdk.AccAddress) ([]sdk.Msg, error) {
+	_, err := wasmkeeper.ConvertWasmCoinsToSdkCoins(fcp.Amount)
+	if err != nil {
+		return nil, err
+	}
+	return []sdk.Msg{}, nil
+}
+
+func Encoder(contract sdk.AccAddress, data json.RawMessage, version string) ([]sdk.Msg, error) {
+	msg := &AllocMsg{}
+	err := json.Unmarshal(data, msg)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+	}
+	if msg.FundFeeCollector != nil {
+		return msg.FundFeeCollector.Encode(contract)
+	}
+	return nil, fmt.Errorf("wasm: invalid custom alloc message")
+}

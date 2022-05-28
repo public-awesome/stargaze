@@ -105,6 +105,7 @@ import (
 	allocmodule "github.com/public-awesome/stargaze/v5/x/alloc"
 	allocmodulekeeper "github.com/public-awesome/stargaze/v5/x/alloc/keeper"
 	allocmoduletypes "github.com/public-awesome/stargaze/v5/x/alloc/types"
+	allocwasm "github.com/public-awesome/stargaze/v5/x/alloc/wasm"
 	claimmodule "github.com/public-awesome/stargaze/v5/x/claim"
 	claimmodulekeeper "github.com/public-awesome/stargaze/v5/x/claim/keeper"
 	claimmoduletypes "github.com/public-awesome/stargaze/v5/x/claim/types"
@@ -456,6 +457,7 @@ func NewStargazeApp(
 	registry := sgwasm.NewEncoderRegistry()
 	registry.RegisterEncoder(sgwasm.DistributionRoute, sgwasm.CustomDistributionEncoder)
 	registry.RegisterEncoder(claimmoduletypes.ModuleName, claimwasm.Encoder)
+	registry.RegisterEncoder(allocmoduletypes.ModuleName, allocwasm.Encoder)
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
