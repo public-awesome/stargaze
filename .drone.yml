@@ -80,7 +80,7 @@ steps:
       event:
         - push
       branch:
-        - feature/ibc-v3
+        - ibc-v3
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -364,6 +364,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 7134f912c4d6559e7007b1bf09603c48ab54f8eadcc9cbd833c42979ba7d21b1
+hmac: e4deb01c71df30289035dddcbc43ff45b235c080fda9d914dd2337d0029964d4
 
 ...
