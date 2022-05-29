@@ -9,12 +9,13 @@ import (
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgCreateVestingAccount{}, "alloc/CreateVestingAccount", nil)
-	// this line is used by starport scaffolding # 2
+	cdc.RegisterConcrete(&MsgFundFeeCollector{}, "alloc/FundFeeCollector", nil)
 }
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateVestingAccount{},
+		&MsgFundFeeCollector{},
 	)
 	// this line is used by starport scaffolding # 3
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
