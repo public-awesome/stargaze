@@ -65,7 +65,7 @@ func (k Keeper) GetModuleAccount(ctx sdk.Context, moduleName string) authtypes.A
 	return k.accountKeeper.GetModuleAccount(ctx, moduleName)
 }
 
-func (k Keeper) FundFairburlPool(ctx sdk.Context, sender sdk.AccAddress, amount sdk.Coins) error {
+func (k Keeper) sendToFairburnPool(ctx sdk.Context, sender sdk.AccAddress, amount sdk.Coins) error {
 	if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, sender, types.FairburnPoolName, amount); err != nil {
 		return err
 	}
@@ -114,6 +114,9 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 	}
 	fairburnPoolAddress := k.accountKeeper.GetModuleAccount(ctx, types.FairburnPoolName).GetAddress()
 	collectedFairburnFees := k.bankKeeper.GetBalance(ctx, fairburnPoolAddress, k.stakingKeeper.BondDenom(ctx))
+	if collectedFairburnFees.IsZero() {
+		return nil
+	}
 	// transfer collected fees from fairburn to the fee collector for distribution
 	err = k.bankKeeper.SendCoinsFromModuleToModule(ctx,
 		types.FairburnPoolName,

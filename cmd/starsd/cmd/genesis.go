@@ -455,7 +455,7 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.ClaimParams = claimtypes.Params{
 		AirdropEnabled:     false,
 		AirdropStartTime:   genParams.GenesisTime.Add(time.Hour * 24 * 365), // 1 year (will be changed by gov)
-		DurationUntilDecay: time.Hour * 24 * 120,                            // 120 days = ~4 months
+		DurationUntilDecay: time.Hour * 24 * 240,                            // 120 days = ~4 months
 		DurationOfDecay:    time.Hour * 24 * 120,                            // 120 days = ~4 months
 		ClaimDenom:         genParams.NativeCoinMetadatas[0].Base,
 	}
@@ -468,7 +468,6 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.ConsensusParams.Version.AppVersion = 1
 
 	genParams.WasmParams = wasmtypes.DefaultParams()
-	// genParams.WasmParams.MaxWasmCodeSize = 1000 * 1024 * 2 // 2000 KB
 
 	return genParams
 }
@@ -510,7 +509,7 @@ func TestnetGenesisParams() GenesisParams {
 	}
 	genParams.WasmParams.CodeUploadAccess = wasmtypes.AllowEverybody
 	genParams.WasmParams.InstantiateDefaultPermission = wasmtypes.AccessTypeEverybody
-	// genParams.WasmParams.MaxWasmCodeSize = 1000 * 1024 * 2 // 1000kb
+
 	return genParams
 }
 

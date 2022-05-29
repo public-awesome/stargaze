@@ -14,7 +14,7 @@ func (k msgServer) FundFairburnPool(goCtx context.Context, msg *types.MsgFundFai
 	if err != nil {
 		return nil, err
 	}
-	err = k.FundFairburlPool(ctx, sender, msg.Amount)
+	err = k.sendToFairburnPool(ctx, sender, msg.Amount)
 	if err != nil {
 		return nil, err
 	}
