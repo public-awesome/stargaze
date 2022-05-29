@@ -15,10 +15,10 @@ service Msg {
   rpc CreateVestingAccount(MsgCreateVestingAccount)
       returns (MsgCreateVestingAccountResponse);
 
-  // FundFeeCollector defines a method to allow an account to directly
+  // FundFairburnPool defines a method to allow an account to directly
   // fund the fee collector module account.
-  rpc FundFeeCollector(MsgFundFeeCollector)
-      returns (MsgFundFeeCollectorResponse);
+  rpc FundFairburnPool(MsgFundFairburnPool)
+      returns (MsgFundFairburnPoolResponse);
 }
 
 // MsgCreateVestingAccount defines a message that enables creating a vesting
@@ -42,9 +42,9 @@ message MsgCreateVestingAccount {
 // type.
 message MsgCreateVestingAccountResponse {}
 
-// MsgFundFeeCollector allows an account to directly
+// MsgFundFairburnPool allows an account to directly
 // fund the fee collector pool.
-message MsgFundFeeCollector {
+message MsgFundFairburnPool {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
@@ -56,6 +56,6 @@ message MsgFundFeeCollector {
   ];
 }
 
-// MsgFundFeeCollectorResponse defines the Msg/MsgFundFeeCollector response
+// MsgFundFairburnPoolResponse defines the Msg/MsgFundFairburnPool response
 // type.
-message MsgFundFeeCollectorResponse {}
+message MsgFundFairburnPoolResponse {}

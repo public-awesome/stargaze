@@ -154,25 +154,25 @@ func (m *MsgCreateVestingAccountResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgCreateVestingAccountResponse proto.InternalMessageInfo
 
-// MsgFundFeeCollector allows an account to directly
+// MsgFundFairburnPool allows an account to directly
 // fund the fee collector pool.
-type MsgFundFeeCollector struct {
+type MsgFundFairburnPool struct {
 	Sender string                                   `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
 	Amount github_com_cosmos_cosmos_sdk_types.Coins `protobuf:"bytes,2,rep,name=amount,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"amount"`
 }
 
-func (m *MsgFundFeeCollector) Reset()         { *m = MsgFundFeeCollector{} }
-func (m *MsgFundFeeCollector) String() string { return proto.CompactTextString(m) }
-func (*MsgFundFeeCollector) ProtoMessage()    {}
-func (*MsgFundFeeCollector) Descriptor() ([]byte, []int) {
+func (m *MsgFundFairburnPool) Reset()         { *m = MsgFundFairburnPool{} }
+func (m *MsgFundFairburnPool) String() string { return proto.CompactTextString(m) }
+func (*MsgFundFairburnPool) ProtoMessage()    {}
+func (*MsgFundFairburnPool) Descriptor() ([]byte, []int) {
 	return fileDescriptor_8d14330d7694f253, []int{2}
 }
-func (m *MsgFundFeeCollector) XXX_Unmarshal(b []byte) error {
+func (m *MsgFundFairburnPool) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgFundFeeCollector) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgFundFairburnPool) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgFundFeeCollector.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgFundFairburnPool.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -182,35 +182,35 @@ func (m *MsgFundFeeCollector) XXX_Marshal(b []byte, deterministic bool) ([]byte,
 		return b[:n], nil
 	}
 }
-func (m *MsgFundFeeCollector) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgFundFeeCollector.Merge(m, src)
+func (m *MsgFundFairburnPool) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgFundFairburnPool.Merge(m, src)
 }
-func (m *MsgFundFeeCollector) XXX_Size() int {
+func (m *MsgFundFairburnPool) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgFundFeeCollector) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgFundFeeCollector.DiscardUnknown(m)
+func (m *MsgFundFairburnPool) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgFundFairburnPool.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgFundFeeCollector proto.InternalMessageInfo
+var xxx_messageInfo_MsgFundFairburnPool proto.InternalMessageInfo
 
-// MsgFundFeeCollectorResponse defines the Msg/MsgFundFeeCollector response
+// MsgFundFairburnPoolResponse defines the Msg/MsgFundFairburnPool response
 // type.
-type MsgFundFeeCollectorResponse struct {
+type MsgFundFairburnPoolResponse struct {
 }
 
-func (m *MsgFundFeeCollectorResponse) Reset()         { *m = MsgFundFeeCollectorResponse{} }
-func (m *MsgFundFeeCollectorResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgFundFeeCollectorResponse) ProtoMessage()    {}
-func (*MsgFundFeeCollectorResponse) Descriptor() ([]byte, []int) {
+func (m *MsgFundFairburnPoolResponse) Reset()         { *m = MsgFundFairburnPoolResponse{} }
+func (m *MsgFundFairburnPoolResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgFundFairburnPoolResponse) ProtoMessage()    {}
+func (*MsgFundFairburnPoolResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_8d14330d7694f253, []int{3}
 }
-func (m *MsgFundFeeCollectorResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgFundFairburnPoolResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgFundFeeCollectorResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgFundFairburnPoolResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgFundFeeCollectorResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgFundFairburnPoolResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -220,63 +220,63 @@ func (m *MsgFundFeeCollectorResponse) XXX_Marshal(b []byte, deterministic bool) 
 		return b[:n], nil
 	}
 }
-func (m *MsgFundFeeCollectorResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgFundFeeCollectorResponse.Merge(m, src)
+func (m *MsgFundFairburnPoolResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgFundFairburnPoolResponse.Merge(m, src)
 }
-func (m *MsgFundFeeCollectorResponse) XXX_Size() int {
+func (m *MsgFundFairburnPoolResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgFundFeeCollectorResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgFundFeeCollectorResponse.DiscardUnknown(m)
+func (m *MsgFundFairburnPoolResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgFundFairburnPoolResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgFundFeeCollectorResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgFundFairburnPoolResponse proto.InternalMessageInfo
 
 func init() {
 	proto.RegisterType((*MsgCreateVestingAccount)(nil), "publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccount")
 	proto.RegisterType((*MsgCreateVestingAccountResponse)(nil), "publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccountResponse")
-	proto.RegisterType((*MsgFundFeeCollector)(nil), "publicawesome.stargaze.alloc.v1beta1.MsgFundFeeCollector")
-	proto.RegisterType((*MsgFundFeeCollectorResponse)(nil), "publicawesome.stargaze.alloc.v1beta1.MsgFundFeeCollectorResponse")
+	proto.RegisterType((*MsgFundFairburnPool)(nil), "publicawesome.stargaze.alloc.v1beta1.MsgFundFairburnPool")
+	proto.RegisterType((*MsgFundFairburnPoolResponse)(nil), "publicawesome.stargaze.alloc.v1beta1.MsgFundFairburnPoolResponse")
 }
 
 func init() { proto.RegisterFile("stargaze/alloc/v1beta1/tx.proto", fileDescriptor_8d14330d7694f253) }
 
 var fileDescriptor_8d14330d7694f253 = []byte{
-	// 533 bytes of a gzipped FileDescriptorProto
+	// 535 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x94, 0x31, 0x6f, 0xd3, 0x40,
-	0x14, 0xc7, 0x7d, 0x49, 0x49, 0x93, 0x2b, 0x12, 0xe0, 0x14, 0x1a, 0x82, 0xf0, 0x05, 0x8b, 0x21,
-	0x4b, 0xcf, 0xb4, 0x85, 0x81, 0x48, 0x0c, 0x49, 0x44, 0xb7, 0x2c, 0x16, 0x62, 0x60, 0xa9, 0xce,
-	0xf6, 0xc3, 0x58, 0xd8, 0xbe, 0xc8, 0x77, 0x29, 0x0d, 0x9f, 0x80, 0xb1, 0x1f, 0xa0, 0x43, 0x66,
-	0xbe, 0x00, 0x5f, 0xa1, 0x63, 0x47, 0xa6, 0x80, 0x92, 0xa5, 0x73, 0x06, 0x66, 0x64, 0x9f, 0x9d,
-	0x46, 0xd0, 0x4a, 0x15, 0xa8, 0x53, 0xf2, 0xf4, 0xde, 0xef, 0xbd, 0xff, 0xfd, 0xdf, 0xf9, 0x30,
-	0x11, 0x92, 0x25, 0x3e, 0xfb, 0x0c, 0x16, 0x0b, 0x43, 0xee, 0x5a, 0x87, 0x3b, 0x0e, 0x48, 0xb6,
-	0x63, 0xc9, 0x23, 0x3a, 0x4c, 0xb8, 0xe4, 0xfa, 0xd3, 0xe1, 0xc8, 0x09, 0x03, 0x97, 0x7d, 0x02,
-	0xc1, 0x23, 0xa0, 0x45, 0x39, 0xcd, 0xca, 0x69, 0x5e, 0xde, 0xdc, 0xf4, 0xb9, 0xcf, 0x33, 0xc0,
-	0x4a, 0xff, 0x29, 0xb6, 0x69, 0xb8, 0x5c, 0x44, 0x5c, 0x58, 0x0e, 0x13, 0xb0, 0xec, 0xec, 0xf2,
-	0x20, 0x56, 0x79, 0xf3, 0x57, 0x09, 0x6f, 0x0d, 0x84, 0xdf, 0x4f, 0x80, 0x49, 0x78, 0x0b, 0x42,
-	0x06, 0xb1, 0xdf, 0x75, 0x5d, 0x3e, 0x8a, 0xa5, 0xde, 0xc1, 0xb7, 0xdf, 0x27, 0x3c, 0x3a, 0x60,
-	0x9e, 0x97, 0x80, 0x10, 0x0d, 0xd4, 0x42, 0xed, 0x5a, 0x6f, 0x6b, 0x31, 0x25, 0xf5, 0x31, 0x8b,
-	0xc2, 0x8e, 0xb9, 0x9a, 0x35, 0xed, 0x8d, 0x34, 0xec, 0xaa, 0x48, 0x7f, 0x8e, 0xb1, 0xe4, 0x4b,
-	0xb2, 0x94, 0x91, 0xf7, 0x17, 0x53, 0x72, 0x4f, 0x91, 0x17, 0x39, 0xd3, 0xae, 0x49, 0x5e, 0x50,
-	0x2e, 0xae, 0xb0, 0x28, 0x9d, 0xdd, 0x28, 0xb7, 0xca, 0xed, 0x8d, 0xdd, 0x87, 0x54, 0xc9, 0xa7,
-	0xa9, 0xfc, 0xe2, 0xa4, 0xb4, 0xcf, 0x83, 0xb8, 0xf7, 0xec, 0x74, 0x4a, 0xb4, 0xaf, 0x3f, 0x48,
-	0xdb, 0x0f, 0xe4, 0x87, 0x91, 0x43, 0x5d, 0x1e, 0x59, 0xf9, 0x59, 0xd5, 0xcf, 0xb6, 0xf0, 0x3e,
-	0x5a, 0x72, 0x3c, 0x04, 0x91, 0x01, 0xc2, 0xce, 0x5b, 0xa7, 0xd2, 0x52, 0x0b, 0xe5, 0x81, 0x0c,
-	0x22, 0x68, 0xac, 0xb5, 0x50, 0xbb, 0xbc, 0x2a, 0xed, 0x22, 0x67, 0xda, 0xb5, 0x2c, 0x78, 0x13,
-	0x44, 0xa0, 0x53, 0x5c, 0x85, 0xd8, 0x53, 0xcc, 0xad, 0x8c, 0xa9, 0x2f, 0xa6, 0xe4, 0x8e, 0x62,
-	0x8a, 0x8c, 0x69, 0xaf, 0x43, 0xec, 0x65, 0xf5, 0x0d, 0xbc, 0xee, 0x41, 0xc8, 0xc6, 0xe0, 0x35,
-	0x2a, 0x2d, 0xd4, 0xae, 0xda, 0x45, 0xd8, 0x59, 0x3b, 0x9f, 0x10, 0x64, 0x3e, 0xc1, 0xe4, 0x0a,
-	0xdf, 0x6d, 0x10, 0x43, 0x1e, 0x0b, 0x30, 0x4f, 0x10, 0xae, 0x0f, 0x84, 0xbf, 0x3f, 0x8a, 0xbd,
-	0x7d, 0x80, 0x3e, 0x0f, 0x43, 0x70, 0x25, 0x4f, 0xf4, 0x07, 0xb8, 0x22, 0x20, 0xf6, 0x20, 0x51,
-	0x1b, 0xb1, 0xf3, 0x68, 0xc5, 0xbd, 0xd2, 0x8d, 0xb9, 0xd7, 0xa9, 0x7e, 0x99, 0x10, 0xed, 0x7c,
-	0x42, 0x34, 0xf3, 0x31, 0x7e, 0x74, 0x89, 0xba, 0x42, 0xfd, 0xee, 0xb7, 0x12, 0x2e, 0x0f, 0x84,
-	0xaf, 0x9f, 0x20, 0xbc, 0x79, 0xe9, 0xf5, 0x7a, 0x45, 0xaf, 0x73, 0xaf, 0xe9, 0x15, 0x2e, 0x35,
-	0x5f, 0xff, 0x17, 0x5e, 0xc8, 0xd4, 0x8f, 0x11, 0xbe, 0xfb, 0x97, 0xc3, 0x2f, 0xaf, 0xdd, 0xfb,
-	0x4f, 0xb4, 0xd9, 0xfd, 0x67, 0xb4, 0x90, 0xd4, 0x1b, 0x9c, 0xce, 0x0c, 0x74, 0x36, 0x33, 0xd0,
-	0xcf, 0x99, 0x81, 0x8e, 0xe7, 0x86, 0x76, 0x36, 0x37, 0xb4, 0xef, 0x73, 0x43, 0x7b, 0xb7, 0xb7,
-	0xb2, 0x2e, 0x35, 0x66, 0x3b, 0x9f, 0x63, 0x2d, 0x1f, 0x91, 0xc3, 0x17, 0xd6, 0x51, 0xfe, 0x92,
-	0x64, 0xfb, 0x73, 0x2a, 0xd9, 0x97, 0xbe, 0xf7, 0x3b, 0x00, 0x00, 0xff, 0xff, 0x33, 0x1d, 0x3d,
-	0xd9, 0x68, 0x04, 0x00, 0x00,
+	0x14, 0xc7, 0x7d, 0x49, 0x49, 0x9b, 0x2b, 0x12, 0xe0, 0x14, 0x1a, 0x82, 0xb0, 0x83, 0xc5, 0x90,
+	0xa5, 0x67, 0xda, 0xc2, 0x40, 0x24, 0x86, 0xa4, 0xa2, 0x5b, 0x24, 0x64, 0x21, 0x06, 0x96, 0xea,
+	0x6c, 0x3f, 0x8c, 0x85, 0x7d, 0x17, 0xf9, 0xce, 0xa5, 0xe1, 0x13, 0x30, 0xf6, 0x03, 0x74, 0xc8,
+	0xcc, 0x17, 0xe0, 0x2b, 0x74, 0xec, 0xc8, 0x14, 0x50, 0xb2, 0x74, 0xce, 0xc0, 0x8c, 0xec, 0xb3,
+	0xd3, 0x08, 0x5a, 0xa9, 0x02, 0x31, 0x25, 0x4f, 0xef, 0xfd, 0xde, 0xfb, 0xdf, 0xff, 0x9d, 0x0f,
+	0x9b, 0x42, 0xd2, 0x24, 0xa0, 0x9f, 0xc0, 0xa6, 0x51, 0xc4, 0x3d, 0xfb, 0x70, 0xdb, 0x05, 0x49,
+	0xb7, 0x6d, 0x79, 0x44, 0x86, 0x09, 0x97, 0x5c, 0x7f, 0x3c, 0x4c, 0xdd, 0x28, 0xf4, 0xe8, 0x47,
+	0x10, 0x3c, 0x06, 0x52, 0x96, 0x93, 0xbc, 0x9c, 0x14, 0xe5, 0xad, 0x8d, 0x80, 0x07, 0x3c, 0x07,
+	0xec, 0xec, 0x9f, 0x62, 0x5b, 0x86, 0xc7, 0x45, 0xcc, 0x85, 0xed, 0x52, 0x01, 0x8b, 0xce, 0x1e,
+	0x0f, 0x99, 0xca, 0x5b, 0x3f, 0x2b, 0x78, 0x73, 0x20, 0x82, 0xbd, 0x04, 0xa8, 0x84, 0x37, 0x20,
+	0x64, 0xc8, 0x82, 0x9e, 0xe7, 0xf1, 0x94, 0x49, 0xbd, 0x8b, 0x6f, 0xbe, 0x4b, 0x78, 0x7c, 0x40,
+	0x7d, 0x3f, 0x01, 0x21, 0x9a, 0xa8, 0x8d, 0x3a, 0xf5, 0xfe, 0xe6, 0x7c, 0x62, 0x36, 0x46, 0x34,
+	0x8e, 0xba, 0xd6, 0x72, 0xd6, 0x72, 0xd6, 0xb3, 0xb0, 0xa7, 0x22, 0xfd, 0x29, 0xc6, 0x92, 0x2f,
+	0xc8, 0x4a, 0x4e, 0xde, 0x9d, 0x4f, 0xcc, 0x3b, 0x8a, 0xbc, 0xc8, 0x59, 0x4e, 0x5d, 0xf2, 0x92,
+	0xf2, 0x70, 0x8d, 0xc6, 0xd9, 0xec, 0x66, 0xb5, 0x5d, 0xed, 0xac, 0xef, 0xdc, 0x27, 0x4a, 0x3e,
+	0xc9, 0xe4, 0x97, 0x27, 0x25, 0x7b, 0x3c, 0x64, 0xfd, 0x27, 0xa7, 0x13, 0x53, 0xfb, 0xf2, 0xdd,
+	0xec, 0x04, 0xa1, 0x7c, 0x9f, 0xba, 0xc4, 0xe3, 0xb1, 0x5d, 0x9c, 0x55, 0xfd, 0x6c, 0x09, 0xff,
+	0x83, 0x2d, 0x47, 0x43, 0x10, 0x39, 0x20, 0x9c, 0xa2, 0x75, 0x26, 0x2d, 0xb3, 0x50, 0x1e, 0xc8,
+	0x30, 0x86, 0xe6, 0x4a, 0x1b, 0x75, 0xaa, 0xcb, 0xd2, 0x2e, 0x72, 0x96, 0x53, 0xcf, 0x83, 0xd7,
+	0x61, 0x0c, 0x3a, 0xc1, 0x6b, 0xc0, 0x7c, 0xc5, 0xdc, 0xc8, 0x99, 0xc6, 0x7c, 0x62, 0xde, 0x52,
+	0x4c, 0x99, 0xb1, 0x9c, 0x55, 0x60, 0x7e, 0x5e, 0xdf, 0xc4, 0xab, 0x3e, 0x44, 0x74, 0x04, 0x7e,
+	0xb3, 0xd6, 0x46, 0x9d, 0x35, 0xa7, 0x0c, 0xbb, 0x2b, 0xe7, 0x63, 0x13, 0x59, 0x8f, 0xb0, 0x79,
+	0x85, 0xef, 0x0e, 0x88, 0x21, 0x67, 0x02, 0xac, 0x13, 0x84, 0x1b, 0x03, 0x11, 0xec, 0xa7, 0xcc,
+	0xdf, 0xa7, 0x61, 0xe2, 0xa6, 0x09, 0x7b, 0xc5, 0x79, 0xa4, 0xdf, 0xc3, 0x35, 0x01, 0xcc, 0x87,
+	0x44, 0x6d, 0xc4, 0x29, 0xa2, 0x25, 0xf7, 0x2a, 0xff, 0xcd, 0xbd, 0xee, 0xda, 0xe7, 0xb1, 0xa9,
+	0x9d, 0x8f, 0x4d, 0xcd, 0x7a, 0x88, 0x1f, 0x5c, 0xa2, 0xae, 0x54, 0xbf, 0xf3, 0xb5, 0x82, 0xab,
+	0x03, 0x11, 0xe8, 0x27, 0x08, 0x6f, 0x5c, 0x7a, 0xbd, 0x5e, 0x90, 0xeb, 0xdc, 0x6b, 0x72, 0x85,
+	0x4b, 0xad, 0x97, 0xff, 0x84, 0x97, 0x32, 0xf5, 0x63, 0x84, 0x6f, 0xff, 0xe1, 0xf0, 0xf3, 0x6b,
+	0xf7, 0xfe, 0x1d, 0x6d, 0xf5, 0xfe, 0x1a, 0x2d, 0x25, 0xf5, 0x07, 0xa7, 0x53, 0x03, 0x9d, 0x4d,
+	0x0d, 0xf4, 0x63, 0x6a, 0xa0, 0xe3, 0x99, 0xa1, 0x9d, 0xcd, 0x0c, 0xed, 0xdb, 0xcc, 0xd0, 0xde,
+	0xee, 0x2e, 0xad, 0x4b, 0x8d, 0xd9, 0x2a, 0xe6, 0xd8, 0x8b, 0x47, 0xe4, 0xf0, 0x99, 0x7d, 0x54,
+	0xbc, 0x24, 0xf9, 0xfe, 0xdc, 0x5a, 0xfe, 0xa5, 0xef, 0xfe, 0x0a, 0x00, 0x00, 0xff, 0xff, 0xe5,
+	0xe4, 0xdd, 0xc8, 0x68, 0x04, 0x00, 0x00,
 }
 
 func (this *MsgCreateVestingAccount) Equal(that interface{}) bool {
@@ -339,9 +339,9 @@ type MsgClient interface {
 	// CreateVestingAccount defines a method that enables creating a vesting
 	// account.
 	CreateVestingAccount(ctx context.Context, in *MsgCreateVestingAccount, opts ...grpc.CallOption) (*MsgCreateVestingAccountResponse, error)
-	// FundFeeCollector defines a method to allow an account to directly
+	// FundFairburnPool defines a method to allow an account to directly
 	// fund the fee collector module account.
-	FundFeeCollector(ctx context.Context, in *MsgFundFeeCollector, opts ...grpc.CallOption) (*MsgFundFeeCollectorResponse, error)
+	FundFairburnPool(ctx context.Context, in *MsgFundFairburnPool, opts ...grpc.CallOption) (*MsgFundFairburnPoolResponse, error)
 }
 
 type msgClient struct {
@@ -361,9 +361,9 @@ func (c *msgClient) CreateVestingAccount(ctx context.Context, in *MsgCreateVesti
 	return out, nil
 }
 
-func (c *msgClient) FundFeeCollector(ctx context.Context, in *MsgFundFeeCollector, opts ...grpc.CallOption) (*MsgFundFeeCollectorResponse, error) {
-	out := new(MsgFundFeeCollectorResponse)
-	err := c.cc.Invoke(ctx, "/publicawesome.stargaze.alloc.v1beta1.Msg/FundFeeCollector", in, out, opts...)
+func (c *msgClient) FundFairburnPool(ctx context.Context, in *MsgFundFairburnPool, opts ...grpc.CallOption) (*MsgFundFairburnPoolResponse, error) {
+	out := new(MsgFundFairburnPoolResponse)
+	err := c.cc.Invoke(ctx, "/publicawesome.stargaze.alloc.v1beta1.Msg/FundFairburnPool", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -375,9 +375,9 @@ type MsgServer interface {
 	// CreateVestingAccount defines a method that enables creating a vesting
 	// account.
 	CreateVestingAccount(context.Context, *MsgCreateVestingAccount) (*MsgCreateVestingAccountResponse, error)
-	// FundFeeCollector defines a method to allow an account to directly
+	// FundFairburnPool defines a method to allow an account to directly
 	// fund the fee collector module account.
-	FundFeeCollector(context.Context, *MsgFundFeeCollector) (*MsgFundFeeCollectorResponse, error)
+	FundFairburnPool(context.Context, *MsgFundFairburnPool) (*MsgFundFairburnPoolResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -387,8 +387,8 @@ type UnimplementedMsgServer struct {
 func (*UnimplementedMsgServer) CreateVestingAccount(ctx context.Context, req *MsgCreateVestingAccount) (*MsgCreateVestingAccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateVestingAccount not implemented")
 }
-func (*UnimplementedMsgServer) FundFeeCollector(ctx context.Context, req *MsgFundFeeCollector) (*MsgFundFeeCollectorResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FundFeeCollector not implemented")
+func (*UnimplementedMsgServer) FundFairburnPool(ctx context.Context, req *MsgFundFairburnPool) (*MsgFundFairburnPoolResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FundFairburnPool not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -413,20 +413,20 @@ func _Msg_CreateVestingAccount_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_FundFeeCollector_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgFundFeeCollector)
+func _Msg_FundFairburnPool_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgFundFairburnPool)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).FundFeeCollector(ctx, in)
+		return srv.(MsgServer).FundFairburnPool(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/publicawesome.stargaze.alloc.v1beta1.Msg/FundFeeCollector",
+		FullMethod: "/publicawesome.stargaze.alloc.v1beta1.Msg/FundFairburnPool",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).FundFeeCollector(ctx, req.(*MsgFundFeeCollector))
+		return srv.(MsgServer).FundFairburnPool(ctx, req.(*MsgFundFairburnPool))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -440,8 +440,8 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Msg_CreateVestingAccount_Handler,
 		},
 		{
-			MethodName: "FundFeeCollector",
-			Handler:    _Msg_FundFeeCollector_Handler,
+			MethodName: "FundFairburnPool",
+			Handler:    _Msg_FundFairburnPool_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -542,7 +542,7 @@ func (m *MsgCreateVestingAccountResponse) MarshalToSizedBuffer(dAtA []byte) (int
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgFundFeeCollector) Marshal() (dAtA []byte, err error) {
+func (m *MsgFundFairburnPool) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -552,12 +552,12 @@ func (m *MsgFundFeeCollector) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgFundFeeCollector) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgFundFairburnPool) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgFundFeeCollector) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgFundFairburnPool) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -586,7 +586,7 @@ func (m *MsgFundFeeCollector) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgFundFeeCollectorResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgFundFairburnPoolResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -596,12 +596,12 @@ func (m *MsgFundFeeCollectorResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgFundFeeCollectorResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgFundFairburnPoolResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgFundFeeCollectorResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgFundFairburnPoolResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -661,7 +661,7 @@ func (m *MsgCreateVestingAccountResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgFundFeeCollector) Size() (n int) {
+func (m *MsgFundFairburnPool) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -680,7 +680,7 @@ func (m *MsgFundFeeCollector) Size() (n int) {
 	return n
 }
 
-func (m *MsgFundFeeCollectorResponse) Size() (n int) {
+func (m *MsgFundFairburnPoolResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -951,7 +951,7 @@ func (m *MsgCreateVestingAccountResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgFundFeeCollector) Unmarshal(dAtA []byte) error {
+func (m *MsgFundFairburnPool) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -974,10 +974,10 @@ func (m *MsgFundFeeCollector) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgFundFeeCollector: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgFundFairburnPool: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgFundFeeCollector: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgFundFairburnPool: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1067,7 +1067,7 @@ func (m *MsgFundFeeCollector) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgFundFeeCollectorResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgFundFairburnPoolResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1090,10 +1090,10 @@ func (m *MsgFundFeeCollectorResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgFundFeeCollectorResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgFundFairburnPoolResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgFundFeeCollectorResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgFundFairburnPoolResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

@@ -60,6 +60,18 @@ func (k Keeper) GetModuleAccountAddress(ctx sdk.Context) sdk.AccAddress {
 	return k.accountKeeper.GetModuleAddress(types.ModuleName)
 }
 
+// GetModuleAccountBalance gets the airdrop coin balance of module account
+func (k Keeper) GetModuleAccount(ctx sdk.Context, moduleName string) authtypes.AccountI {
+	return k.accountKeeper.GetModuleAccount(ctx, moduleName)
+}
+
+func (k Keeper) FundFeeCollector(ctx sdk.Context, sender sdk.AccAddress, amount sdk.Coins) error {
+	if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, sender, types.FairburnPoolName, amount); err != nil {
+		return err
+	}
+	return nil
+}
+
 // DistributeInflation distributes module-specific inflation
 func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 	blockInflationAddr := k.accountKeeper.GetModuleAccount(ctx, authtypes.FeeCollectorName).GetAddress()

@@ -10,6 +10,7 @@ import (
 // state.
 func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) {
 	k.SetParams(ctx, genState.Params)
+	k.GetModuleAccount(ctx, types.FairburnPoolName)
 	err := k.FundCommunityPool(ctx)
 	if err != nil {
 		panic(err)

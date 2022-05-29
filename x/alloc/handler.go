@@ -18,8 +18,8 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		case *types.MsgCreateVestingAccount:
 			res, err := msgServer.CreateVestingAccount(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types.MsgFundFeeCollector:
-			res, err := msgServer.FundFeeCollector(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgFundFairburnPool:
+			res, err := msgServer.FundFairburnPool(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 		default:
 			errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, msg)
