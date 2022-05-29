@@ -14,14 +14,14 @@ import (
 var _ sgwasm.Encoder = Encoder
 
 type AllocMsg struct {
-	FundFeeCollector *FundFeeCollector `json:"fund_fee_collector,omitempty"`
+	FundFairburnPool *FundFairburnPool `json:"fund_fairburn_pool,omitempty"`
 }
 
-type FundFeeCollector struct {
+type FundFairburnPool struct {
 	Amount wasmvmtypes.Coins `json:"amount"`
 }
 
-func (fcp FundFeeCollector) Encode(contract sdk.AccAddress) ([]sdk.Msg, error) {
+func (fcp FundFairburnPool) Encode(contract sdk.AccAddress) ([]sdk.Msg, error) {
 	_, err := wasmkeeper.ConvertWasmCoinsToSdkCoins(fcp.Amount)
 	if err != nil {
 		return nil, err
@@ -35,8 +35,8 @@ func Encoder(contract sdk.AccAddress, data json.RawMessage, version string) ([]s
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	if msg.FundFeeCollector != nil {
-		return msg.FundFeeCollector.Encode(contract)
+	if msg.FundFairburnPool != nil {
+		return msg.FundFairburnPool.Encode(contract)
 	}
 	return nil, fmt.Errorf("wasm: invalid custom alloc message")
 }

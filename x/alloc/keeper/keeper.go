@@ -112,7 +112,17 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 			k.Logger(ctx).Debug("sent coins to developer", "amount", devRewardPortionCoins.String(), "from", blockInflationAddr)
 		}
 	}
-
+	fairburnPoolAddress := k.accountKeeper.GetModuleAccount(ctx, types.FairburnPoolName).GetAddress()
+	collectedFairburnFees := k.bankKeeper.GetBalance(ctx, fairburnPoolAddress, k.stakingKeeper.BondDenom(ctx))
+	// transfer collected fees from fairburn to the fee collector for distribution
+	err = k.bankKeeper.SendCoinsFromModuleToModule(ctx,
+		types.FairburnPoolName,
+		authtypes.FeeCollectorName,
+		sdk.NewCoins(collectedFairburnFees),
+	)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
