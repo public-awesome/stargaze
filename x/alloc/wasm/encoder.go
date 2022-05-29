@@ -9,6 +9,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	sgwasm "github.com/public-awesome/stargaze/v5/internal/wasm"
+	"github.com/public-awesome/stargaze/v5/x/alloc/types"
 )
 
 var _ sgwasm.Encoder = Encoder
@@ -22,11 +23,12 @@ type FundFairburnPool struct {
 }
 
 func (fcp FundFairburnPool) Encode(contract sdk.AccAddress) ([]sdk.Msg, error) {
-	_, err := wasmkeeper.ConvertWasmCoinsToSdkCoins(fcp.Amount)
+	amount, err := wasmkeeper.ConvertWasmCoinsToSdkCoins(fcp.Amount)
 	if err != nil {
 		return nil, err
 	}
-	return []sdk.Msg{}, nil
+	msg := types.NewMsgFundFairburnPool(contract, amount)
+	return []sdk.Msg{msg}, nil
 }
 
 func Encoder(contract sdk.AccAddress, data json.RawMessage, version string) ([]sdk.Msg, error) {

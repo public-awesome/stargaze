@@ -12,9 +12,10 @@ const (
 	TypeMsgFundFairburnPool = "fund_fairburn_pool"
 )
 
-func NewMsgFundFairburnPool(sender string) *MsgFundFairburnPool {
+func NewMsgFundFairburnPool(sender sdk.AccAddress, amount sdk.Coins) *MsgFundFairburnPool {
 	return &MsgFundFairburnPool{
-		Sender: sender,
+		Sender: sender.String(),
+		Amount: amount,
 	}
 }
 
