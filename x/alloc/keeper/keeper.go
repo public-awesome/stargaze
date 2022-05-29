@@ -65,7 +65,7 @@ func (k Keeper) GetModuleAccount(ctx sdk.Context, moduleName string) authtypes.A
 	return k.accountKeeper.GetModuleAccount(ctx, moduleName)
 }
 
-func (k Keeper) FundFeeCollector(ctx sdk.Context, sender sdk.AccAddress, amount sdk.Coins) error {
+func (k Keeper) FundFairburlPool(ctx sdk.Context, sender sdk.AccAddress, amount sdk.Coins) error {
 	if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, sender, types.FairburnPoolName, amount); err != nil {
 		return err
 	}
