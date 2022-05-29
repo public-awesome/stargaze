@@ -14,6 +14,11 @@ service Msg {
   // account.
   rpc CreateVestingAccount(MsgCreateVestingAccount)
       returns (MsgCreateVestingAccountResponse);
+
+  // FundFeeCollector defines a method to allow an account to directly
+  // fund the fee collector module account.
+  rpc FundFeeCollector(MsgFundFeeCollector)
+      returns (MsgFundFeeCollectorResponse);
 }
 
 // MsgCreateVestingAccount defines a message that enables creating a vesting
@@ -36,3 +41,21 @@ message MsgCreateVestingAccount {
 // MsgCreateVestingAccountResponse defines the Msg/CreateVestingAccount response
 // type.
 message MsgCreateVestingAccountResponse {}
+
+// MsgFundFeeCollector allows an account to directly
+// fund the fee collector pool.
+message MsgFundFeeCollector {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string sender = 1;
+
+  repeated cosmos.base.v1beta1.Coin amount = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
+  ];
+}
+
+// MsgFundFeeCollectorResponse defines the Msg/MsgFundFeeCollector response
+// type.
+message MsgFundFeeCollectorResponse {}
