@@ -75,12 +75,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - ibc3
+        - v6-alpha
     when:
       event:
         - push
       branch:
-        - ibc-v3
+        - prepare-v6
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -315,7 +315,7 @@ steps:
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
-    image: publicawesome/stargaze:ibc3
+    image: publicawesome/stargaze:v6-alpha
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -364,6 +364,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: e4deb01c71df30289035dddcbc43ff45b235c080fda9d914dd2337d0029964d4
+hmac: b9597bbb1f6cd7182620492858abf2f406a95e4b396215a74062d48adadb2335
 
 ...

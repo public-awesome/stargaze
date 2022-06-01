@@ -5,8 +5,8 @@ import (
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
-	"github.com/public-awesome/stargaze/v5/app"
-	"github.com/public-awesome/stargaze/v5/cmd/starsd/cmd"
+	"github.com/public-awesome/stargaze/v6/app"
+	"github.com/public-awesome/stargaze/v6/cmd/starsd/cmd"
 	"github.com/spf13/cobra"
 	"github.com/tendermint/spm/cosmoscmd"
 )

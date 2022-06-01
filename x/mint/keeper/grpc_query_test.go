@@ -9,8 +9,8 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v5/app"
-	"github.com/public-awesome/stargaze/v5/x/mint/types"
+	"github.com/public-awesome/stargaze/v6/app"
+	"github.com/public-awesome/stargaze/v6/x/mint/types"
 )
 
 type MintTestSuite struct {

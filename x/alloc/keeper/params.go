@@ -2,7 +2,7 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v5/x/alloc/types"
+	"github.com/public-awesome/stargaze/v6/x/alloc/types"
 )
 
 // GetParams returns the total set of minting parameters.
