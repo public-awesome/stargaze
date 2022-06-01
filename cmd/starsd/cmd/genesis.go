@@ -26,7 +26,7 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	ibctransfertypes "github.com/cosmos/ibc-go/v2/modules/apps/transfer/types"
+	ibctransfertypes "github.com/cosmos/ibc-go/v3/modules/apps/transfer/types"
 	minttypes "github.com/public-awesome/stargaze/v5/x/mint/types"
 
 	// appParams "github.com/public-awesome/stargaze/app/params"
@@ -455,7 +455,7 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.ClaimParams = claimtypes.Params{
 		AirdropEnabled:     false,
 		AirdropStartTime:   genParams.GenesisTime.Add(time.Hour * 24 * 365), // 1 year (will be changed by gov)
-		DurationUntilDecay: time.Hour * 24 * 120,                            // 120 days = ~4 months
+		DurationUntilDecay: time.Hour * 24 * 240,                            // 120 days = ~4 months
 		DurationOfDecay:    time.Hour * 24 * 120,                            // 120 days = ~4 months
 		ClaimDenom:         genParams.NativeCoinMetadatas[0].Base,
 	}
@@ -468,7 +468,6 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.ConsensusParams.Version.AppVersion = 1
 
 	genParams.WasmParams = wasmtypes.DefaultParams()
-	genParams.WasmParams.MaxWasmCodeSize = 1000 * 1024 * 2 // 2000 KB
 
 	return genParams
 }
@@ -510,7 +509,7 @@ func TestnetGenesisParams() GenesisParams {
 	}
 	genParams.WasmParams.CodeUploadAccess = wasmtypes.AllowEverybody
 	genParams.WasmParams.InstantiateDefaultPermission = wasmtypes.AccessTypeEverybody
-	genParams.WasmParams.MaxWasmCodeSize = 1000 * 1024 * 2 // 1000kb
+
 	return genParams
 }
 
@@ -554,6 +553,6 @@ func LocalnetGenesisParams() GenesisParams {
 	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.1")    // 10%
 	genParams.GovParams.TallyParams.Threshold = sdk.MustNewDecFromStr("0.5") // 50%
 	genParams.GovParams.VotingParams.VotingPeriod = time.Minute * 1          // 5 min
-	genParams.WasmParams.MaxWasmCodeSize = 1000 * 1024 * 2                   // 2000kb
+	// genParams.WasmParams.MaxWasmCodeSize = 1000 * 1024 * 2                   // 2000kb
 	return genParams
 }

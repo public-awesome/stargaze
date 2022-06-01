@@ -7,14 +7,16 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	allocmoduletypes "github.com/public-awesome/stargaze/v5/x/alloc/types"
 )
 
 // next upgrade name
-const upgradeName = "v5"
+const upgradeName = "v6"
 
 // RegisterUpgradeHandlers returns upgrade handlers
 func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 	app.UpgradeKeeper.SetUpgradeHandler(upgradeName, func(ctx sdk.Context, plan upgradetypes.Plan, vm module.VersionMap) (module.VersionMap, error) {
+		app.AccountKeeper.GetModuleAccount(ctx, allocmoduletypes.FairburnPoolName)
 		return app.mm.RunMigrations(ctx, cfg, vm)
 	})
 
