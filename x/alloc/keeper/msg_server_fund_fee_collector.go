@@ -18,12 +18,16 @@ func (k msgServer) FundFairburnPool(goCtx context.Context, msg *types.MsgFundFai
 	if err != nil {
 		return nil, err
 	}
-	ctx.EventManager().EmitEvent(
+	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Sender),
+		),
+		sdk.NewEvent(
+			types.EventTypeFundFairburnPool,
 			sdk.NewAttribute(sdk.AttributeKeyAmount, msg.Amount.String()),
 		),
-	)
+	})
 	return &types.MsgFundFairburnPoolResponse{}, nil
 }
