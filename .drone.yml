@@ -31,7 +31,7 @@ steps:
         - '/go/pkg/mod'
 
   - name: test
-    image: publicawesome/golang:1.18.1-devtooling
+    image: publicawesome/golang:1.18.3-devtooling
     volumes:
       - name: cache
         path: /go
@@ -75,12 +75,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - ibc3
+        - v6-alpha
     when:
       event:
         - push
       branch:
-        - ibc-v3
+        - prepare-v6
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -177,7 +177,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/golang:1.18.1-devtooling
+    image: publicawesome/golang:1.18.3-devtooling
     volumes:
       - name: cache
         path: /go
@@ -256,7 +256,7 @@ steps:
       mount:
         - '/go/pkg/mod'
   - name: build-wrapper
-    image: publicawesome/golang:1.18.1-devtooling
+    image: publicawesome/golang:1.18.3-devtooling
     volumes:
       - name: cache
         path: /go
@@ -315,7 +315,7 @@ steps:
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
-    image: publicawesome/stargaze:ibc3
+    image: publicawesome/stargaze:v6-alpha
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -364,6 +364,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: e4deb01c71df30289035dddcbc43ff45b235c080fda9d914dd2337d0029964d4
+hmac: 1ea486eda981b385da7859e2ed088f0efc2f24729c12d3897fb0389139d5bf74
 
 ...

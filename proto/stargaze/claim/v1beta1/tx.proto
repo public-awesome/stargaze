@@ -7,7 +7,7 @@ import "stargaze/claim/v1beta1/claim_record.proto";
 
 // this line is used by starport scaffolding # proto/tx/import
 
-option go_package = "github.com/public-awesome/stargaze/v5/x/claim/types";
+option go_package = "github.com/public-awesome/stargaze/v6/x/claim/types";
 
 // Msg defines the Msg service.
 service Msg {

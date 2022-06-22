@@ -1,4 +1,4 @@
-module github.com/public-awesome/stargaze/v5
+module github.com/public-awesome/stargaze/v6
 
 go 1.18
 

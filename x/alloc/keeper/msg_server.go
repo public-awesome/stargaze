@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"github.com/public-awesome/stargaze/v5/x/alloc/types"
+	"github.com/public-awesome/stargaze/v6/x/alloc/types"
 )
 
 type msgServer struct {
