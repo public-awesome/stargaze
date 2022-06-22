@@ -80,7 +80,7 @@ steps:
       event:
         - push
       branch:
-        - prepare-v6
+        - feature/bump-sdk-version
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -364,6 +364,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 1ea486eda981b385da7859e2ed088f0efc2f24729c12d3897fb0389139d5bf74
+hmac: ef69549934db69aa1e98e17d0b9600148df91c7b56bbc9d1c07de3a32a530dac
 
 ...
