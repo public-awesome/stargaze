@@ -311,10 +311,11 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: proposal
-    image: publicawesome/stargaze:4.0.0
+    image: publicawesome/stargaze:5.0.0
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
+    pull: true
     image: publicawesome/stargaze:v6-beta
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
@@ -364,6 +365,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 842944233ac336ba2fe075ee71eb9ffe3541d3b713ebb70139b13d19cde5085d
+hmac: 914da8c365cc04225d4f414b45e08d85db056ecba8070e9e3c289adbd1ece37d
 
 ...
