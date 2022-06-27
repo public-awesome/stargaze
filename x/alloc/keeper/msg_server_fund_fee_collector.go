@@ -4,20 +4,17 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v6/x/claim/types"
+	"github.com/public-awesome/stargaze/v6/x/alloc/types"
 )
 
-func (k msgServer) InitialClaim(goCtx context.Context, msg *types.MsgInitialClaim) (*types.MsgInitialClaimResponse, error) {
+func (k msgServer) FundFairburnPool(goCtx context.Context, msg *types.MsgFundFairburnPool) (*types.MsgFundFairburnPoolResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
 	sender, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		return nil, err
 	}
-	params := k.GetParams(ctx)
-	if !params.IsAirdropEnabled(ctx.BlockTime()) {
-		return nil, types.ErrAirdropNotEnabled
-	}
-	coins, err := k.Keeper.ClaimCoinsForAction(ctx, sender, types.ActionInitialClaim)
+	err = k.sendToFairburnPool(ctx, sender, msg.Amount)
 	if err != nil {
 		return nil, err
 	}
@@ -27,8 +24,10 @@ func (k msgServer) InitialClaim(goCtx context.Context, msg *types.MsgInitialClai
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Sender),
 		),
+		sdk.NewEvent(
+			types.EventTypeFundFairburnPool,
+			sdk.NewAttribute(sdk.AttributeKeyAmount, msg.Amount.String()),
+		),
 	})
-	return &types.MsgInitialClaimResponse{
-		ClaimedAmount: coins,
-	}, nil
+	return &types.MsgFundFairburnPoolResponse{}, nil
 }

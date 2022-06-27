@@ -6,7 +6,7 @@ import "cosmos/base/v1beta1/coin.proto";
 
 // this line is used by starport scaffolding # proto/tx/import
 
-option go_package = "github.com/public-awesome/stargaze/v5/x/alloc/types";
+option go_package = "github.com/public-awesome/stargaze/v6/x/alloc/types";
 
 // Msg defines the alloc Msg service.
 service Msg {
@@ -14,6 +14,11 @@ service Msg {
   // account.
   rpc CreateVestingAccount(MsgCreateVestingAccount)
       returns (MsgCreateVestingAccountResponse);
+
+  // FundFairburnPool defines a method to allow an account to directly
+  // fund the fee collector module account.
+  rpc FundFairburnPool(MsgFundFairburnPool)
+      returns (MsgFundFairburnPoolResponse);
 }
 
 // MsgCreateVestingAccount defines a message that enables creating a vesting
@@ -36,3 +41,21 @@ message MsgCreateVestingAccount {
 // MsgCreateVestingAccountResponse defines the Msg/CreateVestingAccount response
 // type.
 message MsgCreateVestingAccountResponse {}
+
+// MsgFundFairburnPool allows an account to directly
+// fund the fee collector pool.
+message MsgFundFairburnPool {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string sender = 1;
+
+  repeated cosmos.base.v1beta1.Coin amount = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
+  ];
+}
+
+// MsgFundFairburnPoolResponse defines the Msg/MsgFundFairburnPool response
+// type.
+message MsgFundFairburnPoolResponse {}

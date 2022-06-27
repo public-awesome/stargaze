@@ -31,7 +31,7 @@ steps:
         - '/go/pkg/mod'
 
   - name: test
-    image: publicawesome/golang:1.18.1-devtooling
+    image: publicawesome/golang:1.18.3-devtooling
     volumes:
       - name: cache
         path: /go
@@ -46,8 +46,8 @@ steps:
         path: /go
     commands:
       - apk add --no-cache ca-certificates build-base git
-      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0-beta10/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.a
-      - echo "2f44efa9c6c1cda138bd1f46d8d53c5ebfe1f4a53cf3457b01db86472c4917ac  /lib/libwasmvm_muslc.a" | sha256sum -c
+      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.a
+      - echo "f6282df732a13dec836cda1f399dd874b1e3163504dbd9607c6af915b2740479  /lib/libwasmvm_muslc.a" | sha256sum -c
       - LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true  make build
       - echo "Ensuring binary is statically linked ..." && (file $PWD/bin/starsd | grep "statically linked")
     environment:
@@ -75,12 +75,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - latest
+        - v6-beta
     when:
       event:
         - push
       branch:
-        - main
+        - feature/bump-sdk-version
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -177,7 +177,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/golang:1.18.1-devtooling
+    image: publicawesome/golang:1.18.3-devtooling
     volumes:
       - name: cache
         path: /go
@@ -256,7 +256,7 @@ steps:
       mount:
         - '/go/pkg/mod'
   - name: build-wrapper
-    image: publicawesome/golang:1.18.1-devtooling
+    image: publicawesome/golang:1.18.3-devtooling
     volumes:
       - name: cache
         path: /go
@@ -281,7 +281,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:4.0.0
+    image: publicawesome/stargaze:5.0.0
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
@@ -311,11 +311,12 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: proposal
-    image: publicawesome/stargaze:4.0.0
+    image: publicawesome/stargaze:5.0.0
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
-    image: publicawesome/stargaze:v5alpha
+    pull: true
+    image: publicawesome/stargaze:v6-beta
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -364,6 +365,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: cbed26a1a5a9a788b56f84fea008ecf153f53ffb20b0755f0c08f9f0ffa707c5
+hmac: dd858d75cb427a760fa37eade8bee8b4741ddfa0a443abf8c207ea9c7e0bf32d
 
 ...

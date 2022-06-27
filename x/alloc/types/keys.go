@@ -7,6 +7,9 @@ const (
 	// StoreKey defines the primary module store key
 	StoreKey = ModuleName
 
+	// Fairburn pool name
+	FairburnPoolName = "fairburn_pool"
+
 	// RouterKey is the message route for slashing
 	RouterKey = ModuleName
 

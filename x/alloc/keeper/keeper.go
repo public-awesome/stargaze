@@ -9,7 +9,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/public-awesome/stargaze/v5/x/alloc/types"
+	"github.com/public-awesome/stargaze/v6/x/alloc/types"
 )
 
 type (
@@ -60,6 +60,18 @@ func (k Keeper) GetModuleAccountAddress(ctx sdk.Context) sdk.AccAddress {
 	return k.accountKeeper.GetModuleAddress(types.ModuleName)
 }
 
+// GetModuleAccountBalance gets the airdrop coin balance of module account
+func (k Keeper) GetModuleAccount(ctx sdk.Context, moduleName string) authtypes.AccountI {
+	return k.accountKeeper.GetModuleAccount(ctx, moduleName)
+}
+
+func (k Keeper) sendToFairburnPool(ctx sdk.Context, sender sdk.AccAddress, amount sdk.Coins) error {
+	if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, sender, types.FairburnPoolName, amount); err != nil {
+		return err
+	}
+	return nil
+}
+
 // DistributeInflation distributes module-specific inflation
 func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 	blockInflationAddr := k.accountKeeper.GetModuleAccount(ctx, authtypes.FeeCollectorName).GetAddress()
@@ -100,7 +112,20 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 			k.Logger(ctx).Debug("sent coins to developer", "amount", devRewardPortionCoins.String(), "from", blockInflationAddr)
 		}
 	}
-
+	fairburnPoolAddress := k.accountKeeper.GetModuleAccount(ctx, types.FairburnPoolName).GetAddress()
+	collectedFairburnFees := k.bankKeeper.GetBalance(ctx, fairburnPoolAddress, k.stakingKeeper.BondDenom(ctx))
+	if collectedFairburnFees.IsZero() {
+		return nil
+	}
+	// transfer collected fees from fairburn to the fee collector for distribution
+	err = k.bankKeeper.SendCoinsFromModuleToModule(ctx,
+		types.FairburnPoolName,
+		authtypes.FeeCollectorName,
+		sdk.NewCoins(collectedFairburnFees),
+	)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

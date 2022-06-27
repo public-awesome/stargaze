@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"time"
 )
 
 func main() {
@@ -21,7 +22,7 @@ func main() {
 	if err := cmd.Start(); err != nil {
 		log.Fatal(err)
 	}
-	server := &http.Server{Addr: ":8090", Handler: nil}
+	server := &http.Server{Addr: ":8090", Handler: nil, ReadHeaderTimeout: time.Second * 5}
 	http.HandleFunc("/kill", func(w http.ResponseWriter, r *http.Request) {
 		err := cmd.Process.Kill()
 		if err != nil {

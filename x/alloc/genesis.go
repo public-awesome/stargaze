@@ -2,14 +2,15 @@ package alloc
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v5/x/alloc/keeper"
-	"github.com/public-awesome/stargaze/v5/x/alloc/types"
+	"github.com/public-awesome/stargaze/v6/x/alloc/keeper"
+	"github.com/public-awesome/stargaze/v6/x/alloc/types"
 )
 
 // InitGenesis initializes the capability module's state from a provided genesis
 // state.
 func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) {
 	k.SetParams(ctx, genState.Params)
+	k.GetModuleAccount(ctx, types.FairburnPoolName)
 	err := k.FundCommunityPool(ctx)
 	if err != nil {
 		panic(err)
