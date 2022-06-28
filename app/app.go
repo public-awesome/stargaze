@@ -100,6 +100,7 @@ import (
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	"github.com/public-awesome/stargaze/v6/docs"
+	sgstatesync "github.com/public-awesome/stargaze/v6/internal/statesync"
 	sgwasm "github.com/public-awesome/stargaze/v6/internal/wasm"
 	allocmodule "github.com/public-awesome/stargaze/v6/x/alloc"
 	allocmodulekeeper "github.com/public-awesome/stargaze/v6/x/alloc/keeper"
@@ -654,6 +655,7 @@ func NewStargazeApp(
 	if manager := app.SnapshotManager(); manager != nil {
 		err := manager.RegisterExtensions(
 			wasmkeeper.NewWasmSnapshotter(app.CommitMultiStore(), &app.WasmKeeper),
+			sgstatesync.NewVersionSnapshotter(app.CommitMultiStore(), app, app),
 		)
 		if err != nil {
 			panic(fmt.Errorf("failed to register snapshot extension: %s", err))
