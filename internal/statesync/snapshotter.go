@@ -57,9 +57,7 @@ func (vs *VersionSnapshotter) Snapshot(height uint64, protoWriter protoio.Writer
 		appVersion = params.Version.GetAppVersion()
 	}
 	bz := sdk.Uint64ToBigEndian(appVersion)
-	snapshot.WriteExtensionItem(protoWriter, bz)
-
-	return nil
+	return snapshot.WriteExtensionItem(protoWriter, bz)
 }
 
 // Restore restores a state snapshot from the protobuf items read from the reader.
