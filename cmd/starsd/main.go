@@ -3,11 +3,9 @@ package main
 import (
 	"os"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 	"github.com/public-awesome/stargaze/v6/app"
 	"github.com/public-awesome/stargaze/v6/cmd/starsd/cmd"
-	"github.com/spf13/cobra"
 	"github.com/tendermint/spm/cosmoscmd"
 )
 
@@ -22,9 +20,7 @@ func main() {
 		cosmoscmd.AddSubCmd(cmd.TestnetCmd(app.ModuleBasics)),
 		cosmoscmd.AddCustomInitCmd(cmd.InitCmd(app.ModuleBasics, app.DefaultNodeHome)),
 		cosmoscmd.AddSubCmd(cmd.PrepareGenesisCmd(app.DefaultNodeHome, app.ModuleBasics)),
-		cosmoscmd.CustomizeStartCmd(func(startCmd *cobra.Command) {
-			wasm.AddModuleInitFlags(startCmd)
-		}),
+		cosmoscmd.CustomizeStartCmd(cmd.CustomStart),
 		cosmoscmd.AddSubCmd(cmd.AddGenesisWasmMsgCmd(app.DefaultNodeHome)),
 		// this line is used by starport scaffolding # root/arguments
 	)
