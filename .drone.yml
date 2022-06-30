@@ -40,7 +40,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: build
-    image: golang:1.18.1-alpine3.15
+    image: golang:1.18.3-alpine3.15
     volumes:
       - name: cache
         path: /go
@@ -80,7 +80,7 @@ steps:
       event:
         - push
       branch:
-        - feature/bump-sdk-version
+        - feature/prepare-release
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -96,7 +96,7 @@ steps:
         - tag
 
   - name: release
-    image: golang:1.18.0
+    image: golang:1.18.3
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -365,6 +365,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: dd858d75cb427a760fa37eade8bee8b4741ddfa0a443abf8c207ea9c7e0bf32d
+hmac: 7f71a112a21fe87f49d6c110e02944d1978a7039c6e51a330d2f7ec17c38859c
 
 ...
