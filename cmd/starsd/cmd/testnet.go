@@ -12,14 +12,8 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
-	"time"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/testutil"
-	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	claimtypes "github.com/public-awesome/stargaze/v6/x/claim/types"
-	minttypes "github.com/public-awesome/stargaze/v6/x/mint/types"
 	"github.com/spf13/cobra"
 	tmconfig "github.com/tendermint/tendermint/config"
 	tmos "github.com/tendermint/tendermint/libs/os"
@@ -27,8 +21,6 @@ import (
 	"github.com/tendermint/tendermint/types"
 	tmtime "github.com/tendermint/tendermint/types/time"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
-	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -122,6 +114,29 @@ Example:
 
 const nodeDirPerm = 0755
 
+func getSimappConfig(chainID, gasPrices string, statesync bool) *srvconfig.Config {
+	simappConfig := srvconfig.DefaultConfig()
+	simappConfig.MinGasPrices = gasPrices
+	simappConfig.PruningKeepEvery = "0"
+	simappConfig.PruningInterval = "11"
+	simappConfig.PruningKeepRecent = "5"
+	if statesync {
+		simappConfig.PruningKeepEvery = "2000"
+		simappConfig.StateSync.SnapshotInterval = 2000
+		simappConfig.StateSync.SnapshotKeepRecent = 2
+	}
+
+	simappConfig.API.Enable = true
+	simappConfig.API.EnableUnsafeCORS = true
+	simappConfig.API.Swagger = true
+	simappConfig.GRPCWeb.EnableUnsafeCORS = true
+	simappConfig.Telemetry.Enabled = true
+	simappConfig.Telemetry.PrometheusRetentionTime = 60
+	simappConfig.Telemetry.EnableHostnameLabel = false
+	simappConfig.Telemetry.GlobalLabels = [][]string{{"chain_id", chainID}}
+	return simappConfig
+}
+
 // Initialize the testnet
 func InitTestnet(
 	clientCtx client.Context,
@@ -146,14 +161,6 @@ func InitTestnet(
 
 	nodeIDs := make([]string, numValidators)
 	valPubKeys := make([]cryptotypes.PubKey, numValidators)
-
-	simappConfig := srvconfig.DefaultConfig()
-	simappConfig.MinGasPrices = minGasPrices
-	simappConfig.API.Enable = true
-	simappConfig.Telemetry.Enabled = true
-	simappConfig.Telemetry.PrometheusRetentionTime = 60
-	simappConfig.Telemetry.EnableHostnameLabel = false
-	simappConfig.Telemetry.GlobalLabels = [][]string{{"chain_id", chainID}}
 
 	var (
 		genAccounts []authtypes.GenesisAccount
@@ -199,6 +206,7 @@ func InitTestnet(
 		initialPort = endPort + 1
 
 		nodeConfig.SetRoot(nodeDir)
+		nodeConfig.RPC.CORSAllowedOrigins = []string{"*"}
 		nodeConfig.RPC.ListenAddress = "tcp://0.0.0.0:26657"
 
 		if err := os.MkdirAll(filepath.Join(nodeDir, "config"), nodeDirPerm); err != nil {
@@ -292,6 +300,7 @@ func InitTestnet(
 			return err
 		}
 
+		simappConfig := getSimappConfig(chainID, minGasPrices, i == 0)
 		srvconfig.WriteConfigFile(filepath.Join(nodeDir, "config/app.toml"), simappConfig)
 	}
 
@@ -373,7 +382,10 @@ func initGenFiles(
 	snapshot := &Snapshot{}
 	if snapshotFileName != "" {
 		// read snapshot.json and parse into struct
-		snapshotFile, _ := ioutil.ReadFile(snapshotFileName)
+		snapshotFile, err := ioutil.ReadFile(snapshotFileName)
+		if err != nil {
+			return err
+		}
 		err = json.Unmarshal(snapshotFile, snapshot)
 		if err != nil {
 			return err
@@ -508,93 +520,4 @@ func docker(nodes []TestnetNode, tag string) (string, error) {
 		return "", err
 	}
 	return buf.String(), nil
-}
-
-func initGenesis(
-	cdc codec.JSONCodec,
-	genDoc *types.GenesisDoc,
-	stakeDenom,
-	unbondingPeriod string,
-) (json.RawMessage, error) {
-	appState := make(map[string]json.RawMessage)
-	if err := json.Unmarshal(genDoc.AppState, &appState); err != nil {
-		return nil, fmt.Errorf("failed to JSON unmarshal initial genesis state %w", err)
-	}
-	// migrate staking state
-	if appState[stakingtypes.ModuleName] != nil {
-		var stakingGenState stakingtypes.GenesisState
-		err := cdc.UnmarshalJSON(appState[stakingtypes.ModuleName], &stakingGenState)
-		if err != nil {
-			return nil, err
-		}
-
-		stakingGenState.Params.BondDenom = stakeDenom
-
-		d, err := time.ParseDuration(unbondingPeriod)
-		if err != nil {
-			return nil, fmt.Errorf("failed to parse unbonding period %w", err)
-		}
-		stakingGenState.Params.UnbondingTime = d
-
-		appState[stakingtypes.ModuleName] = cdc.MustMarshalJSON(&stakingGenState)
-	}
-
-	// migrate crisis state
-	if appState[crisistypes.ModuleName] != nil {
-		var crisisGenState crisistypes.GenesisState
-		err := cdc.UnmarshalJSON(appState[crisistypes.ModuleName], &crisisGenState)
-		if err != nil {
-			return nil, err
-		}
-		crisisGenState.ConstantFee.Denom = stakeDenom
-		appState[crisistypes.ModuleName] = cdc.MustMarshalJSON(&crisisGenState)
-	}
-
-	// migrate gov state
-	if appState[govtypes.ModuleName] != nil {
-		var govGenState govtypes.GenesisState
-		err := cdc.UnmarshalJSON(appState[govtypes.ModuleName], &govGenState)
-		if err != nil {
-			return nil, err
-		}
-		minDeposit := sdk.NewInt64Coin(stakeDenom, 10_000_000)
-		govGenState.DepositParams.MinDeposit = sdk.NewCoins(minDeposit)
-		appState[govtypes.ModuleName] = cdc.MustMarshalJSON(&govGenState)
-	}
-	// migrate mint state
-	if appState[minttypes.ModuleName] != nil {
-		var mintGenState minttypes.GenesisState
-		err := cdc.UnmarshalJSON(appState[minttypes.ModuleName], &mintGenState)
-		if err != nil {
-			return nil, err
-		}
-		mintGenState.Params.MintDenom = stakeDenom
-		mintGenState.Params.StartTime = time.Now()
-		appState[minttypes.ModuleName] = cdc.MustMarshalJSON(&mintGenState)
-	}
-
-	// claim
-
-	if appState[claimtypes.ModuleName] != nil {
-		var claimGenState claimtypes.GenesisState
-		err := cdc.UnmarshalJSON(appState[claimtypes.ModuleName], &claimGenState)
-		if err != nil {
-			return nil, err
-		}
-		claimGenState.ModuleAccountBalance = sdk.NewCoin(stakeDenom, claimGenState.ModuleAccountBalance.Amount)
-		claimGenState.Params.ClaimDenom = stakeDenom
-		appState[claimtypes.ModuleName] = cdc.MustMarshalJSON(&claimGenState)
-	}
-
-	// wasm
-	if appState[wasmtypes.ModuleName] != nil {
-		wasmGenesisState := &wasm.GenesisState{
-			Params: wasmtypes.DefaultParams(),
-		}
-		wasmGenesisState.Params.CodeUploadAccess = wasmtypes.AllowEverybody
-		wasmGenesisState.Params.InstantiateDefaultPermission = wasmtypes.AccessTypeEverybody
-		appState[wasmtypes.ModuleName] = cdc.MustMarshalJSON(wasmGenesisState)
-	}
-
-	return json.Marshal(appState)
 }
