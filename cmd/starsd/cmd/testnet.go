@@ -303,6 +303,9 @@ func InitTestnet(
 		simappConfig := getSimappConfig(chainID, minGasPrices, i == 0)
 		srvconfig.WriteConfigFile(filepath.Join(nodeDir, "config/app.toml"), simappConfig)
 	}
+	for i, node := range nodes {
+		fmt.Printf("Node %s, id [%s] outside port: %s \n", node.Name, nodeIDs[i], node.OutsidePortRange)
+	}
 
 	genAccounts = authtypes.SanitizeGenesisAccounts(genAccounts)
 	genBalances = banktypes.SanitizeGenesisBalances(genBalances)
@@ -382,7 +385,7 @@ func initGenFiles(
 	snapshot := &Snapshot{}
 	if snapshotFileName != "" {
 		// read snapshot.json and parse into struct
-		snapshotFile, err := ioutil.ReadFile(snapshotFileName)
+		snapshotFile, err := ioutil.ReadFile(filepath.Clean(snapshotFileName))
 		if err != nil {
 			return err
 		}
