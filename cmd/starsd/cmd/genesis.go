@@ -476,6 +476,8 @@ func MainnetGenesisParams() GenesisParams {
 func TestnetGenesisParams() GenesisParams {
 	genParams := MainnetGenesisParams()
 
+	genParams.ClaimParams.AirdropEnabled = true
+	genParams.ClaimParams.AirdropStartTime = genParams.GenesisTime
 	genParams.AirdropSupply = sdk.NewInt(250_000_000_000_000)              // 250M STARS
 	genParams.GenesisTime = time.Date(2022, 02, 17, 17, 0, 0, 0, time.UTC) // Feb 17
 

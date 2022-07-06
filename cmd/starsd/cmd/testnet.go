@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -26,6 +27,8 @@ import (
 	"github.com/tendermint/tendermint/types"
 	tmtime "github.com/tendermint/tendermint/types/time"
 
+	"github.com/CosmWasm/wasmd/x/wasm"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -54,8 +57,8 @@ var (
 	flagUnbondingPeriod      = "unbonding-period"
 	flagInitialCoins         = "coins"
 	flagInitialStakingAmount = "initial-staking-amount"
-
-	defaultBondDenom = "ustarx"
+	flagSnapshotFile         = "snapshot-file"
+	defaultBondDenom         = "ustars"
 )
 
 // get cmd to initialize all files for tendermint testnet and application
@@ -102,16 +105,17 @@ Example:
 	cmd.Flags().String(flagNodeDaemonHome, "starsd", "Home directory of the node's daemon configuration")
 	cmd.Flags().String(flagStartingIPAddress, "192.168.0.1", "Starting IP address (192.168.0.1 results in persistent peers list ID0@192.168.0.1:46656, ID1@192.168.0.2:46656, ...)")
 	cmd.Flags().String(flags.FlagChainID, "", "genesis file chain-id, if left blank will be randomly created")
-	cmd.Flags().String(server.FlagMinGasPrices, fmt.Sprintf("0.000006%s", defaultBondDenom), "Minimum gas prices to accept for transactions; All fees in a tx must meet this minimum (e.g. 0.01photino,0.001stake)")
+	cmd.Flags().String(server.FlagMinGasPrices, fmt.Sprintf("0%s", defaultBondDenom), "Minimum gas prices to accept for transactions; All fees in a tx must meet this minimum (e.g. 0.01photino,0.001stake)")
 	cmd.Flags().String(flags.FlagKeyringBackend, flags.DefaultKeyringBackend, "Select keyring's backend (os|file|test)")
 	cmd.Flags().String(flags.FlagKeyAlgorithm, string(hd.Secp256k1Type), "Key signing algorithm to generate keys for")
 	cmd.Flags().String(flagStakeDenom, defaultBondDenom, "app's stake denom")
 	cmd.Flags().Int64(flagInitialStakingAmount, 100000000,
 		"Flag initial staking amount: 100000000")
 	cmd.Flags().String(flagInitialCoins, fmt.Sprintf("1000000000%s", defaultBondDenom),
-		"Validator genesis coins: 100000ustarx")
+		"Validator genesis coins: 100000ustars")
 	cmd.Flags().String(flagDockerTag, "latest", "docker tag for testnet command")
 	cmd.Flags().String(flagUnbondingPeriod, "72h", "app's unbonding period")
+	cmd.Flags().String(flagSnapshotFile, "", "snapshot filename for airdrop")
 
 	return cmd
 }
@@ -172,10 +176,6 @@ func InitTestnet(
 		return err
 	}
 	valCoins, err := sdk.ParseCoinsNormalized(initialCoins)
-	if err != nil {
-		return err
-	}
-	unbondingPeriod, err := cmd.Flags().GetString(flagUnbondingPeriod)
 	if err != nil {
 		return err
 	}
@@ -298,7 +298,11 @@ func InitTestnet(
 	genAccounts = authtypes.SanitizeGenesisAccounts(genAccounts)
 	genBalances = banktypes.SanitizeGenesisBalances(genBalances)
 
-	if err := initGenFiles(clientCtx, mbm, chainID, stakeDenom, unbondingPeriod, genAccounts, genBalances, genFiles, numValidators); err != nil {
+	snapshotFile, err := cmd.Flags().GetString(flagSnapshotFile)
+	if err != nil {
+		return err
+	}
+	if err := initGenFiles(clientCtx, mbm, chainID, snapshotFile, genAccounts, genBalances, genFiles, numValidators); err != nil {
 		return err
 	}
 
@@ -329,7 +333,7 @@ func InitTestnet(
 }
 
 func initGenFiles(
-	clientCtx client.Context, mbm module.BasicManager, chainID, stakeDenom, unbondingPeriod string,
+	clientCtx client.Context, mbm module.BasicManager, chainID, snapshotFileName string,
 	genAccounts []authtypes.GenesisAccount, genBalances []banktypes.Balance,
 	genFiles []string, numValidators int,
 ) error {
@@ -360,16 +364,38 @@ func initGenFiles(
 		return err
 	}
 
-	genDoc := types.GenesisDoc{
+	genDoc := &types.GenesisDoc{
 		ChainID:    chainID,
 		AppState:   appGenStateJSON,
 		Validators: nil,
 	}
-	genDoc.AppState, err = initGenesis(clientCtx.Codec, &genDoc, stakeDenom, unbondingPeriod)
+
+	snapshot := &Snapshot{}
+	if snapshotFileName != "" {
+		// read snapshot.json and parse into struct
+		snapshotFile, _ := ioutil.ReadFile(snapshotFileName)
+		err = json.Unmarshal(snapshotFile, snapshot)
+		if err != nil {
+			return err
+		}
+	}
+
+	appGenState, genDoc, err = PrepareGenesis(clientCtx, appGenState, genDoc, TestnetGenesisParams(), chainID, *snapshot)
 	if err != nil {
 		return err
 	}
+	// validate genesis state
+	if err = mbm.ValidateGenesis(clientCtx.Codec, clientCtx.TxConfig, appGenState); err != nil {
+		return fmt.Errorf("error validating genesis file: %s", err.Error())
+	}
 
+	// save genesis
+	appStateJSON, err := json.Marshal(appGenState)
+	if err != nil {
+		return fmt.Errorf("failed to marshal application genesis state: %w", err)
+	}
+
+	genDoc.AppState = appStateJSON
 	// generate empty genesis files for each validator and save
 	for i := 0; i < numValidators; i++ {
 		if err := genDoc.SaveAs(genFiles[i]); err != nil {
@@ -454,6 +480,7 @@ version: '3.1'
 services:{{range $node := .Nodes }}
 	{{ $node.Name }}:
 		image: publicawesome/stargaze:{{ $.Tag }}
+		pull_policy: always
 		restart: always
 		ports:
 			- {{ $node.OutsidePortRange}}:{{ $node.InsidePortRange}}
@@ -557,6 +584,16 @@ func initGenesis(
 		claimGenState.ModuleAccountBalance = sdk.NewCoin(stakeDenom, claimGenState.ModuleAccountBalance.Amount)
 		claimGenState.Params.ClaimDenom = stakeDenom
 		appState[claimtypes.ModuleName] = cdc.MustMarshalJSON(&claimGenState)
+	}
+
+	// wasm
+	if appState[wasmtypes.ModuleName] != nil {
+		wasmGenesisState := &wasm.GenesisState{
+			Params: wasmtypes.DefaultParams(),
+		}
+		wasmGenesisState.Params.CodeUploadAccess = wasmtypes.AllowEverybody
+		wasmGenesisState.Params.InstantiateDefaultPermission = wasmtypes.AccessTypeEverybody
+		appState[wasmtypes.ModuleName] = cdc.MustMarshalJSON(wasmGenesisState)
 	}
 
 	return json.Marshal(appState)
