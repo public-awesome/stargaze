@@ -48,8 +48,8 @@ func (s *KeeperTestSuite) TestModuleAccountCreated() {
 	moduleAddress := app.AccountKeeper.GetModuleAddress(types.ModuleName)
 	balance := app.BankKeeper.GetBalance(ctx, moduleAddress, types.DefaultClaimDenom)
 	s.Require().Equal(fmt.Sprintf("10000000%s", types.DefaultClaimDenom), balance.String())
-
 }
+
 func (s *KeeperTestSuite) TestClaimFor() {
 	pub1 := secp256k1.GenPrivKey().PubKey()
 	pub2 := secp256k1.GenPrivKey().PubKey()
@@ -165,7 +165,6 @@ func (s *KeeperTestSuite) TestClaimFor() {
 	s.Require().False(record.ActionCompleted[1])
 	s.Require().True(record.ActionCompleted[2])
 	s.Require().Equal([]bool{false, false, true, false, false}, record.ActionCompleted)
-
 }
 
 func TestKeeperTestSuite(t *testing.T) {

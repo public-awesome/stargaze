@@ -20,6 +20,7 @@ func CheckLibwasmVersion(cmd *cobra.Command, args []string) error {
 	}
 	return nil
 }
+
 func CustomStart(startCmd *cobra.Command) {
 	wasm.AddModuleInitFlags(startCmd)
 	startCmd.PreRunE = chainPreRuns(CheckLibwasmVersion, startCmd.PreRunE)

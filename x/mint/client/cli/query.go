@@ -44,7 +44,6 @@ func GetCmdQueryParams() *cobra.Command {
 
 			params := &types.QueryParamsRequest{}
 			res, err := queryClient.Params(cmd.Context(), params)
-
 			if err != nil {
 				return err
 			}
@@ -74,7 +73,6 @@ func GetCmdQueryAnnualProvisions() *cobra.Command {
 
 			params := &types.QueryAnnualProvisionsRequest{}
 			res, err := queryClient.AnnualProvisions(cmd.Context(), params)
-
 			if err != nil {
 				return err
 			}

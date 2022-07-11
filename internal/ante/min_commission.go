@@ -18,6 +18,7 @@ func NewMinCommissionDecorator(codec codec.BinaryCodec) MinCommissionDecorator {
 		codec,
 	}
 }
+
 func checkCommission(m sdk.Msg) error {
 	switch msg := m.(type) {
 	case *stakingtypes.MsgCreateValidator:
@@ -38,6 +39,7 @@ func checkCommission(m sdk.Msg) error {
 	}
 	return nil
 }
+
 func (dec MinCommissionDecorator) Validate(m sdk.Msg) error {
 	err := checkCommission(m)
 	if err != nil {
@@ -61,7 +63,8 @@ func (dec MinCommissionDecorator) Validate(m sdk.Msg) error {
 
 func (dec MinCommissionDecorator) AnteHandle(
 	ctx sdk.Context, tx sdk.Tx,
-	simulate bool, next sdk.AnteHandler) (newCtx sdk.Context, err error) {
+	simulate bool, next sdk.AnteHandler,
+) (newCtx sdk.Context, err error) {
 	msgs := tx.GetMsgs()
 	for _, m := range msgs {
 		err := dec.Validate(m)
