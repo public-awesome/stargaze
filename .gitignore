@@ -9,6 +9,7 @@ node_modules/
 .env
 build/
 *.swp
+.vscode
 
 coverage.txt
 *.json
