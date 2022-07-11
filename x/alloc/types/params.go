@@ -23,7 +23,6 @@ func NewParams(
 	distrProportions DistributionProportions,
 	weightedDevRewardsReceivers []WeightedAddress,
 ) Params {
-
 	return Params{
 		DistributionProportions:           distrProportions,
 		WeightedDeveloperRewardsReceivers: weightedDevRewardsReceivers,

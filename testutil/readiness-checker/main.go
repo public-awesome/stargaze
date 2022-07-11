@@ -46,8 +46,8 @@ func waitFor(timeout time.Duration, blocks int, url string, ch chan<- error) {
 			return
 		}
 	}
-
 }
+
 func exists(path string) bool {
 	_, err := os.Stat(path)
 	return !errors.Is(err, os.ErrNotExist)
