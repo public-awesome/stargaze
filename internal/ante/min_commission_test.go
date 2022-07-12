@@ -102,8 +102,8 @@ func TestMinCommissionAnteHandler(t *testing.T) {
 
 	validator = checkValidator(t, app, sdk.ValAddress(addr1), true)
 	require.Equal(t, com, validator.Commission.Rate)
-
 }
+
 func TestMinCommissionAuthzAnteHandler(t *testing.T) {
 	priv1 := secp256k1.GenPrivKey()
 	pub1 := priv1.PubKey()

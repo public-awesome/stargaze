@@ -29,7 +29,6 @@ func ParamKeyTable() paramtypes.KeyTable {
 func NewParams(
 	mintDenom string, startTime time.Time, initialAnnualProvisions, reductionFactor sdk.Dec, blocksPerYear uint64,
 ) Params {
-
 	return Params{
 		MintDenom:               mintDenom,
 		StartTime:               startTime,

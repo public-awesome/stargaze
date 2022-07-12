@@ -29,7 +29,6 @@ by the '--delayed' flag. The start_time, end_time must be provided as a UNIX epo
 timestamp.`,
 		Args: cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
