@@ -132,7 +132,8 @@ func SetupWithGenesisAccounts(t *testing.T, dir string, genAccs []authtypes.Gene
 func genesisStateWithValSet(t *testing.T,
 	app *stargazeapp.App, genesisState stargazeapp.GenesisState,
 	valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount,
-	balances ...banktypes.Balance) stargazeapp.GenesisState {
+	balances ...banktypes.Balance,
+) stargazeapp.GenesisState {
 	// set genesis accounts
 	authGenesis := authtypes.NewGenesisState(authtypes.DefaultParams(), genAccs)
 	genesisState[authtypes.ModuleName] = app.AppCodec().MustMarshalJSON(authGenesis)

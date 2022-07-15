@@ -245,8 +245,8 @@ func (suite *KeeperTestSuite) TestNotRunningGenesisBlock() {
 	coins1, err = suite.app.ClaimKeeper.GetUserTotalClaimable(suite.ctx, addr1)
 	suite.Require().NoError(err)
 	suite.Require().Equal(coins1, claimRecords[0].InitialClaimableAmount)
-
 }
+
 func (suite *KeeperTestSuite) TestDelegationAutoWithdrawAndDelegateMore() {
 	suite.SetupTest()
 	suite.app.ClaimKeeper.CreateModuleAccount(suite.ctx, sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000000)))
@@ -322,11 +322,9 @@ func (suite *KeeperTestSuite) TestDelegationAutoWithdrawAndDelegateMore() {
 
 	_, err = suite.app.StakingKeeper.Delegate(suite.ctx, addr2, claimedCoins.AmountOf(sdk.DefaultBondDenom), stakingtypes.Unbonded, validator, true)
 	suite.NoError(err)
-
 }
 
 func (suite *KeeperTestSuite) TestEndAirdrop() {
-
 	// set airdrop enabled but with date in the future
 	suite.app.ClaimKeeper.SetParams(suite.ctx, types.Params{
 		AirdropEnabled:     true,

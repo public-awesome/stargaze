@@ -12,8 +12,10 @@ import (
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
-const SnapshotName = "sg_version_snapshotter"
-const SnapshotFormat = 0xFF
+const (
+	SnapshotName   = "sg_version_snapshotter"
+	SnapshotFormat = 0xFF
+)
 
 var _ snapshot.ExtensionSnapshotter = &VersionSnapshotter{}
 
