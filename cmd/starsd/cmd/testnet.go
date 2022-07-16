@@ -7,18 +7,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
-	"time"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/testutil"
-	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	claimtypes "github.com/public-awesome/stargaze/v6/x/claim/types"
-	minttypes "github.com/public-awesome/stargaze/v6/x/mint/types"
 	"github.com/spf13/cobra"
 	tmconfig "github.com/tendermint/tendermint/config"
 	tmos "github.com/tendermint/tendermint/libs/os"
@@ -54,8 +49,8 @@ var (
 	flagUnbondingPeriod      = "unbonding-period"
 	flagInitialCoins         = "coins"
 	flagInitialStakingAmount = "initial-staking-amount"
-
-	defaultBondDenom = "ustarx"
+	flagSnapshotFile         = "snapshot-file"
+	defaultBondDenom         = "ustars"
 )
 
 // get cmd to initialize all files for tendermint testnet and application
@@ -102,21 +97,45 @@ Example:
 	cmd.Flags().String(flagNodeDaemonHome, "starsd", "Home directory of the node's daemon configuration")
 	cmd.Flags().String(flagStartingIPAddress, "192.168.0.1", "Starting IP address (192.168.0.1 results in persistent peers list ID0@192.168.0.1:46656, ID1@192.168.0.2:46656, ...)")
 	cmd.Flags().String(flags.FlagChainID, "", "genesis file chain-id, if left blank will be randomly created")
-	cmd.Flags().String(server.FlagMinGasPrices, fmt.Sprintf("0.000006%s", defaultBondDenom), "Minimum gas prices to accept for transactions; All fees in a tx must meet this minimum (e.g. 0.01photino,0.001stake)")
+	cmd.Flags().String(server.FlagMinGasPrices, fmt.Sprintf("0%s", defaultBondDenom), "Minimum gas prices to accept for transactions; All fees in a tx must meet this minimum (e.g. 0.01photino,0.001stake)")
 	cmd.Flags().String(flags.FlagKeyringBackend, flags.DefaultKeyringBackend, "Select keyring's backend (os|file|test)")
 	cmd.Flags().String(flags.FlagKeyAlgorithm, string(hd.Secp256k1Type), "Key signing algorithm to generate keys for")
 	cmd.Flags().String(flagStakeDenom, defaultBondDenom, "app's stake denom")
 	cmd.Flags().Int64(flagInitialStakingAmount, 100000000,
 		"Flag initial staking amount: 100000000")
 	cmd.Flags().String(flagInitialCoins, fmt.Sprintf("1000000000%s", defaultBondDenom),
-		"Validator genesis coins: 100000ustarx")
+		"Validator genesis coins: 100000ustars")
 	cmd.Flags().String(flagDockerTag, "latest", "docker tag for testnet command")
 	cmd.Flags().String(flagUnbondingPeriod, "72h", "app's unbonding period")
+	cmd.Flags().String(flagSnapshotFile, "", "snapshot filename for airdrop")
 
 	return cmd
 }
 
 const nodeDirPerm = 0o755
+
+func getSimappConfig(chainID, gasPrices string, statesync bool) *srvconfig.Config {
+	simappConfig := srvconfig.DefaultConfig()
+	simappConfig.MinGasPrices = gasPrices
+	simappConfig.PruningKeepEvery = "0"
+	simappConfig.PruningInterval = "11"
+	simappConfig.PruningKeepRecent = "5"
+	if statesync {
+		simappConfig.PruningKeepEvery = "2000"
+		simappConfig.StateSync.SnapshotInterval = 2000
+		simappConfig.StateSync.SnapshotKeepRecent = 2
+	}
+
+	simappConfig.API.Enable = true
+	simappConfig.API.EnableUnsafeCORS = true
+	simappConfig.API.Swagger = true
+	simappConfig.GRPCWeb.EnableUnsafeCORS = true
+	simappConfig.Telemetry.Enabled = true
+	simappConfig.Telemetry.PrometheusRetentionTime = 60
+	simappConfig.Telemetry.EnableHostnameLabel = false
+	simappConfig.Telemetry.GlobalLabels = [][]string{{"chain_id", chainID}}
+	return simappConfig
+}
 
 // Initialize the testnet
 func InitTestnet(
@@ -142,14 +161,6 @@ func InitTestnet(
 	nodeIDs := make([]string, numValidators)
 	valPubKeys := make([]cryptotypes.PubKey, numValidators)
 
-	simappConfig := srvconfig.DefaultConfig()
-	simappConfig.MinGasPrices = minGasPrices
-	simappConfig.API.Enable = true
-	simappConfig.Telemetry.Enabled = true
-	simappConfig.Telemetry.PrometheusRetentionTime = 60
-	simappConfig.Telemetry.EnableHostnameLabel = false
-	simappConfig.Telemetry.GlobalLabels = [][]string{{"chain_id", chainID}}
-
 	var (
 		genAccounts []authtypes.GenesisAccount
 		genBalances []banktypes.Balance
@@ -174,10 +185,6 @@ func InitTestnet(
 	if err != nil {
 		return err
 	}
-	unbondingPeriod, err := cmd.Flags().GetString(flagUnbondingPeriod)
-	if err != nil {
-		return err
-	}
 
 	// generate private keys, node IDs, and initial transactions
 	for i := 0; i < numValidators; i++ {
@@ -198,6 +205,7 @@ func InitTestnet(
 		initialPort = endPort + 1
 
 		nodeConfig.SetRoot(nodeDir)
+		nodeConfig.RPC.CORSAllowedOrigins = []string{"*"}
 		nodeConfig.RPC.ListenAddress = "tcp://0.0.0.0:26657"
 
 		if err := os.MkdirAll(filepath.Join(nodeDir, "config"), nodeDirPerm); err != nil {
@@ -291,13 +299,21 @@ func InitTestnet(
 			return err
 		}
 
+		simappConfig := getSimappConfig(chainID, minGasPrices, i == 0)
 		srvconfig.WriteConfigFile(filepath.Join(nodeDir, "config/app.toml"), simappConfig)
+	}
+	for i, node := range nodes {
+		fmt.Printf("Node %s, id [%s] outside port: %s \n", node.Name, nodeIDs[i], node.OutsidePortRange)
 	}
 
 	genAccounts = authtypes.SanitizeGenesisAccounts(genAccounts)
 	genBalances = banktypes.SanitizeGenesisBalances(genBalances)
 
-	if err := initGenFiles(clientCtx, mbm, chainID, stakeDenom, unbondingPeriod, genAccounts, genBalances, genFiles, numValidators); err != nil {
+	snapshotFile, err := cmd.Flags().GetString(flagSnapshotFile)
+	if err != nil {
+		return err
+	}
+	if err := initGenFiles(clientCtx, mbm, chainID, snapshotFile, genAccounts, genBalances, genFiles, numValidators); err != nil {
 		return err
 	}
 
@@ -328,7 +344,7 @@ func InitTestnet(
 }
 
 func initGenFiles(
-	clientCtx client.Context, mbm module.BasicManager, chainID, stakeDenom, unbondingPeriod string,
+	clientCtx client.Context, mbm module.BasicManager, chainID, snapshotFileName string,
 	genAccounts []authtypes.GenesisAccount, genBalances []banktypes.Balance,
 	genFiles []string, numValidators int,
 ) error {
@@ -358,16 +374,41 @@ func initGenFiles(
 		return err
 	}
 
-	genDoc := types.GenesisDoc{
+	genDoc := &types.GenesisDoc{
 		ChainID:    chainID,
 		AppState:   appGenStateJSON,
 		Validators: nil,
 	}
-	genDoc.AppState, err = initGenesis(clientCtx.Codec, &genDoc, stakeDenom, unbondingPeriod)
+
+	snapshot := &Snapshot{}
+	if snapshotFileName != "" {
+		// read snapshot.json and parse into struct
+		snapshotFile, err := ioutil.ReadFile(filepath.Clean(snapshotFileName))
+		if err != nil {
+			return err
+		}
+		err = json.Unmarshal(snapshotFile, snapshot)
+		if err != nil {
+			return err
+		}
+	}
+
+	appGenState, genDoc, err = PrepareGenesis(clientCtx, appGenState, genDoc, TestnetGenesisParams(), chainID, *snapshot)
 	if err != nil {
 		return err
 	}
+	// validate genesis state
+	if err = mbm.ValidateGenesis(clientCtx.Codec, clientCtx.TxConfig, appGenState); err != nil {
+		return fmt.Errorf("error validating genesis file: %s", err.Error())
+	}
 
+	// save genesis
+	appStateJSON, err := json.Marshal(appGenState)
+	if err != nil {
+		return fmt.Errorf("failed to marshal application genesis state: %w", err)
+	}
+
+	genDoc.AppState = appStateJSON
 	// generate empty genesis files for each validator and save
 	for i := 0; i < numValidators; i++ {
 		if err := genDoc.SaveAs(genFiles[i]); err != nil {
@@ -451,6 +492,7 @@ version: '3.1'
 services:{{range $node := .Nodes }}
 	{{ $node.Name }}:
 		image: publicawesome/stargaze:{{ $.Tag }}
+		pull_policy: always
 		restart: always
 		ports:
 			- {{ $node.OutsidePortRange}}:{{ $node.InsidePortRange}}
@@ -478,83 +520,4 @@ func docker(nodes []TestnetNode, tag string) (string, error) {
 		return "", err
 	}
 	return buf.String(), nil
-}
-
-func initGenesis(
-	cdc codec.JSONCodec,
-	genDoc *types.GenesisDoc,
-	stakeDenom,
-	unbondingPeriod string,
-) (json.RawMessage, error) {
-	appState := make(map[string]json.RawMessage)
-	if err := json.Unmarshal(genDoc.AppState, &appState); err != nil {
-		return nil, fmt.Errorf("failed to JSON unmarshal initial genesis state %w", err)
-	}
-	// migrate staking state
-	if appState[stakingtypes.ModuleName] != nil {
-		var stakingGenState stakingtypes.GenesisState
-		err := cdc.UnmarshalJSON(appState[stakingtypes.ModuleName], &stakingGenState)
-		if err != nil {
-			return nil, err
-		}
-
-		stakingGenState.Params.BondDenom = stakeDenom
-
-		d, err := time.ParseDuration(unbondingPeriod)
-		if err != nil {
-			return nil, fmt.Errorf("failed to parse unbonding period %w", err)
-		}
-		stakingGenState.Params.UnbondingTime = d
-
-		appState[stakingtypes.ModuleName] = cdc.MustMarshalJSON(&stakingGenState)
-	}
-
-	// migrate crisis state
-	if appState[crisistypes.ModuleName] != nil {
-		var crisisGenState crisistypes.GenesisState
-		err := cdc.UnmarshalJSON(appState[crisistypes.ModuleName], &crisisGenState)
-		if err != nil {
-			return nil, err
-		}
-		crisisGenState.ConstantFee.Denom = stakeDenom
-		appState[crisistypes.ModuleName] = cdc.MustMarshalJSON(&crisisGenState)
-	}
-
-	// migrate gov state
-	if appState[govtypes.ModuleName] != nil {
-		var govGenState govtypes.GenesisState
-		err := cdc.UnmarshalJSON(appState[govtypes.ModuleName], &govGenState)
-		if err != nil {
-			return nil, err
-		}
-		minDeposit := sdk.NewInt64Coin(stakeDenom, 10_000_000)
-		govGenState.DepositParams.MinDeposit = sdk.NewCoins(minDeposit)
-		appState[govtypes.ModuleName] = cdc.MustMarshalJSON(&govGenState)
-	}
-	// migrate mint state
-	if appState[minttypes.ModuleName] != nil {
-		var mintGenState minttypes.GenesisState
-		err := cdc.UnmarshalJSON(appState[minttypes.ModuleName], &mintGenState)
-		if err != nil {
-			return nil, err
-		}
-		mintGenState.Params.MintDenom = stakeDenom
-		mintGenState.Params.StartTime = time.Now()
-		appState[minttypes.ModuleName] = cdc.MustMarshalJSON(&mintGenState)
-	}
-
-	// claim
-
-	if appState[claimtypes.ModuleName] != nil {
-		var claimGenState claimtypes.GenesisState
-		err := cdc.UnmarshalJSON(appState[claimtypes.ModuleName], &claimGenState)
-		if err != nil {
-			return nil, err
-		}
-		claimGenState.ModuleAccountBalance = sdk.NewCoin(stakeDenom, claimGenState.ModuleAccountBalance.Amount)
-		claimGenState.Params.ClaimDenom = stakeDenom
-		appState[claimtypes.ModuleName] = cdc.MustMarshalJSON(&claimGenState)
-	}
-
-	return json.Marshal(appState)
 }
