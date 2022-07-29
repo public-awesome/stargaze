@@ -315,7 +315,7 @@ steps:
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
-    pull: always
+    pull: true
     image: publicawesome/stargaze:v7-alpha
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
@@ -365,6 +365,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: e78e7c8a1300b79a8c07f3fa5d84bd750aba66b8b962e7a5081daf208602e822
+hmac: 4b668796b958b936416e6c8d86414240ba0875bfe75e69cdaea917b4e9bfbeef
 
 ...
