@@ -75,12 +75,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - v6-beta
+        - v7-alpha
     when:
       event:
         - push
       branch:
-        - feature/prepare-release
+        - jhernandezb/upgrade-depdencies
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -281,7 +281,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:5.0.0
+    image: publicawesome/stargaze:6.0.0
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
@@ -311,12 +311,12 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: proposal
-    image: publicawesome/stargaze:5.0.0
+    image: publicawesome/stargaze:6.0.0
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
-    pull: always
-    image: publicawesome/stargaze:v6-beta
+    pull: true
+    image: publicawesome/stargaze:v7-alpha
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -365,6 +365,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: ee2b0dc39d8a7bb0083fd2f865afdd2b83af4d7c5d1ccb83f7afedef451092b1
+hmac: 4b668796b958b936416e6c8d86414240ba0875bfe75e69cdaea917b4e9bfbeef
 
 ...
