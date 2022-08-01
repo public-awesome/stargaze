@@ -7,7 +7,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/public-awesome/stargaze/v6/x/mint/types"
+	"github.com/public-awesome/stargaze/v7/x/mint/types"
 )
 
 // GetQueryCmd returns the cli query commands for the minting module.

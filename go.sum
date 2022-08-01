@@ -840,8 +840,8 @@ github.com/prometheus/procfs v0.7.3 h1:4jVXhlkAyzOScmCkXBTOLRLTz8EeU+eyjrwB/EPq0
 github.com/prometheus/procfs v0.7.3/go.mod h1:cz+aTbrPOrUb4q7XlbU9ygM+/jj0fzG6c1xBZuNvfVA=
 github.com/prometheus/tsdb v0.6.2-0.20190402121629-4f204dcbc150/go.mod h1:qhTCs0VvXwvX/y3TZrWD7rabWM+ijKTux40TwIPHuXU=
 github.com/prometheus/tsdb v0.7.1/go.mod h1:qhTCs0VvXwvX/y3TZrWD7rabWM+ijKTux40TwIPHuXU=
-github.com/public-awesome/spm v0.1.9-stargaze.0.20220630053558-c96052c2bdb9 h1:vEtHt6YwEXU0nbeOCX9cIoBUbuCxBLunt/YBW7j2p40=
-github.com/public-awesome/spm v0.1.9-stargaze.0.20220630053558-c96052c2bdb9/go.mod h1:I41jlLlB7+iYaz+Kq3Jg3VpG1uwIOlBliFUqxVD+G9s=
+github.com/public-awesome/spm v0.1.9-stargaze.0.20220731235144-1dba71b36e7b h1:JY1sUfouCbkMLgWJWRnrSRZe8jCMekV7ahtszxBU1NI=
+github.com/public-awesome/spm v0.1.9-stargaze.0.20220731235144-1dba71b36e7b/go.mod h1:uR+6feS4bIcyDCBmvNYyTbhI/L2+/TcYOrIepwgf3yg=
 github.com/rakyll/statik v0.1.7 h1:OF3QCZUuyPxuGEP7B4ypUa7sB/iHtqOTDYZXGM8KOdQ=
 github.com/rakyll/statik v0.1.7/go.mod h1:AlZONWzMtEnMs7W4e/1LURLiI49pIMmp6V9Unghqrcc=
 github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a/go.mod h1:bCqnVzQkZxMG4s8nGwiZ5l3QUCyqpo9Y+/ZMZ9VjZe4=

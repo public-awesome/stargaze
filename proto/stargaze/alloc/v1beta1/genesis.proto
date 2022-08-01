@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 import "stargaze/alloc/v1beta1/params.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 
-option go_package = "github.com/public-awesome/stargaze/v6/x/alloc/types";
+option go_package = "github.com/public-awesome/stargaze/v7/x/alloc/types";
 
 // GenesisState defines the alloc module's genesis state.
 message GenesisState {

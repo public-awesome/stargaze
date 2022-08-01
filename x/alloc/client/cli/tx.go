@@ -8,7 +8,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	// "github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/public-awesome/stargaze/v6/x/alloc/types"
+	"github.com/public-awesome/stargaze/v7/x/alloc/types"
 )
 
 var DefaultRelativePacketTimeoutTimestamp = uint64((time.Duration(10) * time.Minute).Nanoseconds())

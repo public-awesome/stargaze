@@ -4,7 +4,7 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v6/x/mint/types"
+	"github.com/public-awesome/stargaze/v7/x/mint/types"
 )
 
 var _ types.QueryServer = Keeper{}
