@@ -31,7 +31,7 @@ steps:
         - '/go/pkg/mod'
 
   - name: test
-    image: publicawesome/golang:1.18.4-devtooling
+    image: publicawesome/golang:1.18.5-devtooling
     volumes:
       - name: cache
         path: /go
@@ -40,7 +40,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: build
-    image: golang:1.18.4-alpine3.15
+    image: golang:1.18.5-alpine3.15
     volumes:
       - name: cache
         path: /go
@@ -96,7 +96,7 @@ steps:
         - tag
 
   - name: release
-    image: golang:1.18.4
+    image: golang:1.18.5
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -163,21 +163,21 @@ steps:
       mount:
         - '/go/pkg/mod'
   - name: gaia
-    image: publicawesome/gaia:7.0.0
+    image: publicawesome/gaia:7.0.2
     detach: true
     commands:
       - ./scripts/ci/setup-gaia.sh
     environment:
       GOPROXY: http://goproxy
   - name: osmosis
-    image: publicawesome/osmosis:7.1.0
+    image: publicawesome/osmosis:10.1.1
     detach: true
     commands:
       - ./scripts/ci/setup-osmosis.sh
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/golang:1.18.4-devtooling
+    image: publicawesome/golang:1.18.5-devtooling
     volumes:
       - name: cache
         path: /go
@@ -256,7 +256,7 @@ steps:
       mount:
         - '/go/pkg/mod'
   - name: build-wrapper
-    image: publicawesome/golang:1.18.4-devtooling
+    image: publicawesome/golang:1.18.5-devtooling
     volumes:
       - name: cache
         path: /go
@@ -267,14 +267,14 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: gaia
-    image: publicawesome/gaia:7.0.0
+    image: publicawesome/gaia:7.0.2
     detach: true
     commands:
       - ./scripts/ci/setup-gaia.sh
     environment:
       GOPROXY: http://goproxy
   - name: osmosis
-    image: publicawesome/osmosis:7.1.0
+    image: publicawesome/osmosis:10.1.1
     detach: true
     commands:
       - ./scripts/ci/setup-osmosis.sh
@@ -365,6 +365,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 4b668796b958b936416e6c8d86414240ba0875bfe75e69cdaea917b4e9bfbeef
+hmac: 0fa5651d2d0d14051df43063c97c8dab5f549f5bf3ab039d6ed280c992947144
 
 ...
