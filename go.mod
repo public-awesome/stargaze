@@ -1,4 +1,4 @@
-module github.com/public-awesome/stargaze/v6
+module github.com/public-awesome/stargaze/v7
 
 go 1.18
 
@@ -128,6 +128,6 @@ replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-	github.com/tendermint/spm => github.com/public-awesome/spm v0.1.9-stargaze.0.20220630053558-c96052c2bdb9
+	github.com/tendermint/spm => github.com/public-awesome/spm v0.1.9-stargaze.0.20220731235144-1dba71b36e7b
 	google.golang.org/grpc => google.golang.org/grpc v1.33.2
 )

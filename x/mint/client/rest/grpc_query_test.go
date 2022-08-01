@@ -15,7 +15,7 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"github.com/cosmos/cosmos-sdk/testutil/network"
-	minttypes "github.com/public-awesome/stargaze/v6/x/mint/types"
+	minttypes "github.com/public-awesome/stargaze/v7/x/mint/types"
 )
 
 type IntegrationTestSuite struct {

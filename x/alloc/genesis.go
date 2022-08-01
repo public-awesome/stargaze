@@ -2,8 +2,8 @@ package alloc
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v6/x/alloc/keeper"
-	"github.com/public-awesome/stargaze/v6/x/alloc/types"
+	"github.com/public-awesome/stargaze/v7/x/alloc/keeper"
+	"github.com/public-awesome/stargaze/v7/x/alloc/types"
 )
 
 // InitGenesis initializes the capability module's state from a provided genesis

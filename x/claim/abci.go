@@ -2,7 +2,7 @@ package claim
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v6/x/claim/keeper"
+	"github.com/public-awesome/stargaze/v7/x/claim/keeper"
 )
 
 // EndBlocker called every block, process inflation, update validator set.

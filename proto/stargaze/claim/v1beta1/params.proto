@@ -6,7 +6,7 @@ import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 import "stargaze/claim/v1beta1/claim_record.proto";
 
-option go_package = "github.com/public-awesome/stargaze/v6/x/claim/types";
+option go_package = "github.com/public-awesome/stargaze/v7/x/claim/types";
 
 message ClaimAuthorization {
   string contract_address = 1
