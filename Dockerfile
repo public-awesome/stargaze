@@ -35,4 +35,4 @@ EXPOSE 26656
 EXPOSE 26657
 
 
-CMD ["starsd", "start", "--pruning", "nothing", "--log_format", "json"]
+CMD ["starsd", "start", "--log_format", "json"]
