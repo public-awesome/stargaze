@@ -178,6 +178,7 @@ steps:
       GOPROXY: http://goproxy
   - name: icad
     image: publicawesome/icad
+    pull: true
     detach: true
     commands:
       - ./scripts/ci/setup-icad.sh
@@ -219,6 +220,7 @@ steps:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: ica-test
     image: publicawesome/icad
+    pull: true
     commands:
       - /bin/bash ./scripts/ci/test-ica.sh
   - name: discord
@@ -385,6 +387,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: df35c9811e3eca1eb7eb0276ecf402fb1084e91dea0fd42be0844fb249405847
+hmac: 60c087b1801e41a18ed4505ece7acbb03743e154fd59c67da03a24bf6d87cfb8
 
 ...
