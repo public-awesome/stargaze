@@ -199,6 +199,7 @@ var (
 		claimmodule.AppModuleBasic{},
 		allocmodule.AppModuleBasic{},
 		wasm.AppModuleBasic{},
+		ica.AppModuleBasic{},
 	)
 
 	// module account permissions
