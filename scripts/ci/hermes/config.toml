@@ -71,5 +71,5 @@ trust_threshold = { numerator = '1', denominator = '3' }
 [chains.packet_filter]
 policy = 'deny'
 list = [
-  ['ica*', '*'], # deny relaying on all channels whose port starts with `ica`
+  [], # deny relaying on all channels whose port starts with `ica`
 ]
