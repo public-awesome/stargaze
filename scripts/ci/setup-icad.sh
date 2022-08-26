@@ -4,7 +4,7 @@ CHAINID=icad-test-1
 RLYKEY=cosmos1wt3khka7cmn5zd592x430ph4zmlhf5gfztgha6
 icad version --long
 
-# Setup Osmosis
+# Setup Interchain Accounts Demo app
 icad init --chain-id $CHAINID $CHAINID
 sed -i 's#tcp://127.0.0.1:26657#tcp://0.0.0.0:26657#g' ~/.ica/config/config.toml
 sed -i "s/\"stake\"/\"$DENOM\"/g" ~/.ica/config/genesis.json

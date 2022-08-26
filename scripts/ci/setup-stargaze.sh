@@ -13,7 +13,7 @@ sed -i 's#tcp://127.0.0.1:26657#tcp://0.0.0.0:26657#g' ~/.starsd/config/config.t
 sed -i "s/\"stake\"/\"$DENOM\"/g" ~/.starsd/config/genesis.json
 sed -i 's/pruning = "syncable"/pruning = "nothing"/g' ~/.starsd/config/app.toml
 sed -i 's/enable = false/enable = true/g' ~/.starsd/config/app.toml
-sed -i -e 's/\"allow_messages\":.*/\"allow_messages\": [\"\/cosmos.bank.v1beta1.MsgSend\", \"\/cosmos.staking.v1beta1.MsgDelegate\"]/g' ~/.ica/config/genesis.json
+sed -i -e 's/\"allow_messages\":.*/\"allow_messages\": [\"\/cosmos.bank.v1beta1.MsgSend\", \"\/cosmos.staking.v1beta1.MsgDelegate\"]/g' ~/.starsd/config/genesis.json
 starsd keys --keyring-backend test add validator
 
 starsd add-genesis-account $(starsd keys --keyring-backend test show validator -a) 100000000000$DENOM
