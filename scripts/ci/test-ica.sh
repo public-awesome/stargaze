@@ -1,15 +1,23 @@
+set -ex
 MNEMONIC=$(cat $PWD/scripts/ci/hermes/ica-test.json | jq -r .mnemonic)
 echo "$MNEMONIC" | icad keys add ica-test --recover --keyring-backend test
 ICA_WALLET_ADDRESS=$(icad keys show ica-test -a --keyring-backend test)
 echo $ICA_WALLET_ADDRESS
 
 icad config keyring-backend test
+icad config chain-id icad
+icad config node http://icad:266557
+icad status 
+sleep 5
 icad tx intertx register --from $ICA_WALLET_ADDRESS  --connection-id connection-0 --chain-id ica --keyring-backend test --node http://icad:26657 -b block --yes
 icad query intertx interchainaccounts connection-0 $ICA_WALLET_ADDRESS --node http://icad:26657
 export ICA_ADDR=$(icad query intertx interchainaccounts connection-0 $ICA_WALLET_ADDRESS  -o json  --node http://icad:26657 | jq -r '.interchain_account_address') && echo $ICA_ADDR
 
 
 starsd config keyring-backend test
+starsd config chain-id stargaze
+starsd config node http://stargaze:266557
+starsd status
 echo "$MNEMONIC" | starsd keys add ica-test --recover --keyring-backend test
 STARGAZE_WALLET_ADDRESS=$(starsd keys show ica-test -a --keyring-backend test)
 echo $STARGAZE_WALLET_ADDRESS
