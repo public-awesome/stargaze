@@ -217,6 +217,10 @@ steps:
     image: publicawesome/hermes:0.15.0
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
+ - name: icad
+    image: publicawesome/icad
+    detach: true
+      - /bin/bash ./scripts/ci/test-ica.sh
   - name: discord
     image: appleboy/drone-discord
     settings:
