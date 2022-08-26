@@ -7,8 +7,8 @@ hermes keys add osmosis -f $PWD/scripts/ci/hermes/osmosis.json
 hermes keys add icad -f $PWD/scripts/ci/hermes/icad.json
 hermes create connection stargaze gaia
 hermes create connection stargaze osmosis
-hermes create connection stargaze icad
+hermes create connection icad stargaze 
 hermes create channel --port-a transfer --port-b transfer stargaze connection-0
 hermes create channel --port-a transfer --port-b transfer stargaze connection-1
 hermes create channel --port-a transfer --port-b transfer stargaze connection-2
-hermes create channel --port-a icacontroller --port-b ica icad connection-0
+hermes create channel --port-a icacontroller --port-b icahost icad connection-0
