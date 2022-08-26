@@ -217,9 +217,9 @@ steps:
     image: publicawesome/hermes:0.15.0
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
- - name: icad
+  - name: ica-test
     image: publicawesome/icad
-    detach: true
+    commands:
       - /bin/bash ./scripts/ci/test-ica.sh
   - name: discord
     image: appleboy/drone-discord
@@ -385,6 +385,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 24ef020814bbb05a05b022cc0dbafb3ae356abdecb193e1ad3dbd794913dee0e
+hmac: df35c9811e3eca1eb7eb0276ecf402fb1084e91dea0fd42be0844fb249405847
 
 ...
