@@ -114,8 +114,10 @@ docker-test: build-linux
 test:
 	go test -v -race github.com/public-awesome/stargaze/v7/x/...
 
-.PHONY: test build-linux docker-test lint build install
+.PHONY: test build-linux docker-test lint build install format
 
+format:
+	gofumpt -l -w .
 ###############################################################################
 ###                                Protobuf                                 ###
 ###############################################################################
@@ -131,3 +133,4 @@ ci-sign:
 build-readiness-checker:
 	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -o bin/readiness-checker github.com/public-awesome/stargaze/testutil/readiness-checker
 	docker build -t publicawesome/stargaze-readiness-checker -f docker/Dockerfile.readiness .
+

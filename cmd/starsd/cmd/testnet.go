@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -383,7 +382,7 @@ func initGenFiles(
 	snapshot := &Snapshot{}
 	if snapshotFileName != "" {
 		// read snapshot.json and parse into struct
-		snapshotFile, err := ioutil.ReadFile(filepath.Clean(snapshotFileName))
+		snapshotFile, err := os.ReadFile(filepath.Clean(snapshotFileName))
 		if err != nil {
 			return err
 		}

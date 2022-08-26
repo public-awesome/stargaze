@@ -3,7 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -129,7 +129,7 @@ Example:
 			chainID := args[1]
 
 			// read snapshot.json and parse into struct
-			snapshotFile, _ := ioutil.ReadFile(args[2])
+			snapshotFile, _ := os.ReadFile(args[2])
 			snapshot := Snapshot{}
 			err = json.Unmarshal(snapshotFile, &snapshot)
 			if err != nil {
