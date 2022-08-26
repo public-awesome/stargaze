@@ -10,4 +10,4 @@ hermes create connection stargaze osmosis
 hermes create connection stargaze icad
 hermes create channel --port-a transfer --port-b transfer stargaze connection-0
 hermes create channel --port-a transfer --port-b transfer stargaze connection-1
-hermes create channel --port-a transfer --port-b transfer stargaze connection-2
+
