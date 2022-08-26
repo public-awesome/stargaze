@@ -1,6 +1,6 @@
 set -ex
 DENOM=stake
-CHAINID=gaia
+CHAINID=gaia-test-1
 RLYKEY=cosmos1wt3khka7cmn5zd592x430ph4zmlhf5gfztgha6
 gaiad version --long
 
@@ -14,7 +14,7 @@ gaiad keys --keyring-backend test add validator
 
 gaiad add-genesis-account $(gaiad keys --keyring-backend test show validator -a) 100000000000$DENOM
 gaiad add-genesis-account $RLYKEY 100000000000$DENOM
-gaiad gentx validator 900000000$DENOM --keyring-backend test --chain-id gaia
+gaiad gentx validator 900000000$DENOM --keyring-backend test --chain-id $CHAINID
 gaiad collect-gentxs
 
 gaiad start --pruning nothing

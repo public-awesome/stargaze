@@ -21,7 +21,7 @@ clear_on_start = true
 tx_confirmation = true
 
 [[chains]]
-id = 'stargaze'
+id = 'stargaze-test-1'
 rpc_addr = 'http://stargaze:26657'
 grpc_addr = 'http://stargaze:9090'
 websocket_addr = 'ws://stargaze:26657/websocket'
@@ -37,7 +37,7 @@ trusting_period = '2days'
 trust_threshold = { numerator = '1', denominator = '3' }
 
 [[chains]]
-id = 'gaia'
+id = 'gaia-test-1'
 rpc_addr = 'http://gaia:26657'
 grpc_addr = 'http://gaia:9090'
 websocket_addr = 'ws://gaia:26657/websocket'
@@ -53,7 +53,7 @@ trusting_period = '2days'
 trust_threshold = { numerator = '1', denominator = '3' }
 
 [[chains]]
-id = 'osmosis'
+id = 'cosmosis-test-1'
 rpc_addr = 'http://osmosis:26657'
 grpc_addr = 'http://osmosis:9090'
 websocket_addr = 'ws://osmosis:26657/websocket'
@@ -70,7 +70,7 @@ trust_threshold = { numerator = '1', denominator = '3' }
 
 
 [[chains]]
-id = 'icad'
+id = 'icad-test-1'
 rpc_addr = 'http://icad:26657'
 grpc_addr = 'http://icad:9090'
 websocket_addr = 'ws://icad:26657/websocket'
