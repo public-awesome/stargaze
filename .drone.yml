@@ -387,6 +387,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 60c087b1801e41a18ed4505ece7acbb03743e154fd59c67da03a24bf6d87cfb8
+hmac: 930aa853a6538161d2251dde4e18393bd1b2c8de123c7dfb6144dcda88fa610b
 
 ...
