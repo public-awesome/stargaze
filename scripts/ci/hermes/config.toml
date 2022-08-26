@@ -149,3 +149,23 @@ clock_drift = '300s'
 trusting_period = '2days'
 trust_threshold = { numerator = '1', denominator = '3' }
 address_type = { derivation = 'cosmos' }
+
+[[chains]]
+id = 'icad'
+rpc_addr = 'http://icad:26657'
+grpc_addr = 'http://icad:9090'
+websocket_addr = 'ws://icad:26657/websocket'
+rpc_timeout = '10s'
+account_prefix = 'cosmos'
+key_name = 'cosmos'
+store_prefix = 'ibc'
+default_gas = 100000
+max_gas = 3000000
+gas_price = { price = 0.025, denom = 'stake' }
+gas_adjustment = 0.1
+max_msg_num = 30
+max_tx_size = 2097152
+clock_drift = '300s'
+trusting_period = '2days'
+trust_threshold = { numerator = '1', denominator = '3' }
+address_type = { derivation = 'cosmos' }
