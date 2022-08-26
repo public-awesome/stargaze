@@ -68,8 +68,3 @@ clock_drift = '300s'
 trusting_period = '2days'
 trust_threshold = { numerator = '1', denominator = '3' }
 
-[chains.packet_filter]
-policy = 'deny'
-list = [
-  [], # deny relaying on all channels whose port starts with `ica`
-]
