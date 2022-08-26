@@ -1,6 +1,6 @@
 set -ex
 DENOM=uosmo
-CHAINID=osmosis-test-1
+CHAINID=osmosis
 RLYKEY=osmo1qk2rqkk28z8v3d7npupz33zqc6dae6n9a2x5v4
 osmosisd version --long
 

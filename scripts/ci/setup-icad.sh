@@ -1,6 +1,6 @@
 set -ex
 DENOM=stake
-CHAINID=icad-test-1
+CHAINID=icad
 RLYKEY=cosmos1wt3khka7cmn5zd592x430ph4zmlhf5gfztgha6
 icad version --long
 

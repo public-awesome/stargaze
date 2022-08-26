@@ -1,6 +1,6 @@
 set -ex
 DENOM=stake
-CHAINID=gaia-test-1
+CHAINID=gaia
 RLYKEY=cosmos1wt3khka7cmn5zd592x430ph4zmlhf5gfztgha6
 gaiad version --long
 

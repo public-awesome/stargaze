@@ -1,6 +1,6 @@
 set -ex
 DENOM=ustars
-CHAINID=stargaze-test-1
+CHAINID=stargaze
 RLYKEY=stars12g0xe2ld0k5ws3h7lmxc39d4rpl3fyxp5qys69
 LEDGER_ENABLED=false make install
 starsd version --long
