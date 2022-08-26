@@ -11,4 +11,4 @@ hermes create connection stargaze icad
 hermes create channel --port-a transfer --port-b transfer stargaze connection-0
 hermes create channel --port-a transfer --port-b transfer stargaze connection-1
 hermes create channel --port-a transfer --port-b transfer stargaze connection-2
-hermes create channel --port-a ica --port-b ica stargaze connection-2
+hermes create channel --port-a icahost --port-b icacontroller stargaze connection-2
