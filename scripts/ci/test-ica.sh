@@ -6,7 +6,7 @@ echo $ICA_WALLET_ADDRESS
 
 icad config keyring-backend test
 icad config chain-id icad
-icad config node http://icad:266557
+icad config node http://icad:26657
 icad status 
 sleep 5
 icad tx intertx register --from $ICA_WALLET_ADDRESS  --connection-id connection-0 --chain-id ica --keyring-backend test --node http://icad:26657 -b block --yes
@@ -16,7 +16,7 @@ export ICA_ADDR=$(icad query intertx interchainaccounts connection-0 $ICA_WALLET
 
 starsd config keyring-backend test
 starsd config chain-id stargaze
-starsd config node http://stargaze:266557
+starsd config node http://stargaze:26657
 starsd status
 echo "$MNEMONIC" | starsd keys add ica-test --recover --keyring-backend test
 STARGAZE_WALLET_ADDRESS=$(starsd keys show ica-test -a --keyring-backend test)
