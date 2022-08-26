@@ -92,9 +92,9 @@ port = 3001
 
 [[chains]]
 id = 'stargaze'
-rpc_addr = 'http://stargaze-upgraded:26657'
-grpc_addr = 'http://stargaze-upgraded:9090'
-websocket_addr = 'ws://stargaze-upgraded:26657/websocket'
+rpc_addr = 'http://stargaze:26657'
+grpc_addr = 'http://stargaze:9090'
+websocket_addr = 'ws://stargaze:26657/websocket'
 rpc_timeout = '10s'
 account_prefix = 'stars'
 key_name = 'relayer'
