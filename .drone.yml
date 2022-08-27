@@ -224,7 +224,7 @@ steps:
     image: publicawesome/icad:0.1.2
     pull: true
     commands:
-      - /bin/bash ./scripts/ci/test-ica.sh
+      - /bin/sh ./scripts/ci/test-ica.sh
   - name: discord
     image: appleboy/drone-discord
     settings:
@@ -389,6 +389,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 433eaa53944f72393b4da3e16fb8d545490c29e39d9cd6b05ff3f3243497edf4
+hmac: e1ce45dd7d6c451ba4bcf8127cc52915e0529cae7d94df5fbd25b39fe2ac8dda
 
 ...
