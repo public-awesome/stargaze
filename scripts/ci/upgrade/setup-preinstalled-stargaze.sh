@@ -20,7 +20,7 @@ sed -i -e 's/timeout_propose = "3s"/timeout_propose = "1s"/g' ~/.starsd/config/c
 starsd keys --keyring-backend test add validator --home $STARGAZE_HOME
 starsd add-genesis-account $(starsd keys --keyring-backend test show validator -a --home $STARGAZE_HOME) 10000000000000$DENOM --home $STARGAZE_HOME
 starsd add-genesis-account $RLYKEY 10000000000000$DENOM --home $STARGAZE_HOME
-starsd add-genesis-account stars1y8tcah6r989vna00ag65xcqn6mpasjjdekwfhm 1000000000000$DENOM
+starsd add-genesis-account stars1y8tcah6r989vna00ag65xcqn6mpasjjdekwfhm 1000000000000$DENOM --home $STARGAZE_HOME
 starsd gentx validator 900000000$DENOM --keyring-backend test --chain-id stargaze --home $STARGAZE_HOME
 starsd collect-gentxs --home $STARGAZE_HOME
 /stargaze/bin/upgrade-watcher starsd start --pruning nothing --home $STARGAZE_HOME
