@@ -80,7 +80,7 @@ steps:
       event:
         - push
       branch:
-        - jhernandezb/upgrade-depdencies
+        - ica-testing
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -396,6 +396,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: e9c61ed919e24fbb460219f999f161fca9e7e8341d4807c08c7449804fb8e584
+hmac: 0b778bfb2eaa3b852127d6a595c16dcd3aa9697d7e6cc50d172deccf8eb4b9ab
 
 ...
