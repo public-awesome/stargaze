@@ -8,4 +8,6 @@ apk add -U --no-cache jq tree curl wget
 STARGAZE_HOME=/stargaze/starsd
 curl -s -v http://stargaze:8090/kill || echo "done"
 sleep 10
+
+cat ~/.starsd/config/app.toml | grep -A 10  grpc
 starsd start --pruning nothing --home $STARGAZE_HOME

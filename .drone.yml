@@ -298,6 +298,7 @@ steps:
       GOPROXY: http://goproxy
   - name: icad
     image: publicawesome/icad:0.1.2
+    pull: true
     detach: true
     commands:
       - ./scripts/ci/setup-icad.sh
@@ -355,6 +356,7 @@ steps:
         - http://stargaze-upgraded:26657
         - http://gaia:26657
         - http://osmosis:26657
+        - http://icad:26657
   - name: relayer-upgrade-start
     image: publicawesome/hermes:0.15.0
     commands:
@@ -394,6 +396,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 2ba0ac697bfa1666badd51e58fe48f586986be312dfe7b01577af0dcdbe13c95
+hmac: e9c61ed919e24fbb460219f999f161fca9e7e8341d4807c08c7449804fb8e584
 
 ...
