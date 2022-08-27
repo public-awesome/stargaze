@@ -75,12 +75,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - v7-alpha
+        - v7-rc
     when:
       event:
         - push
       branch:
-        - ica-testing
+        - add-denom-traces-migration
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -341,7 +341,7 @@ steps:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: true
-    image: publicawesome/stargaze:v7-alpha
+    image: publicawesome/stargaze:v7-rc
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -396,6 +396,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 0b778bfb2eaa3b852127d6a595c16dcd3aa9697d7e6cc50d172deccf8eb4b9ab
+hmac: 83236df0cf43bf7972a6a9c949af5d1c0b01791cb081b0f03d2d6e2d6ddc40cc
 
 ...
