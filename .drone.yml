@@ -177,7 +177,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: icad
-    image: publicawesome/icad:0.1.2
+    image: publicawesome/icad
     pull: true
     detach: true
     commands:
@@ -221,7 +221,7 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: ica-test
-    image: publicawesome/icad:0.1.2
+    image: publicawesome/icad
     pull: true
     commands:
       - /bin/sh ./scripts/ci/test-ica.sh
@@ -297,7 +297,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: icad
-    image: publicawesome/icad:0.1.2
+    image: publicawesome/icad
     detach: true
     commands:
       - ./scripts/ci/setup-icad.sh
@@ -389,6 +389,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: e1ce45dd7d6c451ba4bcf8127cc52915e0529cae7d94df5fbd25b39fe2ac8dda
+hmac: e7adb1768c705bad5fdd16f179bb5c2888be9e8094712dceb7a82d7002856ae3
 
 ...
