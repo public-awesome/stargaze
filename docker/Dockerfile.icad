@@ -15,5 +15,6 @@ RUN apt update && apt install curl jq -y
 ADD https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0/libwasmvm_muslc.x86_64.a /lib/libwasmvm_muslc.a
 COPY --from=publicawesome/stargaze:6.0.0 /usr/bin/starsd /bin/starsd
 COPY --from=go-builder /code/interchain-accounts-demo/build/icad /bin/icad
-
+WORKDIR /home/icad
+ENV HOME=/home/icad
 ENTRYPOINT ["/bin/bash"]

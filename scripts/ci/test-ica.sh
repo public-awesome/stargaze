@@ -50,3 +50,22 @@ EOF
 icad tx intertx submit $TX_MSG --connection-id connection-0 --from $ICA_WALLET_ADDRESS --chain-id icad -y -b block
 sleep 20
 starsd q bank balances stars1ly5qeh4xjept0udwny9edwzgw95qmvekms3na8
+
+
+
+DELEGATE_MSG=$(cat <<EOF
+{
+    "@type":"/cosmos.staking.v1beta1.MsgDelegate",
+    "delegator_address":"$ICA_ADDR",
+    "validator_address":"$VALIDATOR",
+    "amount": {
+        "denom": "ustars",
+        "amount": "1000"
+    }
+}
+EOF
+)
+# Submit a staking delegation tx using the interchain account via ibc
+icad tx intertx submit  $DELEGATE_MSG --connection-id connection-0 --from $ICA_WALLET_ADDRESS --chain-id icad -y -b block 
+sleep 20
+starsd query staking delegations $ICA_ADDR
