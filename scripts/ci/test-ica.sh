@@ -28,7 +28,7 @@ starsd q bank balances $ICA_ADDR
 starsd tx bank send ica-test $ICA_ADDR 100000000ustars --chain-id stargaze -y -b block --from ica-test
 starsd q bank balances $ICA_ADDR 
 
-$VALIDATOR=$(starsd q  staking validators --limit 1 -o json | jq '.validators[0].operator_address' -r)
+VALIDATOR=$(starsd q  staking validators --limit 1 -o json | jq '.validators[0].operator_address' -r)
 echo "Delegate to validator $VALIDATOR"
 
 TX_MSG=$(cat <<EOF
