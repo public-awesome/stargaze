@@ -19,7 +19,7 @@ export ICA_ADDR=$(icad query intertx interchainaccounts connection-0 $ICA_WALLET
 
 starsd config keyring-backend test
 starsd config chain-id stargaze
-starsd config node http://stargaze:26657
+starsd config node http://stargaze-upgraded:26657
 starsd status
 echo "$MNEMONIC" | starsd keys add ica-test --recover --keyring-backend test
 STARGAZE_WALLET_ADDRESS=$(starsd keys show ica-test -a --keyring-backend test)

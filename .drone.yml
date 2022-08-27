@@ -364,6 +364,11 @@ steps:
     image: publicawesome/hermes:0.15.0
     commands:
       - /bin/bash ./scripts/ci/upgrade/transfer-relayer.sh
+  - name: ica-upgrade-test
+    image: publicawesome/icad:0.1.2
+    pull: true
+    commands:
+      - /bin/sh ./scripts/ci/upgrade/test-ica.sh
   - name: discord
     image: appleboy/drone-discord
     settings:
@@ -389,6 +394,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: e1ce45dd7d6c451ba4bcf8127cc52915e0529cae7d94df5fbd25b39fe2ac8dda
+hmac: 2ba0ac697bfa1666badd51e58fe48f586986be312dfe7b01577af0dcdbe13c95
 
 ...
