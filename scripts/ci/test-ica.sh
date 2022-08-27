@@ -45,9 +45,9 @@ TX_MSG=$(cat <<EOF
 }
 EOF
 )
-
+echo "$TX_MSG" > send.json
 # Submit a bank send tx using the interchain account via ibc
-icad tx intertx submit $TX_MSG --connection-id connection-0 --from $ICA_WALLET_ADDRESS --chain-id icad -y -b block
+icad tx intertx submit send.json --connection-id connection-0 --from $ICA_WALLET_ADDRESS --chain-id icad -y -b block
 sleep 20
 starsd q bank balances stars1ly5qeh4xjept0udwny9edwzgw95qmvekms3na8
 
@@ -65,7 +65,8 @@ DELEGATE_MSG=$(cat <<EOF
 }
 EOF
 )
+echo $DELEGATE_MSG > delegate.json
 # Submit a staking delegation tx using the interchain account via ibc
-icad tx intertx submit  $DELEGATE_MSG --connection-id connection-0 --from $ICA_WALLET_ADDRESS --chain-id icad -y -b block 
+icad tx intertx submit delegate.json --connection-id connection-0 --from $ICA_WALLET_ADDRESS --chain-id icad -y -b block 
 sleep 20
 starsd query staking delegations $ICA_ADDR

@@ -7,7 +7,7 @@ RUN set -eux; apk add --no-cache ca-certificates build-base;
 RUN apk add --no-cache ca-certificates build-base git
 WORKDIR /code
 RUN git clone https://github.com/cosmos/interchain-accounts-demo
-RUN cd interchain-accounts-demo && make build
+RUN cd interchain-accounts-demo && git checkout $TAG && go build -o build/icad ./cmd/icad
 
 
 FROM alpine:3.15
