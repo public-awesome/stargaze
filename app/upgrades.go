@@ -32,6 +32,7 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 			HostEnabled: true,
 			AllowMessages: []string{
 				sdk.MsgTypeURL(&banktypes.MsgSend{}),
+				sdk.MsgTypeURL(&banktypes.MsgMultiSend{}),
 				sdk.MsgTypeURL(&stakingtypes.MsgDelegate{}),
 				sdk.MsgTypeURL(&stakingtypes.MsgUndelegate{}),
 				sdk.MsgTypeURL(&stakingtypes.MsgBeginRedelegate{}),

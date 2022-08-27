@@ -1,0 +1,20 @@
+FROM golang:1.18.5-alpine3.15 AS go-builder
+ARG TAG
+
+# Usage:
+#   docker build . --build-arg TAG=v0.1.2 -t publicawesome/icad:0.1.2 -f docker/Dockerfile.icad
+RUN set -eux; apk add --no-cache ca-certificates build-base;
+RUN apk add --no-cache ca-certificates build-base git
+WORKDIR /code
+RUN git clone https://github.com/cosmos/interchain-accounts-demo
+RUN cd interchain-accounts-demo && git checkout $TAG && go build -o build/icad ./cmd/icad
+
+
+FROM alpine:3.15
+ADD https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0/libwasmvm_muslc.x86_64.a /lib/libwasmvm_muslc.a
+COPY --from=publicawesome/stargaze:6.0.0 /usr/bin/starsd /bin/starsd
+COPY --from=go-builder /code/interchain-accounts-demo/build/icad /bin/icad
+RUN apk add -U --no-cache ca-certificates curl jq wget
+WORKDIR /home/icad
+ENV HOME=/home/icad
+ENTRYPOINT ["/bin/sh"]

@@ -80,7 +80,7 @@ steps:
       event:
         - push
       branch:
-        - jhernandezb/upgrade-depdencies
+        - ica-testing
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -176,6 +176,16 @@ steps:
       - ./scripts/ci/setup-osmosis.sh
     environment:
       GOPROXY: http://goproxy
+  - name: icad
+    image: publicawesome/icad:0.1.2
+    pull: true
+    detach: true
+    commands:
+      - echo $PWD
+      - ls -ltrah
+      - ./scripts/ci/setup-icad.sh
+    environment:
+      GOPROXY: http://goproxy
   - name: stargaze
     image: publicawesome/golang:1.18.5-devtooling
     volumes:
@@ -195,20 +205,26 @@ steps:
         - http://stargaze:26657
         - http://gaia:26657
         - http://osmosis:26657
+        - http://icad:26657
   - name: relayer
-    image: publicawesome/hermes:0.13.0
+    image: publicawesome/hermes:0.15.0
     commands:
       - /bin/bash ./scripts/ci/setup-relayer.sh
 
   - name: relayer-start
-    image: publicawesome/hermes:0.13.0
+    image: publicawesome/hermes:0.15.0
     commands:
       - /bin/bash ./scripts/ci/start-relayer.sh
     detach: true
   - name: relayer-sender
-    image: publicawesome/hermes:0.13.0
+    image: publicawesome/hermes:0.15.0
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
+  - name: ica-test
+    image: publicawesome/icad:0.1.2
+    pull: true
+    commands:
+      - /bin/sh ./scripts/ci/test-ica.sh
   - name: discord
     image: appleboy/drone-discord
     settings:
@@ -280,6 +296,14 @@ steps:
       - ./scripts/ci/setup-osmosis.sh
     environment:
       GOPROXY: http://goproxy
+  - name: icad
+    image: publicawesome/icad:0.1.2
+    pull: true
+    detach: true
+    commands:
+      - ./scripts/ci/setup-icad.sh
+    environment:
+      GOPROXY: http://goproxy
   - name: stargaze
     image: publicawesome/stargaze:6.0.0
     commands:
@@ -296,18 +320,19 @@ steps:
         - http://stargaze:26657
         - http://gaia:26657
         - http://osmosis:26657
+        - http://icad:26657
   - name: relayer
-    image: publicawesome/hermes:0.13.0
+    image: publicawesome/hermes:0.15.0
     commands:
       - /bin/bash ./scripts/ci/setup-relayer.sh
 
   - name: relayer-start
-    image: publicawesome/hermes:0.13.0
+    image: publicawesome/hermes:0.15.0
     commands:
       - /bin/bash ./scripts/ci/start-relayer.sh
     detach: true
   - name: relayer-sender
-    image: publicawesome/hermes:0.13.0
+    image: publicawesome/hermes:0.15.0
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: proposal
@@ -331,15 +356,21 @@ steps:
         - http://stargaze-upgraded:26657
         - http://gaia:26657
         - http://osmosis:26657
+        - http://icad:26657
   - name: relayer-upgrade-start
-    image: publicawesome/hermes:0.13.0
+    image: publicawesome/hermes:0.15.0
     commands:
       - /bin/bash ./scripts/ci/upgrade/start-relayer.sh
     detach: true
   - name: relayer-ugprade-sender
-    image: publicawesome/hermes:0.13.0
+    image: publicawesome/hermes:0.15.0
     commands:
       - /bin/bash ./scripts/ci/upgrade/transfer-relayer.sh
+  - name: ica-upgrade-test
+    image: publicawesome/icad:0.1.2
+    pull: true
+    commands:
+      - /bin/sh ./scripts/ci/upgrade/test-ica.sh
   - name: discord
     image: appleboy/drone-discord
     settings:
@@ -365,6 +396,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 0fa5651d2d0d14051df43063c97c8dab5f549f5bf3ab039d6ed280c992947144
+hmac: 0b778bfb2eaa3b852127d6a595c16dcd3aa9697d7e6cc50d172deccf8eb4b9ab
 
 ...

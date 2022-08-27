@@ -10,6 +10,8 @@ sed -i 's#tcp://127.0.0.1:26657#tcp://0.0.0.0:26657#g' ~/.osmosisd/config/config
 sed -i "s/\"stake\"/\"$DENOM\"/g" ~/.osmosisd/config/genesis.json
 sed -i 's/pruning = "syncable"/pruning = "nothing"/g' ~/.osmosisd/config/app.toml
 sed -i 's/enable = false/enable = true/g' ~/.osmosisd/config/app.toml
+sed -i -e 's/timeout_commit = "5s"/timeout_commit = "1s"/g' ~/.osmosisd/config/config.toml
+sed -i -e 's/timeout_propose = "3s"/timeout_propose = "1s"/g' ~/.osmosisd/config/config.toml
 osmosisd keys --keyring-backend test add validator
 
 osmosisd add-genesis-account $(osmosisd keys --keyring-backend test show validator -a) 100000000000$DENOM

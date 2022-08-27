@@ -4,6 +4,7 @@ cp ./scripts/ci/hermes/config.toml ~/.hermes/
 hermes keys add stargaze -f $PWD/scripts/ci/hermes/stargaze.json
 hermes keys add gaia -f $PWD/scripts/ci/hermes/gaia.json
 hermes keys add osmosis -f $PWD/scripts/ci/hermes/osmosis.json
+sleep 10
 hermes tx raw ft-transfer stargaze gaia transfer channel-0 9999 -d stake -o 1000 -n 2
 hermes tx raw ft-transfer gaia stargaze transfer channel-0 9999 -d ustars -o 1000 -n 2
 sleep 10
