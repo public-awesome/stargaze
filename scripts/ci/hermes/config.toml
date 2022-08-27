@@ -3,7 +3,7 @@
 
 # Specify the verbosity for the relayer logging output. Default: 'info'
 # Valid options are 'error', 'warn', 'info', 'debug', 'trace'.
-log_level = 'trace'
+log_level = 'info'
 
 
 # Specify the mode to be used by the relayer. [Required]
