@@ -122,10 +122,7 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 		authtypes.FeeCollectorName,
 		sdk.NewCoins(collectedFairburnFees),
 	)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 // GetProportions gets the balance of the `MintedDenom` from minted coins

@@ -17,9 +17,11 @@ func waitFor(timeout time.Duration, blocks int, url string, ch chan<- error) {
 		Timeout: time.Second * 1,
 	}
 	end := time.After(timeout)
+	tick := time.NewTicker(time.Second * 5)
+	defer tick.Stop()
 	for {
 		select {
-		case <-time.After(time.Second * 5):
+		case <-tick.C:
 			resp, err := cli.Get(fmt.Sprintf("%s/status", url))
 			if err != nil {
 				log.Printf("%s\n", err.Error())

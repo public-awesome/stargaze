@@ -468,13 +468,7 @@ func writeFile(name string, dir string, contents []byte) error {
 	if err != nil {
 		return err
 	}
-
-	err = tmos.WriteFile(file, contents, 0o644)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return tmos.WriteFile(file, contents, 0o644)
 }
 
 // TestnetNode holds configuration for nodes

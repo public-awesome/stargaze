@@ -131,6 +131,6 @@ ci-sign:
 .PHONY: build-readiness-checker
 
 build-readiness-checker:
-	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -o bin/readiness-checker github.com/public-awesome/stargaze/testutil/readiness-checker
+	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -o bin/readiness-checker ./testutil/readiness-checker
 	docker build -t publicawesome/stargaze-readiness-checker -f docker/Dockerfile.readiness .
 
