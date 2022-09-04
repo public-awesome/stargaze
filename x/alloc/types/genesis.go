@@ -29,11 +29,7 @@ func DefaultGenesis() *GenesisState {
 // Validate performs basic genesis state validation returning an error upon any
 // failure.
 func (gs GenesisState) Validate() error {
-	err := gs.Params.Validate()
-	if err != nil {
-		return err
-	}
-	return nil
+	return gs.Params.Validate()
 }
 
 // GetGenesisStateFromAppState return GenesisState

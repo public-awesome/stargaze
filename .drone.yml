@@ -197,6 +197,7 @@ steps:
       GOPROXY: http://goproxy
     detach: true
   - name: readiness
+    pull: true
     image: publicawesome/stargaze-readiness-checker:latest
     settings:
       timeout: 300
@@ -312,6 +313,7 @@ steps:
       GOPROXY: http://goproxy
     detach: true
   - name: readiness
+    pull: true
     image: publicawesome/stargaze-readiness-checker:latest
     settings:
       timeout: 300
@@ -348,6 +350,7 @@ steps:
       GOPROXY: http://goproxy
     detach: true
   - name: readiness-upgrade
+    pull: true
     image: publicawesome/stargaze-readiness-checker:latest
     settings:
       timeout: 300
@@ -383,7 +386,7 @@ steps:
 
 trigger:
   branch:
-    - main
+    - release/v6
   event:
     - pull_request
     - push
@@ -396,6 +399,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 83236df0cf43bf7972a6a9c949af5d1c0b01791cb081b0f03d2d6e2d6ddc40cc
+hmac: 63391d4fd1d9686397b1b13850a2ed6905162ebc2e6b9852090d6a9b11ec0eb8
 
 ...
