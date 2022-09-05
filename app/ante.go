@@ -18,6 +18,7 @@ type HandlerOptions struct {
 	ante.HandlerOptions
 	keeper            *ibckeeper.Keeper
 	WasmConfig        *wasmTypes.WasmConfig
+	wasmKeeper        wasmTypes.ViewKeeper
 	TXCounterStoreKey sdk.StoreKey
 	Codec             codec.BinaryCodec
 }
@@ -46,6 +47,10 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "tx counter key is required for ante builder")
 	}
 
+	if options.wasmKeeper == nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "wasm keeper required")
+	}
+
 	sigGasConsumer := options.SigGasConsumer
 	if sigGasConsumer == nil {
 		sigGasConsumer = ante.DefaultSigVerificationGasConsumer
@@ -56,6 +61,7 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		// limit simulation gas
 		wasmkeeper.NewLimitSimulationGasDecorator(options.WasmConfig.SimulationGasLimit),
 		stargazeante.NewMinCommissionDecorator(options.Codec),
+		stargazeante.NewMinFeeDecorador(options.Codec, options.wasmKeeper),
 		wasmkeeper.NewCountTXDecorator(options.TXCounterStoreKey),
 		ante.NewRejectExtensionOptionsDecorator(),
 		ante.NewMempoolFeeDecorator(),

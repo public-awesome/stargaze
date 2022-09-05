@@ -13,6 +13,13 @@ type MinFeeDecorator struct {
 	codec  codec.BinaryCodec
 }
 
+func NewMinFeeDecorador(codec codec.BinaryCodec, keeper wasmtypes.ViewKeeper) MinFeeDecorator {
+	return MinFeeDecorator{
+		codec:  codec,
+		keeper: keeper,
+	}
+}
+
 func (mfd MinFeeDecorator) checkMinFee(ctx sdk.Context, m sdk.Msg, fee sdk.Coins) error {
 	switch msg := m.(type) {
 	case *wasmtypes.MsgExecuteContract:
