@@ -714,8 +714,7 @@ func NewStargazeApp(
 	app.ScopedICAHostKeeper = scopedICAHostKeeper
 	app.ScopedIBCKeeper = scopedIBCKeeper
 	app.ScopedTransferKeeper = scopedTransferKeeper
-	app.ScopedIBCKeeper = scopedWasmKeeper
-	// this line is used by starport scaffolding # stargate/app/beforeInitReturn
+	app.ScopedWasmKeeper = scopedWasmKeeper
 	return app
 }
 
