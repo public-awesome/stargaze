@@ -28,7 +28,10 @@ func main() {
 		if err != nil {
 			fmt.Println("error killing process", err)
 		}
-		_, _ = w.Write([]byte(string("OK")))
+		_, err = w.Write([]byte(string("OK")))
+		if err != nil {
+			fmt.Println("error shuting down", err)
+		}
 		w.WriteHeader(http.StatusAccepted)
 		err = server.Shutdown(r.Context())
 		if err != nil {
