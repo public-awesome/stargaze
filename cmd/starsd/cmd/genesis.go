@@ -129,11 +129,14 @@ Example:
 			chainID := args[1]
 
 			// read snapshot.json and parse into struct
-			snapshotFile, _ := os.ReadFile(args[2])
+			snapshotFile, err := os.ReadFile(args[2])
+			if err != nil {
+				return err
+			}
 			snapshot := Snapshot{}
 			err = json.Unmarshal(snapshotFile, &snapshot)
 			if err != nil {
-				panic(err)
+				return err
 			}
 
 			// run Prepare Genesis

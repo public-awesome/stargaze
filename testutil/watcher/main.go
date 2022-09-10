@@ -36,8 +36,16 @@ func main() {
 		}
 	})
 	err := server.ListenAndServe()
-	_ = cmd.Process.Kill()
+	code := 0
+	if err != nil {
+		log.Println(err)
+		code = 1
+	}
+	err = cmd.Process.Kill()
 	if err != nil {
 		log.Fatal(err)
+	}
+	if code != 0 {
+		os.Exit(1)
 	}
 }
