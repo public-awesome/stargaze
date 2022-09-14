@@ -14,12 +14,12 @@ if [ -z "$2" ]; then
 fi
 
 # Build genesis file incl account for passed address
-coins="100000000000ustarx,100000000000ucredits"
+coins="10000000000000000stake"
 starsd init --chain-id $CHAINID $CHAINID
 starsd keys add validator --keyring-backend="test"
 starsd add-genesis-account validator $coins --keyring-backend="test"
 starsd add-genesis-account $GENACCT $coins --keyring-backend="test"
-starsd gentx --name validator --amount 1000000ustarx --keyring-backend="test"
+starsd gentx validator 10000000000stake --chain-id $CHAINID --keyring-backend="test"
 starsd collect-gentxs
 
 
