@@ -3,14 +3,18 @@
 CHAINID=${CHAINID:-testing}
 DENOM=${DENOM:-ustars}
 
-# TODO: Allow for multiple genesis account addrs to be passed in
-
-# Build genesis file incl account for passed address
+# Build genesis file incl account for each address passed in
 coins="10000000000000000$DENOM"
 starsd init --chain-id $CHAINID $CHAINID
 starsd keys add validator --keyring-backend="test"
 starsd add-genesis-account validator $coins --keyring-backend="test"
-starsd add-genesis-account $1 $coins --keyring-backend="test"
+
+# create account for each passed in address
+for addr in "$@"; do
+  echo "creating genesis account: $addr"
+  starsd add-genesis-account $addr $coins --keyring-backend="test"
+done
+
 starsd gentx validator 10000000000$DENOM --chain-id $CHAINID --keyring-backend="test"
 starsd collect-gentxs
 
