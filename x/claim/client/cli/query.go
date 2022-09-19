@@ -41,8 +41,8 @@ func GetQueryCmd(queryRoute string) *cobra.Command {
 	return cmd
 }
 
-// GetCmdQueryParams implements a command to return the current minting
-// parameters.
+// GetCmdQueryParams implements a command to return the current claim
+// module account balance.
 func GetCmdQueryModuleAccountBalance() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "module-account-balance",
@@ -70,7 +70,7 @@ func GetCmdQueryModuleAccountBalance() *cobra.Command {
 	return cmd
 }
 
-// GetCmdQueryParams implements a command to return the current minting
+// GetCmdQueryParams implements a command to return the current claim
 // parameters.
 func GetCmdQueryParams() *cobra.Command {
 	cmd := &cobra.Command{
