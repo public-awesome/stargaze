@@ -6,7 +6,7 @@ import (
 	"github.com/public-awesome/stargaze/v7/x/alloc/types"
 )
 
-// InitGenesis initializes the capability module's state from a provided genesis
+// InitGenesis initializes the alloc module's state from a provided genesis
 // state.
 func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) {
 	k.SetParams(ctx, genState.Params)
@@ -17,7 +17,7 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	}
 }
 
-// ExportGenesis returns the capability module's exported genesis.
+// ExportGenesis returns the alloc module's exported genesis.
 func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	return &types.GenesisState{
 		Params: k.GetParams(ctx),

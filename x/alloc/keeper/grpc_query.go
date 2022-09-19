@@ -9,7 +9,7 @@ import (
 
 var _ types.QueryServer = Keeper{}
 
-// Params returns params of the mint module.
+// Params returns params of the alloc module.
 func (k Keeper) Params(c context.Context, _ *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
 	params := k.GetParams(ctx)
