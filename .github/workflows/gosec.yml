@@ -1,5 +1,12 @@
 name: Run Gosec
 on:
+  push:
+    branches:
+      - release/v7.x
+  pull_request:
+    branches:
+      - release/v7.x
+on:
   pull_request:
   push:
 jobs:
