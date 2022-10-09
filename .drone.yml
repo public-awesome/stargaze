@@ -31,7 +31,7 @@ steps:
         - '/go/pkg/mod'
 
   - name: test
-    image: publicawesome/golang:1.18.5-devtooling
+    image: publicawesome/golang:1.18.7-devtooling
     volumes:
       - name: cache
         path: /go
@@ -40,14 +40,14 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: build
-    image: golang:1.18.5-alpine3.15
+    image: golang:1.18.7-alpine3.15
     volumes:
       - name: cache
         path: /go
     commands:
       - apk add --no-cache ca-certificates build-base git
-      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.a
-      - echo "f6282df732a13dec836cda1f399dd874b1e3163504dbd9607c6af915b2740479  /lib/libwasmvm_muslc.a" | sha256sum -c
+      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.1.1/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.a
+      - echo "6e4de7ba9bad4ae9679c7f9ecf7e283dd0160e71567c6a7be6ae47c81ebe7f32  /lib/libwasmvm_muslc.a" | sha256sum -c
       - LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true  make build
       - echo "Ensuring binary is statically linked ..." && (file $PWD/bin/starsd | grep "statically linked")
     environment:
@@ -96,7 +96,7 @@ steps:
         - tag
 
   - name: release
-    image: golang:1.18.5
+    image: golang:1.18.7
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -187,7 +187,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/golang:1.18.5-devtooling
+    image: publicawesome/golang:1.18.7-devtooling
     volumes:
       - name: cache
         path: /go
@@ -273,7 +273,7 @@ steps:
       mount:
         - '/go/pkg/mod'
   - name: build-wrapper
-    image: publicawesome/golang:1.18.5-devtooling
+    image: publicawesome/golang:1.18.7-devtooling
     volumes:
       - name: cache
         path: /go
@@ -399,6 +399,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 63391d4fd1d9686397b1b13850a2ed6905162ebc2e6b9852090d6a9b11ec0eb8
+hmac: 506ab0d4dc371faf5e7bfd8f5dcfa7488cc5957e3e0b4a840e10570da5cb7fb0
 
 ...

@@ -1,6 +1,6 @@
 # docker build . -t publicawesome/stargaze:latest
 # docker run --rm -it publicawesome/stargaze:latest /bin/sh
-FROM golang:1.18.5-alpine3.15 AS go-builder
+FROM golang:1.18.7-alpine3.15 AS go-builder
 
 
 RUN set -eux; apk add --no-cache ca-certificates build-base git;
@@ -12,8 +12,8 @@ WORKDIR /code
 COPY . /code/
 
 # See https://github.com/CosmWasm/wasmvm/releases
-ADD https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0/libwasmvm_muslc.x86_64.a /lib/libwasmvm_muslc.a
-RUN echo "f6282df732a13dec836cda1f399dd874b1e3163504dbd9607c6af915b2740479  /lib/libwasmvm_muslc.a" | sha256sum -c
+ADD https://github.com/CosmWasm/wasmvm/releases/download/v1.1.1/libwasmvm_muslc.x86_64.a /lib/libwasmvm_muslc.a
+RUN echo "6e4de7ba9bad4ae9679c7f9ecf7e283dd0160e71567c6a7be6ae47c81ebe7f32  /lib/libwasmvm_muslc.a" | sha256sum -c
 
 # force it to use static lib (from above) not standard libgo_cosmwasm.so file
 RUN  LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true  make build
