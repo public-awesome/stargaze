@@ -6,9 +6,6 @@ on:
   pull_request:
     branches:
       - release/v7.x
-on:
-  pull_request:
-  push:
 jobs:
   tests:
     runs-on: ubuntu-latest
