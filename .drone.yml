@@ -177,7 +177,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: icad
-    image: publicawesome/icad:0.1.6-stargaze
+    image: publicawesome/icad:0.1.6-stargaze.1
     pull: true
     detach: true
     commands:
@@ -222,7 +222,7 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: ica-test
-    image: publicawesome/icad:0.1.6-stargaze
+    image: publicawesome/icad:0.1.6-stargaze.1
     pull: true
     commands:
       - /bin/sh ./scripts/ci/test-ica.sh
@@ -298,7 +298,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: icad
-    image: publicawesome/icad:0.1.6-stargaze
+    image: publicawesome/icad:0.1.6-stargaze.1
     pull: true
     detach: true
     commands:
@@ -370,7 +370,7 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/upgrade/transfer-relayer.sh
   - name: ica-upgrade-test
-    image: publicawesome/icad:0.1.6-stargaze
+    image: publicawesome/icad:0.1.6-stargaze.1
     pull: true
     commands:
       - /bin/sh ./scripts/ci/upgrade/test-ica.sh
@@ -399,6 +399,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: c411f5525bbb1efe84174ed95d92cf4cf09319c05781a0f12887142e3e88c84c
+hmac: 4628f830e85b77edab02474145ee543607143ad02e7a791eb7aa6f435f211891
 
 ...
