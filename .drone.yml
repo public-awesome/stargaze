@@ -75,12 +75,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - v7-rc
+        - v8-alpha
     when:
       event:
         - push
       branch:
-        - add-denom-traces-migration
+        - feature/upgrade-wasmd
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -399,6 +399,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: cf10dbb04af5b5a7d823246f9f008e0d1facc675cf10821df8c4de559f78e835
+hmac: c411f5525bbb1efe84174ed95d92cf4cf09319c05781a0f12887142e3e88c84c
 
 ...
