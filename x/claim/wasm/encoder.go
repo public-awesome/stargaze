@@ -6,8 +6,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	sgwasm "github.com/public-awesome/stargaze/v7/internal/wasm"
-	claimtypes "github.com/public-awesome/stargaze/v7/x/claim/types"
+	sgwasm "github.com/public-awesome/stargaze/v8/internal/wasm"
+	claimtypes "github.com/public-awesome/stargaze/v8/x/claim/types"
 )
 
 var _ sgwasm.Encoder = Encoder

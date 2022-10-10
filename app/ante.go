@@ -9,7 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	ibcante "github.com/cosmos/ibc-go/v3/modules/core/ante"
 	ibckeeper "github.com/cosmos/ibc-go/v3/modules/core/keeper"
-	stargazeante "github.com/public-awesome/stargaze/v7/internal/ante"
+	stargazeante "github.com/public-awesome/stargaze/v8/internal/ante"
 )
 
 // HandlerOptions extend the SDK's AnteHandler options by requiring the IBC
