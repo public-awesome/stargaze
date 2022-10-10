@@ -386,7 +386,7 @@ steps:
 
 trigger:
   branch:
-    - feature/upgrade-wasmd
+    - main
   event:
     - pull_request
     - push
@@ -399,6 +399,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: d11ccb6869514a98b677a6683edabc779357418f04540a81e6040c7b26f152f8
+hmac: 3b4f008daa1304a0afae3643e241829c47e50cd849d51c1574954cd3569355fc
 
 ...
