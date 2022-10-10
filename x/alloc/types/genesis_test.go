@@ -3,7 +3,7 @@ package types_test
 import (
 	"testing"
 
-	"github.com/public-awesome/stargaze/v7/x/alloc/types"
+	"github.com/public-awesome/stargaze/v8/x/alloc/types"
 	"github.com/stretchr/testify/require"
 )
 
