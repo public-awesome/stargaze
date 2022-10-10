@@ -306,7 +306,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:6.0.0
+    image: publicawesome/stargaze:7.0.0
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
@@ -338,7 +338,7 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: proposal
-    image: publicawesome/stargaze:6.0.0
+    image: publicawesome/stargaze:7.0.0
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
@@ -399,6 +399,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: be14d1ba7a19c5b401ea916b6175e2c917ba566cf62afc0d01ec1ee859ac1356
+hmac: cf10dbb04af5b5a7d823246f9f008e0d1facc675cf10821df8c4de559f78e835
 
 ...
