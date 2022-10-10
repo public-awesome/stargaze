@@ -55,8 +55,9 @@ func (s *KeeperTestSuite) TestClaimFor() {
 	pub2 := secp256k1.GenPrivKey().PubKey()
 	addr1 := sdk.AccAddress(pub1.Address())
 	addr2 := sdk.AccAddress(pub2.Address())
-	contractAddress1 := wasmkeeper.BuildContractAddress(1, 1)
-	contractAddress2 := wasmkeeper.BuildContractAddress(1, 2)
+
+	contractAddress1 := wasmkeeper.BuildContractAddressClassic(1, 1)
+	contractAddress2 := wasmkeeper.BuildContractAddressClassic(1, 2)
 	claimRecords := []types.ClaimRecord{
 		{
 			Address:                addr1.String(),
@@ -107,7 +108,7 @@ func (s *KeeperTestSuite) TestClaimFor() {
 	})
 
 	// unauthorized
-	msgClaimFor = types.NewMsgClaimFor(wasmkeeper.BuildContractAddress(2, 1).String(), addr1.String(), types.ActionMintNFT)
+	msgClaimFor = types.NewMsgClaimFor(wasmkeeper.BuildContractAddressClassic(2, 1).String(), addr1.String(), types.ActionMintNFT)
 	_, err = s.msgSrvr.ClaimFor(ctx, msgClaimFor)
 	s.Require().Error(err)
 	s.Contains(err.Error(), "address is not allowed to claim")

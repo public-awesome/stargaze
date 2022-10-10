@@ -101,6 +101,9 @@ lint:
 	@go mod verify
 
 
+full-lint: lint
+	@gosec -exclude-dir=cmd ./...
+
 build-linux: 
 	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build $(BUILD_FLAGS) -o bin/starsd github.com/public-awesome/stargaze/cmd/starsd
 
