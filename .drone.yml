@@ -343,7 +343,7 @@ steps:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: true
-    image: publicawesome/stargaze:v7-rc
+    image: publicawesome/stargaze:v8-alpha
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -386,7 +386,7 @@ steps:
 
 trigger:
   branch:
-    - release/v6
+    - feature/upgrade-wasmd
   event:
     - pull_request
     - push
@@ -399,6 +399,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 4628f830e85b77edab02474145ee543607143ad02e7a791eb7aa6f435f211891
+hmac: d11ccb6869514a98b677a6683edabc779357418f04540a81e6040c7b26f152f8
 
 ...
