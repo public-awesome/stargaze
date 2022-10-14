@@ -3,7 +3,7 @@ module github.com/public-awesome/stargaze/v8
 go 1.18
 
 require (
-	github.com/CosmWasm/wasmd v0.29.0
+	github.com/CosmWasm/wasmd v0.29.1
 	github.com/CosmWasm/wasmvm v1.1.1
 	github.com/armon/go-metrics v0.4.1
 	github.com/cosmos/cosmos-sdk v0.45.9
