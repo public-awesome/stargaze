@@ -132,3 +132,5 @@ replace (
 	github.com/tendermint/spm => github.com/public-awesome/spm v0.1.9-stargaze.0.20221010022708-6a1862c70304
 	google.golang.org/grpc => google.golang.org/grpc v1.33.2
 )
+
+replace github.com/confio/ics23/go => github.com/cosmos/cosmos-sdk/ics23/go v0.8.0
