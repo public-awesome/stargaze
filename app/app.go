@@ -493,7 +493,7 @@ func NewStargazeApp(
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
-	supportedFeatures := "iterator,staking,stargate,stargaze"
+	availableCapabilities := "iterator,staking,stargate,stargaze,cosmwasm_1_1"
 
 	wasmOpts = append(
 		wasmOpts,
@@ -516,7 +516,7 @@ func NewStargazeApp(
 		app.GRPCQueryRouter(),
 		wasmDir,
 		wasmConfig,
-		supportedFeatures,
+		availableCapabilities,
 		wasmOpts...,
 	)
 
