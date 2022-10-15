@@ -131,7 +131,7 @@ replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-	github.com/tendermint/spm => github.com/public-awesome/spm v0.1.9-stargaze.0.20221010022708-6a1862c70304
+	github.com/tendermint/spm => github.com/public-awesome/spm v0.1.9-stargaze.0.20221015160454-019146ae3b56
 	google.golang.org/grpc => google.golang.org/grpc v1.33.2
 )
 
