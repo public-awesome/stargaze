@@ -137,3 +137,24 @@ build-readiness-checker:
 	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -o bin/readiness-checker ./testutil/readiness-checker
 	docker build -t publicawesome/stargaze-readiness-checker -f docker/Dockerfile.readiness .
 
+BUF_IMAGE=bufbuild/buf@sha256:3cb1f8a4b48bd5ad8f09168f10f607ddc318af202f5c057d52a45216793d85e5 #v1.4.0
+DOCKER_BUF := $(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace $(BUF_IMAGE)
+
+
+###############################################################################
+###                                Protobuf                                 ###
+###############################################################################
+PROTO_BUILDER_IMAGE=tendermintdev/sdk-proto-gen:v0.2
+PROTO_FORMATTER_IMAGE=tendermintdev/docker-build-proto@sha256:aabcfe2fc19c31c0f198d4cd26393f5e5ca9502d7ea3feafbfe972448fee7cae
+
+proto-all: proto-format proto-lint proto-gen format
+
+proto-gen:
+	@echo "Generating Protobuf files"
+	$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace $(PROTO_BUILDER_IMAGE) sh ./scripts/protocgen.sh
+
+proto-format:
+	@echo "Formatting Protobuf files"
+	$(DOCKER) run --rm -v $(CURDIR):/workspace \
+	--workdir /workspace $(PROTO_FORMATTER_IMAGE) \
+	find ./ -name *.proto -exec clang-format -i {} \;
