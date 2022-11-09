@@ -3,12 +3,12 @@ module github.com/public-awesome/stargaze/v8
 go 1.18
 
 require (
-	github.com/CosmWasm/wasmd v0.29.1
+	github.com/CosmWasm/wasmd v0.29.2
 	github.com/CosmWasm/wasmvm v1.1.1
 	github.com/armon/go-metrics v0.4.1
 	github.com/cosmos/cosmos-sdk v0.45.10
 	github.com/cosmos/go-bip39 v1.0.0
-	github.com/cosmos/ibc-go/v3 v3.3.0
+	github.com/cosmos/ibc-go/v3 v3.4.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.5.2
 	github.com/gorilla/mux v1.8.0
@@ -42,7 +42,7 @@ require (
 	github.com/cosmos/cosmos-proto v1.0.0-alpha7 // indirect
 	github.com/cosmos/gogoproto v1.4.2 // indirect
 	github.com/cosmos/gorocksdb v1.2.0 // indirect
-	github.com/cosmos/iavl v0.19.3 // indirect
+	github.com/cosmos/iavl v0.19.4 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.11.1 // indirect
 	github.com/cosmos/ledger-go v0.9.3 // indirect
 	github.com/creachadair/taskgroup v0.3.2 // indirect
