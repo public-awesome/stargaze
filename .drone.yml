@@ -365,7 +365,7 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/upgrade/start-relayer.sh
     detach: true
-  - name: relayer-ugprade-sender
+  - name: relayer-upgrade-sender
     image: publicawesome/hermes:0.15.0
     commands:
       - /bin/bash ./scripts/ci/upgrade/transfer-relayer.sh
@@ -399,6 +399,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 2fb00f4217b272887f6b4324a41a2fff9e7034f0c664550c7eecd143021cf0ac
+hmac: 2d864f6e27004b39f8313571de1e2326af4df2098bf5df30b093857183a4a1af
 
 ...

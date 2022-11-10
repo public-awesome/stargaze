@@ -3,8 +3,8 @@ RUN apk add -U --no-cache ca-certificates
 
 WORKDIR /data
 ENV HOME=/data
-COPY /stargaze//bin/starsd /usr/bin/starsd
-COPY /stargaze/docker/entry-point.sh ./entry-point.sh
+COPY ./bin/starsd /usr/bin/starsd
+COPY ./docker/entry-point.sh ./entry-point.sh
 EXPOSE 26657
 
 CMD ["starsd", "start", "--pruning", "nothing", "--log_format", "json"]
