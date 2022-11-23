@@ -1,4 +1,4 @@
-.PHONY: build proto
+.PHONY: build proto check_version install
 #!/usr/bin/make -f
 
 PACKAGES_SIMTEST=$(shell go list ./... | grep '/simulation')
@@ -13,6 +13,9 @@ POST_ID ?= 1
 STAKE_DENOM ?= ustarx
 
 export GO111MODULE = on
+
+GO_MAJOR_VERSION = $(shell go version | cut -c 14- | cut -d' ' -f1 | cut -d'.' -f1)
+GO_MINOR_VERSION = $(shell go version | cut -c 14- | cut -d' ' -f1 | cut -d'.' -f2)
 
 # process build tags
 build_tags = netgo
@@ -81,13 +84,19 @@ ifeq (,$(findstring nostrip,$(STARGAZE_BUILD_OPTIONS)))
   BUILD_FLAGS += -trimpath
 endif
 
+check_version:
+	@echo "Go version: $(GO_MAJOR_VERSION).$(GO_MINOR_VERSION)"
+ifneq ($(GO_MINOR_VERSION),18)
+	@echo "ERROR: Go version 1.18 is recommended for this version Stargaze"
+	exit 1
+endif
 
 all: install
 
-install:
+install: check_version
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/starsd
 
-build:
+build: check_version
 	go build $(BUILD_FLAGS) -o bin/starsd ./cmd/starsd
 
 go.sum: go.mod
