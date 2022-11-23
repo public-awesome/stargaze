@@ -80,7 +80,7 @@ steps:
       event:
         - push
       branch:
-        - feature/upgrade-wasmd
+        - jhernandezb/check-go-version
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -399,6 +399,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 3b4f008daa1304a0afae3643e241829c47e50cd849d51c1574954cd3569355fc
+hmac: f86e410c27d1101182496015cdcf5acc5f04e82abed9b7903412ba6b2739fed8
 
 ...
