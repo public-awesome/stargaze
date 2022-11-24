@@ -76,6 +76,7 @@ func (vs *VersionSnapshotter) Restore(height uint64, format uint32, protoReader 
 			}
 			payload := item.GetExtensionPayload()
 			if payload == nil {
+				vs.versionSetter.SetProtocolVersion(0)
 				break
 			}
 			appVersion := sdk.BigEndianToUint64(payload.Payload)
