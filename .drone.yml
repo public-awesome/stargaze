@@ -75,7 +75,7 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - v8.0.0-rc.1
+        - 8.0.0-rc.1
     when:
       event:
         - push
@@ -399,6 +399,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 264a83a1f277c67ac7ef8844f8b6998528fbcab5b4a83e6d8dd7ec5ffd20c661
+hmac: 375f9134b8a4ebe29a1e1680b5a6bebc1444a551ff6843d8fa794c3bdcd8c5da
 
 ...
