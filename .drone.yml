@@ -31,7 +31,7 @@ steps:
         - '/go/pkg/mod'
 
   - name: test
-    image: publicawesome/golang:1.18.7-devtooling
+    image: publicawesome/golang:1.19.3-devtooling
     volumes:
       - name: cache
         path: /go
@@ -40,7 +40,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: build
-    image: golang:1.18.7-alpine3.15
+    image: golang:1.19.3-alpine3.15
     volumes:
       - name: cache
         path: /go
@@ -187,7 +187,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/golang:1.18.7-devtooling
+    image: publicawesome/golang:1.19.3-devtooling
     volumes:
       - name: cache
         path: /go
@@ -273,7 +273,7 @@ steps:
       mount:
         - '/go/pkg/mod'
   - name: build-wrapper
-    image: publicawesome/golang:1.18.7-devtooling
+    image: publicawesome/golang:1.19.3-devtooling
     volumes:
       - name: cache
         path: /go
@@ -399,6 +399,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: e366fc223a728f3f84559cb42c25951e50d21b3b50658ec2fb8829bd6471956e
+hmac: 264a83a1f277c67ac7ef8844f8b6998528fbcab5b4a83e6d8dd7ec5ffd20c661
 
 ...

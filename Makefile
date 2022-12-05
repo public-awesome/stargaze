@@ -86,8 +86,8 @@ endif
 
 check_version:
 	@echo "Go version: $(GO_MAJOR_VERSION).$(GO_MINOR_VERSION)"
-ifneq ($(GO_MINOR_VERSION),18)
-	@echo "ERROR: Go version 1.18 is recommended for this version Stargaze"
+ifneq ($(GO_MINOR_VERSION),19)
+	@echo "ERROR: Go version 1.19 is required for this version of Stargaze"
 	exit 1
 endif
 
