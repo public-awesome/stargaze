@@ -55,7 +55,7 @@ func (vs *VersionSnapshotter) Snapshot(height uint64, protoWriter protoio.Writer
 	params := vs.consensusParamGetter.GetConsensusParams(ctx)
 	// default to 1 for stargaze
 	appVersion := uint64(1)
-	if params != nil && params.Version != nil && params.Version.GetAppVersion() > 0 {
+	if params != nil && params.Version != nil {
 		appVersion = params.Version.GetAppVersion()
 	}
 	bz := sdk.Uint64ToBigEndian(appVersion)
@@ -76,7 +76,6 @@ func (vs *VersionSnapshotter) Restore(height uint64, format uint32, protoReader 
 			}
 			payload := item.GetExtensionPayload()
 			if payload == nil {
-				vs.versionSetter.SetProtocolVersion(0)
 				break
 			}
 			appVersion := sdk.BigEndianToUint64(payload.Payload)
