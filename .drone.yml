@@ -80,7 +80,7 @@ steps:
       event:
         - push
       branch:
-        - jhernandezb/check-go-version
+        - feature/min-deposit-ante-handler
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -306,7 +306,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:7.0.0
+    image: publicawesome/stargaze:7.5.0
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
@@ -338,7 +338,7 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: proposal
-    image: publicawesome/stargaze:7.0.0
+    image: publicawesome/stargaze:7.5.0
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
@@ -365,7 +365,7 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/upgrade/start-relayer.sh
     detach: true
-  - name: relayer-ugprade-sender
+  - name: relayer-upgrade-sender
     image: publicawesome/hermes:0.15.0
     commands:
       - /bin/bash ./scripts/ci/upgrade/transfer-relayer.sh
@@ -399,6 +399,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: f86e410c27d1101182496015cdcf5acc5f04e82abed9b7903412ba6b2739fed8
+hmac: f581eeab2aa3d320a680ba43dda39edd4654a52fee12f3d3133da7e926d44953
 
 ...
