@@ -75,12 +75,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - v8-alpha
+        - v8.0.0-rc.1
     when:
       event:
         - push
       branch:
-        - feature/min-deposit-ante-handler
+        - prepare-v8
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -343,7 +343,7 @@ steps:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: true
-    image: publicawesome/stargaze:v8-alpha
+    image: publicawesome/stargaze:8.0.0-rc.1
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -399,6 +399,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: f581eeab2aa3d320a680ba43dda39edd4654a52fee12f3d3133da7e926d44953
+hmac: e366fc223a728f3f84559cb42c25951e50d21b3b50658ec2fb8829bd6471956e
 
 ...
