@@ -19,7 +19,7 @@ func NewMinDepositDecorator(codec codec.BinaryCodec) MinDepositDecorator {
 	}
 }
 
-func checkDeposit(m sdk.Msg) error {
+func (dec MinDepositDecorator) checkDeposit(m sdk.Msg) error {
 	switch msg := m.(type) {
 	case *govtypes.MsgSubmitProposal:
 		c := msg.GetInitialDeposit()
@@ -33,7 +33,7 @@ func checkDeposit(m sdk.Msg) error {
 }
 
 func (dec MinDepositDecorator) Validate(m sdk.Msg) error {
-	err := checkDeposit(m)
+	err := dec.checkDeposit(m)
 	if err != nil {
 		return err
 	}
@@ -44,7 +44,7 @@ func (dec MinDepositDecorator) Validate(m sdk.Msg) error {
 			if err != nil {
 				return sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "error decoding authz messages")
 			}
-			err = checkDeposit(wrappedMsg)
+			err = dec.checkDeposit(wrappedMsg)
 			if err != nil {
 				return err
 			}
