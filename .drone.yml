@@ -31,7 +31,7 @@ steps:
         - '/go/pkg/mod'
 
   - name: test
-    image: publicawesome/golang:1.19.3-devtooling
+    image: publicawesome/golang:1.19.4-devtooling
     volumes:
       - name: cache
         path: /go
@@ -40,7 +40,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: build
-    image: golang:1.19.3-alpine3.15
+    image: golang:1.19.4-alpine3.15
     volumes:
       - name: cache
         path: /go
@@ -75,12 +75,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 8.0.0-rc.1
+        - 8.0.0-rc.2
     when:
       event:
         - push
       branch:
-        - prepare-v8
+        - feature/update-go-version
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -96,7 +96,7 @@ steps:
         - tag
 
   - name: release
-    image: golang:1.18.7
+    image: golang:1.19.4
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -187,7 +187,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/golang:1.19.3-devtooling
+    image: publicawesome/golang:1.19.4-devtooling
     volumes:
       - name: cache
         path: /go
@@ -273,7 +273,7 @@ steps:
       mount:
         - '/go/pkg/mod'
   - name: build-wrapper
-    image: publicawesome/golang:1.19.3-devtooling
+    image: publicawesome/golang:1.19.4-devtooling
     volumes:
       - name: cache
         path: /go
@@ -343,7 +343,7 @@ steps:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: true
-    image: publicawesome/stargaze:8.0.0-rc.1
+    image: publicawesome/stargaze:8.0.0-rc.2
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -399,6 +399,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 375f9134b8a4ebe29a1e1680b5a6bebc1444a551ff6843d8fa794c3bdcd8c5da
+hmac: 6b5fc40b40ce50572731d28f4bad215ec28cb6de74ba164892e47117ffd27d71
 
 ...
