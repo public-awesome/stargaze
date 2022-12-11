@@ -40,7 +40,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: build
-    image: golang:1.19.4-alpine3.15
+    image: golang:1.19.3-alpine3.15
     volumes:
       - name: cache
         path: /go
@@ -399,6 +399,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 6b5fc40b40ce50572731d28f4bad215ec28cb6de74ba164892e47117ffd27d71
+hmac: c7577a898d2fc61b29c61c9759b205b10ca29010f6cbe9ab0cafdf3d4140bff9
 
 ...
