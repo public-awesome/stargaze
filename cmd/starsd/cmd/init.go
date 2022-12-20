@@ -26,6 +26,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
+
+	sg "github.com/public-awesome/stargaze/v8/app"
 )
 
 const (
@@ -150,7 +152,14 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 				return fmt.Errorf("genesis.json file already exists: %v", genFile)
 			}
 
-			appState, err := json.MarshalIndent(mbm.DefaultGenesis(cdc), "", " ")
+			gen := mbm.DefaultGenesis(cdc)
+			sgDefaultGen := sg.NewDefaultGenesisState(cdc)
+			gen["tokenfactory"] = sgDefaultGen["tokenfactory"]
+			// for key := range sgDefaultGen {
+			// 	gen[key] = sgDefaultGen[key]
+			// }
+
+			appState, err := json.MarshalIndent(gen, "", " ")
 			if err != nil {
 				return errors.Wrap(err, "Failed to marshall default genesis state")
 			}

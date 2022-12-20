@@ -3,9 +3,11 @@ package app
 import (
 	"encoding/json"
 
+	tokenfactorytypes "github.com/CosmWasm/token-factory/x/tokenfactory/types"
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // The genesis state of the blockchain is represented here as a map of raw json
@@ -32,6 +34,10 @@ func NewDefaultGenesisState(cdc codec.JSONCodec) GenesisState {
 			InstantiateDefaultPermission: wasmtypes.AccessTypeEverybody,
 		},
 	}
+	tokenfactoryGen := tokenfactorytypes.GenesisState{
+		Params: tokenfactorytypes.NewParams(sdk.NewCoins()),
+	}
 	genesis[wasm.ModuleName] = cdc.MustMarshalJSON(&wasmGen)
+	genesis[tokenfactorytypes.ModuleName] = cdc.MustMarshalJSON(&tokenfactoryGen)
 	return genesis
 }

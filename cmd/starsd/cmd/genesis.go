@@ -30,6 +30,7 @@ import (
 	minttypes "github.com/public-awesome/stargaze/v8/x/mint/types"
 
 	// appParams "github.com/public-awesome/stargaze/app/params"
+	tokenfactorytypes "github.com/CosmWasm/token-factory/x/tokenfactory/types"
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	alloctypes "github.com/public-awesome/stargaze/v8/x/alloc/types"
@@ -83,7 +84,8 @@ type GenesisParams struct {
 	ClaimParams claimtypes.Params
 	MintParams  minttypes.Params
 
-	WasmParams wasmtypes.Params
+	WasmParams         wasmtypes.Params
+	TokenFactoryParams tokenfactorytypes.Params
 }
 
 func PrepareGenesisCmd(defaultNodeHome string, mbm module.BasicManager) *cobra.Command {
@@ -559,5 +561,8 @@ func LocalnetGenesisParams() GenesisParams {
 	genParams.GovParams.TallyParams.Threshold = sdk.MustNewDecFromStr("0.5") // 50%
 	genParams.GovParams.VotingParams.VotingPeriod = time.Minute * 1          // 5 min
 	// genParams.WasmParams.MaxWasmCodeSize = 1000 * 1024 * 2                   // 2000kb
+
+	genParams.TokenFactoryParams.DenomCreationFee = sdk.NewCoins()
+
 	return genParams
 }
