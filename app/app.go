@@ -674,6 +674,7 @@ func NewStargazeApp(
 		allocmoduletypes.ModuleName,
 		// wasm after ibc transfer
 		wasm.ModuleName,
+		tokenfactorytypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
