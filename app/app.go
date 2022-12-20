@@ -119,6 +119,7 @@ import (
 	icatypes "github.com/cosmos/ibc-go/v3/modules/apps/27-interchain-accounts/types"
 
 	"github.com/CosmWasm/token-factory/x/tokenfactory"
+	"github.com/CosmWasm/token-factory/x/tokenfactory/bindings"
 	tokenfactorykeeper "github.com/CosmWasm/token-factory/x/tokenfactory/keeper"
 	tokenfactorytypes "github.com/CosmWasm/token-factory/x/tokenfactory/types"
 )
@@ -259,7 +260,7 @@ type App struct {
 
 	// keepers
 	AccountKeeper    authkeeper.AccountKeeper
-	BankKeeper       bankkeeper.Keeper
+	BankKeeper       bankkeeper.BaseKeeper
 	CapabilityKeeper *capabilitykeeper.Keeper
 	StakingKeeper    stakingkeeper.Keeper
 	SlashingKeeper   slashingkeeper.Keeper
@@ -500,15 +501,28 @@ func NewStargazeApp(
 	registry.RegisterEncoder(claimmoduletypes.ModuleName, claimwasm.Encoder)
 	registry.RegisterEncoder(allocmoduletypes.ModuleName, allocwasm.Encoder)
 
+	app.TokenFactoryKeeper = tokenfactorykeeper.NewKeeper(
+		keys[tokenfactorytypes.StoreKey],
+		app.GetSubspace(tokenfactorytypes.ModuleName),
+		app.AccountKeeper,
+		app.BankKeeper,
+		app.DistrKeeper,
+	)
+
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
-	availableCapabilities := "iterator,staking,stargate,stargaze,cosmwasm_1_1"
+	availableCapabilities := "iterator,staking,stargate,stargaze,cosmwasm_1_1,token_factory"
 
 	wasmOpts = append(
 		wasmOpts,
 		wasmkeeper.WithMessageEncoders(sgwasm.MessageEncoders(registry)),
 		wasmkeeper.WithQueryPlugins(nil),
 	)
+	wasmOpts = append(
+		wasmOpts, 
+		bindings.RegisterCustomPlugins(&app.BankKeeper, &app.TokenFactoryKeeper)...,
+	)
+
 	app.WasmKeeper = wasm.NewKeeper(
 		appCodec,
 		keys[wasm.StoreKey],
@@ -527,14 +541,6 @@ func NewStargazeApp(
 		wasmConfig,
 		availableCapabilities,
 		wasmOpts...,
-	)
-
-	app.TokenFactoryKeeper = tokenfactorykeeper.NewKeeper(
-		keys[tokenfactorytypes.StoreKey],
-		app.GetSubspace(tokenfactorytypes.ModuleName),
-		app.AccountKeeper,
-		app.BankKeeper,
-		app.DistrKeeper,
 	)
 
 	// The gov proposal types can be individually enabled
