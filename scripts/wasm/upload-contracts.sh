@@ -14,10 +14,10 @@ fi
 
 TXFLAG="--gas-prices 0.01$DENOM --gas auto --gas-adjustment 1.3 -y -b block --chain-id $CHAIN_ID --node $NODE --output json"
 
-CONTRACTS_REPO=https://github.com/public-awesome/stargaze-contracts
-CONTRACTS_TAG=v0.12.4-alpha
+LAUNCHPAD_REPO=https://github.com/public-awesome/launchpad
+LAUNCHPAD_TAG=v0.21.5
 MARKETPLACE_REPO=https://github.com/public-awesome/marketplace
-MARKETPLACE_TAG=v0.5.1
+MARKETPLACE_TAG=v1.2.0
 
 if ! command -v fetch &> /dev/null
 then
@@ -27,16 +27,18 @@ fi
 
 # Fetch contract wasm binaries
 fetch --repo=$MARKETPLACE_REPO --tag=$MARKETPLACE_TAG --release-asset="sg_marketplace.wasm" .
-fetch --repo=$CONTRACTS_REPO --tag=$CONTRACTS_TAG --release-asset="sg721.wasm" .
-fetch --repo=$CONTRACTS_REPO --tag=$CONTRACTS_TAG --release-asset="minter.wasm" .
-fetch --repo=$CONTRACTS_REPO --tag=$CONTRACTS_TAG --release-asset="whitelist.wasm" .
-fetch --repo=$CONTRACTS_REPO --tag=$CONTRACTS_TAG --release-asset="claim.wasm" .
+fetch --repo=$LAUNCHPAD_REPO --tag=$LAUNCHPAD_TAG --release-asset="sg721.wasm" .
+fetch --repo=$LAUNCHPAD_REPO --tag=$LAUNCHPAD_TAG --release-asset="minter.wasm" .
+fetch --repo=$LAUNCHPAD_REPO --tag=$LAUNCHPAD_TAG --release-asset="whitelist.wasm" .
+fetch --repo=$LAUNCHPAD_REPO --tag=$LAUNCHPAD_TAG --release-asset="claim.wasm" .
+
 # Store code on chain
 MARKETPLACE_CODE=$($BINARY tx wasm store sg_marketplace.wasm --from $1 $TXFLAG | jq -r '.logs[0].events[-1].attributes[0].value')
 SG721_CODE=$($BINARY tx wasm store sg721.wasm --from $1 $TXFLAG | jq -r '.logs[0].events[-1].attributes[0].value')
 MINTER_CODE=$($BINARY tx wasm store minter.wasm --from $1 $TXFLAG | jq -r '.logs[0].events[-1].attributes[0].value')
 WHITELIST_CODE=$($BINARY tx wasm store whitelist.wasm --from $1 $TXFLAG | jq -r '.logs[0].events[-1].attributes[0].value')
 CLAIM_CODE=$($BINARY tx wasm store claim.wasm --from $1 $TXFLAG | jq -r '.logs[0].events[-1].attributes[0].value')
+
 # Clean up
 rm sg_marketplace.wasm sg721.wasm minter.wasm whitelist.wasm claim.wasm
 
