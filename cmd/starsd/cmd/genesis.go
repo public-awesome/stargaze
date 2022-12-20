@@ -84,7 +84,7 @@ type GenesisParams struct {
 	ClaimParams claimtypes.Params
 	MintParams  minttypes.Params
 
-	WasmParams wasmtypes.Params
+	WasmParams         wasmtypes.Params
 	TokenFactoryParams tokenfactorytypes.Params
 }
 

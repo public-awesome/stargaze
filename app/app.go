@@ -222,7 +222,7 @@ var (
 		allocmoduletypes.FairburnPoolName: nil,
 		wasm.ModuleName:                   {authtypes.Burner},
 		icatypes.ModuleName:               nil,
-		tokenfactorytypes.ModuleName:			 {authtypes.Minter, authtypes.Burner},
+		tokenfactorytypes.ModuleName:      {authtypes.Minter, authtypes.Burner},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 )
@@ -519,7 +519,7 @@ func NewStargazeApp(
 		wasmkeeper.WithQueryPlugins(nil),
 	)
 	wasmOpts = append(
-		wasmOpts, 
+		wasmOpts,
 		bindings.RegisterCustomPlugins(&app.BankKeeper, &app.TokenFactoryKeeper)...,
 	)
 
