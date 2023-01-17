@@ -10,7 +10,21 @@ option go_package = "github.com/public-awesome/stargaze/v8/x/cron/types";
 
 // Query defines the gRPC querier service.
 service Query {
+  // Parameters queries the parameters of the module.
+  rpc ListPrivileged(QueryListPrivilegedRequest) returns (QueryListPrivilegedResponse) {
+    option (google.api.http).get = "/stargaze/v8/cron/list-privileged";
+  }
   // this line is used by starport scaffolding # 2
+}
+
+// QueryListPrivilegedRequest is request type for the Query/Params RPC method.
+message QueryListPrivilegedRequest {}
+
+// QueryListPrivilegedResponse is response type for the Query/Params RPC method.
+message QueryListPrivilegedResponse {
+  // params holds all the parameters of this module.
+  repeated string contract_addresses = 1
+  [ (gogoproto.jsontag) = "privileged_contract_addresses,omitempty" ]; 
 }
 
 // this line is used by starport scaffolding # 3
