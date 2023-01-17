@@ -1,0 +1,14 @@
+syntax = "proto3";
+package stargaze.v8.cron;
+
+import "gogoproto/gogo.proto";
+import "stargaze/cron/params.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "github.com/public-awesome/stargaze/v8/x/cron/types";
+
+// GenesisState defines the cron module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+  // this line is used by starport scaffolding # genesis/proto/state
+}

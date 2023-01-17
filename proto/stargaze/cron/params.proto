@@ -1,0 +1,12 @@
+syntax = "proto3";
+package stargaze.v8.cron;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/public-awesome/stargaze/v8/x/cron/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  
+}
