@@ -3,15 +3,15 @@ package cron
 import (
 	"math/rand"
 
-	"github.com/public-awesome/stargaze/v8/testutil/sample"
-	cronsimulation "github.com/public-awesome/stargaze/v8/x/cron/simulation"
-	"github.com/public-awesome/stargaze/v8/x/cron/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/public-awesome/stargaze/v8/testutil/sample"
+	cronsimulation "github.com/public-awesome/stargaze/v8/x/cron/simulation"
+	"github.com/public-awesome/stargaze/v8/x/cron/types"
 )
 
 // avoid unused import issue
@@ -24,7 +24,7 @@ var (
 )
 
 const (
-    // this line is used by starport scaffolding # simapp/module/const
+// this line is used by starport scaffolding # simapp/module/const
 )
 
 // GenerateGenesisState creates a randomized GenState of the module
@@ -34,7 +34,6 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 		accs[i] = acc.Address.String()
 	}
 	cronGenesis := types.GenesisState{
-		Params:	types.DefaultParams(),
 		// this line is used by starport scaffolding # simapp/module/genesisState
 	}
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&cronGenesis)
@@ -47,9 +46,8 @@ func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedP
 
 // RandomizedParams creates randomized  param changes for the simulator
 func (am AppModule) RandomizedParams(_ *rand.Rand) []simtypes.ParamChange {
-	
-	return []simtypes.ParamChange{
-	}
+
+	return []simtypes.ParamChange{}
 }
 
 // RegisterStoreDecoder registers a decoder
