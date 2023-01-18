@@ -1,5 +1,7 @@
 package types
 
+import sdk "github.com/cosmos/cosmos-sdk/types"
+
 const (
 	// ModuleName defines the module name
 	ModuleName = "cron"
@@ -12,12 +14,12 @@ const (
 
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_cron"
-
-    
 )
 
+var (
+	PrivilegedContractsPrefix = []byte{0x00}
+)
 
-
-func KeyPrefix(p string) []byte {
-    return []byte(p)
+func PrivilegedContractsKey(contractAddr sdk.AccAddress) []byte {
+	return append(PrivilegedContractsPrefix, contractAddr...)
 }
