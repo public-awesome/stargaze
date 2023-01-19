@@ -29,7 +29,7 @@ func TestMsgCreateVestingAccount_ValidateBasic(t *testing.T) {
 		}, {
 			name: "invalid to address",
 			msg: MsgCreateVestingAccount{
-				FromAddress: sample.AccAddress(),
+				FromAddress: sample.AccAddress().String(),
 				ToAddress:   "invalid_address",
 				Amount:      sdk.NewCoins(sdk.NewInt64Coin("stake", 10)),
 				StartTime:   time.Now().Unix(),
@@ -39,8 +39,8 @@ func TestMsgCreateVestingAccount_ValidateBasic(t *testing.T) {
 		}, {
 			name: "invalid start time",
 			msg: MsgCreateVestingAccount{
-				FromAddress: sample.AccAddress(),
-				ToAddress:   sample.AccAddress(),
+				FromAddress: sample.AccAddress().String(),
+				ToAddress:   sample.AccAddress().String(),
 				Amount:      sdk.NewCoins(sdk.NewInt64Coin("stake", 10)),
 				StartTime:   0,
 				EndTime:     time.Now().Unix() + 1,
@@ -49,8 +49,8 @@ func TestMsgCreateVestingAccount_ValidateBasic(t *testing.T) {
 		}, {
 			name: "invalid end time",
 			msg: MsgCreateVestingAccount{
-				FromAddress: sample.AccAddress(),
-				ToAddress:   sample.AccAddress(),
+				FromAddress: sample.AccAddress().String(),
+				ToAddress:   sample.AccAddress().String(),
 				Amount:      sdk.NewCoins(sdk.NewInt64Coin("stake", 10)),
 				StartTime:   time.Now().Unix(),
 				EndTime:     0,
@@ -59,8 +59,8 @@ func TestMsgCreateVestingAccount_ValidateBasic(t *testing.T) {
 		}, {
 			name: "star time < end time",
 			msg: MsgCreateVestingAccount{
-				FromAddress: sample.AccAddress(),
-				ToAddress:   sample.AccAddress(),
+				FromAddress: sample.AccAddress().String(),
+				ToAddress:   sample.AccAddress().String(),
 				Amount:      sdk.NewCoins(sdk.NewInt64Coin("stake", 10)),
 				StartTime:   time.Now().Unix(),
 				EndTime:     time.Now().Unix(),
@@ -69,8 +69,8 @@ func TestMsgCreateVestingAccount_ValidateBasic(t *testing.T) {
 		}, {
 			name: "invalid amount",
 			msg: MsgCreateVestingAccount{
-				FromAddress: sample.AccAddress(),
-				ToAddress:   sample.AccAddress(),
+				FromAddress: sample.AccAddress().String(),
+				ToAddress:   sample.AccAddress().String(),
 
 				StartTime: time.Now().Unix(),
 				EndTime:   time.Now().Unix() + 1,
@@ -79,8 +79,8 @@ func TestMsgCreateVestingAccount_ValidateBasic(t *testing.T) {
 		}, {
 			name: "valid address",
 			msg: MsgCreateVestingAccount{
-				FromAddress: sample.AccAddress(),
-				ToAddress:   sample.AccAddress(),
+				FromAddress: sample.AccAddress().String(),
+				ToAddress:   sample.AccAddress().String(),
 				Amount:      sdk.NewCoins(sdk.NewInt64Coin("stake", 10)),
 				StartTime:   time.Now().Unix(),
 				EndTime:     time.Now().Unix() + 1,

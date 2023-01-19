@@ -23,7 +23,7 @@ func TestMsgInitialClaim_ValidateBasic(t *testing.T) {
 		}, {
 			name: "valid address",
 			msg: MsgInitialClaim{
-				Sender: sample.AccAddress(),
+				Sender: sample.AccAddress().String(),
 			},
 		},
 	}
