@@ -23,11 +23,10 @@ In the ABCI endblock, the module fetches the list of all priviledged contracts a
 
 The module emits the following events:
 
-| Source type | Source name                | Protobuf reference                                                 |
-| ----------- | -------------------------- |--------------------------------------------------------------------|
-| Keeper      | `SetContractPriviledge`    | Yet to implement                                                   |
-| Keeper      | `RevokeContractPriviledge` | Yet to implement                                                   |
-
+| Source type | Source name                |
+| ----------- | -------------------------- |
+| Keeper      | `SetContractPriviledge`    |
+| Keeper      | `UnsetContractPriviledge`  |
 
 ## Client
 

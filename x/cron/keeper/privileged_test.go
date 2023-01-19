@@ -15,12 +15,9 @@ func Test_SetPrivileged(t *testing.T) {
 	acc1 := sample.AccAddress()
 	k.SetPrivileged(ctx, acc1)
 
-	k.IteratePrivileged(ctx, func(addr sdk.AccAddress) bool {
-		if addr.String() != acc1.String() {
-			t.Errorf("expected %s, got %s", acc1, addr)
-		}
-		return false
-	})
+	if !k.IsPrivileged(ctx, acc1) {
+		t.Errorf("expected %s to be privileged", acc1)
+	}
 }
 
 func Test_UnsetPrivileged(t *testing.T) {
@@ -30,12 +27,9 @@ func Test_UnsetPrivileged(t *testing.T) {
 	k.SetPrivileged(ctx, acc1)
 	k.UnsetPrivileged(ctx, acc1)
 
-	k.IteratePrivileged(ctx, func(addr sdk.AccAddress) bool {
-		if addr.String() == acc1.String() {
-			t.Errorf("expected %s to not be there, got %s", acc1, addr)
-		}
-		return false
-	})
+	if k.IsPrivileged(ctx, acc1) {
+		t.Errorf("expected %s to not be privileged", acc1)
+	}
 }
 
 func Test_IteratePrivileged(t *testing.T) {
