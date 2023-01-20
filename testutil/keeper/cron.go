@@ -3,6 +3,8 @@ package keeper
 import (
 	"testing"
 
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -36,11 +38,13 @@ func CronKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		memStoreKey,
 		"CronParams",
 	)
+	wk := wasmkeeper.NewKeeper(cdc, nil, paramsSubspace, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, "", wasmtypes.DefaultWasmConfig(), "")
 	k := keeper.NewKeeper(
 		cdc,
 		storeKey,
 		memStoreKey,
 		paramsSubspace,
+		wk,
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())

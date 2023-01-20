@@ -1,0 +1,28 @@
+syntax = "proto3";
+package stargaze.v8.cron;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/public-awesome/stargaze/v8/x/cron/types";
+
+// PromoteToPrivilegedContractProposal gov proposal content type to add
+// "privileges" to a contract
+message PromoteToPrivilegedContractProposal {
+  // Title is a short summary
+  string title = 1 [ (gogoproto.moretags) = "yaml:\"title\"" ];
+  // Description is a human readable text
+  string description = 2 [ (gogoproto.moretags) = "yaml:\"description\"" ];
+  // Contract is the address of the smart contract
+  string contract = 3 [ (gogoproto.moretags) = "yaml:\"contract\"" ];
+}
+
+// PromoteToPrivilegedContractProposal gov proposal content type to remove
+// "privileges" from a contract
+message DemotePrivilegedContractProposal {
+  // Title is a short summary
+  string title = 1 [ (gogoproto.moretags) = "yaml:\"title\"" ];
+  // Description is a human readable text
+  string description = 2 [ (gogoproto.moretags) = "yaml:\"description\"" ];
+  // Contract is the address of the smart contract
+  string contract = 3 [ (gogoproto.moretags) = "yaml:\"contract\"" ];
+}
