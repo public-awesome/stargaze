@@ -111,10 +111,9 @@ import (
 	claimmoduletypes "github.com/public-awesome/stargaze/v8/x/claim/types"
 	claimwasm "github.com/public-awesome/stargaze/v8/x/claim/wasm"
 
-	//cronmodule "github.com/public-awesome/stargaze/v8/x/cron"
+	cronmodule "github.com/public-awesome/stargaze/v8/x/cron"
 	cronmodulekeeper "github.com/public-awesome/stargaze/v8/x/cron/keeper"
-	//cronmoduletypes "github.com/public-awesome/stargaze/v8/x/cron/types"
-	//cronwasm "github.com/public-awesome/stargaze/v8/x/cron/wasm"
+	cronmoduletypes "github.com/public-awesome/stargaze/v8/x/cron/types"
 
 	//  ica
 	ica "github.com/cosmos/ibc-go/v3/modules/apps/27-interchain-accounts"
@@ -203,6 +202,7 @@ var (
 		vesting.AppModuleBasic{},
 		claimmodule.AppModuleBasic{},
 		allocmodule.AppModuleBasic{},
+		cronmodule.AppModuleBasic{},
 		wasm.AppModuleBasic{},
 		ica.AppModuleBasic{},
 	)
@@ -326,6 +326,7 @@ func NewStargazeApp(
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		claimmoduletypes.StoreKey,
 		allocmoduletypes.StoreKey,
+		cronmoduletypes.StoreKey,
 		authzkeeper.StoreKey,
 		wasm.StoreKey,
 		icahosttypes.StoreKey,
@@ -444,7 +445,8 @@ func NewStargazeApp(
 		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.ParamsKeeper)).
 		AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.DistrKeeper)).
 		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.UpgradeKeeper)).
-		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper))
+		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper)).
+		AddRoute(cronmoduletypes.RouterKey, cronmodulekeeper.NewProposalHandler(app.CronKeeper))
 
 	// Create Transfer Keepers
 	app.TransferKeeper = ibctransferkeeper.NewKeeper(
@@ -526,6 +528,9 @@ func NewStargazeApp(
 		wasmOpts...,
 	)
 
+	app.CronKeeper = *cronmodulekeeper.NewKeeper(appCodec, keys[cronmoduletypes.StoreKey], keys[cronmoduletypes.MemStoreKey], app.GetSubspace(cronmoduletypes.ModuleName), app.WasmKeeper)
+	cronModule := cronmodule.NewAppModule(appCodec, app.CronKeeper, app.AccountKeeper, app.BankKeeper)
+
 	// The gov proposal types can be individually enabled
 	if len(enabledProposals) != 0 {
 		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(app.WasmKeeper, enabledProposals))
@@ -595,6 +600,7 @@ func NewStargazeApp(
 		claimModule,
 		allocModule,
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
+		cronModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -610,7 +616,7 @@ func NewStargazeApp(
 		ibchost.ModuleName, ibctransfertypes.ModuleName,
 		icatypes.ModuleName,
 		authtypes.ModuleName, banktypes.ModuleName, govtypes.ModuleName, crisistypes.ModuleName, genutiltypes.ModuleName,
-		authz.ModuleName, feegrant.ModuleName, claimmoduletypes.ModuleName,
+		authz.ModuleName, feegrant.ModuleName, claimmoduletypes.ModuleName, cronmoduletypes.ModuleName,
 		paramstypes.ModuleName, vestingtypes.ModuleName,
 		wasm.ModuleName,
 	)
@@ -624,7 +630,7 @@ func NewStargazeApp(
 		paramstypes.ModuleName, upgradetypes.ModuleName, vestingtypes.ModuleName,
 		ibchost.ModuleName, ibctransfertypes.ModuleName,
 		icatypes.ModuleName,
-		allocmoduletypes.ModuleName, claimmoduletypes.ModuleName,
+		allocmoduletypes.ModuleName, claimmoduletypes.ModuleName, cronmoduletypes.ModuleName,
 		wasm.ModuleName,
 	)
 
@@ -655,6 +661,7 @@ func NewStargazeApp(
 		allocmoduletypes.ModuleName,
 		// wasm after ibc transfer
 		wasm.ModuleName,
+		cronmoduletypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -872,6 +879,7 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(claimmoduletypes.ModuleName)
 	paramsKeeper.Subspace(allocmoduletypes.ModuleName)
 	paramsKeeper.Subspace(wasm.ModuleName)
+	paramsKeeper.Subspace(cronmoduletypes.ModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
