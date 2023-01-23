@@ -16,6 +16,10 @@ type govKeeper interface {
 
 // NewProposalHandler creates a new governance Handler for wasm proposals
 func NewProposalHandler(k Keeper) govtypes.Handler {
+	return NewProposalHandlerX(k)
+}
+
+func NewProposalHandlerX(k govKeeper) govtypes.Handler {
 	return func(ctx sdk.Context, content govtypes.Content) error {
 		switch c := content.(type) {
 		case *types.PromoteToPrivilegedContractProposal:
