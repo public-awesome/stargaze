@@ -1,51 +1,45 @@
 package keeper_test
 
 import (
-	"testing"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/public-awesome/stargaze/v8/testutil/keeper"
 	"github.com/public-awesome/stargaze/v8/testutil/sample"
 )
 
-func Test_SetPrivileged(t *testing.T) {
-	k, ctx := keeper.CronKeeper(t)
-
+func (s *KeeperTestSuite) Test_SetPrivileged() {
+	app, ctx := s.app, s.ctx
 	acc1 := sample.AccAddress()
-	k.SetPrivileged(ctx, acc1)
 
-	if !k.IsPrivileged(ctx, acc1) {
-		t.Errorf("expected %s to be privileged", acc1)
-	}
+	app.CronKeeper.SetPrivileged(ctx, acc1)
+
+	s.Require().True(app.CronKeeper.IsPrivileged(ctx, acc1), "expected %s to be privileged", acc1)
 }
 
-func Test_UnsetPrivileged(t *testing.T) {
-	k, ctx := keeper.CronKeeper(t)
-
+func (s *KeeperTestSuite) Test_UnsetPrivileged() {
+	app, ctx := s.app, s.ctx
 	acc1 := sample.AccAddress()
-	k.SetPrivileged(ctx, acc1)
-	k.UnsetPrivileged(ctx, acc1)
 
-	if k.IsPrivileged(ctx, acc1) {
-		t.Errorf("expected %s to not be privileged", acc1)
-	}
+	app.CronKeeper.SetPrivileged(ctx, acc1)
+	app.CronKeeper.UnsetPrivileged(ctx, acc1)
+
+	s.Require().False(app.CronKeeper.IsPrivileged(ctx, acc1), "expected %s to not be privileged", acc1)
 }
 
-func Test_IteratePrivileged(t *testing.T) {
-	k, ctx := keeper.CronKeeper(t)
+func (s *KeeperTestSuite) Test_IteratePrivileged() {
+	app, ctx := s.app, s.ctx
 	acc1 := sample.AccAddress()
-	k.SetPrivileged(ctx, acc1)
 	acc2 := sample.AccAddress()
-	k.SetPrivileged(ctx, acc2)
-	expectedContractCount := 2
+	acc3 := sample.AccAddress()
+	// Setting three contracts as privileged.
+	app.CronKeeper.SetPrivileged(ctx, acc1)
+	app.CronKeeper.SetPrivileged(ctx, acc2)
+	app.CronKeeper.SetPrivileged(ctx, acc3)
+	// Removing one contract as privileged
+	app.CronKeeper.UnsetPrivileged(ctx, acc2)
 
-	count := 0
-	k.IteratePrivileged(ctx, func(addr sdk.AccAddress) bool {
-		count += 1
+	var contracts []sdk.AccAddress
+	app.CronKeeper.IteratePrivileged(ctx, func(addr sdk.AccAddress) bool {
+		contracts = append(contracts, addr)
 		return false
 	})
-	if count != 2 {
-		t.Errorf("expected %d, got %d", expectedContractCount, count)
-	}
+	s.Require().Len(contracts, 2, "expected 2 privileged contracts, got %d", len(contracts))
 }

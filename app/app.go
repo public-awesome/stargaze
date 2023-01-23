@@ -111,6 +111,11 @@ import (
 	claimmoduletypes "github.com/public-awesome/stargaze/v8/x/claim/types"
 	claimwasm "github.com/public-awesome/stargaze/v8/x/claim/wasm"
 
+	//cronmodule "github.com/public-awesome/stargaze/v8/x/cron"
+	cronmodulekeeper "github.com/public-awesome/stargaze/v8/x/cron/keeper"
+	//cronmoduletypes "github.com/public-awesome/stargaze/v8/x/cron/types"
+	//cronwasm "github.com/public-awesome/stargaze/v8/x/cron/wasm"
+
 	//  ica
 	ica "github.com/cosmos/ibc-go/v3/modules/apps/27-interchain-accounts"
 	icahost "github.com/cosmos/ibc-go/v3/modules/apps/27-interchain-accounts/host"
@@ -283,6 +288,7 @@ type App struct {
 	// stargaze modules
 	ClaimKeeper claimmodulekeeper.Keeper
 	AllocKeeper allocmodulekeeper.Keeper
+	CronKeeper  cronmodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// the module manager
