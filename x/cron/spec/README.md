@@ -2,7 +2,7 @@
 
 ## Abstract
 
-This module enables smart contracts on chain to recive callbacks at the end of each block. Useful for scheduling actions which need to happen every block.
+This module enables smart contracts on chain to receive callbacks at the end of each block. Useful for scheduling actions which need to happen every block.
 
 
 ## Concepts

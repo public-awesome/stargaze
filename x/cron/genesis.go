@@ -14,8 +14,10 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 // ExportGenesis returns the module's exported genesis
 func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis := types.DefaultGenesis()
-
+	k.IteratePrivileged(ctx, func(addr sdk.AccAddress) bool {
+		genesis.PrivilegedContractAddresses = append(genesis.PrivilegedContractAddresses, addr.String())
+		return false
+	})
 	// this line is used by starport scaffolding # genesis/module/export
-
 	return genesis
 }
