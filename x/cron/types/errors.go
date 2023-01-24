@@ -8,5 +8,6 @@ import (
 
 // x/cron module sentinel errors
 var (
-	ErrSample = sdkerrors.Register(ModuleName, 1100, "sample error")
+	ErrContractDoesNotExist    = sdkerrors.Register(ModuleName, 2, "contract does not exist to modify its privilege")
+	ErrContractPrivilegeNotSet = sdkerrors.Register(ModuleName, 3, "contract does not have privilege set and therefore cannot unset its privilege")
 )

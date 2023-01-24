@@ -10,8 +10,8 @@ import (
 
 // govKeeper is a subset of Keeper that is needed for the gov proposal handling
 type govKeeper interface {
-	SetPrivileged(ctx sdk.Context, contractAddr sdk.AccAddress)
-	UnsetPrivileged(ctx sdk.Context, contractAddr sdk.AccAddress)
+	SetPrivileged(ctx sdk.Context, contractAddr sdk.AccAddress) error
+	UnsetPrivileged(ctx sdk.Context, contractAddr sdk.AccAddress) error
 }
 
 // NewProposalHandler creates a new governance Handler for wasm proposals

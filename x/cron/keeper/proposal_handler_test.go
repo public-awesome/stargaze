@@ -34,8 +34,9 @@ func TestGovHandler(t *testing.T) {
 		"promote proposal": {
 			wasmHandler: notHandler,
 			setupGovKeeper: func(m *MockGovKeeper) {
-				m.SetPrivilegedFn = func(ctx sdk.Context, contractAddr sdk.AccAddress) {
+				m.SetPrivilegedFn = func(ctx sdk.Context, contractAddr sdk.AccAddress) error {
 					capturedContractAddrs = append(capturedContractAddrs, contractAddr)
+					return nil
 				}
 			},
 			srcProposal: types.PromoteProposalFixture(func(proposal *types.PromoteToPrivilegedContractProposal) {
@@ -51,8 +52,9 @@ func TestGovHandler(t *testing.T) {
 		"demote proposal": {
 			wasmHandler: notHandler,
 			setupGovKeeper: func(m *MockGovKeeper) {
-				m.UnsetPrivilegedFn = func(ctx sdk.Context, contractAddr sdk.AccAddress) {
+				m.UnsetPrivilegedFn = func(ctx sdk.Context, contractAddr sdk.AccAddress) error {
 					capturedContractAddrs = append(capturedContractAddrs, contractAddr)
+					return nil
 				}
 			},
 			srcProposal: types.DemoteProposalFixture(func(proposal *types.DemotePrivilegedContractProposal) {
@@ -91,22 +93,22 @@ func TestGovHandler(t *testing.T) {
 }
 
 type MockGovKeeper struct {
-	SetPrivilegedFn   func(ctx sdk.Context, contractAddr sdk.AccAddress)
-	UnsetPrivilegedFn func(ctx sdk.Context, contractAddr sdk.AccAddress)
+	SetPrivilegedFn   func(ctx sdk.Context, contractAddr sdk.AccAddress) error
+	UnsetPrivilegedFn func(ctx sdk.Context, contractAddr sdk.AccAddress) error
 }
 
-func (m MockGovKeeper) SetPrivileged(ctx sdk.Context, contractAddr sdk.AccAddress) {
+func (m MockGovKeeper) SetPrivileged(ctx sdk.Context, contractAddr sdk.AccAddress) error {
 	if m.SetPrivilegedFn == nil {
 		panic("not expected to be called")
 	}
-	m.SetPrivilegedFn(ctx, contractAddr)
+	return m.SetPrivilegedFn(ctx, contractAddr)
 }
 
-func (m MockGovKeeper) UnsetPrivileged(ctx sdk.Context, contractAddr sdk.AccAddress) {
+func (m MockGovKeeper) UnsetPrivileged(ctx sdk.Context, contractAddr sdk.AccAddress) error {
 	if m.UnsetPrivilegedFn == nil {
 		panic("not expected to be called")
 	}
-	m.UnsetPrivilegedFn(ctx, contractAddr)
+	return m.UnsetPrivilegedFn(ctx, contractAddr)
 }
 
 type CapturingGovRouter struct {

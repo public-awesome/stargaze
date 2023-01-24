@@ -16,3 +16,9 @@ type BankKeeper interface {
 	SpendableCoins(ctx sdk.Context, addr sdk.AccAddress) sdk.Coins
 	// Methods imported from bank should be defined here
 }
+
+type WasmKeeper interface {
+	HasContractInfo(ctx sdk.Context, contractAddr sdk.AccAddress) bool
+
+	Sudo(ctx sdk.Context, contractAddress sdk.AccAddress, msg []byte) ([]byte, error)
+}
