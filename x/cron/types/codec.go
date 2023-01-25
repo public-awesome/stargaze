@@ -13,7 +13,6 @@ import (
 
 // RegisterLegacyAminoCodec registers the account types and interface
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	wasmtypes.RegisterLegacyAminoCodec(cdc)
 	cdc.RegisterConcrete(&PromoteToPrivilegedContractProposal{}, "cron/PromoteToPrivilegedContractProposal", nil)
 	cdc.RegisterConcrete(&DemotePrivilegedContractProposal{}, "cron/DemotePrivilegedContractProposal", nil)
 }
