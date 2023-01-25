@@ -112,6 +112,7 @@ import (
 	claimwasm "github.com/public-awesome/stargaze/v8/x/claim/wasm"
 
 	cronmodule "github.com/public-awesome/stargaze/v8/x/cron"
+	cronclient "github.com/public-awesome/stargaze/v8/x/cron/client"
 	cronmodulekeeper "github.com/public-awesome/stargaze/v8/x/cron/keeper"
 	cronmoduletypes "github.com/public-awesome/stargaze/v8/x/cron/types"
 
@@ -169,6 +170,7 @@ func getGovProposalHandlers() []govclient.ProposalHandler {
 		upgradeclient.ProposalHandler,
 		upgradeclient.CancelProposalHandler,
 		ibcclientclient.UpdateClientProposalHandler, ibcclientclient.UpgradeProposalHandler,
+		cronclient.SetPrivilegeProposalHandler, cronclient.UnsetPrivilegeProposalHandler,
 		// this line is used by starport scaffolding # stargate/app/govProposalHandler
 	)
 	return govProposalHandlers
