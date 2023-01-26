@@ -328,14 +328,14 @@ func NewStargazeApp(
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		claimmoduletypes.StoreKey,
 		allocmoduletypes.StoreKey,
-		cronmoduletypes.StoreKey,
 		authzkeeper.StoreKey,
 		wasm.StoreKey,
+		cronmoduletypes.StoreKey,
 		icahosttypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
-	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
+	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey, cronmoduletypes.MemStoreKey)
 
 	app := &App{
 		BaseApp:           bApp,
@@ -531,7 +531,7 @@ func NewStargazeApp(
 	)
 
 	app.CronKeeper = *cronmodulekeeper.NewKeeper(appCodec, keys[cronmoduletypes.StoreKey], keys[cronmoduletypes.MemStoreKey], app.GetSubspace(cronmoduletypes.ModuleName), app.WasmKeeper)
-	cronModule := cronmodule.NewAppModule(appCodec, app.CronKeeper, app.AccountKeeper, app.BankKeeper)
+	cronModule := cronmodule.NewAppModule(appCodec, app.CronKeeper, app.AccountKeeper, app.BankKeeper, app.WasmKeeper)
 
 	// The gov proposal types can be individually enabled
 	if len(enabledProposals) != 0 {

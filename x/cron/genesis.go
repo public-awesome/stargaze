@@ -13,9 +13,7 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 		if err != nil {
 			panic(err)
 		}
-		if k.HasContractInfo(ctx, contractAddr) {
-			k.SetPrivileged(ctx, contractAddr)
-		}
+		k.SetPrivileged(ctx, contractAddr)
 	}
 	// this line is used by starport scaffolding # genesis/module/init
 }
