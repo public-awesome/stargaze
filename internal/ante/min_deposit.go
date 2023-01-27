@@ -1,30 +1,40 @@
 package ante
 
 import (
+	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/cosmos/cosmos-sdk/x/authz"
+	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 )
 
 type MinDepositDecorator struct {
-	codec codec.BinaryCodec
+	codec     codec.BinaryCodec
+	govKeeper govkeeper.Keeper
 }
 
-func NewMinDepositDecorator(codec codec.BinaryCodec) MinDepositDecorator {
+func NewMinDepositDecorator(codec codec.BinaryCodec, gk govkeeper.Keeper) MinDepositDecorator {
 	return MinDepositDecorator{
 		codec,
+		gk,
 	}
 }
 
-func (dec MinDepositDecorator) checkDeposit(m sdk.Msg) error {
+func (dec MinDepositDecorator) checkDeposit(ctx sdk.Context, m sdk.Msg) error {
 	switch msg := m.(type) {
 	case *govtypes.MsgSubmitProposal:
-		c := msg.GetInitialDeposit()
-		if c.AmountOf("ustars").LT(sdk.NewInt(1_000_000_000)) {
-			return sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "min deposit cannot be lower than 1,000 STARS")
+		params := dec.govKeeper.GetDepositParams(ctx)
+		if len(params.MinDeposit) > 0 {
+			coinDenom := params.MinDeposit[0]
+			minDepositAmount := sdk.NewInt(1_000_000_000)
+			c := msg.GetInitialDeposit()
+			if c.AmountOf(coinDenom.Denom).LT(minDepositAmount) {
+				return sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("min deposit cannot be lower than %s %s", minDepositAmount.String(), coinDenom.GetDenom()))
+			}
 		}
 	default:
 		return nil
@@ -32,8 +42,8 @@ func (dec MinDepositDecorator) checkDeposit(m sdk.Msg) error {
 	return nil
 }
 
-func (dec MinDepositDecorator) Validate(m sdk.Msg) error {
-	err := dec.checkDeposit(m)
+func (dec MinDepositDecorator) Validate(ctx sdk.Context, m sdk.Msg) error {
+	err := dec.checkDeposit(ctx, m)
 	if err != nil {
 		return err
 	}
@@ -44,7 +54,7 @@ func (dec MinDepositDecorator) Validate(m sdk.Msg) error {
 			if err != nil {
 				return sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "error decoding authz messages")
 			}
-			err = dec.checkDeposit(wrappedMsg)
+			err = dec.checkDeposit(ctx, wrappedMsg)
 			if err != nil {
 				return err
 			}
@@ -59,7 +69,7 @@ func (dec MinDepositDecorator) AnteHandle(
 ) (newCtx sdk.Context, err error) {
 	msgs := tx.GetMsgs()
 	for _, m := range msgs {
-		err := dec.Validate(m)
+		err := dec.Validate(ctx, m)
 		if err != nil {
 			return ctx, err
 		}
