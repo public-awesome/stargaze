@@ -9,7 +9,7 @@ import (
 )
 
 func (k Keeper) SetPrivileged(ctx sdk.Context, contractAddr sdk.AccAddress) error {
-	if k.HasContractInfo(ctx, contractAddr) {
+	if k.wasmKeeper.HasContractInfo(ctx, contractAddr) {
 		store := ctx.KVStore(k.storeKey)
 		store.Set(types.PrivilegedContractsKey(contractAddr), []byte{1})
 
@@ -25,7 +25,7 @@ func (k Keeper) SetPrivileged(ctx sdk.Context, contractAddr sdk.AccAddress) erro
 }
 
 func (k Keeper) UnsetPrivileged(ctx sdk.Context, contractAddr sdk.AccAddress) error {
-	if k.HasContractInfo(ctx, contractAddr) {
+	if k.wasmKeeper.HasContractInfo(ctx, contractAddr) {
 		if k.IsPrivileged(ctx, contractAddr) {
 			store := ctx.KVStore(k.storeKey)
 			store.Delete(types.PrivilegedContractsKey(contractAddr))

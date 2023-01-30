@@ -50,11 +50,3 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 func ModuleLogger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
-
-func (k Keeper) Sudo(ctx sdk.Context, contractAddress sdk.AccAddress, msg []byte) ([]byte, error) {
-	return k.wasmKeeper.Sudo(ctx, contractAddress, msg)
-}
-
-func (k Keeper) HasContractInfo(ctx sdk.Context, contractAddress sdk.AccAddress) bool {
-	return k.wasmKeeper.HasContractInfo(ctx, contractAddress)
-}

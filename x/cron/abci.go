@@ -15,24 +15,19 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 )
 
-type abciKeeper interface {
-	Sudo(ctx sdk.Context, contractAddress sdk.AccAddress, msg []byte) ([]byte, error)
-	IteratePrivileged(ctx sdk.Context, cb func(contractAddr sdk.AccAddress) bool)
-}
-
-func EndBlocker(ctx sdk.Context, k abciKeeper) []abci.ValidatorUpdate {
+func EndBlocker(ctx sdk.Context, k keeper.Keeper, w types.WasmKeeper) []abci.ValidatorUpdate {
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyEndBlocker)
 	sudoMsg := contract.SudoMsg{EndBlock: &struct{}{}}
 	msgBz, err := json.Marshal(sudoMsg)
 	if err != nil {
 		panic(err)
 	}
-	k.IteratePrivileged(ctx, abciContractCallback(ctx, k, msgBz))
+	k.IteratePrivileged(ctx, abciContractCallback(ctx, k, w, msgBz))
 	return nil
 }
 
 // returns safe method to send the message via sudo to the privileged contract
-func abciContractCallback(parentCtx sdk.Context, k abciKeeper, msgBz []byte) func(contractAddr sdk.AccAddress) bool {
+func abciContractCallback(parentCtx sdk.Context, k keeper.Keeper, w types.WasmKeeper, msgBz []byte) func(contractAddr sdk.AccAddress) bool {
 	logger := keeper.ModuleLogger(parentCtx)
 	return func(contractAddr sdk.AccAddress) bool {
 		// any panic will crash the node, so we are better taking care of them here
@@ -41,7 +36,7 @@ func abciContractCallback(parentCtx sdk.Context, k abciKeeper, msgBz []byte) fun
 		logger.Debug("privileged contract callback", "type", "end_blocker", "msg", string(msgBz))
 		ctx, commit := parentCtx.CacheContext()
 
-		if _, err := k.Sudo(ctx, contractAddr, msgBz); err != nil {
+		if _, err := w.Sudo(ctx, contractAddr, msgBz); err != nil {
 			logger.Error(
 				"abci callback to privileged contract failed",
 				"type", "end_blocker",
