@@ -447,8 +447,7 @@ func NewStargazeApp(
 		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.ParamsKeeper)).
 		AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.DistrKeeper)).
 		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.UpgradeKeeper)).
-		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper)).
-		AddRoute(cronmoduletypes.RouterKey, cronmodulekeeper.NewProposalHandler(app.CronKeeper))
+		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper))
 
 	// Create Transfer Keepers
 	app.TransferKeeper = ibctransferkeeper.NewKeeper(
@@ -532,6 +531,7 @@ func NewStargazeApp(
 
 	app.CronKeeper = *cronmodulekeeper.NewKeeper(appCodec, keys[cronmoduletypes.StoreKey], keys[cronmoduletypes.MemStoreKey], app.GetSubspace(cronmoduletypes.ModuleName), app.WasmKeeper)
 	cronModule := cronmodule.NewAppModule(appCodec, app.CronKeeper, app.AccountKeeper, app.BankKeeper, app.WasmKeeper)
+	govRouter.AddRoute(cronmoduletypes.RouterKey, cronmodulekeeper.NewProposalHandler(app.CronKeeper))
 
 	// The gov proposal types can be individually enabled
 	if len(enabledProposals) != 0 {
