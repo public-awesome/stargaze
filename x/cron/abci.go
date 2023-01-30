@@ -22,7 +22,7 @@ type abciKeeper interface {
 
 func EndBlocker(ctx sdk.Context, k abciKeeper) []abci.ValidatorUpdate {
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyEndBlocker)
-	sudoMsg := contract.TgradeSudoMsg{EndBlock: &struct{}{}}
+	sudoMsg := contract.SudoMsg{EndBlock: &struct{}{}}
 	msgBz, err := json.Marshal(sudoMsg)
 	if err != nil {
 		panic(err)
