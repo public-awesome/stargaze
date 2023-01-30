@@ -42,7 +42,10 @@ func handlePromoteContractProposal(ctx sdk.Context, k govKeeper, p types.Promote
 		return sdkerrors.Wrap(err, "contract address")
 	}
 
-	k.SetPrivileged(ctx, contractAddr)
+	err = k.SetPrivileged(ctx, contractAddr)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -55,6 +58,9 @@ func handleDemoteContractProposal(ctx sdk.Context, k govKeeper, p types.DemotePr
 		return sdkerrors.Wrap(err, "contract address")
 	}
 
-	k.UnsetPrivileged(ctx, contractAddr)
+	err = k.UnsetPrivileged(ctx, contractAddr)
+	if err != nil {
+		return err
+	}
 	return nil
 }

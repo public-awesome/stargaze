@@ -13,7 +13,10 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 		if err != nil {
 			panic(err)
 		}
-		k.SetPrivileged(ctx, contractAddr)
+		err = k.SetPrivileged(ctx, contractAddr)
+		if err != nil {
+			panic(err)
+		}
 	}
 	// this line is used by starport scaffolding # genesis/module/init
 }
