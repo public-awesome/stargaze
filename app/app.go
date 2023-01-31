@@ -692,6 +692,7 @@ func NewStargazeApp(
 				SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
 			},
 			keeper:            app.IBCKeeper,
+			govKeeper:         app.GovKeeper,
 			WasmConfig:        &wasmConfig,
 			TXCounterStoreKey: keys[wasm.StoreKey],
 			Codec:             app.appCodec,

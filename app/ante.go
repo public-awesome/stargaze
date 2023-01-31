@@ -7,6 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
+	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	ibcante "github.com/cosmos/ibc-go/v3/modules/core/ante"
 	ibckeeper "github.com/cosmos/ibc-go/v3/modules/core/keeper"
 	stargazeante "github.com/public-awesome/stargaze/v8/internal/ante"
@@ -17,6 +18,7 @@ import (
 type HandlerOptions struct {
 	ante.HandlerOptions
 	keeper            *ibckeeper.Keeper
+	govKeeper         govkeeper.Keeper
 	WasmConfig        *wasmTypes.WasmConfig
 	TXCounterStoreKey sdk.StoreKey
 	Codec             codec.BinaryCodec
@@ -56,7 +58,7 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		// limit simulation gas
 		wasmkeeper.NewLimitSimulationGasDecorator(options.WasmConfig.SimulationGasLimit),
 		stargazeante.NewMinCommissionDecorator(options.Codec),
-		stargazeante.NewMinDepositDecorator(options.Codec),
+		stargazeante.NewMinDepositDecorator(options.Codec, options.govKeeper),
 		wasmkeeper.NewCountTXDecorator(options.TXCounterStoreKey),
 		ante.NewRejectExtensionOptionsDecorator(),
 		ante.NewMempoolFeeDecorator(),
