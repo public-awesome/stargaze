@@ -22,15 +22,14 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper, w types.WasmKeeper) []abci.Val
 	if err != nil {
 		panic(err)
 	}
-	k.IteratePrivileged(ctx, abciContractCallback(ctx, k, w, msgBz))
+	k.IteratePrivileged(ctx, abciContractCallback(ctx, w, msgBz))
 	return nil
 }
 
 // returns safe method to send the message via sudo to the privileged contract
-func abciContractCallback(parentCtx sdk.Context, k keeper.Keeper, w types.WasmKeeper, msgBz []byte) func(contractAddr sdk.AccAddress) bool {
+func abciContractCallback(parentCtx sdk.Context, w types.WasmKeeper, msgBz []byte) func(contractAddr sdk.AccAddress) bool {
 	logger := keeper.ModuleLogger(parentCtx)
 	return func(contractAddr sdk.AccAddress) bool {
-		// any panic will crash the node, so we are better taking care of them here
 		defer RecoverToLog(logger, contractAddr)()
 
 		logger.Debug("privileged contract callback", "type", "end_blocker", "msg", string(msgBz))

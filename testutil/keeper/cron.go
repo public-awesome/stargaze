@@ -17,6 +17,7 @@ import (
 	tmdb "github.com/tendermint/tm-db"
 )
 
+// CronKeeper creates a testing keeper for the x/cron module
 func CronKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)

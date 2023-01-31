@@ -8,6 +8,7 @@ option go_package = "github.com/public-awesome/stargaze/v8/x/cron/types";
 
 // GenesisState defines the cron module's genesis state.
 message GenesisState {
+  // List of all the contracts that have been given the privilege status via governance. They can set up hooks to abci.EndBlocker
   repeated string privileged_contract_addresses = 1
   [ (gogoproto.jsontag) = "privileged_contract_addresses,omitempty" ]; 
 
