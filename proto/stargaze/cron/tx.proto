@@ -1,5 +1,5 @@
 syntax = "proto3";
-package stargaze.v8.cron;
+package publicawesome.stargaze.cron.v1;
 
 // this line is used by starport scaffolding # proto/tx/import
 
