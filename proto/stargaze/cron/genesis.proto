@@ -2,7 +2,6 @@ syntax = "proto3";
 package publicawesome.stargaze.cron.v1;
 
 import "gogoproto/gogo.proto";
-// this line is used by starport scaffolding # genesis/proto/import
 
 option go_package = "github.com/public-awesome/stargaze/v8/x/cron/types";
 
