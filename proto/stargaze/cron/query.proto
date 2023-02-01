@@ -12,7 +12,7 @@ option go_package = "github.com/public-awesome/stargaze/v8/x/cron/types";
 service Query {
   // ListPrivileged queries the contracts which have the priviledge status
   rpc ListPrivileged(QueryListPrivilegedRequest) returns (QueryListPrivilegedResponse) {
-    option (google.api.http).get = "/stargaze/v8/cron/list-privileged";
+    option (google.api.http).get = "/stargaze/cron/v1/list-privileged";
   }
   // this line is used by starport scaffolding # 2
 }
