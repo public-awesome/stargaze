@@ -75,12 +75,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 9.0.0-alpha.1
+        - 9.0.0-alpha.2
     when:
       event:
         - push
       branch:
-        - feature/v9-upgrade
+        - update-tm
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -343,7 +343,7 @@ steps:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: true
-    image: publicawesome/stargaze:9.0.0-alpha.1
+    image: publicawesome/stargaze:9.0.0-alpha.2
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -399,6 +399,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 3c11501f8e7cd407d7e8191d3aae78409a24782faf1ad0fec98656b11de1ef78
+hmac: bd240fd738340fb13608cc921a422d6f520bc4ce417d9e6859ec4d5c00db7e14
 
 ...
