@@ -75,12 +75,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 8.0.0-rc.2
+        - 9.0.0-alpha.1
     when:
       event:
         - push
       branch:
-        - feature/update-go-version
+        - feature/v9-upgrade
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -306,7 +306,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:7.5.0
+    image: publicawesome/stargaze:8.0.0
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
@@ -338,12 +338,12 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: proposal
-    image: publicawesome/stargaze:7.5.0
+    image: publicawesome/stargaze:8.0.0
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: true
-    image: publicawesome/stargaze:8.0.0-rc.2
+    image: publicawesome/stargaze:9.0.0-alpha.1
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -399,6 +399,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: c7577a898d2fc61b29c61c9759b205b10ca29010f6cbe9ab0cafdf3d4140bff9
+hmac: 3c11501f8e7cd407d7e8191d3aae78409a24782faf1ad0fec98656b11de1ef78
 
 ...
