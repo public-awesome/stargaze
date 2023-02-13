@@ -13,10 +13,10 @@ HEIGHT=$(starsd status --node http://stargaze:26657 --home $STARGAZE_HOME | jq .
 echo "current height $HEIGHT"
 HEIGHT=$(expr $HEIGHT + 20) 
 echo "submit with height $HEIGHT"
-starsd tx gov submit-proposal software-upgrade v8 --upgrade-height $HEIGHT  \
---deposit 10000000ustars \
---description "V8 Upgrade" \
---title "V8 Upgrade" \
+starsd tx gov submit-proposal software-upgrade v9 --upgrade-height $HEIGHT  \
+--deposit 1000000000ustars \
+--description "V9 Upgrade" \
+--title "V9 Upgrade" \
 --gas-prices 0.025ustars --gas auto --gas-adjustment 1.5 --from validator  \
 --chain-id stargaze -b block --yes --node http://stargaze:26657 --home $STARGAZE_HOME --keyring-backend test
 
