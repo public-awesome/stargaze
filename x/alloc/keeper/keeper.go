@@ -130,16 +130,3 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 func (k Keeper) GetProportions(ctx sdk.Context, mintedCoin sdk.Coin, ratio sdk.Dec) sdk.Coin {
 	return sdk.NewCoin(mintedCoin.Denom, mintedCoin.Amount.ToDec().Mul(ratio).TruncateInt())
 }
-
-func (k Keeper) FundCommunityPool(ctx sdk.Context) error {
-	// If this account exists and has coins, fund the community pool
-	funder, err := sdk.AccAddressFromHex("8CEF4A78C2225BBD62040BCD0FF0B12FFD48C1BF") // stars13nh557xzyfdm6csyp0xslu939l753sdlgdc2q0
-	if err != nil {
-		panic(err)
-	}
-	balances := k.bankKeeper.GetAllBalances(ctx, funder)
-	if balances.IsZero() {
-		return nil
-	}
-	return k.distrKeeper.FundCommunityPool(ctx, balances, funder)
-}
