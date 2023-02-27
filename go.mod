@@ -1,4 +1,4 @@
-module github.com/public-awesome/stargaze/v8
+module github.com/public-awesome/stargaze/v9
 
 go 1.19
 
