@@ -29,11 +29,13 @@ func (dec MinDepositDecorator) checkDeposit(ctx sdk.Context, m sdk.Msg) error {
 	case *govtypes.MsgSubmitProposal:
 		params := dec.govKeeper.GetDepositParams(ctx)
 		if len(params.MinDeposit) > 0 {
-			coinDenom := params.MinDeposit[0]
-			minDepositAmount := sdk.NewInt(1_000_000_000)
-			c := msg.GetInitialDeposit()
-			if c.AmountOf(coinDenom.Denom).LT(minDepositAmount) {
-				return sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("min deposit cannot be lower than %s %s", minDepositAmount.String(), coinDenom.GetDenom()))
+			minDeposit := params.MinDeposit[0]
+			// 20% of the min deposit
+			minDepositRatio := sdk.NewDecWithPrec(20, 2)
+			minDepositAmount := sdk.NewDecFromInt(minDeposit.Amount).Mul(minDepositRatio).RoundInt()
+			initialDeposit := msg.GetInitialDeposit()
+			if initialDeposit.AmountOf(minDeposit.Denom).LT(minDepositAmount) {
+				return sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("min deposit cannot be lower than %s %s", minDepositAmount.String(), minDeposit.GetDenom()))
 			}
 		}
 	default:

@@ -23,10 +23,11 @@ func TestMinDepositDecorator(t *testing.T) {
 	pub1 := priv1.PubKey()
 	addr1 := sdk.AccAddress(pub1.Address())
 
-	pub2 := secp256k1.GenPrivKey().PubKey()
+	priv2 := secp256k1.GenPrivKey()
+	pub2 := priv2.PubKey()
 	addr2 := sdk.AccAddress(pub2.Address())
 
-	genTokens := sdk.TokensFromConsensusPower(1000, sdk.DefaultPowerReduction)
+	genTokens := sdk.TokensFromConsensusPower(5000, sdk.DefaultPowerReduction)
 	bondTokens := sdk.TokensFromConsensusPower(10, sdk.DefaultPowerReduction)
 	genCoin := sdk.NewCoin(sdk.DefaultBondDenom, genTokens)
 	stars := sdk.NewCoin("ustars", sdk.NewInt(5_000_000_000))
@@ -47,7 +48,11 @@ func TestMinDepositDecorator(t *testing.T) {
 	}
 
 	app := simapp.SetupWithGenesisAccounts(t, t.TempDir(), accs, balances...)
-
+	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
+	params := govtypes.DefaultDepositParams()
+	params.MinDeposit = sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(5_000_000_000)))
+	app.GovKeeper.SetDepositParams(ctx, params)
+	app.Commit()
 	content := govtypes.ContentFromProposalType("Prop Title", "Description", govtypes.ProposalTypeText)
 
 	createProposalMsg, err := govtypes.NewMsgSubmitProposal(content, sdk.NewCoins(bondCoin), addr1)
@@ -64,6 +69,23 @@ func TestMinDepositDecorator(t *testing.T) {
 
 	header = tmproto.Header{Height: app.LastBlockHeight() + 1}
 	_, _, err = simapp.SignCheckDeliver(t, txGen, app.BaseApp, header, []sdk.Msg{createProposalMsg}, "", []uint64{0}, []uint64{0}, false, true, true, priv1)
+	require.NoError(t, err)
+
+	app = simapp.SetupWithGenesisAccounts(t, t.TempDir(), accs, balances...)
+	ctx = app.BaseApp.NewContext(false, tmproto.Header{})
+	params = govtypes.DefaultDepositParams()
+	params.MinDeposit = sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(20_000_000_000)))
+	app.GovKeeper.SetDepositParams(ctx, params)
+	app.Commit()
+
+	header = tmproto.Header{Height: app.LastBlockHeight() + 1}
+	_, _, err = simapp.SignCheckDeliver(t, txGen, app.BaseApp, header, []sdk.Msg{createProposalMsg}, "", []uint64{0}, []uint64{0}, true, false, false, priv1)
+	require.EqualError(t, err, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("min deposit cannot be lower than %d %s", 4000000000, sdk.DefaultBondDenom)).Error())
+
+	createProposalMsg, err = govtypes.NewMsgSubmitProposal(content, sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 4_000_000_000)), addr2)
+	require.NoError(t, err)
+	header = tmproto.Header{Height: app.LastBlockHeight() + 1}
+	_, _, err = simapp.SignCheckDeliver(t, txGen, app.BaseApp, header, []sdk.Msg{createProposalMsg}, "", []uint64{1}, []uint64{0}, false, true, true, priv2)
 	require.NoError(t, err)
 
 }
