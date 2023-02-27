@@ -13,6 +13,7 @@ import (
 
 var _ types.QueryServer = Keeper{}
 
+// ListPrivileged lists the addresses of all the contracts which have been promoted to privilege status
 func (k Keeper) ListPrivileged(c context.Context, req *types.QueryListPrivilegedRequest) (*types.QueryListPrivilegedResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")

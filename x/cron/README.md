@@ -2,18 +2,22 @@
 
 ## Abstract
 
-This module enables smart contracts on chain to receive callbacks at the end of each block. Useful for scheduling actions which need to happen every block.
+This module enables smart contracts on chain to receive callbacks at the beginning and end of each block. Useful for scheduling actions which need to happen every block.
 
 
 ## Concepts
 
 ### Priviledged contracts
 An existing contract instantiated on chain which has been elevated to the status of priviledged contract via on-chain governance proposal. 
-Privileged contracts receive some extra superpowers where they can receive callbacks from the [`EndBlocker`](https://docs.cosmos.network/main/building-modules/beginblock-endblock.html) into their [`sudo`](https://book.cosmwasm.com/basics/entry-points.html?highlight=sudo#entry-points) entrypoint. More details on how to use this in [here](#how-to-use-in-cw-contract)
+Privileged contracts receive some extra superpowers where they can receive callbacks from the [`BeginBlocker & EndBlocker`](https://docs.cosmos.network/main/building-modules/beginblock-endblock.html) into their [`sudo`](https://book.cosmwasm.com/basics/entry-points.html?highlight=sudo#entry-points) entrypoint. More details on how to use this in [here](#how-to-use-in-cw-contract)
 
 ## State
 
 The module state is quite simple. It stores an array of bech32 address of all the Cosmwasm smart contracts that have been elevated via governance. Once the contract priviledge is demoted via governance, it is removed from state.
+
+## Begin Blockers
+
+In the ABCI beginblock, the module fetches the list of all priviledged contracts and loops through them and calls the `sudo` entry point with the `BeginBlocker` msg. None of the `abci.RequestBeginBlock` values are passed in.
 
 ## End Blockers
 
@@ -62,13 +66,14 @@ Creates a governance proposal which on passing will remove the given contract ad
 
 ## How to use in CW contract
 
-To use the `EndBlocker` callback from this module, you need to add the following msg type to your contract msgs. 
+To use the `BeginBlocker` & `EndBlocker` callback from this module, you need to add the following msg type to your contract msgs. 
 
 `msg.rs`
 ```rust
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum SudoMsg {
+    BeginBlock {},
     EndBlock {},
 }
 ```
@@ -77,9 +82,11 @@ pub enum SudoMsg {
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn sudo(deps: DepsMut, env: Env, msg: SudoMsg) -> Result<Response, ContractError> {
     match msg {
+        SudoMsg::BeginBlock {} => !unimplemented(),
         SudoMsg::EndBlock {} => !unimplemented(),
     }
 }
 ```
-Ensure you have a specific sudo entrypoint in your contract and add your code to be called by the `SudoMsg::EndBlock`.
-This endpoint is hit at the end of every block by the x/cron module. The `deps` and `env` values are set as expected. It is not possible to receive any input in the `EndBlock` call and as such the contract must maintain any relevant state it needs to use. 
+Ensure you have a specific sudo entrypoint in your contract and add your code to be called by the `SudoMsg::BeginBlock` & `SudoMsg::EndBlock`. Both endpoints are hit for every privileged contract in the block lifecycle, so ensure both are implemented.
+
+This endpoint is hit at the beginning and end of every block by the x/cron module. The `deps` and `env` values are set as expected. It is not possible to receive any input in the `BeginBlock` & `EndBlock` call and as such the contract must maintain any relevant state it needs to use. 

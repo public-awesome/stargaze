@@ -15,12 +15,14 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 )
 
+// BeginBlocker sends a BeginBlock SudoMsg to all privileged contracts
 func BeginBlocker(ctx sdk.Context, k keeper.Keeper, w types.WasmKeeper) {
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyEndBlocker)
 	sudoMsg := contract.SudoMsg{BeginBlock: &struct{}{}}
 	k.IteratePrivileged(ctx, abciContractCallback(ctx, w, sudoMsg))
 }
 
+// EndBlocker sends a EndBlock SudoMsg to all privileged contracts
 func EndBlocker(ctx sdk.Context, k keeper.Keeper, w types.WasmKeeper) []abci.ValidatorUpdate {
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyEndBlocker)
 	sudoMsg := contract.SudoMsg{EndBlock: &struct{}{}}

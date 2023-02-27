@@ -38,7 +38,7 @@ func ProposalSetPrivilegeContractCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "promote-to-privilege-contract [contract_addr_bech32]",
 		Short:   "Create a proposal to promote the given contract",
-		Long:    "Create a proposal to promote the given contract to privilege status which enables the contract to hook on to abci.EndBlocker",
+		Long:    "Create a proposal to promote the given contract to privilege status which enables the contract to hook on to abci.BeginBlocker and abci.EndBlocker",
 		Aliases: []string{"promote-contract"},
 		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -79,7 +79,7 @@ func ProposalUnsetPrivilegeContractCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "demote-from-privilege-contract [contract_addr_bech32]",
 		Short:   "Create a proposal to demote the given contract",
-		Long:    "Create a proposal to demote the given contract privilege status which disables the contract to be called from abci.EndBllocker",
+		Long:    "Create a proposal to demote the given contract privilege status which disables the contract to be called from abci.BeginBlocker and abci.EndBlocker",
 		Aliases: []string{"demote-contract"},
 		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
