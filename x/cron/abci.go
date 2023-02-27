@@ -15,30 +15,36 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 )
 
+func BeginBlocker(ctx sdk.Context, k keeper.Keeper, w types.WasmKeeper) {
+	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyEndBlocker)
+	sudoMsg := contract.SudoMsg{BeginBlock: &struct{}{}}
+	k.IteratePrivileged(ctx, abciContractCallback(ctx, w, sudoMsg))
+}
+
 func EndBlocker(ctx sdk.Context, k keeper.Keeper, w types.WasmKeeper) []abci.ValidatorUpdate {
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyEndBlocker)
 	sudoMsg := contract.SudoMsg{EndBlock: &struct{}{}}
-	msgBz, err := json.Marshal(sudoMsg)
-	if err != nil {
-		panic(err)
-	}
-	k.IteratePrivileged(ctx, abciContractCallback(ctx, w, msgBz))
+	k.IteratePrivileged(ctx, abciContractCallback(ctx, w, sudoMsg))
 	return nil
 }
 
 // returns safe method to send the message via sudo to the privileged contract
-func abciContractCallback(parentCtx sdk.Context, w types.WasmKeeper, msgBz []byte) func(contractAddr sdk.AccAddress) bool {
+func abciContractCallback(parentCtx sdk.Context, w types.WasmKeeper, msg contract.SudoMsg) func(contractAddr sdk.AccAddress) bool {
 	logger := keeper.ModuleLogger(parentCtx)
 	return func(contractAddr sdk.AccAddress) bool {
+		msgBz, err := json.Marshal(msg)
+		if err != nil {
+			panic(err)
+		}
 		defer RecoverToLog(logger, contractAddr)()
 
-		logger.Debug("privileged contract callback", "type", "end_blocker", "msg", string(msgBz))
+		logger.Debug("privileged contract callback", "type", contractCallbackType(msg), "msg", string(msgBz))
 		ctx, commit := parentCtx.CacheContext()
 
 		if _, err := w.Sudo(ctx, contractAddr, msgBz); err != nil {
 			logger.Error(
 				"abci callback to privileged contract failed",
-				"type", "end_blocker",
+				"type", contractCallbackType(msg),
 				"cause", err,
 				"contract-address", contractAddr,
 			)
@@ -47,6 +53,15 @@ func abciContractCallback(parentCtx sdk.Context, w types.WasmKeeper, msgBz []byt
 		commit()
 		return false
 	}
+}
+
+func contractCallbackType(msg contract.SudoMsg) string {
+	if msg.BeginBlock != nil {
+		return "begin_blocker"
+	} else if msg.EndBlock != nil {
+		return "end_blocker"
+	}
+	panic("unknown sudo msg type") // this panic cannot be reached cuz we build the SudoMsg
 }
 
 // RecoverToLog catches panic and logs cause to error

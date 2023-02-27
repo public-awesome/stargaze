@@ -16,7 +16,7 @@ message PromoteToPrivilegedContractProposal {
   string contract = 3 [ (gogoproto.moretags) = "yaml:\"contract\"" ];
 }
 
-// PromoteToPrivilegedContractProposal gov proposal content type to remove
+// DemotePrivilegedContractProposal gov proposal content type to remove
 // "privileges" from a contract
 message DemotePrivilegedContractProposal {
   // Title is a short summary
