@@ -10,7 +10,7 @@ require (
 	github.com/cosmos/go-bip39 v1.0.0
 	github.com/cosmos/ibc-go/v3 v3.4.0
 	github.com/gogo/protobuf v1.3.3
-	github.com/golang/protobuf v1.5.2
+	github.com/golang/protobuf v1.5.3
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/pkg/errors v0.9.1
