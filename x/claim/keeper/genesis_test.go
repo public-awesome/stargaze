@@ -1,7 +1,7 @@
 package keeper_test
 
 import (
-	"github.com/public-awesome/stargaze/v8/x/claim/types"
+	"github.com/public-awesome/stargaze/v9/x/claim/types"
 )
 
 func (s *KeeperTestSuite) TestExportGenesis() {
