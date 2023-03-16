@@ -1,4 +1,4 @@
-.PHONY: build proto check_version install
+.PHONY: build proto check_go_version install
 #!/usr/bin/make -f
 
 PACKAGES_SIMTEST=$(shell go list ./... | grep '/simulation')
@@ -84,19 +84,19 @@ ifeq (,$(findstring nostrip,$(STARGAZE_BUILD_OPTIONS)))
   BUILD_FLAGS += -trimpath
 endif
 
-check_version:
+check_go_version:
 	@echo "Go version: $(GO_MAJOR_VERSION).$(GO_MINOR_VERSION)"
-ifneq ($(GO_MINOR_VERSION),19)
-	@echo "ERROR: Go version 1.19 is required for this version of Stargaze"
+ifneq ($(GO_MINOR_VERSION),20)
+	@echo "ERROR: Go version 1.20 is required for this version of Stargaze"
 	exit 1
 endif
 
 all: install
 
-install: check_version
+install: check_go_version
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/starsd
 
-build: check_version
+build: check_go_version
 	go build $(BUILD_FLAGS) -o bin/starsd ./cmd/starsd
 
 go.sum: go.mod

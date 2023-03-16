@@ -1,4 +1,4 @@
-FROM alpine:3.15
+FROM alpine:3.17
 RUN apk add -U --no-cache ca-certificates
 
 WORKDIR /data
