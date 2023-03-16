@@ -16,7 +16,7 @@ RUN cd gaia && git checkout $TAG && CGO_ENABLED=0 LEDGER_ENABLED=false make buil
 
 
 # --------------------------------------------------------
-FROM alpine:3.15
+FROM alpine:3.17
 
 COPY --from=go-builder /code/gaia/build/gaiad /usr/bin/gaiad
 RUN apk add -U --no-cache ca-certificates
