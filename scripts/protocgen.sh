@@ -32,8 +32,7 @@ buf protoc \
   --doc_opt=./docs/protodoc-markdown.tmpl,proto-docs.md \
   $(find "$(pwd)/proto" -maxdepth 5 -name '*.proto')
 
-go mod tidy
 
 # move proto files to the right places
-cp -r github.com/public-awesome/stargaze/v8/* ./
+cp -r github.com/public-awesome/stargaze/v9/* ./
 rm -rf github.com

@@ -67,19 +67,19 @@ import (
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	"github.com/cosmos/ibc-go/v3/modules/apps/transfer"
-	ibctransferkeeper "github.com/cosmos/ibc-go/v3/modules/apps/transfer/keeper"
-	ibctransfertypes "github.com/cosmos/ibc-go/v3/modules/apps/transfer/types"
-	ibc "github.com/cosmos/ibc-go/v3/modules/core"
-	ibcclient "github.com/cosmos/ibc-go/v3/modules/core/02-client"
-	ibcclientclient "github.com/cosmos/ibc-go/v3/modules/core/02-client/client"
-	ibcclienttypes "github.com/cosmos/ibc-go/v3/modules/core/02-client/types"
-	ibcporttypes "github.com/cosmos/ibc-go/v3/modules/core/05-port/types"
-	ibchost "github.com/cosmos/ibc-go/v3/modules/core/24-host"
-	ibckeeper "github.com/cosmos/ibc-go/v3/modules/core/keeper"
-	"github.com/public-awesome/stargaze/v8/x/mint"
-	mintkeeper "github.com/public-awesome/stargaze/v8/x/mint/keeper"
-	minttypes "github.com/public-awesome/stargaze/v8/x/mint/types"
+	"github.com/cosmos/ibc-go/v4/modules/apps/transfer"
+	ibctransferkeeper "github.com/cosmos/ibc-go/v4/modules/apps/transfer/keeper"
+	ibctransfertypes "github.com/cosmos/ibc-go/v4/modules/apps/transfer/types"
+	ibc "github.com/cosmos/ibc-go/v4/modules/core"
+	ibcclient "github.com/cosmos/ibc-go/v4/modules/core/02-client"
+	ibcclientclient "github.com/cosmos/ibc-go/v4/modules/core/02-client/client"
+	ibcclienttypes "github.com/cosmos/ibc-go/v4/modules/core/02-client/types"
+	ibcporttypes "github.com/cosmos/ibc-go/v4/modules/core/05-port/types"
+	ibchost "github.com/cosmos/ibc-go/v4/modules/core/24-host"
+	ibckeeper "github.com/cosmos/ibc-go/v4/modules/core/keeper"
+	"github.com/public-awesome/stargaze/v9/x/mint"
+	mintkeeper "github.com/public-awesome/stargaze/v9/x/mint/keeper"
+	minttypes "github.com/public-awesome/stargaze/v9/x/mint/types"
 	"github.com/spf13/cast"
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmjson "github.com/tendermint/tendermint/libs/json"
@@ -99,17 +99,17 @@ import (
 	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
-	"github.com/public-awesome/stargaze/v8/docs"
-	sgstatesync "github.com/public-awesome/stargaze/v8/internal/statesync"
-	sgwasm "github.com/public-awesome/stargaze/v8/internal/wasm"
-	allocmodule "github.com/public-awesome/stargaze/v8/x/alloc"
-	allocmodulekeeper "github.com/public-awesome/stargaze/v8/x/alloc/keeper"
-	allocmoduletypes "github.com/public-awesome/stargaze/v8/x/alloc/types"
-	allocwasm "github.com/public-awesome/stargaze/v8/x/alloc/wasm"
-	claimmodule "github.com/public-awesome/stargaze/v8/x/claim"
-	claimmodulekeeper "github.com/public-awesome/stargaze/v8/x/claim/keeper"
-	claimmoduletypes "github.com/public-awesome/stargaze/v8/x/claim/types"
-	claimwasm "github.com/public-awesome/stargaze/v8/x/claim/wasm"
+	"github.com/public-awesome/stargaze/v9/docs"
+	sgstatesync "github.com/public-awesome/stargaze/v9/internal/statesync"
+	sgwasm "github.com/public-awesome/stargaze/v9/internal/wasm"
+	allocmodule "github.com/public-awesome/stargaze/v9/x/alloc"
+	allocmodulekeeper "github.com/public-awesome/stargaze/v9/x/alloc/keeper"
+	allocmoduletypes "github.com/public-awesome/stargaze/v9/x/alloc/types"
+	allocwasm "github.com/public-awesome/stargaze/v9/x/alloc/wasm"
+	claimmodule "github.com/public-awesome/stargaze/v9/x/claim"
+	claimmodulekeeper "github.com/public-awesome/stargaze/v9/x/claim/keeper"
+	claimmoduletypes "github.com/public-awesome/stargaze/v9/x/claim/types"
+	claimwasm "github.com/public-awesome/stargaze/v9/x/claim/wasm"
 
 	cronmodule "github.com/public-awesome/stargaze/v8/x/cron"
 	cronclient "github.com/public-awesome/stargaze/v8/x/cron/client"
@@ -117,11 +117,11 @@ import (
 	cronmoduletypes "github.com/public-awesome/stargaze/v8/x/cron/types"
 
 	//  ica
-	ica "github.com/cosmos/ibc-go/v3/modules/apps/27-interchain-accounts"
-	icahost "github.com/cosmos/ibc-go/v3/modules/apps/27-interchain-accounts/host"
-	icahostkeeper "github.com/cosmos/ibc-go/v3/modules/apps/27-interchain-accounts/host/keeper"
-	icahosttypes "github.com/cosmos/ibc-go/v3/modules/apps/27-interchain-accounts/host/types"
-	icatypes "github.com/cosmos/ibc-go/v3/modules/apps/27-interchain-accounts/types"
+	ica "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts"
+	icahost "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts/host"
+	icahostkeeper "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts/host/keeper"
+	icahosttypes "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts/host/types"
+	icatypes "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts/types"
 )
 
 const (
@@ -538,7 +538,7 @@ func NewStargazeApp(
 		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(app.WasmKeeper, enabledProposals))
 	}
 
-	ibcRouter.AddRoute(wasm.ModuleName, wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper))
+	ibcRouter.AddRoute(wasm.ModuleName, wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper, app.IBCKeeper.ChannelKeeper))
 	app.IBCKeeper.SetRouter(ibcRouter)
 
 	govKeeper := govkeeper.NewKeeper(

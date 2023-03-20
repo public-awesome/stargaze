@@ -17,7 +17,7 @@ RUN cd osmosis && git checkout $TAG && LEDGER_ENABLED=FALSE BUILD_TAGS=muslc LIN
 
 
 # --------------------------------------------------------
-FROM alpine:3.15
+FROM alpine:3.17
 
 COPY --from=go-builder /code/osmosis/build/osmosisd /usr/bin/osmosisd
 RUN apk add -U --no-cache ca-certificates

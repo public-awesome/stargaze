@@ -26,14 +26,14 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	ibctransfertypes "github.com/cosmos/ibc-go/v3/modules/apps/transfer/types"
-	minttypes "github.com/public-awesome/stargaze/v8/x/mint/types"
+	ibctransfertypes "github.com/cosmos/ibc-go/v4/modules/apps/transfer/types"
+	minttypes "github.com/public-awesome/stargaze/v9/x/mint/types"
 
 	// appParams "github.com/public-awesome/stargaze/app/params"
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-	alloctypes "github.com/public-awesome/stargaze/v8/x/alloc/types"
-	claimtypes "github.com/public-awesome/stargaze/v8/x/claim/types"
+	alloctypes "github.com/public-awesome/stargaze/v9/x/alloc/types"
+	claimtypes "github.com/public-awesome/stargaze/v9/x/claim/types"
 )
 
 const (
