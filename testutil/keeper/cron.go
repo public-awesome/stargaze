@@ -37,7 +37,22 @@ func CronKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		memStoreKey,
 		"CronParams",
 	)
-	var wk MockWasmKeeper
+	wk := MockWasmKeeper{
+		HasContractInfoFn: func(ctx sdk.Context, contractAddr sdk.AccAddress) bool {
+			switch contractAddr.String() {
+			case "cosmos1qyqszqgpqyqszqgpqyqszqgpqyqszqgpjnp7du":
+				return true
+			case "cosmos1hfml4tzwlc3mvynsg6vtgywyx00wfkhrtpkx6t":
+				return true
+			case "cosmos144sh8vyv5nqfylmg4mlydnpe3l4w780jsrmf4k":
+				return true
+			}
+			return false
+		},
+		SudoFn: func(ctx sdk.Context, contractAddress sdk.AccAddress, msg []byte) ([]byte, error) {
+			return nil, nil
+		},
+	}
 
 	k := keeper.NewKeeper(
 		cdc,
@@ -54,20 +69,19 @@ func CronKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 
 type MockWasmKeeper struct {
 	HasContractInfoFn func(ctx sdk.Context, contractAddr sdk.AccAddress) bool
+	SudoFn            func(ctx sdk.Context, contractAddress sdk.AccAddress, msg []byte) ([]byte, error)
 }
 
 func (k MockWasmKeeper) HasContractInfo(ctx sdk.Context, contractAddress sdk.AccAddress) bool {
-	switch contractAddress.String() {
-	case "cosmos1qyqszqgpqyqszqgpqyqszqgpqyqszqgpjnp7du":
-		return true
-	case "cosmos1hfml4tzwlc3mvynsg6vtgywyx00wfkhrtpkx6t":
-		return true
-	case "cosmos144sh8vyv5nqfylmg4mlydnpe3l4w780jsrmf4k":
-		return true
+	if k.HasContractInfoFn == nil {
+		panic("not supposed to be called!")
 	}
-	return false
+	return k.HasContractInfoFn(ctx, contractAddress)
 }
 
 func (k MockWasmKeeper) Sudo(ctx sdk.Context, contractAddress sdk.AccAddress, msg []byte) ([]byte, error) {
-	return nil, nil
+	if k.SudoFn == nil {
+		panic("not supposed to be called!")
+	}
+	return k.SudoFn(ctx, contractAddress, msg)
 }
