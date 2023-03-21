@@ -14,23 +14,23 @@ func BatchedQuerierHandler(clientCtx client.Context) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		if r.Method != http.MethodPost {
 			w.WriteHeader(http.StatusMethodNotAllowed)
-			json.NewEncoder(w).Encode(QueryResponse{Error: "method not allowed"})
+			_ = json.NewEncoder(w).Encode(QueryResponse{Error: "method not allowed"})
 			return
 		}
 		batchRequest := &BatchQueryRequest{}
 		err := json.NewDecoder(r.Body).Decode(batchRequest)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(QueryResponse{Error: "invalid request"})
+			_ = json.NewEncoder(w).Encode(QueryResponse{Error: "invalid request"})
 			return
 		}
 		if len(batchRequest.QueryRequests) == 0 {
 			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(QueryResponse{Error: "empty request"})
+			_ = json.NewEncoder(w).Encode(QueryResponse{Error: "empty request"})
 			return
 		}
 		if len(batchRequest.QueryRequests) > 10 {
-			json.NewEncoder(w).Encode(QueryResponse{Error: "max batch size"})
+			_ = json.NewEncoder(w).Encode(QueryResponse{Error: "max batch size"})
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
@@ -49,7 +49,7 @@ func BatchedQuerierHandler(clientCtx client.Context) http.HandlerFunc {
 			}
 			responses[i] = batchQueryResponse
 		}
-		json.NewEncoder(w).Encode(QueryResponse{Results: responses})
+		_ = json.NewEncoder(w).Encode(QueryResponse{Results: responses})
 	}
 }
 
