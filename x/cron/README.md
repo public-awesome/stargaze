@@ -90,3 +90,12 @@ pub fn sudo(deps: DepsMut, env: Env, msg: SudoMsg) -> Result<Response, ContractE
 Ensure you have a specific sudo entrypoint in your contract and add your code to be called by the `SudoMsg::BeginBlock` & `SudoMsg::EndBlock`. Both endpoints are hit for every privileged contract in the block lifecycle, so ensure both are implemented.
 
 This endpoint is hit at the beginning and end of every block by the x/cron module. The `deps` and `env` values are set as expected. It is not possible to receive any input in the `BeginBlock` & `EndBlock` call and as such the contract must maintain any relevant state it needs to use. 
+
+
+## Attribution
+Thanks to Confio and the Tgrade open source project for providing a base for x/cron where most of it's bits were extracted and adapted to only do end_blocker callbacks.
+
+Found more about Tgrade's twasm module:
+
+[x/twasm](https://github.com/confio/tgrade/tree/main/x/twasm
+)
