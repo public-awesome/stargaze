@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 )
 
-// BatchedQuerierHandler returns a handler that performas batch queries to smart contracts.
+// BatchedQuerierHandler returns a handler that performs batch queries to smart contracts.
 func BatchedQuerierHandler(clientCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
