@@ -111,10 +111,10 @@ import (
 	claimmoduletypes "github.com/public-awesome/stargaze/v9/x/claim/types"
 	claimwasm "github.com/public-awesome/stargaze/v9/x/claim/wasm"
 
-	cronmodule "github.com/public-awesome/stargaze/v8/x/cron"
-	cronclient "github.com/public-awesome/stargaze/v8/x/cron/client"
-	cronmodulekeeper "github.com/public-awesome/stargaze/v8/x/cron/keeper"
-	cronmoduletypes "github.com/public-awesome/stargaze/v8/x/cron/types"
+	cronmodule "github.com/public-awesome/stargaze/v9/x/cron"
+	cronclient "github.com/public-awesome/stargaze/v9/x/cron/client"
+	cronmodulekeeper "github.com/public-awesome/stargaze/v9/x/cron/keeper"
+	cronmoduletypes "github.com/public-awesome/stargaze/v9/x/cron/types"
 
 	//  ica
 	ica "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts"

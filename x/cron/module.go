@@ -18,10 +18,10 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/public-awesome/stargaze/v8/x/cron/client/cli"
-	"github.com/public-awesome/stargaze/v8/x/cron/keeper"
-	"github.com/public-awesome/stargaze/v8/x/cron/types"
-	"github.com/public-awesome/stargaze/v8/x/mint/client/rest"
+	"github.com/public-awesome/stargaze/v9/x/cron/client/cli"
+	"github.com/public-awesome/stargaze/v9/x/cron/keeper"
+	"github.com/public-awesome/stargaze/v9/x/cron/types"
+	"github.com/public-awesome/stargaze/v9/x/mint/client/rest"
 )
 
 var (

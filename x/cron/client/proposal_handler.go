@@ -2,8 +2,8 @@ package client
 
 import (
 	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
-	"github.com/public-awesome/stargaze/v8/x/cron/client/cli"
-	"github.com/public-awesome/stargaze/v8/x/cron/client/rest"
+	"github.com/public-awesome/stargaze/v9/x/cron/client/cli"
+	"github.com/public-awesome/stargaze/v9/x/cron/client/rest"
 )
 
 var (

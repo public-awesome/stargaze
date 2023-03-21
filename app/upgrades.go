@@ -8,11 +8,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
-	crontypes "github.com/public-awesome/stargaze/v8/x/cron/types"
+	crontypes "github.com/public-awesome/stargaze/v9/x/cron/types"
 )
 
 // next upgrade name
-const upgradeName = "v9"
+const upgradeName = "v10"
 
 // RegisterUpgradeHandlers returns upgrade handlers
 func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
