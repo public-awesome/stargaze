@@ -97,5 +97,4 @@ Thanks to Confio and the Tgrade open source project for providing a base for x/c
 
 Found more about Tgrade's twasm module:
 
-[x/twasm](https://github.com/confio/tgrade/tree/main/x/twasm
-)
+[x/twasm](https://github.com/confio/tgrade/tree/main/x/twasm)
