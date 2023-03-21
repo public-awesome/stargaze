@@ -75,12 +75,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 9.0.0-alpha.3
+        - 9.0.0-rc.3
     when:
       event:
         - push
       branch:
-        - jhernandezb/ibc-v4
+        - v9-release
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -96,7 +96,7 @@ steps:
         - tag
 
   - name: release
-    image: golang:1.19.4
+    image: golang:1.20.2
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -343,7 +343,7 @@ steps:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: true
-    image: publicawesome/stargaze:9.0.0-alpha.3
+    image: publicawesome/stargaze:9.0.0-rc.3
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -399,6 +399,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: abaa9d0e010f5f2f45e0fde2d4bc347cc9e0d36d61b67d8e25af8a1d4b816ecc
+hmac: 14d7527b77ad8e3ebcc875e305e12b133fb5f5f90d96e0e6d283e9f8fddffee3
 
 ...
