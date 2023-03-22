@@ -2,12 +2,15 @@ syntax = "proto3";
 package publicawesome.stargaze.cron.v1;
 
 import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
 
 option go_package = "github.com/public-awesome/stargaze/v9/x/cron/types";
 
 // PromoteToPrivilegedContractProposal gov proposal content type to add
 // "privileges" to a contract
 message PromoteToPrivilegedContractProposal {
+  option (cosmos_proto.implements_interface) = "cosmos.gov.v1beta1.Content";
+
   // Title is a short summary
   string title = 1 [ (gogoproto.moretags) = "yaml:\"title\"" ];
   // Description is a human readable text
@@ -19,6 +22,8 @@ message PromoteToPrivilegedContractProposal {
 // DemotePrivilegedContractProposal gov proposal content type to remove
 // "privileges" from a contract
 message DemotePrivilegedContractProposal {
+  option (cosmos_proto.implements_interface) = "cosmos.gov.v1beta1.Content";
+
   // Title is a short summary
   string title = 1 [ (gogoproto.moretags) = "yaml:\"title\"" ];
   // Description is a human readable text
