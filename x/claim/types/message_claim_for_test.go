@@ -23,7 +23,7 @@ func TestMsgClaimFor_ValidateBasic(t *testing.T) {
 		}, {
 			name: "valid address",
 			msg: MsgClaimFor{
-				Sender: sample.AccAddress(),
+				Sender: sample.AccAddress().String(),
 			},
 		},
 	}

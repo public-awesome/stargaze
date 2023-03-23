@@ -111,6 +111,11 @@ import (
 	claimmoduletypes "github.com/public-awesome/stargaze/v9/x/claim/types"
 	claimwasm "github.com/public-awesome/stargaze/v9/x/claim/wasm"
 
+	cronmodule "github.com/public-awesome/stargaze/v9/x/cron"
+	cronclient "github.com/public-awesome/stargaze/v9/x/cron/client"
+	cronmodulekeeper "github.com/public-awesome/stargaze/v9/x/cron/keeper"
+	cronmoduletypes "github.com/public-awesome/stargaze/v9/x/cron/types"
+
 	//  ica
 	ica "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts"
 	icahost "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts/host"
@@ -166,6 +171,7 @@ func getGovProposalHandlers() []govclient.ProposalHandler {
 		upgradeclient.ProposalHandler,
 		upgradeclient.CancelProposalHandler,
 		ibcclientclient.UpdateClientProposalHandler, ibcclientclient.UpgradeProposalHandler,
+		cronclient.SetPrivilegeProposalHandler, cronclient.UnsetPrivilegeProposalHandler,
 		// this line is used by starport scaffolding # stargate/app/govProposalHandler
 	)
 	return govProposalHandlers
@@ -199,6 +205,7 @@ var (
 		vesting.AppModuleBasic{},
 		claimmodule.AppModuleBasic{},
 		allocmodule.AppModuleBasic{},
+		cronmodule.AppModuleBasic{},
 		wasm.AppModuleBasic{},
 		ica.AppModuleBasic{},
 	)
@@ -284,6 +291,7 @@ type App struct {
 	// stargaze modules
 	ClaimKeeper claimmodulekeeper.Keeper
 	AllocKeeper allocmodulekeeper.Keeper
+	CronKeeper  cronmodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// the module manager
@@ -323,6 +331,7 @@ func NewStargazeApp(
 		allocmoduletypes.StoreKey,
 		authzkeeper.StoreKey,
 		wasm.StoreKey,
+		cronmoduletypes.StoreKey,
 		icahosttypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
@@ -521,6 +530,10 @@ func NewStargazeApp(
 		wasmOpts...,
 	)
 
+	app.CronKeeper = *cronmodulekeeper.NewKeeper(appCodec, keys[cronmoduletypes.StoreKey], keys[cronmoduletypes.MemStoreKey], app.GetSubspace(cronmoduletypes.ModuleName), app.WasmKeeper)
+	cronModule := cronmodule.NewAppModule(appCodec, app.CronKeeper, app.WasmKeeper)
+	govRouter.AddRoute(cronmoduletypes.RouterKey, cronmodulekeeper.NewProposalHandler(app.CronKeeper))
+
 	// The gov proposal types can be individually enabled
 	if len(enabledProposals) != 0 {
 		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(app.WasmKeeper, enabledProposals))
@@ -590,6 +603,7 @@ func NewStargazeApp(
 		claimModule,
 		allocModule,
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
+		cronModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -608,6 +622,7 @@ func NewStargazeApp(
 		authz.ModuleName, feegrant.ModuleName, claimmoduletypes.ModuleName,
 		paramstypes.ModuleName, vestingtypes.ModuleName,
 		wasm.ModuleName,
+		cronmoduletypes.ModuleName,
 	)
 
 	app.mm.SetOrderEndBlockers(
@@ -621,6 +636,7 @@ func NewStargazeApp(
 		icatypes.ModuleName,
 		allocmoduletypes.ModuleName, claimmoduletypes.ModuleName,
 		wasm.ModuleName,
+		cronmoduletypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -650,6 +666,7 @@ func NewStargazeApp(
 		allocmoduletypes.ModuleName,
 		// wasm after ibc transfer
 		wasm.ModuleName,
+		cronmoduletypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -870,6 +887,7 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(claimmoduletypes.ModuleName)
 	paramsKeeper.Subspace(allocmoduletypes.ModuleName)
 	paramsKeeper.Subspace(wasm.ModuleName)
+	paramsKeeper.Subspace(cronmoduletypes.ModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 

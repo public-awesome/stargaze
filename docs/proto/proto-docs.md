@@ -60,6 +60,19 @@
   
     - [Msg](#publicawesome.stargaze.claim.v1beta1.Msg)
   
+- [stargaze/cron/genesis.proto](#stargaze/cron/genesis.proto)
+    - [GenesisState](#publicawesome.stargaze.cron.v1.GenesisState)
+  
+- [stargaze/cron/proposal.proto](#stargaze/cron/proposal.proto)
+    - [DemotePrivilegedContractProposal](#publicawesome.stargaze.cron.v1.DemotePrivilegedContractProposal)
+    - [PromoteToPrivilegedContractProposal](#publicawesome.stargaze.cron.v1.PromoteToPrivilegedContractProposal)
+  
+- [stargaze/cron/query.proto](#stargaze/cron/query.proto)
+    - [QueryListPrivilegedRequest](#publicawesome.stargaze.cron.v1.QueryListPrivilegedRequest)
+    - [QueryListPrivilegedResponse](#publicawesome.stargaze.cron.v1.QueryListPrivilegedResponse)
+  
+    - [Query](#publicawesome.stargaze.cron.v1.Query)
+  
 - [stargaze/mint/v1beta1/mint.proto](#stargaze/mint/v1beta1/mint.proto)
     - [Minter](#stargaze.mint.v1beta1.Minter)
     - [Params](#stargaze.mint.v1beta1.Params)
@@ -703,6 +716,140 @@ Msg defines the Msg service.
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
 | `InitialClaim` | [MsgInitialClaim](#publicawesome.stargaze.claim.v1beta1.MsgInitialClaim) | [MsgInitialClaimResponse](#publicawesome.stargaze.claim.v1beta1.MsgInitialClaimResponse) |  | |
 | `ClaimFor` | [MsgClaimFor](#publicawesome.stargaze.claim.v1beta1.MsgClaimFor) | [MsgClaimForResponse](#publicawesome.stargaze.claim.v1beta1.MsgClaimForResponse) | this line is used by starport scaffolding # proto/tx/rpc | |
+
+ <!-- end services -->
+
+
+
+<a name="stargaze/cron/genesis.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## stargaze/cron/genesis.proto
+
+
+
+<a name="publicawesome.stargaze.cron.v1.GenesisState"></a>
+
+### GenesisState
+GenesisState defines the cron module's genesis state.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `privileged_contract_addresses` | [string](#string) | repeated | List of all the contracts that have been given the privilege status via governance. They can set up hooks to abci.EndBlocker |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="stargaze/cron/proposal.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## stargaze/cron/proposal.proto
+
+
+
+<a name="publicawesome.stargaze.cron.v1.DemotePrivilegedContractProposal"></a>
+
+### DemotePrivilegedContractProposal
+DemotePrivilegedContractProposal gov proposal content type to remove
+"privileges" from a contract
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `title` | [string](#string) |  | Title is a short summary |
+| `description` | [string](#string) |  | Description is a human readable text |
+| `contract` | [string](#string) |  | Contract is the bech32 address of the smart contract |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.cron.v1.PromoteToPrivilegedContractProposal"></a>
+
+### PromoteToPrivilegedContractProposal
+PromoteToPrivilegedContractProposal gov proposal content type to add
+"privileges" to a contract
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `title` | [string](#string) |  | Title is a short summary |
+| `description` | [string](#string) |  | Description is a human readable text |
+| `contract` | [string](#string) |  | Contract is the bech32 address of the smart contract |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="stargaze/cron/query.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## stargaze/cron/query.proto
+
+
+
+<a name="publicawesome.stargaze.cron.v1.QueryListPrivilegedRequest"></a>
+
+### QueryListPrivilegedRequest
+QueryListPrivilegedRequest is request type for the Query/ListPrivileged RPC method.
+
+
+
+
+
+
+<a name="publicawesome.stargaze.cron.v1.QueryListPrivilegedResponse"></a>
+
+### QueryListPrivilegedResponse
+QueryListPrivilegedResponse is response type for the Query/ListPrivileged RPC method.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `contract_addresses` | [string](#string) | repeated | contract_addresses holds all the smart contract addresses which have privilege status. |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+<a name="publicawesome.stargaze.cron.v1.Query"></a>
+
+### Query
+Query defines the gRPC querier service.
+
+| Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
+| ----------- | ------------ | ------------- | ------------| ------- | -------- |
+| `ListPrivileged` | [QueryListPrivilegedRequest](#publicawesome.stargaze.cron.v1.QueryListPrivilegedRequest) | [QueryListPrivilegedResponse](#publicawesome.stargaze.cron.v1.QueryListPrivilegedResponse) | ListPrivileged queries the contracts which have the priviledge status | GET|/stargaze/cron/v1/list-privileged|
 
  <!-- end services -->
 

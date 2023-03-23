@@ -24,6 +24,14 @@ else
   sed -i '' "s/cors_allowed_origins = \[\]/cors_allowed_origins = [\"*\"]/g" $config
 fi
 
+# modify genesis params for localnet ease of use
+# x/gov params change
+# reduce voting period to 2 minutes
+contents="$(jq '.app_state.gov.voting_params.voting_period = "120s"' $HOME/.starsd/config/genesis.json)" && echo "${contents}" >  $HOME/.starsd/config/genesis.json
+# reduce minimum deposit amount to 10stake
+contents="$(jq '.app_state.gov.deposit_params.min_deposit[0].amount = "10"' $HOME/.starsd/config/genesis.json)" && echo "${contents}" >  $HOME/.starsd/config/genesis.json
+# reduce deposit period to 20seconds 
+contents="$(jq '.app_state.gov.deposit_params.max_deposit_period = "20s"' $HOME/.starsd/config/genesis.json)" && echo "${contents}" >  $HOME/.starsd/config/genesis.json
 
 starsd add-genesis-account $VALIDATOR 10000000000000000stake
 starsd add-genesis-account $CREATOR 10000000000000000stake
