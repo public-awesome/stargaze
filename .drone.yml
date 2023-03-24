@@ -46,8 +46,8 @@ steps:
         path: /go
     commands:
       - apk add --no-cache ca-certificates build-base git
-      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.1.1/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.a
-      - echo "6e4de7ba9bad4ae9679c7f9ecf7e283dd0160e71567c6a7be6ae47c81ebe7f32  /lib/libwasmvm_muslc.a" | sha256sum -c
+      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.2.1/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.a
+      - echo "a00700aa19f5bfe0f46290ddf69bf51eb03a6dfcd88b905e1081af2e42dbbafc  /lib/libwasmvm_muslc.a" | sha256sum -c
       - LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true  make build
       - echo "Ensuring binary is statically linked ..." && (file $PWD/bin/starsd | grep "statically linked")
     environment:
@@ -75,12 +75,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 9.0.0-rc.3
+        - latest
     when:
       event:
         - push
       branch:
-        - v9-release
+        - feature/wasmd-0.31
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -343,7 +343,7 @@ steps:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: true
-    image: publicawesome/stargaze:9.0.0-rc.3
+    image: publicawesome/stargaze:latest
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -399,6 +399,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 14d7527b77ad8e3ebcc875e305e12b133fb5f5f90d96e0e6d283e9f8fddffee3
+hmac: 852bdd03d09f473c9b32c3b33a29c783cbdf862981b7f63deb9f767fb41a5842
 
 ...

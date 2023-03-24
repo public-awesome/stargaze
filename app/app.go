@@ -503,7 +503,7 @@ func NewStargazeApp(
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
-	availableCapabilities := "iterator,staking,stargate,stargaze,cosmwasm_1_1"
+	availableCapabilities := "iterator,staking,stargate,stargaze,cosmwasm_1_1,cosmwasm_1_2"
 
 	wasmOpts = append(
 		wasmOpts,
