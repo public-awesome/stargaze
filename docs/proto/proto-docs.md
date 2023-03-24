@@ -60,14 +60,14 @@
   
     - [Msg](#publicawesome.stargaze.claim.v1beta1.Msg)
   
-- [stargaze/cron/genesis.proto](#stargaze/cron/genesis.proto)
+- [stargaze/cron/v1/genesis.proto](#stargaze/cron/v1/genesis.proto)
     - [GenesisState](#publicawesome.stargaze.cron.v1.GenesisState)
   
-- [stargaze/cron/proposal.proto](#stargaze/cron/proposal.proto)
+- [stargaze/cron/v1/proposal.proto](#stargaze/cron/v1/proposal.proto)
     - [DemotePrivilegedContractProposal](#publicawesome.stargaze.cron.v1.DemotePrivilegedContractProposal)
     - [PromoteToPrivilegedContractProposal](#publicawesome.stargaze.cron.v1.PromoteToPrivilegedContractProposal)
   
-- [stargaze/cron/query.proto](#stargaze/cron/query.proto)
+- [stargaze/cron/v1/query.proto](#stargaze/cron/v1/query.proto)
     - [QueryListPrivilegedRequest](#publicawesome.stargaze.cron.v1.QueryListPrivilegedRequest)
     - [QueryListPrivilegedResponse](#publicawesome.stargaze.cron.v1.QueryListPrivilegedResponse)
   
@@ -721,10 +721,10 @@ Msg defines the Msg service.
 
 
 
-<a name="stargaze/cron/genesis.proto"></a>
+<a name="stargaze/cron/v1/genesis.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## stargaze/cron/genesis.proto
+## stargaze/cron/v1/genesis.proto
 
 
 
@@ -752,10 +752,10 @@ GenesisState defines the cron module's genesis state.
 
 
 
-<a name="stargaze/cron/proposal.proto"></a>
+<a name="stargaze/cron/v1/proposal.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## stargaze/cron/proposal.proto
+## stargaze/cron/v1/proposal.proto
 
 
 
@@ -804,10 +804,10 @@ PromoteToPrivilegedContractProposal gov proposal content type to add
 
 
 
-<a name="stargaze/cron/query.proto"></a>
+<a name="stargaze/cron/v1/query.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## stargaze/cron/query.proto
+## stargaze/cron/v1/query.proto
 
 
 

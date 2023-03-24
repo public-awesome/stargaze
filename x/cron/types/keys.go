@@ -16,9 +16,7 @@ const (
 	MemStoreKey = "mem_cron"
 )
 
-var (
-	PrivilegedContractsPrefix = []byte{0x00}
-)
+var PrivilegedContractsPrefix = []byte{0x00}
 
 func PrivilegedContractsKey(contractAddr sdk.AccAddress) []byte {
 	return append(PrivilegedContractsPrefix, contractAddr...)
