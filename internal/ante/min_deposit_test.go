@@ -87,5 +87,4 @@ func TestMinDepositDecorator(t *testing.T) {
 	header = tmproto.Header{Height: app.LastBlockHeight() + 1}
 	_, _, err = simapp.SignCheckDeliver(t, txGen, app.BaseApp, header, []sdk.Msg{createProposalMsg}, "", []uint64{1}, []uint64{0}, false, true, true, priv2)
 	require.NoError(t, err)
-
 }
