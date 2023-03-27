@@ -1,10 +1,11 @@
 # Events
 
-This esction descrobes the module events.
+This section describes the module events.
 
 x/globalfee emits the following events
 
-| Source type | Source name              | 
-| ----------- | ------------------------ |
-| Message     | `Msg` |                          
-| Keeper     | `` |                                          
+| Source type | Event                             | 
+| ----------- | --------------------------------- |
+| Keeper      | `CodeAuthorizationUpdated`        |                          
+| Keeper      | `ContractAuthorizationUpdated`    |                        
+| Message     | `GlobalFeeAuthorizationUpdated`   |                                          
