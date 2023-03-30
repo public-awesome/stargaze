@@ -1,7 +1,6 @@
 package globalfee
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"math/rand"
@@ -64,9 +63,7 @@ func (a AppModuleBasic) ValidateGenesis(cdc codec.JSONCodec, _ client.TxEncoding
 
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the module.
 func (a AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, serveMux *runtime.ServeMux) {
-	if err := types.RegisterQueryHandlerClient(context.Background(), serveMux, types.NewQueryClient(clientCtx)); err != nil {
-		panic(fmt.Errorf("registering query handler for x/%s: %w", types.ModuleName, err))
-	}
+
 }
 
 func (a AppModuleBasic) RegisterRESTRoutes(_ client.Context, _ *mux.Router) {}
