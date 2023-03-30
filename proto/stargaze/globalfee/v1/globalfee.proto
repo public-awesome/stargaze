@@ -1,4 +1,29 @@
 syntax = "proto3";
 package publicawesome.stargaze.globalfee.v1;
 
+import "gogoproto/gogo.proto";
+
 option go_package = "github.com/public-awesome/stargaze/v9/x/globalfee/types";
+
+// Params holds parameters for the globalfee module.
+message Params {
+    option (gogoproto.goproto_stringer) = false;
+    // Addresses which are whitelisted to modify the gas free operations
+    repeated string privileged_address = 1;
+}
+
+// Configuration for code Ids which can have zero gas operations
+message CodeAuthorization {
+    // authorized code ids
+    uint64 code_id = 1;
+    // authorized contract operation methods
+    repeated string methods = 2;
+}
+
+// Configuration for contract addresses which can have zero gas operations
+message ContractAuthorization {
+    // authorized contract addresses
+    string contract_address = 1;
+    // authorized contract operation methods
+    repeated string methods = 2;
+}

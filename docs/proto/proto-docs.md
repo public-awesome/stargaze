@@ -77,6 +77,10 @@
     - [GenesisState](#publicawesome.stargaze.globalfee.v1.GenesisState)
   
 - [stargaze/globalfee/v1/globalfee.proto](#stargaze/globalfee/v1/globalfee.proto)
+    - [CodeAuthorization](#publicawesome.stargaze.globalfee.v1.CodeAuthorization)
+    - [ContractAuthorization](#publicawesome.stargaze.globalfee.v1.ContractAuthorization)
+    - [Params](#publicawesome.stargaze.globalfee.v1.Params)
+  
 - [stargaze/globalfee/v1/proposal.proto](#stargaze/globalfee/v1/proposal.proto)
 - [stargaze/globalfee/v1/query.proto](#stargaze/globalfee/v1/query.proto)
     - [Query](#publicawesome.stargaze.globalfee.v1.Query)
@@ -896,6 +900,53 @@ GenesisState defines the globalfee module's genesis state.
 <p align="right"><a href="#top">Top</a></p>
 
 ## stargaze/globalfee/v1/globalfee.proto
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.CodeAuthorization"></a>
+
+### CodeAuthorization
+Configuration for code Ids which can have zero gas operations
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `code_id` | [uint64](#uint64) |  | authorized code ids |
+| `methods` | [string](#string) | repeated | authorized contract operation methods |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.ContractAuthorization"></a>
+
+### ContractAuthorization
+Configuration for contract addresses which can have zero gas operations
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `contract_address` | [string](#string) |  | authorized contract addresses |
+| `methods` | [string](#string) | repeated | authorized contract operation methods |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.Params"></a>
+
+### Params
+Params holds parameters for the globalfee module.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `privileged_address` | [string](#string) | repeated | Addresses which are whitelisted to modify the gas free operations |
+
+
+
 
 
  <!-- end messages -->
