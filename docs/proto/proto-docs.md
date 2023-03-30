@@ -73,6 +73,17 @@
   
     - [Query](#publicawesome.stargaze.cron.v1.Query)
   
+- [stargaze/globalfee/v1/genesis.proto](#stargaze/globalfee/v1/genesis.proto)
+    - [GenesisState](#publicawesome.stargaze.globalfee.v1.GenesisState)
+  
+- [stargaze/globalfee/v1/globalfee.proto](#stargaze/globalfee/v1/globalfee.proto)
+- [stargaze/globalfee/v1/proposal.proto](#stargaze/globalfee/v1/proposal.proto)
+- [stargaze/globalfee/v1/query.proto](#stargaze/globalfee/v1/query.proto)
+    - [Query](#publicawesome.stargaze.globalfee.v1.Query)
+  
+- [stargaze/globalfee/v1/tx.proto](#stargaze/globalfee/v1/tx.proto)
+    - [Msg](#publicawesome.stargaze.globalfee.v1.Msg)
+  
 - [stargaze/mint/v1beta1/mint.proto](#stargaze/mint/v1beta1/mint.proto)
     - [Minter](#stargaze.mint.v1beta1.Minter)
     - [Params](#stargaze.mint.v1beta1.Params)
@@ -850,6 +861,114 @@ Query defines the gRPC querier service.
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
 | `ListPrivileged` | [QueryListPrivilegedRequest](#publicawesome.stargaze.cron.v1.QueryListPrivilegedRequest) | [QueryListPrivilegedResponse](#publicawesome.stargaze.cron.v1.QueryListPrivilegedResponse) | ListPrivileged queries the contracts which have the priviledge status | GET|/stargaze/cron/v1/list-privileged|
+
+ <!-- end services -->
+
+
+
+<a name="stargaze/globalfee/v1/genesis.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## stargaze/globalfee/v1/genesis.proto
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.GenesisState"></a>
+
+### GenesisState
+GenesisState defines the globalfee module's genesis state.
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="stargaze/globalfee/v1/globalfee.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## stargaze/globalfee/v1/globalfee.proto
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="stargaze/globalfee/v1/proposal.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## stargaze/globalfee/v1/proposal.proto
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="stargaze/globalfee/v1/query.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## stargaze/globalfee/v1/query.proto
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+<a name="publicawesome.stargaze.globalfee.v1.Query"></a>
+
+### Query
+Query defines the gRPC querier service.
+
+| Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
+| ----------- | ------------ | ------------- | ------------| ------- | -------- |
+
+ <!-- end services -->
+
+
+
+<a name="stargaze/globalfee/v1/tx.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## stargaze/globalfee/v1/tx.proto
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+<a name="publicawesome.stargaze.globalfee.v1.Msg"></a>
+
+### Msg
+Msg defines the alloc Msg service.
+
+| Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
+| ----------- | ------------ | ------------- | ------------| ------- | -------- |
 
  <!-- end services -->
 
