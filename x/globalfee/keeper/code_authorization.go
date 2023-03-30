@@ -18,11 +18,16 @@ func (k Keeper) GetCodeAuthorization(ctx sdk.Context, codeId uint64) (types.Code
 	return ca, true
 }
 
-func (k Keeper) SetCodeAuthorization(ctx sdk.Context, ca types.CodeAuthorization) {
+func (k Keeper) SetCodeAuthorization(ctx sdk.Context, ca types.CodeAuthorization) error {
+	if err := ca.Validate(); err != nil {
+		return err
+	}
+
 	store := ctx.KVStore(k.storeKey)
 	value := k.cdc.MustMarshal(&ca)
 
 	store.Set(types.GetCodeAuthorizationPrefix(ca.CodeId), value)
+	return nil
 }
 
 func (k Keeper) DeleteCodeAuthorization(ctx sdk.Context, codeId uint64) {

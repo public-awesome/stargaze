@@ -11,6 +11,8 @@ const (
 	StoreKey = ModuleName
 	// QuerierRoute is the querier route for the module.
 	QuerierRoute = ModuleName
+	// MemStoreKey defines the in-memory store key
+	MemStoreKey = "mem_globalfee"
 )
 
 var (
