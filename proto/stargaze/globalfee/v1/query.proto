@@ -1,9 +1,34 @@
 syntax = "proto3";
 package publicawesome.stargaze.globalfee.v1;
 
+import "google/api/annotations.proto";
+
 option go_package = "github.com/public-awesome/stargaze/v9/x/globalfee/types";
 
 // Query defines the gRPC querier service.
 service Query {
+    rpc CodeAuthorization(QueryCodeAuthorizationRequest) returns (QueryCodeAuthorizationResponse) {
+        option (google.api.http).get =
+            "/stargaze/globalfee/v1/code_authorization/{code_id}";
+      }
+    rpc ContractAuthorization(QueryContractAuthorizationRequest) returns (QueryContractAuthorizationResponse) {
+        option (google.api.http).get =
+            "/stargaze/globalfee/v1/contract_authorization/{contract_address}";
+      }
+}
 
+message QueryCodeAuthorizationRequest {
+    uint64 code_id = 1;
+}
+
+message QueryCodeAuthorizationResponse {
+    repeated string methods = 1;
+}
+
+message QueryContractAuthorizationRequest {
+    string contract_address = 1;
+}
+
+message QueryContractAuthorizationResponse {
+    repeated string methods = 1;
 }
