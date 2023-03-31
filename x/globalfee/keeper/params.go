@@ -19,3 +19,13 @@ func (k Keeper) GetParams(ctx sdk.Context) types.Params {
 	k.paramStore.GetParamSet(ctx, &params)
 	return params
 }
+
+func (k Keeper) IsPrivilegedAddress(ctx sdk.Context, address string) bool {
+	privilegedAddresses := k.GetParams(ctx).PrivilegedAddress
+	for _, paddr := range privilegedAddresses {
+		if address == paddr {
+			return true
+		}
+	}
+	return false
+}
