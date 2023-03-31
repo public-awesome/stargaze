@@ -87,6 +87,8 @@
     - [QueryCodeAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationResponse)
     - [QueryContractAuthorizationRequest](#publicawesome.stargaze.globalfee.v1.QueryContractAuthorizationRequest)
     - [QueryContractAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.QueryContractAuthorizationResponse)
+    - [QueryParamsRequest](#publicawesome.stargaze.globalfee.v1.QueryParamsRequest)
+    - [QueryParamsResponse](#publicawesome.stargaze.globalfee.v1.QueryParamsResponse)
   
     - [Query](#publicawesome.stargaze.globalfee.v1.Query)
   
@@ -1055,6 +1057,31 @@ Params holds parameters for the globalfee module.
 
 
 
+
+<a name="publicawesome.stargaze.globalfee.v1.QueryParamsRequest"></a>
+
+### QueryParamsRequest
+
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.QueryParamsResponse"></a>
+
+### QueryParamsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `params` | [Params](#publicawesome.stargaze.globalfee.v1.Params) |  |  |
+
+
+
+
+
  <!-- end messages -->
 
  <!-- end enums -->
@@ -1071,6 +1098,7 @@ Query defines the gRPC querier service.
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
 | `CodeAuthorization` | [QueryCodeAuthorizationRequest](#publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationRequest) | [QueryCodeAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationResponse) |  | GET|/stargaze/globalfee/v1/code_authorization/{code_id}|
 | `ContractAuthorization` | [QueryContractAuthorizationRequest](#publicawesome.stargaze.globalfee.v1.QueryContractAuthorizationRequest) | [QueryContractAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.QueryContractAuthorizationResponse) |  | GET|/stargaze/globalfee/v1/contract_authorization/{contract_address}|
+| `Params` | [QueryParamsRequest](#publicawesome.stargaze.globalfee.v1.QueryParamsRequest) | [QueryParamsResponse](#publicawesome.stargaze.globalfee.v1.QueryParamsResponse) |  | GET|/stargaze/globalfee/v1/params|
 
  <!-- end services -->
 

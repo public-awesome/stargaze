@@ -2,6 +2,7 @@ syntax = "proto3";
 package publicawesome.stargaze.globalfee.v1;
 
 import "google/api/annotations.proto";
+import "stargaze/globalfee/v1/globalfee.proto";
 
 option go_package = "github.com/public-awesome/stargaze/v9/x/globalfee/types";
 
@@ -10,11 +11,14 @@ service Query {
     rpc CodeAuthorization(QueryCodeAuthorizationRequest) returns (QueryCodeAuthorizationResponse) {
         option (google.api.http).get =
             "/stargaze/globalfee/v1/code_authorization/{code_id}";
-      }
+    }
     rpc ContractAuthorization(QueryContractAuthorizationRequest) returns (QueryContractAuthorizationResponse) {
         option (google.api.http).get =
             "/stargaze/globalfee/v1/contract_authorization/{contract_address}";
-      }
+    }
+    rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+        option (google.api.http).get = "/stargaze/globalfee/v1/params";
+    }
 }
 
 message QueryCodeAuthorizationRequest {
@@ -31,4 +35,10 @@ message QueryContractAuthorizationRequest {
 
 message QueryContractAuthorizationResponse {
     repeated string methods = 1;
+}
+
+message QueryParamsRequest {}
+
+message QueryParamsResponse {
+    Params params = 1;
 }
