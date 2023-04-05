@@ -9,21 +9,21 @@ option go_package = "github.com/public-awesome/stargaze/v9/x/globalfee/types";
 message Params {
     option (gogoproto.goproto_stringer) = false;
     // Addresses which are whitelisted to modify the gas free operations
-    repeated string privileged_address = 1;
+    repeated string privileged_address = 1 [ (gogoproto.moretags) = "yaml:\"privileged_address\"" ];
 }
 
 // Configuration for code Ids which can have zero gas operations
 message CodeAuthorization {
     // authorized code ids
-    uint64 code_id = 1;
+    uint64 code_id = 1 [ (gogoproto.moretags) = "yaml:\"code_id\"" ];
     // authorized contract operation methods
-    repeated string methods = 2;
+    repeated string methods = 2 [ (gogoproto.moretags) = "yaml:\"methods\"" ];
 }
 
 // Configuration for contract addresses which can have zero gas operations
 message ContractAuthorization {
     // authorized contract addresses
-    string contract_address = 1;
+    string contract_address = 1 [ (gogoproto.moretags) = "yaml:\"contract_address\"" ];
     // authorized contract operation methods
-    repeated string methods = 2;
+    repeated string methods = 2 [ (gogoproto.moretags) = "yaml:\"methods\"" ];
 }

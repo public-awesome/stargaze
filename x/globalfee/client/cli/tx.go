@@ -184,8 +184,10 @@ func CmdProposalSetCodeAuthorization() *cobra.Command {
 			prop := types.SetCodeAuthorizationProposal{
 				Title:       proposalTitle,
 				Description: proposalDescr,
-				CodeId:      codeId,
-				Methods:     methods,
+				CodeAuthorization: &types.CodeAuthorization{
+					CodeId:  codeId,
+					Methods: methods,
+				},
 			}
 
 			msg, err := govtypes.NewMsgSubmitProposal(&prop, deposit, clientCtx.GetFromAddress())
@@ -264,10 +266,12 @@ func CmdProposalSetContractAuthorization() *cobra.Command {
 			methods := strings.Split(args[1], ",")
 
 			content := types.SetContractAuthorizationProposal{
-				Title:           proposalTitle,
-				Description:     proposalDescr,
-				ContractAddress: args[0],
-				Methods:         methods,
+				Title:       proposalTitle,
+				Description: proposalDescr,
+				ContractAuthorization: &types.ContractAuthorization{
+					ContractAddress: args[0],
+					Methods:         methods,
+				},
 			}
 
 			msg, err := govtypes.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
