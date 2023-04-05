@@ -55,12 +55,13 @@ func (msg MsgSetCodeAuthorization) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid sender address (%s)", err)
 	}
-	return nil
+	return msg.CodeAuthorization.Validate()
 }
 
-func NewMsgRemoveCodeAuthorization(sender string) *MsgRemoveCodeAuthorization {
+func NewMsgRemoveCodeAuthorization(sender string, codeId uint64) *MsgRemoveCodeAuthorization {
 	return &MsgRemoveCodeAuthorization{
 		Sender: sender,
+		CodeId: codeId,
 	}
 }
 
@@ -91,4 +92,8 @@ func (msg MsgRemoveCodeAuthorization) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid sender address (%s)", err)
 	}
 	return nil
+}
+
+func (ca CodeAuthorization) Validate() error {
+	return validateMethods(ca.Methods)
 }
