@@ -1,4 +1,43 @@
 syntax = "proto3";
 package publicawesome.stargaze.globalfee.v1;
 
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+
 option go_package = "github.com/public-awesome/stargaze/v9/x/globalfee/types";
+
+message SetCodeAuthorizationProposal {
+    option (cosmos_proto.implements_interface) = "cosmos.gov.v1beta1.Content";
+
+    string title = 1 [ (gogoproto.moretags) = "yaml:\"title\"" ];
+    string description = 2 [ (gogoproto.moretags) = "yaml:\"description\"" ];
+    uint64 code_id = 3 [ (gogoproto.moretags) = "yaml:\"code_id\"" ];
+    repeated string methods = 4 [ (gogoproto.moretags) = "yaml:\"methods\"" ];
+}
+
+message DeleteCodeAuthorizationProposal {
+    option (cosmos_proto.implements_interface) = "cosmos.gov.v1beta1.Content";
+  
+    string title = 1 [ (gogoproto.moretags) = "yaml:\"title\"" ];
+    string description = 2 [ (gogoproto.moretags) = "yaml:\"description\"" ];
+    uint64 code_id = 3 [ (gogoproto.moretags) = "yaml:\"code_id\"" ];
+}
+
+
+message SetContractAuthorizationProposal {
+    option (cosmos_proto.implements_interface) = "cosmos.gov.v1beta1.Content";
+  
+    string title = 1 [ (gogoproto.moretags) = "yaml:\"title\"" ];
+    string description = 2 [ (gogoproto.moretags) = "yaml:\"description\"" ];
+    string contract_address = 3 [ (gogoproto.moretags) = "yaml:\"contract_address\"" ];
+    repeated string methods = 4 [ (gogoproto.moretags) = "yaml:\"methods\"" ];
+}
+
+
+message DeleteContractAuthorizationProposal {
+    option (cosmos_proto.implements_interface) = "cosmos.gov.v1beta1.Content";
+  
+    string title = 1 [ (gogoproto.moretags) = "yaml:\"title\"" ];
+    string description = 2 [ (gogoproto.moretags) = "yaml:\"description\"" ];
+    string contract_address = 3 [ (gogoproto.moretags) = "yaml:\"contract_address\"" ];
+}
