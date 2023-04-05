@@ -24,8 +24,8 @@ func GetTxCmd() *cobra.Command {
 
 	cmd.AddCommand(CmdSetCodeAuthorization())
 	cmd.AddCommand(CmdRemoveCodeAuthorization())
-	cmd.AddCommand(CmdInitialClaim())
-	cmd.AddCommand(CmdInitialClaim())
+	cmd.AddCommand(CmdSetContractAuthorization())
+	cmd.AddCommand(CmdRemoveContractAuthorization())
 
 	return cmd
 }
@@ -33,7 +33,7 @@ func GetTxCmd() *cobra.Command {
 func CmdSetCodeAuthorization() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "set-code-authorization [code-id] [methods]",
-		Short: "",
+		Short: "Creates or updates the gasless operation authorization for the given code id and for the provided methods",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -68,7 +68,7 @@ func CmdSetCodeAuthorization() *cobra.Command {
 func CmdRemoveCodeAuthorization() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "remove-code-authorization [code-id]",
-		Short: "",
+		Short: "Removes any previously set code authorizations",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -81,10 +81,10 @@ func CmdRemoveCodeAuthorization() *cobra.Command {
 				return err
 			}
 
-			msg := types.MsgRemoveCodeAuthorization{
-				Sender: clientCtx.GetFromAddress().String(),
-				CodeId: codeId,
-			}
+			msg := types.NewMsgRemoveCodeAuthorization(
+				clientCtx.GetFromAddress().String(),
+				codeId,
+			)
 
 			if err := msg.ValidateBasic(); err != nil {
 				return err
@@ -98,10 +98,10 @@ func CmdRemoveCodeAuthorization() *cobra.Command {
 	return cmd
 }
 
-func CmdInitialClaim() *cobra.Command {
+func CmdSetContractAuthorization() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "initial-claim",
-		Short: "Claim Initial Amount",
+		Use:   "set-contract-authorization [contract-address] [methods]",
+		Short: "Creates or updates the gasless operation authorization for the given contract address and for the provided methods",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -109,8 +109,12 @@ func CmdInitialClaim() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgInitialClaim(
+			methods := strings.Split(args[1], ",")
+
+			msg := types.NewMsgSetContractAuthorization(
 				clientCtx.GetFromAddress().String(),
+				args[0],
+				methods,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
@@ -124,10 +128,10 @@ func CmdInitialClaim() *cobra.Command {
 	return cmd
 }
 
-func CmdInitialClaim() *cobra.Command {
+func CmdRemoveContractAuthorization() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "initial-claim",
-		Short: "Claim Initial Amount",
+		Use:   "remove-contract-authorization [contract-address]",
+		Short: "Removes any previously set contract authorizations",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -135,8 +139,9 @@ func CmdInitialClaim() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgInitialClaim(
+			msg := types.NewMsgRemoveContractAuthorization(
 				clientCtx.GetFromAddress().String(),
+				args[0],
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
