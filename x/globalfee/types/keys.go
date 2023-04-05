@@ -13,6 +13,8 @@ const (
 	QuerierRoute = ModuleName
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_globalfee"
+	// RouterKey is the message route f
+	RouterKey = ModuleName
 )
 
 var (

@@ -31,7 +31,7 @@ func GetCmdParams() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "params",
 		Short: "List the module params",
-		Args:  cobra.ExactArgs(0),
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
