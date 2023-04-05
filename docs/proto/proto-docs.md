@@ -82,8 +82,8 @@
     - [Params](#publicawesome.stargaze.globalfee.v1.Params)
   
 - [stargaze/globalfee/v1/proposal.proto](#stargaze/globalfee/v1/proposal.proto)
-    - [DeleteCodeAuthorizationProposal](#publicawesome.stargaze.globalfee.v1.DeleteCodeAuthorizationProposal)
-    - [DeleteContractAuthorizationProposal](#publicawesome.stargaze.globalfee.v1.DeleteContractAuthorizationProposal)
+    - [RemoveCodeAuthorizationProposal](#publicawesome.stargaze.globalfee.v1.RemoveCodeAuthorizationProposal)
+    - [RemoveContractAuthorizationProposal](#publicawesome.stargaze.globalfee.v1.RemoveContractAuthorizationProposal)
     - [SetCodeAuthorizationProposal](#publicawesome.stargaze.globalfee.v1.SetCodeAuthorizationProposal)
     - [SetContractAuthorizationProposal](#publicawesome.stargaze.globalfee.v1.SetContractAuthorizationProposal)
   
@@ -987,9 +987,9 @@ Params holds parameters for the globalfee module.
 
 
 
-<a name="publicawesome.stargaze.globalfee.v1.DeleteCodeAuthorizationProposal"></a>
+<a name="publicawesome.stargaze.globalfee.v1.RemoveCodeAuthorizationProposal"></a>
 
-### DeleteCodeAuthorizationProposal
+### RemoveCodeAuthorizationProposal
 
 
 
@@ -1004,9 +1004,9 @@ Params holds parameters for the globalfee module.
 
 
 
-<a name="publicawesome.stargaze.globalfee.v1.DeleteContractAuthorizationProposal"></a>
+<a name="publicawesome.stargaze.globalfee.v1.RemoveContractAuthorizationProposal"></a>
 
-### DeleteContractAuthorizationProposal
+### RemoveContractAuthorizationProposal
 
 
 
