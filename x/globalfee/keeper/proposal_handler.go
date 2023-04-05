@@ -41,12 +41,7 @@ func handleSetCodeAuthorizationProposal(ctx sdk.Context, k govKeeper, p types.Se
 		return err
 	}
 
-	codeAuth := types.CodeAuthorization{
-		CodeId:  p.GetCodeId(),
-		Methods: p.GetMethods(),
-	}
-
-	return k.SetCodeAuthorization(ctx, codeAuth)
+	return k.SetCodeAuthorization(ctx, *p.GetCodeAuthorization())
 }
 
 func handleDeleteCodeAuthorizationProposal(ctx sdk.Context, k govKeeper, p types.RemoveCodeAuthorizationProposal) error {
@@ -63,12 +58,7 @@ func handleSetContractAuthorizationProposal(ctx sdk.Context, k govKeeper, p type
 		return err
 	}
 
-	contractAuth := types.ContractAuthorization{
-		ContractAddress: p.GetContractAddress(),
-		Methods:         p.GetMethods(),
-	}
-
-	return k.SetContractAuthorization(ctx, contractAuth)
+	return k.SetContractAuthorization(ctx, *p.GetContractAuthorization())
 }
 
 func handleDeleteContractAuthorizationProposal(ctx sdk.Context, k govKeeper, p types.RemoveContractAuthorizationProposal) error {

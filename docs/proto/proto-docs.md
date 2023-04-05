@@ -1031,8 +1031,7 @@ Params holds parameters for the globalfee module.
 | ----- | ---- | ----- | ----------- |
 | `title` | [string](#string) |  |  |
 | `description` | [string](#string) |  |  |
-| `code_id` | [uint64](#uint64) |  |  |
-| `methods` | [string](#string) | repeated |  |
+| `code_authorization` | [CodeAuthorization](#publicawesome.stargaze.globalfee.v1.CodeAuthorization) |  |  |
 
 
 
@@ -1049,8 +1048,7 @@ Params holds parameters for the globalfee module.
 | ----- | ---- | ----- | ----------- |
 | `title` | [string](#string) |  |  |
 | `description` | [string](#string) |  |  |
-| `contract_address` | [string](#string) |  |  |
-| `methods` | [string](#string) | repeated |  |
+| `contract_authorization` | [ContractAuthorization](#publicawesome.stargaze.globalfee.v1.ContractAuthorization) |  |  |
 
 
 

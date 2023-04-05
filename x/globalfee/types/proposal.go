@@ -50,7 +50,7 @@ func (p SetCodeAuthorizationProposal) ValidateBasic() error {
 	if err := validateProposalCommons(p.Title, p.Description); err != nil {
 		return err
 	}
-	return nil
+	return p.CodeAuthorization.Validate()
 }
 
 // MarshalYAML pretty prints the wasm byte code
@@ -92,10 +92,7 @@ func (p SetContractAuthorizationProposal) ValidateBasic() error {
 	if err := validateProposalCommons(p.Title, p.Description); err != nil {
 		return err
 	}
-	if _, err := sdk.AccAddressFromBech32(p.ContractAddress); err != nil {
-		return sdkerrors.Wrap(err, "contract")
-	}
-	return nil
+	return p.ContractAuthorization.Validate()
 }
 
 // MarshalYAML pretty prints the wasm byte code
