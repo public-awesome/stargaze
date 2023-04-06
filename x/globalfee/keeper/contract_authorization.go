@@ -23,6 +23,10 @@ func (k Keeper) SetContractAuthorization(ctx sdk.Context, ca types.ContractAutho
 		return err
 	}
 
+	if !k.wasmKeeper.HasContractInfo(ctx, sdk.MustAccAddressFromBech32(ca.GetContractAddress())) {
+		return types.ErrContractNotExist
+	}
+
 	store := ctx.KVStore(k.storeKey)
 	value := k.cdc.MustMarshal(&ca)
 
