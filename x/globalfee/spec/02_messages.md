@@ -15,11 +15,30 @@ message MsgSetCodeAuthorization {
 A new Code Id authorization is set using the MsgSetCodeAuthorization message
 
 On Success:
-* Code authorization is set/updated if the methods are not empty
-* Code authorization is removed if the methods are empty
+* Code authorization is set/updated 
 
 This message is expected to fail if:
 * Given Code Id does not exist
+* Sender is not part of the whitelist configured in the module params
+* Code authorization methods are empty
+
+This data can also be updated via governance
+
+## MsgRemoveCodeAuthorization
+
+```protobuf
+message MsgRemoveCodeAuthorization {
+  string sender_address = 1;
+  uint64 code_id = 2;
+}
+```
+
+Existing Code Id authorization is deleted using the MsgRemoveCodeAuthorization message
+
+On Success:
+* Code authorization is removed
+
+This message is expected to fail if:
 * Sender is not part of the whitelist configured in the module params
 
 This data can also be updated via governance
@@ -37,11 +56,30 @@ message MsgSetContractAuthorization {
 A new contract authorization is set using the MsgSetContractAuthorization message
 
 On Success:
-* Contract authorization is set/updated if the methods are not empty
-* Contract authorization is removed if the methods are empty
+* Contract authorization is set/updated 
 
 This message is expected to fail if:
 * No contract exists for given address
+* Sender is not part of the whitelist configured in the module params
+* Contract authorization methods are empty
+
+This data can also be updated via governance
+
+## MsgRemoveContractAuthorization
+
+```protobuf
+message MsgRemoveContractAuthorization {
+  string sender_address = 1;
+  string contract_address = 2;
+}
+```
+
+Existing contract authorization is removed using the MsgRemoveContractAuthorization message
+
+On Success:
+* Contract authorization is deleted
+
+This message is expected to fail if:
 * Sender is not part of the whitelist configured in the module params
 
 This data can also be updated via governance
