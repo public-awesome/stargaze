@@ -3,6 +3,7 @@ package keeper
 import (
 	"testing"
 
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -70,6 +71,7 @@ func CronKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 type MockWasmKeeper struct {
 	HasContractInfoFn func(ctx sdk.Context, contractAddr sdk.AccAddress) bool
 	SudoFn            func(ctx sdk.Context, contractAddress sdk.AccAddress, msg []byte) ([]byte, error)
+	GetCodeInfoFn     func(ctx sdk.Context, codeID uint64) *wasmtypes.CodeInfo
 }
 
 func (k MockWasmKeeper) HasContractInfo(ctx sdk.Context, contractAddress sdk.AccAddress) bool {
@@ -84,4 +86,11 @@ func (k MockWasmKeeper) Sudo(ctx sdk.Context, contractAddress sdk.AccAddress, ms
 		panic("not supposed to be called!")
 	}
 	return k.SudoFn(ctx, contractAddress, msg)
+}
+
+func (k MockWasmKeeper) GetCodeInfo(ctx sdk.Context, codeID uint64) *wasmtypes.CodeInfo {
+	if k.GetCodeInfoFn == nil {
+		panic("not supposed to be called!")
+	}
+	return k.GetCodeInfoFn(ctx, codeID)
 }

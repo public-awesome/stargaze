@@ -13,13 +13,21 @@ import (
 func Test_ContractAuthorization(t *testing.T) {
 	k, ctx := keeper.GlobalFeeKeeper(t)
 	ca := types.ContractAuthorization{
-		ContractAddress: sample.AccAddress().String(),
+		ContractAddress: "cosmos1qyqszqgpqyqszqgpqyqszqgpqyqszqgpjnp7du",
 		Methods:         []string{"mint", "list"},
 	}
 
 	t.Run("store invalid ca", func(t *testing.T) {
 		err := k.SetContractAuthorization(ctx, types.ContractAuthorization{
 			ContractAddress: "👻",
+			Methods:         []string{"mint", "list"},
+		})
+		require.Error(t, err)
+	})
+
+	t.Run("non existing contract address", func(t *testing.T) {
+		err := k.SetContractAuthorization(ctx, types.ContractAuthorization{
+			ContractAddress: sample.AccAddress().String(),
 			Methods:         []string{"mint", "list"},
 		})
 		require.Error(t, err)
