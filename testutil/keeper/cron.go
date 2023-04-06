@@ -95,6 +95,7 @@ func (k MockWasmKeeper) GetCodeInfo(ctx sdk.Context, codeID uint64) *wasmtypes.C
 	}
 	return k.GetCodeInfoFn(ctx, codeID)
 }
+
 func (k MockWasmKeeper) GetContractInfo(ctx sdk.Context, contractAddress sdk.AccAddress) *wasmtypes.ContractInfo {
 	if k.GetContractInfoFn == nil {
 		panic("not supposed to be called!")
