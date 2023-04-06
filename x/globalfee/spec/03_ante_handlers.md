@@ -14,6 +14,7 @@ If the msg is of type `wasmd.MsgExecuteContract`, we decode the msg to identify 
 * the code id for the given contract address
 
 If all the msgs in the tx are eligible for zero fees, then we allow the msg to `next()` irrespective of any fees provided.
+
 In all other cases, we take the required fees value from node's local minimum gas prices and check if the fees provided are sufficient.
 
 //todo

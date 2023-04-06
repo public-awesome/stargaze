@@ -14,9 +14,9 @@ Examples of explicit configuration:
 
 A cosmos-sdk blockchain allows the network of validators to set minimum gas prices as part of the node configuration. It is set in the `config/app.toml` configuration file.
 
-x/globalfee module allows the chain to enforce gas fees on transactions bypassing the validator configuration which might allow for zero gas. 
+x/globalfee module implements a way for the network to set a few operations on specific contracts which can use free gas (irrespective of validator configuration). Operations outside this configuration
 
-Additionally, the module also implements a way for the network to set a few operations on specific contracts which can still use free gas (irrespective of validator configuration). This configuration can be updated either via on-chain governance or via whitelisted addresses. 
+This configuration can be updated either via on-chain governance or via whitelisted addresses. 
 
 ## Contents
 
