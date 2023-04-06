@@ -23,6 +23,10 @@ func (k Keeper) SetCodeAuthorization(ctx sdk.Context, ca types.CodeAuthorization
 		return err
 	}
 
+	if k.wasmKeeper.GetCodeInfo(ctx, ca.GetCodeId()) == nil {
+		return types.ErrCodeIdNotExist
+	}
+
 	store := ctx.KVStore(k.storeKey)
 	value := k.cdc.MustMarshal(&ca)
 
