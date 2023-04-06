@@ -22,7 +22,6 @@ This message is expected to fail if:
 * Sender is not part of the whitelist configured in the module params
 * Code authorization methods are empty
 
-This data can also be updated via governance
 
 ## MsgRemoveCodeAuthorization
 
@@ -41,7 +40,6 @@ On Success:
 This message is expected to fail if:
 * Sender is not part of the whitelist configured in the module params
 
-This data can also be updated via governance
 
 ## MsgSetContractAuthorization
 
@@ -63,7 +61,6 @@ This message is expected to fail if:
 * Sender is not part of the whitelist configured in the module params
 * Contract authorization methods are empty
 
-This data can also be updated via governance
 
 ## MsgRemoveContractAuthorization
 
@@ -81,5 +78,3 @@ On Success:
 
 This message is expected to fail if:
 * Sender is not part of the whitelist configured in the module params
-
-This data can also be updated via governance
