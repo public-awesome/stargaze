@@ -111,7 +111,9 @@ starsd tx globalfee -h
 Creates or updates the gasless operation authorization for the given code id and for the provided methods.
 The methods should be comma separated values.
 
-Only whitelisted address can perform this operation.
+> **Note**
+>
+> Only whitelisted address can perform this operation.
 
 Usage:
 
@@ -132,7 +134,9 @@ starsd tx globalfee set-code-authorization 3 "mint,unlist"  \
 Creates or updates the gasless operation authorization for the given contract address and for the provided methods.
 The methods should be comma separated values.
 
-Only whitelisted address can perform this operation.
+> **Note**
+>
+> Only whitelisted address can perform this operation.
 
 Usage:
 
