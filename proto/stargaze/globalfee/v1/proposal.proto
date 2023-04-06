@@ -1,0 +1,4 @@
+syntax = "proto3";
+package publicawesome.stargaze.globalfee.v1;
+
+option go_package = "github.com/public-awesome/stargaze/v9/x/globalfee/types";
