@@ -66,6 +66,16 @@ func GlobalFeeKeeper(t testing.TB) (keeper.Keeper, sdk.Context) {
 					Creator: "cosmos144sh8vyv5nqfylmg4mlydnpe3l4w780jsrmf4k",
 				}
 			}
+			if codeID == 2 {
+				return &wasmtypes.CodeInfo{
+					Creator: "cosmos1hfml4tzwlc3mvynsg6vtgywyx00wfkhrtpkx6t",
+				}
+			}
+			if codeID == 3 {
+				return &wasmtypes.CodeInfo{
+					Creator: "cosmos1qyqszqgpqyqszqgpqyqszqgpqyqszqgpjnp7du",
+				}
+			}
 			return nil
 		},
 	}

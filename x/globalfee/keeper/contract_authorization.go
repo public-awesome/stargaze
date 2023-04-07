@@ -1,9 +1,24 @@
 package keeper
 
 import (
+	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/public-awesome/stargaze/v9/x/globalfee/types"
 )
+
+func (k Keeper) IterateContractAuthorizations(ctx sdk.Context, cb func(types.ContractAuthorization) bool) {
+	prefixStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.ContractAuthorizationPrefix)
+	iter := prefixStore.Iterator(nil, nil)
+	defer iter.Close()
+	for ; iter.Valid(); iter.Next() {
+		var ca types.ContractAuthorization
+		k.cdc.MustUnmarshal(iter.Value(), &ca)
+		// cb returns true to stop early
+		if cb(ca) {
+			return
+		}
+	}
+}
 
 func (k Keeper) GetContractAuthorization(ctx sdk.Context, contractAddr sdk.AccAddress) (types.ContractAuthorization, bool) {
 	store := ctx.KVStore(k.storeKey)

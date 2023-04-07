@@ -27,7 +27,7 @@ func GetCodeAuthorizationPrefix(codeId uint64) []byte {
 }
 
 func GetContractAuthorizationPrefix(contractAddress sdk.AccAddress) []byte {
-	return append(CodeAuthorizationPrefix, contractAddress...)
+	return append(ContractAuthorizationPrefix, contractAddress...)
 }
 
 func i64tob(val uint64) []byte {
