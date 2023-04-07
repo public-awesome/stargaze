@@ -55,4 +55,26 @@ func Test_ContractAuthorization(t *testing.T) {
 		_, found = k.GetContractAuthorization(ctx, sdk.MustAccAddressFromBech32(ca.ContractAddress))
 		require.False(t, found)
 	})
+
+	t.Run("iterate contract authorization", func(t *testing.T) {
+		err := k.SetContractAuthorization(ctx, ca)
+		require.NoError(t, err)
+		err = k.SetContractAuthorization(ctx, types.ContractAuthorization{
+			ContractAddress: "cosmos1hfml4tzwlc3mvynsg6vtgywyx00wfkhrtpkx6t",
+			Methods:         ca.GetMethods(),
+		})
+		require.NoError(t, err)
+		err = k.SetContractAuthorization(ctx, types.ContractAuthorization{
+			ContractAddress: "cosmos144sh8vyv5nqfylmg4mlydnpe3l4w780jsrmf4k",
+			Methods:         []string{"test"},
+		})
+		require.NoError(t, err)
+
+		count := 0
+		k.IterateContractAuthorizations(ctx, func(ca types.ContractAuthorization) bool {
+			count += 1
+			return false
+		})
+		require.Equal(t, 3, count)
+	})
 }
