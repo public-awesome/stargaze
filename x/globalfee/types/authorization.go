@@ -7,6 +7,9 @@ import (
 	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
+// validateMethods validates the method names for the code and contract authorizations
+// valid values are alphanumeric names and '*' which is wildcard for all methods of given codeid/contract
+// e.g "mint", "test_burn", "*", "list2"
 func validateMethods(caMethods []string) error {
 	if len(caMethods) == 0 {
 		return sdkErrors.Wrap(ErrInvalidMethods, "empty methods provided")

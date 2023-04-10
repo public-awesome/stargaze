@@ -6,6 +6,7 @@ import (
 	"github.com/public-awesome/stargaze/v9/x/globalfee/types"
 )
 
+// IterateContractAuthorizations executes the given func on all the contract authorizations
 func (k Keeper) IterateContractAuthorizations(ctx sdk.Context, cb func(types.ContractAuthorization) bool) {
 	prefixStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.ContractAuthorizationPrefix)
 	iter := prefixStore.Iterator(nil, nil)
@@ -20,6 +21,7 @@ func (k Keeper) IterateContractAuthorizations(ctx sdk.Context, cb func(types.Con
 	}
 }
 
+// GetContractAuthorization gets any authorizations set up for the given contract address
 func (k Keeper) GetContractAuthorization(ctx sdk.Context, contractAddr sdk.AccAddress) (types.ContractAuthorization, bool) {
 	store := ctx.KVStore(k.storeKey)
 
@@ -33,6 +35,7 @@ func (k Keeper) GetContractAuthorization(ctx sdk.Context, contractAddr sdk.AccAd
 	return ca, true
 }
 
+// SetContractAuthorization creates of updates provided authorizations for given contract address
 func (k Keeper) SetContractAuthorization(ctx sdk.Context, ca types.ContractAuthorization) error {
 	if err := ca.Validate(); err != nil {
 		return err
@@ -49,6 +52,7 @@ func (k Keeper) SetContractAuthorization(ctx sdk.Context, ca types.ContractAutho
 	return nil
 }
 
+// DeleteContractAuthorization deletes any existing authorizations for given contract address
 func (k Keeper) DeleteContractAuthorization(ctx sdk.Context, contractAddr sdk.AccAddress) {
 	store := ctx.KVStore(k.storeKey)
 
