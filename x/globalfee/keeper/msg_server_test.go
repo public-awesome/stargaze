@@ -240,6 +240,26 @@ func TestSetContractAuthorization(t *testing.T) {
 			true,
 		},
 		{
+			"contract doesnt exist",
+			func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgSetContractAuthorization {
+				sender := sample.AccAddress()
+				params := types.Params{
+					PrivilegedAddress: []string{sender.String()},
+				}
+				keeper.SetParams(ctx, params)
+
+				msg := types.MsgSetContractAuthorization{
+					Sender: sender.String(),
+					ContractAuthorization: &types.ContractAuthorization{
+						ContractAddress: sample.AccAddress().String(),
+						Methods:         []string{"2"},
+					},
+				}
+				return &msg
+			},
+			true,
+		},
+		{
 			"invalid methods",
 			func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgSetContractAuthorization {
 				sender := sample.AccAddress()
@@ -270,7 +290,7 @@ func TestSetContractAuthorization(t *testing.T) {
 				msg := types.MsgSetContractAuthorization{
 					Sender: sender.String(),
 					ContractAuthorization: &types.ContractAuthorization{
-						ContractAddress: sample.AccAddress().String(),
+						ContractAddress: "cosmos1qyqszqgpqyqszqgpqyqszqgpqyqszqgpjnp7du",
 						Methods:         []string{"2"},
 					},
 				}
@@ -358,7 +378,7 @@ func TestRemoveContractAuthorization(t *testing.T) {
 
 				msg := types.MsgRemoveContractAuthorization{
 					Sender:          sender.String(),
-					ContractAddress: contractAddress,
+					ContractAddress: "cosmos1qyqszqgpqyqszqgpqyqszqgpqyqszqgpjnp7du",
 				}
 				return &msg
 			},
@@ -371,7 +391,7 @@ func TestRemoveContractAuthorization(t *testing.T) {
 		t.Run(tc.testCase, func(t *testing.T) {
 			k, c := keepertest.GlobalFeeKeeper(t)
 			msgSrvr, ctx := keeper.NewMsgServerImpl(k), sdk.WrapSDKContext(c)
-			contractAddr := sample.AccAddress()
+			contractAddr := sdk.MustAccAddressFromBech32("cosmos1qyqszqgpqyqszqgpqyqszqgpqyqszqgpjnp7du")
 			err := k.SetContractAuthorization(c, types.ContractAuthorization{
 				ContractAddress: contractAddr.String(),
 				Methods:         []string{"mint"},
