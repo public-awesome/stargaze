@@ -73,13 +73,13 @@
   
     - [Query](#publicawesome.stargaze.cron.v1.Query)
   
-- [stargaze/globalfee/v1/genesis.proto](#stargaze/globalfee/v1/genesis.proto)
-    - [GenesisState](#publicawesome.stargaze.globalfee.v1.GenesisState)
-  
 - [stargaze/globalfee/v1/globalfee.proto](#stargaze/globalfee/v1/globalfee.proto)
     - [CodeAuthorization](#publicawesome.stargaze.globalfee.v1.CodeAuthorization)
     - [ContractAuthorization](#publicawesome.stargaze.globalfee.v1.ContractAuthorization)
     - [Params](#publicawesome.stargaze.globalfee.v1.Params)
+  
+- [stargaze/globalfee/v1/genesis.proto](#stargaze/globalfee/v1/genesis.proto)
+    - [GenesisState](#publicawesome.stargaze.globalfee.v1.GenesisState)
   
 - [stargaze/globalfee/v1/proposal.proto](#stargaze/globalfee/v1/proposal.proto)
     - [RemoveCodeAuthorizationProposal](#publicawesome.stargaze.globalfee.v1.RemoveCodeAuthorizationProposal)
@@ -893,32 +893,6 @@ Query defines the gRPC querier service.
 
 
 
-<a name="stargaze/globalfee/v1/genesis.proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## stargaze/globalfee/v1/genesis.proto
-
-
-
-<a name="publicawesome.stargaze.globalfee.v1.GenesisState"></a>
-
-### GenesisState
-GenesisState defines the globalfee module's genesis state.
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="stargaze/globalfee/v1/globalfee.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -968,6 +942,39 @@ Params holds parameters for the globalfee module.
 | ----- | ---- | ----- | ----------- |
 | `privileged_address` | [string](#string) | repeated | Addresses which are whitelisted to modify the gas free operations |
 | `minimum_gas_prices` | [cosmos.base.v1beta1.DecCoin](#cosmos.base.v1beta1.DecCoin) | repeated | Minimum stores the minimum gas price(s) for all TX on the chain. |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="stargaze/globalfee/v1/genesis.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## stargaze/globalfee/v1/genesis.proto
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.GenesisState"></a>
+
+### GenesisState
+GenesisState defines the globalfee module's genesis state.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `params` | [Params](#publicawesome.stargaze.globalfee.v1.Params) |  |  |
+| `code_authorizations` | [CodeAuthorization](#publicawesome.stargaze.globalfee.v1.CodeAuthorization) | repeated |  |
+| `contract_authorizations` | [ContractAuthorization](#publicawesome.stargaze.globalfee.v1.ContractAuthorization) | repeated |  |
 
 
 
