@@ -1,10 +1,5 @@
 package types
 
-// NewGenesisState creates a new GenesisState object.
-func NewGenesisState() *GenesisState {
-	panic("unimplemented 👻")
-}
-
 // DefaultGenesisState returns a default genesis state.
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
