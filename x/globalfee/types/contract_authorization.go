@@ -89,6 +89,7 @@ func (msg MsgRemoveContractAuthorization) ValidateBasic() error {
 	return nil
 }
 
+// Validate validates the values of contract authorizations
 func (ca ContractAuthorization) Validate() error {
 	_, err := sdk.AccAddressFromBech32(ca.GetContractAddress())
 	if err != nil {
