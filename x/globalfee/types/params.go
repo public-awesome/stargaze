@@ -57,8 +57,7 @@ func validateMinimumGasPrices(i interface{}) error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidType, "type: %T, expected sdk.DecCoins", i)
 	}
 
-	dec := sdk.DecCoins(v)
-	return dec.Validate()
+	return v.Validate()
 }
 
 // String implements the Stringer interface.
