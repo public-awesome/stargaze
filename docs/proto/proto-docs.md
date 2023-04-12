@@ -918,6 +918,7 @@ Params holds parameters for the globalfee module.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `privileged_address` | [string](#string) | repeated | Addresses which are whitelisted to modify the gas free operations |
+| `minimum_gas_prices` | [cosmos.base.v1beta1.DecCoin](#cosmos.base.v1beta1.DecCoin) | repeated | Minimum stores the minimum gas price(s) for all TX on the chain. |
 
 
 
