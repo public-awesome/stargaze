@@ -2,6 +2,7 @@ package ante
 
 import (
 	"encoding/json"
+	"errors"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -17,17 +18,24 @@ type GlobalFeeReaderExpected interface {
 	GetContractAuthorization(ctx sdk.Context, contractAddr sdk.AccAddress) (types.ContractAuthorization, bool)
 	GetCodeAuthorization(ctx sdk.Context, codeId uint64) (types.CodeAuthorization, bool)
 	GetContractInfo(ctx sdk.Context, contractAddress sdk.AccAddress) *wasmtypes.ContractInfo
+	GetParams(ctx sdk.Context) types.Params
+}
+
+type StakingReaderExpected interface {
+	BondDenom(ctx sdk.Context) string
 }
 
 type FeeDecorator struct {
-	codec     codec.BinaryCodec
-	feeKeeper GlobalFeeReaderExpected
+	codec         codec.BinaryCodec
+	feeKeeper     GlobalFeeReaderExpected
+	stakingKeeper StakingReaderExpected
 }
 
-func NewFeeDecorator(codec codec.BinaryCodec, fk GlobalFeeReaderExpected) FeeDecorator {
+func NewFeeDecorator(codec codec.BinaryCodec, fk GlobalFeeReaderExpected, sk StakingReaderExpected) FeeDecorator {
 	return FeeDecorator{
-		codec:     codec,
-		feeKeeper: fk,
+		codec:         codec,
+		feeKeeper:     fk,
+		stakingKeeper: sk,
 	}
 }
 
@@ -35,7 +43,7 @@ func NewFeeDecorator(codec codec.BinaryCodec, fk GlobalFeeReaderExpected) FeeDec
 func (mfd FeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (newCtx sdk.Context, err error) {
 	feeTx, ok := tx.(sdk.FeeTx)
 	if !ok {
-		return ctx, sdkerrors.Wrap(sdkerrors.ErrTxDecode, "Tx must be a FeeTx")
+		return ctx, sdkerrors.Wrap(sdkerrors.ErrTxDecode, "Tx must implement the sdk.FeeTx interface")
 	}
 
 	// Only check for minimum fees and global fee if the execution mode is CheckTx
@@ -43,25 +51,19 @@ func (mfd FeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, ne
 		return next(ctx, tx, simulate)
 	}
 
-	feeCoins := feeTx.GetFee().Sort()
-	gas := feeTx.GetGas()
 	msgs := feeTx.GetMsgs()
-
 	// currently zero fees allowed only when all msgs are authorized to be zero fees
-	// todo how to handle mixed msgs
-	zeroFeeTx, err := mfd.containsOnlyZeroFeeMsgs(ctx, msgs)
+	// todo yet to handle mixed msgs
+	zeroFeeTxs, err := mfd.containsOnlyZeroFeeMsgs(ctx, msgs)
 	if err != nil {
 		return ctx, err
 	}
 
-	if !zeroFeeTx {
-		requiredFees := getMinGasPrice(ctx, int64(gas))
-		if requiredFees.IsAllGTE(feeCoins) { // required fees > tx fees
-			return ctx, sdkerrors.Wrap(sdkerrors.ErrInsufficientFee, "Required fees "+requiredFees.String())
-		}
+	if zeroFeeTxs {
+		return next(ctx, tx, simulate)
 	}
 
-	return next(ctx, tx, simulate)
+	return mfd.checkFees(ctx, feeTx, tx, simulate, next) // https://github.com/cosmos/gaia/blob/6fe097e3280baa360a28b59a29b8cca964a5ae97/x/globalfee/ante/fee.go
 }
 
 func (mfd FeeDecorator) containsOnlyZeroFeeMsgs(ctx sdk.Context, msgs []sdk.Msg) (bool, error) {
@@ -96,18 +98,18 @@ func (mfd FeeDecorator) isZeroFeeMsg(ctx sdk.Context, msg *wasmtypes.MsgExecuteC
 	contactAddr := sdk.MustAccAddressFromBech32(msg.Contract)
 	contractAuth, found := mfd.feeKeeper.GetContractAuthorization(ctx, contactAddr)
 	if found {
-		return mfd.isAuthorizedMethod(msg.GetMsg(), contractAuth.GetMethods())
+		return isAuthorizedMethod(msg.GetMsg(), contractAuth.GetMethods())
 	}
 	codeId := mfd.feeKeeper.GetContractInfo(ctx, contactAddr).CodeID
 	codeAuth, found := mfd.feeKeeper.GetCodeAuthorization(ctx, codeId)
 	if found {
-		return mfd.isAuthorizedMethod(msg.GetMsg(), codeAuth.GetMethods())
+		return isAuthorizedMethod(msg.GetMsg(), codeAuth.GetMethods())
 	}
 
 	return false
 }
 
-func (mfd FeeDecorator) isAuthorizedMethod(jsonBytes wasmtypes.RawContractMessage, methods []string) bool {
+func isAuthorizedMethod(jsonBytes wasmtypes.RawContractMessage, methods []string) bool {
 	document := map[string]interface{}{}
 
 	if len(methods) == 1 && methods[0] == "*" {
@@ -133,7 +135,96 @@ func (mfd FeeDecorator) isAuthorizedMethod(jsonBytes wasmtypes.RawContractMessag
 	return false
 }
 
-// https://github.com/cosmos/gaia/blob/79626dfe1d99c6c87850ffd83f5c54666c981f87/x/globalfee/ante/fee.go#L190
+// The fee checking ante mechanism below is based on the x/GlobalFee/ante from cosmos/gaia
+// https://github.com/cosmos/gaia/blob/6fe097e3280baa360a28b59a29b8cca964a5ae97/x/globalfee/ante/fee.go
+func (mfd FeeDecorator) checkFees(ctx sdk.Context, feeTx sdk.FeeTx, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (sdk.Context, error) {
+	feeCoins := feeTx.GetFee().Sort()
+	gas := feeTx.GetGas()
+
+	// Get required Global Fee set by module
+	requiredGlobalFees, err := mfd.getGlobalFee(ctx, feeTx)
+	if err != nil {
+		return ctx, err
+	}
+
+	// Get local minimum-gas-prices set by the validator node
+	localFees := getMinGasPrice(ctx, int64(gas))
+
+	// CombinedFeeRequirement should never be empty since
+	// global fee is set to its default value, i.e. 0ustars, if empty
+	combinedFeeRequirement := combinedFeeRequirement(requiredGlobalFees, localFees)
+	if len(combinedFeeRequirement) == 0 {
+		return ctx, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "required fees are not setup.")
+	}
+
+	nonZeroCoinFeesReq, zeroCoinFeesDenomReq := getNonZeroFees(combinedFeeRequirement)
+
+	// feeCoinsNonZeroDenom contains non-zero denominations from the combinedFeeRequirement
+	//
+	// feeCoinsNoZeroDenom is used to check if the fees meets the requirement imposed by nonZeroCoinFeesReq
+	// when feeCoins does not contain zero coins' denoms in combinedFeeRequirement
+	//feeCoinsNonZeroDenom, feeCoinsZeroDenom := splitCoinsByDenoms(feeCoins, zeroCoinFeesDenomReq)
+	feeCoinsNonZeroDenom, _ := splitCoinsByDenoms(feeCoins, zeroCoinFeesDenomReq)
+
+	// Check that the fees are in expected denominations.
+	// if feeCoinsNoZeroDenom=[], DenomsSubsetOf returns true
+	// if feeCoinsNoZeroDenom is not empty, but nonZeroCoinFeesReq empty, return false
+	if !feeCoinsNonZeroDenom.DenomsSubsetOf(nonZeroCoinFeesReq) {
+		return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "fee is not a subset of required fees; got %s, required: %s", feeCoins, combinedFeeRequirement)
+	}
+
+	if len(feeCoins) == 0 && len(zeroCoinFeesDenomReq) != 0 {
+		return next(ctx, tx, simulate)
+	}
+
+	// Check that the amounts of the fees are greater or equal than
+	// the expected amounts, i.e., at least one feeCoin amount must
+	// be greater or equal to one of the combined required fees.
+
+	// if feeCoinsNoZeroDenom=[], return false
+	// if nonZeroCoinFeesReq=[], return false (this situation should not happen
+	// because when nonZeroCoinFeesReq empty, and DenomsSubsetOf check passed,
+	// the tx should already passed before)
+	if !feeCoinsNonZeroDenom.IsAnyGTE(nonZeroCoinFeesReq) {
+		return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, combinedFeeRequirement)
+	}
+
+	return next(ctx, tx, simulate)
+}
+
+// getGlobalFee returns the global fees for a given fee tx's gas
+// (might also return 0denom if globalMinGasPrice is 0)
+// sorted in ascending order.
+// Note that ParamStoreKeyMinGasPrices type requires coins sorted.
+func (mfd FeeDecorator) getGlobalFee(ctx sdk.Context, feeTx sdk.FeeTx) (sdk.Coins, error) {
+	var (
+		globalMinGasPrices sdk.DecCoins
+		err                error
+	)
+
+	globalMinGasPrices = mfd.feeKeeper.GetParams(ctx).MinimumGasPrices
+
+	// global fee is empty set, set global fee to 0uatom
+	if len(globalMinGasPrices) == 0 {
+		globalMinGasPrices, err = mfd.defaultZeroGlobalFee(ctx)
+		if err != nil {
+			return sdk.Coins{}, err
+		}
+	}
+	requiredGlobalFees := make(sdk.Coins, len(globalMinGasPrices))
+	// Determine the required fees by multiplying each required minimum gas
+	// price by the gas limit, where fee = ceil(minGasPrice * gasLimit).
+	glDec := sdk.NewDec(int64(feeTx.GetGas()))
+	for i, gp := range globalMinGasPrices {
+		fee := gp.Amount.Mul(glDec)
+		requiredGlobalFees[i] = sdk.NewCoin(gp.Denom, fee.Ceil().RoundInt())
+	}
+
+	return requiredGlobalFees.Sort(), nil
+}
+
+// getMinGasPrice returns the validator's minimum gas prices
+// fees given a gas limit
 func getMinGasPrice(ctx sdk.Context, gasLimit int64) sdk.Coins {
 	minGasPrices := ctx.MinGasPrices()
 	// special case: if minGasPrices=[], requiredFees=[]
@@ -151,4 +242,105 @@ func getMinGasPrice(ctx sdk.Context, gasLimit int64) sdk.Coins {
 	}
 
 	return requiredFees.Sort()
+}
+
+// combinedFeeRequirement returns the global fee and min_gas_price combined and sorted.
+// Both globalFees and minGasPrices must be valid, but combinedFeeRequirement
+// does not validate them, so it may return 0denom.
+// if globalfee is empty, combinedFeeRequirement return sdk.Coins{}
+func combinedFeeRequirement(globalFees, minGasPrices sdk.Coins) sdk.Coins {
+	// empty min_gas_price
+	if len(minGasPrices) == 0 {
+		return globalFees
+	}
+	// empty global fee is not possible if we set default global fee
+	if len(globalFees) == 0 && len(minGasPrices) != 0 {
+		return sdk.Coins{}
+	}
+
+	// if min_gas_price denom is in globalfee, and the amount is higher than globalfee, add min_gas_price to allFees
+	var allFees sdk.Coins
+	for _, fee := range globalFees {
+		// min_gas_price denom in global fee
+		ok, c := find(minGasPrices, fee.Denom)
+		if ok && c.Amount.GT(fee.Amount) {
+			allFees = append(allFees, c)
+		} else {
+			allFees = append(allFees, fee)
+		}
+	}
+
+	return allFees.Sort()
+}
+
+// getNonZeroFees returns the given fees nonzero coins
+// and a map storing the zero coins's denoms
+func getNonZeroFees(fees sdk.Coins) (sdk.Coins, map[string]bool) {
+	requiredFeesNonZero := sdk.Coins{}
+	requiredFeesZeroDenom := map[string]bool{}
+
+	for _, gf := range fees {
+		if gf.IsZero() {
+			requiredFeesZeroDenom[gf.Denom] = true
+		} else {
+			requiredFeesNonZero = append(requiredFeesNonZero, gf)
+		}
+	}
+
+	return requiredFeesNonZero.Sort(), requiredFeesZeroDenom
+}
+
+// splitCoinsByDenoms returns the given coins split in two whether
+// their demon is or isn't found in the given denom map.
+func splitCoinsByDenoms(feeCoins sdk.Coins, denomMap map[string]bool) (feeCoinsNonZeroDenom sdk.Coins, feeCoinsZeroDenom sdk.Coins) {
+	for _, fc := range feeCoins {
+		_, found := denomMap[fc.Denom]
+		if found {
+			feeCoinsZeroDenom = append(feeCoinsZeroDenom, fc)
+		} else {
+			feeCoinsNonZeroDenom = append(feeCoinsNonZeroDenom, fc)
+		}
+	}
+
+	return feeCoinsNonZeroDenom.Sort(), feeCoinsZeroDenom.Sort()
+}
+
+func (mfd FeeDecorator) defaultZeroGlobalFee(ctx sdk.Context) ([]sdk.DecCoin, error) {
+	bondDenom := mfd.getBondDenom(ctx)
+	if bondDenom == "" {
+		return nil, errors.New("empty staking bond denomination")
+	}
+
+	return []sdk.DecCoin{sdk.NewDecCoinFromDec(bondDenom, sdk.NewDec(0))}, nil
+}
+
+// find replaces the functionality of Coins.find from SDK v0.46.x
+func find(coins sdk.Coins, denom string) (bool, sdk.Coin) {
+	switch len(coins) {
+	case 0:
+		return false, sdk.Coin{}
+
+	case 1:
+		coin := coins[0]
+		if coin.Denom == denom {
+			return true, coin
+		}
+		return false, sdk.Coin{}
+
+	default:
+		midIdx := len(coins) / 2 // 2:1, 3:1, 4:2
+		coin := coins[midIdx]
+		switch {
+		case denom < coin.Denom:
+			return find(coins[:midIdx], denom)
+		case denom == coin.Denom:
+			return true, coin
+		default:
+			return find(coins[midIdx+1:], denom)
+		}
+	}
+}
+
+func (mfd FeeDecorator) getBondDenom(ctx sdk.Context) string {
+	return mfd.stakingKeeper.BondDenom(ctx)
 }
