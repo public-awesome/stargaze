@@ -1,10 +1,13 @@
 package types
 
+import sdk "github.com/cosmos/cosmos-sdk/types"
+
 // DefaultGenesisState returns a default genesis state.
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		Params: &Params{
 			PrivilegedAddress: []string{},
+			MinimumGasPrices:  sdk.DecCoins{},
 		},
 		CodeAuthorizations:     []*CodeAuthorization{},
 		ContractAuthorizations: []*ContractAuthorization{},
