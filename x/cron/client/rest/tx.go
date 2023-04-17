@@ -29,7 +29,7 @@ func ProposalDemotePrivilegeContractHandler(cliCtx client.Context) govrest.Propo
 	return govrest.ProposalRESTHandler{
 		SubRoute: "wasm_demote_privilege",
 		Handler: func(w http.ResponseWriter, r *http.Request) {
-			var req SetPrivilegeProposalJSONReq
+			var req UnsetPrivilegeProposalJSONReq
 			if !rest.ReadRESTReq(w, r, cliCtx.LegacyAmino, &req) {
 				return
 			}

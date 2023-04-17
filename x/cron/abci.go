@@ -17,7 +17,7 @@ import (
 
 // BeginBlocker sends a BeginBlock SudoMsg to all privileged contracts
 func BeginBlocker(ctx sdk.Context, k keeper.Keeper, w types.WasmKeeper) {
-	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyEndBlocker)
+	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyBeginBlocker)
 	sudoMsg := contract.SudoMsg{BeginBlock: &struct{}{}}
 	k.IteratePrivileged(ctx, abciContractCallback(ctx, w, sudoMsg))
 }
