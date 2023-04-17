@@ -295,7 +295,7 @@ func CmdProposalSetContractAuthorization() *cobra.Command {
 
 func CmdProposalRemoveContractAuthorization() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "remove-contract-authorization [contract-address]",
+		Use:   "remove-contract-authorization-proposal [contract-address]",
 		Short: "Creates a proposal which removes any previously set contract authorizations",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
