@@ -52,18 +52,14 @@ func (mfd FeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, ne
 	}
 
 	msgs := feeTx.GetMsgs()
-	// currently zero fees allowed only when all msgs are authorized to be zero fees
-	// todo yet to handle mixed msgs
-	zeroFeeTxs, err := mfd.containsOnlyZeroFeeMsgs(ctx, msgs)
+
+	// currently accepting zero fee transactions only when the tx contains only the authorized operations that can bypass the minimum fee
+	zeroFeeMsgs, err := mfd.containsOnlyZeroFeeMsgs(ctx, msgs)
 	if err != nil {
 		return ctx, err
 	}
 
-	if zeroFeeTxs {
-		return next(ctx, tx, simulate)
-	}
-
-	return mfd.checkFees(ctx, feeTx, tx, simulate, next) // https://github.com/cosmos/gaia/blob/6fe097e3280baa360a28b59a29b8cca964a5ae97/x/globalfee/ante/fee.go
+	return mfd.checkFees(ctx, feeTx, tx, zeroFeeMsgs, simulate, next) // https://github.com/cosmos/gaia/blob/6fe097e3280baa360a28b59a29b8cca964a5ae97/x/globalfee/ante/fee.go
 }
 
 func (mfd FeeDecorator) containsOnlyZeroFeeMsgs(ctx sdk.Context, msgs []sdk.Msg) (bool, error) {
@@ -137,7 +133,7 @@ func isAuthorizedMethod(jsonBytes wasmtypes.RawContractMessage, methods []string
 
 // The fee checking ante mechanism below is based on the x/GlobalFee/ante from cosmos/gaia
 // https://github.com/cosmos/gaia/blob/6fe097e3280baa360a28b59a29b8cca964a5ae97/x/globalfee/ante/fee.go
-func (mfd FeeDecorator) checkFees(ctx sdk.Context, feeTx sdk.FeeTx, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (sdk.Context, error) {
+func (mfd FeeDecorator) checkFees(ctx sdk.Context, feeTx sdk.FeeTx, tx sdk.Tx, onlyZeroFeeMsgs bool, simulate bool, next sdk.AnteHandler) (sdk.Context, error) {
 	feeCoins := feeTx.GetFee().Sort()
 	gas := feeTx.GetGas()
 
@@ -163,8 +159,8 @@ func (mfd FeeDecorator) checkFees(ctx sdk.Context, feeTx sdk.FeeTx, tx sdk.Tx, s
 	//
 	// feeCoinsNoZeroDenom is used to check if the fees meets the requirement imposed by nonZeroCoinFeesReq
 	// when feeCoins does not contain zero coins' denoms in combinedFeeRequirement
-	//feeCoinsNonZeroDenom, feeCoinsZeroDenom := splitCoinsByDenoms(feeCoins, zeroCoinFeesDenomReq)
-	feeCoinsNonZeroDenom, _ := splitCoinsByDenoms(feeCoins, zeroCoinFeesDenomReq)
+	// feeCoinsNonZeroDenom, feeCoinsZeroDenom := splitCoinsByDenoms(feeCoins, zeroCoinFeesDenomReq)
+	feeCoinsNonZeroDenom, feeCoinsZeroDenom := splitCoinsByDenoms(feeCoins, zeroCoinFeesDenomReq)
 
 	// Check that the fees are in expected denominations.
 	// if feeCoinsNoZeroDenom=[], DenomsSubsetOf returns true
@@ -173,20 +169,25 @@ func (mfd FeeDecorator) checkFees(ctx sdk.Context, feeTx sdk.FeeTx, tx sdk.Tx, s
 		return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "fee is not a subset of required fees; got %s, required: %s", feeCoins, combinedFeeRequirement)
 	}
 
-	if len(feeCoins) == 0 && len(zeroCoinFeesDenomReq) != 0 {
-		return next(ctx, tx, simulate)
-	}
+	// only check feeCoinsNoZeroDenom has coins IsAnyGTE than nonZeroCoinFeesReq
+	// when feeCoins does not contain denoms of zero denoms in combinedFeeRequirement
+	if !onlyZeroFeeMsgs && len(feeCoinsZeroDenom) == 0 {
+		// special case: when feeCoins=[] and there is zero coin in fee requirement
+		if len(feeCoins) == 0 && len(zeroCoinFeesDenomReq) != 0 {
+			return next(ctx, tx, simulate)
+		}
 
-	// Check that the amounts of the fees are greater or equal than
-	// the expected amounts, i.e., at least one feeCoin amount must
-	// be greater or equal to one of the combined required fees.
+		// Check that the amounts of the fees are greater or equal than
+		// the expected amounts, i.e., at least one feeCoin amount must
+		// be greater or equal to one of the combined required fees.
 
-	// if feeCoinsNoZeroDenom=[], return false
-	// if nonZeroCoinFeesReq=[], return false (this situation should not happen
-	// because when nonZeroCoinFeesReq empty, and DenomsSubsetOf check passed,
-	// the tx should already passed before)
-	if !feeCoinsNonZeroDenom.IsAnyGTE(nonZeroCoinFeesReq) {
-		return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, combinedFeeRequirement)
+		// if feeCoinsNoZeroDenom=[], return false
+		// if nonZeroCoinFeesReq=[], return false (this situation should not happen
+		// because when nonZeroCoinFeesReq empty, and DenomsSubsetOf check passed,
+		// the tx should already passed before)
+		if !feeCoinsNonZeroDenom.IsAnyGTE(nonZeroCoinFeesReq) {
+			return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, combinedFeeRequirement)
+		}
 	}
 
 	return next(ctx, tx, simulate)
