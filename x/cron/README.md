@@ -54,8 +54,8 @@ List all privileged contract addresses in bech32 format
 #### **promote-to-privilege-contract** || **promote-contract**
 
 ```
-starsd tx cron promote-contract {contractAddr} --title {proposalTitle} --deposit {depositAmount}
-starsd tx cron promote-contract stars19jq6mj84cnt9p7sagjxqf8hxtczwc8wlpuwe4sh62w45aheseues57n420 --title "Promote Contract Proposal" --deposit 1000ustars
+starsd tx gov submit-proposal promote-contract {contractAddr} --title {proposalTitle} --deposit {depositAmount}
+starsd tx gov submit-proposal promote-contract stars19jq6mj84cnt9p7sagjxqf8hxtczwc8wlpuwe4sh62w45aheseues57n420 --title "Promote Contract Proposal" --deposit 1000ustars
 ```
 
 Creates a governance proposal which on passing will add the given contract address to the priviledged contract list
@@ -63,8 +63,8 @@ Creates a governance proposal which on passing will add the given contract addre
 #### **demote-from-privilege-contract** || **demote-contract**
 
 ```
-starsd tx cron demote-contract {contractAddr} --title {proposalTitle} --deposit {depositAmount}
-starsd tx cron demote-contract  stars19jq6mj84cnt9p7sagjxqf8hxtczwc8wlpuwe4sh62w45aheseues57n420 --title "Demote Contract Proposal" --deposit 1000ustars
+starsd tx gov submit-proposal demote-contract {contractAddr} --title {proposalTitle} --deposit {depositAmount}
+starsd tx gov submit-proposal demote-contract  stars19jq6mj84cnt9p7sagjxqf8hxtczwc8wlpuwe4sh62w45aheseues57n420 --title "Demote Contract Proposal" --deposit 1000ustars
 ```
 
 Creates a governance proposal which on passing will remove the given contract address from the priviledged contract list
