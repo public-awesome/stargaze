@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 
-	"github.com/public-awesome/stargaze/v9/x/cron/types"
+	"github.com/public-awesome/stargaze/v10/x/cron/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module

@@ -9,7 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/gov/client/cli"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 
-	"github.com/public-awesome/stargaze/v9/x/cron/types"
+	"github.com/public-awesome/stargaze/v10/x/cron/types"
 )
 
 func ProposalSetPrivilegeContractCmd() *cobra.Command {

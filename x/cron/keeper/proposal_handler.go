@@ -5,7 +5,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 
-	"github.com/public-awesome/stargaze/v9/x/cron/types"
+	"github.com/public-awesome/stargaze/v10/x/cron/types"
 )
 
 // govKeeper is a subset of Keeper that is needed for the gov proposal handling

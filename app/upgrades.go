@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
-	crontypes "github.com/public-awesome/stargaze/v9/x/cron/types"
+	crontypes "github.com/public-awesome/stargaze/v10/x/cron/types"
 )
 
 // next upgrade name
