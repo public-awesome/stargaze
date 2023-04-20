@@ -8,7 +8,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 
-	"github.com/public-awesome/stargaze/v9/x/cron/types"
+	"github.com/public-awesome/stargaze/v10/x/cron/types"
 )
 
 var DefaultRelativePacketTimeoutTimestamp = uint64((time.Duration(10) * time.Minute).Nanoseconds())

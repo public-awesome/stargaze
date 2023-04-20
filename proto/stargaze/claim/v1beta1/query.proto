@@ -8,7 +8,7 @@ import "stargaze/claim/v1beta1/claim_record.proto";
 import "stargaze/claim/v1beta1/params.proto";
 // this line is used by starport scaffolding # 1
 
-option go_package = "github.com/public-awesome/stargaze/v9/x/claim/types";
+option go_package = "github.com/public-awesome/stargaze/v10/x/claim/types";
 
 // Query defines the gRPC querier service.
 service Query {
