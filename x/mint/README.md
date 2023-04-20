@@ -1,6 +1,6 @@
 # Mint
 
-This module mints new tokens on each block. It implements a reduction factor to redunce emissions over time.
+This module mints new tokens on each block. It implements a reduction factor to reduce emissions over time.
 
 ## Governance Parameters
 
