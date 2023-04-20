@@ -11,7 +11,7 @@ Here's a table for the parameters of the module:
 | Name                       | Type                      | Description                                            | Default   |
 | -------------------------- | ------------------------- | ------------------------------------------------------ | --------- |
 | `DistributionProportions`  | `DistributionProportions` | Allocations for `NftIncentives` and `DeveloperRewards` | See below |
-| `DeveloperRewardsReceiver` | array                     | List of addresses with allocation weight               | `[]`      |
+| `DeveloperRewardsReceiver` | Array<WeightedAddress>                     | List of addresses with allocation weight               | `[]`      |
 
 The `DistributionProportions` is a struct with the following fields:
 
