@@ -17,5 +17,13 @@ The `DistributionProportions` is a struct with the following fields:
 
 | Name               | Type         | Description                                                 | Default  |
 | ------------------ | ------------ | ----------------------------------------------------------- | -------- |
-| `NftIncentives`    | string (dec) | Proportion of inflation to be distributed to NFT incentives | `"0.45"` |
+| `Address`    | string (dec) | Proportion of inflation to be distributed to NFT incentives | `"0.45"` |
 | `DeveloperRewards` | string (dec) | Proportion of inflation to be distributed to developers     | `"0.15"` |
+
+
+The `WeightedAddress` is a struct with the following fields:
+| Name               | Type         | Description                                    | 
+| ------------------ | ------------ | -----------------------------------------------|
+| `Address`          | string       | Receiving address                              |
+| `Weight`           | string (dec) | Proportion of the assigned developer rewards   |
+
