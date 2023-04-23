@@ -17,13 +17,13 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 }
 
 var (
-	ModuleCdc = codec.NewAminoCodec(amino)
-	amino     = codec.NewLegacyAmino()
+	ModuleCdc = codec.NewAminoCodec(Amino)
+	Amino     = codec.NewLegacyAmino()
 )
 
 func init() {
-	RegisterLegacyAminoCodec(amino)
-	cryptoCodec.RegisterCrypto(amino)
-	sdk.RegisterLegacyAminoCodec(amino)
-	amino.Seal()
+	RegisterLegacyAminoCodec(Amino)
+	cryptoCodec.RegisterCrypto(Amino)
+	sdk.RegisterLegacyAminoCodec(Amino)
+	Amino.Seal()
 }

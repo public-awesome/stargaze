@@ -10,16 +10,16 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/public-awesome/stargaze/v9/x/cron/keeper"
-	"github.com/public-awesome/stargaze/v9/x/cron/types"
+	"github.com/public-awesome/stargaze/v9/x/globalfee/keeper"
+	"github.com/public-awesome/stargaze/v9/x/globalfee/types"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	tmdb "github.com/tendermint/tm-db"
 )
 
-// CronKeeper creates a testing keeper for the x/cron module
-func CronKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
+// GlobalFeeKeeper creates a testing keeper for the x/global module
+func GlobalFeeKeeper(t testing.TB) (keeper.Keeper, sdk.Context) {
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
 
@@ -36,7 +36,7 @@ func CronKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		types.Amino,
 		storeKey,
 		memStoreKey,
-		"CronParams",
+		"GlobalFeeParams",
 	)
 	wk := MockWasmKeeper{
 		HasContractInfoFn: func(ctx sdk.Context, contractAddr sdk.AccAddress) bool {
@@ -50,15 +50,29 @@ func CronKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 			}
 			return false
 		},
-		SudoFn: func(ctx sdk.Context, contractAddress sdk.AccAddress, msg []byte) ([]byte, error) {
-			return nil, nil
+		GetCodeInfoFn: func(ctx sdk.Context, codeID uint64) *wasmtypes.CodeInfo {
+			if codeID == 1 {
+				return &wasmtypes.CodeInfo{
+					Creator: "cosmos144sh8vyv5nqfylmg4mlydnpe3l4w780jsrmf4k",
+				}
+			}
+			if codeID == 2 {
+				return &wasmtypes.CodeInfo{
+					Creator: "cosmos1hfml4tzwlc3mvynsg6vtgywyx00wfkhrtpkx6t",
+				}
+			}
+			if codeID == 3 {
+				return &wasmtypes.CodeInfo{
+					Creator: "cosmos1qyqszqgpqyqszqgpqyqszqgpqyqszqgpjnp7du",
+				}
+			}
+			return nil
 		},
 	}
 
 	k := keeper.NewKeeper(
 		cdc,
 		storeKey,
-		memStoreKey,
 		paramsSubspace,
 		wk,
 	)
@@ -66,31 +80,4 @@ func CronKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
 
 	return k, ctx
-}
-
-type MockWasmKeeper struct {
-	HasContractInfoFn func(ctx sdk.Context, contractAddr sdk.AccAddress) bool
-	SudoFn            func(ctx sdk.Context, contractAddress sdk.AccAddress, msg []byte) ([]byte, error)
-	GetCodeInfoFn     func(ctx sdk.Context, codeID uint64) *wasmtypes.CodeInfo
-}
-
-func (k MockWasmKeeper) HasContractInfo(ctx sdk.Context, contractAddress sdk.AccAddress) bool {
-	if k.HasContractInfoFn == nil {
-		panic("not supposed to be called!")
-	}
-	return k.HasContractInfoFn(ctx, contractAddress)
-}
-
-func (k MockWasmKeeper) Sudo(ctx sdk.Context, contractAddress sdk.AccAddress, msg []byte) ([]byte, error) {
-	if k.SudoFn == nil {
-		panic("not supposed to be called!")
-	}
-	return k.SudoFn(ctx, contractAddress, msg)
-}
-
-func (k MockWasmKeeper) GetCodeInfo(ctx sdk.Context, codeID uint64) *wasmtypes.CodeInfo {
-	if k.GetCodeInfoFn == nil {
-		panic("not supposed to be called!")
-	}
-	return k.GetCodeInfoFn(ctx, codeID)
 }
