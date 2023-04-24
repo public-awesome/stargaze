@@ -14,14 +14,16 @@ type Keeper struct {
 	cdc        codec.Codec
 	paramStore paramTypes.Subspace
 	storeKey   sdk.StoreKey
+	wasmKeeper types.WasmKeeper
 }
 
 // NewKeeper creates a new Keeper instance.
-func NewKeeper(cdc codec.Codec, storeKey sdk.StoreKey, ps paramTypes.Subspace) Keeper {
+func NewKeeper(cdc codec.Codec, storeKey sdk.StoreKey, ps paramTypes.Subspace, wk types.WasmKeeper) Keeper {
 	return Keeper{
 		cdc:        cdc,
 		storeKey:   storeKey,
 		paramStore: ps,
+		wasmKeeper: wk,
 	}
 }
 

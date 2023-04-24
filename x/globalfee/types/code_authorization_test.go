@@ -30,10 +30,26 @@ func TestCodeAuthorizationValidate(t *testing.T) {
 			true,
 		},
 		{
+			"fail: invalid method name with space",
+			types.CodeAuthorization{
+				CodeId:  1,
+				Methods: []string{"mint nft"},
+			},
+			true,
+		},
+		{
 			"ok: valid name",
 			types.CodeAuthorization{
 				CodeId:  1,
 				Methods: []string{"mint"},
+			},
+			false,
+		},
+		{
+			"ok: valid name with underscore",
+			types.CodeAuthorization{
+				CodeId:  1,
+				Methods: []string{"mint_nft"},
 			},
 			false,
 		},

@@ -23,6 +23,7 @@ func GetQueryCmd() *cobra.Command {
 	cmd.AddCommand(GetCmdParams())
 	cmd.AddCommand(GetCmdCodeAuthorization())
 	cmd.AddCommand(GetCmdContractAuthorization())
+	cmd.AddCommand(GetCmdAuthorizations())
 
 	return cmd
 }
@@ -103,6 +104,32 @@ func GetCmdContractAuthorization() *cobra.Command {
 				&types.QueryContractAuthorizationRequest{
 					ContractAddress: args[0],
 				},
+			)
+			if err != nil {
+				return err
+			}
+			return clientCtx.PrintProto(res)
+		},
+	}
+	flags.AddQueryFlagsToCmd(cmd)
+	return cmd
+}
+
+func GetCmdAuthorizations() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "auth_all",
+		Short: "Gets all the authorizations",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			queryClient := types.NewQueryClient(clientCtx)
+			res, err := queryClient.Authorizations(
+				cmd.Context(),
+				&types.QueryAuthorizationsRequest{},
 			)
 			if err != nil {
 				return err

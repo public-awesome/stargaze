@@ -63,3 +63,18 @@ func (q QueryServer) Params(c context.Context, _ *types.QueryParamsRequest) (*ty
 	params := q.keeper.GetParams(ctx)
 	return &types.QueryParamsResponse{Params: &params}, nil
 }
+
+func (q QueryServer) Authorizations(c context.Context, _ *types.QueryAuthorizationsRequest) (*types.QueryAuthorizationsResponse, error) {
+	ctx := sdk.UnwrapSDKContext(c)
+
+	res := types.QueryAuthorizationsResponse{}
+	q.keeper.IterateCodeAuthorizations(ctx, func(ca types.CodeAuthorization) bool {
+		res.CodeAuthorizations = append(res.CodeAuthorizations, &ca)
+		return false
+	})
+	q.keeper.IterateContractAuthorizations(ctx, func(ca types.ContractAuthorization) bool {
+		res.ContractAuthorizations = append(res.ContractAuthorizations, &ca)
+		return false
+	})
+	return &res, nil
+}
