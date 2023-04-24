@@ -57,6 +57,11 @@ func TestParamsValidate(t *testing.T) {
 			},
 			false,
 		},
+		{
+			"ok: default params",
+			types.DefaultParams(),
+			false,
+		},
 	}
 
 	for _, tc := range testCases {
