@@ -34,6 +34,7 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	alloctypes "github.com/public-awesome/stargaze/v9/x/alloc/types"
 	claimtypes "github.com/public-awesome/stargaze/v9/x/claim/types"
+	globalfeetypes "github.com/public-awesome/stargaze/v9/x/globalfee/types"
 )
 
 const (
@@ -79,9 +80,10 @@ type GenesisParams struct {
 
 	SlashingParams slashingtypes.Params
 
-	AllocParams alloctypes.Params
-	ClaimParams claimtypes.Params
-	MintParams  minttypes.Params
+	AllocParams     alloctypes.Params
+	ClaimParams     claimtypes.Params
+	MintParams      minttypes.Params
+	GlobalFeeParams globalfeetypes.Params
 
 	WasmParams wasmtypes.Params
 }
@@ -471,6 +473,8 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.ConsensusParams.Version.AppVersion = 1
 
 	genParams.WasmParams = wasmtypes.DefaultParams()
+
+	genParams.GlobalFeeParams = globalfeetypes.DefaultParams()
 
 	return genParams
 }

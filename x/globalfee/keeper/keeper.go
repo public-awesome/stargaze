@@ -19,6 +19,11 @@ type Keeper struct {
 
 // NewKeeper creates a new Keeper instance.
 func NewKeeper(cdc codec.Codec, storeKey sdk.StoreKey, ps paramTypes.Subspace, wk types.WasmKeeper) Keeper {
+	// set KeyTable if it has not already been set
+	if !ps.HasKeyTable() {
+		ps = ps.WithKeyTable(types.ParamKeyTable())
+	}
+
 	return Keeper{
 		cdc:        cdc,
 		storeKey:   storeKey,
