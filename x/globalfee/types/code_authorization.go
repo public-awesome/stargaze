@@ -5,11 +5,6 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-// Validate validates the values of code authorizations
-func (ca CodeAuthorization) Validate() error {
-	return validateMethods(ca.Methods)
-}
-
 var _ sdk.Msg = &MsgSetCodeAuthorization{}
 var _ sdk.Msg = &MsgRemoveCodeAuthorization{}
 
@@ -94,6 +89,7 @@ func (msg MsgRemoveCodeAuthorization) ValidateBasic() error {
 	return nil
 }
 
+// Validate validates the values of code authorizations
 func (ca CodeAuthorization) Validate() error {
 	return validateMethods(ca.Methods)
 }
