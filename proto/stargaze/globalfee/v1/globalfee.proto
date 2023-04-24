@@ -22,16 +22,17 @@ message Params {
 
 // Configuration for code Ids which can have zero gas operations
 message CodeAuthorization {
-    // authorized code ids
-    uint64 code_id = 1;
-    // authorized contract operation methods
-    repeated string methods = 2;
+  // authorized code ids
+  uint64 code_id = 1 [ (gogoproto.moretags) = "yaml:\"code_id\"" ];
+  // authorized contract operation methods
+  repeated string methods = 2 [ (gogoproto.moretags) = "yaml:\"methods\"" ];
 }
 
 // Configuration for contract addresses which can have zero gas operations
 message ContractAuthorization {
-    // authorized contract addresses
-    string contract_address = 1;
-    // authorized contract operation methods
-    repeated string methods = 2;
+  // authorized contract addresses
+  string contract_address = 1
+      [ (gogoproto.moretags) = "yaml:\"contract_address\"" ];
+  // authorized contract operation methods
+  repeated string methods = 2 [ (gogoproto.moretags) = "yaml:\"methods\"" ];
 }

@@ -9,7 +9,11 @@ import (
 	grpc1 "github.com/gogo/protobuf/grpc"
 	proto "github.com/gogo/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
+	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -23,20 +27,404 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+type MsgSetCodeAuthorization struct {
+	Sender            string             `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
+	CodeAuthorization *CodeAuthorization `protobuf:"bytes,2,opt,name=code_authorization,json=codeAuthorization,proto3" json:"code_authorization,omitempty"`
+}
+
+func (m *MsgSetCodeAuthorization) Reset()         { *m = MsgSetCodeAuthorization{} }
+func (m *MsgSetCodeAuthorization) String() string { return proto.CompactTextString(m) }
+func (*MsgSetCodeAuthorization) ProtoMessage()    {}
+func (*MsgSetCodeAuthorization) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f5157c8f1c83ee51, []int{0}
+}
+func (m *MsgSetCodeAuthorization) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgSetCodeAuthorization) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgSetCodeAuthorization.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgSetCodeAuthorization) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSetCodeAuthorization.Merge(m, src)
+}
+func (m *MsgSetCodeAuthorization) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgSetCodeAuthorization) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSetCodeAuthorization.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgSetCodeAuthorization proto.InternalMessageInfo
+
+func (m *MsgSetCodeAuthorization) GetSender() string {
+	if m != nil {
+		return m.Sender
+	}
+	return ""
+}
+
+func (m *MsgSetCodeAuthorization) GetCodeAuthorization() *CodeAuthorization {
+	if m != nil {
+		return m.CodeAuthorization
+	}
+	return nil
+}
+
+type MsgSetCodeAuthorizationResponse struct {
+}
+
+func (m *MsgSetCodeAuthorizationResponse) Reset()         { *m = MsgSetCodeAuthorizationResponse{} }
+func (m *MsgSetCodeAuthorizationResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgSetCodeAuthorizationResponse) ProtoMessage()    {}
+func (*MsgSetCodeAuthorizationResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f5157c8f1c83ee51, []int{1}
+}
+func (m *MsgSetCodeAuthorizationResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgSetCodeAuthorizationResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgSetCodeAuthorizationResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgSetCodeAuthorizationResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSetCodeAuthorizationResponse.Merge(m, src)
+}
+func (m *MsgSetCodeAuthorizationResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgSetCodeAuthorizationResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSetCodeAuthorizationResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgSetCodeAuthorizationResponse proto.InternalMessageInfo
+
+type MsgRemoveCodeAuthorization struct {
+	Sender string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
+	CodeId uint64 `protobuf:"varint,2,opt,name=code_id,json=codeId,proto3" json:"code_id,omitempty"`
+}
+
+func (m *MsgRemoveCodeAuthorization) Reset()         { *m = MsgRemoveCodeAuthorization{} }
+func (m *MsgRemoveCodeAuthorization) String() string { return proto.CompactTextString(m) }
+func (*MsgRemoveCodeAuthorization) ProtoMessage()    {}
+func (*MsgRemoveCodeAuthorization) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f5157c8f1c83ee51, []int{2}
+}
+func (m *MsgRemoveCodeAuthorization) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRemoveCodeAuthorization) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRemoveCodeAuthorization.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRemoveCodeAuthorization) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRemoveCodeAuthorization.Merge(m, src)
+}
+func (m *MsgRemoveCodeAuthorization) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRemoveCodeAuthorization) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRemoveCodeAuthorization.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRemoveCodeAuthorization proto.InternalMessageInfo
+
+func (m *MsgRemoveCodeAuthorization) GetSender() string {
+	if m != nil {
+		return m.Sender
+	}
+	return ""
+}
+
+func (m *MsgRemoveCodeAuthorization) GetCodeId() uint64 {
+	if m != nil {
+		return m.CodeId
+	}
+	return 0
+}
+
+type MsgRemoveCodeAuthorizationResponse struct {
+}
+
+func (m *MsgRemoveCodeAuthorizationResponse) Reset()         { *m = MsgRemoveCodeAuthorizationResponse{} }
+func (m *MsgRemoveCodeAuthorizationResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgRemoveCodeAuthorizationResponse) ProtoMessage()    {}
+func (*MsgRemoveCodeAuthorizationResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f5157c8f1c83ee51, []int{3}
+}
+func (m *MsgRemoveCodeAuthorizationResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRemoveCodeAuthorizationResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRemoveCodeAuthorizationResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRemoveCodeAuthorizationResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRemoveCodeAuthorizationResponse.Merge(m, src)
+}
+func (m *MsgRemoveCodeAuthorizationResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRemoveCodeAuthorizationResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRemoveCodeAuthorizationResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRemoveCodeAuthorizationResponse proto.InternalMessageInfo
+
+type MsgSetContractAuthorization struct {
+	Sender                string                 `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
+	ContractAuthorization *ContractAuthorization `protobuf:"bytes,2,opt,name=contract_authorization,json=contractAuthorization,proto3" json:"contract_authorization,omitempty"`
+}
+
+func (m *MsgSetContractAuthorization) Reset()         { *m = MsgSetContractAuthorization{} }
+func (m *MsgSetContractAuthorization) String() string { return proto.CompactTextString(m) }
+func (*MsgSetContractAuthorization) ProtoMessage()    {}
+func (*MsgSetContractAuthorization) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f5157c8f1c83ee51, []int{4}
+}
+func (m *MsgSetContractAuthorization) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgSetContractAuthorization) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgSetContractAuthorization.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgSetContractAuthorization) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSetContractAuthorization.Merge(m, src)
+}
+func (m *MsgSetContractAuthorization) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgSetContractAuthorization) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSetContractAuthorization.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgSetContractAuthorization proto.InternalMessageInfo
+
+func (m *MsgSetContractAuthorization) GetSender() string {
+	if m != nil {
+		return m.Sender
+	}
+	return ""
+}
+
+func (m *MsgSetContractAuthorization) GetContractAuthorization() *ContractAuthorization {
+	if m != nil {
+		return m.ContractAuthorization
+	}
+	return nil
+}
+
+type MsgSetContractAuthorizationResponse struct {
+}
+
+func (m *MsgSetContractAuthorizationResponse) Reset()         { *m = MsgSetContractAuthorizationResponse{} }
+func (m *MsgSetContractAuthorizationResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgSetContractAuthorizationResponse) ProtoMessage()    {}
+func (*MsgSetContractAuthorizationResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f5157c8f1c83ee51, []int{5}
+}
+func (m *MsgSetContractAuthorizationResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgSetContractAuthorizationResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgSetContractAuthorizationResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgSetContractAuthorizationResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSetContractAuthorizationResponse.Merge(m, src)
+}
+func (m *MsgSetContractAuthorizationResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgSetContractAuthorizationResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSetContractAuthorizationResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgSetContractAuthorizationResponse proto.InternalMessageInfo
+
+type MsgRemoveContractAuthorization struct {
+	Sender          string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
+	ContractAddress string `protobuf:"bytes,2,opt,name=contract_address,json=contractAddress,proto3" json:"contract_address,omitempty"`
+}
+
+func (m *MsgRemoveContractAuthorization) Reset()         { *m = MsgRemoveContractAuthorization{} }
+func (m *MsgRemoveContractAuthorization) String() string { return proto.CompactTextString(m) }
+func (*MsgRemoveContractAuthorization) ProtoMessage()    {}
+func (*MsgRemoveContractAuthorization) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f5157c8f1c83ee51, []int{6}
+}
+func (m *MsgRemoveContractAuthorization) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRemoveContractAuthorization) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRemoveContractAuthorization.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRemoveContractAuthorization) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRemoveContractAuthorization.Merge(m, src)
+}
+func (m *MsgRemoveContractAuthorization) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRemoveContractAuthorization) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRemoveContractAuthorization.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRemoveContractAuthorization proto.InternalMessageInfo
+
+func (m *MsgRemoveContractAuthorization) GetSender() string {
+	if m != nil {
+		return m.Sender
+	}
+	return ""
+}
+
+func (m *MsgRemoveContractAuthorization) GetContractAddress() string {
+	if m != nil {
+		return m.ContractAddress
+	}
+	return ""
+}
+
+type MsgRemoveContractAuthorizationResponse struct {
+}
+
+func (m *MsgRemoveContractAuthorizationResponse) Reset() {
+	*m = MsgRemoveContractAuthorizationResponse{}
+}
+func (m *MsgRemoveContractAuthorizationResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgRemoveContractAuthorizationResponse) ProtoMessage()    {}
+func (*MsgRemoveContractAuthorizationResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f5157c8f1c83ee51, []int{7}
+}
+func (m *MsgRemoveContractAuthorizationResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRemoveContractAuthorizationResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRemoveContractAuthorizationResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRemoveContractAuthorizationResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRemoveContractAuthorizationResponse.Merge(m, src)
+}
+func (m *MsgRemoveContractAuthorizationResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRemoveContractAuthorizationResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRemoveContractAuthorizationResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRemoveContractAuthorizationResponse proto.InternalMessageInfo
+
+func init() {
+	proto.RegisterType((*MsgSetCodeAuthorization)(nil), "publicawesome.stargaze.globalfee.v1.MsgSetCodeAuthorization")
+	proto.RegisterType((*MsgSetCodeAuthorizationResponse)(nil), "publicawesome.stargaze.globalfee.v1.MsgSetCodeAuthorizationResponse")
+	proto.RegisterType((*MsgRemoveCodeAuthorization)(nil), "publicawesome.stargaze.globalfee.v1.MsgRemoveCodeAuthorization")
+	proto.RegisterType((*MsgRemoveCodeAuthorizationResponse)(nil), "publicawesome.stargaze.globalfee.v1.MsgRemoveCodeAuthorizationResponse")
+	proto.RegisterType((*MsgSetContractAuthorization)(nil), "publicawesome.stargaze.globalfee.v1.MsgSetContractAuthorization")
+	proto.RegisterType((*MsgSetContractAuthorizationResponse)(nil), "publicawesome.stargaze.globalfee.v1.MsgSetContractAuthorizationResponse")
+	proto.RegisterType((*MsgRemoveContractAuthorization)(nil), "publicawesome.stargaze.globalfee.v1.MsgRemoveContractAuthorization")
+	proto.RegisterType((*MsgRemoveContractAuthorizationResponse)(nil), "publicawesome.stargaze.globalfee.v1.MsgRemoveContractAuthorizationResponse")
+}
+
 func init() { proto.RegisterFile("stargaze/globalfee/v1/tx.proto", fileDescriptor_f5157c8f1c83ee51) }
 
 var fileDescriptor_f5157c8f1c83ee51 = []byte{
-	// 153 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0x2b, 0x2e, 0x49, 0x2c,
-	0x4a, 0x4f, 0xac, 0x4a, 0xd5, 0x4f, 0xcf, 0xc9, 0x4f, 0x4a, 0xcc, 0x49, 0x4b, 0x4d, 0xd5, 0x2f,
-	0x33, 0xd4, 0x2f, 0xa9, 0xd0, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x52, 0x2e, 0x28, 0x4d, 0xca,
-	0xc9, 0x4c, 0x4e, 0x2c, 0x4f, 0x2d, 0xce, 0xcf, 0x4d, 0xd5, 0x83, 0xa9, 0xd6, 0x83, 0xab, 0xd6,
-	0x2b, 0x33, 0x34, 0x62, 0xe5, 0x62, 0xf6, 0x2d, 0x4e, 0x77, 0x0a, 0x3c, 0xf1, 0x48, 0x8e, 0xf1,
-	0xc2, 0x23, 0x39, 0xc6, 0x07, 0x8f, 0xe4, 0x18, 0x27, 0x3c, 0x96, 0x63, 0xb8, 0xf0, 0x58, 0x8e,
-	0xe1, 0xc6, 0x63, 0x39, 0x86, 0x28, 0xf3, 0xf4, 0xcc, 0x92, 0x8c, 0xd2, 0x24, 0xbd, 0xe4, 0xfc,
-	0x5c, 0x7d, 0x88, 0x81, 0xba, 0x50, 0x13, 0xf5, 0xe1, 0xf6, 0x97, 0x59, 0xea, 0x57, 0x20, 0x39,
-	0xa2, 0xa4, 0xb2, 0x20, 0xb5, 0x38, 0x89, 0x0d, 0xec, 0x0a, 0x63, 0x40, 0x00, 0x00, 0x00, 0xff,
-	0xff, 0x6a, 0x9f, 0x39, 0x7e, 0xa7, 0x00, 0x00, 0x00,
+	// 452 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x94, 0x4d, 0xeb, 0xd3, 0x40,
+	0x10, 0xc6, 0xbb, 0xbe, 0x54, 0xfe, 0xe3, 0x41, 0x0d, 0xda, 0x96, 0x14, 0xd6, 0x9a, 0x5a, 0xa9,
+	0x07, 0x13, 0x5a, 0x41, 0x51, 0x04, 0x5f, 0x2a, 0xa8, 0x48, 0x0e, 0xc6, 0x9b, 0x17, 0x49, 0x36,
+	0x63, 0x1a, 0x68, 0xb3, 0x31, 0xbb, 0x8d, 0xb5, 0x9f, 0xc2, 0xa3, 0x78, 0x2d, 0x88, 0x37, 0xbf,
+	0x86, 0xc7, 0x1e, 0x3d, 0x4a, 0xfb, 0x45, 0xc4, 0xb4, 0x49, 0x8b, 0x26, 0x25, 0xa5, 0x1e, 0x77,
+	0x98, 0x7d, 0x9e, 0xdf, 0x0c, 0x0f, 0x03, 0x54, 0x48, 0x3b, 0xf2, 0xec, 0x19, 0x1a, 0xde, 0x88,
+	0x3b, 0xf6, 0xe8, 0x1d, 0xa2, 0x11, 0xf7, 0x0c, 0x39, 0xd5, 0xc3, 0x88, 0x4b, 0xae, 0xb4, 0xc3,
+	0x89, 0x33, 0xf2, 0x99, 0xfd, 0x01, 0x05, 0x1f, 0xa3, 0x9e, 0x76, 0xeb, 0x59, 0xb7, 0x1e, 0xf7,
+	0xd4, 0x4e, 0xbe, 0xc8, 0xb6, 0x27, 0xd1, 0xd2, 0x3e, 0x13, 0xa8, 0x9b, 0xc2, 0x7b, 0x8d, 0x72,
+	0xc0, 0x5d, 0x7c, 0x3c, 0x91, 0x43, 0x1e, 0xf9, 0x33, 0x5b, 0xfa, 0x3c, 0x50, 0x6a, 0x50, 0x15,
+	0x18, 0xb8, 0x18, 0x35, 0x48, 0x8b, 0x74, 0x4f, 0xac, 0xcd, 0x4b, 0x41, 0x50, 0x18, 0x77, 0xf1,
+	0xad, 0xbd, 0xdb, 0xdd, 0x38, 0xd5, 0x22, 0xdd, 0xf3, 0xfd, 0x3b, 0x7a, 0x09, 0x38, 0xfd, 0x1f,
+	0x2f, 0xeb, 0x12, 0xfb, 0xbb, 0xa4, 0x5d, 0x83, 0xab, 0x05, 0x64, 0x16, 0x8a, 0x90, 0x07, 0x02,
+	0x35, 0x13, 0x54, 0x53, 0x78, 0x16, 0x8e, 0x79, 0x8c, 0xe5, 0xf9, 0xeb, 0x70, 0x2e, 0xe1, 0xf7,
+	0xdd, 0x04, 0xfa, 0x8c, 0x55, 0xfd, 0xf3, 0x7c, 0xe1, 0x6a, 0xd7, 0x41, 0x2b, 0x96, 0xcb, 0x4c,
+	0xbf, 0x11, 0x68, 0xa6, 0x60, 0x81, 0x8c, 0x6c, 0x26, 0xcb, 0xd9, 0xbe, 0x87, 0x1a, 0xdb, 0x7c,
+	0xc8, 0x5d, 0xdd, 0xfd, 0x92, 0xab, 0xcb, 0xf1, 0xb4, 0xae, 0xb0, 0xbc, 0xb2, 0xd6, 0x81, 0xf6,
+	0x1e, 0xd2, 0x6c, 0x22, 0x06, 0x74, 0x67, 0xee, 0x43, 0x66, 0xba, 0x09, 0x17, 0xb7, 0x33, 0xb9,
+	0x6e, 0x84, 0x42, 0x24, 0xd3, 0x9c, 0x58, 0x17, 0x32, 0xa2, 0x75, 0x59, 0xeb, 0xc2, 0x8d, 0xfd,
+	0x26, 0x29, 0x4e, 0x7f, 0x7e, 0x16, 0x4e, 0x9b, 0xc2, 0x53, 0xbe, 0x10, 0xb8, 0x9c, 0x1b, 0xcc,
+	0x07, 0xa5, 0x36, 0x55, 0x10, 0x1e, 0xf5, 0xe9, 0x31, 0xbf, 0x53, 0x48, 0x65, 0x4e, 0xa0, 0x5e,
+	0x14, 0xbc, 0x87, 0x65, 0x1d, 0x0a, 0x04, 0xd4, 0x67, 0x47, 0x0a, 0x64, 0x94, 0x5f, 0x09, 0x34,
+	0x0a, 0x83, 0xfa, 0xe8, 0xa0, 0x45, 0xe4, 0x28, 0xa8, 0xcf, 0x8f, 0x55, 0xc8, 0x40, 0xbf, 0x13,
+	0x68, 0xee, 0x0b, 0xe0, 0xe0, 0xd0, 0x8d, 0xe4, 0xe1, 0xbe, 0xfc, 0x0f, 0x22, 0x29, 0xf1, 0x93,
+	0x57, 0x3f, 0x96, 0x94, 0x2c, 0x96, 0x94, 0xfc, 0x5a, 0x52, 0xf2, 0x69, 0x45, 0x2b, 0x8b, 0x15,
+	0xad, 0xfc, 0x5c, 0xd1, 0xca, 0x9b, 0xbb, 0x9e, 0x2f, 0x87, 0x13, 0x47, 0x67, 0x7c, 0x6c, 0xac,
+	0x0d, 0x6f, 0x6d, 0x1c, 0x8d, 0xec, 0x28, 0xc7, 0xf7, 0x8c, 0xe9, 0xce, 0x65, 0x96, 0x1f, 0x43,
+	0x14, 0x4e, 0x35, 0xb9, 0xc9, 0xb7, 0x7f, 0x07, 0x00, 0x00, 0xff, 0xff, 0xc8, 0x04, 0x61, 0x6d,
+	0x01, 0x06, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -51,6 +439,10 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
+	SetCodeAuthorization(ctx context.Context, in *MsgSetCodeAuthorization, opts ...grpc.CallOption) (*MsgSetCodeAuthorizationResponse, error)
+	RemoveCodeAuthorization(ctx context.Context, in *MsgRemoveCodeAuthorization, opts ...grpc.CallOption) (*MsgRemoveCodeAuthorizationResponse, error)
+	SetContractAuthorization(ctx context.Context, in *MsgSetContractAuthorization, opts ...grpc.CallOption) (*MsgSetContractAuthorizationResponse, error)
+	RemoveContractAuthorization(ctx context.Context, in *MsgRemoveContractAuthorization, opts ...grpc.CallOption) (*MsgRemoveContractAuthorizationResponse, error)
 }
 
 type msgClient struct {
@@ -61,22 +453,1268 @@ func NewMsgClient(cc grpc1.ClientConn) MsgClient {
 	return &msgClient{cc}
 }
 
+func (c *msgClient) SetCodeAuthorization(ctx context.Context, in *MsgSetCodeAuthorization, opts ...grpc.CallOption) (*MsgSetCodeAuthorizationResponse, error) {
+	out := new(MsgSetCodeAuthorizationResponse)
+	err := c.cc.Invoke(ctx, "/publicawesome.stargaze.globalfee.v1.Msg/SetCodeAuthorization", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) RemoveCodeAuthorization(ctx context.Context, in *MsgRemoveCodeAuthorization, opts ...grpc.CallOption) (*MsgRemoveCodeAuthorizationResponse, error) {
+	out := new(MsgRemoveCodeAuthorizationResponse)
+	err := c.cc.Invoke(ctx, "/publicawesome.stargaze.globalfee.v1.Msg/RemoveCodeAuthorization", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) SetContractAuthorization(ctx context.Context, in *MsgSetContractAuthorization, opts ...grpc.CallOption) (*MsgSetContractAuthorizationResponse, error) {
+	out := new(MsgSetContractAuthorizationResponse)
+	err := c.cc.Invoke(ctx, "/publicawesome.stargaze.globalfee.v1.Msg/SetContractAuthorization", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) RemoveContractAuthorization(ctx context.Context, in *MsgRemoveContractAuthorization, opts ...grpc.CallOption) (*MsgRemoveContractAuthorizationResponse, error) {
+	out := new(MsgRemoveContractAuthorizationResponse)
+	err := c.cc.Invoke(ctx, "/publicawesome.stargaze.globalfee.v1.Msg/RemoveContractAuthorization", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
+	SetCodeAuthorization(context.Context, *MsgSetCodeAuthorization) (*MsgSetCodeAuthorizationResponse, error)
+	RemoveCodeAuthorization(context.Context, *MsgRemoveCodeAuthorization) (*MsgRemoveCodeAuthorizationResponse, error)
+	SetContractAuthorization(context.Context, *MsgSetContractAuthorization) (*MsgSetContractAuthorizationResponse, error)
+	RemoveContractAuthorization(context.Context, *MsgRemoveContractAuthorization) (*MsgRemoveContractAuthorizationResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
 type UnimplementedMsgServer struct {
 }
 
+func (*UnimplementedMsgServer) SetCodeAuthorization(ctx context.Context, req *MsgSetCodeAuthorization) (*MsgSetCodeAuthorizationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetCodeAuthorization not implemented")
+}
+func (*UnimplementedMsgServer) RemoveCodeAuthorization(ctx context.Context, req *MsgRemoveCodeAuthorization) (*MsgRemoveCodeAuthorizationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveCodeAuthorization not implemented")
+}
+func (*UnimplementedMsgServer) SetContractAuthorization(ctx context.Context, req *MsgSetContractAuthorization) (*MsgSetContractAuthorizationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetContractAuthorization not implemented")
+}
+func (*UnimplementedMsgServer) RemoveContractAuthorization(ctx context.Context, req *MsgRemoveContractAuthorization) (*MsgRemoveContractAuthorizationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveContractAuthorization not implemented")
+}
+
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
 	s.RegisterService(&_Msg_serviceDesc, srv)
+}
+
+func _Msg_SetCodeAuthorization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSetCodeAuthorization)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SetCodeAuthorization(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/publicawesome.stargaze.globalfee.v1.Msg/SetCodeAuthorization",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SetCodeAuthorization(ctx, req.(*MsgSetCodeAuthorization))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_RemoveCodeAuthorization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRemoveCodeAuthorization)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RemoveCodeAuthorization(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/publicawesome.stargaze.globalfee.v1.Msg/RemoveCodeAuthorization",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RemoveCodeAuthorization(ctx, req.(*MsgRemoveCodeAuthorization))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_SetContractAuthorization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSetContractAuthorization)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SetContractAuthorization(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/publicawesome.stargaze.globalfee.v1.Msg/SetContractAuthorization",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SetContractAuthorization(ctx, req.(*MsgSetContractAuthorization))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_RemoveContractAuthorization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRemoveContractAuthorization)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RemoveContractAuthorization(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/publicawesome.stargaze.globalfee.v1.Msg/RemoveContractAuthorization",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RemoveContractAuthorization(ctx, req.(*MsgRemoveContractAuthorization))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "publicawesome.stargaze.globalfee.v1.Msg",
 	HandlerType: (*MsgServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "stargaze/globalfee/v1/tx.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "SetCodeAuthorization",
+			Handler:    _Msg_SetCodeAuthorization_Handler,
+		},
+		{
+			MethodName: "RemoveCodeAuthorization",
+			Handler:    _Msg_RemoveCodeAuthorization_Handler,
+		},
+		{
+			MethodName: "SetContractAuthorization",
+			Handler:    _Msg_SetContractAuthorization_Handler,
+		},
+		{
+			MethodName: "RemoveContractAuthorization",
+			Handler:    _Msg_RemoveContractAuthorization_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "stargaze/globalfee/v1/tx.proto",
 }
+
+func (m *MsgSetCodeAuthorization) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgSetCodeAuthorization) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgSetCodeAuthorization) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.CodeAuthorization != nil {
+		{
+			size, err := m.CodeAuthorization.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintTx(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Sender) > 0 {
+		i -= len(m.Sender)
+		copy(dAtA[i:], m.Sender)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Sender)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgSetCodeAuthorizationResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgSetCodeAuthorizationResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgSetCodeAuthorizationResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRemoveCodeAuthorization) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRemoveCodeAuthorization) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRemoveCodeAuthorization) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.CodeId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.CodeId))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Sender) > 0 {
+		i -= len(m.Sender)
+		copy(dAtA[i:], m.Sender)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Sender)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRemoveCodeAuthorizationResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRemoveCodeAuthorizationResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRemoveCodeAuthorizationResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgSetContractAuthorization) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgSetContractAuthorization) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgSetContractAuthorization) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.ContractAuthorization != nil {
+		{
+			size, err := m.ContractAuthorization.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintTx(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Sender) > 0 {
+		i -= len(m.Sender)
+		copy(dAtA[i:], m.Sender)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Sender)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgSetContractAuthorizationResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgSetContractAuthorizationResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgSetContractAuthorizationResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRemoveContractAuthorization) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRemoveContractAuthorization) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRemoveContractAuthorization) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.ContractAddress) > 0 {
+		i -= len(m.ContractAddress)
+		copy(dAtA[i:], m.ContractAddress)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.ContractAddress)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Sender) > 0 {
+		i -= len(m.Sender)
+		copy(dAtA[i:], m.Sender)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Sender)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRemoveContractAuthorizationResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRemoveContractAuthorizationResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRemoveContractAuthorizationResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
+	offset -= sovTx(v)
+	base := offset
+	for v >= 1<<7 {
+		dAtA[offset] = uint8(v&0x7f | 0x80)
+		v >>= 7
+		offset++
+	}
+	dAtA[offset] = uint8(v)
+	return base
+}
+func (m *MsgSetCodeAuthorization) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Sender)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.CodeAuthorization != nil {
+		l = m.CodeAuthorization.Size()
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgSetCodeAuthorizationResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgRemoveCodeAuthorization) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Sender)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.CodeId != 0 {
+		n += 1 + sovTx(uint64(m.CodeId))
+	}
+	return n
+}
+
+func (m *MsgRemoveCodeAuthorizationResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgSetContractAuthorization) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Sender)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.ContractAuthorization != nil {
+		l = m.ContractAuthorization.Size()
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgSetContractAuthorizationResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgRemoveContractAuthorization) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Sender)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.ContractAddress)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgRemoveContractAuthorizationResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func sovTx(x uint64) (n int) {
+	return (math_bits.Len64(x|1) + 6) / 7
+}
+func sozTx(x uint64) (n int) {
+	return sovTx(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *MsgSetCodeAuthorization) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgSetCodeAuthorization: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgSetCodeAuthorization: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sender", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Sender = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CodeAuthorization", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.CodeAuthorization == nil {
+				m.CodeAuthorization = &CodeAuthorization{}
+			}
+			if err := m.CodeAuthorization.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgSetCodeAuthorizationResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgSetCodeAuthorizationResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgSetCodeAuthorizationResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRemoveCodeAuthorization) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRemoveCodeAuthorization: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRemoveCodeAuthorization: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sender", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Sender = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CodeId", wireType)
+			}
+			m.CodeId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CodeId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRemoveCodeAuthorizationResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRemoveCodeAuthorizationResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRemoveCodeAuthorizationResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgSetContractAuthorization) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgSetContractAuthorization: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgSetContractAuthorization: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sender", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Sender = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ContractAuthorization", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.ContractAuthorization == nil {
+				m.ContractAuthorization = &ContractAuthorization{}
+			}
+			if err := m.ContractAuthorization.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgSetContractAuthorizationResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgSetContractAuthorizationResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgSetContractAuthorizationResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRemoveContractAuthorization) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRemoveContractAuthorization: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRemoveContractAuthorization: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sender", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Sender = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ContractAddress", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ContractAddress = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRemoveContractAuthorizationResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRemoveContractAuthorizationResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRemoveContractAuthorizationResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func skipTx(dAtA []byte) (n int, err error) {
+	l := len(dAtA)
+	iNdEx := 0
+	depth := 0
+	for iNdEx < l {
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return 0, ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return 0, io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		wireType := int(wire & 0x7)
+		switch wireType {
+		case 0:
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				iNdEx++
+				if dAtA[iNdEx-1] < 0x80 {
+					break
+				}
+			}
+		case 1:
+			iNdEx += 8
+		case 2:
+			var length int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				length |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if length < 0 {
+				return 0, ErrInvalidLengthTx
+			}
+			iNdEx += length
+		case 3:
+			depth++
+		case 4:
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupTx
+			}
+			depth--
+		case 5:
+			iNdEx += 4
+		default:
+			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
+		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthTx
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
+	}
+	return 0, io.ErrUnexpectedEOF
+}
+
+var (
+	ErrInvalidLengthTx        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowTx          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupTx = fmt.Errorf("proto: unexpected end of group")
+)
