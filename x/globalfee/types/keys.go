@@ -13,6 +13,8 @@ const (
 	QuerierRoute = ModuleName
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_globalfee"
+	// RouterKey is the message route f
+	RouterKey = ModuleName
 )
 
 var (
@@ -21,17 +23,9 @@ var (
 )
 
 func GetCodeAuthorizationPrefix(codeId uint64) []byte {
-	return append(CodeAuthorizationPrefix, i64tob(codeId)...)
+	return append(CodeAuthorizationPrefix, sdk.Uint64ToBigEndian(codeId)...)
 }
 
 func GetContractAuthorizationPrefix(contractAddress sdk.AccAddress) []byte {
 	return append(ContractAuthorizationPrefix, contractAddress...)
-}
-
-func i64tob(val uint64) []byte {
-	r := make([]byte, 8)
-	for i := uint64(0); i < 8; i++ {
-		r[i] = byte((val >> (i * 8)) & 0xff)
-	}
-	return r
 }
