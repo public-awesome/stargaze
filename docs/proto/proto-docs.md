@@ -82,6 +82,11 @@
     - [Params](#publicawesome.stargaze.globalfee.v1.Params)
   
 - [stargaze/globalfee/v1/proposal.proto](#stargaze/globalfee/v1/proposal.proto)
+    - [RemoveCodeAuthorizationProposal](#publicawesome.stargaze.globalfee.v1.RemoveCodeAuthorizationProposal)
+    - [RemoveContractAuthorizationProposal](#publicawesome.stargaze.globalfee.v1.RemoveContractAuthorizationProposal)
+    - [SetCodeAuthorizationProposal](#publicawesome.stargaze.globalfee.v1.SetCodeAuthorizationProposal)
+    - [SetContractAuthorizationProposal](#publicawesome.stargaze.globalfee.v1.SetContractAuthorizationProposal)
+  
 - [stargaze/globalfee/v1/query.proto](#stargaze/globalfee/v1/query.proto)
     - [QueryAuthorizationsRequest](#publicawesome.stargaze.globalfee.v1.QueryAuthorizationsRequest)
     - [QueryAuthorizationsResponse](#publicawesome.stargaze.globalfee.v1.QueryAuthorizationsResponse)
@@ -982,6 +987,74 @@ Params holds parameters for the globalfee module.
 <p align="right"><a href="#top">Top</a></p>
 
 ## stargaze/globalfee/v1/proposal.proto
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.RemoveCodeAuthorizationProposal"></a>
+
+### RemoveCodeAuthorizationProposal
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) |  |  |
+| `code_id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.RemoveContractAuthorizationProposal"></a>
+
+### RemoveContractAuthorizationProposal
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) |  |  |
+| `contract_address` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.SetCodeAuthorizationProposal"></a>
+
+### SetCodeAuthorizationProposal
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) |  |  |
+| `code_authorization` | [CodeAuthorization](#publicawesome.stargaze.globalfee.v1.CodeAuthorization) |  |  |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.SetContractAuthorizationProposal"></a>
+
+### SetContractAuthorizationProposal
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) |  |  |
+| `contract_authorization` | [ContractAuthorization](#publicawesome.stargaze.globalfee.v1.ContractAuthorization) |  |  |
+
+
+
 
 
  <!-- end messages -->
