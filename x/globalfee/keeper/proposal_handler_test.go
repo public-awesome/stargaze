@@ -67,7 +67,7 @@ func TestGovHandler(t *testing.T) {
 			srcProposal: types.RemoveCodeAuthorizationProposalFixture(func(proposal *types.RemoveCodeAuthorizationProposal) {
 				proposal.CodeId = 1
 			}),
-			expCapturedCodeIds: []uint64{},
+			expCapturedCodeIds: nil,
 		},
 		"invalid remove code auth proposal rejected": {
 			wasmHandler: notHandler,
