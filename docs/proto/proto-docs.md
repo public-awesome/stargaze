@@ -88,6 +88,8 @@
     - [SetContractAuthorizationProposal](#publicawesome.stargaze.globalfee.v1.SetContractAuthorizationProposal)
   
 - [stargaze/globalfee/v1/query.proto](#stargaze/globalfee/v1/query.proto)
+    - [QueryAuthorizationsRequest](#publicawesome.stargaze.globalfee.v1.QueryAuthorizationsRequest)
+    - [QueryAuthorizationsResponse](#publicawesome.stargaze.globalfee.v1.QueryAuthorizationsResponse)
     - [QueryCodeAuthorizationRequest](#publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationRequest)
     - [QueryCodeAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationResponse)
     - [QueryContractAuthorizationRequest](#publicawesome.stargaze.globalfee.v1.QueryContractAuthorizationRequest)
@@ -1072,6 +1074,32 @@ Params holds parameters for the globalfee module.
 
 
 
+<a name="publicawesome.stargaze.globalfee.v1.QueryAuthorizationsRequest"></a>
+
+### QueryAuthorizationsRequest
+
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.QueryAuthorizationsResponse"></a>
+
+### QueryAuthorizationsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `code_authorizations` | [CodeAuthorization](#publicawesome.stargaze.globalfee.v1.CodeAuthorization) | repeated |  |
+| `contract_authorizations` | [ContractAuthorization](#publicawesome.stargaze.globalfee.v1.ContractAuthorization) | repeated |  |
+
+
+
+
+
+
 <a name="publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationRequest"></a>
 
 ### QueryCodeAuthorizationRequest
@@ -1173,6 +1201,7 @@ Query defines the gRPC querier service.
 | `CodeAuthorization` | [QueryCodeAuthorizationRequest](#publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationRequest) | [QueryCodeAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationResponse) |  | GET|/stargaze/globalfee/v1/code_authorization/{code_id}|
 | `ContractAuthorization` | [QueryContractAuthorizationRequest](#publicawesome.stargaze.globalfee.v1.QueryContractAuthorizationRequest) | [QueryContractAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.QueryContractAuthorizationResponse) |  | GET|/stargaze/globalfee/v1/contract_authorization/{contract_address}|
 | `Params` | [QueryParamsRequest](#publicawesome.stargaze.globalfee.v1.QueryParamsRequest) | [QueryParamsResponse](#publicawesome.stargaze.globalfee.v1.QueryParamsResponse) |  | GET|/stargaze/globalfee/v1/params|
+| `Authorizations` | [QueryAuthorizationsRequest](#publicawesome.stargaze.globalfee.v1.QueryAuthorizationsRequest) | [QueryAuthorizationsResponse](#publicawesome.stargaze.globalfee.v1.QueryAuthorizationsResponse) |  | GET|/stargaze/globalfee/v1/authorizations|
 
  <!-- end services -->
 

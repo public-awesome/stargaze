@@ -8,30 +8,31 @@ option go_package = "github.com/public-awesome/stargaze/v9/x/globalfee/types";
 
 // Params holds parameters for the globalfee module.
 message Params {
-    option (gogoproto.goproto_stringer) = false;
-    // Addresses which are whitelisted to modify the gas free operations
-    repeated string privileged_address = 1;
-    // Minimum stores the minimum gas price(s) for all TX on the chain.
-    repeated cosmos.base.v1beta1.DecCoin minimum_gas_prices = 2 [
-        (gogoproto.nullable) = false,
-        (gogoproto.jsontag) = "minimum_gas_prices,omitempty",
-        (gogoproto.moretags) = "yaml:\"minimum_gas_prices\"",
-        (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.DecCoins"
-      ];
+  option (gogoproto.goproto_stringer) = false;
+  // Addresses which are whitelisted to modify the gas free operations
+  repeated string privileged_address = 1;
+  // Minimum stores the minimum gas price(s) for all TX on the chain.
+  repeated cosmos.base.v1beta1.DecCoin minimum_gas_prices = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.jsontag) = "minimum_gas_prices,omitempty",
+    (gogoproto.moretags) = "yaml:\"minimum_gas_prices\"",
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.DecCoins"
+  ];
 }
 
 // Configuration for code Ids which can have zero gas operations
 message CodeAuthorization {
-    // authorized code ids
-    uint64 code_id = 1 [ (gogoproto.moretags) = "yaml:\"code_id\"" ];
-    // authorized contract operation methods
-    repeated string methods = 2 [ (gogoproto.moretags) = "yaml:\"methods\"" ];
+  // authorized code ids
+  uint64 code_id = 1 [ (gogoproto.moretags) = "yaml:\"code_id\"" ];
+  // authorized contract operation methods
+  repeated string methods = 2 [ (gogoproto.moretags) = "yaml:\"methods\"" ];
 }
 
 // Configuration for contract addresses which can have zero gas operations
 message ContractAuthorization {
-    // authorized contract addresses
-    string contract_address = 1 [ (gogoproto.moretags) = "yaml:\"contract_address\"" ];
-    // authorized contract operation methods
-    repeated string methods = 2 [ (gogoproto.moretags) = "yaml:\"methods\"" ];
+  // authorized contract addresses
+  string contract_address = 1
+      [ (gogoproto.moretags) = "yaml:\"contract_address\"" ];
+  // authorized contract operation methods
+  repeated string methods = 2 [ (gogoproto.moretags) = "yaml:\"methods\"" ];
 }

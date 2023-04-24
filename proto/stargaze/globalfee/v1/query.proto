@@ -19,6 +19,9 @@ service Query {
     rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
         option (google.api.http).get = "/stargaze/globalfee/v1/params";
     }
+    rpc Authorizations(QueryAuthorizationsRequest) returns (QueryAuthorizationsResponse) {
+        option (google.api.http).get = "/stargaze/globalfee/v1/authorizations";
+    }
 }
 
 message QueryCodeAuthorizationRequest {
@@ -41,4 +44,11 @@ message QueryParamsRequest {}
 
 message QueryParamsResponse {
     Params params = 1;
+}
+
+message QueryAuthorizationsRequest {}
+
+message QueryAuthorizationsResponse {
+    repeated CodeAuthorization code_authorizations = 1;
+    repeated ContractAuthorization contract_authorizations = 2;
 }
