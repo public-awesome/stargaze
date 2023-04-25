@@ -8,7 +8,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/cosmos/cosmos-sdk/x/authz"
 	"github.com/public-awesome/stargaze/v9/x/globalfee/types"
 )
 
@@ -54,40 +53,26 @@ func (mfd FeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, ne
 	msgs := feeTx.GetMsgs()
 
 	// currently accepting zero fee transactions only when the tx contains only the authorized operations that can bypass the minimum fee
-	zeroFeeMsgs, err := mfd.containsOnlyZeroFeeMsgs(ctx, msgs)
-	if err != nil {
-		return ctx, err
-	}
+	onlyZeroFeeMsgs := mfd.containsOnlyZeroFeeMsgs(ctx, msgs)
 
-	return mfd.checkFees(ctx, feeTx, tx, zeroFeeMsgs, simulate, next) // https://github.com/cosmos/gaia/blob/6fe097e3280baa360a28b59a29b8cca964a5ae97/x/globalfee/ante/fee.go
+	return mfd.checkFees(ctx, feeTx, tx, onlyZeroFeeMsgs, simulate, next) // https://github.com/cosmos/gaia/blob/6fe097e3280baa360a28b59a29b8cca964a5ae97/x/globalfee/ante/fee.go
 }
 
-func (mfd FeeDecorator) containsOnlyZeroFeeMsgs(ctx sdk.Context, msgs []sdk.Msg) (bool, error) {
+func (mfd FeeDecorator) containsOnlyZeroFeeMsgs(ctx sdk.Context, msgs []sdk.Msg) bool {
 	for _, m := range msgs {
 		switch msg := m.(type) {
 		case *wasmtypes.MsgExecuteContract:
 			{
 				if !mfd.isZeroFeeMsg(ctx, msg) {
-					return false, nil
+					return false
 				}
 			}
-		case *authz.MsgExec:
-			{
-				var authzMsgs []sdk.Msg
-				for _, v := range msg.Msgs {
-					var wrappedMsg sdk.Msg
-					err := mfd.codec.UnpackAny(v, &wrappedMsg)
-					if err != nil {
-						return false, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "error decoding authz messages")
-					}
-					authzMsgs = append(authzMsgs, wrappedMsg)
-				}
-				return mfd.containsOnlyZeroFeeMsgs(ctx, authzMsgs)
-			}
+		default:
+			return false
 		}
 	}
 
-	return true, nil
+	return true
 }
 
 func (mfd FeeDecorator) isZeroFeeMsg(ctx sdk.Context, msg *wasmtypes.MsgExecuteContract) bool {
@@ -148,12 +133,12 @@ func (mfd FeeDecorator) checkFees(ctx sdk.Context, feeTx sdk.FeeTx, tx sdk.Tx, o
 
 	// CombinedFeeRequirement should never be empty since
 	// global fee is set to its default value, i.e. 0ustars, if empty
-	combinedFeeRequirement := combinedFeeRequirement(requiredGlobalFees, localFees)
-	if len(combinedFeeRequirement) == 0 {
+	combinedFeeRequired := combinedFeeRequirement(requiredGlobalFees, localFees)
+	if len(combinedFeeRequired) == 0 {
 		return ctx, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "required fees are not setup.")
 	}
 
-	nonZeroCoinFeesReq, zeroCoinFeesDenomReq := getNonZeroFees(combinedFeeRequirement)
+	nonZeroCoinFeesReq, zeroCoinFeesDenomReq := getNonZeroFees(combinedFeeRequired)
 
 	// feeCoinsNonZeroDenom contains non-zero denominations from the combinedFeeRequirement
 	//
@@ -166,7 +151,7 @@ func (mfd FeeDecorator) checkFees(ctx sdk.Context, feeTx sdk.FeeTx, tx sdk.Tx, o
 	// if feeCoinsNoZeroDenom=[], DenomsSubsetOf returns true
 	// if feeCoinsNoZeroDenom is not empty, but nonZeroCoinFeesReq empty, return false
 	if !feeCoinsNonZeroDenom.DenomsSubsetOf(nonZeroCoinFeesReq) {
-		return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "fee is not a subset of required fees; got %s, required: %s", feeCoins, combinedFeeRequirement)
+		return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "fee is not a subset of required fees; got %s, required: %s", feeCoins, combinedFeeRequired)
 	}
 
 	// only check feeCoinsNoZeroDenom has coins IsAnyGTE than nonZeroCoinFeesReq
@@ -186,7 +171,7 @@ func (mfd FeeDecorator) checkFees(ctx sdk.Context, feeTx sdk.FeeTx, tx sdk.Tx, o
 		// because when nonZeroCoinFeesReq empty, and DenomsSubsetOf check passed,
 		// the tx should already passed before)
 		if !feeCoinsNonZeroDenom.IsAnyGTE(nonZeroCoinFeesReq) {
-			return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, combinedFeeRequirement)
+			return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, combinedFeeRequired)
 		}
 	}
 
