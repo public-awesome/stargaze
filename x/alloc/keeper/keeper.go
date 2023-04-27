@@ -65,10 +65,8 @@ func (k Keeper) GetModuleAccount(ctx sdk.Context, moduleName string) authtypes.A
 }
 
 func (k Keeper) sendToFairburnPool(ctx sdk.Context, sender sdk.AccAddress, amount sdk.Coins) error {
-	if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, sender, types.FairburnPoolName, amount); err != nil {
-		return err
-	}
-	return nil
+	err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, sender, types.FairburnPoolName, amount)
+	return err
 }
 
 // DistributeInflation distributes module-specific inflation
