@@ -4,16 +4,16 @@ import (
 	"encoding/json"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
+	"github.com/cometbft/cometbft/libs/log"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/tendermint/spm/cosmoscmd"
-	"github.com/tendermint/tendermint/libs/log"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	"github.com/cosmos/cosmos-sdk/simapp"
+	"cosmossdk.io/simapp"
+	dbm "github.com/cometbft/cometbft-db"
+	abci "github.com/cometbft/cometbft/abci/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stargazeapp "github.com/public-awesome/stargaze/v10/app"
 	"github.com/public-awesome/stargaze/v10/x/mint/types"
-	abci "github.com/tendermint/tendermint/abci/types"
-	dbm "github.com/tendermint/tm-db"
 )
 
 // returns context and an app with updated mint keeper

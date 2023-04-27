@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/cometbft/cometbft/crypto/secp256k1"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -13,8 +15,6 @@ import (
 	"github.com/public-awesome/stargaze/v10/x/alloc/keeper"
 	"github.com/public-awesome/stargaze/v10/x/alloc/types"
 	"github.com/stretchr/testify/suite"
-	"github.com/tendermint/tendermint/crypto/secp256k1"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
 type KeeperTestSuite struct {

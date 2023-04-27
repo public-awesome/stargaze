@@ -3,9 +3,9 @@ package keeper
 import (
 	"time"
 
+	abci "github.com/cometbft/cometbft/abci/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/public-awesome/stargaze/v10/x/claim/types"
-	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.ValidatorUpdate {

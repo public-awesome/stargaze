@@ -3,11 +3,11 @@ package mint_test
 import (
 	"testing"
 
+	abcitypes "github.com/cometbft/cometbft/abci/types"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/stretchr/testify/require"
-	abcitypes "github.com/tendermint/tendermint/abci/types"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	"github.com/cosmos/cosmos-sdk/simapp"
+	"cosmossdk.io/simapp"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/public-awesome/stargaze/v10/x/mint/types"
 )

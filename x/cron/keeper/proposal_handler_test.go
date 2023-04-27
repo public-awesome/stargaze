@@ -3,6 +3,7 @@ package keeper_test
 import (
 	"testing"
 
+	"github.com/cometbft/cometbft/libs/rand"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/address"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -11,7 +12,6 @@ import (
 	"github.com/public-awesome/stargaze/v10/x/cron/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/tendermint/tendermint/libs/rand"
 )
 
 func TestGovHandler(t *testing.T) {
