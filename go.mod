@@ -3,12 +3,12 @@ module github.com/public-awesome/stargaze/v10
 go 1.20
 
 require (
-	github.com/CosmWasm/wasmd v0.31.0
+	github.com/CosmWasm/wasmd v0.40.0
 	github.com/CosmWasm/wasmvm v1.2.3
 	github.com/armon/go-metrics v0.4.1
-	github.com/cosmos/cosmos-sdk v0.45.14
+	github.com/cosmos/cosmos-sdk v0.47.2
 	github.com/cosmos/go-bip39 v1.0.0
-	github.com/cosmos/ibc-go/v4 v4.3.0
+	github.com/cosmos/ibc-go/v7 v7.0.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.5.3
 	github.com/gorilla/mux v1.8.0
@@ -19,8 +19,6 @@ require (
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.2
 	github.com/tendermint/spm v0.0.0-00010101000000-000000000000
-	github.com/tendermint/tendermint v0.34.26
-	github.com/tendermint/tm-db v0.6.7
 	google.golang.org/genproto v0.0.0-20230223222841-637eb2293923
 	google.golang.org/grpc v1.53.0
 	google.golang.org/protobuf v1.30.0
