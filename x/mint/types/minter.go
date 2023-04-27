@@ -26,7 +26,7 @@ func DefaultInitialMinter() Minter {
 }
 
 // validate minter
-func ValidateMinter(minter Minter) error {
+func ValidateMinter(_ Minter) error {
 	return nil
 }
 

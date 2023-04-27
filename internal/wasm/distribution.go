@@ -34,7 +34,7 @@ type DistributionMsg struct {
 	FundCommunityPool *FundCommunityPool `json:"fund_community_pool,omitempty"`
 }
 
-func CustomDistributionEncoder(contract sdk.AccAddress, data json.RawMessage, version string) ([]sdk.Msg, error) {
+func CustomDistributionEncoder(contract sdk.AccAddress, data json.RawMessage, _ string) ([]sdk.Msg, error) {
 	msg := &DistributionMsg{}
 	err := json.Unmarshal(data, msg)
 	if err != nil {
