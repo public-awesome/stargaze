@@ -175,7 +175,7 @@ func InitTestnet(
 	minGasPrices,
 	nodeDirPrefix,
 	nodeDaemonHome,
-	startingIPAddress,
+	_ string, // startingIPAddress
 	keyringBackend,
 	algoStr string,
 	numValidators int,

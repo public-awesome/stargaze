@@ -225,7 +225,8 @@ func TestMinCommissionAuthzAnteHandler(t *testing.T) {
 	require.Equal(t, sdk.MustNewDecFromStr("0.09"), validator.Commission.Rate)
 }
 
-func checkValidator(t *testing.T, app *stargazeapp.App, addr sdk.ValAddress, expFound bool) types.Validator {
+func checkValidator(t *testing.T, app *stargazeapp.App, addr sdk.ValAddress, expFound bool) types.Validator { //nolint:unparam // expFound always receives true currently, but may get different input in the future.
+	t.Helper()
 	ctxCheck := app.BaseApp.NewContext(true, tmproto.Header{})
 	validator, found := app.StakingKeeper.GetValidator(ctxCheck, addr)
 	require.Equal(t, expFound, found)

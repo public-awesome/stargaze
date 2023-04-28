@@ -116,11 +116,11 @@ type CapturingGovRouter struct {
 	captured []govtypes.Content
 }
 
-func (m CapturingGovRouter) HasRoute(r string) bool {
+func (m CapturingGovRouter) HasRoute(_ string) bool {
 	return true
 }
 
-func (m *CapturingGovRouter) GetRoute(path string) (h govtypes.Handler) {
+func (m *CapturingGovRouter) GetRoute(_ string) (h govtypes.Handler) {
 	return func(ctx sdk.Context, content govtypes.Content) error {
 		m.captured = append(m.captured, content)
 		return nil

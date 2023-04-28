@@ -66,7 +66,7 @@ func Test_IteratePrivileged(t *testing.T) {
 
 	count := 0
 	k.IteratePrivileged(ctx, func(addr sdk.AccAddress) bool {
-		count += 1
+		count++
 		return false
 	})
 	if count != 2 {
