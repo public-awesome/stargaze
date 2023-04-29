@@ -63,7 +63,7 @@ func (vs *VersionSnapshotter) Snapshot(height uint64, protoWriter protoio.Writer
 }
 
 // Restore restores a state snapshot from the protobuf items read from the reader.
-func (vs *VersionSnapshotter) Restore(height uint64, format uint32, protoReader protoio.Reader) (snapshot.SnapshotItem, error) {
+func (vs *VersionSnapshotter) Restore(_ uint64, format uint32, protoReader protoio.Reader) (snapshot.SnapshotItem, error) {
 	if format == SnapshotFormat {
 		var item snapshot.SnapshotItem
 		for {
