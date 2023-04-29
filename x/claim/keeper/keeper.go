@@ -56,7 +56,7 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 }
 
 // GetModuleAccountBalance gets the airdrop coin balance of module account
-func (k Keeper) GetModuleAccountAddress(ctx sdk.Context) sdk.AccAddress {
+func (k Keeper) GetModuleAccountAddress(_ sdk.Context) sdk.AccAddress {
 	return k.accountKeeper.GetModuleAddress(types.ModuleName)
 }
 

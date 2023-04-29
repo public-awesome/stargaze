@@ -10,7 +10,7 @@ import (
 
 var LibwasmVersion = "1.2.3"
 
-func CheckLibwasmVersion(cmd *cobra.Command, args []string) error {
+func CheckLibwasmVersion(_ *cobra.Command, _ []string) error {
 	version, err := wasmvmapi.LibwasmvmVersion()
 	if err != nil {
 		return fmt.Errorf("unable to retrieve libwasmversion %w", err)

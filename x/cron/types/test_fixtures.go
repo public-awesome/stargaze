@@ -39,5 +39,6 @@ func RandomAddress(_ *testing.T) sdk.AccAddress {
 }
 
 func RandomBech32Address(t *testing.T) string {
+	t.Helper()
 	return RandomAddress(t).String()
 }

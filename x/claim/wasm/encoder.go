@@ -50,7 +50,7 @@ func (c ClaimFor) Encode(contract sdk.AccAddress) ([]sdk.Msg, error) {
 	return []sdk.Msg{msg}, nil
 }
 
-func Encoder(contract sdk.AccAddress, data json.RawMessage, version string) ([]sdk.Msg, error) {
+func Encoder(contract sdk.AccAddress, data json.RawMessage, _ string) ([]sdk.Msg, error) {
 	msg := &ClaimMsg{}
 	err := json.Unmarshal(data, msg)
 	if err != nil {
