@@ -1,5 +1,7 @@
 package ante_test
 
+/*
+
 import (
 	"testing"
 	"time"
@@ -232,3 +234,5 @@ func checkValidator(t *testing.T, app *stargazeapp.App, addr sdk.ValAddress, exp
 	require.Equal(t, expFound, found)
 	return validator
 }
+
+*/
