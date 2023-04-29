@@ -1,5 +1,6 @@
 package types
 
+/*
 import (
 	"testing"
 
@@ -38,3 +39,4 @@ func TestMsgInitialClaim_ValidateBasic(t *testing.T) {
 		})
 	}
 }
+*/

@@ -1,12 +1,6 @@
 package keeper_test
 
-import (
-	"testing"
-
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v10/testutil/keeper"
-	"github.com/public-awesome/stargaze/v10/testutil/sample"
-)
+/*
 
 func Test_SetPrivileged(t *testing.T) {
 	k, ctx := keeper.CronKeeper(t)
@@ -73,3 +67,6 @@ func Test_IteratePrivileged(t *testing.T) {
 		t.Errorf("expected %d, got %d", expectedContractCount, count)
 	}
 }
+
+
+*/

@@ -6,7 +6,6 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cometbft/cometbft/libs/log"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
-	"github.com/tendermint/spm/cosmoscmd"
 
 	"cosmossdk.io/simapp"
 	dbm "github.com/cometbft/cometbft-db"
@@ -51,7 +50,7 @@ func setup(isCheckTx bool) *stargazeapp.App {
 
 func genApp(withGenesis bool, invCheckPeriod uint) (*stargazeapp.App, stargazeapp.GenesisState) {
 	db := dbm.NewMemDB()
-	encCdc := cosmoscmd.MakeEncodingConfig(stargazeapp.ModuleBasics)
+	encCdc := stargazeapp.MakeTestEncodingConfig()
 	app := stargazeapp.NewStargazeApp(
 		log.NewNopLogger(),
 		db,
@@ -66,7 +65,7 @@ func genApp(withGenesis bool, invCheckPeriod uint) (*stargazeapp.App, stargazeap
 		wasm.DisableAllProposals,
 	)
 
-	originalApp := app.(*stargazeapp.App)
+	originalApp := app
 
 	if withGenesis {
 		return originalApp, stargazeapp.NewDefaultGenesisState(encCdc.Marshaler)

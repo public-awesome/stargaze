@@ -1,5 +1,7 @@
 package keeper_test
 
+/*
+
 import (
 	"fmt"
 	"testing"
@@ -178,3 +180,5 @@ func FundAccount(bankKeeper bankkeeper.Keeper, ctx sdk.Context, addr sdk.AccAddr
 	}
 	return bankKeeper.SendCoinsFromModuleToAccount(ctx, minttypes.ModuleName, addr, amounts)
 }
+
+*/

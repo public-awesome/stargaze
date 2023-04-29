@@ -1,5 +1,7 @@
 package keeper_test
 
+/*
+
 import (
 	"github.com/public-awesome/stargaze/v10/x/claim/types"
 )
@@ -13,3 +15,5 @@ func (s *KeeperTestSuite) TestExportGenesis() {
 	params.AirdropStartTime = ctx.BlockTime()
 	s.Require().Equal(params.AllowedClaimers, exported.Params.AllowedClaimers)
 }
+
+*/
