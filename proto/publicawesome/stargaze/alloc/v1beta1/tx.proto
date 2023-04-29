@@ -1,0 +1,61 @@
+syntax = "proto3";
+package publicawesome.stargaze.alloc.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
+// this line is used by starport scaffolding # proto/tx/import
+
+option go_package = "github.com/public-awesome/stargaze/v10/x/alloc/types";
+
+// Msg defines the alloc Msg service.
+service Msg {
+  // CreateVestingAccount defines a method that enables creating a vesting
+  // account.
+  rpc CreateVestingAccount(MsgCreateVestingAccount)
+      returns (MsgCreateVestingAccountResponse);
+
+  // FundFairburnPool defines a method to allow an account to directly
+  // fund the fee collector module account.
+  rpc FundFairburnPool(MsgFundFairburnPool)
+      returns (MsgFundFairburnPoolResponse);
+}
+
+// MsgCreateVestingAccount defines a message that enables creating a vesting
+// account.
+message MsgCreateVestingAccount {
+  option (gogoproto.equal) = true;
+
+  string from_address = 1 [ (gogoproto.moretags) = "yaml:\"from_address\"" ];
+  string to_address = 2 [ (gogoproto.moretags) = "yaml:\"to_address\"" ];
+  repeated cosmos.base.v1beta1.Coin amount = 3 [
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
+  ];
+
+  int64 start_time = 4 [ (gogoproto.moretags) = "yaml:\"start_time\"" ];
+  int64 end_time = 5 [ (gogoproto.moretags) = "yaml:\"end_time\"" ];
+  bool delayed = 6;
+}
+
+// MsgCreateVestingAccountResponse defines the Msg/CreateVestingAccount response
+// type.
+message MsgCreateVestingAccountResponse {}
+
+// MsgFundFairburnPool allows an account to directly
+// fund the fee collector pool.
+message MsgFundFairburnPool {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string sender = 1;
+
+  repeated cosmos.base.v1beta1.Coin amount = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
+  ];
+}
+
+// MsgFundFairburnPoolResponse defines the Msg/MsgFundFairburnPool response
+// type.
+message MsgFundFairburnPoolResponse {}
