@@ -6,8 +6,8 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cometbft/cometbft/libs/log"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	"github.com/public-awesome/stargaze/v10/app"
 
-	"cosmossdk.io/simapp"
 	dbm "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -56,11 +56,7 @@ func genApp(withGenesis bool, invCheckPeriod uint) (*stargazeapp.App, stargazeap
 		db,
 		nil,
 		true,
-		map[int64]bool{},
-		simapp.DefaultNodeHome,
-		invCheckPeriod,
-		encCdc,
-		simapp.EmptyAppOptions{},
+		app.EmptyAppOptions{},
 		nil,
 		wasm.DisableAllProposals,
 	)
@@ -68,7 +64,7 @@ func genApp(withGenesis bool, invCheckPeriod uint) (*stargazeapp.App, stargazeap
 	originalApp := app
 
 	if withGenesis {
-		return originalApp, stargazeapp.NewDefaultGenesisState(encCdc.Marshaler)
+		return originalApp, stargazeapp.NewDefaultGenesisState(encCdc.Codec)
 	}
 
 	return originalApp, stargazeapp.GenesisState{}
