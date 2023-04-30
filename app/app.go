@@ -7,7 +7,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"cosmossdk.io/simapp"
+	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
+	reflectionv1 "cosmossdk.io/api/cosmos/reflection/v1"
+	"github.com/cosmos/cosmos-sdk/runtime"
+	runtimeservices "github.com/cosmos/cosmos-sdk/runtime/services"
+
 	dbm "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
 	tmjson "github.com/cometbft/cometbft/libs/json"
@@ -65,6 +69,7 @@ import (
 	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/cosmos/cosmos-sdk/x/group"
 	groupkeeper "github.com/cosmos/cosmos-sdk/x/group/keeper"
 	groupmodule "github.com/cosmos/cosmos-sdk/x/group/module"
@@ -118,6 +123,9 @@ import (
 	claimmoduletypes "github.com/public-awesome/stargaze/v10/x/claim/types"
 	claimwasm "github.com/public-awesome/stargaze/v10/x/claim/wasm"
 
+	ibcfee "github.com/cosmos/ibc-go/v7/modules/apps/29-fee"
+	ibcfeekeeper "github.com/cosmos/ibc-go/v7/modules/apps/29-fee/keeper"
+	ibcfeetypes "github.com/cosmos/ibc-go/v7/modules/apps/29-fee/types"
 	cronmodule "github.com/public-awesome/stargaze/v10/x/cron"
 	cronclient "github.com/public-awesome/stargaze/v10/x/cron/client"
 	cronmodulekeeper "github.com/public-awesome/stargaze/v10/x/cron/keeper"
@@ -234,6 +242,7 @@ var (
 		claimmodule.AppModuleBasic{},
 		allocmodule.AppModuleBasic{},
 		cronmodule.AppModuleBasic{},
+		ibcfee.AppModuleBasic{},
 		wasm.AppModuleBasic{},
 		ica.AppModuleBasic{},
 	)
@@ -247,17 +256,17 @@ var (
 		stakingtypes.NotBondedPoolName:    {authtypes.Burner, authtypes.Staking},
 		govtypes.ModuleName:               {authtypes.Burner},
 		ibctransfertypes.ModuleName:       {authtypes.Minter, authtypes.Burner},
+		ibcfeetypes.ModuleName:            nil,
 		claimmoduletypes.ModuleName:       {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		allocmoduletypes.ModuleName:       {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		allocmoduletypes.FairburnPoolName: nil,
 		wasm.ModuleName:                   {authtypes.Burner},
 		icatypes.ModuleName:               nil,
-		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 )
 
 var (
-	_ simapp.App              = (*App)(nil)
+	_ runtime.AppI            = (*App)(nil)
 	_ servertypes.Application = (*App)(nil)
 )
 
@@ -304,14 +313,15 @@ type App struct {
 	ConsensusParamsKeeper consensusparamkeeper.Keeper
 
 	EvidenceKeeper evidencekeeper.Keeper
-	TransferKeeper ibctransferkeeper.Keeper
 	FeeGrantKeeper feegrantkeeper.Keeper
 	AuthzKeeper    authzkeeper.Keeper
 	WasmKeeper     wasm.Keeper
 
 	// IBC
-	IBCKeeper     *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
-	ICAHostKeeper icahostkeeper.Keeper
+	IBCKeeper      *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
+	IBCFeeKeeper   ibcfeekeeper.Keeper
+	TransferKeeper ibctransferkeeper.Keeper
+	ICAHostKeeper  icahostkeeper.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
@@ -362,7 +372,8 @@ func NewStargazeApp(
 		authtypes.StoreKey, banktypes.StoreKey, stakingtypes.StoreKey,
 		minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
 		govtypes.StoreKey, paramstypes.StoreKey, ibcexported.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey,
-		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
+		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey, authzkeeper.StoreKey, ibcfeetypes.StoreKey,
+		nftkeeper.StoreKey, group.StoreKey, consensusparamtypes.StoreKey,
 		claimmoduletypes.StoreKey,
 		allocmoduletypes.StoreKey,
 		authzkeeper.StoreKey,
@@ -469,11 +480,7 @@ func NewStargazeApp(
 	)
 
 	app.FeeGrantKeeper = feegrantkeeper.NewKeeper(appCodec, keys[feegrant.StoreKey], app.AccountKeeper)
-	app.AuthzKeeper = authzkeeper.NewKeeper(
-		keys[authzkeeper.StoreKey],
-		appCodec,
-		app.BaseApp.MsgServiceRouter(),
-	)
+	app.AuthzKeeper = authzkeeper.NewKeeper(keys[authzkeeper.StoreKey], appCodec, app.MsgServiceRouter(), app.AccountKeeper)
 
 	// get skipUpgradeHeights from the app options
 	skipUpgradeHeights := map[int64]bool{}
@@ -571,6 +578,14 @@ func NewStargazeApp(
 		app.BankKeeper,
 	)
 
+	// IBC Fee Module keeper
+	app.IBCFeeKeeper = ibcfeekeeper.NewKeeper(
+		appCodec, keys[ibcfeetypes.StoreKey],
+		app.IBCKeeper.ChannelKeeper, // may be replaced with IBC middleware
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper, app.AccountKeeper, app.BankKeeper,
+	)
+
 	// Create Transfer Keepers
 	app.TransferKeeper = ibctransferkeeper.NewKeeper(
 		appCodec, keys[ibctransfertypes.StoreKey], app.GetSubspace(ibctransfertypes.ModuleName),
@@ -581,13 +596,14 @@ func NewStargazeApp(
 	transferIBCModule := transfer.NewIBCModule(app.TransferKeeper)
 	app.ICAHostKeeper = icahostkeeper.NewKeeper(
 		appCodec,
-		app.keys[icahosttypes.StoreKey],
+		keys[icahosttypes.StoreKey],
 		app.GetSubspace(icahosttypes.SubModuleName),
+		app.IBCFeeKeeper, // use ics29 fee as ics4Wrapper in middleware stack
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		app.AccountKeeper,
 		scopedICAHostKeeper,
-		bApp.MsgServiceRouter(),
+		app.MsgServiceRouter(),
 	)
 
 	icaModule := ica.NewAppModule(nil, &app.ICAHostKeeper)
@@ -603,7 +619,7 @@ func NewStargazeApp(
 
 	// Create evidence Keeper for to register the IBC light client misbehaviour evidence route
 	evidenceKeeper := evidencekeeper.NewKeeper(
-		appCodec, keys[evidencetypes.StoreKey], &app.StakingKeeper, app.SlashingKeeper,
+		appCodec, keys[evidencetypes.StoreKey], app.StakingKeeper, app.SlashingKeeper,
 	)
 	// If evidence needs to be handled for the app, set routes in router here and seal
 	app.EvidenceKeeper = *evidenceKeeper
@@ -791,6 +807,14 @@ func NewStargazeApp(
 	app.ModuleManager.RegisterInvariants(app.CrisisKeeper)
 	app.configurator = module.NewConfigurator(app.appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
 	app.ModuleManager.RegisterServices(app.configurator)
+
+	autocliv1.RegisterQueryServer(app.GRPCQueryRouter(), runtimeservices.NewAutoCLIQueryService(app.ModuleManager.Modules))
+
+	reflectionSvc, err := runtimeservices.NewReflectionService()
+	if err != nil {
+		panic(err)
+	}
+	reflectionv1.RegisterReflectionServiceServer(app.GRPCQueryRouter(), reflectionSvc)
 
 	// add test gRPC service for testing gRPC queries in isolation
 	testdata.RegisterQueryServer(app.GRPCQueryRouter(), testdata.QueryImpl{})

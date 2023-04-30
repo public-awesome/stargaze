@@ -39,7 +39,7 @@ func setup(isCheckTx bool) *stargazeapp.App {
 		app.InitChain(
 			abci.RequestInitChain{
 				Validators:      []abci.ValidatorUpdate{},
-				ConsensusParams: simapp.DefaultConsensusParams,
+				ConsensusParams: tmproto.DefaultConsensusParams,
 				AppStateBytes:   stateBytes,
 			},
 		)
