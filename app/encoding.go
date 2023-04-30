@@ -17,3 +17,13 @@ func MakeTestEncodingConfig() params.EncodingConfig {
 	ModuleBasics.RegisterInterfaces(encodingConfig.InterfaceRegistry)
 	return encodingConfig
 }
+
+// MakeEncodingConfig creates a new EncodingConfig with all modules registered
+func MakeEncodingConfig() params.EncodingConfig {
+	encodingConfig := params.MakeTestEncodingConfig()
+	std.RegisterLegacyAminoCodec(encodingConfig.Amino)
+	std.RegisterInterfaces(encodingConfig.InterfaceRegistry)
+	ModuleBasics.RegisterLegacyAminoCodec(encodingConfig.Amino)
+	ModuleBasics.RegisterInterfaces(encodingConfig.InterfaceRegistry)
+	return encodingConfig
+}
