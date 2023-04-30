@@ -569,6 +569,13 @@ func NewStargazeApp(
 		),
 	)
 
+	app.NFTKeeper = nftkeeper.NewKeeper(
+		keys[nftkeeper.StoreKey],
+		appCodec,
+		app.AccountKeeper,
+		app.BankKeeper,
+	)
+
 	// Create Transfer Keepers
 	app.TransferKeeper = ibctransferkeeper.NewKeeper(
 		appCodec, keys[ibctransfertypes.StoreKey], app.GetSubspace(ibctransfertypes.ModuleName),
