@@ -17,7 +17,7 @@ const upgradeName = "v10"
 // RegisterUpgradeHandlers returns upgrade handlers
 func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 	app.UpgradeKeeper.SetUpgradeHandler(upgradeName, func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
-		return app.mm.RunMigrations(ctx, cfg, fromVM)
+		return app.ModuleManager.RunMigrations(ctx, cfg, fromVM)
 	})
 
 	upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
