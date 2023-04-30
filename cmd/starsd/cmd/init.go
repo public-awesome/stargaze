@@ -112,7 +112,6 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 			config.P2P.MaxNumOutboundPeers = 60
 			config.Mempool.Size = 10000
 			config.StateSync.TrustPeriod = 112 * time.Hour
-			config.FastSync.Version = "v0"
 
 			// Get bip39 mnemonic
 			var mnemonic string
