@@ -9,7 +9,7 @@ import (
 	snapshot "github.com/cosmos/cosmos-sdk/snapshots/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	protoio "github.com/gogo/protobuf/io"
+	protoio "github.com/cosmos/gogoproto/io"
 )
 
 const (
