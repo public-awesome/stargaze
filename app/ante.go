@@ -57,12 +57,11 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 	anteDecorators := []sdk.AnteDecorator{
 		ante.NewSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
 		// limit simulation gas
-		wasmkeeper.NewLimitSimulationGasDecorator(options.WasmConfig.SimulationGasLimit),
+		wasmkeeper.NewLimitSimulationGasDecorator(options.WasmConfig.SimulationGasLimit), // after setup context to enforce limits early
+		wasmkeeper.NewCountTXDecorator(options.TXCounterStoreKey),
+		ante.NewExtensionOptionsDecorator(options.ExtensionOptionChecker),
 		stargazeante.NewMinCommissionDecorator(options.Codec),
 		stargazeante.NewMinDepositDecorator(options.Codec, options.govKeeper),
-		wasmkeeper.NewCountTXDecorator(options.TXCounterStoreKey),
-		ante.NewRejectExtensionOptionsDecorator(),
-		ante.NewMempoolFeeDecorator(),
 		ante.NewValidateBasicDecorator(),
 		ante.NewTxTimeoutHeightDecorator(),
 		ante.NewValidateMemoDecorator(options.AccountKeeper),

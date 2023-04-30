@@ -182,7 +182,6 @@ func PrepareGenesis(
 	// chain params genesis
 	genDoc.GenesisTime = genesisParams.GenesisTime
 	genDoc.ChainID = chainID
-	genDoc.ConsensusParams = genesisParams.ConsensusParams
 
 	// IBC transfer module genesis
 	ibcGenState := ibctransfertypes.DefaultGenesisState()
