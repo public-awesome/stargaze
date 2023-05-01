@@ -1,0 +1,27 @@
+syntax = "proto3";
+package publicawesome.stargaze.tokenfactory.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
+option go_package = "github.com/public-awesome/stargaze/v10/x/tokenfactory/types";
+
+// DenomAuthorityMetadata specifies metadata for addresses that have specific
+// capabilities over a token factory denom. Right now there is only one Admin
+// permission, but is planned to be extended to the future.
+message DenomAuthorityMetadata {
+  option (gogoproto.equal) = true;
+
+  // Can be empty for no admin, or a valid stargaze address
+  string admin = 1 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
+}
+
+// Params defines the parameters for the tokenfactory module.
+message Params {
+    repeated cosmos.base.v1beta1.Coin denom_creation_fee = 1 [
+      (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+      (gogoproto.moretags) = "yaml:\"denom_creation_fee\"",
+      (gogoproto.nullable) = false
+    ];
+  }
