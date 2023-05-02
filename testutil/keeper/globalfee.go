@@ -9,6 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/public-awesome/stargaze/v9/app"
 	"github.com/public-awesome/stargaze/v9/x/globalfee/keeper"
 	"github.com/public-awesome/stargaze/v9/x/globalfee/types"
