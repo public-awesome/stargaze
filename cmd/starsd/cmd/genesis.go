@@ -32,9 +32,9 @@ import (
 	// appParams "github.com/public-awesome/stargaze/app/params"
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-	alloctypes "github.com/public-awesome/stargaze/v9/x/alloc/types"
-	claimtypes "github.com/public-awesome/stargaze/v9/x/claim/types"
-	globalfeetypes "github.com/public-awesome/stargaze/v9/x/globalfee/types"
+	alloctypes "github.com/public-awesome/stargaze/v10/x/alloc/types"
+	claimtypes "github.com/public-awesome/stargaze/v10/x/claim/types"
+	globalfeetypes "github.com/public-awesome/stargaze/v10/x/globalfee/types"
 )
 
 const (

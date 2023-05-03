@@ -3,43 +3,47 @@ package publicawesome.stargaze.globalfee.v1;
 
 import "stargaze/globalfee/v1/globalfee.proto";
 
-option go_package = "github.com/public-awesome/stargaze/v9/x/globalfee/types";
+option go_package = "github.com/public-awesome/stargaze/v10/x/globalfee/types";
 
 // Msg defines the alloc Msg service.
 service Msg {
-    rpc SetCodeAuthorization (MsgSetCodeAuthorization) returns (MsgSetCodeAuthorizationResponse);
+  rpc SetCodeAuthorization(MsgSetCodeAuthorization)
+      returns (MsgSetCodeAuthorizationResponse);
 
-    rpc RemoveCodeAuthorization(MsgRemoveCodeAuthorization) returns (MsgRemoveCodeAuthorizationResponse);
-    
-    rpc SetContractAuthorization (MsgSetContractAuthorization ) returns (MsgSetContractAuthorizationResponse);
+  rpc RemoveCodeAuthorization(MsgRemoveCodeAuthorization)
+      returns (MsgRemoveCodeAuthorizationResponse);
 
-    rpc RemoveContractAuthorization(MsgRemoveContractAuthorization) returns (MsgRemoveContractAuthorizationResponse);
+  rpc SetContractAuthorization(MsgSetContractAuthorization)
+      returns (MsgSetContractAuthorizationResponse);
+
+  rpc RemoveContractAuthorization(MsgRemoveContractAuthorization)
+      returns (MsgRemoveContractAuthorizationResponse);
 }
 
 message MsgSetCodeAuthorization {
-    string sender = 1;
-    CodeAuthorization code_authorization = 2;
+  string sender = 1;
+  CodeAuthorization code_authorization = 2;
 }
 
 message MsgSetCodeAuthorizationResponse {}
 
 message MsgRemoveCodeAuthorization {
-    string sender = 1;
-    uint64 code_id = 2;
+  string sender = 1;
+  uint64 code_id = 2;
 }
 
 message MsgRemoveCodeAuthorizationResponse {}
 
 message MsgSetContractAuthorization {
-    string sender = 1;
-    ContractAuthorization contract_authorization = 2;
+  string sender = 1;
+  ContractAuthorization contract_authorization = 2;
 }
 
 message MsgSetContractAuthorizationResponse {}
 
 message MsgRemoveContractAuthorization {
-    string sender = 1;
-    string contract_address = 2;
+  string sender = 1;
+  string contract_address = 2;
 }
 
 message MsgRemoveContractAuthorizationResponse {}

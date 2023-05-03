@@ -12,8 +12,8 @@ import (
 	ibcante "github.com/cosmos/ibc-go/v4/modules/core/ante"
 	ibckeeper "github.com/cosmos/ibc-go/v4/modules/core/keeper"
 	stargazeante "github.com/public-awesome/stargaze/v10/internal/ante"
-	globalfeeante "github.com/public-awesome/stargaze/v9/x/globalfee/ante"
-	globalfeekeeper "github.com/public-awesome/stargaze/v9/x/globalfee/keeper"
+	globalfeeante "github.com/public-awesome/stargaze/v10/x/globalfee/ante"
+	globalfeekeeper "github.com/public-awesome/stargaze/v10/x/globalfee/keeper"
 )
 
 // HandlerOptions extend the SDK's AnteHandler options by requiring the IBC
