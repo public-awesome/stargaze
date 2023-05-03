@@ -29,6 +29,8 @@ steps:
       region: us-east-1
       mount:
         - '/go/pkg/mod'
+    when:
+      branch: no-cache
 
   - name: test
     image: publicawesome/golang:1.20.2-devtooling
@@ -125,6 +127,8 @@ steps:
       region: us-east-1
       mount:
         - '/go/pkg/mod'
+    when:
+      branch: no-cache
   - name: discord
     image: appleboy/drone-discord
     settings:
@@ -162,6 +166,8 @@ steps:
       region: us-east-1
       mount:
         - '/go/pkg/mod'
+    when:
+      branch: no-cache
   - name: gaia
     image: publicawesome/gaia:7.0.2
     detach: true
@@ -271,6 +277,8 @@ steps:
       region: us-east-1
       mount:
         - '/go/pkg/mod'
+    when:
+      branch: no-cache
   - name: build-wrapper
     image: publicawesome/golang:1.20.2-devtooling
     volumes:
@@ -397,6 +405,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 50b305b3f3c3d4f533d2a9811e39d87eaa47f4d086ccae526aecbf0894a14b51
+hmac: 898029ea7b69242b5a8ed21628b76b77e87a7c514dda895ab58947de8c4898d8
 
 ...
