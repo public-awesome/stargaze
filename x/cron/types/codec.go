@@ -17,7 +17,7 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&DemotePrivilegedContractProposal{}, "cron/DemotePrivilegedContractProposal", nil)
 }
 
-func RegisterCodec(cdc *codec.LegacyAmino) {
+func RegisterCodec(_ *codec.LegacyAmino) {
 	// this line is used by starport scaffolding # 2
 }
 

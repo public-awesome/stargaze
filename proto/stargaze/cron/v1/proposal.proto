@@ -4,7 +4,7 @@ package publicawesome.stargaze.cron.v1;
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/public-awesome/stargaze/v9/x/cron/types";
+option go_package = "github.com/public-awesome/stargaze/v10/x/cron/types";
 
 // PromoteToPrivilegedContractProposal gov proposal content type to add
 // "privileges" to a contract

@@ -16,11 +16,11 @@ import (
 	// "github.com/cosmos/cosmos-sdk/client/flags"
 	// sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/public-awesome/stargaze/v9/x/claim/types"
+	"github.com/public-awesome/stargaze/v10/x/claim/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module
-func GetQueryCmd(queryRoute string) *cobra.Command {
+func GetQueryCmd(_ string) *cobra.Command {
 	// Group claim queries under a subcommand
 	cmd := &cobra.Command{
 		Use:                        types.ModuleName,

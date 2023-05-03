@@ -9,7 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	govrest "github.com/cosmos/cosmos-sdk/x/gov/client/rest"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	"github.com/public-awesome/stargaze/v9/x/cron/types"
+	"github.com/public-awesome/stargaze/v10/x/cron/types"
 )
 
 func ProposalSetPrivilegeContractHandler(cliCtx client.Context) govrest.ProposalRESTHandler {
@@ -29,7 +29,7 @@ func ProposalDemotePrivilegeContractHandler(cliCtx client.Context) govrest.Propo
 	return govrest.ProposalRESTHandler{
 		SubRoute: "wasm_demote_privilege",
 		Handler: func(w http.ResponseWriter, r *http.Request) {
-			var req SetPrivilegeProposalJSONReq
+			var req UnsetPrivilegeProposalJSONReq
 			if !rest.ReadRESTReq(w, r, cliCtx.LegacyAmino, &req) {
 				return
 			}

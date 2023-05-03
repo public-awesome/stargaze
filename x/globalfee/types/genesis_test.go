@@ -3,7 +3,7 @@ package types_test
 import (
 	"testing"
 
-	"github.com/public-awesome/stargaze/v9/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v10/x/globalfee/types"
 	"github.com/stretchr/testify/require"
 )
 

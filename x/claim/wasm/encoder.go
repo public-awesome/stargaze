@@ -6,8 +6,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	sgwasm "github.com/public-awesome/stargaze/v9/internal/wasm"
-	claimtypes "github.com/public-awesome/stargaze/v9/x/claim/types"
+	sgwasm "github.com/public-awesome/stargaze/v10/internal/wasm"
+	claimtypes "github.com/public-awesome/stargaze/v10/x/claim/types"
 )
 
 var _ sgwasm.Encoder = Encoder
@@ -50,7 +50,7 @@ func (c ClaimFor) Encode(contract sdk.AccAddress) ([]sdk.Msg, error) {
 	return []sdk.Msg{msg}, nil
 }
 
-func Encoder(contract sdk.AccAddress, data json.RawMessage, version string) ([]sdk.Msg, error) {
+func Encoder(contract sdk.AccAddress, data json.RawMessage, _ string) ([]sdk.Msg, error) {
 	msg := &ClaimMsg{}
 	err := json.Unmarshal(data, msg)
 	if err != nil {

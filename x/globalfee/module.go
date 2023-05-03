@@ -17,9 +17,9 @@ import (
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/public-awesome/stargaze/v9/x/globalfee/client/cli"
-	"github.com/public-awesome/stargaze/v9/x/globalfee/keeper"
-	"github.com/public-awesome/stargaze/v9/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v10/x/globalfee/client/cli"
+	"github.com/public-awesome/stargaze/v10/x/globalfee/keeper"
+	"github.com/public-awesome/stargaze/v10/x/globalfee/types"
 )
 
 var (

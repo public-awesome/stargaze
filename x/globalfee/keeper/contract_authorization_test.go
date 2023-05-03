@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v9/testutil/keeper"
-	"github.com/public-awesome/stargaze/v9/testutil/sample"
-	"github.com/public-awesome/stargaze/v9/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v10/testutil/keeper"
+	"github.com/public-awesome/stargaze/v10/testutil/sample"
+	"github.com/public-awesome/stargaze/v10/x/globalfee/types"
 	"github.com/stretchr/testify/require"
 )
 

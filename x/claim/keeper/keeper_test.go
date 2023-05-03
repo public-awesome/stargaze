@@ -11,10 +11,10 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-	"github.com/public-awesome/stargaze/v9/app"
-	"github.com/public-awesome/stargaze/v9/testutil/simapp"
-	"github.com/public-awesome/stargaze/v9/x/claim/keeper"
-	"github.com/public-awesome/stargaze/v9/x/claim/types"
+	"github.com/public-awesome/stargaze/v10/app"
+	"github.com/public-awesome/stargaze/v10/testutil/simapp"
+	"github.com/public-awesome/stargaze/v10/x/claim/keeper"
+	"github.com/public-awesome/stargaze/v10/x/claim/types"
 	"github.com/stretchr/testify/suite"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
@@ -43,14 +43,14 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.ctx = suite.ctx.WithBlockTime(startTime)
 }
 
-func (s *KeeperTestSuite) TestModuleAccountCreated() {
-	app, ctx := s.app, s.ctx
+func (suite *KeeperTestSuite) TestModuleAccountCreated() {
+	app, ctx := suite.app, suite.ctx
 	moduleAddress := app.AccountKeeper.GetModuleAddress(types.ModuleName)
 	balance := app.BankKeeper.GetBalance(ctx, moduleAddress, types.DefaultClaimDenom)
-	s.Require().Equal(fmt.Sprintf("10000000%s", types.DefaultClaimDenom), balance.String())
+	suite.Require().Equal(fmt.Sprintf("10000000%s", types.DefaultClaimDenom), balance.String())
 }
 
-func (s *KeeperTestSuite) TestClaimFor() {
+func (suite *KeeperTestSuite) TestClaimFor() {
 	pub1 := secp256k1.GenPrivKey().PubKey()
 	pub2 := secp256k1.GenPrivKey().PubKey()
 	addr1 := sdk.AccAddress(pub1.Address())
@@ -71,10 +71,10 @@ func (s *KeeperTestSuite) TestClaimFor() {
 		},
 	}
 
-	s.app.AccountKeeper.SetAccount(s.ctx, authtypes.NewBaseAccount(addr1, nil, 0, 0))
-	s.app.AccountKeeper.SetAccount(s.ctx, authtypes.NewBaseAccount(addr2, nil, 0, 0))
+	suite.app.AccountKeeper.SetAccount(suite.ctx, authtypes.NewBaseAccount(addr1, nil, 0, 0))
+	suite.app.AccountKeeper.SetAccount(suite.ctx, authtypes.NewBaseAccount(addr2, nil, 0, 0))
 
-	s.app.ClaimKeeper.SetParams(s.ctx, types.Params{
+	suite.app.ClaimKeeper.SetParams(suite.ctx, types.Params{
 		AirdropEnabled:     false,
 		AirdropStartTime:   time.Now().Add(time.Hour * -1),
 		ClaimDenom:         types.DefaultClaimDenom,
@@ -82,14 +82,14 @@ func (s *KeeperTestSuite) TestClaimFor() {
 		DurationOfDecay:    time.Hour * 4,
 		AllowedClaimers:    make([]types.ClaimAuthorization, 0),
 	})
-	err := s.app.ClaimKeeper.SetClaimRecords(s.ctx, claimRecords)
-	s.Require().NoError(err)
+	err := suite.app.ClaimKeeper.SetClaimRecords(suite.ctx, claimRecords)
+	suite.Require().NoError(err)
 	msgClaimFor := types.NewMsgClaimFor(contractAddress1.String(), addr1.String(), types.ActionBidNFT)
-	ctx := sdk.WrapSDKContext(s.ctx)
-	_, err = s.msgSrvr.ClaimFor(ctx, msgClaimFor)
-	s.Error(err)
-	s.Contains(err.Error(), "airdrop not enabled")
-	s.app.ClaimKeeper.SetParams(s.ctx, types.Params{
+	ctx := sdk.WrapSDKContext(suite.ctx)
+	_, err = suite.msgSrvr.ClaimFor(ctx, msgClaimFor)
+	suite.Error(err)
+	suite.Contains(err.Error(), "airdrop not enabled")
+	suite.app.ClaimKeeper.SetParams(suite.ctx, types.Params{
 		AirdropEnabled:     true,
 		AirdropStartTime:   time.Now().Add(time.Hour * -1),
 		ClaimDenom:         types.DefaultClaimDenom,
@@ -109,63 +109,63 @@ func (s *KeeperTestSuite) TestClaimFor() {
 
 	// unauthorized
 	msgClaimFor = types.NewMsgClaimFor(wasmkeeper.BuildContractAddressClassic(2, 1).String(), addr1.String(), types.ActionMintNFT)
-	_, err = s.msgSrvr.ClaimFor(ctx, msgClaimFor)
-	s.Require().Error(err)
-	s.Contains(err.Error(), "address is not allowed to claim")
+	_, err = suite.msgSrvr.ClaimFor(ctx, msgClaimFor)
+	suite.Require().Error(err)
+	suite.Contains(err.Error(), "address is not allowed to claim")
 
 	// unauthorized to claim another action
 
 	msgClaimFor = types.NewMsgClaimFor(contractAddress1.String(), addr1.String(), types.ActionMintNFT)
-	_, err = s.msgSrvr.ClaimFor(ctx, msgClaimFor)
-	s.Require().Error(err)
-	s.Contains(err.Error(), "address is not allowed to claim")
+	_, err = suite.msgSrvr.ClaimFor(ctx, msgClaimFor)
+	suite.Require().Error(err)
+	suite.Contains(err.Error(), "address is not allowed to claim")
 
 	// claim
 	msgClaimFor = types.NewMsgClaimFor(contractAddress1.String(), addr1.String(), types.ActionBidNFT)
-	_, err = s.msgSrvr.ClaimFor(ctx, msgClaimFor)
-	s.Require().NoError(err)
+	_, err = suite.msgSrvr.ClaimFor(ctx, msgClaimFor)
+	suite.Require().NoError(err)
 
-	claimedCoins := s.app.BankKeeper.GetAllBalances(s.ctx, addr1)
-	s.Require().Equal(claimedCoins.AmountOf(types.DefaultClaimDenom), claimRecords[0].InitialClaimableAmount.AmountOf(types.DefaultClaimDenom).Quo(sdk.NewInt(5)))
+	claimedCoins := suite.app.BankKeeper.GetAllBalances(suite.ctx, addr1)
+	suite.Require().Equal(claimedCoins.AmountOf(types.DefaultClaimDenom), claimRecords[0].InitialClaimableAmount.AmountOf(types.DefaultClaimDenom).Quo(sdk.NewInt(5)))
 
-	record, err := s.app.ClaimKeeper.GetClaimRecord(s.ctx, addr1)
-	s.Require().NoError(err)
-	s.Require().True(record.ActionCompleted[1])
-	s.Require().Equal([]bool{false, true, false, false, false}, record.ActionCompleted)
+	record, err := suite.app.ClaimKeeper.GetClaimRecord(suite.ctx, addr1)
+	suite.Require().NoError(err)
+	suite.Require().True(record.ActionCompleted[1])
+	suite.Require().Equal([]bool{false, true, false, false, false}, record.ActionCompleted)
 
 	// claim 2
 	msgClaimFor = types.NewMsgClaimFor(contractAddress2.String(), addr1.String(), types.ActionMintNFT)
-	_, err = s.msgSrvr.ClaimFor(ctx, msgClaimFor)
-	s.Require().NoError(err)
+	_, err = suite.msgSrvr.ClaimFor(ctx, msgClaimFor)
+	suite.Require().NoError(err)
 
-	claimedCoins = s.app.BankKeeper.GetAllBalances(s.ctx, addr1)
-	s.Require().Equal(
+	claimedCoins = suite.app.BankKeeper.GetAllBalances(suite.ctx, addr1)
+	suite.Require().Equal(
 		claimedCoins.AmountOf(types.DefaultClaimDenom).String(),
 		claimRecords[0].InitialClaimableAmount.AmountOf(types.DefaultClaimDenom).Quo(sdk.NewInt(5)).Mul(sdk.NewInt(2)).String(), // 2 actions claimed
 	)
 
-	record, err = s.app.ClaimKeeper.GetClaimRecord(s.ctx, addr1)
-	s.Require().NoError(err)
-	s.Require().True(record.ActionCompleted[1])
-	s.Require().True(record.ActionCompleted[2])
-	s.Require().Equal([]bool{false, true, true, false, false}, record.ActionCompleted)
+	record, err = suite.app.ClaimKeeper.GetClaimRecord(suite.ctx, addr1)
+	suite.Require().NoError(err)
+	suite.Require().True(record.ActionCompleted[1])
+	suite.Require().True(record.ActionCompleted[2])
+	suite.Require().Equal([]bool{false, true, true, false, false}, record.ActionCompleted)
 
 	// claim second address
 	msgClaimFor = types.NewMsgClaimFor(contractAddress2.String(), addr2.String(), types.ActionMintNFT)
-	_, err = s.msgSrvr.ClaimFor(ctx, msgClaimFor)
-	s.Require().NoError(err)
+	_, err = suite.msgSrvr.ClaimFor(ctx, msgClaimFor)
+	suite.Require().NoError(err)
 
-	claimedCoins = s.app.BankKeeper.GetAllBalances(s.ctx, addr2)
-	s.Require().Equal(
+	claimedCoins = suite.app.BankKeeper.GetAllBalances(suite.ctx, addr2)
+	suite.Require().Equal(
 		claimedCoins.AmountOf(types.DefaultClaimDenom).String(),
 		claimRecords[0].InitialClaimableAmount.AmountOf(types.DefaultClaimDenom).Quo(sdk.NewInt(5)).String(), // 1 action claimed
 	)
 
-	record, err = s.app.ClaimKeeper.GetClaimRecord(s.ctx, addr2)
-	s.Require().NoError(err)
-	s.Require().False(record.ActionCompleted[1])
-	s.Require().True(record.ActionCompleted[2])
-	s.Require().Equal([]bool{false, false, true, false, false}, record.ActionCompleted)
+	record, err = suite.app.ClaimKeeper.GetClaimRecord(suite.ctx, addr2)
+	suite.Require().NoError(err)
+	suite.Require().False(record.ActionCompleted[1])
+	suite.Require().True(record.ActionCompleted[2])
+	suite.Require().Equal([]bool{false, false, true, false, false}, record.ActionCompleted)
 }
 
 func TestKeeperTestSuite(t *testing.T) {

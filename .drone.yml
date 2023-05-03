@@ -29,6 +29,8 @@ steps:
       region: us-east-1
       mount:
         - '/go/pkg/mod'
+    when:
+      branch: no-cache
 
   - name: test
     image: publicawesome/golang:1.20.2-devtooling
@@ -75,12 +77,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - latest
+        - v10.0.0.alpha-2
     when:
       event:
         - push
       branch:
-        - feature/wasmd-0.31
+        - feature/globalfee
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -125,6 +127,8 @@ steps:
       region: us-east-1
       mount:
         - '/go/pkg/mod'
+    when:
+      branch: no-cache
   - name: discord
     image: appleboy/drone-discord
     settings:
@@ -162,6 +166,8 @@ steps:
       region: us-east-1
       mount:
         - '/go/pkg/mod'
+    when:
+      branch: no-cache
   - name: gaia
     image: publicawesome/gaia:7.0.2
     detach: true
@@ -245,8 +251,7 @@ trigger:
 volumes:
 - name: cache
   temp: {}
-node:
-  runner: integration
+
 ---
 kind: pipeline
 type: docker
@@ -272,6 +277,8 @@ steps:
       region: us-east-1
       mount:
         - '/go/pkg/mod'
+    when:
+      branch: no-cache
   - name: build-wrapper
     image: publicawesome/golang:1.20.2-devtooling
     volumes:
@@ -306,7 +313,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:8.0.0
+    image: publicawesome/stargaze:9.0.0
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
@@ -343,7 +350,7 @@ steps:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: true
-    image: publicawesome/stargaze:latest
+    image: publicawesome/stargaze:v10.0.0.alpha-2
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -393,12 +400,10 @@ trigger:
 volumes:
 - name: cache
   temp: {}
-node:
-  runner: integration
-depends_on:
-  - ibc-integration-test
+
+
 ---
 kind: signature
-hmac: 852bdd03d09f473c9b32c3b33a29c783cbdf862981b7f63deb9f767fb41a5842
+hmac: 97dc6e971f56a9fe6d6eb3b740a691d4fb4337219a0e2bc38ee45245de08d63e
 
 ...
