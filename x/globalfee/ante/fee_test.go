@@ -15,9 +15,12 @@ func TestAnteHandlerTestSuite(t *testing.T) {
 }
 
 func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
+	s.SetupTest()
+	s.SetupWasmMsgServer()
 	s.txBuilder = s.clientCtx.TxConfig.NewTxBuilder()
 	priv1, _, addr1 := testdata.KeyTestPubAddr()
 	privs, accNums, accSeqs := []cryptotypes.PrivKey{priv1}, []uint64{0}, []uint64{0}
+	contractAddr := s.SetupContracts(addr1.String(), "counter.wasm")
 
 	testCases := []struct {
 		testCase    string
@@ -34,7 +37,8 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 1)),
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
-					Sender: addr1.String(),
+					Sender:   addr1.String(),
+					Contract: contractAddr,
 				},
 			},
 			true,
@@ -46,7 +50,8 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 1)),
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
-					Sender: addr1.String(),
+					Sender:   addr1.String(),
+					Contract: contractAddr,
 				},
 			},
 			false,
@@ -58,7 +63,8 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 0)),
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
-					Sender: addr1.String(),
+					Sender:   addr1.String(),
+					Contract: contractAddr,
 				},
 			},
 			false,
@@ -70,7 +76,8 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 1)),
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
-					Sender: addr1.String(),
+					Sender:   addr1.String(),
+					Contract: contractAddr,
 				},
 			},
 			true,
@@ -82,7 +89,8 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 3)),
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
-					Sender: addr1.String(),
+					Sender:   addr1.String(),
+					Contract: contractAddr,
 				},
 			},
 			false,
@@ -94,7 +102,8 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 0)),
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
-					Sender: addr1.String(),
+					Sender:   addr1.String(),
+					Contract: contractAddr,
 				},
 			},
 			false,
@@ -106,7 +115,8 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 0)),
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
-					Sender: addr1.String(),
+					Sender:   addr1.String(),
+					Contract: contractAddr,
 				},
 			},
 			false,
@@ -118,13 +128,16 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 0)),
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
-					Sender: addr1.String(),
+					Sender:   addr1.String(),
+					Contract: contractAddr,
 				},
 				&wasmtypes.MsgExecuteContract{
-					Sender: addr1.String(),
+					Sender:   addr1.String(),
+					Contract: contractAddr,
 				},
 				&wasmtypes.MsgExecuteContract{
-					Sender: addr1.String(),
+					Sender:   addr1.String(),
+					Contract: contractAddr,
 				},
 			},
 			false,
@@ -136,25 +149,16 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 0)),
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
-					Sender: addr1.String(),
+					Sender:   addr1.String(),
+					Contract: contractAddr,
 				},
 				&wasmtypes.MsgExecuteContract{
-					Sender: addr1.String(),
+					Sender:   addr1.String(),
+					Contract: contractAddr,
 				},
 				&wasmtypes.MsgExecuteContract{
-					Sender: addr1.String(),
-				},
-			},
-			false,
-		},
-		{
-			"ok: min_gas_price: 2stake, globalfee: 5stake, feeSent: 0stake, authorized contract address in a authz msg",
-			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 2)),
-			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 5)),
-			sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 0)),
-			[]sdk.Msg{
-				&wasmtypes.MsgExecuteContract{ //todo authz wrap
-					Sender: addr1.String(),
+					Sender:   addr1.String(),
+					Contract: contractAddr,
 				},
 			},
 			false,

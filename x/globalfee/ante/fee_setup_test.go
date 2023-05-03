@@ -1,6 +1,13 @@
 package ante_test
 
 import (
+	"encoding/json"
+	"io/ioutil"
+	"sync"
+	"time"
+
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -24,10 +31,18 @@ type AnteHandlerTestSuite struct {
 	suite.Suite
 
 	app       *stargazeapp.App
+	msgServer wasmtypes.MsgServer
 	ctx       sdk.Context
 	clientCtx client.Context
 	txBuilder client.TxBuilder
 }
+
+type storeCache struct {
+	sync.Mutex
+	contracts map[string][]byte
+}
+
+var contractsCache = storeCache{contracts: make(map[string][]byte)}
 
 func (s *AnteHandlerTestSuite) SetupTest() {
 	_, _, acc1_addr := getTestAccount()
@@ -50,6 +65,7 @@ func (s *AnteHandlerTestSuite) SetupTest() {
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{
 		ChainID: "ante-test-1",
 		Height:  1,
+		Time:    time.Now(),
 	})
 
 	encodingConfig := cosmoscmd.MakeEncodingConfig(stargazeapp.ModuleBasics)
@@ -71,6 +87,43 @@ func (s *AnteHandlerTestSuite) SetupTestGlobalFeeStoreAndMinGasPrice(minGasPrice
 	antehandler := sdk.ChainAnteDecorators(feeDecorator)
 
 	return feeDecorator, antehandler
+}
+
+func (s *AnteHandlerTestSuite) SetupWasmMsgServer() {
+	wasmParams := s.app.WasmKeeper.GetParams(s.ctx)
+	wasmParams.CodeUploadAccess = wasmtypes.AllowEverybody
+	s.app.WasmKeeper.SetParams(s.ctx, wasmParams)
+	s.msgServer = wasmkeeper.NewMsgServerImpl(wasmkeeper.NewDefaultPermissionKeeper(s.app.WasmKeeper))
+}
+
+func (s *AnteHandlerTestSuite) SetupContracts(senderAddr string, contractBinary string) string {
+	codeId, err := storeContract(s.ctx, s.msgServer, senderAddr, contractBinary)
+	s.Require().NoError(err)
+
+	instantiageMsg := CounterInsantiateMsg{
+		Count: 0,
+	}
+	instantiateMsgRaw, err := json.Marshal(&instantiageMsg)
+	s.Require().NoError(err)
+
+	initMsg := wasmtypes.MsgInstantiateContract{
+		Sender: senderAddr,
+		Admin:  senderAddr,
+		CodeID: codeId,
+		Label:  "Counter Contract",
+		Msg:    instantiateMsgRaw,
+		Funds:  sdk.NewCoins(),
+	}
+	instantiateRes, err := s.msgServer.InstantiateContract(sdk.WrapSDKContext(s.ctx), &initMsg)
+	s.Require().NoError(err)
+
+	err = s.app.GlobalFeeKeeper.SetCodeAuthorization(s.ctx, types.CodeAuthorization{
+		CodeId:  codeId,
+		Methods: []string{"count"},
+	})
+	s.Require().NoError(err)
+
+	return instantiateRes.Address
 }
 
 func (s *AnteHandlerTestSuite) CreateTestTx(privs []cryptotypes.PrivKey, accNums []uint64, accSeqs []uint64, chainID string) (xauthsigning.Tx, error) {
@@ -121,9 +174,46 @@ func (s *AnteHandlerTestSuite) CreateTestTx(privs []cryptotypes.PrivKey, accNums
 	return s.txBuilder.GetTx(), nil
 }
 
+func storeContract(ctx sdk.Context, msgServer wasmtypes.MsgServer, creator string, contract string) (uint64, error) {
+	b, err := getContractBytes(contract)
+	if err != nil {
+		return 0, err
+	}
+	res, err := msgServer.StoreCode(sdk.WrapSDKContext(ctx), &wasmtypes.MsgStoreCode{
+		Sender:       creator,
+		WASMByteCode: b,
+	})
+	if err != nil {
+		return 0, err
+	}
+	return res.CodeID, nil
+}
+
 func getTestAccount() (privateKey secp256k1.PrivKey, publicKey crypto.PubKey, accountAddress sdk.AccAddress) {
 	privateKey = secp256k1.GenPrivKey()
 	publicKey = privateKey.PubKey()
 	accountAddress = sdk.AccAddress(publicKey.Address())
 	return
+}
+
+func getContractBytes(contract string) ([]byte, error) {
+	contractsCache.Lock()
+	bz, found := contractsCache.contracts[contract]
+	contractsCache.Unlock()
+	if found {
+		return bz, nil
+	}
+	contractsCache.Lock()
+	defer contractsCache.Unlock()
+	var err error
+	bz, err = ioutil.ReadFile(contract)
+	if err != nil {
+		return nil, err
+	}
+	contractsCache.contracts[contract] = bz
+	return bz, nil
+}
+
+type CounterInsantiateMsg struct {
+	Count uint64 `json:"count"`
 }
