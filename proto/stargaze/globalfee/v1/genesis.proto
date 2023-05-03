@@ -1,9 +1,17 @@
 syntax = "proto3";
 package publicawesome.stargaze.globalfee.v1;
 
+import "stargaze/globalfee/v1/globalfee.proto";
+import "gogoproto/gogo.proto";
+
 option go_package = "github.com/public-awesome/stargaze/v9/x/globalfee/types";
 
 // GenesisState defines the globalfee module's genesis state.
 message GenesisState {
-
+    // Module params
+    Params params = 1 [ (gogoproto.jsontag) = "params,omitempty" ];  
+    // Authorizations configured by code id
+    repeated CodeAuthorization code_authorizations = 2 [ (gogoproto.jsontag) = "code_authorizations,omitempty" ];   
+    // Authorizations configured by contract addresses 
+    repeated ContractAuthorization contract_authorizations = 3 [ (gogoproto.jsontag) = "contract_authorizations,omitempty" ];
 }
