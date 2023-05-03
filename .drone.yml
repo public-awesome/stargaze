@@ -401,10 +401,9 @@ volumes:
 - name: cache
   temp: {}
 
-depends_on:
-  - ibc-integration-test
+
 ---
 kind: signature
-hmac: 898029ea7b69242b5a8ed21628b76b77e87a7c514dda895ab58947de8c4898d8
+hmac: 96c6dfda726e450ed66d7fe3a3e3bbbf611b4973e5d6e48ca72a96349230cf68
 
 ...
