@@ -245,8 +245,7 @@ trigger:
 volumes:
 - name: cache
   temp: {}
-node:
-  runner: integration
+
 ---
 kind: pipeline
 type: docker
@@ -393,12 +392,11 @@ trigger:
 volumes:
 - name: cache
   temp: {}
-node:
-  runner: integration
+
 depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 852bdd03d09f473c9b32c3b33a29c783cbdf862981b7f63deb9f767fb41a5842
+hmac: 50b305b3f3c3d4f533d2a9811e39d87eaa47f4d086ccae526aecbf0894a14b51
 
 ...
