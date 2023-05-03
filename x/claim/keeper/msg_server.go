@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"github.com/public-awesome/stargaze/v9/x/claim/types"
+	"github.com/public-awesome/stargaze/v10/x/claim/types"
 )
 
 type msgServer struct {

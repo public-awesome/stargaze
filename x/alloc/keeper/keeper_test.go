@@ -8,10 +8,10 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-	"github.com/public-awesome/stargaze/v9/app"
-	"github.com/public-awesome/stargaze/v9/testutil/simapp"
-	"github.com/public-awesome/stargaze/v9/x/alloc/keeper"
-	"github.com/public-awesome/stargaze/v9/x/alloc/types"
+	"github.com/public-awesome/stargaze/v10/app"
+	"github.com/public-awesome/stargaze/v10/testutil/simapp"
+	"github.com/public-awesome/stargaze/v10/x/alloc/keeper"
+	"github.com/public-awesome/stargaze/v10/x/alloc/types"
 	"github.com/stretchr/testify/suite"
 	"github.com/tendermint/tendermint/crypto/secp256k1"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -89,7 +89,8 @@ func (suite *KeeperTestSuite) TestDistribution() {
 		sdk.NewDec(0),
 		feePool.CommunityPool.AmountOf(denom))
 
-	allocKeeper.DistributeInflation(suite.ctx)
+	err := allocKeeper.DistributeInflation(suite.ctx)
+	suite.Require().NoError(err)
 
 	feeCollector = suite.app.AccountKeeper.GetModuleAddress(authtypes.FeeCollectorName)
 	modulePortion := params.DistributionProportions.NftIncentives.
@@ -139,7 +140,8 @@ func (suite *KeeperTestSuite) TestFairburnPool() {
 	// should be 0
 	suite.Require().True(suite.app.BankKeeper.GetBalance(suite.ctx, fairBurnPool, denom).IsZero())
 	suite.Require().True(suite.app.BankKeeper.GetBalance(suite.ctx, feeCollector, denom).IsZero())
-	allocKeeper.DistributeInflation(suite.ctx)
+	err := allocKeeper.DistributeInflation(suite.ctx)
+	suite.Require().NoError(err)
 
 	// should be 0
 	suite.Require().True(suite.app.BankKeeper.GetBalance(suite.ctx, fairBurnPool, denom).IsZero())
@@ -148,9 +150,10 @@ func (suite *KeeperTestSuite) TestFairburnPool() {
 	msgServer := keeper.NewMsgServerImpl(allocKeeper)
 
 	// fundAccount
-	FundAccount(suite.app.BankKeeper, suite.ctx, addr1, fundAmount)
+	err = FundAccount(suite.app.BankKeeper, suite.ctx, addr1, fundAmount)
+	suite.NoError(err)
 	suite.Require().True(suite.app.BankKeeper.GetBalance(suite.ctx, fairBurnPool, denom).IsZero())
-	_, err := msgServer.FundFairburnPool(sdk.WrapSDKContext(suite.ctx), types.NewMsgFundFairburnPool(addr1, fundAmount))
+	_, err = msgServer.FundFairburnPool(sdk.WrapSDKContext(suite.ctx), types.NewMsgFundFairburnPool(addr1, fundAmount))
 	suite.NoError(err)
 
 	// should have funds now
@@ -158,7 +161,8 @@ func (suite *KeeperTestSuite) TestFairburnPool() {
 	// still 0
 	suite.Require().True(suite.app.BankKeeper.GetBalance(suite.ctx, feeCollector, denom).IsZero())
 
-	allocKeeper.DistributeInflation(suite.ctx)
+	err = allocKeeper.DistributeInflation(suite.ctx)
+	suite.Require().NoError(err)
 
 	// fee collector should have funds now
 	suite.Require().Equal(fundAmount.String(), suite.app.BankKeeper.GetBalance(suite.ctx, feeCollector, denom).String())

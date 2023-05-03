@@ -1,7 +1,7 @@
 run:
-  tests: false
+  tests: true
   # timeout for analysis, e.g. 30s, 5m, default is 1m
-  timeout: 5m
+  timeout: 10m
 
 linters:
   disable-all: true
@@ -12,8 +12,7 @@ linters:
     - errcheck
     - goconst
     - gocritic
-    - gofmt
-    - goimports
+    - gofumpt
     - gosec
     - gosimple
     - govet
@@ -21,16 +20,16 @@ linters:
     - misspell
     - nakedret
     - prealloc
-    # - revive
+    - revive
     - exportloopref
     - staticcheck
     - stylecheck
     - typecheck
+    - thelper
     - unconvert
     - unused
     - unparam
     - misspell
-    # - wsl
     - nolintlint
 
 issues:

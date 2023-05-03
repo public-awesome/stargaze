@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/public-awesome/stargaze/v9/x/claim/types"
+	"github.com/public-awesome/stargaze/v10/x/claim/types"
 )
 
 type (
@@ -56,7 +56,7 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 }
 
 // GetModuleAccountBalance gets the airdrop coin balance of module account
-func (k Keeper) GetModuleAccountAddress(ctx sdk.Context) sdk.AccAddress {
+func (k Keeper) GetModuleAccountAddress(_ sdk.Context) sdk.AccAddress {
 	return k.accountKeeper.GetModuleAddress(types.ModuleName)
 }
 

@@ -27,7 +27,7 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	ibctransfertypes "github.com/cosmos/ibc-go/v4/modules/apps/transfer/types"
-	minttypes "github.com/public-awesome/stargaze/v9/x/mint/types"
+	minttypes "github.com/public-awesome/stargaze/v10/x/mint/types"
 
 	// appParams "github.com/public-awesome/stargaze/app/params"
 	"github.com/CosmWasm/wasmd/x/wasm"

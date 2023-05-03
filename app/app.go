@@ -77,9 +77,9 @@ import (
 	ibcporttypes "github.com/cosmos/ibc-go/v4/modules/core/05-port/types"
 	ibchost "github.com/cosmos/ibc-go/v4/modules/core/24-host"
 	ibckeeper "github.com/cosmos/ibc-go/v4/modules/core/keeper"
-	"github.com/public-awesome/stargaze/v9/x/mint"
-	mintkeeper "github.com/public-awesome/stargaze/v9/x/mint/keeper"
-	minttypes "github.com/public-awesome/stargaze/v9/x/mint/types"
+	"github.com/public-awesome/stargaze/v10/x/mint"
+	mintkeeper "github.com/public-awesome/stargaze/v10/x/mint/keeper"
+	minttypes "github.com/public-awesome/stargaze/v10/x/mint/types"
 	"github.com/spf13/cast"
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmjson "github.com/tendermint/tendermint/libs/json"
@@ -92,29 +92,29 @@ import (
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	authzmodule "github.com/cosmos/cosmos-sdk/x/authz/module"
 
+	"github.com/public-awesome/stargaze/v10/app/openapiconsole"
 	"github.com/tendermint/spm/cosmoscmd"
-	"github.com/tendermint/spm/openapiconsole"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
-	"github.com/public-awesome/stargaze/v9/docs"
-	sgstatesync "github.com/public-awesome/stargaze/v9/internal/statesync"
-	sgwasm "github.com/public-awesome/stargaze/v9/internal/wasm"
-	allocmodule "github.com/public-awesome/stargaze/v9/x/alloc"
-	allocmodulekeeper "github.com/public-awesome/stargaze/v9/x/alloc/keeper"
-	allocmoduletypes "github.com/public-awesome/stargaze/v9/x/alloc/types"
-	allocwasm "github.com/public-awesome/stargaze/v9/x/alloc/wasm"
-	claimmodule "github.com/public-awesome/stargaze/v9/x/claim"
-	claimmodulekeeper "github.com/public-awesome/stargaze/v9/x/claim/keeper"
-	claimmoduletypes "github.com/public-awesome/stargaze/v9/x/claim/types"
-	claimwasm "github.com/public-awesome/stargaze/v9/x/claim/wasm"
+	"github.com/public-awesome/stargaze/v10/docs"
+	sgstatesync "github.com/public-awesome/stargaze/v10/internal/statesync"
+	sgwasm "github.com/public-awesome/stargaze/v10/internal/wasm"
+	allocmodule "github.com/public-awesome/stargaze/v10/x/alloc"
+	allocmodulekeeper "github.com/public-awesome/stargaze/v10/x/alloc/keeper"
+	allocmoduletypes "github.com/public-awesome/stargaze/v10/x/alloc/types"
+	allocwasm "github.com/public-awesome/stargaze/v10/x/alloc/wasm"
+	claimmodule "github.com/public-awesome/stargaze/v10/x/claim"
+	claimmodulekeeper "github.com/public-awesome/stargaze/v10/x/claim/keeper"
+	claimmoduletypes "github.com/public-awesome/stargaze/v10/x/claim/types"
+	claimwasm "github.com/public-awesome/stargaze/v10/x/claim/wasm"
 
-	cronmodule "github.com/public-awesome/stargaze/v9/x/cron"
-	cronclient "github.com/public-awesome/stargaze/v9/x/cron/client"
-	cronmodulekeeper "github.com/public-awesome/stargaze/v9/x/cron/keeper"
-	cronmoduletypes "github.com/public-awesome/stargaze/v9/x/cron/types"
+	cronmodule "github.com/public-awesome/stargaze/v10/x/cron"
+	cronclient "github.com/public-awesome/stargaze/v10/x/cron/client"
+	cronmodulekeeper "github.com/public-awesome/stargaze/v10/x/cron/keeper"
+	cronmoduletypes "github.com/public-awesome/stargaze/v10/x/cron/types"
 
 	globalfeemodule "github.com/public-awesome/stargaze/v9/x/globalfee"
 	globalfeeclient "github.com/public-awesome/stargaze/v9/x/globalfee/client"
@@ -127,7 +127,7 @@ import (
 	icahostkeeper "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts/host/keeper"
 	icahosttypes "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts/host/types"
 	icatypes "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts/types"
-	stargazerest "github.com/public-awesome/stargaze/v9/internal/rest"
+	stargazerest "github.com/public-awesome/stargaze/v10/internal/rest"
 )
 
 const (
@@ -845,7 +845,7 @@ func (app *App) GetSubspace(moduleName string) paramstypes.Subspace {
 
 // RegisterAPIRoutes registers all application module routes with the provided
 // API server.
-func (app *App) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig) {
+func (app *App) RegisterAPIRoutes(apiSvr *api.Server, _ config.APIConfig) {
 	clientCtx := apiSvr.ClientCtx
 	rpc.RegisterRoutes(clientCtx, apiSvr.Router)
 	// Register legacy tx routes.

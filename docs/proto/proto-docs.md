@@ -852,7 +852,8 @@ PromoteToPrivilegedContractProposal gov proposal content type to add
 <a name="publicawesome.stargaze.cron.v1.QueryListPrivilegedRequest"></a>
 
 ### QueryListPrivilegedRequest
-QueryListPrivilegedRequest is request type for the Query/ListPrivileged RPC method.
+QueryListPrivilegedRequest is request type for the Query/ListPrivileged RPC
+method.
 
 
 
@@ -862,7 +863,8 @@ QueryListPrivilegedRequest is request type for the Query/ListPrivileged RPC meth
 <a name="publicawesome.stargaze.cron.v1.QueryListPrivilegedResponse"></a>
 
 ### QueryListPrivilegedResponse
-QueryListPrivilegedResponse is response type for the Query/ListPrivileged RPC method.
+QueryListPrivilegedResponse is response type for the Query/ListPrivileged RPC
+method.
 
 
 | Field | Type | Label | Description |

@@ -10,8 +10,8 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	stargazeapp "github.com/public-awesome/stargaze/v9/app"
-	"github.com/public-awesome/stargaze/v9/testutil/simapp"
+	stargazeapp "github.com/public-awesome/stargaze/v10/app"
+	"github.com/public-awesome/stargaze/v10/testutil/simapp"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/spm/cosmoscmd"
 

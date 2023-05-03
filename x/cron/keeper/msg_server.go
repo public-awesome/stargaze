@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"github.com/public-awesome/stargaze/v9/x/cron/types"
+	"github.com/public-awesome/stargaze/v10/x/cron/types"
 )
 
 type msgServer struct {

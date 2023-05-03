@@ -13,11 +13,11 @@ import (
 	// "github.com/cosmos/cosmos-sdk/client/flags"
 	// sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/public-awesome/stargaze/v9/x/alloc/types"
+	"github.com/public-awesome/stargaze/v10/x/alloc/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module
-func GetQueryCmd(queryRoute string) *cobra.Command {
+func GetQueryCmd(_ string) *cobra.Command {
 	// Group alloc queries under a subcommand
 	cmd := &cobra.Command{
 		Use:                        types.ModuleName,

@@ -8,16 +8,16 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v9/x/cron/contract"
-	"github.com/public-awesome/stargaze/v9/x/cron/keeper"
-	"github.com/public-awesome/stargaze/v9/x/cron/types"
+	"github.com/public-awesome/stargaze/v10/x/cron/contract"
+	"github.com/public-awesome/stargaze/v10/x/cron/keeper"
+	"github.com/public-awesome/stargaze/v10/x/cron/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 )
 
 // BeginBlocker sends a BeginBlock SudoMsg to all privileged contracts
 func BeginBlocker(ctx sdk.Context, k keeper.Keeper, w types.WasmKeeper) {
-	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyEndBlocker)
+	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyBeginBlocker)
 	sudoMsg := contract.SudoMsg{BeginBlock: &struct{}{}}
 	k.IteratePrivileged(ctx, abciContractCallback(ctx, w, sudoMsg))
 }

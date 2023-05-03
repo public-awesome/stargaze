@@ -5,15 +5,16 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/public-awesome/stargaze/v9/x/cron/types"
+	"github.com/public-awesome/stargaze/v10/x/cron/types"
 )
 
 // SetPrivileged checks if the given contract exists and adds it to the list of privilege contracts
 func (k Keeper) SetPrivileged(ctx sdk.Context, contractAddr sdk.AccAddress) error {
 	if k.wasmKeeper.HasContractInfo(ctx, contractAddr) {
-		store := ctx.KVStore(k.storeKey)
-		store.Set(types.PrivilegedContractsKey(contractAddr), []byte{1})
-
+		if !k.IsPrivileged(ctx, contractAddr) {
+			store := ctx.KVStore(k.storeKey)
+			store.Set(types.PrivilegedContractsKey(contractAddr), []byte{1})
+		}
 		event := sdk.NewEvent(
 			types.EventTypeSetContractPriviledge,
 			sdk.NewAttribute(wasmtypes.AttributeKeyContractAddr, contractAddr.String()),

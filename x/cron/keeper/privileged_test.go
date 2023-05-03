@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v9/testutil/keeper"
-	"github.com/public-awesome/stargaze/v9/testutil/sample"
+	"github.com/public-awesome/stargaze/v10/testutil/keeper"
+	"github.com/public-awesome/stargaze/v10/testutil/sample"
 )
 
 func Test_SetPrivileged(t *testing.T) {
@@ -66,7 +66,7 @@ func Test_IteratePrivileged(t *testing.T) {
 
 	count := 0
 	k.IteratePrivileged(ctx, func(addr sdk.AccAddress) bool {
-		count += 1
+		count++
 		return false
 	})
 	if count != 2 {

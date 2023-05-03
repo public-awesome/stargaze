@@ -4,23 +4,26 @@ package publicawesome.stargaze.cron.v1;
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 
-option go_package = "github.com/public-awesome/stargaze/v9/x/cron/types";
+option go_package = "github.com/public-awesome/stargaze/v10/x/cron/types";
 
 // Query defines the gRPC querier service.
 service Query {
   // ListPrivileged queries the contracts which have the priviledge status
-  rpc ListPrivileged(QueryListPrivilegedRequest) returns (QueryListPrivilegedResponse) {
+  rpc ListPrivileged(QueryListPrivilegedRequest)
+      returns (QueryListPrivilegedResponse) {
     option (google.api.http).get = "/stargaze/cron/v1/list-privileged";
   }
 }
 
-// QueryListPrivilegedRequest is request type for the Query/ListPrivileged RPC method.
+// QueryListPrivilegedRequest is request type for the Query/ListPrivileged RPC
+// method.
 message QueryListPrivilegedRequest {}
 
-// QueryListPrivilegedResponse is response type for the Query/ListPrivileged RPC method.
+// QueryListPrivilegedResponse is response type for the Query/ListPrivileged RPC
+// method.
 message QueryListPrivilegedResponse {
-  // contract_addresses holds all the smart contract addresses which have privilege status.
+  // contract_addresses holds all the smart contract addresses which have
+  // privilege status.
   repeated string contract_addresses = 1
-  [ (gogoproto.jsontag) = "privileged_contract_addresses,omitempty" ]; 
+      [ (gogoproto.jsontag) = "privileged_contract_addresses,omitempty" ];
 }
-

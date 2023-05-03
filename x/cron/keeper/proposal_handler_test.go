@@ -7,8 +7,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/address"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	"github.com/public-awesome/stargaze/v9/x/cron/keeper"
-	"github.com/public-awesome/stargaze/v9/x/cron/types"
+	"github.com/public-awesome/stargaze/v10/x/cron/keeper"
+	"github.com/public-awesome/stargaze/v10/x/cron/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/rand"
@@ -116,11 +116,11 @@ type CapturingGovRouter struct {
 	captured []govtypes.Content
 }
 
-func (m CapturingGovRouter) HasRoute(r string) bool {
+func (m CapturingGovRouter) HasRoute(_ string) bool {
 	return true
 }
 
-func (m *CapturingGovRouter) GetRoute(path string) (h govtypes.Handler) {
+func (m *CapturingGovRouter) GetRoute(_ string) (h govtypes.Handler) {
 	return func(ctx sdk.Context, content govtypes.Content) error {
 		m.captured = append(m.captured, content)
 		return nil
