@@ -15,8 +15,8 @@ sed -i "s/\"stake\"/\"$DENOM\"/g" $STARGAZE_HOME/config/genesis.json
 sed -i 's/pruning = "syncable"/pruning = "nothing"/g' $STARGAZE_HOME/config/app.toml
 sed -i 's/enable = false/enable = true/g' $STARGAZE_HOME/config/app.toml
 sed -i 's/172800s/60s/g'  $STARGAZE_HOME/config/genesis.json
-sed -i -e 's/timeout_commit = "5s"/timeout_commit = "1s"/g' ~/.starsd/config/config.toml
-sed -i -e 's/timeout_propose = "3s"/timeout_propose = "1s"/g' ~/.starsd/config/config.toml
+sed -i -e 's/timeout_commit = "5s"/timeout_commit = "100ms"/g' ~/.starsd/config/config.toml
+sed -i -e 's/timeout_propose = "3s"/timeout_propose = "100ms"/g' ~/.starsd/config/config.toml
 starsd keys --keyring-backend test add validator --home $STARGAZE_HOME
 starsd add-genesis-account $(starsd keys --keyring-backend test show validator -a --home $STARGAZE_HOME) 10000000000000$DENOM --home $STARGAZE_HOME
 starsd add-genesis-account $RLYKEY 10000000000000$DENOM --home $STARGAZE_HOME

@@ -77,12 +77,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - latest
+        - v10.0.0.alpha-2
     when:
       event:
         - push
       branch:
-        - feature/wasmd-0.31
+        - feature/globalfee
   - name: docker_release
     image: plugins/docker:18
     settings:
@@ -313,7 +313,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:8.0.0
+    image: publicawesome/stargaze:9.0.0
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
@@ -350,7 +350,7 @@ steps:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: true
-    image: publicawesome/stargaze:latest
+    image: publicawesome/stargaze:v10.0.0.alpha-2
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -404,6 +404,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 96c6dfda726e450ed66d7fe3a3e3bbbf611b4973e5d6e48ca72a96349230cf68
+hmac: 97dc6e971f56a9fe6d6eb3b740a691d4fb4337219a0e2bc38ee45245de08d63e
 
 ...
