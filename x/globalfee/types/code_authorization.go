@@ -5,8 +5,10 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-var _ sdk.Msg = &MsgSetCodeAuthorization{}
-var _ sdk.Msg = &MsgRemoveCodeAuthorization{}
+var (
+	_ sdk.Msg = &MsgSetCodeAuthorization{}
+	_ sdk.Msg = &MsgRemoveCodeAuthorization{}
+)
 
 // msg types
 const (

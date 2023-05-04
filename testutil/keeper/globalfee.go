@@ -22,6 +22,7 @@ import (
 
 // GlobalFeeKeeper creates a testing keeper for the x/global module
 func GlobalFeeKeeper(tb testing.TB) (keeper.Keeper, sdk.Context) {
+	tb.Helper()
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
 	tStoreKey := storetypes.NewTransientStoreKey("t_globalfee")
