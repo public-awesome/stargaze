@@ -22,11 +22,11 @@ func (k Keeper) IterateCodeAuthorizations(ctx sdk.Context, cb func(types.CodeAut
 }
 
 // GetCodeAuthorization gets any authorizations set up for the given code id
-func (k Keeper) GetCodeAuthorization(ctx sdk.Context, codeId uint64) (types.CodeAuthorization, bool) {
+func (k Keeper) GetCodeAuthorization(ctx sdk.Context, codeID uint64) (types.CodeAuthorization, bool) {
 	store := ctx.KVStore(k.storeKey)
 
 	var ca types.CodeAuthorization
-	bz := store.Get(types.GetCodeAuthorizationPrefix(codeId))
+	bz := store.Get(types.GetCodeAuthorizationPrefix(codeID))
 	if bz == nil {
 		return ca, false
 	}
@@ -42,7 +42,7 @@ func (k Keeper) SetCodeAuthorization(ctx sdk.Context, ca types.CodeAuthorization
 	}
 
 	if k.wasmKeeper.GetCodeInfo(ctx, ca.GetCodeId()) == nil {
-		return types.ErrCodeIdNotExist
+		return types.ErrCodeIDNotExist
 	}
 
 	store := ctx.KVStore(k.storeKey)
@@ -53,8 +53,8 @@ func (k Keeper) SetCodeAuthorization(ctx sdk.Context, ca types.CodeAuthorization
 }
 
 // DeleteCodeAuthorization deletes any existing authorizations for given code id
-func (k Keeper) DeleteCodeAuthorization(ctx sdk.Context, codeId uint64) {
+func (k Keeper) DeleteCodeAuthorization(ctx sdk.Context, codeID uint64) {
 	store := ctx.KVStore(k.storeKey)
 
-	store.Delete(types.GetCodeAuthorizationPrefix(codeId))
+	store.Delete(types.GetCodeAuthorizationPrefix(codeID))
 }

@@ -14,11 +14,11 @@ const (
 	TypeMsgRemoveCodeAuthorization = "remove_code_authorization"
 )
 
-func NewMsgSetCodeAuthorization(sender string, codeId uint64, methods []string) *MsgSetCodeAuthorization {
+func NewMsgSetCodeAuthorization(sender string, codeID uint64, methods []string) *MsgSetCodeAuthorization {
 	return &MsgSetCodeAuthorization{
 		Sender: sender,
 		CodeAuthorization: &CodeAuthorization{
-			CodeId:  codeId,
+			CodeId:  codeID,
 			Methods: methods,
 		},
 	}
@@ -53,10 +53,10 @@ func (msg MsgSetCodeAuthorization) ValidateBasic() error {
 	return msg.CodeAuthorization.Validate()
 }
 
-func NewMsgRemoveCodeAuthorization(sender string, codeId uint64) *MsgRemoveCodeAuthorization {
+func NewMsgRemoveCodeAuthorization(sender string, codeID uint64) *MsgRemoveCodeAuthorization {
 	return &MsgRemoveCodeAuthorization{
 		Sender: sender,
-		CodeId: codeId,
+		CodeID: codeID,
 	}
 }
 

@@ -117,7 +117,7 @@ var xxx_messageInfo_MsgSetCodeAuthorizationResponse proto.InternalMessageInfo
 
 type MsgRemoveCodeAuthorization struct {
 	Sender string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
-	CodeId uint64 `protobuf:"varint,2,opt,name=code_id,json=codeId,proto3" json:"code_id,omitempty"`
+	CodeID uint64 `protobuf:"varint,2,opt,name=code_id,json=codeId,proto3" json:"code_id,omitempty"`
 }
 
 func (m *MsgRemoveCodeAuthorization) Reset()         { *m = MsgRemoveCodeAuthorization{} }
@@ -162,7 +162,7 @@ func (m *MsgRemoveCodeAuthorization) GetSender() string {
 
 func (m *MsgRemoveCodeAuthorization) GetCodeId() uint64 {
 	if m != nil {
-		return m.CodeId
+		return m.CodeID
 	}
 	return 0
 }
@@ -700,8 +700,8 @@ func (m *MsgRemoveCodeAuthorization) MarshalToSizedBuffer(dAtA []byte) (int, err
 	_ = i
 	var l int
 	_ = l
-	if m.CodeId != 0 {
-		i = encodeVarintTx(dAtA, i, uint64(m.CodeId))
+	if m.CodeID != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.CodeID))
 		i--
 		dAtA[i] = 0x10
 	}
@@ -910,8 +910,8 @@ func (m *MsgRemoveCodeAuthorization) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
-	if m.CodeId != 0 {
-		n += 1 + sovTx(uint64(m.CodeId))
+	if m.CodeID != 0 {
+		n += 1 + sovTx(uint64(m.CodeID))
 	}
 	return n
 }
@@ -1216,7 +1216,7 @@ func (m *MsgRemoveCodeAuthorization) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CodeId", wireType)
 			}
-			m.CodeId = 0
+			m.CodeID = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowTx
@@ -1226,7 +1226,7 @@ func (m *MsgRemoveCodeAuthorization) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.CodeId |= uint64(b&0x7F) << shift
+				m.CodeID |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}

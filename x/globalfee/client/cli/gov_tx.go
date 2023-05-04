@@ -25,7 +25,7 @@ func CmdProposalSetCodeAuthorization() *cobra.Command {
 				return err
 			}
 
-			codeId, err := strconv.ParseUint(args[0], 10, 64)
+			codeID, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
 				return err
 			}
@@ -36,7 +36,7 @@ func CmdProposalSetCodeAuthorization() *cobra.Command {
 				Title:       proposalTitle,
 				Description: proposalDescr,
 				CodeAuthorization: &types.CodeAuthorization{
-					CodeId:  codeId,
+					CodeId:  codeID,
 					Methods: methods,
 				},
 			}
@@ -72,7 +72,7 @@ func CmdProposalRemoveCodeAuthorization() *cobra.Command {
 				return err
 			}
 
-			codeId, err := strconv.ParseUint(args[0], 10, 64)
+			codeID, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
 				return err
 			}
@@ -80,7 +80,7 @@ func CmdProposalRemoveCodeAuthorization() *cobra.Command {
 			content := types.RemoveCodeAuthorizationProposal{
 				Title:       proposalTitle,
 				Description: proposalDescr,
-				CodeId:      codeId,
+				CodeId:      codeID,
 			}
 
 			msg, err := govtypes.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())

@@ -119,7 +119,7 @@ func TestRemoveCodeAuthorization(t *testing.T) {
 			func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgRemoveCodeAuthorization {
 				msg := types.MsgRemoveCodeAuthorization{
 					Sender: "👻",
-					CodeId: 2,
+					CodeID: 2,
 				}
 				return &msg
 			},
@@ -131,7 +131,7 @@ func TestRemoveCodeAuthorization(t *testing.T) {
 				sender := sample.AccAddress()
 				msg := types.MsgRemoveCodeAuthorization{
 					Sender: sender.String(),
-					CodeId: 2,
+					CodeID: 2,
 				}
 				return &msg
 			},
@@ -148,7 +148,7 @@ func TestRemoveCodeAuthorization(t *testing.T) {
 
 				msg := types.MsgRemoveCodeAuthorization{
 					Sender: sender.String(),
-					CodeId: 2,
+					CodeID: 2,
 				}
 				return &msg
 			},

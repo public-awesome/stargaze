@@ -22,8 +22,8 @@ var (
 	ContractAuthorizationPrefix = []byte{0x01}
 )
 
-func GetCodeAuthorizationPrefix(codeId uint64) []byte {
-	return append(CodeAuthorizationPrefix, sdk.Uint64ToBigEndian(codeId)...)
+func GetCodeAuthorizationPrefix(codeID uint64) []byte {
+	return append(CodeAuthorizationPrefix, sdk.Uint64ToBigEndian(codeID)...)
 }
 
 func GetContractAuthorizationPrefix(contractAddress sdk.AccAddress) []byte {

@@ -15,7 +15,7 @@ var _ sdk.AnteDecorator = FeeDecorator{}
 
 type GlobalFeeReaderExpected interface {
 	GetContractAuthorization(ctx sdk.Context, contractAddr sdk.AccAddress) (types.ContractAuthorization, bool)
-	GetCodeAuthorization(ctx sdk.Context, codeId uint64) (types.CodeAuthorization, bool)
+	GetCodeAuthorization(ctx sdk.Context, codeID uint64) (types.CodeAuthorization, bool)
 	GetContractInfo(ctx sdk.Context, contractAddress sdk.AccAddress) *wasmtypes.ContractInfo
 	GetParams(ctx sdk.Context) types.Params
 }
@@ -81,8 +81,8 @@ func (mfd FeeDecorator) isZeroFeeMsg(ctx sdk.Context, msg *wasmtypes.MsgExecuteC
 	if found {
 		return isAuthorizedMethod(msg.GetMsg(), contractAuth.GetMethods())
 	}
-	codeId := mfd.feeKeeper.GetContractInfo(ctx, contactAddr).CodeID
-	codeAuth, found := mfd.feeKeeper.GetCodeAuthorization(ctx, codeId)
+	codeID := mfd.feeKeeper.GetContractInfo(ctx, contactAddr).CodeID
+	codeAuth, found := mfd.feeKeeper.GetCodeAuthorization(ctx, codeID)
 	if found {
 		return isAuthorizedMethod(msg.GetMsg(), codeAuth.GetMethods())
 	}
