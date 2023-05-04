@@ -20,7 +20,9 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 	s.txBuilder = s.clientCtx.TxConfig.NewTxBuilder()
 	priv1, _, addr1 := testdata.KeyTestPubAddr()
 	privs, accNums, accSeqs := []cryptotypes.PrivKey{priv1}, []uint64{0}, []uint64{0}
-	contractAddr := s.SetupContracts(addr1.String(), "counter.wasm")
+	contract_with_code_auth := s.SetupContractWithCodeAuth(addr1.String(), "counter.wasm", []string{"increment"})
+	contract_with_addr_auth := s.SetupContractWithContractAuth(addr1.String(), "counter.wasm", []string{"increment"})
+	contract_with_addr_auth_all := s.SetupContractWithContractAuth(addr1.String(), "counter.wasm", []string{"*"})
 	counterIncrementMsg := []byte(`{"increment": {}}`)
 	counterResetMsg := []byte(`{"reset": 0}`)
 
@@ -40,7 +42,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contractAddr,
+					Contract: contract_with_code_auth,
 					Msg:      counterResetMsg,
 				},
 			},
@@ -54,21 +56,35 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contractAddr,
+					Contract: contract_with_code_auth,
 					Msg:      counterResetMsg,
 				},
 			},
 			false,
 		},
 		{
-			"ok: min_gas_price: 0stake, globalfee: 5stake, feeSent: 0stake, not authorized contract exec",
+			"fail: min_gas_price: 0stake, globalfee: 5stake, feeSent: 0stake, not authorized contract exec",
 			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 0)),
 			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 5)),
 			sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 0)),
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contractAddr,
+					Contract: contract_with_code_auth,
+					Msg:      counterResetMsg,
+				},
+			},
+			true,
+		},
+		{
+			"ok: min_gas_price: 0stake, globalfee: 5stake, feeSent: 5stake, not authorized contract exec",
+			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 0)),
+			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 5)),
+			sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 5)),
+			[]sdk.Msg{
+				&wasmtypes.MsgExecuteContract{
+					Sender:   addr1.String(),
+					Contract: contract_with_code_auth,
 					Msg:      counterResetMsg,
 				},
 			},
@@ -82,21 +98,35 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contractAddr,
+					Contract: contract_with_code_auth,
 					Msg:      counterResetMsg,
 				},
 			},
 			true,
 		},
 		{
-			"ok: min_gas_price: 2stake, globalfee: 5stake, feeSent: 3stake, not authorized contract exec",
+			"fail: min_gas_price: 2stake, globalfee: 5stake, feeSent: 3stake, not authorized contract exec",
 			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 2)),
 			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 5)),
 			sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 3)),
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contractAddr,
+					Contract: contract_with_code_auth,
+					Msg:      counterResetMsg,
+				},
+			},
+			true,
+		},
+		{
+			"ok: min_gas_price: 2stake, globalfee: 5stake, feeSent: 5stake, not authorized contract exec",
+			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 2)),
+			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 5)),
+			sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 5)),
+			[]sdk.Msg{
+				&wasmtypes.MsgExecuteContract{
+					Sender:   addr1.String(),
+					Contract: contract_with_code_auth,
 					Msg:      counterResetMsg,
 				},
 			},
@@ -110,22 +140,64 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contractAddr,
+					Contract: contract_with_code_auth,
 					Msg:      counterIncrementMsg,
 				},
 			},
 			false,
 		},
 		{
-			"ok: min_gas_price: 2stake, globalfee: 5stake, feeSent: 0stake, authorized contract address",
+			"fail: min_gas_price: 2stake, globalfee: 5stake, feeSent: 0stake, authorized contract address but not auth msg",
 			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 2)),
 			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 5)),
 			sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 0)),
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contractAddr,
+					Contract: contract_with_addr_auth,
+					Msg:      counterResetMsg,
+				},
+			},
+			true,
+		},
+		{
+			"ok: min_gas_price: 2stake, globalfee: 5stake, feeSent: 0stake, authorized contract address with auth msg",
+			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 2)),
+			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 5)),
+			sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 0)),
+			[]sdk.Msg{
+				&wasmtypes.MsgExecuteContract{
+					Sender:   addr1.String(),
+					Contract: contract_with_addr_auth,
 					Msg:      counterIncrementMsg,
+				},
+			},
+			false,
+		},
+		{
+			"ok: min_gas_price: 2stake, globalfee: 5stake, feeSent: 0stake, authorized contract address with auth all (*)",
+			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 2)),
+			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 5)),
+			sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 0)),
+			[]sdk.Msg{
+				&wasmtypes.MsgExecuteContract{
+					Sender:   addr1.String(),
+					Contract: contract_with_addr_auth_all,
+					Msg:      counterIncrementMsg,
+				},
+			},
+			false,
+		},
+		{
+			"ok: min_gas_price: 2stake, globalfee: 5stake, feeSent: 0stake, authorized contract address with auth all (*)",
+			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 2)),
+			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 5)),
+			sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 0)),
+			[]sdk.Msg{
+				&wasmtypes.MsgExecuteContract{
+					Sender:   addr1.String(),
+					Contract: contract_with_addr_auth_all,
+					Msg:      counterResetMsg,
 				},
 			},
 			false,
@@ -138,18 +210,18 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contractAddr,
+					Contract: contract_with_code_auth,
 					Msg:      counterIncrementMsg,
 				},
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contractAddr,
+					Contract: contract_with_addr_auth,
 					Msg:      counterIncrementMsg,
 				},
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contractAddr,
-					Msg:      counterIncrementMsg,
+					Contract: contract_with_addr_auth_all,
+					Msg:      counterResetMsg,
 				},
 			},
 			false,
@@ -162,12 +234,36 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contractAddr,
+					Contract: contract_with_code_auth,
 					Msg:      counterIncrementMsg,
 				},
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contractAddr,
+					Contract: contract_with_code_auth,
+					Msg:      counterResetMsg,
+				},
+				&wasmtypes.MsgExecuteContract{
+					Sender:   addr1.String(),
+					Contract: contract_with_code_auth,
+					Msg:      counterResetMsg,
+				},
+			},
+			true,
+		},
+		{
+			"ok: min_gas_price: 2stake, globalfee: 5stake, feeSent: 0stake, one authorized contract + unauthorized msgs",
+			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 2)),
+			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 5)),
+			sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 5)),
+			[]sdk.Msg{
+				&wasmtypes.MsgExecuteContract{
+					Sender:   addr1.String(),
+					Contract: contract_with_code_auth,
+					Msg:      counterIncrementMsg,
+				},
+				&wasmtypes.MsgExecuteContract{
+					Sender:   addr1.String(),
+					Contract: contract_with_code_auth,
 					Msg:      counterResetMsg,
 				},
 			},

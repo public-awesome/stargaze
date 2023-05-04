@@ -95,7 +95,28 @@ func (s *AnteHandlerTestSuite) SetupWasmMsgServer() {
 	s.msgServer = wasmkeeper.NewMsgServerImpl(wasmkeeper.NewDefaultPermissionKeeper(s.app.WasmKeeper))
 }
 
-func (s *AnteHandlerTestSuite) SetupContracts(senderAddr string, contractBinary string) string {
+func (s *AnteHandlerTestSuite) SetupContractWithCodeAuth(senderAddr string, contractBinary string, authMethods []string) string {
+	codeId, err := storeContract(s.ctx, s.msgServer, senderAddr, contractBinary)
+	s.Require().NoError(err)
+
+	instantiageMsg := CounterInsantiateMsg{Count: 0}
+	instantiateMsgRaw, err := json.Marshal(&instantiageMsg)
+	s.Require().NoError(err)
+
+	initMsg := wasmtypes.MsgInstantiateContract{Sender: senderAddr, Admin: senderAddr, CodeID: codeId, Label: "Counter Contract", Msg: instantiateMsgRaw, Funds: sdk.NewCoins()}
+	instantiateRes, err := s.msgServer.InstantiateContract(sdk.WrapSDKContext(s.ctx), &initMsg)
+	s.Require().NoError(err)
+
+	err = s.app.GlobalFeeKeeper.SetCodeAuthorization(s.ctx, types.CodeAuthorization{
+		CodeId:  codeId,
+		Methods: authMethods,
+	})
+	s.Require().NoError(err)
+
+	return instantiateRes.Address
+}
+
+func (s *AnteHandlerTestSuite) SetupContractWithContractAuth(senderAddr string, contractBinary string, authMethods []string) string {
 	codeId, err := storeContract(s.ctx, s.msgServer, senderAddr, contractBinary)
 	s.Require().NoError(err)
 
@@ -109,7 +130,7 @@ func (s *AnteHandlerTestSuite) SetupContracts(senderAddr string, contractBinary 
 
 	err = s.app.GlobalFeeKeeper.SetContractAuthorization(s.ctx, types.ContractAuthorization{
 		ContractAddress: instantiateRes.Address,
-		Methods:         []string{"increment"},
+		Methods:         authMethods,
 	})
 	s.Require().NoError(err)
 
