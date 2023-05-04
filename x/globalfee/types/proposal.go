@@ -68,10 +68,7 @@ func (p RemoveCodeAuthorizationProposal) ProposalType() string {
 
 // ValidateBasic validates the proposal
 func (p RemoveCodeAuthorizationProposal) ValidateBasic() error {
-	if err := validateProposalCommons(p.Title, p.Description); err != nil {
-		return err
-	}
-	return nil
+	return validateProposalCommons(p.Title, p.Description)
 }
 
 // MarshalYAML pretty prints the wasm byte code

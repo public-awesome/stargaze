@@ -65,7 +65,7 @@ func GetCmdCodeAuthorization() *cobra.Command {
 				return err
 			}
 
-			codeId, err := strconv.ParseUint(args[0], 10, 64)
+			codeID, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
 				return err
 			}
@@ -74,7 +74,7 @@ func GetCmdCodeAuthorization() *cobra.Command {
 			res, err := queryClient.CodeAuthorization(
 				cmd.Context(),
 				&types.QueryCodeAuthorizationRequest{
-					CodeId: codeId,
+					CodeId: codeID,
 				},
 			)
 			if err != nil {

@@ -21,7 +21,8 @@ import (
 )
 
 // GlobalFeeKeeper creates a testing keeper for the x/global module
-func GlobalFeeKeeper(t testing.TB) (keeper.Keeper, sdk.Context) {
+func GlobalFeeKeeper(tb testing.TB) (keeper.Keeper, sdk.Context) {
+	tb.Helper()
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
 	tStoreKey := storetypes.NewTransientStoreKey("t_globalfee")
@@ -31,7 +32,7 @@ func GlobalFeeKeeper(t testing.TB) (keeper.Keeper, sdk.Context) {
 	stateStore.MountStoreWithDB(storeKey, storetypes.StoreTypeIAVL, db)
 	stateStore.MountStoreWithDB(memStoreKey, storetypes.StoreTypeMemory, nil)
 	stateStore.MountStoreWithDB(tStoreKey, sdk.StoreTypeTransient, db)
-	require.NoError(t, stateStore.LoadLatestVersion())
+	require.NoError(tb, stateStore.LoadLatestVersion())
 
 	registry := codectypes.NewInterfaceRegistry()
 	encoding := cosmoscmd.MakeEncodingConfig(app.ModuleBasics)

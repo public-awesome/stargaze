@@ -39,10 +39,7 @@ func (p Params) Validate() error {
 	if err := validatePriviligedAddresses(p.PrivilegedAddress); err != nil {
 		return err
 	}
-	if err := validateMinimumGasPrices(p.MinimumGasPrices); err != nil {
-		return err
-	}
-	return nil
+	return validateMinimumGasPrices(p.MinimumGasPrices)
 }
 
 func validatePriviligedAddresses(i interface{}) error {

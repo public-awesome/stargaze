@@ -41,7 +41,7 @@ func CmdSetCodeAuthorization() *cobra.Command {
 				return err
 			}
 
-			codeId, err := strconv.ParseUint(args[0], 10, 64)
+			codeID, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
 				return err
 			}
@@ -50,7 +50,7 @@ func CmdSetCodeAuthorization() *cobra.Command {
 
 			msg := types.NewMsgSetCodeAuthorization(
 				clientCtx.GetFromAddress().String(),
-				codeId,
+				codeID,
 				methods,
 			)
 			if err := msg.ValidateBasic(); err != nil {
@@ -76,14 +76,14 @@ func CmdRemoveCodeAuthorization() *cobra.Command {
 				return err
 			}
 
-			codeId, err := strconv.ParseUint(args[0], 10, 64)
+			codeID, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
 				return err
 			}
 
 			msg := types.NewMsgRemoveCodeAuthorization(
 				clientCtx.GetFromAddress().String(),
-				codeId,
+				codeID,
 			)
 
 			if err := msg.ValidateBasic(); err != nil {
