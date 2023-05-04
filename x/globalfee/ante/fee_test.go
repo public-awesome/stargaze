@@ -21,6 +21,8 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 	priv1, _, addr1 := testdata.KeyTestPubAddr()
 	privs, accNums, accSeqs := []cryptotypes.PrivKey{priv1}, []uint64{0}, []uint64{0}
 	contractAddr := s.SetupContracts(addr1.String(), "counter.wasm")
+	counterIncrementMsg := []byte(`{"increment": {}}`)
+	counterResetMsg := []byte(`{"reset": 0}`)
 
 	testCases := []struct {
 		testCase    string
@@ -39,6 +41,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
 					Contract: contractAddr,
+					Msg:      counterResetMsg,
 				},
 			},
 			true,
@@ -47,11 +50,12 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			"ok: min_gas_price: empty, globalfee: 5stake, feeSent: 7stake, not authorized contract exec",
 			[]sdk.DecCoin{},
 			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 5)),
-			sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 1)),
+			sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 7)),
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
 					Contract: contractAddr,
+					Msg:      counterResetMsg,
 				},
 			},
 			false,
@@ -65,6 +69,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
 					Contract: contractAddr,
+					Msg:      counterResetMsg,
 				},
 			},
 			false,
@@ -78,6 +83,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
 					Contract: contractAddr,
+					Msg:      counterResetMsg,
 				},
 			},
 			true,
@@ -91,6 +97,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
 					Contract: contractAddr,
+					Msg:      counterResetMsg,
 				},
 			},
 			false,
@@ -104,6 +111,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
 					Contract: contractAddr,
+					Msg:      counterIncrementMsg,
 				},
 			},
 			false,
@@ -117,6 +125,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
 					Contract: contractAddr,
+					Msg:      counterIncrementMsg,
 				},
 			},
 			false,
@@ -130,14 +139,17 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
 					Contract: contractAddr,
+					Msg:      counterIncrementMsg,
 				},
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
 					Contract: contractAddr,
+					Msg:      counterIncrementMsg,
 				},
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
 					Contract: contractAddr,
+					Msg:      counterIncrementMsg,
 				},
 			},
 			false,
@@ -151,14 +163,12 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
 					Contract: contractAddr,
+					Msg:      counterIncrementMsg,
 				},
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
 					Contract: contractAddr,
-				},
-				&wasmtypes.MsgExecuteContract{
-					Sender:   addr1.String(),
-					Contract: contractAddr,
+					Msg:      counterResetMsg,
 				},
 			},
 			false,
@@ -170,6 +180,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			_, antehandler := s.SetupTestGlobalFeeStoreAndMinGasPrice(tc.minGasPrice, tc.globalFees)
 			s.Require().NoError(s.txBuilder.SetMsgs(tc.msg...))
 			s.txBuilder.SetFeeAmount(tc.feeSent)
+			s.txBuilder.SetGasLimit(1)
 			tx, err := s.CreateTestTx(privs, accNums, accSeqs, s.ctx.ChainID())
 			s.Require().NoError(err)
 

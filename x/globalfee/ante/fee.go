@@ -97,10 +97,15 @@ func isAuthorizedMethod(jsonBytes wasmtypes.RawContractMessage, methods []string
 		return true
 	}
 
+	if err := jsonBytes.ValidateBasic(); err != nil {
+		return false
+	}
+
 	// contract method fetching taken from https://github.com/CosmWasm/wasmd/blob/4c906d5a53a255c551d6ed981a548cffe47ae9f0/x/wasm/types/json_matching.go
 	if err := json.Unmarshal(jsonBytes, &document); err != nil {
 		return false
 	}
+
 	if len(document) != 1 {
 		return false
 	}

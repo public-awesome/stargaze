@@ -76,8 +76,7 @@ func (s *AnteHandlerTestSuite) SetupTest() {
 }
 
 func (s *AnteHandlerTestSuite) SetupTestGlobalFeeStoreAndMinGasPrice(minGasPrice []sdk.DecCoin, globalFees sdk.DecCoins) (ante.FeeDecorator, sdk.AnteHandler) {
-	subspace := s.app.GetSubspace(types.ModuleName)
-	subspace.SetParamSet(s.ctx, &types.Params{MinimumGasPrices: globalFees})
+	s.app.GlobalFeeKeeper.SetParams(s.ctx, types.Params{MinimumGasPrices: globalFees})
 	s.ctx = s.ctx.WithMinGasPrices(minGasPrice).WithIsCheckTx(true)
 
 	// build fee decorator
@@ -100,26 +99,17 @@ func (s *AnteHandlerTestSuite) SetupContracts(senderAddr string, contractBinary 
 	codeId, err := storeContract(s.ctx, s.msgServer, senderAddr, contractBinary)
 	s.Require().NoError(err)
 
-	instantiageMsg := CounterInsantiateMsg{
-		Count: 0,
-	}
+	instantiageMsg := CounterInsantiateMsg{Count: 0}
 	instantiateMsgRaw, err := json.Marshal(&instantiageMsg)
 	s.Require().NoError(err)
 
-	initMsg := wasmtypes.MsgInstantiateContract{
-		Sender: senderAddr,
-		Admin:  senderAddr,
-		CodeID: codeId,
-		Label:  "Counter Contract",
-		Msg:    instantiateMsgRaw,
-		Funds:  sdk.NewCoins(),
-	}
+	initMsg := wasmtypes.MsgInstantiateContract{Sender: senderAddr, Admin: senderAddr, CodeID: codeId, Label: "Counter Contract", Msg: instantiateMsgRaw, Funds: sdk.NewCoins()}
 	instantiateRes, err := s.msgServer.InstantiateContract(sdk.WrapSDKContext(s.ctx), &initMsg)
 	s.Require().NoError(err)
 
-	err = s.app.GlobalFeeKeeper.SetCodeAuthorization(s.ctx, types.CodeAuthorization{
-		CodeId:  codeId,
-		Methods: []string{"increment"},
+	err = s.app.GlobalFeeKeeper.SetContractAuthorization(s.ctx, types.ContractAuthorization{
+		ContractAddress: instantiateRes.Address,
+		Methods:         []string{"increment"},
 	})
 	s.Require().NoError(err)
 
