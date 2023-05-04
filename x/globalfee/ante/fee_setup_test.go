@@ -16,10 +16,10 @@ import (
 	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	stargazeapp "github.com/public-awesome/stargaze/v9/app"
-	"github.com/public-awesome/stargaze/v9/testutil/simapp"
-	"github.com/public-awesome/stargaze/v9/x/globalfee/ante"
-	"github.com/public-awesome/stargaze/v9/x/globalfee/types"
+	stargazeapp "github.com/public-awesome/stargaze/v10/app"
+	"github.com/public-awesome/stargaze/v10/testutil/simapp"
+	"github.com/public-awesome/stargaze/v10/x/globalfee/ante"
+	"github.com/public-awesome/stargaze/v10/x/globalfee/types"
 	"github.com/stretchr/testify/suite"
 	"github.com/tendermint/spm/cosmoscmd"
 	"github.com/tendermint/tendermint/crypto"
@@ -81,7 +81,7 @@ func (s *AnteHandlerTestSuite) SetupTestGlobalFeeStoreAndMinGasPrice(minGasPrice
 	s.ctx = s.ctx.WithMinGasPrices(minGasPrice).WithIsCheckTx(true)
 
 	// build fee decorator
-	feeDecorator := ante.NewFeeDecorator(s.app.AppCodec(), nil, s.app.StakingKeeper)
+	feeDecorator := ante.NewFeeDecorator(s.app.AppCodec(), s.app.GlobalFeeKeeper, s.app.StakingKeeper)
 
 	// chain fee decorator to antehandler
 	antehandler := sdk.ChainAnteDecorators(feeDecorator)
@@ -119,7 +119,7 @@ func (s *AnteHandlerTestSuite) SetupContracts(senderAddr string, contractBinary 
 
 	err = s.app.GlobalFeeKeeper.SetCodeAuthorization(s.ctx, types.CodeAuthorization{
 		CodeId:  codeId,
-		Methods: []string{"count"},
+		Methods: []string{"increment"},
 	})
 	s.Require().NoError(err)
 

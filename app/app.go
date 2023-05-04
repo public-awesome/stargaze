@@ -121,11 +121,6 @@ import (
 	globalfeemodulekeeper "github.com/public-awesome/stargaze/v10/x/globalfee/keeper"
 	globalfeemoduletypes "github.com/public-awesome/stargaze/v10/x/globalfee/types"
 
-	globalfeemodule "github.com/public-awesome/stargaze/v9/x/globalfee"
-	globalfeeclient "github.com/public-awesome/stargaze/v9/x/globalfee/client"
-	globalfeemodulekeeper "github.com/public-awesome/stargaze/v9/x/globalfee/keeper"
-	globalfeemoduletypes "github.com/public-awesome/stargaze/v9/x/globalfee/types"
-
 	//  ica
 	ica "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts"
 	icahost "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts/host"
