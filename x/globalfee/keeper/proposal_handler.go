@@ -9,7 +9,7 @@ import (
 
 type govKeeper interface {
 	SetCodeAuthorization(ctx sdk.Context, ca types.CodeAuthorization) error
-	DeleteCodeAuthorization(ctx sdk.Context, codeId uint64)
+	DeleteCodeAuthorization(ctx sdk.Context, codeID uint64)
 	SetContractAuthorization(ctx sdk.Context, ca types.ContractAuthorization) error
 	DeleteContractAuthorization(ctx sdk.Context, contractAddr sdk.AccAddress)
 }
