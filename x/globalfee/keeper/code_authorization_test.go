@@ -11,13 +11,13 @@ import (
 func Test_CodeAuthorization(t *testing.T) {
 	k, ctx := keeper.GlobalFeeKeeper(t)
 	ca := types.CodeAuthorization{
-		CodeId:  1,
+		CodeID:  1,
 		Methods: []string{"mint", "list"},
 	}
 
 	t.Run("store invalid ca", func(t *testing.T) {
 		err := k.SetCodeAuthorization(ctx, types.CodeAuthorization{
-			CodeId:  1,
+			CodeID:  1,
 			Methods: []string{},
 		})
 		require.Error(t, err)
@@ -25,14 +25,14 @@ func Test_CodeAuthorization(t *testing.T) {
 
 	t.Run("code id does not exist", func(t *testing.T) {
 		err := k.SetCodeAuthorization(ctx, types.CodeAuthorization{
-			CodeId:  10,
+			CodeID:  10,
 			Methods: []string{"*"},
 		})
 		require.Error(t, err)
 	})
 
 	t.Run("authorization doesnt exist", func(t *testing.T) {
-		_, found := k.GetCodeAuthorization(ctx, ca.CodeId)
+		_, found := k.GetCodeAuthorization(ctx, ca.CodeID)
 		require.False(t, found)
 	})
 
@@ -40,17 +40,17 @@ func Test_CodeAuthorization(t *testing.T) {
 		err := k.SetCodeAuthorization(ctx, ca)
 		require.NoError(t, err)
 
-		_, found := k.GetCodeAuthorization(ctx, ca.CodeId)
+		_, found := k.GetCodeAuthorization(ctx, ca.CodeID)
 		require.True(t, found)
 	})
 
 	t.Run("delete authorization", func(t *testing.T) {
-		_, found := k.GetCodeAuthorization(ctx, ca.CodeId)
+		_, found := k.GetCodeAuthorization(ctx, ca.CodeID)
 		require.True(t, found)
 
-		k.DeleteCodeAuthorization(ctx, ca.CodeId)
+		k.DeleteCodeAuthorization(ctx, ca.CodeID)
 
-		_, found = k.GetCodeAuthorization(ctx, ca.CodeId)
+		_, found = k.GetCodeAuthorization(ctx, ca.CodeID)
 		require.False(t, found)
 	})
 
@@ -58,12 +58,12 @@ func Test_CodeAuthorization(t *testing.T) {
 		err := k.SetCodeAuthorization(ctx, ca)
 		require.NoError(t, err)
 		err = k.SetCodeAuthorization(ctx, types.CodeAuthorization{
-			CodeId:  2,
+			CodeID:  2,
 			Methods: ca.GetMethods(),
 		})
 		require.NoError(t, err)
 		err = k.SetCodeAuthorization(ctx, types.CodeAuthorization{
-			CodeId:  3,
+			CodeID:  3,
 			Methods: ca.GetMethods(),
 		})
 		require.NoError(t, err)

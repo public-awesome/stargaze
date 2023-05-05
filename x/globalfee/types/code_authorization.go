@@ -20,7 +20,7 @@ func NewMsgSetCodeAuthorization(sender string, codeID uint64, methods []string) 
 	return &MsgSetCodeAuthorization{
 		Sender: sender,
 		CodeAuthorization: &CodeAuthorization{
-			CodeId:  codeID,
+			CodeID:  codeID,
 			Methods: methods,
 		},
 	}

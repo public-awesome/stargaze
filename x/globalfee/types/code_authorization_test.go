@@ -16,7 +16,7 @@ func TestCodeAuthorizationValidate(t *testing.T) {
 		{
 			"fail: empty methods",
 			types.CodeAuthorization{
-				CodeId:  1,
+				CodeID:  1,
 				Methods: []string{},
 			},
 			true,
@@ -24,7 +24,7 @@ func TestCodeAuthorizationValidate(t *testing.T) {
 		{
 			"fail: invalid method names",
 			types.CodeAuthorization{
-				CodeId:  1,
+				CodeID:  1,
 				Methods: []string{"^&()"},
 			},
 			true,
@@ -32,7 +32,7 @@ func TestCodeAuthorizationValidate(t *testing.T) {
 		{
 			"fail: invalid method name with space",
 			types.CodeAuthorization{
-				CodeId:  1,
+				CodeID:  1,
 				Methods: []string{"mint nft"},
 			},
 			true,
@@ -40,7 +40,7 @@ func TestCodeAuthorizationValidate(t *testing.T) {
 		{
 			"ok: valid name",
 			types.CodeAuthorization{
-				CodeId:  1,
+				CodeID:  1,
 				Methods: []string{"mint"},
 			},
 			false,
@@ -48,7 +48,7 @@ func TestCodeAuthorizationValidate(t *testing.T) {
 		{
 			"ok: valid name with underscore",
 			types.CodeAuthorization{
-				CodeId:  1,
+				CodeID:  1,
 				Methods: []string{"mint_nft"},
 			},
 			false,
@@ -56,7 +56,7 @@ func TestCodeAuthorizationValidate(t *testing.T) {
 		{
 			"ok: wildcard",
 			types.CodeAuthorization{
-				CodeId:  1,
+				CodeID:  1,
 				Methods: []string{"*"},
 			},
 			false,

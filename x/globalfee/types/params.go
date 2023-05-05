@@ -23,20 +23,27 @@ func ParamKeyTable() paramtypes.KeyTable {
 // default module parameters
 func DefaultParams() Params {
 	return Params{
-		PrivilegedAddress: []string{},
-		MinimumGasPrices:  sdk.NewDecCoins(),
+		PrivilegedAddresses: []string{},
+		MinimumGasPrices:    sdk.NewDecCoins(),
+	}
+}
+
+func NewParams(addresses []string) Params {
+	return Params{
+		PrivilegedAddresses: addresses,
+		MinimumGasPrices:    sdk.NewDecCoins(),
 	}
 }
 
 func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
-		paramtypes.NewParamSetPair(KeyPrivilegedAddresses, &p.PrivilegedAddress, validatePriviligedAddresses),
+		paramtypes.NewParamSetPair(KeyPrivilegedAddresses, &p.PrivilegedAddresses, validatePriviligedAddresses),
 		paramtypes.NewParamSetPair(KeyMinGasPrices, &p.MinimumGasPrices, validateMinimumGasPrices),
 	}
 }
 
 func (p Params) Validate() error {
-	if err := validatePriviligedAddresses(p.PrivilegedAddress); err != nil {
+	if err := validatePriviligedAddresses(p.PrivilegedAddresses); err != nil {
 		return err
 	}
 	return validateMinimumGasPrices(p.MinimumGasPrices)

@@ -36,7 +36,7 @@ func CmdProposalSetCodeAuthorization() *cobra.Command {
 				Title:       proposalTitle,
 				Description: proposalDescr,
 				CodeAuthorization: &types.CodeAuthorization{
-					CodeId:  codeID,
+					CodeID:  codeID,
 					Methods: methods,
 				},
 			}
@@ -80,7 +80,7 @@ func CmdProposalRemoveCodeAuthorization() *cobra.Command {
 			content := types.RemoveCodeAuthorizationProposal{
 				Title:       proposalTitle,
 				Description: proposalDescr,
-				CodeId:      codeID,
+				CodeID:      codeID,
 			}
 
 			msg, err := govtypes.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
