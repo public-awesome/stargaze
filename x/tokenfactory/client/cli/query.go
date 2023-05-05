@@ -11,7 +11,7 @@ import (
 )
 
 // GetQueryCmd returns the cli query commands for this module
-func GetQueryCmd(_ string) *cobra.Command {
+func GetQueryCmd() *cobra.Command {
 	// Group tokenfactory queries under a subcommand
 	cmd := &cobra.Command{
 		Use:                        types.ModuleName,
