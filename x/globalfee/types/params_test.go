@@ -21,12 +21,12 @@ func TestParamsValidate(t *testing.T) {
 		},
 		{
 			"fail: invalid addr",
-			types.Params{PrivilegedAddress: []string{"👻"}},
+			types.Params{PrivilegedAddresses: []string{"👻"}},
 			true,
 		},
 		{
 			"ok: valid addr",
-			types.Params{PrivilegedAddress: []string{"cosmos1c4k24jzduc365kywrsvf5ujz4ya6mwymy8vq4q"}},
+			types.Params{PrivilegedAddresses: []string{"cosmos1c4k24jzduc365kywrsvf5ujz4ya6mwymy8vq4q"}},
 			false,
 		},
 		{

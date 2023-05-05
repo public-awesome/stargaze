@@ -108,7 +108,7 @@ func (s *AnteHandlerTestSuite) SetupContractWithCodeAuth(senderAddr string, cont
 	s.Require().NoError(err)
 
 	err = s.app.GlobalFeeKeeper.SetCodeAuthorization(s.ctx, types.CodeAuthorization{
-		CodeId:  codeId,
+		CodeID:  codeId,
 		Methods: authMethods,
 	})
 	s.Require().NoError(err)

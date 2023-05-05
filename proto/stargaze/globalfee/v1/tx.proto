@@ -1,6 +1,7 @@
 syntax = "proto3";
 package publicawesome.stargaze.globalfee.v1;
 
+import "gogoproto/gogo.proto";
 import "stargaze/globalfee/v1/globalfee.proto";
 
 option go_package = "github.com/public-awesome/stargaze/v10/x/globalfee/types";
@@ -29,7 +30,7 @@ message MsgSetCodeAuthorizationResponse {}
 
 message MsgRemoveCodeAuthorization {
   string sender = 1;
-  uint64 code_id = 2;
+  uint64 code_id = 2 [ (gogoproto.customname) = "CodeID" ];
 }
 
 message MsgRemoveCodeAuthorizationResponse {}
