@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/gov/client/cli"
@@ -53,7 +52,6 @@ func CmdProposalSetCodeAuthorization() *cobra.Command {
 		},
 	}
 
-	flags.AddTxFlagsToCmd(cmd)
 	cmd.Flags().String(cli.FlagTitle, "", "Title of proposal")
 	cmd.Flags().String(cli.FlagDescription, "", "Description of proposal")
 	cmd.Flags().String(cli.FlagDeposit, "", "Deposit of proposal")
@@ -95,7 +93,6 @@ func CmdProposalRemoveCodeAuthorization() *cobra.Command {
 		},
 	}
 
-	flags.AddTxFlagsToCmd(cmd)
 	cmd.Flags().String(cli.FlagTitle, "", "Title of proposal")
 	cmd.Flags().String(cli.FlagDescription, "", "Description of proposal")
 	cmd.Flags().String(cli.FlagDeposit, "", "Deposit of proposal")
@@ -136,7 +133,6 @@ func CmdProposalSetContractAuthorization() *cobra.Command {
 		},
 	}
 
-	flags.AddTxFlagsToCmd(cmd)
 	cmd.Flags().String(cli.FlagTitle, "", "Title of proposal")
 	cmd.Flags().String(cli.FlagDescription, "", "Description of proposal")
 	cmd.Flags().String(cli.FlagDeposit, "", "Deposit of proposal")
@@ -171,7 +167,6 @@ func CmdProposalRemoveContractAuthorization() *cobra.Command {
 		},
 	}
 
-	flags.AddTxFlagsToCmd(cmd)
 	cmd.Flags().String(cli.FlagTitle, "", "Title of proposal")
 	cmd.Flags().String(cli.FlagDescription, "", "Description of proposal")
 	cmd.Flags().String(cli.FlagDeposit, "", "Deposit of proposal")
