@@ -5,7 +5,7 @@ func SetCodeAuthorizationProposalFixture(mutators ...func(*SetCodeAuthorizationP
 		Title:       "Foo",
 		Description: "Bar",
 		CodeAuthorization: &CodeAuthorization{
-			CodeId:  1,
+			CodeID:  1,
 			Methods: []string{"mint", "unlist"},
 		},
 	}
@@ -19,7 +19,7 @@ func RemoveCodeAuthorizationProposalFixture(mutators ...func(*RemoveCodeAuthoriz
 	p := &RemoveCodeAuthorizationProposal{
 		Title:       "Foo",
 		Description: "Bar",
-		CodeId:      1,
+		CodeID:      1,
 	}
 	for _, m := range mutators {
 		m(p)

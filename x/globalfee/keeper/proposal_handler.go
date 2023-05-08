@@ -49,7 +49,7 @@ func handleDeleteCodeAuthorizationProposal(ctx sdk.Context, k govKeeper, p types
 		return err
 	}
 
-	k.DeleteCodeAuthorization(ctx, p.GetCodeId())
+	k.DeleteCodeAuthorization(ctx, p.GetCodeID())
 	return nil
 }
 

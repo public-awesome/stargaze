@@ -6,8 +6,8 @@ import sdk "github.com/cosmos/cosmos-sdk/types"
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		Params: &Params{
-			PrivilegedAddress: []string{},
-			MinimumGasPrices:  sdk.DecCoins{},
+			PrivilegedAddresses: []string{},
+			MinimumGasPrices:    sdk.DecCoins{},
 		},
 		CodeAuthorizations:     []*CodeAuthorization{},
 		ContractAuthorizations: []*ContractAuthorization{},

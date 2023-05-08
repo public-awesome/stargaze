@@ -22,7 +22,7 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "invalid params state",
 			genState: &types.GenesisState{
 				Params: &types.Params{
-					PrivilegedAddress: []string{"👻"},
+					PrivilegedAddresses: []string{"👻"},
 				},
 				CodeAuthorizations:     types.DefaultGenesis().CodeAuthorizations,
 				ContractAuthorizations: types.DefaultGenesis().ContractAuthorizations,
@@ -35,7 +35,7 @@ func TestGenesisState_Validate(t *testing.T) {
 				Params: types.DefaultGenesis().Params,
 				CodeAuthorizations: []*types.CodeAuthorization{
 					{
-						CodeId:  2,
+						CodeID:  2,
 						Methods: []string{},
 					},
 				},
@@ -61,7 +61,7 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "valid genesis state",
 			genState: &types.GenesisState{
 				Params: &types.Params{
-					PrivilegedAddress: []string{"cosmos1hfml4tzwlc3mvynsg6vtgywyx00wfkhrtpkx6t"},
+					PrivilegedAddresses: []string{"cosmos1hfml4tzwlc3mvynsg6vtgywyx00wfkhrtpkx6t"},
 				},
 			},
 			valid: true,

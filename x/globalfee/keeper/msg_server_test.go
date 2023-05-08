@@ -23,7 +23,7 @@ func TestSetCodeAuthorization(t *testing.T) {
 				msg := types.MsgSetCodeAuthorization{
 					Sender: "👻",
 					CodeAuthorization: &types.CodeAuthorization{
-						CodeId:  2,
+						CodeID:  2,
 						Methods: []string{"2"},
 					},
 				}
@@ -38,7 +38,7 @@ func TestSetCodeAuthorization(t *testing.T) {
 				msg := types.MsgSetCodeAuthorization{
 					Sender: sender.String(),
 					CodeAuthorization: &types.CodeAuthorization{
-						CodeId:  2,
+						CodeID:  2,
 						Methods: []string{"2"},
 					},
 				}
@@ -50,15 +50,13 @@ func TestSetCodeAuthorization(t *testing.T) {
 			"invalid methods",
 			func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgSetCodeAuthorization {
 				sender := sample.AccAddress()
-				params := types.Params{
-					PrivilegedAddress: []string{sender.String()},
-				}
+				params := types.NewParams([]string{sender.String()})
 				keeper.SetParams(ctx, params)
 
 				msg := types.MsgSetCodeAuthorization{
 					Sender: sender.String(),
 					CodeAuthorization: &types.CodeAuthorization{
-						CodeId: 2,
+						CodeID: 2,
 					},
 				}
 				return &msg
@@ -69,15 +67,13 @@ func TestSetCodeAuthorization(t *testing.T) {
 			"valid",
 			func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgSetCodeAuthorization {
 				sender := sample.AccAddress()
-				params := types.Params{
-					PrivilegedAddress: []string{sender.String()},
-				}
+				params := types.NewParams([]string{sender.String()})
 				keeper.SetParams(ctx, params)
 
 				msg := types.MsgSetCodeAuthorization{
 					Sender: sender.String(),
 					CodeAuthorization: &types.CodeAuthorization{
-						CodeId:  2,
+						CodeID:  2,
 						Methods: []string{"2"},
 					},
 				}
@@ -101,7 +97,7 @@ func TestSetCodeAuthorization(t *testing.T) {
 				require.Error(t, err, tc)
 			} else {
 				require.NoError(t, err, tc)
-				_, found := k.GetCodeAuthorization(c, msg.GetCodeAuthorization().GetCodeId())
+				_, found := k.GetCodeAuthorization(c, msg.GetCodeAuthorization().GetCodeID())
 				require.True(t, found)
 			}
 		})
@@ -141,9 +137,7 @@ func TestRemoveCodeAuthorization(t *testing.T) {
 			"valid",
 			func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgRemoveCodeAuthorization {
 				sender := sample.AccAddress()
-				params := types.Params{
-					PrivilegedAddress: []string{sender.String()},
-				}
+				params := types.NewParams([]string{sender.String()})
 				keeper.SetParams(ctx, params)
 
 				msg := types.MsgRemoveCodeAuthorization{
@@ -162,7 +156,7 @@ func TestRemoveCodeAuthorization(t *testing.T) {
 			k, c := keepertest.GlobalFeeKeeper(t)
 			msgSrvr, ctx := keeper.NewMsgServerImpl(k), sdk.WrapSDKContext(c)
 			err := k.SetCodeAuthorization(c, types.CodeAuthorization{
-				CodeId:  2,
+				CodeID:  2,
 				Methods: []string{"mint"},
 			})
 			require.NoError(t, err)
@@ -173,11 +167,11 @@ func TestRemoveCodeAuthorization(t *testing.T) {
 
 			if tc.expectError {
 				require.Error(t, err, tc)
-				_, found := k.GetCodeAuthorization(c, msg.GetCodeId())
+				_, found := k.GetCodeAuthorization(c, msg.GetCodeID())
 				require.True(t, found)
 			} else {
 				require.NoError(t, err, tc)
-				_, found := k.GetCodeAuthorization(c, msg.GetCodeId())
+				_, found := k.GetCodeAuthorization(c, msg.GetCodeID())
 				require.False(t, found)
 			}
 		})
@@ -223,9 +217,7 @@ func TestSetContractAuthorization(t *testing.T) {
 			"invalid contract address",
 			func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgSetContractAuthorization {
 				sender := sample.AccAddress()
-				params := types.Params{
-					PrivilegedAddress: []string{sender.String()},
-				}
+				params := types.NewParams([]string{sender.String()})
 				keeper.SetParams(ctx, params)
 
 				msg := types.MsgSetContractAuthorization{
@@ -243,9 +235,7 @@ func TestSetContractAuthorization(t *testing.T) {
 			"contract doesnt exist",
 			func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgSetContractAuthorization {
 				sender := sample.AccAddress()
-				params := types.Params{
-					PrivilegedAddress: []string{sender.String()},
-				}
+				params := types.NewParams([]string{sender.String()})
 				keeper.SetParams(ctx, params)
 
 				msg := types.MsgSetContractAuthorization{
@@ -263,9 +253,7 @@ func TestSetContractAuthorization(t *testing.T) {
 			"invalid methods",
 			func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgSetContractAuthorization {
 				sender := sample.AccAddress()
-				params := types.Params{
-					PrivilegedAddress: []string{sender.String()},
-				}
+				params := types.NewParams([]string{sender.String()})
 				keeper.SetParams(ctx, params)
 
 				msg := types.MsgSetContractAuthorization{
@@ -282,9 +270,7 @@ func TestSetContractAuthorization(t *testing.T) {
 			"valid",
 			func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgSetContractAuthorization {
 				sender := sample.AccAddress()
-				params := types.Params{
-					PrivilegedAddress: []string{sender.String()},
-				}
+				params := types.NewParams([]string{sender.String()})
 				keeper.SetParams(ctx, params)
 
 				msg := types.MsgSetContractAuthorization{
@@ -354,9 +340,7 @@ func TestRemoveContractAuthorization(t *testing.T) {
 			"invalid contract address",
 			func(ctx sdk.Context, keeper keeper.Keeper, contractAddress string) *types.MsgRemoveContractAuthorization {
 				sender := sample.AccAddress()
-				params := types.Params{
-					PrivilegedAddress: []string{sender.String()},
-				}
+				params := types.NewParams([]string{sender.String()})
 				keeper.SetParams(ctx, params)
 
 				msg := types.MsgRemoveContractAuthorization{
@@ -371,9 +355,7 @@ func TestRemoveContractAuthorization(t *testing.T) {
 			"valid",
 			func(ctx sdk.Context, keeper keeper.Keeper, contractAddress string) *types.MsgRemoveContractAuthorization {
 				sender := sample.AccAddress()
-				params := types.Params{
-					PrivilegedAddress: []string{sender.String()},
-				}
+				params := types.NewParams([]string{sender.String()})
 				keeper.SetParams(ctx, params)
 
 				msg := types.MsgRemoveContractAuthorization{

@@ -46,7 +46,7 @@ func (k msgServer) RemoveCodeAuthorization(goCtx context.Context, msg *types.Msg
 	if !k.IsPrivilegedAddress(ctx, msg.Sender) {
 		return nil, sdkerrors.Wrap(types.ErrUnauthorized, "sender address is not privileged address")
 	}
-	k.Keeper.DeleteCodeAuthorization(ctx, msg.GetCodeId())
+	k.Keeper.DeleteCodeAuthorization(ctx, msg.GetCodeID())
 	return &types.MsgRemoveCodeAuthorizationResponse{}, nil
 }
 

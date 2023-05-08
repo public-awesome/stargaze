@@ -34,13 +34,13 @@ func TestGovHandler(t *testing.T) {
 			wasmHandler: notHandler,
 			setupGovKeeper: func(m *MockGovKeeper) {
 				m.SetCodeAuthorizationFn = func(ctx sdk.Context, ca types.CodeAuthorization) error {
-					capturedCodeIds = append(capturedCodeIds, ca.GetCodeId())
+					capturedCodeIds = append(capturedCodeIds, ca.GetCodeID())
 					return nil
 				}
 			},
 			srcProposal: types.SetCodeAuthorizationProposalFixture(func(proposal *types.SetCodeAuthorizationProposal) {
 				proposal.CodeAuthorization = &types.CodeAuthorization{
-					CodeId:  1,
+					CodeID:  1,
 					Methods: []string{"*"},
 				}
 			}),
@@ -65,7 +65,7 @@ func TestGovHandler(t *testing.T) {
 				}
 			},
 			srcProposal: types.RemoveCodeAuthorizationProposalFixture(func(proposal *types.RemoveCodeAuthorizationProposal) {
-				proposal.CodeId = 1
+				proposal.CodeID = 1
 			}),
 			expCapturedCodeIds: nil,
 		},

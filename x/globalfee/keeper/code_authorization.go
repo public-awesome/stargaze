@@ -41,14 +41,14 @@ func (k Keeper) SetCodeAuthorization(ctx sdk.Context, ca types.CodeAuthorization
 		return err
 	}
 
-	if k.wasmKeeper.GetCodeInfo(ctx, ca.GetCodeId()) == nil {
+	if k.wasmKeeper.GetCodeInfo(ctx, ca.GetCodeID()) == nil {
 		return types.ErrCodeIDNotExist
 	}
 
 	store := ctx.KVStore(k.storeKey)
 	value := k.cdc.MustMarshal(&ca)
 
-	store.Set(types.GetCodeAuthorizationPrefix(ca.CodeId), value)
+	store.Set(types.GetCodeAuthorizationPrefix(ca.CodeID), value)
 	return nil
 }
 
