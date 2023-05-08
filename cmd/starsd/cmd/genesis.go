@@ -23,6 +23,7 @@ import (
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	distributiontypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
+	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -230,7 +231,7 @@ func PrepareGenesis(
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to marshal gov genesis state: %w", err)
 	}
-	appState[govtypes.ModuleName] = govGenStateBz
+	appState[gov.ModuleName] = govGenStateBz
 
 	// crisis module genesis
 	crisisGenState := crisistypes.DefaultGenesisState()
@@ -462,7 +463,7 @@ func MainnetGenesisParams() GenesisParams {
 		ClaimDenom:         genParams.NativeCoinMetadatas[0].Base,
 	}
 
-	genParams.ConsensusParams = tmtypes.DefaultConsensusParams()
+	genParams.ConsensusParams = tmproto.DefaultConsensusParams()
 	genParams.ConsensusParams.Block.MaxBytes = 25 * 1024 * 1024 // 26,214,400 for cosmwasm
 	genParams.ConsensusParams.Block.MaxGas = 100_000_000
 	genParams.ConsensusParams.Evidence.MaxAgeDuration = genParams.StakingParams.UnbondingTime
