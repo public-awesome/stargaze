@@ -29,6 +29,8 @@ steps:
       region: us-east-1
       mount:
         - '/go/pkg/mod'
+    when:
+      branch: no-cache
 
   - name: test
     image: publicawesome/golang:1.20.2-devtooling
@@ -125,6 +127,8 @@ steps:
       region: us-east-1
       mount:
         - '/go/pkg/mod'
+    when:
+      branch: no-cache
   - name: discord
     image: appleboy/drone-discord
     settings:
@@ -162,6 +166,8 @@ steps:
       region: us-east-1
       mount:
         - '/go/pkg/mod'
+    when:
+      branch: no-cache
   - name: gaia
     image: publicawesome/gaia:7.0.2
     detach: true
@@ -245,8 +251,7 @@ trigger:
 volumes:
 - name: cache
   temp: {}
-node:
-  runner: integration
+
 ---
 kind: pipeline
 type: docker
@@ -272,6 +277,8 @@ steps:
       region: us-east-1
       mount:
         - '/go/pkg/mod'
+    when:
+      branch: no-cache
   - name: build-wrapper
     image: publicawesome/golang:1.20.2-devtooling
     volumes:
@@ -393,12 +400,10 @@ trigger:
 volumes:
 - name: cache
   temp: {}
-node:
-  runner: integration
-depends_on:
-  - ibc-integration-test
+
+
 ---
 kind: signature
-hmac: 852bdd03d09f473c9b32c3b33a29c783cbdf862981b7f63deb9f767fb41a5842
+hmac: 96c6dfda726e450ed66d7fe3a3e3bbbf611b4973e5d6e48ca72a96349230cf68
 
 ...
