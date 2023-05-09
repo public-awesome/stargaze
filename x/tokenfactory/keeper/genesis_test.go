@@ -18,7 +18,7 @@ func (suite *KeeperTestSuite) TestGenesis() {
 			{
 				Denom: "factory/cosmos1rf3renzcj8m2pav74758lj7wm8z98yky20x64f/diff-admin",
 				AuthorityMetadata: types.DenomAuthorityMetadata{
-					Admin: "osmo15czt5nhlnvayqq37xun9s9yus0d6y26dw9xnzn",
+					Admin: "cosmos15czt5nhlnvayqq37xun9s9yus0d6y26dx74r5p",
 				},
 			},
 			{
@@ -45,7 +45,7 @@ func (suite *KeeperTestSuite) TestGenesis() {
 	tokenfactoryModuleAccount := app.AccountKeeper.GetAccount(suite.Ctx, app.AccountKeeper.GetModuleAddress(types.ModuleName))
 	suite.Require().Nil(tokenfactoryModuleAccount)
 
-	app.TokenFactoryKeeper.SetParams(suite.Ctx, types.Params{DenomCreationFee: sdk.Coins{sdk.NewInt64Coin("uosmo", 100)}})
+	app.TokenFactoryKeeper.SetParams(suite.Ctx, types.Params{DenomCreationFee: sdk.Coins{sdk.NewInt64Coin("utest", 100)}})
 	app.TokenFactoryKeeper.InitGenesis(suite.Ctx, genesisState)
 
 	// check that the module account is now initialized

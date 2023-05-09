@@ -6,6 +6,7 @@ require (
 	github.com/CosmWasm/wasmd v0.31.0
 	github.com/CosmWasm/wasmvm v1.2.3
 	github.com/armon/go-metrics v0.4.1
+	github.com/cometbft/cometbft v0.37.1
 	github.com/cosmos/cosmos-sdk v0.45.14
 	github.com/cosmos/go-bip39 v1.0.0
 	github.com/cosmos/ibc-go/v4 v4.3.0
@@ -98,7 +99,7 @@ require (
 	github.com/klauspost/compress v1.15.11 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
-	github.com/lib/pq v1.10.6 // indirect
+	github.com/lib/pq v1.10.7 // indirect
 	github.com/libp2p/go-buffer-pool v0.1.0 // indirect
 	github.com/linxGnu/grocksdb v1.7.10 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
