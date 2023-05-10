@@ -510,12 +510,21 @@ func NewStargazeApp(
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
-	availableCapabilities := "iterator,staking,stargate,stargaze,cosmwasm_1_1,cosmwasm_1_2"
+	availableCapabilities := "iterator,staking,stargate,stargaze,cosmwasm_1_1,cosmwasm_1_2,token_factory"
+
+	// Wasm accepted Stargate Queries
+	acceptStargateQueriesList := wasmkeeper.AcceptedStargateQueries{
+		"/stargaze.tokenfactory.v1.Query/Params":                 &tokenfactorytypes.QueryParamsResponse{},
+		"/stargaze.tokenfactory.v1.Query/DenomAuthorityMetadata": &tokenfactorytypes.QueryDenomAuthorityMetadataResponse{},
+		"/stargaze.tokenfactory.v1.Query/DenomsFromCreator":      &tokenfactorytypes.QueryDenomsFromCreatorResponse{},
+	}
 
 	wasmOpts = append(
 		wasmOpts,
 		wasmkeeper.WithMessageEncoders(sgwasm.MessageEncoders(registry)),
-		wasmkeeper.WithQueryPlugins(nil),
+		wasmkeeper.WithQueryPlugins(&wasmkeeper.QueryPlugins{
+			Stargate: wasmkeeper.AcceptListStargateQuerier(acceptStargateQueriesList, app.GRPCQueryRouter(), appCodec),
+		}),
 	)
 	app.WasmKeeper = wasm.NewKeeper(
 		appCodec,
