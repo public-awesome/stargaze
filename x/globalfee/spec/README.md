@@ -30,7 +30,6 @@ This configuration of code/contract authorizations can be updated either via on-
 The whitelisted addresses are set via governance as a module param.
 
 
-
 ## Contents
 
 1. [State](./01_state.md)
@@ -38,3 +37,7 @@ The whitelisted addresses are set via governance as a module param.
 3. [Ante Handlers](./03_ante_handlers.md)
 4. [Params](./04_params.md)
 5. [Client](./05_client.md)
+
+## Attribution
+Thanks to Confio and the Tgrade for providing a base for x/globalfee where the antehandler bits were extracted and adapted from the [Cosmos Hub](https://github.com/cosmos/gaia/tree/main/x/globalfee) x/globalfee module
+
