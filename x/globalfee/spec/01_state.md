@@ -2,15 +2,6 @@
 
 This section describes all stored state by the module objects and their storage keys. 
 
-## Params
-
-```protobuf
-message Params {
-  repeated string privileged_address = 1;
-}
-```
-
-As stored in the global params store, it stores the list of addresses who have the ability to modify the Global Fee configuration without having to go via governance.
 
 ### CodeAuthorization
 ```protobuf
@@ -19,13 +10,15 @@ message CodeAuthorization {
   repeated string methods = 2;
 }
 ```
-CodeAuthorization is used to store the configuration for code Ids which can have zero gas fee operations. The methods are individual msg operations which benefit from zero fees. e.g `mint`, `burn`. This configuration would allow all contracts instantiated from the given code Id to be gas free.
+CodeAuthorization is used to store the configuration for Code IDs which can have zero gas fee operations. The methods are individual msg operations which benefit from zero fees. e.g `mint`, `burn`. This configuration would allow all contracts instantiated from the given code ID to benefit zero gas fee.
 
-`*` value can be used in the configuration to enable all methods of the contracts with given code Id to be gas free
+> **Note**
+>
+> `'*'` value can be used in the configuration to enable all methods of the contracts with given Code ID to have zero gas fee
 
 Storage keys:
 
-* CodeAuthorization: 0x00 | CodeId -> ProtocolBuffer(CodeAuthorization)
+* CodeAuthorization: 0x00 | CodeID -> ProtocolBuffer(CodeAuthorization)
 
 This state can be updated via [MsgSetCodeAuthorization](./02_messages.md#msgsetcodeauthorization) & [MsgRemoveCodeAuthorization](./02_messages.md#msgremovecodeauthorization) by whitelisted addresses or via governance
 
@@ -36,9 +29,11 @@ message ContractAuthorization {
   repeated string methods = 2;
 }
 ```
-ContractAuthorization is used to store the configuration for contract addresses which can have zero gas fees operations. The methods are individual msg operations which benefit from zero gas. e.g `mint`, `burn`. 
+ContractAuthorization is used to store the configuration for contract addresses which can have zero gas fee operations. The methods are individual msg operations which benefit from zero gas. e.g `mint`, `burn`. 
 
-`*` value can be used in the configuration to enable all methods of the contract to be gas free
+> **Note**
+>
+> `'*'` value can be used in the configuration to enable all methods of the contract to have zero gas fee
 
 Storage keys:
 
