@@ -48,8 +48,8 @@ steps:
         path: /go
     commands:
       - apk add --no-cache ca-certificates build-base git
-      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.2.1/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.a
-      - echo "a00700aa19f5bfe0f46290ddf69bf51eb03a6dfcd88b905e1081af2e42dbbafc  /lib/libwasmvm_muslc.a" | sha256sum -c
+      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.2.3/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.a
+      - echo "bb8ffda690b15765c396266721e45516cb3021146fd4de46f7daeda5b0d82c86  /lib/libwasmvm_muslc.a" | sha256sum -c
       - LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true  make build
       - echo "Ensuring binary is statically linked ..." && (file $PWD/bin/starsd | grep "statically linked")
     environment:
@@ -404,6 +404,6 @@ volumes:
 
 ---
 kind: signature
-hmac: d5d006c86ad41a5d7f38535f18b03c78694064f50db0452a03be197ffb5fcf1e
+hmac: a0f4e1cf59635b77880fec212b4cf924b3d912210a58d03589fea8b30ed5cae2
 
 ...
