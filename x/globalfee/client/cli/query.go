@@ -119,7 +119,7 @@ func GetCmdAuthorizations() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "auth_all",
 		Short: "Gets all the authorizations",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
