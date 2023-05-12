@@ -580,8 +580,6 @@ func NewStargazeApp(
 	)
 	allocModule := allocmodule.NewAppModule(appCodec, app.AllocKeeper)
 
-	// this line is used by starport scaffolding # stargate/app/keeperDefinition
-
 	/****  Module Options ****/
 
 	// NOTE: we may consider parsing `appOpts` inside module constructors. For the moment
@@ -712,6 +710,8 @@ func NewStargazeApp(
 			},
 			keeper:            app.IBCKeeper,
 			govKeeper:         app.GovKeeper,
+			globalfeeKeeper:   app.GlobalFeeKeeper,
+			stakingKeeper:     app.StakingKeeper,
 			WasmConfig:        &wasmConfig,
 			TXCounterStoreKey: keys[wasm.StoreKey],
 			Codec:             app.appCodec,
