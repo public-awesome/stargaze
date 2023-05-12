@@ -12,15 +12,15 @@ message MsgSetCodeAuthorization {
 }
 ```
 
-A new Code Id authorization is set using the MsgSetCodeAuthorization message
+A new Code ID authorization is set using the MsgSetCodeAuthorization message. If Code ID authorization already exists, its overwritten.
 
 On Success:
 * Code authorization is set/updated 
 
 This message is expected to fail if:
-* Given Code Id does not exist
-* Sender is not part of the whitelist configured in the module params
-* Code authorization methods are empty
+* Given Code ID does not exist
+* Sender is not part of the whitelist addresses configured in the module params
+* Code authorization methods are empty or invalid
 
 
 ## MsgRemoveCodeAuthorization
@@ -32,7 +32,7 @@ message MsgRemoveCodeAuthorization {
 }
 ```
 
-Existing Code Id authorization is deleted using the MsgRemoveCodeAuthorization message
+Existing Code ID authorization is deleted using the MsgRemoveCodeAuthorization message
 
 On Success:
 * Code authorization is removed
@@ -51,7 +51,8 @@ message MsgSetContractAuthorization {
 }
 ```
 
-A new contract authorization is set using the MsgSetContractAuthorization message
+A new contract authorization is set using the MsgSetContractAuthorization message. If contract authorization already exists, its overwritten.
+
 
 On Success:
 * Contract authorization is set/updated 
@@ -59,7 +60,7 @@ On Success:
 This message is expected to fail if:
 * No contract exists for given address
 * Sender is not part of the whitelist configured in the module params
-* Contract authorization methods are empty
+* Contract authorization methods are empty or invalid
 
 
 ## MsgRemoveContractAuthorization

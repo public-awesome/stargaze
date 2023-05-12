@@ -1,6 +1,6 @@
 # Client
 
-THis section describes interactions with the module by the user
+This section describes interactions with the module by the user
 
 ## CLI
 
@@ -13,8 +13,6 @@ Use the `-h` / `--help` flag to get a help description of a command.
 ```bash
 starsd q globalfee -h
 ```
-
-> You can add the `-o json` for the JSON output format.
 
 #### params
 
@@ -108,11 +106,10 @@ starsd tx globalfee -h
 
 #### set-code-authorization
 
-Creates or updates the gasless operation authorization for the given code id and for the provided methods.
+Creates or updates the gas free operation authorization for the given code ID and for the provided methods.
 The methods should be comma separated values.
 
 > **Note**
->
 > Only whitelisted address can perform this operation.
 
 Usage:
@@ -129,13 +126,34 @@ starsd tx globalfee set-code-authorization 3 "mint,unlist"  \
   --fees 1500ustars
 ```
 
+
+#### remove-code-authorization
+
+Removes the gas free operation authorization for the given code ID.
+
+> **Note**
+> Only whitelisted address can perform this operation.
+
+Usage:
+
+```bash
+starsd tx globalfee remove-code-authorization [code-id]  [flags]
+```
+
+Example:
+
+```bash
+starsd tx globalfee remove-code-authorization 3  \
+  --from myAccountKey \
+  --fees 1500ustars
+```
+
 #### set-contract-authorization
 
-Creates or updates the gasless operation authorization for the given contract address and for the provided methods.
+Creates or updates the gas free operation authorization for the given contract address and for the provided methods.
 The methods should be comma separated values.
 
 > **Note**
->
 > Only whitelisted address can perform this operation.
 
 Usage:
@@ -152,9 +170,30 @@ starsd tx globalfee set-contract-authorization stars1fvhcnyddukcqfnt7nlwv3thm5we
   --fees 1500ustars
 ```
 
+#### remove-contract-authorization
+
+Removes the gas free operation authorization for the given contract address.
+
+> **Note**
+> Only whitelisted address can perform this operation.
+
+Usage:
+
+```bash
+starsd tx globalfee remove-contract-authorization [contract-address] [flags]
+```
+
+Example:
+
+```bash
+starsd tx globalfee remove-contract-authorization stars1fvhcnyddukcqfnt7nlwv3thm5we22lyxyxylr9h77cvgkcn43xfsvgv0pl \
+  --from myAccountKey \
+  --fees 1500ustars
+```
+
 #### set-code-authorization-proposal
 
-Creates a gov proposal to create or update the gasless operation authorization for the given code id and for the provided methods. The methods should be comma separated values.
+Creates a gov proposal to create or update the zero gas fee operation authorization for the given code ID and for the provided methods. The methods should be comma separated values.
 
 Any stargaze address can perform this operation.
 
@@ -169,6 +208,29 @@ Example:
 ```bash
 starsd tx globalfee set-code-authorization-proposal 3 "mint,unlist"  \
   --title "Adding new code authorization" \
+  --deposit 1000ustars \
+  --from myAccountKey \
+  --fees 1500ustars
+```
+
+
+#### remove-code-authorization-proposal
+
+Creates a gov proposal to remove the zero gas fee operation authorization for the given code ID.
+
+Any stargaze address can perform this operation.
+
+Usage:
+
+```bash
+starsd tx globalfee remove-code-authorization-proposal [code-id] [flags]
+```
+
+Example:
+
+```bash
+starsd tx globalfee remove-code-authorization-proposal 3 \
+  --title "Removing the code authorization" \
   --deposit 1000ustars \
   --from myAccountKey \
   --fees 1500ustars
@@ -191,6 +253,28 @@ Example:
 ```bash
 starsd tx globalfee set-contract-authorization-proposal stars1fvhcnyddukcqfnt7nlwv3thm5we22lyxyxylr9h77cvgkcn43xfsvgv0pl "*"  \
   --title "Adding new contract authorization" \
+  --deposit 1000ustars \
+  --from myAccountKey \
+  --fees 1500ustars
+```
+
+#### remove-contract-authorization-proposal
+
+Creates a gov proposal to remove the zero gas fee operation authorization for the given contract adress.
+
+Any stargaze address can perform this operation.
+
+Usage:
+
+```bash
+starsd tx globalfee remove-contract-authorization-proposal [contract-address] [flags]
+```
+
+Example:
+
+```bash
+starsd tx globalfee remove-contract-authorization-proposal stars1fvhcnyddukcqfnt7nlwv3thm5we22lyxyxylr9h77cvgkcn43xfsvgv0pl  \
+  --title "Removing the contract authorization" \
   --deposit 1000ustars \
   --from myAccountKey \
   --fees 1500ustars
