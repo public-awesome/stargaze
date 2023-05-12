@@ -21,7 +21,7 @@ steps:
         from_secret: minio_key_id
       AWS_SECRET_ACCESS_KEY:
         from_secret: minio_secret_key
-    pull: true
+    pull: always
     settings:
       restore: true
       bucket:
@@ -119,7 +119,7 @@ steps:
         from_secret: minio_key_id
       AWS_SECRET_ACCESS_KEY:
         from_secret: minio_secret_key
-    pull: true
+    pull: always
     settings:
       rebuild: true
       bucket:
@@ -158,7 +158,7 @@ steps:
         from_secret: minio_key_id
       AWS_SECRET_ACCESS_KEY:
         from_secret: minio_secret_key
-    pull: true
+    pull: always
     settings:
       restore: true
       bucket:
@@ -184,7 +184,7 @@ steps:
       GOPROXY: http://goproxy
   - name: icad
     image: publicawesome/icad:0.1.6-stargaze.1
-    pull: true
+    pull: always
     detach: true
     commands:
       - echo $PWD
@@ -203,7 +203,7 @@ steps:
       GOPROXY: http://goproxy
     detach: true
   - name: readiness
-    pull: true
+    pull: always
     image: publicawesome/stargaze-readiness-checker:latest
     settings:
       timeout: 300
@@ -229,7 +229,7 @@ steps:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: ica-test
     image: publicawesome/icad:0.1.6-stargaze.1
-    pull: true
+    pull: always
     commands:
       - /bin/sh ./scripts/ci/test-ica.sh
   - name: discord
@@ -269,7 +269,7 @@ steps:
         from_secret: minio_key_id
       AWS_SECRET_ACCESS_KEY:
         from_secret: minio_secret_key
-    pull: true
+    pull: always
     settings:
       restore: true
       bucket:
@@ -306,7 +306,7 @@ steps:
       GOPROXY: http://goproxy
   - name: icad
     image: publicawesome/icad:0.1.6-stargaze.1
-    pull: true
+    pull: always
     detach: true
     commands:
       - ./scripts/ci/setup-icad.sh
@@ -320,7 +320,7 @@ steps:
       GOPROXY: http://goproxy
     detach: true
   - name: readiness
-    pull: true
+    pull: always
     image: publicawesome/stargaze-readiness-checker:latest
     settings:
       timeout: 300
@@ -349,7 +349,7 @@ steps:
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
-    pull: true
+    pull: always
     image: publicawesome/stargaze:v10.0.0.alpha-2
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
@@ -357,7 +357,7 @@ steps:
       GOPROXY: http://goproxy
     detach: true
   - name: readiness-upgrade
-    pull: true
+    pull: always
     image: publicawesome/stargaze-readiness-checker:latest
     settings:
       timeout: 300
@@ -378,7 +378,7 @@ steps:
       - /bin/bash ./scripts/ci/upgrade/transfer-relayer.sh
   - name: ica-upgrade-test
     image: publicawesome/icad:0.1.6-stargaze.1
-    pull: true
+    pull: always
     commands:
       - /bin/sh ./scripts/ci/upgrade/test-ica.sh
   - name: discord
@@ -404,6 +404,6 @@ volumes:
 
 ---
 kind: signature
-hmac: cc7d19ef42515a86e8c0a94b064c4fec1ca5a41e57e811e4540c09e6b1b85a1f
+hmac: d5d006c86ad41a5d7f38535f18b03c78694064f50db0452a03be197ffb5fcf1e
 
 ...
