@@ -297,6 +297,7 @@ func appExport(
 		logger,
 		db,
 		traceStore,
+		height == -1,
 		app.GetEnabledProposals(),
 		appOpts,
 		emptyWasmOpts,

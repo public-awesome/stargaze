@@ -6,7 +6,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	govv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 )
 
@@ -27,8 +26,8 @@ func init() { // register new content types with the sdk
 	govv1beta1.RegisterProposalType(string(ProposalTypePromoteContract))
 	govv1beta1.RegisterProposalType(string(ProposalTypeDemoteContract))
 
-	govv1.RegisterProposalTypeCodec(&PromoteToPrivilegedContractProposal{}, "cron/PromoteToPrivilegedContractProposal")
-	govtypes.RegisterProposalTypeCodec(&DemotePrivilegedContractProposal{}, "cron/DemotePrivilegedContractProposal")
+	govv1beta1.RegisterLegacyAminoCodec(&PromoteToPrivilegedContractProposal{}, "cron/PromoteToPrivilegedContractProposal")
+	govv1beta1.RegisterLegacyAminoCodec(&DemotePrivilegedContractProposal{}, "cron/DemotePrivilegedContractProposal")
 }
 
 // ProposalRoute returns the routing key of a parameter change proposal.

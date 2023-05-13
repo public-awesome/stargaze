@@ -351,9 +351,9 @@ func NewStargazeApp(
 	db dbm.DB,
 	traceStore io.Writer,
 	loadLatest bool,
+	enabledProposals []wasm.ProposalType,
 	appOpts servertypes.AppOptions,
 	wasmOpts []wasm.Option,
-	enabledProposals []wasm.ProposalType,
 	baseAppOptions ...func(*baseapp.BaseApp),
 ) *App {
 	encodingConfig := MakeEncodingConfig()
