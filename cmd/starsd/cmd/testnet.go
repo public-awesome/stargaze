@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"os"
 	"path/filepath"
 	"strings"
@@ -212,6 +213,7 @@ func InitTestnet(
 		return err
 	}
 
+	gasPricesSet := []string{"0ustars", "0.01ustars", "0.1ustars"}
 	// generate private keys, node IDs, and initial transactions
 	for i := 0; i < numValidators; i++ {
 		nodeDirName := fmt.Sprintf("%s%d", nodeDirPrefix, i)
@@ -331,7 +333,9 @@ func InitTestnet(
 			return err
 		}
 
-		simappConfig := getSimappConfig(chainID, minGasPrices, i == 0)
+		randomIndex := rand.Intn(len(gasPricesSet))
+
+		simappConfig := getSimappConfig(chainID, gasPricesSet[randomIndex], i == 0)
 		srvconfig.WriteConfigFile(filepath.Join(nodeDir, "config/app.toml"), simappConfig)
 	}
 	for i, node := range nodes {
