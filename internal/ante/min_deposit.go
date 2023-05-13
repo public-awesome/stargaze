@@ -27,7 +27,7 @@ func NewMinDepositDecorator(codec codec.BinaryCodec, gk govkeeper.Keeper) MinDep
 func (dec MinDepositDecorator) checkDeposit(ctx sdk.Context, m sdk.Msg) error {
 	switch msg := m.(type) {
 	case *govtypes.MsgSubmitProposal:
-		params := dec.govKeeper.GetDepositParams(ctx)
+		params := dec.govKeeper.GetParams(ctx)
 		if len(params.MinDeposit) > 0 {
 			minDeposit := params.MinDeposit[0]
 			// 20% of the min deposit
