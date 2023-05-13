@@ -358,6 +358,21 @@ func PrepareGenesis(
 	}
 	appState[wasm.ModuleName] = wasmGenStateBz
 
+	minGasPrices, err := sdk.ParseDecCoins("0.01ustars")
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to parse dec coins: %w", err)
+	}
+	globalFeeGenState := &globalfeetypes.GenesisState{
+		Params: &globalfeetypes.Params{
+			MinimumGasPrices: minGasPrices,
+		},
+	}
+
+	globalFeeGenStateBz, err := cdc.MarshalJSON(globalFeeGenState)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to marshal wasm genesis state: %w", err)
+	}
+	appState[globalfeetypes.ModuleName] = globalFeeGenStateBz
 	return appState, genDoc, nil
 }
 
