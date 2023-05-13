@@ -20,10 +20,8 @@ starsd init stargaze --chain-id localnet-1
 config="$HOME/.starsd/config/config.toml"
 if [ "$(uname)" = "Linux" ]; then
   sed -i "s/cors_allowed_origins = \[\]/cors_allowed_origins = [\"*\"]/g" $config
-  sed -i "s/enable = false/enable = true/g" $config
 else
   sed -i '' "s/cors_allowed_origins = \[\]/cors_allowed_origins = [\"*\"]/g" $config
-  sed -i '' "s/enable = false/enable = true/g" $config
 fi
 
 # modify genesis params for localnet ease of use
