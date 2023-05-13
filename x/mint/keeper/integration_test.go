@@ -8,7 +8,6 @@ import (
 	"github.com/cometbft/cometbft/libs/log"
 	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	cmttypes "github.com/cometbft/cometbft/types"
-	"github.com/public-awesome/stargaze/v10/app"
 
 	dbm "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
@@ -77,7 +76,7 @@ func genApp(withGenesis bool, invCheckPeriod uint) (*stargazeapp.App, stargazeap
 		db,
 		nil,
 		true,
-		app.EmptyAppOptions{},
+		stargazeapp.EmptyAppOptions{},
 		nil,
 		wasm.DisableAllProposals,
 	)
