@@ -345,7 +345,7 @@ type App struct {
 	sm *module.SimulationManager
 }
 
-// NewStargazeApp returns a reference to an initialized Gaia.
+// NewStargazeApp returns a reference to an initialized StargazeApp.
 func NewStargazeApp(
 	logger log.Logger,
 	db dbm.DB,

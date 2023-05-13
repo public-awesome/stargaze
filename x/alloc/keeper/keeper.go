@@ -127,5 +127,5 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 // GetProportions gets the balance of the `MintedDenom` from minted coins
 // and returns coins according to the `AllocationRatio`
 func (k Keeper) GetProportions(_ sdk.Context, mintedCoin sdk.Coin, ratio sdk.Dec) sdk.Coin {
-	return sdk.NewCoin(mintedCoin.Denom, mintedCoin.Amount.ToDec().Mul(ratio).TruncateInt())
+	return sdk.NewCoin(mintedCoin.Denom, mintedCoin.Amount)
 }
