@@ -1,8 +1,6 @@
 package types
 
 import (
-	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
@@ -26,7 +24,6 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 
-	wasmtypes.RegisterInterfaces(registry)
 	registry.RegisterImplementations(
 		(*govtypes.Content)(nil),
 		&PromoteToPrivilegedContractProposal{},
