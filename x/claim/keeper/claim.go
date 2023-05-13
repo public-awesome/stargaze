@@ -141,7 +141,7 @@ func (k Keeper) GetClaimableAmountForAction(ctx sdk.Context, addr sdk.AccAddress
 
 	claimableCoins := sdk.Coins{}
 	for _, coin := range InitialClaimablePerAction {
-		claimableCoins = claimableCoins.Add(sdk.NewCoin(coin.Denom, coin.Amount.ToDec().Mul(claimablePercent).RoundInt()))
+		claimableCoins = claimableCoins.Add(sdk.NewCoin(coin.Denom, coin.Amount.Mul(claimablePercent.RoundInt())))
 	}
 
 	return claimableCoins, nil
