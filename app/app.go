@@ -232,6 +232,8 @@ var (
 		allocmoduletypes.FairburnPoolName: nil,
 		wasm.ModuleName:                   {authtypes.Burner},
 		icatypes.ModuleName:               nil,
+		cronmoduletypes.ModuleName:        nil,
+		globalfeemoduletypes.ModuleName:   nil,
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 )
