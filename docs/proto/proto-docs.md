@@ -156,7 +156,10 @@ Params defines the parameters for the tokenfactory module.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `denom_creation_fee` | [cosmos.base.v1beta1.Coin](#cosmos.base.v1beta1.Coin) | repeated |  |
+| `denom_creation_fee` | [cosmos.base.v1beta1.Coin](#cosmos.base.v1beta1.Coin) | repeated | DenomCreationFee defines the fee to be charged on the creation of a new denom. The fee is drawn from the MsgCreateDenom's sender account, and transferred to the community pool. |
+| `denom_creation_gas_consume` | [uint64](#uint64) |  | DenomCreationGasConsume defines the gas cost for creating a new denom. This is intended as a spam deterrence mechanism.
+
+See: https://github.com/CosmWasm/token-factory/issues/11 |
 
 
 
