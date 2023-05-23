@@ -5,12 +5,12 @@ import sdk "github.com/cosmos/cosmos-sdk/types"
 // DefaultGenesisState returns a default genesis state.
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
-		Params: &Params{
+		Params: Params{
 			PrivilegedAddresses: []string{},
 			MinimumGasPrices:    sdk.DecCoins{},
 		},
-		CodeAuthorizations:     []*CodeAuthorization{},
-		ContractAuthorizations: []*ContractAuthorization{},
+		CodeAuthorizations:     []CodeAuthorization{},
+		ContractAuthorizations: []ContractAuthorization{},
 	}
 }
 

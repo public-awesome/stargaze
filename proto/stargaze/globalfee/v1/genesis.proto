@@ -9,11 +9,18 @@ option go_package = "github.com/public-awesome/stargaze/v10/x/globalfee/types";
 // GenesisState defines the globalfee module's genesis state.
 message GenesisState {
   // Module params
-  Params params = 1 [ (gogoproto.jsontag) = "params,omitempty" ];
+  Params params = 1 [
+    (gogoproto.jsontag) = "params,omitempty",
+    (gogoproto.nullable) = false
+  ];
   // Authorizations configured by code id
-  repeated CodeAuthorization code_authorizations = 2
-      [ (gogoproto.jsontag) = "code_authorizations,omitempty" ];
+  repeated CodeAuthorization code_authorizations = 2 [
+    (gogoproto.jsontag) = "code_authorizations,omitempty",
+    (gogoproto.nullable) = false
+  ];
   // Authorizations configured by contract addresses
-  repeated ContractAuthorization contract_authorizations = 3
-      [ (gogoproto.jsontag) = "contract_authorizations,omitempty" ];
+  repeated ContractAuthorization contract_authorizations = 3 [
+    (gogoproto.jsontag) = "contract_authorizations,omitempty",
+    (gogoproto.nullable) = false
+  ];
 }
