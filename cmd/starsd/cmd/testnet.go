@@ -173,7 +173,7 @@ func InitTestnet(
 	genBalIterator banktypes.GenesisBalancesIterator,
 	outputDir,
 	chainID,
-	minGasPrices,
+	_ string, // minGasPrices
 	nodeDirPrefix,
 	nodeDaemonHome,
 	_ string, // startingIPAddress
