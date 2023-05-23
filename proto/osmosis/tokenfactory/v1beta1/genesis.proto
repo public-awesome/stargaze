@@ -1,8 +1,8 @@
 syntax = "proto3";
-package publicawesome.stargaze.tokenfactory.v1;
+package osmosis.tokenfactory.v1beta1;
 
 import "gogoproto/gogo.proto";
-import "stargaze/tokenfactory/v1/tokenfactory.proto";  
+import "osmosis/tokenfactory/v1beta1/tokenfactory.proto";  
 
 option go_package = "github.com/public-awesome/stargaze/v10/x/tokenfactory/types";
 

@@ -1,5 +1,5 @@
 syntax = "proto3";
-package publicawesome.stargaze.tokenfactory.v1;
+package osmosis.tokenfactory.v1beta1;
 
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
