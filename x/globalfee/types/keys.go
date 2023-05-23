@@ -18,8 +18,8 @@ const (
 )
 
 var (
-	CodeAuthorizationPrefix     = []byte{0x00}
-	ContractAuthorizationPrefix = []byte{0x01}
+	CodeAuthorizationPrefix     = []byte{0x01}
+	ContractAuthorizationPrefix = []byte{0x02}
 )
 
 func GetCodeAuthorizationPrefix(codeID uint64) []byte {

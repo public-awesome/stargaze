@@ -28,9 +28,9 @@ Example output:
 
 ```yaml
 privileged_address:
-- stars1hjlswfagegg7ymu9p2vn84wqzcaf83w2qj89tq
-- stars1k7nky435jc55th95uhgk94zvchxdezqg3vp07e
-- stars185yv4ka7ymn3f6meq7k3g42nxrgfeykjkua59c
+  - stars1hjlswfagegg7ymu9p2vn84wqzcaf83w2qj89tq
+  - stars1k7nky435jc55th95uhgk94zvchxdezqg3vp07e
+  - stars185yv4ka7ymn3f6meq7k3g42nxrgfeykjkua59c
 ```
 
 #### auth_by_code_id
@@ -48,8 +48,8 @@ Example output:
 ```yaml
 code_id: 2
 methods:
-- mint
-- unlist
+  - mint
+  - unlist
 ```
 
 #### auth_by_contract_address
@@ -125,7 +125,6 @@ starsd tx globalfee set-code-authorization 3 "mint,unlist"  \
   --from myAccountKey \
   --fees 1500ustars
 ```
-
 
 #### remove-code-authorization
 
@@ -212,7 +211,6 @@ starsd tx globalfee set-code-authorization-proposal 3 "mint,unlist"  \
   --from myAccountKey \
   --fees 1500ustars
 ```
-
 
 #### remove-code-authorization-proposal
 
