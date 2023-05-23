@@ -15,13 +15,14 @@ message MsgSetCodeAuthorization {
 A new Code ID authorization is set using the MsgSetCodeAuthorization message. If Code ID authorization already exists, its overwritten.
 
 On Success:
-* Code authorization is set/updated 
+
+- Code authorization is set/updated
 
 This message is expected to fail if:
-* Given Code ID does not exist
-* Sender is not part of the whitelist addresses configured in the module params
-* Code authorization methods are empty or invalid
 
+- Given Code ID does not exist
+- Sender is not part of the whitelist addresses configured in the module params
+- Code authorization methods are empty or invalid
 
 ## MsgRemoveCodeAuthorization
 
@@ -35,11 +36,12 @@ message MsgRemoveCodeAuthorization {
 Existing Code ID authorization is deleted using the MsgRemoveCodeAuthorization message
 
 On Success:
-* Code authorization is removed
+
+- Code authorization is removed
 
 This message is expected to fail if:
-* Sender is not part of the whitelist configured in the module params
 
+- Sender is not part of the whitelist configured in the module params
 
 ## MsgSetContractAuthorization
 
@@ -53,15 +55,15 @@ message MsgSetContractAuthorization {
 
 A new contract authorization is set using the MsgSetContractAuthorization message. If contract authorization already exists, its overwritten.
 
-
 On Success:
-* Contract authorization is set/updated 
+
+- Contract authorization is set/updated
 
 This message is expected to fail if:
-* No contract exists for given address
-* Sender is not part of the whitelist configured in the module params
-* Contract authorization methods are empty or invalid
 
+- No contract exists for given address
+- Sender is not part of the whitelist configured in the module params
+- Contract authorization methods are empty or invalid
 
 ## MsgRemoveContractAuthorization
 
@@ -75,7 +77,9 @@ message MsgRemoveContractAuthorization {
 Existing contract authorization is removed using the MsgRemoveContractAuthorization message
 
 On Success:
-* Contract authorization is deleted
+
+- Contract authorization is deleted
 
 This message is expected to fail if:
-* Sender is not part of the whitelist configured in the module params
+
+- Sender is not part of the whitelist configured in the module params

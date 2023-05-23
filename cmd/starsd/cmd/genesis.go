@@ -363,7 +363,7 @@ func PrepareGenesis(
 		return nil, nil, fmt.Errorf("failed to parse dec coins: %w", err)
 	}
 	globalFeeGenState := &globalfeetypes.GenesisState{
-		Params: &globalfeetypes.Params{
+		Params: globalfeetypes.Params{
 			MinimumGasPrices: minGasPrices,
 		},
 	}

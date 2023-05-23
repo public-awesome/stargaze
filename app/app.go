@@ -909,7 +909,7 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(wasm.ModuleName)
 	paramsKeeper.Subspace(cronmoduletypes.ModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
-	paramsKeeper.Subspace(globalfeemoduletypes.ModuleName).WithKeyTable(globalfeemoduletypes.ParamKeyTable())
+	paramsKeeper.Subspace(globalfeemoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper
