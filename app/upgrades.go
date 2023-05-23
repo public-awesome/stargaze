@@ -7,12 +7,11 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-
-	crontypes "github.com/public-awesome/stargaze/v10/x/cron/types"
+	tokenfactorytypes "github.com/public-awesome/stargaze/v10/x/tokenfactory/types"
 )
 
 // next upgrade name
-const upgradeName = "v10"
+const upgradeName = "v11"
 
 // RegisterUpgradeHandlers returns upgrade handlers
 func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
@@ -27,7 +26,7 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 
 	if upgradeInfo.Name == upgradeName && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
 		storeUpgrades := store.StoreUpgrades{
-			Added: []string{crontypes.ModuleName},
+			Added: []string{tokenfactorytypes.ModuleName},
 		}
 		// configure store loader that checks if version == upgradeHeight and applies store upgrades
 		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades))
