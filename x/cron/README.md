@@ -4,11 +4,11 @@
 
 This module enables smart contracts on chain to receive callbacks at the beginning and end of each block. Useful for scheduling actions which need to happen every block.
 
-
 ## Concepts
 
 ### Priviledged contracts
-An existing contract instantiated on chain which has been elevated to the status of priviledged contract via on-chain governance proposal. 
+
+An existing contract instantiated on chain which has been elevated to the status of priviledged contract via on-chain governance proposal.
 Privileged contracts receive some extra superpowers where they can receive callbacks from the [`BeginBlocker & EndBlocker`](https://docs.cosmos.network/main/building-modules/beginblock-endblock.html) into their [`sudo`](https://book.cosmwasm.com/basics/entry-points.html?highlight=sudo#entry-points) entrypoint. More details on how to use this in [here](#how-to-use-in-cw-contract)
 
 ## State
@@ -17,8 +17,7 @@ The module state is quite simple. It stores the bech32 address of all the Cosmwa
 
 Storage keys:
 
-- PriviledgedContract: `0x00 | contractAddress -> []byte{1}`
-
+- PriviledgedContract: `0x01 | contractAddress -> []byte{1}`
 
 ## Begin Blockers
 
@@ -32,10 +31,10 @@ In the ABCI endblock, the module fetches the list of all priviledged contracts a
 
 The module emits the following events:
 
-| Source type | Source name                |
-| ----------- | -------------------------- |
-| Keeper      | `SetContractPriviledge`    |
-| Keeper      | `UnsetContractPriviledge`  |
+| Source type | Source name               |
+| ----------- | ------------------------- |
+| Keeper      | `SetContractPriviledge`   |
+| Keeper      | `UnsetContractPriviledge` |
 
 ## Client
 
@@ -71,7 +70,7 @@ Creates a governance proposal which on passing will remove the given contract ad
 
 ## How to use in CW contract
 
-To use the `BeginBlocker` & `EndBlocker` callback from this module, you need to add the following msg type to your contract msgs. 
+To use the `BeginBlocker` & `EndBlocker` callback from this module, you need to add the following msg type to your contract msgs.
 
 ```rust
 // msg.rs
@@ -95,12 +94,13 @@ pub fn sudo(deps: DepsMut, env: Env, msg: SudoMsg) -> Result<Response, ContractE
     }
 }
 ```
+
 Ensure you have a sudo entrypoint in your contract and add your code to be called by the `SudoMsg::BeginBlock` & `SudoMsg::EndBlock`. Both endpoints are hit for every privileged contract in the block lifecycle, so **ensure both are implemented**.
 
-This endpoint is hit at the beginning and end of every block by the x/cron module. The `deps` and `env` values are set as expected. It is not possible to receive any input in the `BeginBlock` & `EndBlock` call and as such the contract must maintain any relevant state it needs to use. 
-
+This endpoint is hit at the beginning and end of every block by the x/cron module. The `deps` and `env` values are set as expected. It is not possible to receive any input in the `BeginBlock` & `EndBlock` call and as such the contract must maintain any relevant state it needs to use.
 
 ## Attribution
+
 Thanks to Confio and the Tgrade open source project for providing a base for x/cron where most of it's bits were extracted and adapted to only do begin_blocker & end_blocker callbacks.
 
 Found more about Tgrade's twasm module:

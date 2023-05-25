@@ -34,6 +34,7 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	alloctypes "github.com/public-awesome/stargaze/v10/x/alloc/types"
 	claimtypes "github.com/public-awesome/stargaze/v10/x/claim/types"
+	globalfeetypes "github.com/public-awesome/stargaze/v10/x/globalfee/types"
 )
 
 const (
@@ -79,9 +80,10 @@ type GenesisParams struct {
 
 	SlashingParams slashingtypes.Params
 
-	AllocParams alloctypes.Params
-	ClaimParams claimtypes.Params
-	MintParams  minttypes.Params
+	AllocParams     alloctypes.Params
+	ClaimParams     claimtypes.Params
+	MintParams      minttypes.Params
+	GlobalFeeParams globalfeetypes.Params
 
 	WasmParams wasmtypes.Params
 }
@@ -356,6 +358,21 @@ func PrepareGenesis(
 	}
 	appState[wasm.ModuleName] = wasmGenStateBz
 
+	minGasPrices, err := sdk.ParseDecCoins("0.01ustars")
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to parse dec coins: %w", err)
+	}
+	globalFeeGenState := &globalfeetypes.GenesisState{
+		Params: globalfeetypes.Params{
+			MinimumGasPrices: minGasPrices,
+		},
+	}
+
+	globalFeeGenStateBz, err := cdc.MarshalJSON(globalFeeGenState)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to marshal wasm genesis state: %w", err)
+	}
+	appState[globalfeetypes.ModuleName] = globalFeeGenStateBz
 	return appState, genDoc, nil
 }
 
@@ -471,6 +488,8 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.ConsensusParams.Version.AppVersion = 1
 
 	genParams.WasmParams = wasmtypes.DefaultParams()
+
+	genParams.GlobalFeeParams = globalfeetypes.DefaultParams()
 
 	return genParams
 }
