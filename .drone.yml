@@ -66,7 +66,7 @@ steps:
         - push
         - pull_request
   - name: publish-alpha
-    image: plugins/docker:18
+    image: plugins/docker
     settings:
       dockerfile: docker/Dockerfile
       repo: publicawesome/stargaze
@@ -82,7 +82,7 @@ steps:
       branch:
         - v9-release
   - name: docker_release
-    image: plugins/docker:18
+    image: plugins/docker
     settings:
       dockerfile: docker/Dockerfile
       repo: publicawesome/stargaze
@@ -399,6 +399,6 @@ depends_on:
   - ibc-integration-test
 ---
 kind: signature
-hmac: 14d7527b77ad8e3ebcc875e305e12b133fb5f5f90d96e0e6d283e9f8fddffee3
+hmac: f85967686c28ea333605a5db3a405c37aa477a3b575712835604cb3e7901c68f
 
 ...
