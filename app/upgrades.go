@@ -18,7 +18,18 @@ const upgradeName = "v10"
 // RegisterUpgradeHandlers returns upgrade handlers
 func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 	app.UpgradeKeeper.SetUpgradeHandler(upgradeName, func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
-		return app.mm.RunMigrations(ctx, cfg, fromVM)
+		// run migrations before modifying state
+		migrations, err := app.mm.RunMigrations(ctx, cfg, fromVM)
+		if err != nil {
+			return nil, err
+		}
+		// set global fee params to 0.01ustars
+		stakeDenom := app.StakingKeeper.BondDenom(ctx)
+		globalfeeParams := app.GlobalFeeKeeper.GetParams(ctx)
+		amount := sdk.NewDecWithPrec(1, 2) // 0.01
+		globalfeeParams.MinimumGasPrices = sdk.NewDecCoins(sdk.NewDecCoinFromDec(stakeDenom, amount))
+		app.GlobalFeeKeeper.SetParams(ctx, globalfeeParams)
+		return migrations, nil
 	})
 
 	upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
