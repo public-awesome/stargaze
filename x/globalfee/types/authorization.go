@@ -25,9 +25,6 @@ func validateMethods(caMethods []string) error {
 			return sdkErrors.Wrap(ErrInvalidMethods, "method name is empty")
 		}
 
-		if err != nil {
-			return sdkErrors.Wrap(err, "")
-		}
 		if !matcher.MatchString(method) {
 			return sdkErrors.Wrap(ErrInvalidMethods, "invalid method name")
 		}
