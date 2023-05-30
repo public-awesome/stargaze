@@ -7,7 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	ibchooks "github.com/public-awesome/stargaze/v10/x/ibc-hooks/types"
+	ibchooks "github.com/public-awesome/stargaze/v10/x/ibchooks/types"
 )
 
 // next upgrade name

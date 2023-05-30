@@ -121,9 +121,9 @@ import (
 	globalfeemodulekeeper "github.com/public-awesome/stargaze/v10/x/globalfee/keeper"
 	globalfeemoduletypes "github.com/public-awesome/stargaze/v10/x/globalfee/types"
 
-	ibchooks "github.com/public-awesome/stargaze/v10/x/ibc-hooks"
-	ibchookskeeper "github.com/public-awesome/stargaze/v10/x/ibc-hooks/keeper"
-	ibchookstypes "github.com/public-awesome/stargaze/v10/x/ibc-hooks/types"
+	ibchooks "github.com/public-awesome/stargaze/v10/x/ibchooks"
+	ibchookskeeper "github.com/public-awesome/stargaze/v10/x/ibchooks/keeper"
+	ibchookstypes "github.com/public-awesome/stargaze/v10/x/ibchooks/types"
 
 	//  ica
 	ica "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts"

@@ -7,12 +7,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
-	"github.com/public-awesome/stargaze/v10/x/ibc-hooks/keeper"
-	"github.com/public-awesome/stargaze/v10/x/ibc-hooks/types"
+	"github.com/public-awesome/stargaze/v10/x/ibchooks/keeper"
+	"github.com/public-awesome/stargaze/v10/x/ibchooks/types"
 	"github.com/spf13/cobra"
 )
 
-func indexRunCmd(cmd *cobra.Command, args []string) error {
+func indexRunCmd(cmd *cobra.Command, _ []string) error {
 	usageTemplate := `Usage:{{if .HasAvailableSubCommands}}
   {{.CommandPath}} [command]{{end}}
   

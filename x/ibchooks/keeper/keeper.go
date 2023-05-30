@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/types/address"
-	"github.com/public-awesome/stargaze/v10/x/ibc-hooks/types"
+	"github.com/public-awesome/stargaze/v10/x/ibchooks/types"
 
 	"github.com/tendermint/tendermint/libs/log"
 
