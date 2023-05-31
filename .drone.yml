@@ -77,7 +77,7 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - v10.0.0.alpha-4
+        - v10.0.0.alpha-5
     when:
       event:
         - push
@@ -350,7 +350,7 @@ steps:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:v10.0.0.alpha-4
+    image: publicawesome/stargaze:v10.0.0.alpha-5
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -404,6 +404,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 43d443d9f33be7c8113f4e66a2060cac78e9764ea0e0ffbb9ce9ff8b90ed1366
+hmac: 285c388f188656b67942b460c872689f6ad26ad54a2bae984c4b1788c4f7e234
 
 ...

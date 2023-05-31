@@ -52,6 +52,7 @@ func abciContractCallback(parentCtx sdk.Context, w types.WasmKeeper, msg contrac
 			)
 			return false // return without commit
 		}
+		parentCtx.EventManager().EmitEvents(ctx.EventManager().Events())
 		commit()
 		return false
 	}
