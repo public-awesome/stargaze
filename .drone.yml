@@ -77,7 +77,7 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - v10.0.0.alpha-5
+        - jhernandezb/re-emit-events
     when:
       event:
         - push
@@ -404,6 +404,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 285c388f188656b67942b460c872689f6ad26ad54a2bae984c4b1788c4f7e234
+hmac: b4f01e35de1eff23a82a46cb217c3e925c939c1d73eb4932b8c5ffcbd8f84898
 
 ...
