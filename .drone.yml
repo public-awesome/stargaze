@@ -77,12 +77,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - jhernandezb/re-emit-events
+        - publicawesome/stargaze:v10.0.0.alpha-5
     when:
       event:
         - push
       branch:
-        - jhernandezb/v10-migration
+        - jhernandezb/re-emit-events
   - name: docker_release
     image: plugins/docker
     settings:
@@ -404,6 +404,6 @@ volumes:
 
 ---
 kind: signature
-hmac: b4f01e35de1eff23a82a46cb217c3e925c939c1d73eb4932b8c5ffcbd8f84898
+hmac: 586c139345c6aaef55402ffbb73735fcc9ed97b2128001e4182b3321596966ee
 
 ...
