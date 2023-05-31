@@ -77,7 +77,7 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - publicawesome/stargaze:v10.0.0.alpha-5
+        - v10.0.0.alpha-5
     when:
       event:
         - push
@@ -404,6 +404,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 586c139345c6aaef55402ffbb73735fcc9ed97b2128001e4182b3321596966ee
+hmac: f4bb73711532f592bfff5447458ce85e214c16443dda7abadb3c9e4dab0d8dc3
 
 ...
