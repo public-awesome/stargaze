@@ -23,11 +23,10 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 		if err != nil {
 			return nil, err
 		}
-		// set global fee params to 0.01ustars
+		// set global fee params to 1ustars
 		stakeDenom := app.StakingKeeper.BondDenom(ctx)
 		globalfeeParams := app.GlobalFeeKeeper.GetParams(ctx)
-		amount := sdk.NewDecWithPrec(1, 2) // 0.01
-		globalfeeParams.MinimumGasPrices = sdk.NewDecCoins(sdk.NewDecCoinFromDec(stakeDenom, amount))
+		globalfeeParams.MinimumGasPrices = sdk.NewDecCoins(sdk.NewDecCoinFromDec(stakeDenom, sdk.OneDec()))
 		app.GlobalFeeKeeper.SetParams(ctx, globalfeeParams)
 		return migrations, nil
 	})

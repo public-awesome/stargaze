@@ -358,7 +358,7 @@ func PrepareGenesis(
 	}
 	appState[wasm.ModuleName] = wasmGenStateBz
 
-	minGasPrices, err := sdk.ParseDecCoins("0.01ustars")
+	minGasPrices, err := sdk.ParseDecCoins("1ustars")
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to parse dec coins: %w", err)
 	}
