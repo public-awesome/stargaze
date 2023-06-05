@@ -77,12 +77,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - v10.0.0.alpha-5
+        - v10.0.0.alpha-6
     when:
       event:
         - push
       branch:
-        - jhernandezb/re-emit-events
+        - prepare-v10
   - name: docker_release
     image: plugins/docker
     settings:
@@ -350,7 +350,7 @@ steps:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:v10.0.0.alpha-5
+    image: publicawesome/stargaze:v10.0.0.alpha-6
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -404,6 +404,6 @@ volumes:
 
 ---
 kind: signature
-hmac: f4bb73711532f592bfff5447458ce85e214c16443dda7abadb3c9e4dab0d8dc3
+hmac: d7523583674d6a312b1ed5dc45ac45937956579cc6296561210e1e16ca9bc5dd
 
 ...

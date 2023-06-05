@@ -27,6 +27,12 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 		stakeDenom := app.StakingKeeper.BondDenom(ctx)
 		globalfeeParams := app.GlobalFeeKeeper.GetParams(ctx)
 		globalfeeParams.MinimumGasPrices = sdk.NewDecCoins(sdk.NewDecCoinFromDec(stakeDenom, sdk.OneDec()))
+
+		globalfeeParams.PrivilegedAddresses = []string{
+			// Multisig that is in charge of managing Launchpad Factories until a DAO is created
+			// https://www.mintscan.io/stargaze/account/stars1zmaulflshft579x37acrdad72r57vnn5zsn0ee
+			"stars1zmaulflshft579x37acrdad72r57vnn5zsn0ee",
+		}
 		app.GlobalFeeKeeper.SetParams(ctx, globalfeeParams)
 		return migrations, nil
 	})
