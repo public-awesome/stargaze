@@ -12,7 +12,6 @@ sleep 10
 hermes tx raw ft-transfer osmosis stargaze transfer channel-1 9999 -d ustars -o 1000 -n 2
 
 sleep 30
-starsd q globalfee params
 export GAIA_ADDRESS=cosmos1wt3khka7cmn5zd592x430ph4zmlhf5gfztgha6
 export STARGAZE_ADDRESS=stars12g0xe2ld0k5ws3h7lmxc39d4rpl3fyxp5qys69
 export OSMOSIS_ADDRESS=osmo1qk2rqkk28z8v3d7npupz33zqc6dae6n9a2x5v4

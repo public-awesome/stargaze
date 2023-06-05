@@ -367,6 +367,13 @@ steps:
         - http://gaia:26657
         - http://osmosis:26657
         - http://icad:26657
+  - name: check-params
+    pull: always
+    image: publicawesome/stargaze:v10.0.0.alpha-6
+    commands:
+      - starsd q globalfee params --node http://stargaze-upgraded:26657
+    environment:
+      GOPROXY: http://goproxy
   - name: relayer-upgrade-start
     image: publicawesome/hermes:0.15.0
     commands:
@@ -404,6 +411,6 @@ volumes:
 
 ---
 kind: signature
-hmac: d7523583674d6a312b1ed5dc45ac45937956579cc6296561210e1e16ca9bc5dd
+hmac: b0053e4058901416d03e4be79865bfeb530092fb7f3d5b6599d911ac8b1a3869
 
 ...
