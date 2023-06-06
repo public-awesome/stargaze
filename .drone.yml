@@ -77,12 +77,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - v10.0.0.alpha-6
+        - v10.0.1.alpha-1
     when:
       event:
         - push
       branch:
-        - prepare-v10
+        - jhernandezb/update-libwasmvm
   - name: docker_release
     image: plugins/docker
     settings:
@@ -350,7 +350,7 @@ steps:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:v10.0.0.alpha-6
+    image: publicawesome/stargaze:v10.0.1.alpha-1
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -369,7 +369,7 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:v10.0.0.alpha-6
+    image: publicawesome/stargaze:v10.0.1.alpha-1
     commands:
       - starsd q globalfee params --node http://stargaze-upgraded:26657
     environment:
@@ -411,6 +411,6 @@ volumes:
 
 ---
 kind: signature
-hmac: ee83ace72167d7d84a1045057c252dfead1aa86fc2aaec48d0316bd81ab4857b
+hmac: b2d583e9b1cde6ac36be1e9c239762e3af7717daf94cf73dd401b9e026866dff
 
 ...
