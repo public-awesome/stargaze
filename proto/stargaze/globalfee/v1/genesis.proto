@@ -4,7 +4,7 @@ package publicawesome.stargaze.globalfee.v1;
 import "stargaze/globalfee/v1/globalfee.proto";
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/public-awesome/stargaze/v10/x/globalfee/types";
+option go_package = "github.com/public-awesome/stargaze/v11/x/globalfee/types";
 
 // GenesisState defines the globalfee module's genesis state.
 message GenesisState {

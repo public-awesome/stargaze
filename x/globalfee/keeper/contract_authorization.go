@@ -3,7 +3,7 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v10/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v11/x/globalfee/types"
 )
 
 // IterateContractAuthorizations executes the given func on all the contract authorizations

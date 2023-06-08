@@ -4,7 +4,7 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v10/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v11/x/globalfee/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
