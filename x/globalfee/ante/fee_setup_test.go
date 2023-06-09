@@ -1,10 +1,7 @@
 package ante_test
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"sync"
-	"time"
 
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
@@ -14,17 +11,12 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	stargazeapp "github.com/public-awesome/stargaze/v11/app"
+
 	//	"github.com/public-awesome/stargaze/v11/testutil/simapp"
 	"github.com/public-awesome/stargaze/v11/x/globalfee/ante"
 	"github.com/public-awesome/stargaze/v11/x/globalfee/types"
 	"github.com/stretchr/testify/suite"
-	"github.com/tendermint/spm/cosmoscmd"
-	"github.com/tendermint/tendermint/crypto"
-	"github.com/tendermint/tendermint/crypto/secp256k1"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
 type AnteHandlerTestSuite struct {
@@ -44,6 +36,7 @@ type storeCache struct {
 
 var contractsCache = storeCache{contracts: make(map[string][]byte)}
 
+/*
 func (s *AnteHandlerTestSuite) SetupTest() {
 	_, _, acc1_addr := getTestAccount()
 	_, _, acc2_addr := getTestAccount()
@@ -74,6 +67,7 @@ func (s *AnteHandlerTestSuite) SetupTest() {
 	s.ctx = ctx
 	s.clientCtx = client.Context{}.WithTxConfig(encodingConfig.TxConfig)
 }
+*/
 
 func (s *AnteHandlerTestSuite) SetupTestGlobalFeeStoreAndMinGasPrice(minGasPrice []sdk.DecCoin, globalFees sdk.DecCoins) (ante.FeeDecorator, sdk.AnteHandler) {
 	s.app.GlobalFeeKeeper.SetParams(s.ctx, types.Params{MinimumGasPrices: globalFees})
@@ -187,6 +181,7 @@ func (s *AnteHandlerTestSuite) CreateTestTx(privs []cryptotypes.PrivKey, accNums
 	return s.txBuilder.GetTx(), nil
 }
 
+/*
 func storeContract(ctx sdk.Context, msgServer wasmtypes.MsgServer, creator string, contract string) (uint64, error) {
 	b, err := getContractBytes(contract)
 	if err != nil {

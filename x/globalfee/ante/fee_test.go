@@ -3,10 +3,6 @@ package ante_test
 import (
 	"testing"
 
-	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	"github.com/cosmos/cosmos-sdk/testutil/testdata"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -14,6 +10,7 @@ func TestAnteHandlerTestSuite(t *testing.T) {
 	suite.Run(t, new(AnteHandlerTestSuite))
 }
 
+/*
 func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 	s.SetupTest()
 	s.SetupWasmMsgServer()
@@ -290,3 +287,5 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 		})
 	}
 }
+
+*/

@@ -101,6 +101,7 @@ import (
 	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
+	apparams "github.com/public-awesome/stargaze/v11/app/params"
 	"github.com/public-awesome/stargaze/v11/docs"
 	sgstatesync "github.com/public-awesome/stargaze/v11/internal/statesync"
 	sgwasm "github.com/public-awesome/stargaze/v11/internal/wasm"
@@ -326,7 +327,7 @@ func NewStargazeApp(
 	skipUpgradeHeights map[int64]bool,
 	homePath string,
 	invCheckPeriod uint,
-	encodingConfig appparams.EncodingConfig,
+	encodingConfig apparams.EncodingConfig,
 	appOpts servertypes.AppOptions,
 	wasmOpts []wasm.Option,
 	enabledProposals []wasm.ProposalType,
