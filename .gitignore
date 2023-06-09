@@ -4,6 +4,7 @@ bin/
 .idea/
 dist/
 data/
+.vscode/
 
 node_modules/
 .env

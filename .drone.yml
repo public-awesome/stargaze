@@ -21,7 +21,7 @@ steps:
         from_secret: minio_key_id
       AWS_SECRET_ACCESS_KEY:
         from_secret: minio_secret_key
-    pull: true
+    pull: always
     settings:
       restore: true
       bucket:
@@ -33,7 +33,7 @@ steps:
       branch: no-cache
 
   - name: test
-    image: publicawesome/golang:1.20.2-devtooling
+    image: publicawesome/golang:1.20.4-devtooling
     volumes:
       - name: cache
         path: /go
@@ -42,14 +42,14 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: build
-    image: golang:1.20.2-alpine3.17
+    image: golang:1.20.4-alpine3.17
     volumes:
       - name: cache
         path: /go
     commands:
       - apk add --no-cache ca-certificates build-base git
-      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.2.1/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.a
-      - echo "a00700aa19f5bfe0f46290ddf69bf51eb03a6dfcd88b905e1081af2e42dbbafc  /lib/libwasmvm_muslc.a" | sha256sum -c
+      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.2.4/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.a
+      - echo "ce3d892377d2523cf563e01120cb1436f9343f80be952c93f66aa94f5737b661  /lib/libwasmvm_muslc.a" | sha256sum -c
       - LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true  make build
       - echo "Ensuring binary is statically linked ..." && (file $PWD/bin/starsd | grep "statically linked")
     environment:
@@ -68,7 +68,7 @@ steps:
         - push
         - pull_request
   - name: publish-alpha
-    image: plugins/docker:18
+    image: plugins/docker
     settings:
       dockerfile: docker/Dockerfile
       repo: publicawesome/stargaze
@@ -77,14 +77,14 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - latest
+        - v10.0.1.alpha-1
     when:
       event:
         - push
       branch:
-        - feature/wasmd-0.31
+        - jhernandezb/update-libwasmvm
   - name: docker_release
-    image: plugins/docker:18
+    image: plugins/docker
     settings:
       dockerfile: docker/Dockerfile
       repo: publicawesome/stargaze
@@ -98,7 +98,7 @@ steps:
         - tag
 
   - name: release
-    image: golang:1.20.2
+    image: golang:1.20.4
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -119,7 +119,7 @@ steps:
         from_secret: minio_key_id
       AWS_SECRET_ACCESS_KEY:
         from_secret: minio_secret_key
-    pull: true
+    pull: always
     settings:
       rebuild: true
       bucket:
@@ -158,7 +158,7 @@ steps:
         from_secret: minio_key_id
       AWS_SECRET_ACCESS_KEY:
         from_secret: minio_secret_key
-    pull: true
+    pull: always
     settings:
       restore: true
       bucket:
@@ -184,7 +184,7 @@ steps:
       GOPROXY: http://goproxy
   - name: icad
     image: publicawesome/icad:0.1.6-stargaze.1
-    pull: true
+    pull: always
     detach: true
     commands:
       - echo $PWD
@@ -193,7 +193,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/golang:1.20.2-devtooling
+    image: publicawesome/golang:1.20.4-devtooling
     volumes:
       - name: cache
         path: /go
@@ -203,7 +203,7 @@ steps:
       GOPROXY: http://goproxy
     detach: true
   - name: readiness
-    pull: true
+    pull: always
     image: publicawesome/stargaze-readiness-checker:latest
     settings:
       timeout: 300
@@ -229,7 +229,7 @@ steps:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: ica-test
     image: publicawesome/icad:0.1.6-stargaze.1
-    pull: true
+    pull: always
     commands:
       - /bin/sh ./scripts/ci/test-ica.sh
   - name: discord
@@ -269,7 +269,7 @@ steps:
         from_secret: minio_key_id
       AWS_SECRET_ACCESS_KEY:
         from_secret: minio_secret_key
-    pull: true
+    pull: always
     settings:
       restore: true
       bucket:
@@ -280,7 +280,7 @@ steps:
     when:
       branch: no-cache
   - name: build-wrapper
-    image: publicawesome/golang:1.20.2-devtooling
+    image: publicawesome/golang:1.20.4-devtooling
     volumes:
       - name: cache
         path: /go
@@ -306,21 +306,21 @@ steps:
       GOPROXY: http://goproxy
   - name: icad
     image: publicawesome/icad:0.1.6-stargaze.1
-    pull: true
+    pull: always
     detach: true
     commands:
       - ./scripts/ci/setup-icad.sh
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:8.0.0
+    image: publicawesome/stargaze:9.0.0
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
       GOPROXY: http://goproxy
     detach: true
   - name: readiness
-    pull: true
+    pull: always
     image: publicawesome/stargaze-readiness-checker:latest
     settings:
       timeout: 300
@@ -349,15 +349,15 @@ steps:
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
-    pull: true
-    image: publicawesome/stargaze:latest
+    pull: always
+    image: publicawesome/stargaze:v10.0.1.alpha-1
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
       GOPROXY: http://goproxy
     detach: true
   - name: readiness-upgrade
-    pull: true
+    pull: always
     image: publicawesome/stargaze-readiness-checker:latest
     settings:
       timeout: 300
@@ -367,6 +367,13 @@ steps:
         - http://gaia:26657
         - http://osmosis:26657
         - http://icad:26657
+  - name: check-params
+    pull: always
+    image: publicawesome/stargaze:v10.0.1.alpha-1
+    commands:
+      - starsd q globalfee params --node http://stargaze-upgraded:26657
+    environment:
+      GOPROXY: http://goproxy
   - name: relayer-upgrade-start
     image: publicawesome/hermes:0.15.0
     commands:
@@ -378,7 +385,7 @@ steps:
       - /bin/bash ./scripts/ci/upgrade/transfer-relayer.sh
   - name: ica-upgrade-test
     image: publicawesome/icad:0.1.6-stargaze.1
-    pull: true
+    pull: always
     commands:
       - /bin/sh ./scripts/ci/upgrade/test-ica.sh
   - name: discord
@@ -404,6 +411,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 96c6dfda726e450ed66d7fe3a3e3bbbf611b4973e5d6e48ca72a96349230cf68
+hmac: b2d583e9b1cde6ac36be1e9c239762e3af7717daf94cf73dd401b9e026866dff
 
 ...
