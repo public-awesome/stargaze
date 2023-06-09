@@ -34,5 +34,5 @@ buf protoc \
 
 
 # move proto files to the right places
-cp -r github.com/public-awesome/stargaze/v10/* ./
+cp -r github.com/public-awesome/stargaze/v11/* ./
 rm -rf github.com

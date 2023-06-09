@@ -17,13 +17,13 @@ starsd tx gov submit-proposal software-upgrade v10 --upgrade-height $HEIGHT  \
 --deposit 1000000000ustars \
 --description "v10 Upgrade" \
 --title "v10 Upgrade" \
---gas-prices 0.025ustars --gas auto --gas-adjustment 1.5 --from validator  \
+--gas-prices 1ustars --gas auto --gas-adjustment 1.5 --from validator  \
 --chain-id stargaze -b block --yes --node http://stargaze:26657 --home $STARGAZE_HOME --keyring-backend test
 
 starsd q gov proposals --node http://stargaze:26657 --home $STARGAZE_HOME
 
 
-starsd tx gov vote 1 "yes" --gas-prices 0.025ustars --gas auto --gas-adjustment 1.5 --from validator  \
+starsd tx gov vote 1 "yes" --gas-prices 1ustars --gas auto --gas-adjustment 1.5 --from validator  \
 --chain-id stargaze -b block --yes --node http://stargaze:26657 --home $STARGAZE_HOME --keyring-backend test
 sleep 60
 starsd q gov proposals --node http://stargaze:26657 --home $STARGAZE_HOME

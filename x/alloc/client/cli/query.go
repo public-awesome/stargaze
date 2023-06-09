@@ -13,7 +13,7 @@ import (
 	// "github.com/cosmos/cosmos-sdk/client/flags"
 	// sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/public-awesome/stargaze/v10/x/alloc/types"
+	"github.com/public-awesome/stargaze/v11/x/alloc/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module

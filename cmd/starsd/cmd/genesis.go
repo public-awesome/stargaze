@@ -27,14 +27,14 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	ibctransfertypes "github.com/cosmos/ibc-go/v4/modules/apps/transfer/types"
-	minttypes "github.com/public-awesome/stargaze/v10/x/mint/types"
+	minttypes "github.com/public-awesome/stargaze/v11/x/mint/types"
 
 	// appParams "github.com/public-awesome/stargaze/app/params"
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-	alloctypes "github.com/public-awesome/stargaze/v10/x/alloc/types"
-	claimtypes "github.com/public-awesome/stargaze/v10/x/claim/types"
-	globalfeetypes "github.com/public-awesome/stargaze/v10/x/globalfee/types"
+	alloctypes "github.com/public-awesome/stargaze/v11/x/alloc/types"
+	claimtypes "github.com/public-awesome/stargaze/v11/x/claim/types"
+	globalfeetypes "github.com/public-awesome/stargaze/v11/x/globalfee/types"
 )
 
 const (
@@ -358,7 +358,7 @@ func PrepareGenesis(
 	}
 	appState[wasm.ModuleName] = wasmGenStateBz
 
-	minGasPrices, err := sdk.ParseDecCoins("0.01ustars")
+	minGasPrices, err := sdk.ParseDecCoins("1ustars")
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to parse dec coins: %w", err)
 	}

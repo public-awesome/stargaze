@@ -16,6 +16,14 @@ pull_request_rules:
         commit_message_template: |
           {{ title }} (#{{ number }})
           {{ body }}
+  - name: backport to v10
+    conditions:
+      - base=main
+      - label=backport/v10.x
+    actions:
+      backport:
+        branches:
+          - release/v10.x
   - name: backport to v9
     conditions:
       - base=main

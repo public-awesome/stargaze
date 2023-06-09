@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
-	tokenfactorytypes "github.com/public-awesome/stargaze/v10/x/tokenfactory/types"
+	tokenfactorytypes "github.com/public-awesome/stargaze/v11/x/tokenfactory/types"
 )
 
 // next upgrade name
@@ -17,7 +17,12 @@ const upgradeName = "v11"
 // RegisterUpgradeHandlers returns upgrade handlers
 func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 	app.UpgradeKeeper.SetUpgradeHandler(upgradeName, func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
-		return app.mm.RunMigrations(ctx, cfg, fromVM)
+		// run migrations before modifying state
+		migrations, err := app.mm.RunMigrations(ctx, cfg, fromVM)
+		if err != nil {
+			return nil, err
+		}
+		return migrations, nil
 	})
 
 	upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
