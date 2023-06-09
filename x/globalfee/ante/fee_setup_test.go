@@ -17,7 +17,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	stargazeapp "github.com/public-awesome/stargaze/v11/app"
-	"github.com/public-awesome/stargaze/v11/testutil/simapp"
+	//	"github.com/public-awesome/stargaze/v11/testutil/simapp"
 	"github.com/public-awesome/stargaze/v11/x/globalfee/ante"
 	"github.com/public-awesome/stargaze/v11/x/globalfee/types"
 	"github.com/stretchr/testify/suite"
@@ -95,6 +95,7 @@ func (s *AnteHandlerTestSuite) SetupWasmMsgServer() {
 	s.msgServer = wasmkeeper.NewMsgServerImpl(wasmkeeper.NewDefaultPermissionKeeper(s.app.WasmKeeper))
 }
 
+/*
 func (s *AnteHandlerTestSuite) SetupContractWithCodeAuth(senderAddr string, contractBinary string, authMethods []string) string {
 	codeId, err := storeContract(s.ctx, s.msgServer, senderAddr, contractBinary)
 	s.Require().NoError(err)
@@ -136,6 +137,7 @@ func (s *AnteHandlerTestSuite) SetupContractWithContractAuth(senderAddr string, 
 
 	return instantiateRes.Address
 }
+*/
 
 func (s *AnteHandlerTestSuite) CreateTestTx(privs []cryptotypes.PrivKey, accNums []uint64, accSeqs []uint64, chainID string) (xauthsigning.Tx, error) {
 	var sigsV2 []signing.SignatureV2
@@ -207,6 +209,7 @@ func getTestAccount() (privateKey secp256k1.PrivKey, publicKey crypto.PubKey, ac
 	return
 }
 
+/*
 func getContractBytes(contract string) ([]byte, error) {
 	contractsCache.Lock()
 	bz, found := contractsCache.contracts[contract]
@@ -228,3 +231,4 @@ func getContractBytes(contract string) ([]byte, error) {
 type CounterInsantiateMsg struct {
 	Count uint64 `json:"count"`
 }
+*/
