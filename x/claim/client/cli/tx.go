@@ -7,7 +7,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	// "github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/public-awesome/stargaze/v10/x/claim/types"
+	"github.com/public-awesome/stargaze/v11/x/claim/types"
 )
 
 // GetTxCmd returns the transaction commands for this module

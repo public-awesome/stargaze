@@ -8,9 +8,12 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
+	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	ibcante "github.com/cosmos/ibc-go/v4/modules/core/ante"
 	ibckeeper "github.com/cosmos/ibc-go/v4/modules/core/keeper"
-	stargazeante "github.com/public-awesome/stargaze/v10/internal/ante"
+	stargazeante "github.com/public-awesome/stargaze/v11/internal/ante"
+	globalfeeante "github.com/public-awesome/stargaze/v11/x/globalfee/ante"
+	globalfeekeeper "github.com/public-awesome/stargaze/v11/x/globalfee/keeper"
 )
 
 // HandlerOptions extend the SDK's AnteHandler options by requiring the IBC
@@ -19,6 +22,8 @@ type HandlerOptions struct {
 	ante.HandlerOptions
 	keeper            *ibckeeper.Keeper
 	govKeeper         govkeeper.Keeper
+	globalfeeKeeper   globalfeekeeper.Keeper
+	stakingKeeper     stakingkeeper.Keeper
 	WasmConfig        *wasmTypes.WasmConfig
 	TXCounterStoreKey sdk.StoreKey
 	Codec             codec.BinaryCodec
@@ -59,6 +64,7 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		wasmkeeper.NewLimitSimulationGasDecorator(options.WasmConfig.SimulationGasLimit),
 		stargazeante.NewMinCommissionDecorator(options.Codec),
 		stargazeante.NewMinDepositDecorator(options.Codec, options.govKeeper),
+		globalfeeante.NewFeeDecorator(options.Codec, options.globalfeeKeeper, options.stakingKeeper),
 		wasmkeeper.NewCountTXDecorator(options.TXCounterStoreKey),
 		ante.NewRejectExtensionOptionsDecorator(),
 		ante.NewMempoolFeeDecorator(),
