@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v10/x/tokenfactory/types"
+	"github.com/public-awesome/stargaze/v11/x/tokenfactory/types"
 	"github.com/stretchr/testify/require"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"

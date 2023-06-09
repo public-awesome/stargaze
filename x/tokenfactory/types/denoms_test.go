@@ -3,7 +3,7 @@ package types_test
 import (
 	"testing"
 
-	"github.com/public-awesome/stargaze/v10/x/tokenfactory/types"
+	"github.com/public-awesome/stargaze/v11/x/tokenfactory/types"
 	"github.com/stretchr/testify/require"
 )
 

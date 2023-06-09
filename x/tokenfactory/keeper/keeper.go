@@ -3,7 +3,7 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/public-awesome/stargaze/v10/x/tokenfactory/types"
+	"github.com/public-awesome/stargaze/v11/x/tokenfactory/types"
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
