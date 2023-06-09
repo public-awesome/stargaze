@@ -9,8 +9,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/public-awesome/stargaze/v10/x/ibchooks/client/cli"
-	"github.com/public-awesome/stargaze/v10/x/ibchooks/types"
+	"github.com/public-awesome/stargaze/v11/x/ibchooks/client/cli"
+	"github.com/public-awesome/stargaze/v11/x/ibchooks/types"
 	"github.com/spf13/cobra"
 
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
