@@ -213,7 +213,7 @@ func InitTestnet(
 		return err
 	}
 
-	gasPricesSet := []string{"0ustars", "0.01ustars", "0.1ustars"}
+	gasPricesSet := []string{"0ustars", "1ustars", "1.5ustars"}
 	// generate private keys, node IDs, and initial transactions
 	for i := 0; i < numValidators; i++ {
 		nodeDirName := fmt.Sprintf("%s%d", nodeDirPrefix, i)

@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/public-awesome/stargaze/v10/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v11/x/globalfee/types"
 	"github.com/spf13/cobra"
 )
 
@@ -102,7 +102,7 @@ func CmdSetContractAuthorization() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "set-contract-authorization [contract-address] [methods]",
 		Short: "Creates or updates the gasless operation authorization for the given contract address and for the provided methods",
-		Args:  cobra.ExactArgs(0),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -132,7 +132,7 @@ func CmdRemoveContractAuthorization() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "remove-contract-authorization [contract-address]",
 		Short: "Removes any previously set contract authorizations",
-		Args:  cobra.ExactArgs(0),
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {

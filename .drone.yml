@@ -48,8 +48,8 @@ steps:
         path: /go
     commands:
       - apk add --no-cache ca-certificates build-base git
-      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.2.3/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.a
-      - echo "bb8ffda690b15765c396266721e45516cb3021146fd4de46f7daeda5b0d82c86  /lib/libwasmvm_muslc.a" | sha256sum -c
+      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.2.4/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.a
+      - echo "ce3d892377d2523cf563e01120cb1436f9343f80be952c93f66aa94f5737b661  /lib/libwasmvm_muslc.a" | sha256sum -c
       - LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true  make build
       - echo "Ensuring binary is statically linked ..." && (file $PWD/bin/starsd | grep "statically linked")
     environment:
@@ -77,12 +77,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - v10.0.0.alpha-3
+        - v10.0.1.alpha-1
     when:
       event:
         - push
       branch:
-        - jhernandezb/no-key-table
+        - jhernandezb/update-libwasmvm
   - name: docker_release
     image: plugins/docker
     settings:
@@ -350,7 +350,7 @@ steps:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:v10.0.0.alpha-3
+    image: publicawesome/stargaze:v10.0.1.alpha-1
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -367,6 +367,13 @@ steps:
         - http://gaia:26657
         - http://osmosis:26657
         - http://icad:26657
+  - name: check-params
+    pull: always
+    image: publicawesome/stargaze:v10.0.1.alpha-1
+    commands:
+      - starsd q globalfee params --node http://stargaze-upgraded:26657
+    environment:
+      GOPROXY: http://goproxy
   - name: relayer-upgrade-start
     image: publicawesome/hermes:0.15.0
     commands:
@@ -404,6 +411,6 @@ volumes:
 
 ---
 kind: signature
-hmac: cdac1f4ebe73d20a96ed8e02be188681b592ed66053a25d2e6c16a4f878818db
+hmac: b2d583e9b1cde6ac36be1e9c239762e3af7717daf94cf73dd401b9e026866dff
 
 ...

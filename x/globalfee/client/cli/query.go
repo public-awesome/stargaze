@@ -6,7 +6,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/public-awesome/stargaze/v10/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v11/x/globalfee/types"
 	"github.com/spf13/cobra"
 )
 
@@ -56,7 +56,7 @@ func GetCmdParams() *cobra.Command {
 
 func GetCmdCodeAuthorization() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "auth_by_code_id [code-id]",
+		Use:   "auth-by-code-id [code-id]",
 		Short: "Gets the authorizations for given code id",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -89,7 +89,7 @@ func GetCmdCodeAuthorization() *cobra.Command {
 
 func GetCmdContractAuthorization() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "auth_by_contract_address [contract-address]",
+		Use:   "auth-by-contract-address [contract-address]",
 		Short: "Gets the authorizations for given contract address",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -117,7 +117,7 @@ func GetCmdContractAuthorization() *cobra.Command {
 
 func GetCmdAuthorizations() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "auth_all",
+		Use:   "auth-all",
 		Short: "Gets all the authorizations",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {

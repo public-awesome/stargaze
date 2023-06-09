@@ -1,10 +1,10 @@
-module github.com/public-awesome/stargaze/v10
+module github.com/public-awesome/stargaze/v11
 
 go 1.20
 
 require (
 	github.com/CosmWasm/wasmd v0.31.0
-	github.com/CosmWasm/wasmvm v1.2.3
+	github.com/CosmWasm/wasmvm v1.2.4
 	github.com/armon/go-metrics v0.4.1
 	github.com/cosmos/cosmos-sdk v0.45.16
 	github.com/cosmos/go-bip39 v1.0.0
@@ -17,7 +17,7 @@ require (
 	github.com/regen-network/cosmos-proto v0.3.1
 	github.com/spf13/cast v1.5.1
 	github.com/spf13/cobra v1.7.0
-	github.com/stretchr/testify v1.8.3
+	github.com/stretchr/testify v1.8.4
 	github.com/tendermint/spm v0.0.0-00010101000000-000000000000
 	github.com/tendermint/tendermint v0.34.27
 	github.com/tendermint/tm-db v0.6.7
@@ -151,7 +151,7 @@ replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.8.1
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-	github.com/tendermint/spm => github.com/public-awesome/spm v0.1.9-stargaze.0.20230316175139-f88eba8c8416
+	github.com/tendermint/spm => github.com/public-awesome/spm v0.1.9-stargaze.0.20230605133234-f3f31dccde23
 	github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.27
 	google.golang.org/grpc => google.golang.org/grpc v1.33.2
 )
