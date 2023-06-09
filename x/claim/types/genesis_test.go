@@ -5,7 +5,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v10/x/claim/types"
+	"github.com/public-awesome/stargaze/v11/x/claim/types"
 	"github.com/stretchr/testify/require"
 )
 

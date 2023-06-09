@@ -4,7 +4,7 @@ package publicawesome.stargaze.globalfee.v1;
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
 
-option go_package = "github.com/public-awesome/stargaze/v10/x/globalfee/types";
+option go_package = "github.com/public-awesome/stargaze/v11/x/globalfee/types";
 
 // Params holds parameters for the globalfee module.
 message Params {

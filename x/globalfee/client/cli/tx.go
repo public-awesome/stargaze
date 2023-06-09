@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/public-awesome/stargaze/v10/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v11/x/globalfee/types"
 	"github.com/spf13/cobra"
 )
 
