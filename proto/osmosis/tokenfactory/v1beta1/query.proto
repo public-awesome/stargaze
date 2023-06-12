@@ -4,7 +4,7 @@ package osmosis.tokenfactory.v1beta1;
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
-import "osmosis/tokenfactory/v1beta1/tokenfactory.proto";  
+import "osmosis/tokenfactory/v1beta1/tokenfactory.proto";
 
 option go_package = "github.com/public-awesome/stargaze/v10/x/tokenfactory/types";
 
