@@ -33,7 +33,6 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	alloctypes "github.com/public-awesome/stargaze/v11/x/alloc/types"
-	claimtypes "github.com/public-awesome/stargaze/v11/x/claim/types"
 	globalfeetypes "github.com/public-awesome/stargaze/v11/x/globalfee/types"
 )
 
@@ -81,7 +80,6 @@ type GenesisParams struct {
 	SlashingParams slashingtypes.Params
 
 	AllocParams     alloctypes.Params
-	ClaimParams     claimtypes.Params
 	MintParams      minttypes.Params
 	GlobalFeeParams globalfeetypes.Params
 
@@ -177,7 +175,7 @@ func PrepareGenesis(
 	genDoc *tmtypes.GenesisDoc,
 	genesisParams GenesisParams,
 	chainID string,
-	snapshot Snapshot,
+	_ Snapshot,
 ) (map[string]json.RawMessage, *tmtypes.GenesisDoc, error) {
 	cdc := clientCtx.Codec
 
@@ -266,54 +264,6 @@ func PrepareGenesis(
 	bankGenState.Params.DefaultSendEnabled = true
 	bankGenState.DenomMetadata = genesisParams.NativeCoinMetadatas
 	balances := bankGenState.Balances
-
-	// claim module genesis
-	claimGenState := claimtypes.GetGenesisStateFromAppState(cdc, appState)
-	claimGenState.Params = genesisParams.ClaimParams
-	claimRecords := make([]claimtypes.ClaimRecord, 0, len(snapshot.Accounts))
-	claimsTotal := sdk.ZeroInt()
-	// check from preexisint accounts in genesis
-	preExistingAccounts := make(map[string]bool)
-	for _, b := range balances {
-		preExistingAccounts[b.Address] = true
-	}
-	for addr, acc := range snapshot.Accounts {
-		claimRecord := claimtypes.ClaimRecord{
-			Address:                addr,
-			InitialClaimableAmount: sdk.NewCoins(sdk.NewCoin(BaseCoinUnit, acc.AirdropAmount)),
-			ActionCompleted:        []bool{false, false, false, false, false},
-		}
-		claimsTotal = claimsTotal.Add(acc.AirdropAmount)
-		claimRecords = append(claimRecords, claimRecord)
-		// skip account addition if existent
-		exists := preExistingAccounts[addr]
-		if exists {
-			continue
-		}
-		balances = append(balances, banktypes.Balance{
-			Address: addr,
-			Coins:   sdk.NewCoins(sdk.NewInt64Coin(BaseCoinUnit, 1_000_000)),
-		})
-
-		address, err := sdk.AccAddressFromBech32(addr)
-		if err != nil {
-			return nil, nil, err
-		}
-		// add base account
-		// Add the new account to the set of genesis accounts
-		baseAccount := authtypes.NewBaseAccount(address, nil, 0, 0)
-		if err := baseAccount.Validate(); err != nil {
-			return nil, nil, fmt.Errorf("failed to validate new genesis account: %w", err)
-		}
-		accs = append(accs, baseAccount)
-	}
-	claimGenState.ClaimRecords = claimRecords
-	claimGenState.ModuleAccountBalance = sdk.NewCoin(BaseCoinUnit, claimsTotal)
-	claimGenStateBz, err := cdc.MarshalJSON(claimGenState)
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal claim genesis state: %w", err)
-	}
-	appState[claimtypes.ModuleName] = claimGenStateBz
 
 	// save accounts
 
@@ -472,14 +422,6 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.SlashingParams.SlashFractionDoubleSign = sdk.MustNewDecFromStr("0.05") // 5% double sign slashing
 	genParams.SlashingParams.SlashFractionDowntime = sdk.MustNewDecFromStr("0.0001") // 0.01% liveness slashing
 
-	genParams.ClaimParams = claimtypes.Params{
-		AirdropEnabled:     false,
-		AirdropStartTime:   genParams.GenesisTime.Add(time.Hour * 24 * 365), // 1 year (will be changed by gov)
-		DurationUntilDecay: time.Hour * 24 * 240,                            // 120 days = ~4 months
-		DurationOfDecay:    time.Hour * 24 * 120,                            // 120 days = ~4 months
-		ClaimDenom:         genParams.NativeCoinMetadatas[0].Base,
-	}
-
 	genParams.ConsensusParams = tmtypes.DefaultConsensusParams()
 	genParams.ConsensusParams.Block.MaxBytes = 25 * 1024 * 1024 // 26,214,400 for cosmwasm
 	genParams.ConsensusParams.Block.MaxGas = 100_000_000
@@ -498,8 +440,6 @@ func MainnetGenesisParams() GenesisParams {
 func TestnetGenesisParams() GenesisParams {
 	genParams := MainnetGenesisParams()
 
-	genParams.ClaimParams.AirdropEnabled = true
-	genParams.ClaimParams.AirdropStartTime = genParams.GenesisTime
 	genParams.AirdropSupply = sdk.NewInt(250_000_000_000_000)               // 250M STARS
 	genParams.GenesisTime = time.Date(2022, 0o2, 17, 17, 0, 0, 0, time.UTC) // Feb 17
 
@@ -542,8 +482,6 @@ func DevnetGenesisParams() GenesisParams {
 
 	genParams.AirdropSupply = sdk.NewInt(250_000_000_000_000) // 250M STARS
 	genParams.GenesisTime = time.Now()
-	genParams.ClaimParams.AirdropEnabled = true
-	genParams.ClaimParams.AirdropStartTime = genParams.GenesisTime
 	// mint
 	genParams.MintParams.StartTime = genParams.GenesisTime.Add(time.Hour * 10)
 
@@ -564,8 +502,6 @@ func LocalnetGenesisParams() GenesisParams {
 
 	genParams.AirdropSupply = sdk.NewInt(250_000_000_000_000) // 250M STARS
 	genParams.GenesisTime = time.Now()
-	genParams.ClaimParams.AirdropEnabled = true
-	genParams.ClaimParams.AirdropStartTime = genParams.GenesisTime
 	// mint
 	genParams.MintParams.StartTime = genParams.GenesisTime.Add(time.Hour * 10)
 
