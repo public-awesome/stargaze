@@ -310,11 +310,11 @@ type App struct {
 	ScopedWasmKeeper     capabilitykeeper.ScopedKeeper
 
 	// stargaze modules
-	ClaimKeeper     claimmodulekeeper.Keeper
-	AllocKeeper     allocmodulekeeper.Keeper
-	CronKeeper      cronmodulekeeper.Keeper
-	GlobalFeeKeeper globalfeemodulekeeper.Keeper
-	IBCHooksKeeper  ibchookskeeper.Keeper
+	ClaimKeeper        claimmodulekeeper.Keeper
+	AllocKeeper        allocmodulekeeper.Keeper
+	CronKeeper         cronmodulekeeper.Keeper
+	GlobalFeeKeeper    globalfeemodulekeeper.Keeper
+	IBCHooksKeeper     ibchookskeeper.Keeper
 	TokenFactoryKeeper tokenfactorykeeper.Keeper
 
 	// Middleware wrapper
