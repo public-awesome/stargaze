@@ -298,9 +298,9 @@ type App struct {
 	ScopedWasmKeeper     capabilitykeeper.ScopedKeeper
 
 	// stargaze modules
-	AllocKeeper     allocmodulekeeper.Keeper
-	CronKeeper      cronmodulekeeper.Keeper
-	GlobalFeeKeeper globalfeemodulekeeper.Keeper
+	AllocKeeper        allocmodulekeeper.Keeper
+	CronKeeper         cronmodulekeeper.Keeper
+	GlobalFeeKeeper    globalfeemodulekeeper.Keeper
 	TokenFactoryKeeper tokenfactorykeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
