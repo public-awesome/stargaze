@@ -80,6 +80,9 @@ import (
 	"github.com/public-awesome/stargaze/v11/x/mint"
 	mintkeeper "github.com/public-awesome/stargaze/v11/x/mint/keeper"
 	minttypes "github.com/public-awesome/stargaze/v11/x/mint/types"
+	"github.com/public-awesome/stargaze/v11/x/tokenfactory"
+	tokenfactorykeeper "github.com/public-awesome/stargaze/v11/x/tokenfactory/keeper"
+	tokenfactorytypes "github.com/public-awesome/stargaze/v11/x/tokenfactory/types"
 	"github.com/spf13/cast"
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmjson "github.com/tendermint/tendermint/libs/json"
@@ -209,6 +212,7 @@ var (
 		allocmodule.AppModuleBasic{},
 		cronmodule.AppModuleBasic{},
 		globalfeemodule.AppModuleBasic{},
+		tokenfactory.AppModuleBasic{},
 		wasm.AppModuleBasic{},
 		ica.AppModuleBasic{},
 	)
@@ -228,6 +232,7 @@ var (
 		icatypes.ModuleName:               nil,
 		cronmoduletypes.ModuleName:        nil,
 		globalfeemoduletypes.ModuleName:   nil,
+		tokenfactorytypes.ModuleName:      {authtypes.Minter, authtypes.Burner},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 )
@@ -296,6 +301,7 @@ type App struct {
 	AllocKeeper     allocmodulekeeper.Keeper
 	CronKeeper      cronmodulekeeper.Keeper
 	GlobalFeeKeeper globalfeemodulekeeper.Keeper
+	TokenFactoryKeeper tokenfactorykeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// the module manager
@@ -335,6 +341,7 @@ func NewStargazeApp(
 		authzkeeper.StoreKey,
 		wasm.StoreKey,
 		cronmoduletypes.StoreKey,
+		tokenfactorytypes.StoreKey,
 		icahosttypes.StoreKey,
 		globalfeemoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
@@ -495,12 +502,21 @@ func NewStargazeApp(
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
-	availableCapabilities := "iterator,staking,stargate,stargaze,cosmwasm_1_1,cosmwasm_1_2"
+	availableCapabilities := "iterator,staking,stargate,stargaze,cosmwasm_1_1,cosmwasm_1_2,token_factory"
+
+	// Wasm accepted Stargate Queries
+	acceptStargateQueriesList := wasmkeeper.AcceptedStargateQueries{
+		"/stargaze.tokenfactory.v1.Query/Params":                 &tokenfactorytypes.QueryParamsResponse{},
+		"/stargaze.tokenfactory.v1.Query/DenomAuthorityMetadata": &tokenfactorytypes.QueryDenomAuthorityMetadataResponse{},
+		"/stargaze.tokenfactory.v1.Query/DenomsFromCreator":      &tokenfactorytypes.QueryDenomsFromCreatorResponse{},
+	}
 
 	wasmOpts = append(
 		wasmOpts,
 		wasmkeeper.WithMessageEncoders(sgwasm.MessageEncoders(registry)),
-		wasmkeeper.WithQueryPlugins(nil),
+		wasmkeeper.WithQueryPlugins(&wasmkeeper.QueryPlugins{
+			Stargate: wasmkeeper.AcceptListStargateQuerier(acceptStargateQueriesList, app.GRPCQueryRouter(), appCodec),
+		}),
 	)
 	app.WasmKeeper = wasm.NewKeeper(
 		appCodec,
@@ -558,6 +574,12 @@ func NewStargazeApp(
 	)
 	allocModule := allocmodule.NewAppModule(appCodec, app.AllocKeeper)
 
+	tokenfactoryKeeper := tokenfactorykeeper.NewKeeper(keys[tokenfactorytypes.StoreKey], app.GetSubspace(tokenfactorytypes.ModuleName),
+		app.AccountKeeper, app.BankKeeper, app.DistrKeeper)
+	app.TokenFactoryKeeper = tokenfactoryKeeper
+
+	// this line is used by starport scaffolding # stargate/app/keeperDefinition
+
 	/****  Module Options ****/
 
 	// NOTE: we may consider parsing `appOpts` inside module constructors. For the moment
@@ -594,6 +616,7 @@ func NewStargazeApp(
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 		cronModule,
 		globalfeeModule,
+		tokenfactory.NewAppModule(app.TokenFactoryKeeper, app.AccountKeeper, app.BankKeeper),
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -614,6 +637,7 @@ func NewStargazeApp(
 		wasm.ModuleName,
 		cronmoduletypes.ModuleName,
 		globalfeemoduletypes.ModuleName,
+		tokenfactorytypes.ModuleName,
 	)
 
 	app.mm.SetOrderEndBlockers(
@@ -629,6 +653,7 @@ func NewStargazeApp(
 		wasm.ModuleName,
 		cronmoduletypes.ModuleName,
 		globalfeemoduletypes.ModuleName,
+		tokenfactorytypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -655,6 +680,7 @@ func NewStargazeApp(
 		authz.ModuleName,
 		paramstypes.ModuleName, upgradetypes.ModuleName, vestingtypes.ModuleName,
 		allocmoduletypes.ModuleName,
+		tokenfactorytypes.ModuleName,
 		// wasm after ibc transfer
 		wasm.ModuleName,
 		cronmoduletypes.ModuleName,
@@ -879,6 +905,7 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
 	paramsKeeper.Subspace(allocmoduletypes.ModuleName)
+	paramsKeeper.Subspace(tokenfactorytypes.ModuleName)
 	paramsKeeper.Subspace(wasm.ModuleName)
 	paramsKeeper.Subspace(cronmoduletypes.ModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)

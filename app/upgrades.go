@@ -7,6 +7,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+
+	tokenfactorytypes "github.com/public-awesome/stargaze/v11/x/tokenfactory/types"
 )
 
 // next upgrade name
@@ -22,6 +24,10 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 		if err != nil {
 			return nil, err
 		}
+		params := app.TokenFactoryKeeper.GetParams(ctx)
+		params.DenomCreationFee = nil
+		params.DenomCreationGasConsume = 50_000_000 // 50STARS at 1ustars
+		app.TokenFactoryKeeper.SetParams(ctx, params)
 		return migrations, nil
 	})
 
@@ -32,6 +38,7 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 
 	if upgradeInfo.Name == upgradeName && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
 		storeUpgrades := store.StoreUpgrades{
+			Added: []string{tokenfactorytypes.ModuleName},
 			Deleted: []string{claimModuleName},
 		}
 		// configure store loader that checks if version == upgradeHeight and applies store upgrades
