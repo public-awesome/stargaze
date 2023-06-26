@@ -124,6 +124,10 @@ import (
 	globalfeemodulekeeper "github.com/public-awesome/stargaze/v11/x/globalfee/keeper"
 	globalfeemoduletypes "github.com/public-awesome/stargaze/v11/x/globalfee/types"
 
+	ibchooks "github.com/public-awesome/stargaze/v11/x/ibchooks"
+	ibchookskeeper "github.com/public-awesome/stargaze/v11/x/ibchooks/keeper"
+	ibchookstypes "github.com/public-awesome/stargaze/v11/x/ibchooks/types"
+
 	//  ica
 	ica "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts"
 	icahost "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts/host"
@@ -220,6 +224,7 @@ var (
 		tokenfactory.AppModuleBasic{},
 		wasm.AppModuleBasic{},
 		ica.AppModuleBasic{},
+		ibchooks.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -292,6 +297,7 @@ type App struct {
 	FeeGrantKeeper feegrantkeeper.Keeper
 	AuthzKeeper    authzkeeper.Keeper
 	WasmKeeper     wasm.Keeper
+	ContractKeeper *wasmkeeper.PermissionedKeeper
 
 	// IBC
 	IBCKeeper     *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
@@ -304,11 +310,17 @@ type App struct {
 	ScopedWasmKeeper     capabilitykeeper.ScopedKeeper
 
 	// stargaze modules
-	AllocKeeper        allocmodulekeeper.Keeper
 	ClaimKeeper        claimmodulekeeper.Keeper
+	AllocKeeper        allocmodulekeeper.Keeper
 	CronKeeper         cronmodulekeeper.Keeper
 	GlobalFeeKeeper    globalfeemodulekeeper.Keeper
+	IBCHooksKeeper     ibchookskeeper.Keeper
 	TokenFactoryKeeper tokenfactorykeeper.Keeper
+
+	// Middleware wrapper
+	Ics20WasmHooks   *ibchooks.WasmHooks
+	HooksICS4Wrapper ibchooks.ICS4Middleware
+
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// the module manager
@@ -352,6 +364,7 @@ func NewStargazeApp(
 		tokenfactorytypes.StoreKey,
 		icahosttypes.StoreKey,
 		globalfeemoduletypes.StoreKey,
+		ibchookstypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -461,6 +474,20 @@ func NewStargazeApp(
 		scopedIBCKeeper,
 	)
 
+	// Configure the hooks keeper
+	hooksKeeper := ibchookskeeper.NewKeeper(
+		keys[ibchookstypes.StoreKey],
+	)
+	app.IBCHooksKeeper = hooksKeeper
+
+	stargazePrefix := sdk.GetConfig().GetBech32AccountAddrPrefix()
+	wasmHooks := ibchooks.NewWasmHooks(&app.IBCHooksKeeper, nil, stargazePrefix) // The contract keeper needs to be set later
+	app.Ics20WasmHooks = &wasmHooks
+	app.HooksICS4Wrapper = ibchooks.NewICS4Middleware(
+		app.IBCKeeper.ChannelKeeper,
+		app.Ics20WasmHooks,
+	)
+
 	// register the proposal types
 	govRouter := govtypes.NewRouter()
 	govRouter.AddRoute(govtypes.RouterKey, govtypes.ProposalHandler).
@@ -472,11 +499,14 @@ func NewStargazeApp(
 	// Create Transfer Keepers
 	app.TransferKeeper = ibctransferkeeper.NewKeeper(
 		appCodec, keys[ibctransfertypes.StoreKey], app.GetSubspace(ibctransfertypes.ModuleName),
-		app.IBCKeeper.ChannelKeeper, app.IBCKeeper.ChannelKeeper, &app.IBCKeeper.PortKeeper,
+		app.HooksICS4Wrapper, app.IBCKeeper.ChannelKeeper, &app.IBCKeeper.PortKeeper,
 		app.AccountKeeper, app.BankKeeper, scopedTransferKeeper,
 	)
 	transferModule := transfer.NewAppModule(app.TransferKeeper)
-	transferIBCModule := transfer.NewIBCModule(app.TransferKeeper)
+	var transferStack ibcporttypes.IBCModule
+	transferStack = transfer.NewIBCModule(app.TransferKeeper)
+	transferStack = ibchooks.NewIBCMiddleware(transferStack, &app.HooksICS4Wrapper)
+
 	app.ICAHostKeeper = icahostkeeper.NewKeeper(
 		appCodec,
 		app.keys[icahosttypes.StoreKey],
@@ -492,10 +522,11 @@ func NewStargazeApp(
 	icaHostIBCModule := icahost.NewIBCModule(app.ICAHostKeeper)
 
 	// Create static IBC router, add transfer route, then set and seal it
+
 	ibcRouter := ibcporttypes.NewRouter()
 	ibcRouter.
 		AddRoute(icahosttypes.SubModuleName, icaHostIBCModule).
-		AddRoute(ibctransfertypes.ModuleName, transferIBCModule)
+		AddRoute(ibctransfertypes.ModuleName, transferStack)
 
 	// this line is used by starport scaffolding # ibc/app/router
 
@@ -557,6 +588,10 @@ func NewStargazeApp(
 		availableCapabilities,
 		wasmOpts...,
 	)
+
+	// set the contract keeper for the Ics20WasmHooks
+	app.ContractKeeper = wasmkeeper.NewDefaultPermissionKeeper(app.WasmKeeper)
+	app.Ics20WasmHooks.ContractKeeper = app.ContractKeeper
 
 	app.CronKeeper = *cronmodulekeeper.NewKeeper(appCodec, keys[cronmoduletypes.StoreKey], keys[cronmoduletypes.MemStoreKey], app.GetSubspace(cronmoduletypes.ModuleName), app.WasmKeeper)
 	cronModule := cronmodule.NewAppModule(appCodec, app.CronKeeper, app.WasmKeeper)
@@ -641,6 +676,7 @@ func NewStargazeApp(
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 		cronModule,
 		globalfeeModule,
+		ibchooks.NewAppModule(app.AccountKeeper),
 		tokenfactory.NewAppModule(app.TokenFactoryKeeper, app.AccountKeeper, app.BankKeeper),
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
@@ -662,6 +698,7 @@ func NewStargazeApp(
 		wasm.ModuleName,
 		cronmoduletypes.ModuleName,
 		globalfeemoduletypes.ModuleName,
+		ibchookstypes.ModuleName,
 		tokenfactorytypes.ModuleName,
 	)
 
@@ -678,6 +715,7 @@ func NewStargazeApp(
 		wasm.ModuleName,
 		cronmoduletypes.ModuleName,
 		globalfeemoduletypes.ModuleName,
+		ibchookstypes.ModuleName,
 		tokenfactorytypes.ModuleName,
 	)
 
@@ -711,6 +749,7 @@ func NewStargazeApp(
 		wasm.ModuleName,
 		cronmoduletypes.ModuleName,
 		globalfeemoduletypes.ModuleName, // should be after wasm
+		ibchookstypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
