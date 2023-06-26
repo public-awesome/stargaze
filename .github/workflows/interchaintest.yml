@@ -44,8 +44,8 @@ jobs:
           name: sg
           path: /tmp/sg.tar
 
-  run_interchaintest:
-    name: Build `interchaintest` binary
+  build_interchaintest:
+    name: Build interchaintest 🔗
     runs-on: ubuntu-latest
 
     steps:
@@ -67,6 +67,20 @@ jobs:
         with:
             name: interchaintest
             path: ./bin/interchaintest
+
+  run_interchaintest:
+    needs: build_interchaintest
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download interchaintest
+        uses: actions/download-artifact@v3
+        with:
+          name: interchaintest
+      
+      - name: Run interchain test
+        run: ./interchaintest version
+
         
   # run_defauly:
   #   uses: public-awesome/stargaze/.github/workflows/interchaintest_runner.yml@spoorthi/interchain-test
