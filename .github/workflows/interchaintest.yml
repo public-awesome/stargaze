@@ -89,7 +89,7 @@ jobs:
 
           
       - name: Run interchain test
-        run: ls -l 
+        run: ./interchaintest version
 
   cleanup:
     name: Delete artifacts
