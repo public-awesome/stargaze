@@ -16,7 +16,7 @@ on:
 
 jobs:
   build_sg_image:
-    name: Build docker image
+    name: Build Stargaze image ✨
     runs-on: ubuntu-latest
 
     steps:
@@ -43,6 +43,30 @@ jobs:
         with:
           name: sg
           path: /tmp/sg.tar
+
+  run_interchaintest:
+    name: Build `interchaintest` binary
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Golang 1.20
+        uses: actions/setup-go@v3
+        with:
+          go-version: ~1.20
+
+      - name: Checkout strangelove-ventures/interchaintest
+        uses: actions/checkout@v3
+        with:
+          repository: strangelove-ventures/interchaintest
+
+      - name: Build Interchaintest 🔗
+        run: make interchaintest
+
+      - name: Upload interchain binary as artifact
+        uses: actions/upload-artifact@v3
+        with:
+            name: interchaintest
+            path: ./bin/interchaintest
         
   # run_defauly:
   #   uses: public-awesome/stargaze/.github/workflows/interchaintest_runner.yml@spoorthi/interchain-test
