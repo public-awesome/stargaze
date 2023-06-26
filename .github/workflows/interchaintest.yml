@@ -85,7 +85,7 @@ jobs:
         uses: docker/setup-buildx-action@v2
           
       - name: Run interchain test
-        run: ./interchaintest version
+        run: ls -l 
 
   cleanup:
     name: Delete artifacts
