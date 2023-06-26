@@ -43,6 +43,7 @@ jobs:
         with:
           name: sg
           path: /tmp/sg.tar
+          retention-days: 1
 
   build_interchaintest:
     name: Build interchaintest 🔗
@@ -61,22 +62,6 @@ jobs:
 
       - name: Build Interchaintest 🔗
         run: make interchaintest
-
-      - name: Upload interchain binary as artifact
-        uses: actions/upload-artifact@v3
-        with:
-            name: interchaintest
-            path: ./bin/interchaintest
-
-  run_interchaintest:
-    needs: build_interchaintest
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Download interchaintest
-        uses: actions/download-artifact@v3
-        with:
-          name: interchaintest
       
       - name: Run interchain test
         run: ./interchaintest version
