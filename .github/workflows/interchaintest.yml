@@ -71,40 +71,29 @@ jobs:
             retention-days: 1
 
   run_gaia:
-    name: Gaia ⚛️ <> Stargaze
+    name: gaia ⚛️
     needs: build_interchaintest
-    runs-on: ubuntu-latest
+    uses: public-awesome/stargaze/.github/workflows/interchaintest_runner.yml@spoorthi/ibctest-optimized
+    with:
+      chain-matrix: './interchain_test/gaia.matrix.json'
 
-    steps:
-      - name: Checkout public-awesome/stargaze
-        uses: actions/checkout@v3
-
-      - name: Download interchaintest
-        uses: actions/download-artifact@v3
-        with:
-          name: interchaintest
-      
-      - name: Download stargaze image
-        uses: actions/download-artifact@v3
-        with:
-          name: sg
-          path: /tmp
-
-      - name: Make interchaintest executable
-        run: chmod +x ./interchaintest
+  run_osmosis:
+    name: osmosis 🧪
+    needs: build_interchaintest
+    uses: public-awesome/stargaze/.github/workflows/interchaintest_runner.yml@spoorthi/ibctest-optimized
+    with:
+      chain-matrix: './interchain_test/osmosis.matrix.json'
     
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-    
-      - name: Load the stargaze image
-        run: docker load --input /tmp/sg.tar
-        
-      - name: Run interchain test
-        run: ./interchaintest -matrix ./interchain_test/gaia.matrix.json
+  run_icad:
+    name: icad 🔗
+    needs: build_interchaintest
+    uses: public-awesome/stargaze/.github/workflows/interchaintest_runner.yml@spoorthi/ibctest-optimized
+    with:
+      chain-matrix: './interchain_test/icad.matrix.json'
 
   cleanup:
     name: Delete artifacts
-    needs: [run_gaia,build_sg_image]
+    needs: [run_gaia,run_osmosis,run_icad]
     runs-on: ubuntu-latest
 
     steps:
@@ -120,13 +109,3 @@ jobs:
           name: sg
           failOnError: false
         
-  # run_defauly:
-  #   uses: public-awesome/stargaze/.github/workflows/interchaintest_runner.yml@spoorthi/interchain-test
-  #   with:
-  #     chain-matrix: 'interchain_test/osmosis.matrix.json'
-
-  # run_icad:
-  #   name: icad 🔗
-  #   uses: public-awesome/stargaze/.github/workflows/interchaintest_runner.yml@spoorthi/interchain-test
-  #   with:
-  #     chain-matrix: 'interchain_test/icad.matrix.json'

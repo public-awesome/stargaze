@@ -1,0 +1,41 @@
+name: Interchain Test Runner
+
+on:
+  workflow_call:
+    inputs:
+      test-matrix:
+        type: string
+        required: true
+        description: 'Path of the interchain test matrix file'
+  
+jobs:
+  run_interchaintest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout public-awesome/stargaze
+        uses: actions/checkout@v3
+
+      - name: Download interchaintest
+        uses: actions/download-artifact@v3
+        with:
+          name: interchaintest
+      
+      - name: Download stargaze image
+        uses: actions/download-artifact@v3
+        with:
+          name: sg
+          path: /tmp
+
+      - name: Make interchaintest executable
+        run: chmod +x ./interchaintest
+    
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+    
+      - name: Load the stargaze image
+        run: docker load --input /tmp/sg.tar
+        
+      - name: Run interchain test
+        run: ./interchaintest -matrix ${{ inputs.test-matrix }} -log-file stdout
+      
