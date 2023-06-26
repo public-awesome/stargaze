@@ -70,8 +70,8 @@ jobs:
             path: ./bin/interchaintest
             retention-days: 1
 
-  run_interchaintest:
-    name: Default <> SG Interchaintest
+  run_gaia:
+    name: Gaia ⚛️ <> Stargaze
     needs: build_interchaintest
     runs-on: ubuntu-latest
 
@@ -84,16 +84,15 @@ jobs:
       - name: Make interchaintest executable
         run: chmod +x ./interchaintest
     
-      # - name: Set up Docker Buildx
-      #   uses: docker/setup-buildx-action@v2
-
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
           
       - name: Run interchain test
-        run: ./interchaintest version
+        run: ./interchaintest 
 
   cleanup:
     name: Delete artifacts
-    needs: [run_interchaintest,build_sg_image]
+    needs: [run_gaia,build_sg_image]
     runs-on: ubuntu-latest
 
     steps:
