@@ -14,8 +14,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout public-awesome/stargaze
+      - name: Checkout public-awesome/stargaze # Need this to access the test matrix files
         uses: actions/checkout@v3
+        with:
+          sparse-checkout: ${{ inputs.test-matrix }}
 
       - name: Download interchaintest
         uses: actions/download-artifact@v3
@@ -38,5 +40,5 @@ jobs:
         run: docker load --input /tmp/sg.tar
         
       - name: Run interchain test
-        run: ./interchaintest -matrix ${{ inputs.test-matrix }} -log-file stdout
+        run: ./interchaintest -matrix ./${{ inputs.test-matrix }} -log-file stdout
       
