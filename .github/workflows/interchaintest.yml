@@ -92,7 +92,7 @@ jobs:
       test-matrix: './interchain_test/icad.matrix.json'
 
   cleanup:
-    name: Delete artifacts ❌
+    name: Delete artifacts 🗑️
     needs: [run_gaia,run_osmosis,run_icad]
     runs-on: ubuntu-latest
 
