@@ -76,6 +76,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout public-awesome/stargaze
+        uses: actions/checkout@v3
+
       - name: Download interchaintest
         uses: actions/download-artifact@v3
         with:
@@ -97,7 +100,7 @@ jobs:
         run: docker load --input /tmp/sg.tar
         
       - name: Run interchain test
-        run: ./interchaintest 
+        run: ./interchaintest -matrix ./interchain_test/gaia.matrix.json
 
   cleanup:
     name: Delete artifacts
