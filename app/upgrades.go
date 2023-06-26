@@ -7,7 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-
+	ibchooks "github.com/public-awesome/stargaze/v11/x/ibchooks/types"
 	tokenfactorytypes "github.com/public-awesome/stargaze/v11/x/tokenfactory/types"
 )
 
@@ -36,7 +36,7 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 
 	if upgradeInfo.Name == upgradeName && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
 		storeUpgrades := store.StoreUpgrades{
-			Added: []string{tokenfactorytypes.ModuleName},
+			Added: []string{tokenfactorytypes.ModuleName, ibchooks.ModuleName},
 		}
 		// configure store loader that checks if version == upgradeHeight and applies store upgrades
 		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades))
