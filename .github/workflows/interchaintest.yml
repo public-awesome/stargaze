@@ -1,10 +1,6 @@
 name: Run InterchainTest
 
 on:  
-
-  push: 
-    branches:
-      - spoorthi/ibctest-optimized
   pull_request:
     branches:
       - main
