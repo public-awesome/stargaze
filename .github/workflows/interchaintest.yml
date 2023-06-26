@@ -89,7 +89,7 @@ jobs:
 
   cleanup:
     name: Delete artifacts
-    needs: run_interchaintest
+    needs: [run_interchaintest,build_sg_image]
     runs-on: ubuntu-latest
 
     steps:
@@ -97,6 +97,7 @@ jobs:
         uses: geekyeggo/delete-artifact@v2
         with:
           name: interchaintest
+          failOnError: false
         
   # run_defauly:
   #   uses: public-awesome/stargaze/.github/workflows/interchaintest_runner.yml@spoorthi/interchain-test
