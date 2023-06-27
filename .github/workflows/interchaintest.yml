@@ -69,21 +69,21 @@ jobs:
   run_gaia_interchaintest:
     name: gaia ⚛️
     needs: [build_interchaintest,build_sg_image]
-    uses: public-awesome/stargaze/.github/workflows/interchaintest_runner.yml@spoorthi/ibctest-optimized
+    uses: ./.github/workflows/interchaintest_runner.yml
     with:
       test-matrix: 'interchain_test/gaia.matrix.json'
 
   run_osmosis_interchaintest:
     name: osmosis 🧪
     needs: [build_interchaintest,build_sg_image]
-    uses: public-awesome/stargaze/.github/workflows/interchaintest_runner.yml@spoorthi/ibctest-optimized
+    uses: ./.github/workflows/interchaintest_runner.yml
     with:
       test-matrix: 'interchain_test/osmosis.matrix.json'
     
   run_icad_interchaintest:
     name: icad 🔗
     needs: [build_interchaintest,build_sg_image]
-    uses: public-awesome/stargaze/.github/workflows/interchaintest_runner.yml@spoorthi/ibctest-optimized
+    uses: ./.github/workflows/interchaintest_runner.yml
     with:
       test-matrix: 'interchain_test/icad.matrix.json'
 
