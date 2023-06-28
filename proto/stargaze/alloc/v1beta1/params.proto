@@ -32,9 +32,16 @@ message Params {
   // distribution_proportions defines the proportion of the minted denom
   DistributionProportions distribution_proportions = 1
       [ (gogoproto.nullable) = false ];
-  // address to receive developer rewards
+
+  // addresses to receive developer rewards
   repeated WeightedAddress weighted_developer_rewards_receivers = 2 [
     (gogoproto.moretags) = "yaml:\"developer_rewards_receiver\"",
+    (gogoproto.nullable) = false
+  ];
+
+  // addresses to receive incentive rewards
+  repeated WeightedAddress weighted_incentives_rewards_receivers = 3 [
+    (gogoproto.moretags) = "yaml:\"incentives_rewards_receiver\"",
     (gogoproto.nullable) = false
   ];
 }

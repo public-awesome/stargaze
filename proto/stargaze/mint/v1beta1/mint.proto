@@ -5,6 +5,7 @@ option go_package = "github.com/public-awesome/stargaze/v11/x/mint/types";
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
+import "cosmos/base/v1beta1/coin.proto";
 
 // Minter represents the minting state.
 message Minter {
@@ -43,4 +44,12 @@ message Params {
   // expected blocks per year
   uint64 blocks_per_year = 5
       [ (gogoproto.moretags) = "yaml:\"blocks_per_year\"" ];
+
+  // SupplementAmount is the amount to be supplemented from the pool on top of
+  // newly minted coins.
+  repeated cosmos.base.v1beta1.Coin supplement_amount = 6 [
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (gogoproto.moretags) = "yaml:\"supplement_amount\"",
+    (gogoproto.nullable) = false
+  ];
 }
