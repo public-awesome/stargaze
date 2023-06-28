@@ -1,0 +1,34 @@
+{
+    "Relayers": [
+      "hermes",
+      "rly"
+    ],
+    "ChainSets": [
+      [
+        {
+          "Name": "osmosis",
+          "Version": "v14.0.0"
+        },
+        {
+          "NumValidators": 2,
+          "NumFullNodes": 1,
+          "Type": "cosmos",
+          "Name": "local-stargaze",
+          "ChainID": "testing",
+          "Images": [
+            {
+              "Repository": "publicawesome/stargaze",
+              "Version": "local-dev",
+              "UidGid": "1025:1025"
+            }
+          ],
+          "Bin": "starsd",
+          "Bech32Prefix": "stars",
+          "Denom": "ustars",
+          "GasPrices": "0.01ustars",
+          "GasAdjustment": 1.3,
+          "TrustingPeriod": "504h"
+        }
+      ]
+    ]
+  }
