@@ -35,10 +35,17 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 		mintParams.SupplementAmount = sdk.NewCoins()                         // set amount
 		app.MintKeeper.SetParams(ctx, mintParams)
 
+		// set community tax to 0 since the allocation params now will take care of it
+		distributionParams := app.DistrKeeper.GetParams(ctx)
+		distributionParams.CommunityTax = sdk.ZeroDec()
+		app.DistrKeeper.SetParams(ctx, distributionParams)
+
 		// change alloc params to set nft incentives to 0% until incentives are live
 		allocParams := app.AllocKeeper.GetParams(ctx)
+
+		// distribution proportions
 		proportions := allocParams.DistributionProportions
-		proportions.NftIncentives = sdk.ZeroDec()
+		proportions.NftIncentives = sdk.ZeroDec() // nft incentives to 0%
 		allocParams.DistributionProportions = proportions
 		app.AllocKeeper.SetParams(ctx, allocParams)
 
