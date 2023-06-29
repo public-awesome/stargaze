@@ -78,14 +78,16 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 	params := k.GetParams(ctx)
 	proportions := params.DistributionProportions
 
-	nftIncentiveAmount := blockInflationDec.Mul(proportions.NftIncentives)
-	nftIncentiveCoin := sdk.NewCoin(k.stakingKeeper.BondDenom(ctx), nftIncentiveAmount.TruncateInt())
-	// Distribute NFT incentives to the community pool until a future update
-	err := k.distrKeeper.FundCommunityPool(ctx, sdk.NewCoins(nftIncentiveCoin), blockInflationAddr)
-	if err != nil {
-		return err
+	if proportions.NftIncentives.GT(sdk.ZeroDec()) {
+		nftIncentiveAmount := blockInflationDec.Mul(proportions.NftIncentives)
+		nftIncentiveCoin := sdk.NewCoin(k.stakingKeeper.BondDenom(ctx), nftIncentiveAmount.TruncateInt())
+		// Distribute NFT incentives to the community pool until a future update
+		err := k.distrKeeper.FundCommunityPool(ctx, sdk.NewCoins(nftIncentiveCoin), blockInflationAddr)
+		if err != nil {
+			return err
+		}
+		k.Logger(ctx).Debug("funded community pool", "amount", nftIncentiveCoin.String(), "from", blockInflationAddr)
 	}
-	k.Logger(ctx).Debug("funded community pool", "amount", nftIncentiveCoin.String(), "from", blockInflationAddr)
 
 	devRewardAmount := blockInflationDec.Mul(proportions.DeveloperRewards)
 	devRewardCoin := sdk.NewCoin(k.stakingKeeper.BondDenom(ctx), devRewardAmount.TruncateInt())
@@ -115,7 +117,7 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 		return nil
 	}
 	// transfer collected fees from fairburn to the fee collector for distribution
-	err = k.bankKeeper.SendCoinsFromModuleToModule(ctx,
+	err := k.bankKeeper.SendCoinsFromModuleToModule(ctx,
 		types.FairburnPoolName,
 		authtypes.FeeCollectorName,
 		sdk.NewCoins(collectedFairburnFees),

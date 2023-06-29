@@ -371,7 +371,8 @@ steps:
     pull: always
     image: publicawesome/stargaze:v11.0.0-alpha.1
     commands:
-      - starsd q globalfee params --node http://stargaze-upgraded:26657
+      - starsd q mint params --node http://stargaze-upgraded:26657
+      - starsd q alloc params --node http://stargaze-upgraded:26657
     environment:
       GOPROXY: http://goproxy
   - name: relayer-upgrade-start
@@ -411,6 +412,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 71444d9f3946dc2f7b52f73c6063e53bd69cdcce971772a09d2fc405e7916137
+hmac: 271e83ff3233920eb9283a2dd4c5d162fd9316f97d03d71bafed9ab7c103f849
 
 ...
