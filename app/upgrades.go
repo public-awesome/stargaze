@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"time"
 
 	store "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -29,7 +30,9 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 
 		// change mint params to include the new supplement amount
 		mintParams := app.MintKeeper.GetParams(ctx)
-		mintParams.SupplementAmount = sdk.NewCoins() // set amount
+		mintParams.InitialAnnualProvisions = sdk.NewDec(267_000_000_000_000) // 267M
+		mintParams.StartTime = time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)   // 2023-01-01
+		mintParams.SupplementAmount = sdk.NewCoins()                         // set amount
 		app.MintKeeper.SetParams(ctx, mintParams)
 
 		// change alloc params to set nft incentives to 0% until incentives are live
