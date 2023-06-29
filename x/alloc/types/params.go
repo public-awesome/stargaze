@@ -33,7 +33,7 @@ func NewParams(
 func DefaultParams() Params {
 	return Params{
 		DistributionProportions: DistributionProportions{
-			NftIncentives:    sdk.NewDecWithPrec(45, 2), // 45%
+			NftIncentives:    sdk.NewDecWithPrec(20, 2), // 20%
 			DeveloperRewards: sdk.NewDecWithPrec(15, 2), // 15%
 		},
 		WeightedDeveloperRewardsReceivers: []WeightedAddress{},
@@ -74,11 +74,8 @@ func validateDistributionProportions(i interface{}) error {
 
 	totalProportions := v.NftIncentives.Add(v.DeveloperRewards)
 
-	// 60% is allocated to this module
-	// 35% validators
-	// 5% community pool
-	if !totalProportions.Equal(sdk.NewDecWithPrec(60, 2)) {
-		return errors.New("total distributions ratio should be 60%")
+	if totalProportions.GT(sdk.OneDec()) {
+		return errors.New("total distributions can not be higher than 100%")
 	}
 
 	return nil
