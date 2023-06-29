@@ -5,6 +5,7 @@ package publicawesome.stargaze.alloc.v1beta1;
 option go_package = "github.com/public-awesome/stargaze/v11/x/alloc/types";
 
 import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
 
 message WeightedAddress {
   string address = 1 [ (gogoproto.moretags) = "yaml:\"address\"" ];
@@ -26,6 +27,11 @@ message DistributionProportions {
     (gogoproto.moretags) = "yaml:\"developer_rewards\"",
     (gogoproto.nullable) = false
   ];
+  string community_pool = 3 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.moretags) = "yaml:\"community_pool\"",
+    (gogoproto.nullable) = false
+  ];
 }
 
 message Params {
@@ -42,6 +48,14 @@ message Params {
   // addresses to receive incentive rewards
   repeated WeightedAddress weighted_incentives_rewards_receivers = 3 [
     (gogoproto.moretags) = "yaml:\"incentives_rewards_receiver\"",
+    (gogoproto.nullable) = false
+  ];
+
+  // SupplementAmount is the amount to be supplemented from the pool on top of
+  // newly minted coins.
+  repeated cosmos.base.v1beta1.Coin supplement_amount = 4 [
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (gogoproto.moretags) = "yaml:\"supplement_amount\"",
     (gogoproto.nullable) = false
   ];
 }
