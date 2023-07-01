@@ -47,6 +47,22 @@ func FundModuleAccount(bankKeeper bankkeeper.Keeper, ctx sdk.Context, recipientM
 	return bankKeeper.SendCoinsFromModuleToModule(ctx, minttypes.ModuleName, recipientMod, amounts)
 }
 
+func (suite *KeeperTestSuite) TestZeroAllocation() {
+	suite.SetupTest()
+
+	allocKeeper := suite.app.AllocKeeper
+
+	params := suite.app.AllocKeeper.GetParams(suite.ctx)
+
+	params.DistributionProportions.NftIncentives = sdk.ZeroDec()
+
+	suite.app.AllocKeeper.SetParams(suite.ctx, params)
+
+	err := allocKeeper.DistributeInflation(suite.ctx)
+	suite.Require().NoError(err)
+
+}
+
 func (suite *KeeperTestSuite) TestDistribution() {
 	suite.SetupTest()
 

@@ -86,38 +86,27 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 		if err != nil {
 			return err
 		}
+
+		// iterate over list of icentive addresses and proportions
 		k.Logger(ctx).Debug("funded community pool", "amount", nftIncentiveCoin.String(), "from", blockInflationAddr)
 	}
 
-	devRewardAmount := blockInflationDec.Mul(proportions.DeveloperRewards)
-	devRewardCoin := sdk.NewCoin(k.stakingKeeper.BondDenom(ctx), devRewardAmount.TruncateInt())
+	// TODO:  fund communitiy pool allocation
 
-	for _, w := range params.WeightedDeveloperRewardsReceivers {
-		devRewardPortionCoins := sdk.NewCoins(k.GetProportions(ctx, devRewardCoin, w.Weight))
-		if w.Address == "" {
-			err := k.distrKeeper.FundCommunityPool(ctx, devRewardPortionCoins, blockInflationAddr)
-			if err != nil {
-				return err
-			}
-		} else {
-			devRewardsAddr, err := sdk.AccAddressFromBech32(w.Address)
-			if err != nil {
-				return err
-			}
-			err = k.bankKeeper.SendCoins(ctx, blockInflationAddr, devRewardsAddr, devRewardPortionCoins)
-			if err != nil {
-				return err
-			}
-			k.Logger(ctx).Debug("sent coins to developer", "amount", devRewardPortionCoins.String(), "from", blockInflationAddr)
-		}
+	devRewards := k.GetProportions(ctx, blockInflation, proportions.DeveloperRewards)
+	err := k.DistributeWeightedRewards(ctx, blockInflationAddr, devRewards, params.WeightedDeveloperRewardsReceivers)
+	if err != nil {
+		return err
 	}
+
+	// fairburn pool
 	fairburnPoolAddress := k.accountKeeper.GetModuleAccount(ctx, types.FairburnPoolName).GetAddress()
 	collectedFairburnFees := k.bankKeeper.GetBalance(ctx, fairburnPoolAddress, k.stakingKeeper.BondDenom(ctx))
 	if collectedFairburnFees.IsZero() {
 		return nil
 	}
 	// transfer collected fees from fairburn to the fee collector for distribution
-	err := k.bankKeeper.SendCoinsFromModuleToModule(ctx,
+	err = k.bankKeeper.SendCoinsFromModuleToModule(ctx,
 		types.FairburnPoolName,
 		authtypes.FeeCollectorName,
 		sdk.NewCoins(collectedFairburnFees),
@@ -129,4 +118,23 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 // and returns coins according to the `AllocationRatio`
 func (k Keeper) GetProportions(_ sdk.Context, mintedCoin sdk.Coin, ratio sdk.Dec) sdk.Coin {
 	return sdk.NewCoin(mintedCoin.Denom, mintedCoin.Amount.ToDec().Mul(ratio).TruncateInt())
+}
+func (k Keeper) DistributeWeightedRewards(ctx sdk.Context, feeCollectorAddress sdk.AccAddress, totalAllocation sdk.Coin, accounts []types.WeightedAddress) error {
+	if totalAllocation.IsZero() {
+		return nil
+	}
+	for _, w := range accounts {
+		weightedReward := sdk.NewCoins(k.GetProportions(ctx, totalAllocation, w.Weight))
+		if w.Address != "" {
+			rewardAddress, err := sdk.AccAddressFromBech32(w.Address)
+			if err != nil {
+				return err
+			}
+			err = k.bankKeeper.SendCoins(ctx, feeCollectorAddress, rewardAddress, weightedReward)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
