@@ -72,7 +72,11 @@ func validateDistributionProportions(i interface{}) error {
 		return errors.New("developer rewards distribution ratio should not be negative")
 	}
 
-	totalProportions := v.NftIncentives.Add(v.DeveloperRewards)
+	if v.CommunityPool.IsNegative() {
+		return errors.New("community pool ratio should not be negative")
+	}
+
+	totalProportions := v.NftIncentives.Add(v.DeveloperRewards).Add(v.CommunityPool)
 
 	if totalProportions.GT(sdk.OneDec()) {
 		return errors.New("total distributions can not be higher than 100%")
