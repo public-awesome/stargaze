@@ -60,7 +60,6 @@ func (suite *KeeperTestSuite) TestZeroAllocation() {
 
 	err := allocKeeper.DistributeInflation(suite.ctx)
 	suite.Require().NoError(err)
-
 }
 
 func (suite *KeeperTestSuite) TestDistribution() {

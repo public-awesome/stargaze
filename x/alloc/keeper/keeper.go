@@ -119,6 +119,7 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 func (k Keeper) GetProportions(_ sdk.Context, mintedCoin sdk.Coin, ratio sdk.Dec) sdk.Coin {
 	return sdk.NewCoin(mintedCoin.Denom, mintedCoin.Amount.ToDec().Mul(ratio).TruncateInt())
 }
+
 func (k Keeper) DistributeWeightedRewards(ctx sdk.Context, feeCollectorAddress sdk.AccAddress, totalAllocation sdk.Coin, accounts []types.WeightedAddress) error {
 	if totalAllocation.IsZero() {
 		return nil
