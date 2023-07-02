@@ -45,7 +45,9 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 
 		// distribution proportions
 		proportions := allocParams.DistributionProportions
-		proportions.NftIncentives = sdk.ZeroDec() // nft incentives to 0%
+		proportions.NftIncentives = sdk.ZeroDec()            // nft incentives to 0%
+		proportions.CommunityPool = sdk.NewDecWithPrec(5, 2) // 5% community pool
+
 		allocParams.DistributionProportions = proportions
 		allocParams.SupplementAmount = sdk.NewCoins()
 		app.AllocKeeper.SetParams(ctx, allocParams)

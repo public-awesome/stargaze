@@ -12,6 +12,7 @@ import (
 var (
 	KeyDistributionProportions  = []byte("DistributionProportions")
 	KeyDeveloperRewardsReceiver = []byte("DeveloperRewardsReceiver")
+	KeyIcentiveRewardsReceiver  = []byte("IncentiveRewardsReceiver")
 )
 
 // ParamTable for module.
@@ -46,8 +47,10 @@ func (p Params) Validate() error {
 	if err := validateDistributionProportions(p.DistributionProportions); err != nil {
 		return err
 	}
-	err := validateWeightedDeveloperRewardsReceivers(p.WeightedDeveloperRewardsReceivers)
-	return err
+	if err := validateWeightedRewardsReceivers(p.WeightedDeveloperRewardsReceivers); err != nil {
+		return err
+	}
+	return validateWeightedRewardsReceivers(p.WeightedIncentivesRewardsReceivers)
 }
 
 // Implements params.ParamSet
@@ -55,7 +58,9 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
 		paramtypes.NewParamSetPair(KeyDistributionProportions, &p.DistributionProportions, validateDistributionProportions),
 		paramtypes.NewParamSetPair(
-			KeyDeveloperRewardsReceiver, &p.WeightedDeveloperRewardsReceivers, validateWeightedDeveloperRewardsReceivers),
+			KeyDeveloperRewardsReceiver, &p.WeightedDeveloperRewardsReceivers, validateWeightedRewardsReceivers),
+		paramtypes.NewParamSetPair(
+			KeyIcentiveRewardsReceiver, &p.WeightedIncentivesRewardsReceivers, validateWeightedRewardsReceivers),
 	}
 }
 
@@ -86,7 +91,7 @@ func validateDistributionProportions(i interface{}) error {
 	return nil
 }
 
-func validateWeightedDeveloperRewardsReceivers(i interface{}) error {
+func validateWeightedRewardsReceivers(i interface{}) error {
 	v, ok := i.([]WeightedAddress)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
