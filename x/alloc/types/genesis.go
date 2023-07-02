@@ -20,6 +20,7 @@ func DefaultGenesis() *GenesisState {
 			DistributionProportions: DistributionProportions{
 				NftIncentives:    sdk.NewDecWithPrec(45, 2), // 45%
 				DeveloperRewards: sdk.NewDecWithPrec(15, 2), // 15%
+				CommunityPool:    sdk.NewDecWithPrec(5, 2),  // 5%
 			},
 			WeightedDeveloperRewardsReceivers: []WeightedAddress{},
 		},

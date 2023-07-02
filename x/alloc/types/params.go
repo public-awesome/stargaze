@@ -35,6 +35,7 @@ func DefaultParams() Params {
 		DistributionProportions: DistributionProportions{
 			NftIncentives:    sdk.NewDecWithPrec(20, 2), // 20%
 			DeveloperRewards: sdk.NewDecWithPrec(15, 2), // 15%
+			CommunityPool:    sdk.NewDecWithPrec(5, 2),  // 5%
 		},
 		WeightedDeveloperRewardsReceivers: []WeightedAddress{},
 	}
