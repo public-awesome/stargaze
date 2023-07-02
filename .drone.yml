@@ -77,12 +77,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - v11.0.0-alpha.1
+        - v11.0.0-alpha.2
     when:
       event:
         - push
       branch:
-        - spoorthi/token-factory
+        - jhernandez/tokenomics-update
   - name: docker_release
     image: plugins/docker
     settings:
@@ -350,7 +350,7 @@ steps:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:v11.0.0-alpha.1
+    image: publicawesome/stargaze:v11.0.0-alpha.2
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -369,7 +369,7 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:v11.0.0-alpha.1
+    image: publicawesome/stargaze:v11.0.0-alpha.2
     commands:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
@@ -412,6 +412,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 271e83ff3233920eb9283a2dd4c5d162fd9316f97d03d71bafed9ab7c103f849
+hmac: 53fdb34ff2a823d5035c0615ef0d25d6159c609d9579bcd6f62102858ceaa7dd
 
 ...
