@@ -406,6 +406,7 @@ steps:
 trigger:
   branch:
     - main
+    - jhernandezb/remove-spm-dep
   event:
     - pull_request
     - push
