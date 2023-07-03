@@ -77,7 +77,7 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - v11.0.0-alpha.2
+        - v11.0.0-alpha.3
     when:
       event:
         - push
@@ -351,7 +351,7 @@ steps:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:v11.0.0-alpha.2
+    image: publicawesome/stargaze:v11.0.0-alpha.3
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -370,7 +370,7 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:v11.0.0-alpha.2
+    image: publicawesome/stargaze:v11.0.0-alpha.3
     commands:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
