@@ -33,7 +33,6 @@ func TestStoreMigration(t *testing.T) {
 	require.NoError(t, err)
 
 	require.True(t, paramstore.Has(ctx, types.KeyIcentiveRewardsReceiver))
-
 }
 
 // DefaultContext creates a sdk.Context with a fresh MemDB that can be used in tests.
