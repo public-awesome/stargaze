@@ -403,6 +403,7 @@ steps:
 trigger:
   branch:
     - main
+    - jhernandezb/remove-spm-dep
   event:
     - pull_request
     - push
@@ -413,6 +414,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 3d3366470abacf3ce6a4a7fbca1a74b5211866f2ede9bbf106872cf7dc777029
+hmac: 7e083f5af0e8ae2e46dcafeb1b8adfb9c97dcadde87fadf8ebcffcd8cf60d1bf
 
 ...
