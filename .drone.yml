@@ -83,6 +83,7 @@ steps:
         - push
       branch:
         - jhernandez/tokenomics-update
+        - jhernandezb/remove-spm-dep
   - name: docker_release
     image: plugins/docker
     settings:
