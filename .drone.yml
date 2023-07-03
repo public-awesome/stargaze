@@ -83,6 +83,7 @@ steps:
         - push
       branch:
         - jhernandez/tokenomics-update
+        - jhernandezb/remove-spm-dep
   - name: docker_release
     image: plugins/docker
     settings:
@@ -412,6 +413,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 53fdb34ff2a823d5035c0615ef0d25d6159c609d9579bcd6f62102858ceaa7dd
+hmac: a00a852434e48cd87ca0d91f08ab12ac5e01d2e56c4631e244ecd9dd05db37c7
 
 ...
