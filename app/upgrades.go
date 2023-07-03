@@ -30,9 +30,9 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 
 		// change mint params to include the new supplement amount
 		mintParams := app.MintKeeper.GetParams(ctx)
-		mintParams.InitialAnnualProvisions = sdk.NewDec(259_000_000_000_000) // 259M to the upgrade happening on the 11th of July 2023
+		mintParams.InitialAnnualProvisions = sdk.NewDec(259_700_000_000_000) // 259.7M to the upgrade happening on the 11th of July 2023
 		mintParams.StartTime = time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)   // 2023-01-01
-		mintParams.BlocksPerYear = 5345036                                   // 5.9s avg block time
+		mintParams.BlocksPerYear = 5345036                                   // 5.9 s avg block time
 		// set amount
 		app.MintKeeper.SetParams(ctx, mintParams)
 
