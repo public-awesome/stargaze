@@ -229,21 +229,22 @@ var (
 
 	// module account permissions
 	maccPerms = map[string][]string{
-		authtypes.FeeCollectorName:        nil,
-		distrtypes.ModuleName:             nil,
-		minttypes.ModuleName:              {authtypes.Minter},
-		stakingtypes.BondedPoolName:       {authtypes.Burner, authtypes.Staking},
-		stakingtypes.NotBondedPoolName:    {authtypes.Burner, authtypes.Staking},
-		govtypes.ModuleName:               {authtypes.Burner},
-		ibctransfertypes.ModuleName:       {authtypes.Minter, authtypes.Burner},
-		claimmoduletypes.ModuleName:       {authtypes.Minter, authtypes.Burner, authtypes.Staking},
-		allocmoduletypes.ModuleName:       {authtypes.Minter, authtypes.Burner, authtypes.Staking},
-		allocmoduletypes.FairburnPoolName: nil,
-		wasm.ModuleName:                   {authtypes.Burner},
-		icatypes.ModuleName:               nil,
-		cronmoduletypes.ModuleName:        nil,
-		globalfeemoduletypes.ModuleName:   nil,
-		tokenfactorytypes.ModuleName:      {authtypes.Minter, authtypes.Burner},
+		authtypes.FeeCollectorName:          nil,
+		distrtypes.ModuleName:               nil,
+		minttypes.ModuleName:                {authtypes.Minter},
+		stakingtypes.BondedPoolName:         {authtypes.Burner, authtypes.Staking},
+		stakingtypes.NotBondedPoolName:      {authtypes.Burner, authtypes.Staking},
+		govtypes.ModuleName:                 {authtypes.Burner},
+		ibctransfertypes.ModuleName:         {authtypes.Minter, authtypes.Burner},
+		claimmoduletypes.ModuleName:         {authtypes.Minter, authtypes.Burner, authtypes.Staking},
+		allocmoduletypes.ModuleName:         {authtypes.Minter, authtypes.Burner, authtypes.Staking},
+		allocmoduletypes.FairburnPoolName:   nil,
+		allocmoduletypes.SupplementPoolName: nil,
+		wasm.ModuleName:                     {authtypes.Burner},
+		icatypes.ModuleName:                 nil,
+		cronmoduletypes.ModuleName:          nil,
+		globalfeemoduletypes.ModuleName:     nil,
+		tokenfactorytypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 )

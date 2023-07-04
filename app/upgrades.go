@@ -46,16 +46,16 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 		// change alloc params to set nft incentives to 0% until incentives are live
 		allocParams := app.AllocKeeper.GetParams(ctx)
 
+		denom := app.MintKeeper.GetParams(ctx).MintDenom
 		// distribution proportions
 		proportions := allocParams.DistributionProportions
 		proportions.NftIncentives = sdk.ZeroDec()            // nft incentives to 0%
 		proportions.CommunityPool = sdk.NewDecWithPrec(5, 2) // 5% community pool
 
 		allocParams.DistributionProportions = proportions
-		allocParams.SupplementAmount = sdk.NewCoins()
+		allocParams.SupplementAmount = sdk.NewCoins(sdk.NewInt64Coin(denom, 6_944_444)) // 6.9 STARS per block
 		app.AllocKeeper.SetParams(ctx, allocParams)
 		// set supplement pool account
-		denom := app.MintKeeper.GetParams(ctx).MintDenom
 
 		// check if the account was previously created if that's the case reset it
 		supplementPoolAddress := authtypes.NewModuleAddress(allocmoduletypes.SupplementPoolName)

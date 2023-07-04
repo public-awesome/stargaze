@@ -71,24 +71,27 @@ func (k Keeper) sendToFairburnPool(ctx sdk.Context, sender sdk.AccAddress, amoun
 
 // DistributeInflation distributes module-specific inflation
 func (k Keeper) DistributeInflation(ctx sdk.Context) error {
-	blockInflationAddr := k.accountKeeper.GetModuleAccount(ctx, authtypes.FeeCollectorName).GetAddress()
-	blockInflation := k.bankKeeper.GetBalance(ctx, blockInflationAddr, k.stakingKeeper.BondDenom(ctx))
-	blockInflationDec := sdk.NewDecFromInt(blockInflation.Amount)
+	denom := k.stakingKeeper.BondDenom(ctx)
 
+	// retrieve balance from fee pool which is filled by minting new coins and by collecting transaction fees
+	blockInflationAddr := k.accountKeeper.GetModuleAccount(ctx, authtypes.FeeCollectorName).GetAddress()
+	blockInflation := k.bankKeeper.GetBalance(ctx, blockInflationAddr, denom)
+
+	// get allocation params to retrieve distribution proportions
 	params := k.GetParams(ctx)
 	proportions := params.DistributionProportions
 
 	if proportions.NftIncentives.GT(sdk.ZeroDec()) {
-		nftIncentiveAmount := blockInflationDec.Mul(proportions.NftIncentives)
-		nftIncentiveCoin := sdk.NewCoin(k.stakingKeeper.BondDenom(ctx), nftIncentiveAmount.TruncateInt())
+		incentiveRewards := k.GetProportions(ctx, blockInflation, proportions.NftIncentives)
+
 		// Distribute NFT incentives to the community pool until a future update
-		err := k.DistributeWeightedRewards(ctx, blockInflationAddr, nftIncentiveCoin, params.WeightedIncentivesRewardsReceivers)
+		err := k.DistributeWeightedRewards(ctx, blockInflationAddr, incentiveRewards, params.WeightedIncentivesRewardsReceivers)
 		if err != nil {
 			return err
 		}
 
 		// iterate over list of incentive addresses and proportions
-		k.Logger(ctx).Debug("funded community pool", "amount", nftIncentiveCoin.String(), "from", blockInflationAddr)
+		k.Logger(ctx).Debug("fund incentive rewards", "amount", incentiveRewards.String(), "from", blockInflationAddr)
 	}
 
 	// fund community pool if the value is not nil and greater than zero
@@ -106,9 +109,29 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 		return err
 	}
 
+	supplementPoolAddress := k.accountKeeper.GetModuleAccount(ctx, types.SupplementPoolName).GetAddress()
+	supplementPoolBalance := k.bankKeeper.GetBalance(ctx, supplementPoolAddress, denom)
+
+	// the amount that needs to be supplemented from the supplement pool
+	supplementAmount := params.SupplementAmount.AmountOf(denom)
+
+	// transfer supplement amount to be distributed to stakers if
+	// 1- Supplement from params is not 0
+	// 2- There is enough balance in the pool
+	if !supplementAmount.IsZero() && supplementPoolBalance.Amount.GT(supplementAmount) {
+		err := k.bankKeeper.SendCoinsFromModuleToModule(ctx,
+			types.SupplementPoolName,
+			authtypes.FeeCollectorName,
+			sdk.NewCoins(sdk.NewCoin(denom, supplementAmount)),
+		)
+		if err != nil {
+			return err
+		}
+
+	}
 	// fairburn pool
 	fairburnPoolAddress := k.accountKeeper.GetModuleAccount(ctx, types.FairburnPoolName).GetAddress()
-	collectedFairburnFees := k.bankKeeper.GetBalance(ctx, fairburnPoolAddress, k.stakingKeeper.BondDenom(ctx))
+	collectedFairburnFees := k.bankKeeper.GetBalance(ctx, fairburnPoolAddress, denom)
 	if collectedFairburnFees.IsZero() {
 		return nil
 	}
