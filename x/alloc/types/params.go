@@ -40,6 +40,7 @@ func DefaultParams() Params {
 		},
 		WeightedDeveloperRewardsReceivers:  []WeightedAddress{},
 		WeightedIncentivesRewardsReceivers: []WeightedAddress{},
+		SupplementAmount:                   sdk.NewCoins(),
 	}
 }
 
