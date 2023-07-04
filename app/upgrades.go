@@ -86,7 +86,7 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 		if app.DistrKeeper.GetFeePoolCommunityCoins(ctx).AmountOf(denom).LT(sdk.NewDecCoinFromCoin(fundAmount).Amount) {
 			return migrations, nil
 		}
-		err = app.DistrKeeper.DistributeFromFeePool(ctx, sdk.NewCoins(), supplmentPoolAccount.GetAddress())
+		err = app.DistrKeeper.DistributeFromFeePool(ctx, sdk.NewCoins(fundAmount), supplmentPoolAccount.GetAddress())
 		if err != nil {
 			return nil, err
 		}
