@@ -87,7 +87,7 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 			return err
 		}
 
-		// iterate over list of icentive addresses and proportions
+		// iterate over list of incentive addresses and proportions
 		k.Logger(ctx).Debug("funded community pool", "amount", nftIncentiveCoin.String(), "from", blockInflationAddr)
 	}
 
