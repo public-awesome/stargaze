@@ -12,7 +12,7 @@ import (
 var (
 	KeyDistributionProportions  = []byte("DistributionProportions")
 	KeyDeveloperRewardsReceiver = []byte("DeveloperRewardsReceiver")
-	KeyIncentiveRewardsReceiver  = []byte("IncentiveRewardsReceiver")
+	KeyIncentiveRewardsReceiver = []byte("IncentiveRewardsReceiver")
 )
 
 // ParamTable for module.
@@ -61,7 +61,7 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 		paramtypes.NewParamSetPair(
 			KeyDeveloperRewardsReceiver, &p.WeightedDeveloperRewardsReceivers, validateWeightedRewardsReceivers),
 		paramtypes.NewParamSetPair(
-			KeyIcentiveRewardsReceiver, &p.WeightedIncentivesRewardsReceivers, validateWeightedRewardsReceivers),
+			KeyIncentiveRewardsReceiver, &p.WeightedIncentivesRewardsReceivers, validateWeightedRewardsReceivers),
 	}
 }
 

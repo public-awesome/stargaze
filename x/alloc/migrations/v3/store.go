@@ -11,7 +11,7 @@ import (
 // MigrateStore performs in-place store migrations from v2 to v3
 // The migration includes:
 //
-// - Setting the KeyIcentiveRewardsReceiver param in the paramstore
+// - Setting the KeyIncentiveRewardsReceiver param in the paramstore
 func MigrateStore(ctx sdk.Context, _ storetypes.StoreKey, _ codec.BinaryCodec, paramstore paramtypes.Subspace) error {
 	migrateParamsStore(ctx, paramstore)
 	return nil
@@ -20,9 +20,9 @@ func MigrateStore(ctx sdk.Context, _ storetypes.StoreKey, _ codec.BinaryCodec, p
 func migrateParamsStore(ctx sdk.Context, paramstore paramtypes.Subspace) {
 	defaultParams := types.DefaultParams()
 	if paramstore.HasKeyTable() {
-		paramstore.Set(ctx, types.KeyIcentiveRewardsReceiver, defaultParams.WeightedIncentivesRewardsReceivers)
+		paramstore.Set(ctx, types.KeyIncentiveRewardsReceiver, defaultParams.WeightedIncentivesRewardsReceivers)
 	} else {
 		paramstore.WithKeyTable(types.ParamKeyTable())
-		paramstore.Set(ctx, types.KeyIcentiveRewardsReceiver, defaultParams.WeightedIncentivesRewardsReceivers)
+		paramstore.Set(ctx, types.KeyIncentiveRewardsReceiver, defaultParams.WeightedIncentivesRewardsReceivers)
 	}
 }
