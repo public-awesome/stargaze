@@ -13,6 +13,7 @@ var (
 	KeyDistributionProportions  = []byte("DistributionProportions")
 	KeyDeveloperRewardsReceiver = []byte("DeveloperRewardsReceiver")
 	KeyIncentiveRewardsReceiver = []byte("IncentiveRewardsReceiver")
+	KeySupplementAmount         = []byte("SupplementAmount")
 )
 
 // ParamTable for module.
@@ -63,9 +64,21 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 			KeyDeveloperRewardsReceiver, &p.WeightedDeveloperRewardsReceivers, validateWeightedRewardsReceivers),
 		paramtypes.NewParamSetPair(
 			KeyIncentiveRewardsReceiver, &p.WeightedIncentivesRewardsReceivers, validateWeightedRewardsReceivers),
+		paramtypes.NewParamSetPair(
+			KeySupplementAmount, &p.SupplementAmount, validateSupplementAmount),
 	}
 }
+func validateSupplementAmount(i interface{}) error {
+	v, ok := i.(sdk.Coins)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
 
+	if len(v) == 0 {
+		return nil
+	}
+	return v.Validate()
+}
 func validateDistributionProportions(i interface{}) error {
 	v, ok := i.(DistributionProportions)
 	if !ok {

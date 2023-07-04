@@ -21,8 +21,10 @@ func migrateParamsStore(ctx sdk.Context, paramstore paramtypes.Subspace) {
 	defaultParams := types.DefaultParams()
 	if paramstore.HasKeyTable() {
 		paramstore.Set(ctx, types.KeyIncentiveRewardsReceiver, defaultParams.WeightedIncentivesRewardsReceivers)
+		paramstore.Set(ctx, types.KeySupplementAmount, defaultParams.SupplementAmount)
 	} else {
 		paramstore.WithKeyTable(types.ParamKeyTable())
 		paramstore.Set(ctx, types.KeyIncentiveRewardsReceiver, defaultParams.WeightedIncentivesRewardsReceivers)
+		paramstore.Set(ctx, types.KeySupplementAmount, defaultParams.SupplementAmount)
 	}
 }

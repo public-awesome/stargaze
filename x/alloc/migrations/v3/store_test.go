@@ -28,11 +28,14 @@ func TestStoreMigration(t *testing.T) {
 
 	// check it doesn't exist before
 	require.False(t, paramstore.Has(ctx, types.KeyIncentiveRewardsReceiver))
+	require.False(t, paramstore.Has(ctx, types.KeySupplementAmount))
+
 	err := v3.MigrateStore(ctx, allocKey, encodingConfig.Marshaler, paramstore)
 
 	require.NoError(t, err)
 
 	require.True(t, paramstore.Has(ctx, types.KeyIncentiveRewardsReceiver))
+	require.True(t, paramstore.Has(ctx, types.KeySupplementAmount))
 
 }
 
