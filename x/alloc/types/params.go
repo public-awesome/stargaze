@@ -12,7 +12,7 @@ import (
 var (
 	KeyDistributionProportions  = []byte("DistributionProportions")
 	KeyDeveloperRewardsReceiver = []byte("DeveloperRewardsReceiver")
-	KeyIcentiveRewardsReceiver  = []byte("IncentiveRewardsReceiver")
+	KeyIncentiveRewardsReceiver  = []byte("IncentiveRewardsReceiver")
 )
 
 // ParamTable for module.
