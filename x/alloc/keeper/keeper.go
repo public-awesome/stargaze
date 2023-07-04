@@ -92,7 +92,7 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 	}
 
 	// fund community pool
-	if !proportions.CommunityPool.IsNil() && proportions.NftIncentives.GT(sdk.ZeroDec()) {
+	if !proportions.CommunityPool.IsNil() && proportions.CommunityPool.GT(sdk.ZeroDec()) {
 		communityPoolTax := k.GetProportions(ctx, blockInflation, proportions.CommunityPool)
 		err := k.distrKeeper.FundCommunityPool(ctx, sdk.NewCoins(communityPoolTax), blockInflationAddr)
 		if err != nil {
