@@ -69,11 +69,18 @@ func (suite *KeeperTestSuite) TestDistribution() {
 	allocKeeper := suite.app.AllocKeeper
 	params := suite.app.AllocKeeper.GetParams(suite.ctx)
 	devRewardsReceiver := sdk.AccAddress([]byte("addr1---------------"))
+	nftIncentives := sdk.AccAddress([]byte("addr2---------------"))
 	params.DistributionProportions.NftIncentives = sdk.NewDecWithPrec(45, 2)
 	params.DistributionProportions.DeveloperRewards = sdk.NewDecWithPrec(15, 2)
 	params.WeightedDeveloperRewardsReceivers = []types.WeightedAddress{
 		{
 			Address: devRewardsReceiver.String(),
+			Weight:  sdk.NewDec(1),
+		},
+	}
+	params.WeightedIncentivesRewardsReceivers = []types.WeightedAddress{
+		{
+			Address: nftIncentives.String(),
 			Weight:  sdk.NewDec(1),
 		},
 	}
@@ -109,9 +116,10 @@ func (suite *KeeperTestSuite) TestDistribution() {
 
 	feeCollector = suite.app.AccountKeeper.GetModuleAddress(authtypes.FeeCollectorName)
 	modulePortion := params.DistributionProportions.NftIncentives.
-		Add(params.DistributionProportions.DeveloperRewards) // 60%
+		Add(params.DistributionProportions.DeveloperRewards).
+		Add(params.DistributionProportions.CommunityPool)
 
-	// remaining going to next module should be 100% - 60% = 40%
+	// remaining going to next module should be 100% - 60%  - 5% community pooll = 35%
 	suite.Equal(
 		mintCoin.Amount.ToDec().Mul(sdk.NewDecWithPrec(100, 2).Sub(modulePortion)).RoundInt().String(),
 		suite.app.BankKeeper.GetAllBalances(suite.ctx, feeCollector).AmountOf(denom).String())
@@ -120,11 +128,16 @@ func (suite *KeeperTestSuite) TestDistribution() {
 		mintCoin.Amount.ToDec().Mul(params.DistributionProportions.DeveloperRewards).TruncateInt(),
 		suite.app.BankKeeper.GetBalance(suite.ctx, devRewardsReceiver, denom).Amount)
 
+	suite.Equal(
+		mintCoin.Amount.ToDec().Mul(params.DistributionProportions.NftIncentives).TruncateInt(),
+		suite.app.BankKeeper.GetBalance(suite.ctx, nftIncentives, denom).Amount)
+
 	// since the NFT incentives are not setup yet, funds go into the communtiy pool
 	feePool = suite.app.DistrKeeper.GetFeePool(suite.ctx)
 	suite.Equal(
-		mintCoin.Amount.ToDec().Mul(params.DistributionProportions.NftIncentives),
-		feePool.CommunityPool.AmountOf(denom))
+		sdk.NewDecFromInt(sdk.NewInt(5_000)).String(),
+		feePool.CommunityPool.AmountOf(denom).String(),
+	)
 }
 
 func (suite *KeeperTestSuite) TestFairburnPool() {
