@@ -68,6 +68,7 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 			KeySupplementAmount, &p.SupplementAmount, validateSupplementAmount),
 	}
 }
+
 func validateSupplementAmount(i interface{}) error {
 	v, ok := i.(sdk.Coins)
 	if !ok {
@@ -79,6 +80,7 @@ func validateSupplementAmount(i interface{}) error {
 	}
 	return v.Validate()
 }
+
 func validateDistributionProportions(i interface{}) error {
 	v, ok := i.(DistributionProportions)
 	if !ok {

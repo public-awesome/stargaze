@@ -61,11 +61,13 @@ func (suite *KeeperTestSuite) TestZeroAllocation() {
 	err := allocKeeper.DistributeInflation(suite.ctx)
 	suite.Require().NoError(err)
 }
+
 func (suite *KeeperTestSuite) TestModuleAccountAddress() {
 	acc, err := sdk.GetFromBech32("stars1mnyrspq208uv5m2krdctan2dkyht0szje9s43h", "stars")
 	suite.Require().NoError(err)
 	suite.Require().Equal(authtypes.NewModuleAddress(types.SupplementPoolName).Bytes(), acc)
 }
+
 func (suite *KeeperTestSuite) TestDistribution() {
 	suite.SetupTest()
 
@@ -299,5 +301,4 @@ func (suite *KeeperTestSuite) TestDistributionWithSupplement() {
 	suite.Equal(
 		"90000",
 		suite.app.BankKeeper.GetAllBalances(suite.ctx, supplementAddress).AmountOf(denom).String())
-
 }
