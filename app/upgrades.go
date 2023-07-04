@@ -30,32 +30,47 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 		params.DenomCreationGasConsume = 50_000_000 // 50STARS at 1ustars
 		app.TokenFactoryKeeper.SetParams(ctx, params)
 
+		// Following param changes reflect what was approved by prop 165 and combined in a single upgrade for Prop 1-3
+		// https://www.mintscan.io/stargaze/proposals/165
+		// 1- Reduce Emissions to 711k daily  this is done by adjusting mint params
+		// 2- Introduce a new Supplement Amount and Redirect Funds for the next 6 months
+		//    requiring future proposals to refill the module account
+		// 3- Stop funding community pool and nft incentive allocation
+		//    at the same time this code allows re-enabling incentive allocation
+		//    through param change proposals only
+
 		// change mint params to include the new supplement amount
+		// and store it back to the keeper
 		mintParams := app.MintKeeper.GetParams(ctx)
-		mintParams.InitialAnnualProvisions = sdk.NewDec(259_700_000_000_000) // 259.7M to the upgrade happening on the 11th of July 2023
-		mintParams.StartTime = time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)   // 2023-01-01
-		mintParams.BlocksPerYear = 5345036                                   // 5.9 s avg block time
-		// set amount
+		// 259.7M to the upgrade happening on the 11th of July 2023
+		mintParams.InitialAnnualProvisions = sdk.NewDec(259_700_000_000_000)
+		// reset to 2023-01-01 so there is a thirdening happening on next January 1
+		mintParams.StartTime = time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)
+		// update blocks per year using  5.9 s avg block time
+		mintParams.BlocksPerYear = 5345036
 		app.MintKeeper.SetParams(ctx, mintParams)
 
-		// set community tax to 0 since the allocation params now will take care of it
+		// set community tax to 0 since the allocation module will now take care of it
+		// making an accurate allocation of the inflation
 		distributionParams := app.DistrKeeper.GetParams(ctx)
 		distributionParams.CommunityTax = sdk.ZeroDec()
 		app.DistrKeeper.SetParams(ctx, distributionParams)
 
+		denom := app.MintKeeper.GetParams(ctx).MintDenom
+
 		// change alloc params to set nft incentives to 0% until incentives are live
 		allocParams := app.AllocKeeper.GetParams(ctx)
 
-		denom := app.MintKeeper.GetParams(ctx).MintDenom
 		// distribution proportions
 		proportions := allocParams.DistributionProportions
 		proportions.NftIncentives = sdk.ZeroDec()            // nft incentives to 0%
 		proportions.CommunityPool = sdk.NewDecWithPrec(5, 2) // 5% community pool
 
 		allocParams.DistributionProportions = proportions
+		// supplement amount from the specific module account
+		// set to 100k STARS daily ~= 6.9 STARS per block using same 5.9s avg block time
 		allocParams.SupplementAmount = sdk.NewCoins(sdk.NewInt64Coin(denom, 6_944_444)) // 6.9 STARS per block
 		app.AllocKeeper.SetParams(ctx, allocParams)
-		// set supplement pool account
 
 		// check if the account was previously created if that's the case reset it
 		supplementPoolAddress := authtypes.NewModuleAddress(allocmoduletypes.SupplementPoolName)
@@ -66,7 +81,7 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 		// create module account
 		supplmentPoolAccount := app.AccountKeeper.GetModuleAccount(ctx, allocmoduletypes.SupplementPoolName)
 
-		fundAmount := sdk.NewInt64Coin(denom, 18_000_000_000_000) // 18M STARS
+		fundAmount := sdk.NewInt64Coin(denom, 18_300_000_000_000) // 18M STARS
 		// if there is not enough founds skip
 		if app.DistrKeeper.GetFeePoolCommunityCoins(ctx).AmountOf(denom).LT(sdk.NewDecCoinFromCoin(fundAmount).Amount) {
 			return migrations, nil

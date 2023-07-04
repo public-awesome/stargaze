@@ -374,6 +374,8 @@ steps:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
       - starsd q bank balances stars1mnyrspq208uv5m2krdctan2dkyht0szje9s43h --node http://stargaze-upgraded:26657
+      - starsd q bank balances stars103y4f6h80lc45nr8chuzr3fyzqywm9n0gnr394 --node http://stargaze-upgraded:26657
+      - starsd q distribution community-pool
     environment:
       GOPROXY: http://goproxy
   - name: relayer-upgrade-start
@@ -413,6 +415,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 7b19cd3c5b97af347319bbcb179a9f56d448c0ff65eb2e105c70729dbc192650
+hmac: 8df40e4ca2929670599d3089583a54fd6d8420960602b78f03dd0329daf4f151
 
 ...
