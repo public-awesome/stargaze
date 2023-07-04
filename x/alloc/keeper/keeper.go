@@ -82,7 +82,7 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 		nftIncentiveAmount := blockInflationDec.Mul(proportions.NftIncentives)
 		nftIncentiveCoin := sdk.NewCoin(k.stakingKeeper.BondDenom(ctx), nftIncentiveAmount.TruncateInt())
 		// Distribute NFT incentives to the community pool until a future update
-		err := k.distrKeeper.FundCommunityPool(ctx, sdk.NewCoins(nftIncentiveCoin), blockInflationAddr)
+		err := k.DistributeWeightedRewards(ctx, blockInflationAddr, nftIncentiveCoin, params.WeightedIncentivesRewardsReceivers)
 		if err != nil {
 			return err
 		}
@@ -91,7 +91,14 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 		k.Logger(ctx).Debug("funded community pool", "amount", nftIncentiveCoin.String(), "from", blockInflationAddr)
 	}
 
-	// TODO:  fund communitiy pool allocation
+	// fund community pool
+	if !proportions.CommunityPool.IsNil() && proportions.NftIncentives.GT(sdk.ZeroDec()) {
+		communityPoolTax := k.GetProportions(ctx, blockInflation, proportions.CommunityPool)
+		err := k.distrKeeper.FundCommunityPool(ctx, sdk.NewCoins(communityPoolTax), blockInflationAddr)
+		if err != nil {
+			return err
+		}
+	}
 
 	devRewards := k.GetProportions(ctx, blockInflation, proportions.DeveloperRewards)
 	err := k.DistributeWeightedRewards(ctx, blockInflationAddr, devRewards, params.WeightedDeveloperRewardsReceivers)
