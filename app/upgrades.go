@@ -7,6 +7,7 @@ import (
 	store "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	allocmoduletypes "github.com/public-awesome/stargaze/v11/x/alloc/types"
 	ibchooks "github.com/public-awesome/stargaze/v11/x/ibchooks/types"
@@ -19,7 +20,6 @@ const upgradeName = "v11"
 // RegisterUpgradeHandlers returns upgrade handlers
 func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 	app.UpgradeKeeper.SetUpgradeHandler(upgradeName, func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
-		app.AccountKeeper.GetModuleAccount(ctx, allocmoduletypes.SupplementPoolName)
 		// run migrations before modifying state
 		migrations, err := app.mm.RunMigrations(ctx, cfg, fromVM)
 		if err != nil {
@@ -54,6 +54,27 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 		allocParams.DistributionProportions = proportions
 		allocParams.SupplementAmount = sdk.NewCoins()
 		app.AllocKeeper.SetParams(ctx, allocParams)
+		// set supplement pool account
+		denom := app.MintKeeper.GetParams(ctx).MintDenom
+
+		// check if the account was previously created if that's the case reset it
+		supplementPoolAddress := authtypes.NewModuleAddress(allocmoduletypes.SupplementPoolName)
+		if app.AccountKeeper.HasAccount(ctx, supplementPoolAddress) {
+			account := app.AccountKeeper.GetAccount(ctx, supplementPoolAddress)
+			app.AccountKeeper.RemoveAccount(ctx, account)
+		}
+		// create module account
+		supplmentPoolAccount := app.AccountKeeper.GetModuleAccount(ctx, allocmoduletypes.SupplementPoolName)
+
+		fundAmount := sdk.NewInt64Coin(denom, 18_000_000_000_000) // 18M STARS
+		// if there is not enough founds skip
+		if app.DistrKeeper.GetFeePoolCommunityCoins(ctx).AmountOf(denom).LT(sdk.NewDecCoinFromCoin(fundAmount).Amount) {
+			return migrations, nil
+		}
+		err = app.DistrKeeper.DistributeFromFeePool(ctx, sdk.NewCoins(), supplmentPoolAccount.GetAddress())
+		if err != nil {
+			return nil, err
+		}
 
 		return migrations, nil
 	})

@@ -27,12 +27,12 @@ func TestStoreMigration(t *testing.T) {
 	paramstore := paramtypes.NewSubspace(encodingConfig.Marshaler, encodingConfig.Amino, allocKey, transientAllocKey, types.StoreKey)
 
 	// check it doesn't exist before
-	require.False(t, paramstore.Has(ctx, types.KeyIcentiveRewardsReceiver))
+	require.False(t, paramstore.Has(ctx, types.KeyIncentiveRewardsReceiver))
 	err := v3.MigrateStore(ctx, allocKey, encodingConfig.Marshaler, paramstore)
 
 	require.NoError(t, err)
 
-	require.True(t, paramstore.Has(ctx, types.KeyIcentiveRewardsReceiver))
+	require.True(t, paramstore.Has(ctx, types.KeyIncentiveRewardsReceiver))
 
 }
 

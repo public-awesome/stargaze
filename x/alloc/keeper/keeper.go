@@ -146,3 +146,17 @@ func (k Keeper) DistributeWeightedRewards(ctx sdk.Context, feeCollectorAddress s
 	}
 	return nil
 }
+
+func (k Keeper) FundCommunityPool(ctx sdk.Context) error {
+	// If this account exists and has coins, fund the community pool.
+	// The address hardcoded here is randomly generated with no keypair behind it. It will be empty and unused after the genesis file is applied.
+	funder, err := sdk.AccAddressFromHex("7C4954EAE77FF15A4C67C5F821C5241008ED966F") // stars103y4f6h80lc45nr8chuzr3fyzqywm9n0gnr394
+	if err != nil {
+		panic(err)
+	}
+	balances := k.bankKeeper.GetAllBalances(ctx, funder)
+	if balances.IsZero() {
+		return nil
+	}
+	return k.distrKeeper.FundCommunityPool(ctx, balances, funder)
+}

@@ -11,6 +11,11 @@ import (
 func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) {
 	k.SetParams(ctx, genState.Params)
 	k.GetModuleAccount(ctx, types.FairburnPoolName)
+	k.GetModuleAccount(ctx, types.SupplementPoolName)
+	err := k.FundCommunityPool(ctx)
+	if err != nil {
+		panic(err)
+	}
 }
 
 // ExportGenesis returns the alloc module's exported genesis.
