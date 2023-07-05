@@ -49,7 +49,7 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 
 		// token factory params
 		params := app.TokenFactoryKeeper.GetParams(ctx)
-		params.DenomCreationFee = sdk.NewCoins(sdk.NewInt64Coin(denom, 10_000_000_000)) // 10k STARS
+		params.DenomCreationFee = sdk.NewCoins(sdk.NewInt64Coin(denom, 20_000_000_000)) // 20k STARS
 
 		app.TokenFactoryKeeper.SetParams(ctx, params)
 
