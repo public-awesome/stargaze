@@ -7,9 +7,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// this line is used by starport scaffolding # genesis/types/import
-// this line is used by starport scaffolding # ibc/genesistype/import
-
 // DefaultIndex is the default capability global index
 const DefaultIndex uint64 = 1
 
@@ -20,8 +17,10 @@ func DefaultGenesis() *GenesisState {
 			DistributionProportions: DistributionProportions{
 				NftIncentives:    sdk.NewDecWithPrec(45, 2), // 45%
 				DeveloperRewards: sdk.NewDecWithPrec(15, 2), // 15%
+				CommunityPool:    sdk.NewDecWithPrec(5, 2),  // 5%
 			},
-			WeightedDeveloperRewardsReceivers: []WeightedAddress{},
+			WeightedDeveloperRewardsReceivers:  []WeightedAddress{},
+			WeightedIncentivesRewardsReceivers: []WeightedAddress{},
 		},
 	}
 }

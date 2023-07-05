@@ -12,6 +12,8 @@ import (
 var (
 	KeyDistributionProportions  = []byte("DistributionProportions")
 	KeyDeveloperRewardsReceiver = []byte("DeveloperRewardsReceiver")
+	KeyIncentiveRewardsReceiver = []byte("IncentiveRewardsReceiver")
+	KeySupplementAmount         = []byte("SupplementAmount")
 )
 
 // ParamTable for module.
@@ -33,10 +35,13 @@ func NewParams(
 func DefaultParams() Params {
 	return Params{
 		DistributionProportions: DistributionProportions{
-			NftIncentives:    sdk.NewDecWithPrec(45, 2), // 45%
+			NftIncentives:    sdk.NewDecWithPrec(20, 2), // 20%
 			DeveloperRewards: sdk.NewDecWithPrec(15, 2), // 15%
+			CommunityPool:    sdk.NewDecWithPrec(5, 2),  // 5%
 		},
-		WeightedDeveloperRewardsReceivers: []WeightedAddress{},
+		WeightedDeveloperRewardsReceivers:  []WeightedAddress{},
+		WeightedIncentivesRewardsReceivers: []WeightedAddress{},
+		SupplementAmount:                   sdk.NewCoins(),
 	}
 }
 
@@ -45,8 +50,10 @@ func (p Params) Validate() error {
 	if err := validateDistributionProportions(p.DistributionProportions); err != nil {
 		return err
 	}
-	err := validateWeightedDeveloperRewardsReceivers(p.WeightedDeveloperRewardsReceivers)
-	return err
+	if err := validateWeightedRewardsReceivers(p.WeightedDeveloperRewardsReceivers); err != nil {
+		return err
+	}
+	return validateWeightedRewardsReceivers(p.WeightedIncentivesRewardsReceivers)
 }
 
 // Implements params.ParamSet
@@ -54,8 +61,24 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
 		paramtypes.NewParamSetPair(KeyDistributionProportions, &p.DistributionProportions, validateDistributionProportions),
 		paramtypes.NewParamSetPair(
-			KeyDeveloperRewardsReceiver, &p.WeightedDeveloperRewardsReceivers, validateWeightedDeveloperRewardsReceivers),
+			KeyDeveloperRewardsReceiver, &p.WeightedDeveloperRewardsReceivers, validateWeightedRewardsReceivers),
+		paramtypes.NewParamSetPair(
+			KeyIncentiveRewardsReceiver, &p.WeightedIncentivesRewardsReceivers, validateWeightedRewardsReceivers),
+		paramtypes.NewParamSetPair(
+			KeySupplementAmount, &p.SupplementAmount, validateSupplementAmount),
 	}
+}
+
+func validateSupplementAmount(i interface{}) error {
+	v, ok := i.(sdk.Coins)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
+	if len(v) == 0 {
+		return nil
+	}
+	return v.Validate()
 }
 
 func validateDistributionProportions(i interface{}) error {
@@ -72,19 +95,20 @@ func validateDistributionProportions(i interface{}) error {
 		return errors.New("developer rewards distribution ratio should not be negative")
 	}
 
-	totalProportions := v.NftIncentives.Add(v.DeveloperRewards)
+	if v.CommunityPool.IsNegative() {
+		return errors.New("community pool ratio should not be negative")
+	}
 
-	// 60% is allocated to this module
-	// 35% validators
-	// 5% community pool
-	if !totalProportions.Equal(sdk.NewDecWithPrec(60, 2)) {
-		return errors.New("total distributions ratio should be 60%")
+	totalProportions := v.NftIncentives.Add(v.DeveloperRewards).Add(v.CommunityPool)
+
+	if totalProportions.GT(sdk.OneDec()) {
+		return errors.New("total distributions can not be higher than 100%")
 	}
 
 	return nil
 }
 
-func validateWeightedDeveloperRewardsReceivers(i interface{}) error {
+func validateWeightedRewardsReceivers(i interface{}) error {
 	v, ok := i.([]WeightedAddress)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
