@@ -72,13 +72,34 @@ func (k Keeper) sendToFairburnPool(ctx sdk.Context, sender sdk.AccAddress, amoun
 // DistributeInflation distributes module-specific inflation
 func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 	denom := k.stakingKeeper.BondDenom(ctx)
+	// get allocation params to retrieve distribution proportions
+	params := k.GetParams(ctx)
+
+	supplementPoolAddress := k.accountKeeper.GetModuleAccount(ctx, types.SupplementPoolName).GetAddress()
+	supplementPoolBalance := k.bankKeeper.GetBalance(ctx, supplementPoolAddress, denom)
+
+	// the amount that needs to be supplemented from the supplement pool
+	supplementAmount := params.SupplementAmount.AmountOf(denom)
+
+	// transfer supplement amount to be distributed to stakers if
+	// 1- Supplement from params is not 0
+	// 2- There is enough balance in the pool
+	if !supplementAmount.IsZero() && supplementPoolBalance.Amount.GT(supplementAmount) {
+		err := k.bankKeeper.SendCoinsFromModuleToModule(ctx,
+			types.SupplementPoolName,
+			authtypes.FeeCollectorName,
+			sdk.NewCoins(sdk.NewCoin(denom, supplementAmount)),
+		)
+		if err != nil {
+			return err
+		}
+
+	}
 
 	// retrieve balance from fee pool which is filled by minting new coins and by collecting transaction fees
 	blockInflationAddr := k.accountKeeper.GetModuleAccount(ctx, authtypes.FeeCollectorName).GetAddress()
 	blockInflation := k.bankKeeper.GetBalance(ctx, blockInflationAddr, denom)
 
-	// get allocation params to retrieve distribution proportions
-	params := k.GetParams(ctx)
 	proportions := params.DistributionProportions
 
 	if proportions.NftIncentives.GT(sdk.ZeroDec()) {
@@ -109,26 +130,6 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 		return err
 	}
 
-	supplementPoolAddress := k.accountKeeper.GetModuleAccount(ctx, types.SupplementPoolName).GetAddress()
-	supplementPoolBalance := k.bankKeeper.GetBalance(ctx, supplementPoolAddress, denom)
-
-	// the amount that needs to be supplemented from the supplement pool
-	supplementAmount := params.SupplementAmount.AmountOf(denom)
-
-	// transfer supplement amount to be distributed to stakers if
-	// 1- Supplement from params is not 0
-	// 2- There is enough balance in the pool
-	if !supplementAmount.IsZero() && supplementPoolBalance.Amount.GT(supplementAmount) {
-		err := k.bankKeeper.SendCoinsFromModuleToModule(ctx,
-			types.SupplementPoolName,
-			authtypes.FeeCollectorName,
-			sdk.NewCoins(sdk.NewCoin(denom, supplementAmount)),
-		)
-		if err != nil {
-			return err
-		}
-
-	}
 	// fairburn pool
 	fairburnPoolAddress := k.accountKeeper.GetModuleAccount(ctx, types.FairburnPoolName).GetAddress()
 	collectedFairburnFees := k.bankKeeper.GetBalance(ctx, fairburnPoolAddress, denom)
