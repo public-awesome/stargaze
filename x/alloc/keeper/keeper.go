@@ -71,7 +71,6 @@ func (k Keeper) sendToFairburnPool(ctx sdk.Context, sender sdk.AccAddress, amoun
 
 // DistributeInflation distributes module-specific inflation
 func (k Keeper) DistributeInflation(ctx sdk.Context) error {
-
 	denom := k.stakingKeeper.BondDenom(ctx)
 	// get allocation params to retrieve distribution proportions
 	params := k.GetParams(ctx)
