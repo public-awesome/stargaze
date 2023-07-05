@@ -68,7 +68,7 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 
 		allocParams.DistributionProportions = proportions
 		// supplement amount from the specific module account
-		// set to 100k STARS daily ~= 6.9 STARS per block using same 5.9s avg block time
+		// set to 100k STARS daily ~= 6.82 STARS per block using same 5.9s avg block time
 		allocParams.SupplementAmount = sdk.NewCoins(sdk.NewInt64Coin(denom, 6_828_704)) // 6.9 STARS per block
 		app.AllocKeeper.SetParams(ctx, allocParams)
 
