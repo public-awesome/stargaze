@@ -373,6 +373,7 @@ steps:
     commands:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
+      - starsd q tokenfactory params --node http://stargaze-upgraded:26657
       - starsd q bank balances stars1mnyrspq208uv5m2krdctan2dkyht0szje9s43h --node http://stargaze-upgraded:26657
       - starsd q bank balances stars103y4f6h80lc45nr8chuzr3fyzqywm9n0gnr394 --node http://stargaze-upgraded:26657
       - starsd q distribution community-pool --node http://stargaze-upgraded:26657
@@ -415,6 +416,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 87b5d1cd266a6f780dfe842370c47b915b2410e2b750d54a022de9421cc89000
+hmac: a2715d033d33712aeeb3f541b01e43677014a6871dc7d91b3da0ad19e13faf71
 
 ...
