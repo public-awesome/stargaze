@@ -25,10 +25,6 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 		if err != nil {
 			return nil, err
 		}
-		params := app.TokenFactoryKeeper.GetParams(ctx)
-		params.DenomCreationFee = nil
-		params.DenomCreationGasConsume = 50_000_000 // 50STARS at 1ustars
-		app.TokenFactoryKeeper.SetParams(ctx, params)
 
 		// Following param changes reflect what was approved by prop 165 and combined in a single upgrade for Prop 1-3
 		// https://www.mintscan.io/stargaze/proposals/165
@@ -49,14 +45,19 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 		// update blocks per year using  5.9 s avg block time
 		mintParams.BlocksPerYear = 5345036
 		app.MintKeeper.SetParams(ctx, mintParams)
+		denom := app.MintKeeper.GetParams(ctx).MintDenom
+
+		// token factory params
+		params := app.TokenFactoryKeeper.GetParams(ctx)
+		params.DenomCreationFee = sdk.NewCoins(sdk.NewInt64Coin(denom, 10_000_000_000)) // 10k STARS
+
+		app.TokenFactoryKeeper.SetParams(ctx, params)
 
 		// set community tax to 0 since the allocation module will now take care of it
 		// making an accurate allocation of the inflation
 		distributionParams := app.DistrKeeper.GetParams(ctx)
 		distributionParams.CommunityTax = sdk.ZeroDec()
 		app.DistrKeeper.SetParams(ctx, distributionParams)
-
-		denom := app.MintKeeper.GetParams(ctx).MintDenom
 
 		// change alloc params to set nft incentives to 0% until incentives are live
 		allocParams := app.AllocKeeper.GetParams(ctx)
