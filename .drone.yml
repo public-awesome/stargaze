@@ -77,12 +77,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - v11.0.0-alpha.2
+        - v11.0.0-beta.1
     when:
       event:
         - push
       branch:
-        - jhernandez/tokenomics-update
+        - jhernandezb/v11-beta-release
   - name: docker_release
     image: plugins/docker
     settings:
@@ -350,7 +350,7 @@ steps:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:v11.0.0-alpha.2
+    image: publicawesome/stargaze:v11.0.0-beta.1
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -369,10 +369,11 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:v11.0.0-alpha.2
+    image: publicawesome/stargaze:v11.0.0-beta.1
     commands:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
+      - starsd q tokenfactory params --node http://stargaze-upgraded:26657
       - starsd q bank balances stars1mnyrspq208uv5m2krdctan2dkyht0szje9s43h --node http://stargaze-upgraded:26657
       - starsd q bank balances stars103y4f6h80lc45nr8chuzr3fyzqywm9n0gnr394 --node http://stargaze-upgraded:26657
       - starsd q distribution community-pool --node http://stargaze-upgraded:26657
@@ -415,6 +416,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 6d7b77c0e3c04feeaa508ac592da7feeb6963d8b85da31d180d2bec0b2d3d7eb
+hmac: a2715d033d33712aeeb3f541b01e43677014a6871dc7d91b3da0ad19e13faf71
 
 ...
