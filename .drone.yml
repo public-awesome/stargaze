@@ -77,12 +77,11 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - v11.0.0-alpha.3
+        - v11.0.0-beta.2
     when:
       event:
         - push
       branch:
-        - jhernandez/tokenomics-update
         - jhernandezb/remove-spm-dep
   - name: docker_release
     image: plugins/docker
@@ -346,12 +345,12 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: proposal
-    image: publicawesome/stargaze:8.0.0
+    image: publicawesome/stargaze:10.0.1
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:v11.0.0-alpha.3
+    image: publicawesome/stargaze:v11.0.0-beta.2
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -370,7 +369,7 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:v11.0.0-alpha.3
+    image: publicawesome/stargaze:v11.0.0-beta.2
     commands:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
@@ -407,7 +406,6 @@ steps:
 trigger:
   branch:
     - main
-    - jhernandezb/remove-spm-dep
   event:
     - pull_request
     - push
@@ -418,6 +416,6 @@ volumes:
 
 ---
 kind: signature
-hmac: a2715d033d33712aeeb3f541b01e43677014a6871dc7d91b3da0ad19e13faf71
+hmac: d9bfbbf56316f08a594d6ddb03edf316249c387f8dc7b0e954b8ff341f9cea50
 
 ...
