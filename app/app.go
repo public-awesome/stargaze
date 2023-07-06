@@ -549,10 +549,6 @@ func NewStargazeApp(
 	registry.RegisterEncoder(claimmoduletypes.ModuleName, claimwasm.Encoder)
 	registry.RegisterEncoder(allocmoduletypes.ModuleName, allocwasm.Encoder)
 
-	// The last arguments can contain custom message handlers, and custom query handlers,
-	// if we want to allow any custom callbacks
-	availableCapabilities := "iterator,staking,stargate,stargaze,cosmwasm_1_1,cosmwasm_1_2,token_factory"
-
 	// Wasm accepted Stargate Queries
 	acceptStargateQueriesList := wasmkeeper.AcceptedStargateQueries{
 		"/stargaze.tokenfactory.v1.Query/Params":                 &tokenfactorytypes.QueryParamsResponse{},
@@ -583,7 +579,7 @@ func NewStargazeApp(
 		app.GRPCQueryRouter(),
 		wasmDir,
 		wasmConfig,
-		availableCapabilities,
+		GetWasmCapabilities(),
 		wasmOpts...,
 	)
 

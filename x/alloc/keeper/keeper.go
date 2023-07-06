@@ -81,6 +81,9 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 	// the amount that needs to be supplemented from the supplement pool
 	supplementAmount := params.SupplementAmount.AmountOf(denom)
 
+	distributionEvent := sdk.NewEvent(
+		types.EventTypeDistribution,
+	)
 	// transfer supplement amount to be distributed to stakers if
 	// 1- Supplement from params is not 0
 	// 2- There is enough balance in the pool
@@ -93,13 +96,13 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 		if err != nil {
 			return err
 		}
-
+		distributionEvent = distributionEvent.AppendAttributes(sdk.NewAttribute(types.AttributeKeySupplementAmount, supplementAmount.String()))
 	}
 
 	// retrieve balance from fee pool which is filled by minting new coins and by collecting transaction fees
 	blockInflationAddr := k.accountKeeper.GetModuleAccount(ctx, authtypes.FeeCollectorName).GetAddress()
 	blockInflation := k.bankKeeper.GetBalance(ctx, blockInflationAddr, denom)
-
+	distributionEvent = distributionEvent.AppendAttributes(sdk.NewAttribute(types.AttributeKeyFeePoolAmount, blockInflation.String()))
 	proportions := params.DistributionProportions
 
 	if proportions.NftIncentives.GT(sdk.ZeroDec()) {
@@ -110,9 +113,7 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 		if err != nil {
 			return err
 		}
-
-		// iterate over list of incentive addresses and proportions
-		k.Logger(ctx).Debug("fund incentive rewards", "amount", incentiveRewards.String(), "from", blockInflationAddr)
+		distributionEvent = distributionEvent.AppendAttributes(sdk.NewAttribute(types.AttributeKeyIncentivesAmount, incentiveRewards.String()))
 	}
 
 	// fund community pool if the value is not nil and greater than zero
@@ -122,13 +123,19 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 		if err != nil {
 			return err
 		}
+		distributionEvent = distributionEvent.AppendAttributes(sdk.NewAttribute(types.AttributeKeyCommunityPoolAmount, communityPoolTax.String()))
 	}
 
 	devRewards := k.GetProportions(ctx, blockInflation, proportions.DeveloperRewards)
+	distributionEvent = distributionEvent.AppendAttributes(sdk.NewAttribute(types.AttributeKeyDevRewardsAmount, devRewards.String()))
 	err := k.DistributeWeightedRewards(ctx, blockInflationAddr, devRewards, params.WeightedDeveloperRewardsReceivers)
 	if err != nil {
 		return err
 	}
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		distributionEvent,
+	})
 
 	// fairburn pool
 	fairburnPoolAddress := k.accountKeeper.GetModuleAccount(ctx, types.FairburnPoolName).GetAddress()
