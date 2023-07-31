@@ -1,0 +1,107 @@
+name: Run InterchainTest
+
+on:  
+  pull_request:
+    branches:
+      - main
+  
+  release:
+    types: published
+    
+  workflow_dispatch:
+
+jobs:
+  build_sg_image:
+    name: Build Stargaze image ✨
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout public-awesome/stargaze
+        uses: actions/checkout@v3
+
+      - name: Set up Golang
+        uses: actions/setup-go@v3
+        with:
+          go-version-file: 'go.mod'
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Stargaze Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          tags: publicawesome/stargaze:local-dev
+          outputs: type=docker,dest=/tmp/sg.tar
+      
+      - name: Upload the Docker image # Uploading as artifact so that all the tests which run as different jobs can use this image
+        uses: actions/upload-artifact@v3
+        with:
+          name: sg
+          path: /tmp/sg.tar
+          retention-days: 1
+
+  build_interchaintest:
+    name: Build interchaintest 🔗
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout strangelove-ventures/interchaintest
+        uses: actions/checkout@v3
+        with:
+          repository: strangelove-ventures/interchaintest
+
+      - name: Set up Golang
+        uses: actions/setup-go@v3
+        with:
+          go-version-file: 'go.mod'
+
+      - name: Build Interchaintest
+        run: make interchaintest
+
+      - name: Upload binary as artifact # Uploading as artifact so that all the tests which run as different jobs can use this binary
+        uses: actions/upload-artifact@v3
+        with:
+            name: interchaintest
+            path: ./bin/interchaintest
+            retention-days: 1
+
+  run_gaia_interchaintest:
+    name: gaia ⚛️
+    needs: [build_interchaintest,build_sg_image]
+    uses: ./.github/workflows/interchaintest_runner.yml
+    with:
+      test-matrix: 'interchain_test/gaia.matrix.json'
+
+  run_osmosis_interchaintest:
+    name: osmosis 🧪
+    needs: [build_interchaintest,build_sg_image]
+    uses: ./.github/workflows/interchaintest_runner.yml
+    with:
+      test-matrix: 'interchain_test/osmosis.matrix.json'
+    
+  run_icad_interchaintest:
+    name: icad 🔗
+    needs: [build_interchaintest,build_sg_image]
+    uses: ./.github/workflows/interchaintest_runner.yml
+    with:
+      test-matrix: 'interchain_test/icad.matrix.json'
+
+  cleanup:
+    name: Delete artifacts 🗑️
+    needs: [run_gaia_interchaintest,run_osmosis_interchaintest,run_icad_interchaintest]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Delete interchaintest # Delete the binary from workflow artifacts as its not needed anymore
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: interchaintest
+          failOnError: false
+      
+      - name: Delete sg # Delete the stargaze docker image from workflow artifacts as its not needed anymore
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: sg
+          failOnError: false
+        

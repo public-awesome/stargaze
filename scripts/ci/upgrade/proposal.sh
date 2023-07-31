@@ -8,6 +8,15 @@ apk add -U --no-cache jq tree
 STARGAZE_HOME=/stargaze/starsd
 starsd config keyring-backend test --home $STARGAZE_HOME
 
+
+echo "fund community pool"
+starsd tx distribution fund-community-pool 20000000000000ustars  \
+--gas-prices 1ustars --gas auto --gas-adjustment 1.5 --from funder  \
+--chain-id stargaze -b block --yes --node http://stargaze:26657 --home $STARGAZE_HOME --keyring-backend test
+
+sleep 5
+starsd q distribution community-pool --node http://stargaze:26657
+
 HEIGHT=$(starsd status --node http://stargaze:26657 --home $STARGAZE_HOME | jq .SyncInfo.latest_block_height -r)
 
 echo "current height $HEIGHT"

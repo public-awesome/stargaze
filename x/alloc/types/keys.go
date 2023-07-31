@@ -10,6 +10,8 @@ const (
 	// Fairburn pool name
 	FairburnPoolName = "fairburn_pool"
 
+	SupplementPoolName = "supplement_pool"
+
 	// RouterKey is the message route for slashing
 	RouterKey = ModuleName
 
