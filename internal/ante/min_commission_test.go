@@ -15,7 +15,6 @@ import (
 	stargazeapp "github.com/public-awesome/stargaze/v11/app"
 	"github.com/public-awesome/stargaze/v11/testutil/simapp"
 	"github.com/stretchr/testify/require"
-	"github.com/tendermint/spm/cosmoscmd"
 
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
@@ -61,7 +60,7 @@ func TestMinCommissionAnteHandler(t *testing.T) {
 	)
 	require.NoError(t, err)
 	header := tmproto.Header{Height: app.LastBlockHeight() + 1}
-	encoding := cosmoscmd.MakeEncodingConfig(stargazeapp.ModuleBasics)
+	encoding := stargazeapp.MakeEncodingConfig()
 	txGen := encoding.TxConfig
 	_, _, err = simapp.SignCheckDeliver(t, txGen, app.BaseApp, header, []sdk.Msg{createValidatorMsg}, "", []uint64{0}, []uint64{0}, true, false, false, priv1)
 	require.EqualError(t, err, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "commission can not be lower than 5%").Error())
@@ -152,7 +151,7 @@ func TestMinCommissionAuthzAnteHandler(t *testing.T) {
 	require.NoError(t, err)
 
 	header := tmproto.Header{Height: app.LastBlockHeight() + 1}
-	encoding := cosmoscmd.MakeEncodingConfig(stargazeapp.ModuleBasics)
+	encoding := stargazeapp.MakeEncodingConfig()
 	txGen := encoding.TxConfig
 
 	_, _, err = simapp.SignCheckDeliver(t, txGen, app.BaseApp, header, []sdk.Msg{msg1, msg2}, "",

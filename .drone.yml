@@ -82,7 +82,7 @@ steps:
       event:
         - push
       branch:
-        - jhernandezb/bump-tendermint
+        - jhernandezb/remove-spm-dep
   - name: docker_release
     image: plugins/docker
     settings:
@@ -345,7 +345,7 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: proposal
-    image: publicawesome/stargaze:8.0.0
+    image: publicawesome/stargaze:10.0.1
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
@@ -416,6 +416,6 @@ volumes:
 
 ---
 kind: signature
-hmac: e95441a875addb927e7d4beabaed370400c0d09681af3e3d946ee7887c74f5e2
+hmac: d9bfbbf56316f08a594d6ddb03edf316249c387f8dc7b0e954b8ff341f9cea50
 
 ...

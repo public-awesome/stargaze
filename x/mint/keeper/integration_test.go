@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
-	"github.com/tendermint/spm/cosmoscmd"
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	stargazeapp "github.com/public-awesome/stargaze/v11/app"
 	"github.com/public-awesome/stargaze/v11/x/mint/types"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -51,7 +51,7 @@ func setup(isCheckTx bool) *stargazeapp.App {
 
 func genApp(withGenesis bool, invCheckPeriod uint) (*stargazeapp.App, stargazeapp.GenesisState) {
 	db := dbm.NewMemDB()
-	encCdc := cosmoscmd.MakeEncodingConfig(stargazeapp.ModuleBasics)
+	encCdc := stargazeapp.MakeEncodingConfig()
 	app := stargazeapp.NewStargazeApp(
 		log.NewNopLogger(),
 		db,
@@ -66,11 +66,9 @@ func genApp(withGenesis bool, invCheckPeriod uint) (*stargazeapp.App, stargazeap
 		wasm.DisableAllProposals,
 	)
 
-	originalApp := app.(*stargazeapp.App)
-
 	if withGenesis {
-		return originalApp, stargazeapp.NewDefaultGenesisState(encCdc.Marshaler)
+		return app, stargazeapp.NewDefaultGenesisState(encCdc.Codec)
 	}
 
-	return originalApp, stargazeapp.GenesisState{}
+	return app, stargazeapp.GenesisState{}
 }
