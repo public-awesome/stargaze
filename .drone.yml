@@ -77,12 +77,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - v11.0.0-beta.2
+        - 12.0.0-alpha.1
     when:
       event:
         - push
       branch:
-        - jhernandezb/remove-spm-dep
+        - spoorrthi/remove-claim
   - name: docker_release
     image: plugins/docker
     settings:
@@ -313,7 +313,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:10.0.1
+    image: publicawesome/stargaze:11.0.0
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
@@ -345,12 +345,12 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: proposal
-    image: publicawesome/stargaze:10.0.1
+    image: publicawesome/stargaze:11.0.0
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:v11.0.0-beta.2
+    image: publicawesome/stargaze:12.0.0-alpha.1
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -369,7 +369,7 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:v11.0.0-beta.2
+    image: publicawesome/stargaze:12.0.0-alpha.1
     commands:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
@@ -416,6 +416,6 @@ volumes:
 
 ---
 kind: signature
-hmac: d9bfbbf56316f08a594d6ddb03edf316249c387f8dc7b0e954b8ff341f9cea50
+hmac: b7e4f6b9eab6ef28d62ef96f0b036cae3fb376bfae8748d64be7e51c46a02fac
 
 ...
