@@ -2,7 +2,7 @@ package ante_test
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"sync"
 	"time"
 
@@ -21,7 +21,6 @@ import (
 	"github.com/public-awesome/stargaze/v11/x/globalfee/ante"
 	"github.com/public-awesome/stargaze/v11/x/globalfee/types"
 	"github.com/stretchr/testify/suite"
-	"github.com/tendermint/spm/cosmoscmd"
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/crypto/secp256k1"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -68,7 +67,7 @@ func (s *AnteHandlerTestSuite) SetupTest() {
 		Time:    time.Now(),
 	})
 
-	encodingConfig := cosmoscmd.MakeEncodingConfig(stargazeapp.ModuleBasics)
+	encodingConfig := stargazeapp.MakeEncodingConfig()
 
 	s.app = app
 	s.ctx = ctx
@@ -217,7 +216,7 @@ func getContractBytes(contract string) ([]byte, error) {
 	contractsCache.Lock()
 	defer contractsCache.Unlock()
 	var err error
-	bz, err = ioutil.ReadFile(contract)
+	bz, err = os.ReadFile(contract)
 	if err != nil {
 		return nil, err
 	}

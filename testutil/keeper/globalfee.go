@@ -14,7 +14,7 @@ import (
 	"github.com/public-awesome/stargaze/v11/x/globalfee/keeper"
 	"github.com/public-awesome/stargaze/v11/x/globalfee/types"
 	"github.com/stretchr/testify/require"
-	"github.com/tendermint/spm/cosmoscmd"
+
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	tmdb "github.com/tendermint/tm-db"
@@ -35,8 +35,8 @@ func GlobalFeeKeeper(tb testing.TB) (keeper.Keeper, sdk.Context) {
 	require.NoError(tb, stateStore.LoadLatestVersion())
 
 	registry := codectypes.NewInterfaceRegistry()
-	encoding := cosmoscmd.MakeEncodingConfig(app.ModuleBasics)
-	appCodec := encoding.Marshaler
+	encoding := app.MakeEncodingConfig()
+	appCodec := encoding.Codec
 
 	paramsKeeper := paramskeeper.NewKeeper(appCodec, encoding.Amino, storeKey, tStoreKey)
 	paramsKeeper.Subspace(types.ModuleName).WithKeyTable(types.ParamKeyTable())

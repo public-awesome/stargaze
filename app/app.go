@@ -96,7 +96,6 @@ import (
 	authzmodule "github.com/cosmos/cosmos-sdk/x/authz/module"
 
 	"github.com/public-awesome/stargaze/v11/app/openapiconsole"
-	"github.com/tendermint/spm/cosmoscmd"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"
@@ -131,6 +130,8 @@ import (
 	icahosttypes "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts/host/types"
 	icatypes "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts/types"
 	stargazerest "github.com/public-awesome/stargaze/v11/internal/rest"
+
+	sgappparams "github.com/public-awesome/stargaze/v11/app/params"
 )
 
 const (
@@ -243,10 +244,7 @@ var (
 	}
 )
 
-var (
-	_ cosmoscmd.CosmosApp     = (*App)(nil)
-	_ servertypes.Application = (*App)(nil)
-)
+var _ servertypes.Application = (*App)(nil)
 
 func init() {
 	userHomeDir, err := os.UserHomeDir()
@@ -330,14 +328,13 @@ func NewStargazeApp(
 	skipUpgradeHeights map[int64]bool,
 	homePath string,
 	invCheckPeriod uint,
-	encodingConfig cosmoscmd.EncodingConfig,
+	encodingConfig sgappparams.EncodingConfig,
 	appOpts servertypes.AppOptions,
 	wasmOpts []wasm.Option,
 	enabledProposals []wasm.ProposalType,
 	baseAppOptions ...func(*baseapp.BaseApp),
-) cosmoscmd.App {
-	appCodec := encodingConfig.Marshaler
-	cdc := encodingConfig.Amino
+) *App {
+	appCodec, cdc := encodingConfig.Codec, encodingConfig.Amino
 	interfaceRegistry := encodingConfig.InterfaceRegistry
 
 	bApp := baseapp.NewBaseApp(Name, logger, db, encodingConfig.TxConfig.TxDecoder(), baseAppOptions...)
