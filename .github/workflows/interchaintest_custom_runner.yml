@@ -10,7 +10,7 @@ on:
   
 jobs:
   run_interchaintest_custom:
-    name: Custom Test
+    name: Custom Interchain Test
     runs-on: ubuntu-latest
 
     steps:
