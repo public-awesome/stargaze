@@ -1,0 +1,34 @@
+name: Interchain Custom Test Runner
+
+on:
+  workflow_call:
+    inputs:
+      test-cmd:
+        type: string
+        required: true
+        description: 'The make cmd to run to test the custom interchain tests'
+  
+jobs:
+  run_interchaintest_custom:
+    name: Custom Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout public-awesome/stargaze
+        uses: actions/checkout@v3
+      
+      - name: Download Stargaze Docker image
+        uses: actions/download-artifact@v3
+        with:
+          name: sg
+          path: /tmp
+    
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+    
+      - name: Load Stargaze Docker image
+        run: docker load --input /tmp/sg.tar
+        
+      - name: Run test
+        run: make ${{ inputs.test-cmd }} 
+      
