@@ -11,15 +11,15 @@ var (
 	denom    = "ustars"
 
 	dockerImage = ibc.DockerImage{
-		Repository: "stargaze",
-		Version:    "local",
+		Repository: "publicawesome/stargaze",
+		Version:    "local-dev",
 		UidGid:     "1025:1025",
 	}
 
 	stargazeCfg = ibc.ChainConfig{
 		Type:                   "cosmos",
-		Name:                   "stargaze",
-		ChainID:                "stargaze-1",
+		Name:                   "local-stargaze",
+		ChainID:                "testing",
 		Images:                 []ibc.DockerImage{dockerImage},
 		Bin:                    "starsd",
 		Bech32Prefix:           "stars",
