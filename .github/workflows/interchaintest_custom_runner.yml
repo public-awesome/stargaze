@@ -10,12 +10,17 @@ on:
   
 jobs:
   run_interchaintest_custom:
-    name: Custom Interchain Test
+    name: Custom Test
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout public-awesome/stargaze
         uses: actions/checkout@v3
+
+      - name: Set up Golang
+        uses: actions/setup-go@v3
+        with:
+          go-version-file: 'go.mod'
       
       - name: Download Stargaze Docker image
         uses: actions/download-artifact@v3
