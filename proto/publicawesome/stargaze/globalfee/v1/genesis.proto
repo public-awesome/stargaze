@@ -1,7 +1,7 @@
 syntax = "proto3";
 package publicawesome.stargaze.globalfee.v1;
 
-import "stargaze/globalfee/v1/globalfee.proto";
+import "publicawesome/stargaze/globalfee/v1/globalfee.proto";
 import "gogoproto/gogo.proto";
 
 option go_package = "github.com/public-awesome/stargaze/v11/x/globalfee/types";

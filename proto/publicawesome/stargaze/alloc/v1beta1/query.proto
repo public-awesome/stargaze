@@ -3,7 +3,7 @@ package publicawesome.stargaze.alloc.v1beta1;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
-import "stargaze/alloc/v1beta1/params.proto";
+import "publicawesome/stargaze/alloc/v1beta1/params.proto";
 // this line is used by starport scaffolding # 1
 
 option go_package = "github.com/public-awesome/stargaze/v11/x/alloc/types";

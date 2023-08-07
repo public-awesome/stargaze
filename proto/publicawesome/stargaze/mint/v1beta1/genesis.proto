@@ -2,7 +2,7 @@ syntax = "proto3";
 package publicawesome.stargaze.mint.v1beta1;
 
 import "gogoproto/gogo.proto";
-import "stargaze/mint/v1beta1/mint.proto";
+import "publicawesome/stargaze/mint/v1beta1/mint.proto";
 
 option go_package = "github.com/public-awesome/stargaze/v11/x/mint/types";
 
