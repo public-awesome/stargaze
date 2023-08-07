@@ -1,9 +1,0 @@
-# This file is used to create docker images using the heighliner binary.
-# see: https://github.com/strangelove-ventures/heighliner
-- name: stargaze
-  dockerfile: cosmos
-  build-target: make install
-  binaries:
-    - /go/bin/starsd
-  build-env:
-    - BUILD_TAGS=muslc
