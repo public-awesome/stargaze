@@ -6,7 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/address"
 	"github.com/public-awesome/stargaze/v11/x/ibchooks/types"
 
-	"github.com/tendermint/tendermint/libs/log"
+	"github.com/cometbft/cometbft/libs/log"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

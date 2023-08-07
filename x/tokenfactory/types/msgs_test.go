@@ -8,8 +8,8 @@ import (
 	"github.com/public-awesome/stargaze/v11/x/tokenfactory/types"
 	"github.com/stretchr/testify/require"
 
+	"github.com/cometbft/cometbft/crypto/ed25519"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	"github.com/tendermint/tendermint/crypto/ed25519"
 )
 
 // TestMsgCreateDenom tests if valid/invalid create denom messages are properly validated/invalidated

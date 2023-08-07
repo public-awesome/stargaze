@@ -14,7 +14,7 @@ import (
 	"github.com/public-awesome/stargaze/v11/testutil/simapp"
 	"github.com/stretchr/testify/require"
 
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 )
 
 func TestMinDepositDecorator(t *testing.T) {

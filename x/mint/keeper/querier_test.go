@@ -11,7 +11,7 @@ import (
 	keep "github.com/public-awesome/stargaze/v11/x/mint/keeper"
 	"github.com/public-awesome/stargaze/v11/x/mint/types"
 
-	abci "github.com/tendermint/tendermint/abci/types"
+	abci "github.com/cometbft/cometbft/abci/types"
 )
 
 func TestNewQuerier(t *testing.T) {
