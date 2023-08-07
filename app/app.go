@@ -97,7 +97,6 @@ import (
 	authzmodule "github.com/cosmos/cosmos-sdk/x/authz/module"
 
 	"github.com/public-awesome/stargaze/v11/app/openapiconsole"
-	"github.com/tendermint/spm/cosmoscmd"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"
@@ -110,10 +109,6 @@ import (
 	allocmodulekeeper "github.com/public-awesome/stargaze/v11/x/alloc/keeper"
 	allocmoduletypes "github.com/public-awesome/stargaze/v11/x/alloc/types"
 	allocwasm "github.com/public-awesome/stargaze/v11/x/alloc/wasm"
-	claimmodule "github.com/public-awesome/stargaze/v11/x/claim"
-	claimmodulekeeper "github.com/public-awesome/stargaze/v11/x/claim/keeper"
-	claimmoduletypes "github.com/public-awesome/stargaze/v11/x/claim/types"
-	claimwasm "github.com/public-awesome/stargaze/v11/x/claim/wasm"
 
 	cronmodule "github.com/public-awesome/stargaze/v11/x/cron"
 	cronclient "github.com/public-awesome/stargaze/v11/x/cron/client"
@@ -138,6 +133,8 @@ import (
 	icahosttypes "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts/host/types"
 	icatypes "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts/types"
 	stargazerest "github.com/public-awesome/stargaze/v11/internal/rest"
+
+	sgappparams "github.com/public-awesome/stargaze/v11/app/params"
 )
 
 const (
@@ -220,7 +217,6 @@ var (
 		evidence.AppModuleBasic{},
 		transfer.AppModuleBasic{},
 		vesting.AppModuleBasic{},
-		claimmodule.AppModuleBasic{},
 		allocmodule.AppModuleBasic{},
 		cronmodule.AppModuleBasic{},
 		globalfeemodule.AppModuleBasic{},
@@ -240,7 +236,6 @@ var (
 		stakingtypes.NotBondedPoolName:      {authtypes.Burner, authtypes.Staking},
 		govtypes.ModuleName:                 {authtypes.Burner},
 		ibctransfertypes.ModuleName:         {authtypes.Minter, authtypes.Burner},
-		claimmoduletypes.ModuleName:         {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		allocmoduletypes.ModuleName:         {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		allocmoduletypes.FairburnPoolName:   nil,
 		allocmoduletypes.SupplementPoolName: nil,
@@ -253,10 +248,7 @@ var (
 	}
 )
 
-var (
-	_ cosmoscmd.CosmosApp     = (*App)(nil)
-	_ servertypes.Application = (*App)(nil)
-)
+var _ servertypes.Application = (*App)(nil)
 
 func init() {
 	userHomeDir, err := os.UserHomeDir()
@@ -315,7 +307,6 @@ type App struct {
 	ScopedWasmKeeper     capabilitykeeper.ScopedKeeper
 
 	// stargaze modules
-	ClaimKeeper        claimmodulekeeper.Keeper
 	AllocKeeper        allocmodulekeeper.Keeper
 	CronKeeper         cronmodulekeeper.Keeper
 	GlobalFeeKeeper    globalfeemodulekeeper.Keeper
@@ -344,14 +335,13 @@ func NewStargazeApp(
 	skipUpgradeHeights map[int64]bool,
 	homePath string,
 	invCheckPeriod uint,
-	encodingConfig cosmoscmd.EncodingConfig,
+	encodingConfig sgappparams.EncodingConfig,
 	appOpts servertypes.AppOptions,
 	wasmOpts []wasm.Option,
 	enabledProposals []wasm.ProposalType,
 	baseAppOptions ...func(*baseapp.BaseApp),
-) cosmoscmd.App {
-	appCodec := encodingConfig.Marshaler
-	cdc := encodingConfig.Amino
+) *App {
+	appCodec, cdc := encodingConfig.Codec, encodingConfig.Amino
 	interfaceRegistry := encodingConfig.InterfaceRegistry
 
 	bApp := baseapp.NewBaseApp(Name, logger, db, encodingConfig.TxConfig.TxDecoder(), baseAppOptions...)
@@ -364,7 +354,6 @@ func NewStargazeApp(
 		minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
-		claimmoduletypes.StoreKey,
 		allocmoduletypes.StoreKey,
 		authzkeeper.StoreKey,
 		wasm.StoreKey,
@@ -454,21 +443,10 @@ func NewStargazeApp(
 		homePath,
 		app.BaseApp,
 	)
-	app.ClaimKeeper = *claimmodulekeeper.NewKeeper(
-		appCodec,
-		keys[claimmoduletypes.StoreKey],
-		keys[claimmoduletypes.MemStoreKey],
-		app.AccountKeeper,
-		app.BankKeeper,
-		&stakingKeeper,
-		app.DistrKeeper,
-		app.GetSubspace(claimmoduletypes.ModuleName),
-	)
-	claimModule := claimmodule.NewAppModule(appCodec, app.ClaimKeeper)
 	// register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
 	app.StakingKeeper = *stakingKeeper.SetHooks(
-		stakingtypes.NewMultiStakingHooks(app.DistrKeeper.Hooks(), app.SlashingKeeper.Hooks(), app.ClaimKeeper.Hooks()),
+		stakingtypes.NewMultiStakingHooks(app.DistrKeeper.Hooks(), app.SlashingKeeper.Hooks()),
 	)
 
 	// ... other modules keepers
@@ -599,7 +577,6 @@ func NewStargazeApp(
 	// custom messages
 	registry := sgwasm.NewEncoderRegistry()
 	registry.RegisterEncoder(sgwasm.DistributionRoute, sgwasm.CustomDistributionEncoder)
-	registry.RegisterEncoder(claimmoduletypes.ModuleName, claimwasm.Encoder)
 	registry.RegisterEncoder(allocmoduletypes.ModuleName, allocwasm.Encoder)
 
 	// Wasm accepted Stargate Queries
@@ -661,11 +638,7 @@ func NewStargazeApp(
 		&stakingKeeper, govRouter,
 	)
 
-	app.GovKeeper = *govKeeper.SetHooks(
-		govtypes.NewMultiGovHooks(
-			app.ClaimKeeper.Hooks(),
-		),
-	)
+	app.GovKeeper = *govKeeper.SetHooks(govtypes.NewMultiGovHooks())
 
 	app.AllocKeeper = *allocmodulekeeper.NewKeeper(
 		appCodec,
@@ -718,7 +691,6 @@ func NewStargazeApp(
 		icaModule,
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
-		claimModule,
 		allocModule,
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 		cronModule,
@@ -741,7 +713,7 @@ func NewStargazeApp(
 		ibchost.ModuleName, ibctransfertypes.ModuleName,
 		icatypes.ModuleName,
 		authtypes.ModuleName, banktypes.ModuleName, govtypes.ModuleName, crisistypes.ModuleName, genutiltypes.ModuleName,
-		authz.ModuleName, feegrant.ModuleName, claimmoduletypes.ModuleName,
+		authz.ModuleName, feegrant.ModuleName,
 		paramstypes.ModuleName, vestingtypes.ModuleName,
 		wasm.ModuleName,
 		cronmoduletypes.ModuleName,
@@ -760,7 +732,7 @@ func NewStargazeApp(
 		paramstypes.ModuleName, upgradetypes.ModuleName, vestingtypes.ModuleName,
 		ibchost.ModuleName, ibctransfertypes.ModuleName,
 		icatypes.ModuleName,
-		allocmoduletypes.ModuleName, claimmoduletypes.ModuleName,
+		allocmoduletypes.ModuleName,
 		wasm.ModuleName,
 		cronmoduletypes.ModuleName,
 		globalfeemoduletypes.ModuleName,
@@ -792,7 +764,6 @@ func NewStargazeApp(
 		feegrant.ModuleName,
 		authz.ModuleName,
 		paramstypes.ModuleName, upgradetypes.ModuleName, vestingtypes.ModuleName,
-		claimmoduletypes.ModuleName,
 		allocmoduletypes.ModuleName,
 		tokenfactorytypes.ModuleName,
 		// wasm after ibc transfer
@@ -1031,7 +1002,6 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(crisistypes.ModuleName)
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
-	paramsKeeper.Subspace(claimmoduletypes.ModuleName)
 	paramsKeeper.Subspace(allocmoduletypes.ModuleName)
 	paramsKeeper.Subspace(tokenfactorytypes.ModuleName)
 	paramsKeeper.Subspace(wasm.ModuleName)
