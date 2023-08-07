@@ -1,5 +1,5 @@
 syntax = "proto3";
-package stargaze.mint.v1beta1;
+package publicawesome.stargaze.mint.v1beta1;
 
 import "gogoproto/gogo.proto";
 import "stargaze/mint/v1beta1/mint.proto";

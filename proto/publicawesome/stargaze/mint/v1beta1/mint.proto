@@ -1,5 +1,5 @@
 syntax = "proto3";
-package stargaze.mint.v1beta1;
+package publicawesome.stargaze.mint.v1beta1;
 
 option go_package = "github.com/public-awesome/stargaze/v11/x/mint/types";
 
