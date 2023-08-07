@@ -21,7 +21,6 @@ import (
 	"github.com/public-awesome/stargaze/v11/x/cron/client/cli"
 	"github.com/public-awesome/stargaze/v11/x/cron/keeper"
 	"github.com/public-awesome/stargaze/v11/x/cron/types"
-	"github.com/public-awesome/stargaze/v11/x/mint/client/rest"
 )
 
 var (
@@ -72,9 +71,7 @@ func (AppModuleBasic) ValidateGenesis(cdc codec.JSONCodec, _ client.TxEncodingCo
 }
 
 // RegisterRESTRoutes registers the REST routes for the mint module.
-func (AppModuleBasic) RegisterRESTRoutes(clientCtx client.Context, rtr *mux.Router) {
-	rest.RegisterRoutes(clientCtx, rtr)
-}
+func (AppModuleBasic) RegisterRESTRoutes(clientCtx client.Context, rtr *mux.Router) {}
 
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the module
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
