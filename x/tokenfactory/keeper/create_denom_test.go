@@ -140,7 +140,7 @@ func (suite *KeeperTestSuite) TestCreateDenom() {
 			postCreateBalance := bankKeeper.GetAllBalances(suite.Ctx, suite.TestAccs[0])
 			if tc.valid {
 				suite.Require().NoError(err)
-				suite.Require().True(preCreateBalance.Sub(postCreateBalance).IsEqual(denomCreationFee))
+				suite.Require().True(preCreateBalance.Sub(postCreateBalance...).IsEqual(denomCreationFee))
 
 				// Make sure that the admin is set correctly
 				queryRes, err := suite.queryClient.DenomAuthorityMetadata(suite.Ctx.Context(), &types.QueryDenomAuthorityMetadataRequest{
