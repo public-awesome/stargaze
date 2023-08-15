@@ -9,10 +9,13 @@ import (
 	"sync"
 
 	"github.com/public-awesome/stargaze/v11/versiondb/tsrocksdb"
+	"github.com/spf13/cast"
 	abci "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
+	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	"github.com/cosmos/cosmos-sdk/store/types"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 )
@@ -30,10 +33,11 @@ type StreamingService struct {
 // NewFileStreamingService is the streaming.ServiceConstructor function for
 // creating a FileStreamingService.
 func NewVersionDbStreamingService(
-	homePath string,
+	opts servertypes.AppOptions,
 	keys []storetypes.StoreKey,
 	marshaller codec.BinaryCodec,
-) (*StreamingService, error) {
+) (baseapp.StreamingService, error) {
+	homePath := cast.ToString(opts.Get(flags.FlagHome))
 	dataDir := filepath.Join(homePath, "data", "versiondb")
 	if err := os.MkdirAll(dataDir, os.ModePerm); err != nil {
 		return nil, err

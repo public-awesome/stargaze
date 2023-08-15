@@ -106,6 +106,18 @@ var (
 	mockValue3 = []byte{5, 4, 3}
 )
 
+type fakeOptions struct {
+	home string
+}
+
+func (f fakeOptions) Get(key string) interface{} {
+	if key == "home" {
+		return f.home
+
+	}
+	return nil
+}
+
 func TestVersionDbStreamingService(t *testing.T) {
 	if os.Getenv("CI") != "" {
 		t.Skip("Skipping TestFileStreamingService in CI environment")
@@ -113,9 +125,12 @@ func TestVersionDbStreamingService(t *testing.T) {
 
 	testKeys := []types.StoreKey{mockStoreKey1, mockStoreKey2}
 	var err error
+	var ok bool
 
-	dbDir := t.TempDir()
-	testStreamingService, err = NewVersionDbStreamingService(dbDir, testKeys, testMarshaller)
+	testAppOptions := fakeOptions{}
+	streamingService, err := NewVersionDbStreamingService(testAppOptions, testKeys, testMarshaller)
+	testStreamingService, ok = streamingService.(*StreamingService)
+	require.True(t, ok)
 
 	require.Nil(t, err)
 	require.IsType(t, &StreamingService{}, testStreamingService)
