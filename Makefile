@@ -84,6 +84,17 @@ ifeq (,$(findstring nostrip,$(STARGAZE_BUILD_OPTIONS)))
   BUILD_FLAGS += -trimpath
 endif
 
+export CGO_CFLAGS = -I/opt/homebrew/Cellar/rocksdb/8.3.2/include \
+                    -I/opt/homebrew/Cellar/zstd/1.5.5/include \
+                    -I/opt/homebrew/Cellar/lz4/1.9.4/include \
+                    -I/opt/homebrew/Cellar/snappy/1.1.10/include
+
+export CGO_LDFLAGS = -L/opt/homebrew/Cellar/rocksdb/8.3.2/lib -lrocksdb \
+                     -L/opt/homebrew/Cellar/zstd/1.5.5/lib -lzstd \
+                     -L/opt/homebrew/Cellar/lz4/1.9.4/lib -llz4 \
+                     -L/opt/homebrew/Cellar/snappy/1.1.10/lib -lsnappy
+
+
 check_go_version:
 	@echo "Go version: $(GO_MAJOR_VERSION).$(GO_MINOR_VERSION)"
 ifneq ($(GO_MINOR_VERSION),20)
@@ -122,11 +133,14 @@ build-docker:
 docker-test: build-linux
 	docker build -f docker/Dockerfile.test -t rocketprotocol/stargaze-relayer-test:latest .
 
-
 test:
 	go test -v -race github.com/public-awesome/stargaze/v11/x/...
 
-.PHONY: test build-linux docker-test lint build install format
+test-pkg:
+	@echo "Running tests for package $(CGO_CFLAGS)"
+	go test $(PKG) -v -race $(BUILD_FLAGS)
+
+.PHONY: test test-pkg build-linux docker-test lint build install format
 
 format:
 	gofumpt -l -w .
