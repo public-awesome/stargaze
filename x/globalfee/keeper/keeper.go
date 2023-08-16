@@ -8,18 +8,20 @@ import (
 	paramTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/public-awesome/stargaze/v11/x/globalfee/types"
+
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 )
 
 // Keeper provides module state operations.
 type Keeper struct {
 	cdc        codec.Codec
 	paramStore paramTypes.Subspace
-	storeKey   sdk.StoreKey
+	storeKey   storetypes.StoreKey
 	wasmKeeper types.WasmKeeper
 }
 
 // NewKeeper creates a new Keeper instance.
-func NewKeeper(cdc codec.Codec, storeKey sdk.StoreKey, ps paramTypes.Subspace, wk types.WasmKeeper) Keeper {
+func NewKeeper(cdc codec.Codec, storeKey storetypes.StoreKey, ps paramTypes.Subspace, wk types.WasmKeeper) Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
 		ps = ps.WithKeyTable(types.ParamKeyTable())

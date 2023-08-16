@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"math/rand"
 
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -101,18 +100,9 @@ func NewAppModule(cdc codec.Codec, keeper keeper.Keeper) AppModule {
 // RegisterInvariants registers the module invariants.
 func (a AppModule) RegisterInvariants(_ sdk.InvariantRegistry) {}
 
-// Route returns the message routing key for the module.
-// Deprecated.
-func (AppModule) Route() sdk.Route { return sdk.Route{} }
-
 // QuerierRoute returns the module's querier route name.
 func (a AppModule) QuerierRoute() string {
 	return types.QuerierRoute
-}
-
-// LegacyQuerierHandler returns the staking module sdk.Querier.
-func (a AppModule) LegacyQuerierHandler(_ *codec.LegacyAmino) sdk.Querier {
-	return nil
 }
 
 // RegisterServices registers the module services.
@@ -158,11 +148,6 @@ func (a AppModule) GenerateGenesisState(_ *module.SimulationState) {}
 // ProposalContents doesn't return any content functions for governance proposals.
 func (a AppModule) ProposalContents(_ module.SimulationState) []simTypes.WeightedProposalContent {
 	return []simTypes.WeightedProposalContent{}
-}
-
-// RandomizedParams creates randomized param changes for the simulator.
-func (a AppModule) RandomizedParams(_ *rand.Rand) []simTypes.ParamChange {
-	return []simTypes.ParamChange{}
 }
 
 // RegisterStoreDecoder registers a decoder for the module's types.
