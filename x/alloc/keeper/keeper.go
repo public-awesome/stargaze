@@ -6,6 +6,7 @@ import (
 	"github.com/cometbft/cometbft/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -15,8 +16,8 @@ import (
 type (
 	Keeper struct {
 		cdc      codec.BinaryCodec
-		storeKey sdk.StoreKey
-		memKey   sdk.StoreKey
+		storeKey storetypes.StoreKey
+		memKey   storetypes.StoreKey
 
 		accountKeeper types.AccountKeeper
 		bankKeeper    types.BankKeeper
@@ -30,7 +31,7 @@ type (
 func NewKeeper(
 	cdc codec.BinaryCodec,
 	storeKey,
-	memKey sdk.StoreKey,
+	memKey storetypes.StoreKey,
 
 	accountKeeper types.AccountKeeper, bankKeeper types.BankKeeper, stakingKeeper types.StakingKeeper, distrKeeper types.DistrKeeper,
 	ps paramtypes.Subspace,
@@ -155,7 +156,7 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 // GetProportions gets the balance of the `MintedDenom` from minted coins
 // and returns coins according to the `AllocationRatio`
 func (k Keeper) GetProportions(_ sdk.Context, mintedCoin sdk.Coin, ratio sdk.Dec) sdk.Coin {
-	return sdk.NewCoin(mintedCoin.Denom, mintedCoin.Amount.ToDec().Mul(ratio).TruncateInt())
+	return sdk.NewCoin(mintedCoin.Denom, sdk.NewDecFromInt(mintedCoin.Amount).Mul(ratio).TruncateInt())
 }
 
 func (k Keeper) DistributeWeightedRewards(ctx sdk.Context, feeCollectorAddress sdk.AccAddress, totalAllocation sdk.Coin, accounts []types.WeightedAddress) error {
@@ -181,7 +182,7 @@ func (k Keeper) DistributeWeightedRewards(ctx sdk.Context, feeCollectorAddress s
 func (k Keeper) FundCommunityPool(ctx sdk.Context) error {
 	// If this account exists and has coins, fund the community pool.
 	// The address hardcoded here is randomly generated with no keypair behind it. It will be empty and unused after the genesis file is applied.
-	funder, err := sdk.AccAddressFromHex("7C4954EAE77FF15A4C67C5F821C5241008ED966F") // stars103y4f6h80lc45nr8chuzr3fyzqywm9n0gnr394
+	funder, err := sdk.AccAddressFromHexUnsafe("7C4954EAE77FF15A4C67C5F821C5241008ED966F") // stars103y4f6h80lc45nr8chuzr3fyzqywm9n0gnr394
 	if err != nil {
 		panic(err)
 	}
