@@ -11,7 +11,7 @@ require (
 	github.com/cosmos/cosmos-sdk v0.45.16
 	github.com/cosmos/go-bip39 v1.0.0
 	github.com/cosmos/gogoproto v1.4.6
-	github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v4 v4.0.0-20230706221408-3387cf8120aa
+	github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v4 v4.1.0
 	github.com/cosmos/ibc-go/v4 v4.4.2
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.5.3
@@ -29,7 +29,10 @@ require (
 	gopkg.in/yaml.v2 v2.4.0
 )
 
-require github.com/prometheus/client_golang v1.14.0
+require (
+	github.com/prometheus/client_golang v1.14.0
+	github.com/regen-network/cosmos-proto v0.3.1
+)
 
 require (
 	cosmossdk.io/api v0.2.6 // indirect
@@ -122,7 +125,6 @@ require (
 	github.com/prometheus/procfs v0.8.0 // indirect
 	github.com/rakyll/statik v0.1.7 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
-	github.com/regen-network/cosmos-proto v0.3.1 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/rs/cors v1.8.2 // indirect
 	github.com/rs/zerolog v1.27.0 // indirect
