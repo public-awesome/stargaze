@@ -3,7 +3,14 @@ package app
 import "strings"
 
 var wasmCapabilities = []string{
-	"iterator", "staking", "stargate", "stargaze", "cosmwasm_1_1", "token_factory",
+	"iterator",
+	"staking",
+	"stargate",
+	"stargaze",
+	"cosmwasm_1_1",
+	"cosmwasm_1_2",
+	"cosmwasm_1_2",
+	"token_factory",
 }
 
 func GetWasmCapabilities() string {
