@@ -10,7 +10,7 @@ import (
 	v3 "github.com/public-awesome/stargaze/v11/x/alloc/migrations/v3"
 	"github.com/public-awesome/stargaze/v11/x/alloc/types"
 	"github.com/stretchr/testify/require"
-	"github.com/tendermint/spm/cosmoscmd"
+
 	"github.com/tendermint/tendermint/libs/log"
 
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -20,17 +20,17 @@ import (
 )
 
 func TestStoreMigration(t *testing.T) {
-	encodingConfig := cosmoscmd.MakeEncodingConfig(stargazeapp.ModuleBasics)
+	encodingConfig := stargazeapp.MakeEncodingConfig()
 	allocKey := sdk.NewKVStoreKey(types.StoreKey)
 	transientAllocKey := sdk.NewTransientStoreKey("alloc_transient")
 	ctx := DefaultContext(allocKey, transientAllocKey)
-	paramstore := paramtypes.NewSubspace(encodingConfig.Marshaler, encodingConfig.Amino, allocKey, transientAllocKey, types.StoreKey)
+	paramstore := paramtypes.NewSubspace(encodingConfig.Codec, encodingConfig.Amino, allocKey, transientAllocKey, types.StoreKey)
 
 	// check it doesn't exist before
 	require.False(t, paramstore.Has(ctx, types.KeyIncentiveRewardsReceiver))
 	require.False(t, paramstore.Has(ctx, types.KeySupplementAmount))
 
-	err := v3.MigrateStore(ctx, allocKey, encodingConfig.Marshaler, paramstore)
+	err := v3.MigrateStore(ctx, allocKey, encodingConfig.Codec, paramstore)
 
 	require.NoError(t, err)
 

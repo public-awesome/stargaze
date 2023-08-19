@@ -13,7 +13,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
-	"github.com/tendermint/spm/cosmoscmd"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -34,12 +33,12 @@ func New(dir string) *stargazeapp.App {
 	db := tmdb.NewMemDB()
 	logger := log.NewNopLogger()
 
-	encoding := cosmoscmd.MakeEncodingConfig(stargazeapp.ModuleBasics)
+	encoding := stargazeapp.MakeEncodingConfig()
 
 	a := stargazeapp.NewStargazeApp(logger, db, nil, true, map[int64]bool{}, dir, 0, encoding,
 		simapp.EmptyAppOptions{}, stargazeapp.EmptyWasmOpts, stargazeapp.GetEnabledProposals())
 
-	stateBytes, err := json.MarshalIndent(stargazeapp.ModuleBasics.DefaultGenesis(encoding.Marshaler), "", " ")
+	stateBytes, err := json.MarshalIndent(stargazeapp.ModuleBasics.DefaultGenesis(encoding.Codec), "", " ")
 	if err != nil {
 		panic(err)
 	}
@@ -48,7 +47,7 @@ func New(dir string) *stargazeapp.App {
 		ConsensusParams: defaultConsensusParams,
 		AppStateBytes:   stateBytes,
 	})
-	return a.(*stargazeapp.App)
+	return a
 }
 
 var defaultConsensusParams = &abci.ConsensusParams{
@@ -70,13 +69,13 @@ var defaultConsensusParams = &abci.ConsensusParams{
 
 func setup(withGenesis bool, invCheckPeriod uint, dir string) (*stargazeapp.App, stargazeapp.GenesisState) {
 	db := tmdb.NewMemDB()
-	encoding := cosmoscmd.MakeEncodingConfig(stargazeapp.ModuleBasics)
+	encoding := stargazeapp.MakeEncodingConfig()
 	a := stargazeapp.NewStargazeApp(log.NewNopLogger(), db, nil, true,
 		map[int64]bool{}, dir, invCheckPeriod, encoding, simapp.EmptyAppOptions{}, stargazeapp.EmptyWasmOpts, stargazeapp.GetEnabledProposals())
 	if withGenesis {
-		return a.(*stargazeapp.App), stargazeapp.NewDefaultGenesisState(encoding.Marshaler)
+		return a, stargazeapp.NewDefaultGenesisState(encoding.Codec)
 	}
-	return a.(*stargazeapp.App), stargazeapp.GenesisState{}
+	return a, stargazeapp.GenesisState{}
 }
 
 // SetupWithGenesisValSet initializes a new SimApp with a validator set and genesis accounts
