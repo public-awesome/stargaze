@@ -33,7 +33,7 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 
 	if upgradeInfo.Name == upgradeName && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
 		storeUpgrades := store.StoreUpgrades{
-			Added: []string{packetforwardtypes.StoreKey},
+			Added:   []string{packetforwardtypes.StoreKey},
 			Deleted: []string{claimModuleName},
 		}
 		// configure store loader that checks if version == upgradeHeight and applies store upgrades
