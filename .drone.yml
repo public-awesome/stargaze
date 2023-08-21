@@ -416,14 +416,5 @@ volumes:
 
 ---
 kind: signature
-<<<<<<< HEAD
-<<<<<<< HEAD
-hmac: d9bfbbf56316f08a594d6ddb03edf316249c387f8dc7b0e954b8ff341f9cea50
-=======
-hmac: f2172a5221727acf22c0ac5531e5b21915d16d206d245ef29349918b1dba375e
->>>>>>> 5ea0417 (bump wasmd (#857))
-=======
 hmac: 02da8ca441f7bd076cdb9d309b9bbaedf0aa0f37d164254bcc15b72bcb9e904c
->>>>>>> b92a2fa (bump go version (#861))
-
 ...
