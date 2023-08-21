@@ -580,18 +580,11 @@ func NewStargazeApp(
 	registry.RegisterEncoder(sgwasm.DistributionRoute, sgwasm.CustomDistributionEncoder)
 	registry.RegisterEncoder(allocmoduletypes.ModuleName, allocwasm.Encoder)
 
-	// Wasm accepted Stargate Queries
-	acceptStargateQueriesList := wasmkeeper.AcceptedStargateQueries{
-		"/stargaze.tokenfactory.v1.Query/Params":                 &tokenfactorytypes.QueryParamsResponse{},
-		"/stargaze.tokenfactory.v1.Query/DenomAuthorityMetadata": &tokenfactorytypes.QueryDenomAuthorityMetadataResponse{},
-		"/stargaze.tokenfactory.v1.Query/DenomsFromCreator":      &tokenfactorytypes.QueryDenomsFromCreatorResponse{},
-	}
-
 	wasmOpts = append(
 		wasmOpts,
 		wasmkeeper.WithMessageEncoders(sgwasm.MessageEncoders(registry)),
 		wasmkeeper.WithQueryPlugins(&wasmkeeper.QueryPlugins{
-			Stargate: wasmkeeper.AcceptListStargateQuerier(acceptStargateQueriesList, app.GRPCQueryRouter(), appCodec),
+			Stargate: wasmkeeper.AcceptListStargateQuerier(AcceptedStargateQueries(), app.GRPCQueryRouter(), appCodec),
 		}),
 	)
 	app.WasmKeeper = wasm.NewKeeper(
