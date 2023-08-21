@@ -126,7 +126,10 @@ docker-test: build-linux
 test:
 	go test -v -race github.com/public-awesome/stargaze/v11/x/...
 
-.PHONY: test build-linux docker-test lint build install format
+test-e2e:
+	cd e2e && go test -v -race .
+
+.PHONY: test test-e2e build-linux docker-test lint build install format
 
 format:
 	gofumpt -l -w .
@@ -168,3 +171,20 @@ proto-format:
 
 proto-swagger-gen:
 	@./scripts/protoc-swagger-gen.sh
+
+###############################################################################
+###                                Heighliner                               ###
+###############################################################################
+get-heighliner:
+	git clone https://github.com/strangelove-ventures/heighliner.git
+	cd heighliner && go install
+	rm -rf heighliner/
+
+local-image:
+ifeq (,$(shell which heighliner))
+	echo 'heighliner' binary not found. Consider running 'make get-heighliner'
+else
+	heighliner build -c stargaze --local -f ./chains.yaml
+endif
+
+.PHONY: get-heighliner local-image

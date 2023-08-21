@@ -67,6 +67,7 @@ import (
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	packetforwardtypes "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v4/router/types"
 	"github.com/cosmos/ibc-go/v4/modules/apps/transfer"
 	ibctransferkeeper "github.com/cosmos/ibc-go/v4/modules/apps/transfer/keeper"
 	ibctransfertypes "github.com/cosmos/ibc-go/v4/modules/apps/transfer/types"
@@ -123,10 +124,12 @@ import (
 	globalfeemodulekeeper "github.com/public-awesome/stargaze/v11/x/globalfee/keeper"
 	globalfeemoduletypes "github.com/public-awesome/stargaze/v11/x/globalfee/types"
 
-	ibchooks "github.com/public-awesome/stargaze/v11/x/ibchooks"
+	"github.com/public-awesome/stargaze/v11/x/ibchooks"
 	ibchookskeeper "github.com/public-awesome/stargaze/v11/x/ibchooks/keeper"
 	ibchookstypes "github.com/public-awesome/stargaze/v11/x/ibchooks/types"
 
+	packetforward "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v4/router"
+	packetforwardkeeper "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v4/router/keeper"
 	//  ica
 	ica "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts"
 	icahost "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts/host"
@@ -226,6 +229,7 @@ var (
 		wasm.AppModuleBasic{},
 		ica.AppModuleBasic{},
 		ibchooks.AppModuleBasic{},
+		packetforward.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -320,6 +324,9 @@ type App struct {
 	Ics20WasmHooks   *ibchooks.WasmHooks
 	HooksICS4Wrapper ibchooks.ICS4Middleware
 
+	// IBC Packet Forward Middleware
+	PacketForwardKeeper *packetforwardkeeper.Keeper
+
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// the module manager
@@ -363,6 +370,7 @@ func NewStargazeApp(
 		icahosttypes.StoreKey,
 		globalfeemoduletypes.StoreKey,
 		ibchookstypes.StoreKey,
+		packetforwardtypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -496,13 +504,55 @@ func NewStargazeApp(
 
 	// Create Transfer Keepers
 	app.TransferKeeper = ibctransferkeeper.NewKeeper(
-		appCodec, keys[ibctransfertypes.StoreKey], app.GetSubspace(ibctransfertypes.ModuleName),
-		app.HooksICS4Wrapper, app.IBCKeeper.ChannelKeeper, &app.IBCKeeper.PortKeeper,
-		app.AccountKeeper, app.BankKeeper, scopedTransferKeeper,
+		appCodec,
+		keys[ibctransfertypes.StoreKey],
+		app.GetSubspace(ibctransfertypes.ModuleName),
+		app.HooksICS4Wrapper,
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
+		app.AccountKeeper,
+		app.BankKeeper,
+		scopedTransferKeeper,
 	)
+
+	// Initialize the packet forward middleware Keeper
+	app.PacketForwardKeeper = packetforwardkeeper.NewKeeper(
+		appCodec,
+		app.keys[packetforwardtypes.StoreKey],
+		app.GetSubspace(packetforwardtypes.ModuleName),
+		app.TransferKeeper,
+		app.IBCKeeper.ChannelKeeper,
+		app.DistrKeeper,
+		app.BankKeeper,
+		// The ICS4Wrapper is replaced by the HooksICS4Wrapper instead of the channel so that sending can be overridden by the middleware
+		app.HooksICS4Wrapper,
+	)
+
 	transferModule := transfer.NewAppModule(app.TransferKeeper)
+
+	/*
+		Create Transfer Stack, execution flow of packets between the application stack and IBC core is described below.
+
+		SendPacket, since it is originating from the application to core IBC:
+		transferKeeper.SendPacket -> ibc-hooks.SendPacket -> channel.SendPacket
+
+		RecvPacket, message that originates from core IBC and goes down to app, the flow is the other way:
+		channel.RecvPacket -> ibc-hooks.OnRecvPacket -> packetforward.OnRecvPacket -> transfer.OnRecvPacket
+
+		transfer stack contains (from top to bottom):
+		- IBC Hooks
+		- Packet Forward Middleware
+		- Transfer Module
+	*/
 	var transferStack ibcporttypes.IBCModule
 	transferStack = transfer.NewIBCModule(app.TransferKeeper)
+	transferStack = packetforward.NewIBCMiddleware(
+		transferStack,
+		app.PacketForwardKeeper,
+		0, // retries on timeout
+		packetforwardkeeper.DefaultForwardTransferPacketTimeoutTimestamp, // forward timeout
+		packetforwardkeeper.DefaultRefundTransferPacketTimeoutTimestamp,  // refund timeout
+	)
 	transferStack = ibchooks.NewIBCMiddleware(transferStack, &app.HooksICS4Wrapper)
 
 	app.ICAHostKeeper = icahostkeeper.NewKeeper(
@@ -672,6 +722,7 @@ func NewStargazeApp(
 		globalfeeModule,
 		ibchooks.NewAppModule(app.AccountKeeper),
 		tokenfactory.NewAppModule(app.TokenFactoryKeeper, app.AccountKeeper, app.BankKeeper),
+		packetforward.NewAppModule(app.PacketForwardKeeper),
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -694,6 +745,7 @@ func NewStargazeApp(
 		globalfeemoduletypes.ModuleName,
 		ibchookstypes.ModuleName,
 		tokenfactorytypes.ModuleName,
+		packetforwardtypes.ModuleName,
 	)
 
 	app.mm.SetOrderEndBlockers(
@@ -711,6 +763,7 @@ func NewStargazeApp(
 		globalfeemoduletypes.ModuleName,
 		ibchookstypes.ModuleName,
 		tokenfactorytypes.ModuleName,
+		packetforwardtypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -744,6 +797,7 @@ func NewStargazeApp(
 		cronmoduletypes.ModuleName,
 		globalfeemoduletypes.ModuleName, // should be after wasm
 		ibchookstypes.ModuleName,
+		packetforwardtypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -981,6 +1035,7 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(cronmoduletypes.ModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(globalfeemoduletypes.ModuleName)
+	paramsKeeper.Subspace(packetforwardtypes.ModuleName).WithKeyTable(packetforwardtypes.ParamKeyTable())
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper
