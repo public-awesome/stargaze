@@ -9,9 +9,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	allocmoduletypes "github.com/public-awesome/stargaze/v11/x/alloc/types"
-	ibchooks "github.com/public-awesome/stargaze/v11/x/ibchooks/types"
-	tokenfactorytypes "github.com/public-awesome/stargaze/v11/x/tokenfactory/types"
+	allocmoduletypes "github.com/public-awesome/stargaze/v12/x/alloc/types"
+	ibchooks "github.com/public-awesome/stargaze/v12/x/ibchooks/types"
+	tokenfactorytypes "github.com/public-awesome/stargaze/v12/x/tokenfactory/types"
 )
 
 // next upgrade name

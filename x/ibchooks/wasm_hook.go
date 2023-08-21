@@ -7,8 +7,8 @@ import (
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-	"github.com/public-awesome/stargaze/v11/x/ibchooks/keeper"
-	"github.com/public-awesome/stargaze/v11/x/ibchooks/types"
+	"github.com/public-awesome/stargaze/v12/x/ibchooks/keeper"
+	"github.com/public-awesome/stargaze/v12/x/ibchooks/types"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
