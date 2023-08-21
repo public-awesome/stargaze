@@ -87,9 +87,16 @@ jobs:
     with:
       test-matrix: 'interchain_test/icad.matrix.json'
 
+  run_pfm_interchaintest:
+    name: pfm ⏩
+    needs: [build_sg_image]
+    uses: ./.github/workflows/interchaintest_custom_runner.yml
+    with:
+      test-cmd: 'test-pfm'
+
   cleanup:
     name: Delete artifacts 🗑️
-    needs: [run_gaia_interchaintest,run_osmosis_interchaintest,run_icad_interchaintest]
+    needs: [run_gaia_interchaintest,run_osmosis_interchaintest,run_icad_interchaintest,run_pfm_interchaintest]
     runs-on: ubuntu-latest
 
     steps:
