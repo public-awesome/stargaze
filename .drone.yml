@@ -77,12 +77,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - v11.0.0-beta.2
+        - 12.0.0-alpha.1
     when:
       event:
         - push
       branch:
-        - jhernandezb/remove-spm-dep
+        - jhernandezb/v12-upgrade
   - name: docker_release
     image: plugins/docker
     settings:
@@ -244,7 +244,7 @@ steps:
 
 trigger:
   branch:
-    - main
+    - release/v12.x
   event:
     - pull_request
     - push
@@ -313,7 +313,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:10.0.1
+    image: publicawesome/stargaze:11.0.0
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
@@ -345,12 +345,12 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: proposal
-    image: publicawesome/stargaze:10.0.1
+    image: publicawesome/stargaze:11.0.0
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:v11.0.0-beta.2
+    image: publicawesome/stargaze:12.0.0-alpha.1
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -367,18 +367,6 @@ steps:
         - http://gaia:26657
         - http://osmosis:26657
         - http://icad:26657
-  - name: check-params
-    pull: always
-    image: publicawesome/stargaze:v11.0.0-beta.2
-    commands:
-      - starsd q mint params --node http://stargaze-upgraded:26657
-      - starsd q alloc params --node http://stargaze-upgraded:26657
-      - starsd q tokenfactory params --node http://stargaze-upgraded:26657
-      - starsd q bank balances stars1mnyrspq208uv5m2krdctan2dkyht0szje9s43h --node http://stargaze-upgraded:26657
-      - starsd q bank balances stars103y4f6h80lc45nr8chuzr3fyzqywm9n0gnr394 --node http://stargaze-upgraded:26657
-      - starsd q distribution community-pool --node http://stargaze-upgraded:26657
-    environment:
-      GOPROXY: http://goproxy
   - name: relayer-upgrade-start
     image: publicawesome/hermes:0.15.0
     commands:
@@ -405,7 +393,7 @@ steps:
 
 trigger:
   branch:
-    - main
+    - release/v12.x
   event:
     - pull_request
     - push
@@ -416,6 +404,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 080a970b32e1116f813eb85afec92aa95a77ec11f20da1baafc48d40a9a99c6f
+hmac: a41a2d807eb0a057b55afc2f3a5addc67d3df8923eca45ce85d548a495b01a25
 
 ...
