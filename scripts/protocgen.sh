@@ -17,5 +17,5 @@ cd ..
 
 
 # move proto files to the right places
-cp -r github.com/public-awesome/stargaze/v11/* ./
+cp -r github.com/public-awesome/stargaze/v12/* ./
 rm -rf github.com
