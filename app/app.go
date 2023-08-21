@@ -126,6 +126,7 @@ import (
 
 	packetforward "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v4/router"
 	packetforwardkeeper "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v4/router/keeper"
+
 	//  ica
 	ica "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts"
 	icahost "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts/host"
@@ -579,18 +580,11 @@ func NewStargazeApp(
 	registry.RegisterEncoder(sgwasm.DistributionRoute, sgwasm.CustomDistributionEncoder)
 	registry.RegisterEncoder(allocmoduletypes.ModuleName, allocwasm.Encoder)
 
-	// Wasm accepted Stargate Queries
-	acceptStargateQueriesList := wasmkeeper.AcceptedStargateQueries{
-		"/stargaze.tokenfactory.v1.Query/Params":                 &tokenfactorytypes.QueryParamsResponse{},
-		"/stargaze.tokenfactory.v1.Query/DenomAuthorityMetadata": &tokenfactorytypes.QueryDenomAuthorityMetadataResponse{},
-		"/stargaze.tokenfactory.v1.Query/DenomsFromCreator":      &tokenfactorytypes.QueryDenomsFromCreatorResponse{},
-	}
-
 	wasmOpts = append(
 		wasmOpts,
 		wasmkeeper.WithMessageEncoders(sgwasm.MessageEncoders(registry)),
 		wasmkeeper.WithQueryPlugins(&wasmkeeper.QueryPlugins{
-			Stargate: wasmkeeper.AcceptListStargateQuerier(acceptStargateQueriesList, app.GRPCQueryRouter(), appCodec),
+			Stargate: wasmkeeper.AcceptListStargateQuerier(AcceptedStargateQueries(), app.GRPCQueryRouter(), appCodec),
 		}),
 	)
 	app.WasmKeeper = wasm.NewKeeper(
@@ -601,6 +595,7 @@ func NewStargazeApp(
 		app.BankKeeper,
 		app.StakingKeeper,
 		app.DistrKeeper,
+		app.IBCKeeper.ChannelKeeper,
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedWasmKeeper,
