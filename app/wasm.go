@@ -9,7 +9,7 @@ var wasmCapabilities = []string{
 	"stargaze",
 	"cosmwasm_1_1",
 	"cosmwasm_1_2",
-	"cosmwasm_1_2",
+	"cosmwasm_1_3",
 	"token_factory",
 }
 
