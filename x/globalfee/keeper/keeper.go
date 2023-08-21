@@ -7,7 +7,7 @@ import (
 	paramTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/tendermint/tendermint/libs/log"
 
-	"github.com/public-awesome/stargaze/v11/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v12/x/globalfee/types"
 )
 
 // Keeper provides module state operations.
