@@ -25,6 +25,7 @@ func AcceptedStargateQueries() wasmkeeper.AcceptedStargateQueries {
 		"/osmosis.tokenfactory.v1beta1.Query/DenomsFromCreator":      &tokenfactorytypes.QueryDenomsFromCreatorResponse{},
 	}
 }
+
 func GetWasmCapabilities() string {
 	return strings.Join(wasmCapabilities, ",")
 }
