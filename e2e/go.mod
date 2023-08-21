@@ -8,7 +8,10 @@ replace (
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.27
 	github.com/vedhavyas/go-subkey => github.com/strangelove-ventures/go-subkey v1.0.7
+
 )
+
+require github.com/strangelove-ventures/interchaintest/v4 v4.0.0-20230811171218-1d88910b4bc0
 
 require (
 	cosmossdk.io/api v0.2.6 // indirect
@@ -121,7 +124,6 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.15.0 // indirect
-	github.com/strangelove-ventures/interchaintest/v4 v4.0.0-20230628165518-1f80499fa0cd // indirect
 	github.com/stretchr/testify v1.8.4 // indirect
 	github.com/subosito/gotenv v1.4.2 // indirect
 	github.com/syndtr/goleveldb v1.0.1-0.20220721030215-126854af5e6d // indirect
