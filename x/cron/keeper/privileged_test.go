@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v11/testutil/keeper"
-	"github.com/public-awesome/stargaze/v11/testutil/sample"
+	"github.com/public-awesome/stargaze/v12/testutil/keeper"
+	"github.com/public-awesome/stargaze/v12/testutil/sample"
 )
 
 func Test_SetPrivileged(t *testing.T) {
