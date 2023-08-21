@@ -8,9 +8,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v11/x/cron/contract"
-	"github.com/public-awesome/stargaze/v11/x/cron/keeper"
-	"github.com/public-awesome/stargaze/v11/x/cron/types"
+	"github.com/public-awesome/stargaze/v12/x/cron/contract"
+	"github.com/public-awesome/stargaze/v12/x/cron/keeper"
+	"github.com/public-awesome/stargaze/v12/x/cron/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 )
