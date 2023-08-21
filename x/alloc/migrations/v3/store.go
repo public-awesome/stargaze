@@ -5,7 +5,7 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/public-awesome/stargaze/v11/x/alloc/types"
+	"github.com/public-awesome/stargaze/v12/x/alloc/types"
 )
 
 // MigrateStore performs in-place store migrations from v2 to v3
