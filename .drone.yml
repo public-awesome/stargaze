@@ -33,7 +33,7 @@ steps:
       branch: no-cache
 
   - name: test
-    image: publicawesome/golang:1.20.4-devtooling
+    image: publicawesome/golang:1.21.0-devtooling
     volumes:
       - name: cache
         path: /go
@@ -42,7 +42,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: build
-    image: golang:1.20.4-alpine3.17
+    image: golang:1.21.0-alpine3.17
     volumes:
       - name: cache
         path: /go
@@ -98,7 +98,7 @@ steps:
         - tag
 
   - name: release
-    image: golang:1.20.4
+    image: golang:1.21.0
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -193,7 +193,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/golang:1.20.4-devtooling
+    image: publicawesome/golang:1.21.0-devtooling
     volumes:
       - name: cache
         path: /go
@@ -280,7 +280,7 @@ steps:
     when:
       branch: no-cache
   - name: build-wrapper
-    image: publicawesome/golang:1.20.4-devtooling
+    image: publicawesome/golang:1.21.0-devtooling
     volumes:
       - name: cache
         path: /go
@@ -417,9 +417,13 @@ volumes:
 ---
 kind: signature
 <<<<<<< HEAD
+<<<<<<< HEAD
 hmac: d9bfbbf56316f08a594d6ddb03edf316249c387f8dc7b0e954b8ff341f9cea50
 =======
 hmac: f2172a5221727acf22c0ac5531e5b21915d16d206d245ef29349918b1dba375e
 >>>>>>> 5ea0417 (bump wasmd (#857))
+=======
+hmac: 02da8ca441f7bd076cdb9d309b9bbaedf0aa0f37d164254bcc15b72bcb9e904c
+>>>>>>> b92a2fa (bump go version (#861))
 
 ...
