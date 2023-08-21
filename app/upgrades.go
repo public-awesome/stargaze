@@ -21,7 +21,6 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 			return nil, err
 		}
 		return migrations, nil
-
 	})
 
 	upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
