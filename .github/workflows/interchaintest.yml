@@ -93,6 +93,13 @@ jobs:
     uses: ./.github/workflows/interchaintest_custom_runner.yml
     with:
       test-cmd: 'test-pfm'
+  
+  run_chain_upgrade_interchaintest:
+    name: upgrade 🆙
+    needs: [build_sg_image]
+    uses: ./.github/workflows/interchaintest_custom_runner.yml
+    with:
+      test-cmd: 'test-chain-upgrade'
 
   cleanup:
     name: Delete artifacts 🗑️
