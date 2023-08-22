@@ -126,6 +126,7 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 func addModuleInitFlags(startCmd *cobra.Command) {
 	crisis.AddModuleInitFlags(startCmd)
 	wasm.AddModuleInitFlags(startCmd)
+	startCmd.PreRunE = chainPreRuns(CheckLibwasmVersion, startCmd.PreRunE)
 }
 
 func queryCommand() *cobra.Command {
