@@ -129,6 +129,9 @@ test:
 test-pfm:
 	cd e2e && go test -v -race -run TestPacketForwardMiddleware .
 
+test-chain-upgrade:
+	cd e2e && go test -v -race -run TestChainUpgrade .
+
 .PHONY: test test-e2e build-linux docker-test lint build install format
 
 format:
