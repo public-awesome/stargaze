@@ -141,13 +141,15 @@ func TestMinCommissionAuthzAnteHandler(t *testing.T) {
 
 	auth1 := authz.NewGenericAuthorization("/cosmos.staking.v1beta1.MsgCreateValidator")
 
-	msg1, err := authz.NewMsgGrant(addr1, addr2, auth1, time.Now().Add(time.Hour*72))
+	authzExpiration := time.Now().Add(time.Hour * 72)
+	msg1, err := authz.NewMsgGrant(addr1, addr2, auth1, &authzExpiration)
 	require.NotNil(t, msg1)
 	require.NoError(t, err)
 
 	auth2 := authz.NewGenericAuthorization("/cosmos.staking.v1beta1.MsgEditValidator")
 
-	msg2, err := authz.NewMsgGrant(addr1, addr2, auth2, time.Now().Add(time.Hour*72))
+	authzExpiration = time.Now().Add(time.Hour * 72)
+	msg2, err := authz.NewMsgGrant(addr1, addr2, auth2, &authzExpiration)
 	require.NoError(t, err)
 
 	header := tmproto.Header{Height: app.LastBlockHeight() + 1}

@@ -9,7 +9,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	stargazeapp "github.com/public-awesome/stargaze/v11/app"
 	"github.com/public-awesome/stargaze/v11/testutil/simapp"
 	"github.com/stretchr/testify/require"
@@ -52,7 +52,8 @@ func TestMinDepositDecorator(t *testing.T) {
 	params.MinDeposit = sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(5_000_000_000)))
 	app.GovKeeper.SetDepositParams(ctx, params)
 	app.Commit()
-	content := govtypes.ContentFromProposalType("Prop Title", "Description", govtypes.ProposalTypeText)
+	content, found := govtypes.ContentFromProposalType("Prop Title", "Description", govtypes.ProposalTypeText)
+	require.True(t, found)
 
 	createProposalMsg, err := govtypes.NewMsgSubmitProposal(content, sdk.NewCoins(bondCoin), addr1)
 
