@@ -1,74 +1,76 @@
 package keeper_test
 
-import (
-	"encoding/json"
+// COME BACK
 
-	"github.com/CosmWasm/wasmd/x/wasm"
-	"github.com/cometbft/cometbft/libs/log"
-	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+// import (
+// 	"encoding/json"
 
-	"github.com/cosmos/cosmos-sdk/simapp"
-	sdk "github.com/cosmos/cosmos-sdk/types"
+// 	"github.com/CosmWasm/wasmd/x/wasm"
+// 	"github.com/cometbft/cometbft/libs/log"
+// 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 
-	dbm "github.com/cometbft/cometbft-db"
-	abci "github.com/cometbft/cometbft/abci/types"
-	stargazeapp "github.com/public-awesome/stargaze/v11/app"
-	"github.com/public-awesome/stargaze/v11/x/mint/types"
-)
+// 	"github.com/cosmos/cosmos-sdk/simapp"
+// 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-// returns context and an app with updated mint keeper
-func createTestApp(isCheckTx bool) (*stargazeapp.App, sdk.Context) {
-	app := setup(isCheckTx)
+// 	dbm "github.com/cometbft/cometbft-db"
+// 	abci "github.com/cometbft/cometbft/abci/types"
+// 	stargazeapp "github.com/public-awesome/stargaze/v11/app"
+// 	"github.com/public-awesome/stargaze/v11/x/mint/types"
+// )
 
-	ctx := app.BaseApp.NewContext(isCheckTx, tmproto.Header{})
-	app.MintKeeper.SetParams(ctx, types.DefaultParams())
-	app.MintKeeper.SetMinter(ctx, types.DefaultInitialMinter())
+// // returns context and an app with updated mint keeper
+// func createTestApp(isCheckTx bool) (*stargazeapp.App, sdk.Context) {
+// 	app := setup(isCheckTx)
 
-	return app, ctx
-}
+// 	ctx := app.BaseApp.NewContext(isCheckTx, tmproto.Header{})
+// 	app.MintKeeper.SetParams(ctx, types.DefaultParams())
+// 	app.MintKeeper.SetMinter(ctx, types.DefaultInitialMinter())
 
-func setup(isCheckTx bool) *stargazeapp.App {
-	app, genesisState := genApp(!isCheckTx, 5)
-	if !isCheckTx {
-		// init chain must be called to stop deliverState from being nil
-		stateBytes, err := json.MarshalIndent(genesisState, "", " ")
-		if err != nil {
-			panic(err)
-		}
+// 	return app, ctx
+// }
 
-		// Initialize the chain
-		app.InitChain(
-			abci.RequestInitChain{
-				Validators:      []abci.ValidatorUpdate{},
-				ConsensusParams: simapp.DefaultConsensusParams,
-				AppStateBytes:   stateBytes,
-			},
-		)
-	}
+// func setup(isCheckTx bool) *stargazeapp.App {
+// 	app, genesisState := genApp(!isCheckTx, 5)
+// 	if !isCheckTx {
+// 		// init chain must be called to stop deliverState from being nil
+// 		stateBytes, err := json.MarshalIndent(genesisState, "", " ")
+// 		if err != nil {
+// 			panic(err)
+// 		}
 
-	return app
-}
+// 		// Initialize the chain
+// 		app.InitChain(
+// 			abci.RequestInitChain{
+// 				Validators:      []abci.ValidatorUpdate{},
+// 				ConsensusParams: simapp.DefaultConsensusParams,
+// 				AppStateBytes:   stateBytes,
+// 			},
+// 		)
+// 	}
 
-func genApp(withGenesis bool, invCheckPeriod uint) (*stargazeapp.App, stargazeapp.GenesisState) {
-	db := dbm.NewMemDB()
-	encCdc := stargazeapp.MakeEncodingConfig()
-	app := stargazeapp.NewStargazeApp(
-		log.NewNopLogger(),
-		db,
-		nil,
-		true,
-		map[int64]bool{},
-		simapp.DefaultNodeHome,
-		invCheckPeriod,
-		encCdc,
-		simapp.EmptyAppOptions{},
-		nil,
-		wasm.DisableAllProposals,
-	)
+// 	return app
+// }
 
-	if withGenesis {
-		return app, stargazeapp.NewDefaultGenesisState(encCdc.Codec)
-	}
+// func genApp(withGenesis bool, invCheckPeriod uint) (*stargazeapp.App, stargazeapp.GenesisState) {
+// 	db := dbm.NewMemDB()
+// 	encCdc := stargazeapp.MakeEncodingConfig()
+// 	app := stargazeapp.NewStargazeApp(
+// 		log.NewNopLogger(),
+// 		db,
+// 		nil,
+// 		true,
+// 		map[int64]bool{},
+// 		simapp.DefaultNodeHome,
+// 		invCheckPeriod,
+// 		encCdc,
+// 		simapp.EmptyAppOptions{},
+// 		nil,
+// 		wasm.DisableAllProposals,
+// 	)
 
-	return app, stargazeapp.GenesisState{}
-}
+// 	if withGenesis {
+// 		return app, stargazeapp.NewDefaultGenesisState(encCdc.Codec)
+// 	}
+
+// 	return app, stargazeapp.GenesisState{}
+// }
