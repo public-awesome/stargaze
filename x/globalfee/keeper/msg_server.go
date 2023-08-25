@@ -4,8 +4,8 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
+	errorsmod "cosmossdk.io/errors"
 	"github.com/public-awesome/stargaze/v11/x/globalfee/types"
 )
 
@@ -28,7 +28,7 @@ func (k msgServer) SetCodeAuthorization(goCtx context.Context, msg *types.MsgSet
 		return nil, err
 	}
 	if !k.IsPrivilegedAddress(ctx, msg.Sender) {
-		return nil, sdkerrors.Wrap(types.ErrUnauthorized, "sender address is not privileged address")
+		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender address is not privileged address")
 	}
 	err = k.Keeper.SetCodeAuthorization(ctx, *msg.CodeAuthorization)
 	if err != nil {
@@ -44,7 +44,7 @@ func (k msgServer) RemoveCodeAuthorization(goCtx context.Context, msg *types.Msg
 		return nil, err
 	}
 	if !k.IsPrivilegedAddress(ctx, msg.Sender) {
-		return nil, sdkerrors.Wrap(types.ErrUnauthorized, "sender address is not privileged address")
+		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender address is not privileged address")
 	}
 	k.Keeper.DeleteCodeAuthorization(ctx, msg.GetCodeID())
 	return &types.MsgRemoveCodeAuthorizationResponse{}, nil
@@ -57,7 +57,7 @@ func (k msgServer) SetContractAuthorization(goCtx context.Context, msg *types.Ms
 		return nil, err
 	}
 	if !k.IsPrivilegedAddress(ctx, msg.Sender) {
-		return nil, sdkerrors.Wrap(types.ErrUnauthorized, "sender address is not privileged address")
+		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender address is not privileged address")
 	}
 	err = k.Keeper.SetContractAuthorization(ctx, *msg.ContractAuthorization)
 	if err != nil {
@@ -73,7 +73,7 @@ func (k msgServer) RemoveContractAuthorization(goCtx context.Context, msg *types
 		return nil, err
 	}
 	if !k.IsPrivilegedAddress(ctx, msg.Sender) {
-		return nil, sdkerrors.Wrap(types.ErrUnauthorized, "sender address is not privileged address")
+		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender address is not privileged address")
 	}
 	contractAddr, err := sdk.AccAddressFromBech32(msg.ContractAddress)
 	if err != nil {

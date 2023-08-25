@@ -3,8 +3,8 @@ package types
 import (
 	"strings"
 
+	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	legacygovtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 )
@@ -44,7 +44,7 @@ func (p PromoteToPrivilegedContractProposal) ValidateBasic() error {
 		return err
 	}
 	if _, err := sdk.AccAddressFromBech32(p.Contract); err != nil {
-		return sdkerrors.Wrap(err, "contract")
+		return errorsmod.Wrap(err, "contract")
 	}
 	return nil
 }
@@ -68,7 +68,7 @@ func (p DemotePrivilegedContractProposal) ValidateBasic() error {
 		return err
 	}
 	if _, err := sdk.AccAddressFromBech32(p.Contract); err != nil {
-		return sdkerrors.Wrap(err, "contract")
+		return errorsmod.Wrap(err, "contract")
 	}
 	return nil
 }
@@ -81,22 +81,22 @@ func (p DemotePrivilegedContractProposal) MarshalYAML() (interface{}, error) {
 // common validations
 func validateProposalCommons(title, description string) error {
 	if strings.TrimSpace(title) != title {
-		return sdkerrors.Wrap(govtypes.ErrInvalidProposalContent, "proposal title must not start/end with white spaces")
+		return errorsmod.Wrap(govtypes.ErrInvalidProposalContent, "proposal title must not start/end with white spaces")
 	}
 	if len(title) == 0 {
-		return sdkerrors.Wrap(govtypes.ErrInvalidProposalContent, "proposal title cannot be blank")
+		return errorsmod.Wrap(govtypes.ErrInvalidProposalContent, "proposal title cannot be blank")
 	}
 	if len(title) > legacygovtypes.MaxTitleLength {
-		return sdkerrors.Wrapf(govtypes.ErrInvalidProposalContent, "proposal title is longer than max length of %d", legacygovtypes.MaxTitleLength)
+		return errorsmod.Wrapf(govtypes.ErrInvalidProposalContent, "proposal title is longer than max length of %d", legacygovtypes.MaxTitleLength)
 	}
 	if strings.TrimSpace(description) != description {
-		return sdkerrors.Wrap(govtypes.ErrInvalidProposalContent, "proposal description must not start/end with white spaces")
+		return errorsmod.Wrap(govtypes.ErrInvalidProposalContent, "proposal description must not start/end with white spaces")
 	}
 	if len(description) == 0 {
-		return sdkerrors.Wrap(govtypes.ErrInvalidProposalContent, "proposal description cannot be blank")
+		return errorsmod.Wrap(govtypes.ErrInvalidProposalContent, "proposal description cannot be blank")
 	}
 	if len(description) > legacygovtypes.MaxDescriptionLength {
-		return sdkerrors.Wrapf(govtypes.ErrInvalidProposalContent, "proposal description is longer than max length of %d", legacygovtypes.MaxDescriptionLength)
+		return errorsmod.Wrapf(govtypes.ErrInvalidProposalContent, "proposal description is longer than max length of %d", legacygovtypes.MaxDescriptionLength)
 	}
 	return nil
 }

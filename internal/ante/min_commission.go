@@ -5,6 +5,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
+	errorsmod "cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
@@ -24,7 +25,7 @@ func checkCommission(m sdk.Msg) error {
 	case *stakingtypes.MsgCreateValidator:
 		c := msg.Commission
 		if c.Rate.LT(sdk.NewDecWithPrec(5, 2)) {
-			return sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "commission can not be lower than 5%")
+			return errorsmod.Wrap(sdkerrors.ErrUnauthorized, "commission can not be lower than 5%")
 		}
 	case *stakingtypes.MsgEditValidator:
 		// if commission rate is nil, it means only other fields are being update and we must skip this validation
@@ -32,7 +33,7 @@ func checkCommission(m sdk.Msg) error {
 			return nil
 		}
 		if msg.CommissionRate.LT(sdk.NewDecWithPrec(5, 2)) {
-			return sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "commission can not be lower than 5%")
+			return errorsmod.Wrap(sdkerrors.ErrUnauthorized, "commission can not be lower than 5%")
 		}
 	default:
 		return nil
@@ -50,7 +51,7 @@ func (dec MinCommissionDecorator) Validate(m sdk.Msg) error {
 			var wrappedMsg sdk.Msg
 			err := dec.codec.UnpackAny(v, &wrappedMsg)
 			if err != nil {
-				return sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "error decoding authz messages")
+				return errorsmod.Wrapf(sdkerrors.ErrUnauthorized, "error decoding authz messages")
 			}
 			err = checkCommission(wrappedMsg)
 			if err != nil {

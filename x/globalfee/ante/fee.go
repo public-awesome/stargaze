@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 
+	errorsmod "cosmossdk.io/errors"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -42,7 +43,7 @@ func NewFeeDecorator(codec codec.BinaryCodec, fk GlobalFeeReaderExpected, sk Sta
 func (mfd FeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (newCtx sdk.Context, err error) {
 	feeTx, ok := tx.(sdk.FeeTx)
 	if !ok {
-		return ctx, sdkerrors.Wrap(sdkerrors.ErrTxDecode, "Tx must implement the sdk.FeeTx interface")
+		return ctx, errorsmod.Wrap(sdkerrors.ErrTxDecode, "Tx must implement the sdk.FeeTx interface")
 	}
 
 	// Only check for minimum fees and global fee if the execution mode is CheckTx
@@ -140,7 +141,7 @@ func (mfd FeeDecorator) checkFees(ctx sdk.Context, feeTx sdk.FeeTx, tx sdk.Tx, o
 	// global fee is set to its default value, i.e. 0ustars, if empty
 	combinedFeeRequired := combinedFeeRequirement(requiredGlobalFees, localFees)
 	if len(combinedFeeRequired) == 0 {
-		return ctx, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "required fees are not setup.")
+		return ctx, errorsmod.Wrapf(sdkerrors.ErrNotFound, "required fees are not setup.")
 	}
 
 	nonZeroCoinFeesReq, zeroCoinFeesDenomReq := getNonZeroFees(combinedFeeRequired)
@@ -156,7 +157,7 @@ func (mfd FeeDecorator) checkFees(ctx sdk.Context, feeTx sdk.FeeTx, tx sdk.Tx, o
 	// if feeCoinsNoZeroDenom=[], DenomsSubsetOf returns true
 	// if feeCoinsNoZeroDenom is not empty, but nonZeroCoinFeesReq empty, return false
 	if !feeCoinsNonZeroDenom.DenomsSubsetOf(nonZeroCoinFeesReq) {
-		return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "fee is not a subset of required fees; got %s, required: %s", feeCoins, combinedFeeRequired)
+		return ctx, errorsmod.Wrapf(sdkerrors.ErrInsufficientFee, "fee is not a subset of required fees; got %s, required: %s", feeCoins, combinedFeeRequired)
 	}
 
 	// only check feeCoinsNoZeroDenom has coins IsAnyGTE than nonZeroCoinFeesReq
@@ -176,7 +177,7 @@ func (mfd FeeDecorator) checkFees(ctx sdk.Context, feeTx sdk.FeeTx, tx sdk.Tx, o
 		// because when nonZeroCoinFeesReq empty, and DenomsSubsetOf check passed,
 		// the tx should already passed before)
 		if !feeCoinsNonZeroDenom.IsAnyGTE(nonZeroCoinFeesReq) {
-			return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, combinedFeeRequired)
+			return ctx, errorsmod.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, combinedFeeRequired)
 		}
 	}
 

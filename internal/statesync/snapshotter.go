@@ -74,7 +74,7 @@ package statesync
 // 			if err == io.EOF {
 // 				break
 // 			} else if err != nil {
-// 				return snapshot.SnapshotItem{}, sdkerrors.Wrap(err, "invalid protobuf message")
+// 				return snapshot.SnapshotItem{}, errorsmod.Wrap(err, "invalid protobuf message")
 // 			}
 // 			payload := item.GetExtensionPayload()
 // 			if payload == nil {

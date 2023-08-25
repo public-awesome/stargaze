@@ -7,6 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
+	errorsmod "cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
@@ -35,7 +36,7 @@ func (dec MinDepositDecorator) checkDeposit(ctx sdk.Context, m sdk.Msg) error {
 			minDepositAmount := sdk.NewDecFromInt(minDeposit.Amount).Mul(minDepositRatio).RoundInt()
 			initialDeposit := msg.GetInitialDeposit()
 			if initialDeposit.AmountOf(minDeposit.Denom).LT(minDepositAmount) {
-				return sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("min deposit cannot be lower than %s %s", minDepositAmount.String(), minDeposit.GetDenom()))
+				return errorsmod.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("min deposit cannot be lower than %s %s", minDepositAmount.String(), minDeposit.GetDenom()))
 			}
 		}
 	default:
@@ -54,7 +55,7 @@ func (dec MinDepositDecorator) Validate(ctx sdk.Context, m sdk.Msg) error {
 			var wrappedMsg sdk.Msg
 			err := dec.codec.UnpackAny(v, &wrappedMsg)
 			if err != nil {
-				return sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "error decoding authz messages")
+				return errorsmod.Wrapf(sdkerrors.ErrUnauthorized, "error decoding authz messages")
 			}
 			err = dec.checkDeposit(ctx, wrappedMsg)
 			if err != nil {
