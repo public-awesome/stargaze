@@ -11,7 +11,7 @@ import (
 )
 
 // next upgrade name
-const upgradeName = "v12"
+const upgradeName = "v13"
 
 const claimModuleName = "claim"
 
