@@ -76,7 +76,6 @@ func (server msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.
 	})
 
 	return &types.MsgMintResponse{}, nil
-
 }
 
 func (server msgServer) Burn(goCtx context.Context, msg *types.MsgBurn) (*types.MsgBurnResponse, error) {
