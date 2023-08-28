@@ -66,7 +66,12 @@ func (m MsgMint) Type() string  { return TypeMsgMint }
 func (m MsgMint) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(m.Sender)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid sender address (%s)", err)
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid sender address (%s)", err)
+	}
+
+	_, err = sdk.AccAddressFromBech32(m.MintToAddress)
+	if m.MintToAddress != "" && err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid mint_to_address address (%s)", err)
 	}
 
 	if !m.Amount.IsValid() || m.Amount.Amount.Equal(sdk.ZeroInt()) {
