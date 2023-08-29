@@ -139,6 +139,22 @@ func TestMsgMint(t *testing.T) {
 			}),
 			expectPass: false,
 		},
+		{
+			name: "proper msg with mint_to",
+			msg: createMsg(func(msg types.MsgMint) types.MsgMint {
+				msg.MintToAddress = msg.Sender
+				return msg
+			}),
+			expectPass: true,
+		},
+		{
+			name: "invalid mint to address",
+			msg: createMsg(func(msg types.MsgMint) types.MsgMint {
+				msg.MintToAddress = "someaddress"
+				return msg
+			}),
+			expectPass: false,
+		},
 	}
 
 	for _, test := range tests {
