@@ -1,5 +1,7 @@
 package network
 
+// COME BACK
+
 // import (
 // 	"fmt"
 // 	"testing"
@@ -11,9 +13,9 @@ package network
 // 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 // 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 // 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
-// 	"github.com/cosmos/cosmos-sdk/simapp"
 // 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 // 	"github.com/cosmos/cosmos-sdk/testutil/network"
+// 	simapp "github.com/cosmos/cosmos-sdk/testutil/sims"
 // 	sdk "github.com/cosmos/cosmos-sdk/types"
 // 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
@@ -53,7 +55,7 @@ package network
 // 		LegacyAmino:       encoding.Amino,
 // 		InterfaceRegistry: encoding.InterfaceRegistry,
 // 		AccountRetriever:  authtypes.AccountRetriever{},
-// 		AppConstructor: func(val network.Validator) servertypes.Application {
+// 		AppConstructor: func(val network.ValidatorI) servertypes.Application {
 // 			return app.NewStargazeApp(
 // 				val.Ctx.Logger, tmdb.NewMemDB(), nil, true, map[int64]bool{}, val.Ctx.Config.RootDir, 0,
 // 				encoding,
