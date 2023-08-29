@@ -1,54 +1,52 @@
 package keeper_test
 
-// COME BACK
+import (
+	gocontext "context"
+	"testing"
 
-// import (
-// 	gocontext "context"
-// 	"testing"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	"github.com/stretchr/testify/suite"
 
-// 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
-// 	"github.com/stretchr/testify/suite"
+	"github.com/cosmos/cosmos-sdk/baseapp"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/public-awesome/stargaze/v11/app"
+	"github.com/public-awesome/stargaze/v11/x/mint/types"
+)
 
-// 	"github.com/cosmos/cosmos-sdk/baseapp"
-// 	sdk "github.com/cosmos/cosmos-sdk/types"
-// 	"github.com/public-awesome/stargaze/v11/app"
-// 	"github.com/public-awesome/stargaze/v11/x/mint/types"
-// )
+type MintTestSuite struct {
+	suite.Suite
 
-// type MintTestSuite struct {
-// 	suite.Suite
+	app         *app.App
+	ctx         sdk.Context
+	queryClient types.QueryClient
+}
 
-// 	app         *app.App
-// 	ctx         sdk.Context
-// 	queryClient types.QueryClient
-// }
+func (suite *MintTestSuite) SetupTest() {
+	app := setup(false, suite.T().TempDir())
+	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
-// func (suite *MintTestSuite) SetupTest() {
-// 	app := setup(false)
-// 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
+	queryHelper := baseapp.NewQueryServerTestHelper(ctx, app.InterfaceRegistry())
+	types.RegisterQueryServer(queryHelper, app.MintKeeper)
+	queryClient := types.NewQueryClient(queryHelper)
 
-// 	queryHelper := baseapp.NewQueryServerTestHelper(ctx, app.InterfaceRegistry())
-// 	types.RegisterQueryServer(queryHelper, app.MintKeeper)
-// 	queryClient := types.NewQueryClient(queryHelper)
+	suite.app = app
+	suite.ctx = ctx
 
-// 	suite.app = app
-// 	suite.ctx = ctx
+	suite.queryClient = queryClient
+}
 
-// 	suite.queryClient = queryClient
-// }
+func (suite *MintTestSuite) TestGRPCParams() {
+	app, ctx, queryClient := suite.app, suite.ctx, suite.queryClient
 
-// func (suite *MintTestSuite) TestGRPCParams() {
-// 	app, ctx, queryClient := suite.app, suite.ctx, suite.queryClient
+	params, err := queryClient.Params(gocontext.Background(), &types.QueryParamsRequest{})
+	suite.Require().NoError(err)
+	suite.Require().Equal(params.Params, app.MintKeeper.GetParams(ctx))
 
-// 	params, err := queryClient.Params(gocontext.Background(), &types.QueryParamsRequest{})
-// 	suite.Require().NoError(err)
-// 	suite.Require().Equal(params.Params, app.MintKeeper.GetParams(ctx))
+	annualProvisions, err := queryClient.AnnualProvisions(gocontext.Background(), &types.QueryAnnualProvisionsRequest{})
+	suite.Require().NoError(err)
+	suite.Require().Equal(annualProvisions.AnnualProvisions, app.MintKeeper.GetMinter(ctx).AnnualProvisions)
+}
 
-// 	annualProvisions, err := queryClient.AnnualProvisions(gocontext.Background(), &types.QueryAnnualProvisionsRequest{})
-// 	suite.Require().NoError(err)
-// 	suite.Require().Equal(annualProvisions.AnnualProvisions, app.MintKeeper.GetMinter(ctx).AnnualProvisions)
-// }
-
-// func TestMintTestSuite(t *testing.T) {
-// 	suite.Run(t, new(MintTestSuite))
-// }
+func TestMintTestSuite(t *testing.T) {
+	suite.Run(t, new(MintTestSuite))
+}

@@ -1,7 +1,5 @@
 package mint_test
 
-// COME BACK
-
 // import (
 // 	"testing"
 
