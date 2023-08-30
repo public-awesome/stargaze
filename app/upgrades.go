@@ -7,7 +7,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	packetforwardtypes "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v4/router/types"
 )
 
 // next upgrade name
@@ -33,9 +32,7 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 
 	if upgradeInfo.Name == upgradeName && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
 		storeUpgrades := store.StoreUpgrades{
-			Added: []string{
-				packetforwardtypes.StoreKey,
-			},
+			Added: []string{},
 			Deleted: []string{
 				claimModuleName,
 			},
