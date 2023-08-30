@@ -105,6 +105,7 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	"github.com/public-awesome/stargaze/v11/docs"
+	sgstatesync "github.com/public-awesome/stargaze/v11/internal/statesync"
 	sgwasm "github.com/public-awesome/stargaze/v11/internal/wasm"
 	allocmodule "github.com/public-awesome/stargaze/v11/x/alloc"
 	allocmodulekeeper "github.com/public-awesome/stargaze/v11/x/alloc/keeper"
@@ -236,7 +237,7 @@ var (
 		allocmoduletypes.ModuleName:         {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		allocmoduletypes.FairburnPoolName:   nil,
 		allocmoduletypes.SupplementPoolName: nil,
-		wasm.ModuleName:                     {authtypes.Burner},
+		wasmtypes.ModuleName:                {authtypes.Burner},
 		icatypes.ModuleName:                 nil,
 		cronmoduletypes.ModuleName:          nil,
 		globalfeemoduletypes.ModuleName:     nil,
@@ -516,7 +517,7 @@ func NewStargazeApp(
 		appCodec,
 		app.keys[icahosttypes.StoreKey],
 		app.GetSubspace(icahosttypes.SubModuleName),
-		nil, // COME BACK HERE AND ADD IBC FEE KEEPER
+		app.HooksICS4Wrapper,
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		app.AccountKeeper,
@@ -577,7 +578,7 @@ func NewStargazeApp(
 		app.BankKeeper,
 		app.StakingKeeper,
 		distrkeeper.NewQuerier(app.DistrKeeper),
-		nil, //todo ibcfee keeper
+		app.HooksICS4Wrapper,
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedWasmKeeper,
@@ -796,7 +797,7 @@ func NewStargazeApp(
 	if manager := app.SnapshotManager(); manager != nil {
 		err := manager.RegisterExtensions(
 			wasmkeeper.NewWasmSnapshotter(app.CommitMultiStore(), &app.WasmKeeper),
-			// sgstatesync.NewVersionSnapshotter(app.CommitMultiStore(), app, app), // COME BACK
+			sgstatesync.NewVersionSnapshotter(app.CommitMultiStore(), app, app),
 		)
 		if err != nil {
 			panic(fmt.Errorf("failed to register snapshot extension: %s", err))
