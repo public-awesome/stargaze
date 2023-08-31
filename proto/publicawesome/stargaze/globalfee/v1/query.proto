@@ -2,7 +2,7 @@ syntax = "proto3";
 package publicawesome.stargaze.globalfee.v1;
 
 import "google/api/annotations.proto";
-import "stargaze/globalfee/v1/globalfee.proto";
+import "publicawesome/stargaze/globalfee/v1/globalfee.proto";
 
 option go_package = "github.com/public-awesome/stargaze/v12/x/globalfee/types";
 
