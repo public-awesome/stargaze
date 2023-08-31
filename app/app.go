@@ -86,41 +86,41 @@ import (
 	ibcporttypes "github.com/cosmos/ibc-go/v7/modules/core/05-port/types"
 	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
-	"github.com/public-awesome/stargaze/v11/x/mint"
-	mintkeeper "github.com/public-awesome/stargaze/v11/x/mint/keeper"
-	minttypes "github.com/public-awesome/stargaze/v11/x/mint/types"
-	"github.com/public-awesome/stargaze/v11/x/tokenfactory"
-	tokenfactorykeeper "github.com/public-awesome/stargaze/v11/x/tokenfactory/keeper"
-	tokenfactorytypes "github.com/public-awesome/stargaze/v11/x/tokenfactory/types"
+	"github.com/public-awesome/stargaze/v12/x/mint"
+	mintkeeper "github.com/public-awesome/stargaze/v12/x/mint/keeper"
+	minttypes "github.com/public-awesome/stargaze/v12/x/mint/types"
+	"github.com/public-awesome/stargaze/v12/x/tokenfactory"
+	tokenfactorykeeper "github.com/public-awesome/stargaze/v12/x/tokenfactory/keeper"
+	tokenfactorytypes "github.com/public-awesome/stargaze/v12/x/tokenfactory/types"
 	"github.com/spf13/cast"
 
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	authzmodule "github.com/cosmos/cosmos-sdk/x/authz/module"
 
-	"github.com/public-awesome/stargaze/v11/app/openapiconsole"
+	"github.com/public-awesome/stargaze/v12/app/openapiconsole"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
-	"github.com/public-awesome/stargaze/v11/docs"
-	sgstatesync "github.com/public-awesome/stargaze/v11/internal/statesync"
-	sgwasm "github.com/public-awesome/stargaze/v11/internal/wasm"
-	allocmodule "github.com/public-awesome/stargaze/v11/x/alloc"
-	allocmodulekeeper "github.com/public-awesome/stargaze/v11/x/alloc/keeper"
-	allocmoduletypes "github.com/public-awesome/stargaze/v11/x/alloc/types"
-	allocwasm "github.com/public-awesome/stargaze/v11/x/alloc/wasm"
+	"github.com/public-awesome/stargaze/v12/docs"
+	sgstatesync "github.com/public-awesome/stargaze/v12/internal/statesync"
+	sgwasm "github.com/public-awesome/stargaze/v12/internal/wasm"
+	allocmodule "github.com/public-awesome/stargaze/v12/x/alloc"
+	allocmodulekeeper "github.com/public-awesome/stargaze/v12/x/alloc/keeper"
+	allocmoduletypes "github.com/public-awesome/stargaze/v12/x/alloc/types"
+	allocwasm "github.com/public-awesome/stargaze/v12/x/alloc/wasm"
 
-	cronmodule "github.com/public-awesome/stargaze/v11/x/cron"
-	cronclient "github.com/public-awesome/stargaze/v11/x/cron/client"
-	cronmodulekeeper "github.com/public-awesome/stargaze/v11/x/cron/keeper"
-	cronmoduletypes "github.com/public-awesome/stargaze/v11/x/cron/types"
+	cronmodule "github.com/public-awesome/stargaze/v12/x/cron"
+	cronclient "github.com/public-awesome/stargaze/v12/x/cron/client"
+	cronmodulekeeper "github.com/public-awesome/stargaze/v12/x/cron/keeper"
+	cronmoduletypes "github.com/public-awesome/stargaze/v12/x/cron/types"
 
-	globalfeemodule "github.com/public-awesome/stargaze/v11/x/globalfee"
-	globalfeeclient "github.com/public-awesome/stargaze/v11/x/globalfee/client"
-	globalfeemodulekeeper "github.com/public-awesome/stargaze/v11/x/globalfee/keeper"
-	globalfeemoduletypes "github.com/public-awesome/stargaze/v11/x/globalfee/types"
+	globalfeemodule "github.com/public-awesome/stargaze/v12/x/globalfee"
+	globalfeeclient "github.com/public-awesome/stargaze/v12/x/globalfee/client"
+	globalfeemodulekeeper "github.com/public-awesome/stargaze/v12/x/globalfee/keeper"
+	globalfeemoduletypes "github.com/public-awesome/stargaze/v12/x/globalfee/types"
 
 	ibchooks "github.com/cosmos/ibc-apps/modules/ibc-hooks/v7"
 	ibchookskeeper "github.com/cosmos/ibc-apps/modules/ibc-hooks/v7/keeper"
@@ -132,9 +132,9 @@ import (
 	icahostkeeper "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/host/keeper"
 	icahosttypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/host/types"
 	icatypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/types"
-	stargazerest "github.com/public-awesome/stargaze/v11/internal/rest"
+	stargazerest "github.com/public-awesome/stargaze/v12/internal/rest"
 
-	sgappparams "github.com/public-awesome/stargaze/v11/app/params"
+	sgappparams "github.com/public-awesome/stargaze/v12/app/params"
 )
 
 const (
@@ -223,6 +223,7 @@ var (
 		wasm.AppModuleBasic{},
 		ica.AppModuleBasic{},
 		ibchooks.AppModuleBasic{},
+		packetforward.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -315,6 +316,9 @@ type App struct {
 	Ics20WasmHooks   *ibchooks.WasmHooks
 	HooksICS4Wrapper ibchooks.ICS4Middleware
 
+	// IBC Packet Forward Middleware
+	PacketForwardKeeper *packetforwardkeeper.Keeper
+
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// the module manager
@@ -357,6 +361,7 @@ func NewStargazeApp(
 		icahosttypes.StoreKey,
 		globalfeemoduletypes.StoreKey,
 		ibchookstypes.StoreKey,
+		packetforwardtypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -504,13 +509,55 @@ func NewStargazeApp(
 
 	// Create Transfer Keepers
 	app.TransferKeeper = ibctransferkeeper.NewKeeper(
-		appCodec, keys[ibctransfertypes.StoreKey], app.GetSubspace(ibctransfertypes.ModuleName),
-		app.HooksICS4Wrapper, app.IBCKeeper.ChannelKeeper, &app.IBCKeeper.PortKeeper,
-		app.AccountKeeper, app.BankKeeper, scopedTransferKeeper,
+		appCodec,
+		keys[ibctransfertypes.StoreKey],
+		app.GetSubspace(ibctransfertypes.ModuleName),
+		app.HooksICS4Wrapper,
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
+		app.AccountKeeper,
+		app.BankKeeper,
+		scopedTransferKeeper,
 	)
+
+	// Initialize the packet forward middleware Keeper
+	app.PacketForwardKeeper = packetforwardkeeper.NewKeeper(
+		appCodec,
+		app.keys[packetforwardtypes.StoreKey],
+		app.GetSubspace(packetforwardtypes.ModuleName),
+		app.TransferKeeper,
+		app.IBCKeeper.ChannelKeeper,
+		app.DistrKeeper,
+		app.BankKeeper,
+		// The ICS4Wrapper is replaced by the HooksICS4Wrapper instead of the channel so that sending can be overridden by the middleware
+		app.HooksICS4Wrapper,
+	)
+
 	transferModule := transfer.NewAppModule(app.TransferKeeper)
+
+	/*
+		Create Transfer Stack, execution flow of packets between the application stack and IBC core is described below.
+
+		SendPacket, since it is originating from the application to core IBC:
+		transferKeeper.SendPacket -> ibc-hooks.SendPacket -> channel.SendPacket
+
+		RecvPacket, message that originates from core IBC and goes down to app, the flow is the other way:
+		channel.RecvPacket -> ibc-hooks.OnRecvPacket -> packetforward.OnRecvPacket -> transfer.OnRecvPacket
+
+		transfer stack contains (from top to bottom):
+		- IBC Hooks
+		- Packet Forward Middleware
+		- Transfer Module
+	*/
 	var transferStack ibcporttypes.IBCModule
 	transferStack = transfer.NewIBCModule(app.TransferKeeper)
+	transferStack = packetforward.NewIBCMiddleware(
+		transferStack,
+		app.PacketForwardKeeper,
+		0, // retries on timeout
+		packetforwardkeeper.DefaultForwardTransferPacketTimeoutTimestamp, // forward timeout
+		packetforwardkeeper.DefaultRefundTransferPacketTimeoutTimestamp,  // refund timeout
+	)
 	transferStack = ibchooks.NewIBCMiddleware(transferStack, &app.HooksICS4Wrapper)
 
 	app.ICAHostKeeper = icahostkeeper.NewKeeper(
@@ -557,18 +604,11 @@ func NewStargazeApp(
 	registry.RegisterEncoder(sgwasm.DistributionRoute, sgwasm.CustomDistributionEncoder)
 	registry.RegisterEncoder(allocmoduletypes.ModuleName, allocwasm.Encoder)
 
-	// Wasm accepted Stargate Queries
-	acceptStargateQueriesList := wasmkeeper.AcceptedStargateQueries{
-		"/stargaze.tokenfactory.v1.Query/Params":                 &tokenfactorytypes.QueryParamsResponse{},
-		"/stargaze.tokenfactory.v1.Query/DenomAuthorityMetadata": &tokenfactorytypes.QueryDenomAuthorityMetadataResponse{},
-		"/stargaze.tokenfactory.v1.Query/DenomsFromCreator":      &tokenfactorytypes.QueryDenomsFromCreatorResponse{},
-	}
-
 	wasmOpts = append(
 		wasmOpts,
 		wasmkeeper.WithMessageEncoders(sgwasm.MessageEncoders(registry)),
 		wasmkeeper.WithQueryPlugins(&wasmkeeper.QueryPlugins{
-			Stargate: wasmkeeper.AcceptListStargateQuerier(acceptStargateQueriesList, app.GRPCQueryRouter(), appCodec),
+			Stargate: wasmkeeper.AcceptListStargateQuerier(AcceptedStargateQueries(), app.GRPCQueryRouter(), appCodec),
 		}),
 	)
 	app.WasmKeeper = wasmkeeper.NewKeeper(
@@ -579,6 +619,7 @@ func NewStargazeApp(
 		app.StakingKeeper,
 		distrkeeper.NewQuerier(app.DistrKeeper),
 		app.HooksICS4Wrapper,
+		app.IBCKeeper.ChannelKeeper,
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedWasmKeeper,
@@ -682,6 +723,7 @@ func NewStargazeApp(
 		globalfeeModule,
 		ibchooks.NewAppModule(app.AccountKeeper),
 		tokenfactory.NewAppModule(app.TokenFactoryKeeper, app.AccountKeeper, app.BankKeeper),
+		packetforward.NewAppModule(app.PacketForwardKeeper),
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -704,6 +746,7 @@ func NewStargazeApp(
 		globalfeemoduletypes.ModuleName,
 		ibchookstypes.ModuleName,
 		tokenfactorytypes.ModuleName,
+		packetforwardtypes.ModuleName,
 	)
 
 	app.mm.SetOrderEndBlockers(
@@ -721,6 +764,7 @@ func NewStargazeApp(
 		globalfeemoduletypes.ModuleName,
 		ibchookstypes.ModuleName,
 		tokenfactorytypes.ModuleName,
+		packetforwardtypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -753,6 +797,7 @@ func NewStargazeApp(
 		cronmoduletypes.ModuleName,
 		globalfeemoduletypes.ModuleName, // should be after wasm
 		ibchookstypes.ModuleName,
+		packetforwardtypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -990,6 +1035,8 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(cronmoduletypes.ModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(globalfeemoduletypes.ModuleName)
+	paramsKeeper.Subspace(packetforwardtypes.ModuleName).WithKeyTable(packetforwardtypes.ParamKeyTable())
+	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper
 }

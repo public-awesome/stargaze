@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v11/x/tokenfactory/types"
+	"github.com/public-awesome/stargaze/v12/x/tokenfactory/types"
 	"github.com/stretchr/testify/require"
 
 	"github.com/cometbft/cometbft/crypto/ed25519"
@@ -135,6 +135,22 @@ func TestMsgMint(t *testing.T) {
 			name: "negative amount",
 			msg: createMsg(func(msg types.MsgMint) types.MsgMint {
 				msg.Amount.Amount = sdk.NewInt(-10000000)
+				return msg
+			}),
+			expectPass: false,
+		},
+		{
+			name: "proper msg with mint_to",
+			msg: createMsg(func(msg types.MsgMint) types.MsgMint {
+				msg.MintToAddress = msg.Sender
+				return msg
+			}),
+			expectPass: true,
+		},
+		{
+			name: "invalid mint to address",
+			msg: createMsg(func(msg types.MsgMint) types.MsgMint {
+				msg.MintToAddress = "someaddress"
 				return msg
 			}),
 			expectPass: false,

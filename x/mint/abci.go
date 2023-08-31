@@ -5,8 +5,8 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v11/x/mint/keeper"
-	"github.com/public-awesome/stargaze/v11/x/mint/types"
+	"github.com/public-awesome/stargaze/v12/x/mint/keeper"
+	"github.com/public-awesome/stargaze/v12/x/mint/types"
 )
 
 // BeginBlocker mints new tokens for the previous block.

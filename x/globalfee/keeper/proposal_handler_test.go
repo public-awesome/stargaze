@@ -7,8 +7,8 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	legacygovtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-	"github.com/public-awesome/stargaze/v11/x/globalfee/keeper"
-	"github.com/public-awesome/stargaze/v11/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v12/x/globalfee/keeper"
+	"github.com/public-awesome/stargaze/v12/x/globalfee/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

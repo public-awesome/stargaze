@@ -12,8 +12,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/staking/types"
-	stargazeapp "github.com/public-awesome/stargaze/v11/app"
-	"github.com/public-awesome/stargaze/v11/testutil/simapp"
+	stargazeapp "github.com/public-awesome/stargaze/v12/app"
+	"github.com/public-awesome/stargaze/v12/testutil/simapp"
 	"github.com/stretchr/testify/require"
 
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"

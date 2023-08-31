@@ -5,7 +5,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-	"github.com/public-awesome/stargaze/v11/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v12/x/globalfee/types"
 )
 
 type govKeeper interface {

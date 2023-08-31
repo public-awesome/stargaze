@@ -4,7 +4,7 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v11/x/tokenfactory/types"
+	"github.com/public-awesome/stargaze/v12/x/tokenfactory/types"
 )
 
 type msgServer struct {
@@ -58,7 +58,11 @@ func (server msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.
 		return nil, types.ErrUnauthorized
 	}
 
-	err = server.Keeper.mintTo(ctx, msg.Amount, msg.Sender)
+	if msg.MintToAddress == "" {
+		msg.MintToAddress = msg.Sender
+	}
+
+	err = server.Keeper.mintTo(ctx, msg.Amount, msg.MintToAddress)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +70,7 @@ func (server msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.TypeMsgMint,
-			sdk.NewAttribute(types.AttributeMintToAddress, msg.Sender),
+			sdk.NewAttribute(types.AttributeMintToAddress, msg.MintToAddress),
 			sdk.NewAttribute(types.AttributeAmount, msg.Amount.String()),
 		),
 	})

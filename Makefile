@@ -86,8 +86,8 @@ endif
 
 check_go_version:
 	@echo "Go version: $(GO_MAJOR_VERSION).$(GO_MINOR_VERSION)"
-ifneq ($(GO_MINOR_VERSION),20)
-	@echo "ERROR: Go version 1.20 is required for this version of Stargaze"
+ifneq ($(GO_MINOR_VERSION),21)
+	@echo "ERROR: Go version 1.21 is required for this version of Stargaze"
 	exit 1
 endif
 
@@ -124,9 +124,15 @@ docker-test: build-linux
 
 
 test:
-	go test -v -race github.com/public-awesome/stargaze/v11/x/...
+	go test -v -race github.com/public-awesome/stargaze/v12/x/...
 
-.PHONY: test build-linux docker-test lint build install format
+test-pfm:
+	cd e2e && go test -v -race -run TestPacketForwardMiddleware .
+
+test-chain-upgrade:
+	cd e2e && go test -v -race -run TestChainUpgrade .
+
+.PHONY: test test-e2e build-linux docker-test lint build install format
 
 format:
 	gofumpt -l -w .

@@ -10,8 +10,8 @@ package cmd
 
 // 	"github.com/spf13/cobra"
 
-// 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
-// 	tmtypes "github.com/cometbft/cometbft/types"
+// 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+// 	tmtypes "github.com/tendermint/tendermint/types"
 
 // 	"github.com/cosmos/cosmos-sdk/client"
 // 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -26,17 +26,16 @@ package cmd
 // 	distributiontypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 // 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 // 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-// 	legacygovtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 // 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 // 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-// 	ibctransfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
-// 	minttypes "github.com/public-awesome/stargaze/v11/x/mint/types"
+// 	ibctransfertypes "github.com/cosmos/ibc-go/v4/modules/apps/transfer/types"
+// 	minttypes "github.com/public-awesome/stargaze/v12/x/mint/types"
 
 // 	// appParams "github.com/public-awesome/stargaze/app/params"
 // 	"github.com/CosmWasm/wasmd/x/wasm"
 // 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-// 	alloctypes "github.com/public-awesome/stargaze/v11/x/alloc/types"
-// 	globalfeetypes "github.com/public-awesome/stargaze/v11/x/globalfee/types"
+// 	alloctypes "github.com/public-awesome/stargaze/v12/x/alloc/types"
+// 	globalfeetypes "github.com/public-awesome/stargaze/v12/x/globalfee/types"
 // )
 
 // const (
@@ -76,7 +75,7 @@ package cmd
 
 // 	StakingParams      stakingtypes.Params
 // 	DistributionParams distributiontypes.Params
-// 	GovParams          legacygovtypes.Params
+// 	GovParams          govtypes.Params
 
 // 	CrisisConstantFee sdk.Coin
 
@@ -226,7 +225,7 @@ package cmd
 // 	appState[distributiontypes.ModuleName] = distributionGenStateBz
 
 // 	// gov module genesis
-// 	govGenState := legacygovtypes.DefaultGenesisState()
+// 	govGenState := govtypes.DefaultGenesisState()
 // 	govGenState.DepositParams = genesisParams.GovParams.DepositParams
 // 	govGenState.TallyParams = genesisParams.GovParams.TallyParams
 // 	govGenState.VotingParams = genesisParams.GovParams.VotingParams

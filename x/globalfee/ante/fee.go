@@ -9,7 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/public-awesome/stargaze/v11/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v12/x/globalfee/types"
 )
 
 var _ sdk.AnteDecorator = FeeDecorator{}

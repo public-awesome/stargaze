@@ -10,7 +10,7 @@ import (
 )
 
 // next upgrade name
-const upgradeName = "v12"
+const upgradeName = "v13"
 
 const claimModuleName = "claim"
 
@@ -32,7 +32,10 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 
 	if upgradeInfo.Name == upgradeName && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
 		storeUpgrades := store.StoreUpgrades{
-			Deleted: []string{claimModuleName},
+			Added: []string{},
+			Deleted: []string{
+				claimModuleName,
+			},
 		}
 		// configure store loader that checks if version == upgradeHeight and applies store upgrades
 		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades))

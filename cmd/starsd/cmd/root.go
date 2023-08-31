@@ -35,8 +35,8 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-	"github.com/public-awesome/stargaze/v11/app"
-	"github.com/public-awesome/stargaze/v11/app/params"
+	"github.com/public-awesome/stargaze/v12/app"
+	"github.com/public-awesome/stargaze/v12/app/params"
 )
 
 // NewRootCmd creates a new root command for wasmd. It is called once in the

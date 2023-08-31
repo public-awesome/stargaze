@@ -12,8 +12,8 @@ import (
 
 	dbm "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
-	stargazeapp "github.com/public-awesome/stargaze/v11/app"
-	"github.com/public-awesome/stargaze/v11/x/mint/types"
+	stargazeapp "github.com/public-awesome/stargaze/v12/app"
+	"github.com/public-awesome/stargaze/v12/x/mint/types"
 )
 
 // returns context and an app with updated mint keeper

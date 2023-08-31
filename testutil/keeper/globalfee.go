@@ -10,9 +10,9 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	"github.com/public-awesome/stargaze/v11/app"
-	"github.com/public-awesome/stargaze/v11/x/globalfee/keeper"
-	"github.com/public-awesome/stargaze/v11/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v12/app"
+	"github.com/public-awesome/stargaze/v12/x/globalfee/keeper"
+	"github.com/public-awesome/stargaze/v12/x/globalfee/types"
 	"github.com/stretchr/testify/require"
 
 	tmdb "github.com/cometbft/cometbft-db"

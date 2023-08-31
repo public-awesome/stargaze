@@ -13,8 +13,8 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/public-awesome/stargaze/v11/x/cron/keeper"
-	"github.com/public-awesome/stargaze/v11/x/cron/types"
+	"github.com/public-awesome/stargaze/v12/x/cron/keeper"
+	"github.com/public-awesome/stargaze/v12/x/cron/types"
 	"github.com/stretchr/testify/require"
 )
 
