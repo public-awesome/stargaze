@@ -9,7 +9,7 @@ import (
 
 	"github.com/public-awesome/stargaze/v12/x/globalfee/types"
 
-	storetypes "cosmossdk.io/store/types"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 )
 
 // Keeper provides module state operations.

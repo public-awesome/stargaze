@@ -1,8 +1,8 @@
 package keeper
 
 import (
-	"cosmossdk.io/store/prefix"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/public-awesome/stargaze/v12/x/cron/types"

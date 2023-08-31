@@ -3,7 +3,7 @@ package v3_test
 import (
 	"testing"
 
-	"cosmossdk.io/store"
+	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	stargazeapp "github.com/public-awesome/stargaze/v12/app"
@@ -16,7 +16,7 @@ import (
 	dbm "github.com/cometbft/cometbft-db"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 
-	storetypes "cosmossdk.io/store/types"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 )
 
 func TestStoreMigration(t *testing.T) {
