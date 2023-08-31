@@ -6,8 +6,8 @@ import (
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/public-awesome/stargaze/v12/x/tokenfactory/types"
 
-	"github.com/cosmos/cosmos-sdk/store/prefix"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	"cosmossdk.io/store/prefix"
+	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
