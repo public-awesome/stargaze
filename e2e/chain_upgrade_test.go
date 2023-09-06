@@ -22,9 +22,6 @@ const (
 const (
 	haltHeightDelta    = uint64(10) // The number of blocks after which to apply upgrade after creation of proposal.
 	blocksAfterUpgrade = uint64(10) // The number of blocks to wait for after the upgrade has been applied.
-	votingPeriod       = "10s"      // Reducing voting period for testing
-	maxDepositPeriod   = "10s"      // Reducing max deposit period for testing
-	depositDenom       = "ustars"   // The bond denom to be used to deposit for propsals
 )
 
 func TestChainUpgrade(t *testing.T) {
@@ -133,21 +130,4 @@ func startChain(t *testing.T) (*cosmos.CosmosChain, *client.Client, context.Cont
 		_ = ic.Close()
 	})
 	return stargazeChain, client, ctx
-}
-
-func getTestGenesis() []cosmos.GenesisKV {
-	return []cosmos.GenesisKV{
-		{
-			Key:   "app_state.gov.voting_params.voting_period",
-			Value: votingPeriod,
-		},
-		{
-			Key:   "app_state.gov.deposit_params.max_deposit_period",
-			Value: maxDepositPeriod,
-		},
-		{
-			Key:   "app_state.gov.deposit_params.min_deposit.0.denom",
-			Value: depositDenom,
-		},
-	}
 }
