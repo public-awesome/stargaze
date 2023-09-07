@@ -9,6 +9,8 @@ QUERY_GAS_LIMIT=${QUERY_GAS_LIMIT:-5000000}
 SIMULATION_GAS_LIMIT=${SIMULATION_GAS_LIMIT:-50000000}
 MEMORY_CACHE_SIZE=${MEMORY_CACHE_SIZE:-1000}
 
+NATS_URL=${NATS_URL}
+
 # Build genesis file incl account for each address passed in
 coins="10000000000000000$DENOM"
 starsd init --chain-id $CHAINID $CHAINID
@@ -38,6 +40,17 @@ sed -i "s/iavl-cache-size = 781250/iavl-cache-size = $IAVL_CACHE_SIZE/g" ~/.star
 sed -i "s/query_gas_limit = 50000000/query_gas_limit = $QUERY_GAS_LIMIT/g" ~/.starsd/config/app.toml
 sed -i "s/simulation_gas_limit = 25000000/simulation_gas_limit = $SIMULATION_GAS_LIMIT/g" ~/.starsd/config/app.toml
 sed -i "s/memory_cache_size = 512/memory_cache_size = $MEMORY_CACHE_SIZE/g" ~/.starsd/config/app.toml
+
+# if natsurl is set, then configure nats
+if [ -z "$NATS_URL" ]; then
+  echo "NATS_URL not set, not configuring nats"
+else
+  sed -i 's/streamers = \[\]/streamers = ["nats"]/g' ~/.starsd/config/app.toml
+  sed -i 's/\[streamers.file\]/[streamers.nats]/g' ~/.starsd/config/app.toml
+  sed -i 's/keys = \["\*", \]/keys = ["*"]/g' ~/.starsd/config/app.toml
+  sed -i "s/write_dir = \"\"/url = [ \"$NATS_URL\" ]/g" ~/.starsd/config/app.toml
+  sed -i 's/prefix = ""//' ~/.starsd/config/app.toml
+fi
 
 # Start the stake
 starsd start --pruning=nothing
