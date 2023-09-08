@@ -88,7 +88,7 @@ func NewStreamingService(
 		storeListeners[i] = types.NewMemoryListener(key)
 	}
 
-	natsConn, err := nats.Connect(nats.DefaultURL)
+	natsConn, err := nats.Connect(natsUrl)
 	if err != nil {
 		return nil, err
 	}
