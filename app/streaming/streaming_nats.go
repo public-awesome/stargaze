@@ -195,7 +195,10 @@ func (nss *StreamingService) doListenCommit() (err error) {
 			}
 
 			subject := fmt.Sprintf("%s.%s", changeSetSubjet, listener.StoreKey().Name())
-			nss.natsConn.Publish(subject, message)
+			err = nss.natsConn.Publish(subject, message)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
