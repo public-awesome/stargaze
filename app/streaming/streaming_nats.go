@@ -20,10 +20,10 @@ import (
 
 // Nats streaming option keys
 const (
-	OptNatsUrl             = "store.streamers.nats.url"
-	OptNatsPrefix          = "store.streamers.nats.prefix"
-	OptNatsOutputMetadata  = "store.streamers.nats.output_metadata"
-	OptNatsStopNodeOnError = "store.streamers.nats.stop_node_on_error"
+	OptNatsUrl             = "streamers.nats.url"
+	OptNatsPrefix          = "streamers.nats.prefix"
+	OptNatsOutputMetadata  = "streamers.nats.output_metadata"
+	OptNatsStopNodeOnError = "streamers.nats.stop_node_on_error"
 
 	NatsBlocksSegment    = "blocks"
 	NatsChangeSetSegment = "changeset"
