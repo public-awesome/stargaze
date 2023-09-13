@@ -2,6 +2,7 @@ syntax = "proto3";
 package publicawesome.stargaze.globalfee.v1;
 
 import "gogoproto/gogo.proto";
+import "cosmos/msg/v1/msg.proto";
 import "publicawesome/stargaze/globalfee/v1/globalfee.proto";
 
 option go_package = "github.com/public-awesome/stargaze/v12/x/globalfee/types";
@@ -22,6 +23,7 @@ service Msg {
 }
 
 message MsgSetCodeAuthorization {
+  option (cosmos.msg.v1.signer) = "sender";
   string sender = 1;
   CodeAuthorization code_authorization = 2;
 }
@@ -29,6 +31,7 @@ message MsgSetCodeAuthorization {
 message MsgSetCodeAuthorizationResponse {}
 
 message MsgRemoveCodeAuthorization {
+  option (cosmos.msg.v1.signer) = "sender";
   string sender = 1;
   uint64 code_id = 2 [ (gogoproto.customname) = "CodeID" ];
 }
@@ -36,6 +39,7 @@ message MsgRemoveCodeAuthorization {
 message MsgRemoveCodeAuthorizationResponse {}
 
 message MsgSetContractAuthorization {
+  option (cosmos.msg.v1.signer) = "sender";
   string sender = 1;
   ContractAuthorization contract_authorization = 2;
 }
@@ -43,6 +47,7 @@ message MsgSetContractAuthorization {
 message MsgSetContractAuthorizationResponse {}
 
 message MsgRemoveContractAuthorization {
+  option (cosmos.msg.v1.signer) = "sender";
   string sender = 1;
   string contract_address = 2;
 }
