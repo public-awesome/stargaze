@@ -9,7 +9,7 @@ option go_package = "github.com/public-awesome/stargaze/v12/x/cron/types";
 // PromoteToPrivilegedContractProposal gov proposal content type to add
 // "privileges" to a contract
 message PromoteToPrivilegedContractProposal {
-  option deprecated = true;
+  //option deprecated = true;
   option (cosmos_proto.implements_interface) = "cosmos.gov.v1beta1.Content";
 
   // Title is a short summary
@@ -23,7 +23,7 @@ message PromoteToPrivilegedContractProposal {
 // DemotePrivilegedContractProposal gov proposal content type to remove
 // "privileges" from a contract
 message DemotePrivilegedContractProposal {
-  option deprecated = true;
+  //option deprecated = true;
   option (cosmos_proto.implements_interface) = "cosmos.gov.v1beta1.Content";
 
   // Title is a short summary

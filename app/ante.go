@@ -25,7 +25,7 @@ type HandlerOptions struct {
 	keeper            *ibckeeper.Keeper
 	govKeeper         govkeeper.Keeper
 	globalfeeKeeper   globalfeekeeper.Keeper
-	stakingKeeper     stakingkeeper.Keeper
+	stakingKeeper     *stakingkeeper.Keeper
 	WasmConfig        *wasmTypes.WasmConfig
 	TXCounterStoreKey storetypes.StoreKey
 	Codec             codec.BinaryCodec
