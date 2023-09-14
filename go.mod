@@ -10,7 +10,7 @@ require (
 	github.com/cosmos/cosmos-proto v1.0.0-beta.3
 	github.com/cosmos/cosmos-sdk v0.47.4
 	github.com/cosmos/go-bip39 v1.0.0
-	github.com/cosmos/gogoproto v1.4.11
+	github.com/cosmos/gogoproto v1.4.10
 	github.com/golang/protobuf v1.5.3
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
@@ -32,7 +32,6 @@ require (
 	github.com/cosmos/ibc-apps/modules/ibc-hooks/v7 v7.0.0-20230803181732-7c8f814d3b79
 	github.com/cosmos/ibc-go/v7 v7.2.0
 	github.com/prometheus/client_golang v1.16.0
-	github.com/regen-network/cosmos-proto v0.3.1
 	google.golang.org/genproto/googleapis/api v0.0.0-20230726155614-23370e0ffb3e
 )
 
@@ -186,4 +185,5 @@ require (
 replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.8.1
+	golang.org/x/exp => golang.org/x/exp v0.0.0-20230711153332-06a737ee72cb
 )
