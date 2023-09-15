@@ -145,6 +145,8 @@ import (
 	icahosttypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/host/types"
 	icatypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/types"
 	stargazerest "github.com/public-awesome/stargaze/v12/internal/rest"
+
+	sgappparams "github.com/public-awesome/stargaze/v12/app/params"
 )
 
 const (
@@ -349,12 +351,12 @@ func NewStargazeApp(
 	skipUpgradeHeights map[int64]bool,
 	homePath string,
 	invCheckPeriod uint,
+	encodingConfig sgappparams.EncodingConfig,
 	appOpts servertypes.AppOptions,
 	wasmOpts []wasm.Option,
 	enabledProposals []wasm.ProposalType,
 	baseAppOptions ...func(*baseapp.BaseApp),
 ) *App {
-	encodingConfig := MakeEncodingConfig()
 	appCodec, cdc := encodingConfig.Codec, encodingConfig.Amino
 	interfaceRegistry := encodingConfig.InterfaceRegistry
 

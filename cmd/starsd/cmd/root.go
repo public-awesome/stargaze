@@ -16,6 +16,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/debug"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
+	"github.com/cosmos/cosmos-sdk/client/pruning"
 	"github.com/cosmos/cosmos-sdk/client/rpc"
 	"github.com/cosmos/cosmos-sdk/server"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
@@ -103,13 +104,10 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		debug.Cmd(),
 		config.Cmd(),
 		Bech32Cmd(),
+		pruning.PruningCmd(newApp),
 	)
 
-	ac := appCreator{
-		encCfg: encodingConfig,
-	}
-
-	server.AddCommands(rootCmd, app.DefaultNodeHome, ac.newApp, ac.appExport, addModuleInitFlags)
+	server.AddCommands(rootCmd, app.DefaultNodeHome, newApp, appExport, addModuleInitFlags)
 
 	// add keybase, auxiliary RPC, query, and tx child commands
 	rootCmd.AddCommand(
@@ -181,7 +179,7 @@ type appCreator struct {
 	encCfg params.EncodingConfig
 }
 
-func (ac appCreator) newApp(
+func newApp(
 	logger log.Logger,
 	db dbm.DB,
 	traceStore io.Writer,
@@ -222,9 +220,16 @@ func (ac appCreator) newApp(
 		iavlCacheSize = 781_250
 	}
 
+	chainID := cast.ToString(appOpts.Get(flags.FlagChainID))
+	if chainID == "" {
+		chainID = "stargaze-1"
+	}
+
+	encCfg := app.MakeEncodingConfig()
 	return app.NewStargazeApp(logger, db, traceStore, true, skipUpgradeHeights,
 		cast.ToString(appOpts.Get(flags.FlagHome)),
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
+		encCfg,
 		appOpts,
 		wasmOpts,
 		app.GetEnabledProposals(),
@@ -239,12 +244,13 @@ func (ac appCreator) newApp(
 		baseapp.SetSnapshot(snapshotStore, snapshottypes.SnapshotOptions{Interval: cast.ToUint64(appOpts.Get(server.FlagStateSyncSnapshotInterval)), KeepRecent: cast.ToUint32(appOpts.Get(server.FlagStateSyncSnapshotKeepRecent))}),
 		baseapp.SetIAVLCacheSize(iavlCacheSize),
 		baseapp.SetIAVLDisableFastNode(true),
+		baseapp.SetChainID(chainID),
 		// TODO: enable streaming service
 		// baseapp.SetStreamingService(app.NewStreamingService()),
 	)
 }
 
-func (ac appCreator) appExport(
+func appExport(
 	logger log.Logger,
 	db dbm.DB,
 	traceStore io.Writer,
@@ -261,6 +267,7 @@ func (ac appCreator) appExport(
 	}
 
 	loadLatest := height == -1
+	encCfg := app.MakeEncodingConfig()
 	var emptyWasmOpts []wasm.Option
 	stargazeApp = app.NewStargazeApp(
 		logger,
@@ -270,6 +277,7 @@ func (ac appCreator) appExport(
 		map[int64]bool{},
 		homePath,
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
+		encCfg,
 		appOpts,
 		emptyWasmOpts,
 		app.GetEnabledProposals(),

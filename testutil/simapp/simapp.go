@@ -35,7 +35,7 @@ func New(dir string) *stargazeapp.App {
 
 	encoding := stargazeapp.MakeEncodingConfig()
 
-	a := stargazeapp.NewStargazeApp(logger, db, nil, true, map[int64]bool{}, dir, 0,
+	a := stargazeapp.NewStargazeApp(logger, db, nil, true, map[int64]bool{}, dir, 0, encoding,
 		simapp.EmptyAppOptions{}, stargazeapp.EmptyWasmOpts, stargazeapp.GetEnabledProposals())
 
 	stateBytes, err := json.MarshalIndent(stargazeapp.ModuleBasics.DefaultGenesis(encoding.Codec), "", " ")
@@ -72,7 +72,7 @@ func setup(withGenesis bool, invCheckPeriod uint, dir string) (*stargazeapp.App,
 	db := tmdb.NewMemDB()
 	encoding := stargazeapp.MakeEncodingConfig()
 	a := stargazeapp.NewStargazeApp(log.NewNopLogger(), db, nil, true,
-		map[int64]bool{}, dir, invCheckPeriod, simapp.EmptyAppOptions{}, stargazeapp.EmptyWasmOpts, stargazeapp.GetEnabledProposals())
+		map[int64]bool{}, dir, invCheckPeriod, encoding, simapp.EmptyAppOptions{}, stargazeapp.EmptyWasmOpts, stargazeapp.GetEnabledProposals())
 	if withGenesis {
 		return a, stargazeapp.NewDefaultGenesisState(encoding.Codec)
 	}
