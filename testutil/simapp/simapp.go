@@ -35,7 +35,7 @@ func New(dir string) *stargazeapp.App {
 
 	encoding := stargazeapp.MakeEncodingConfig()
 
-	a := stargazeapp.NewStargazeApp(logger, db, nil, true, map[int64]bool{}, dir, 0, encoding,
+	a := stargazeapp.NewStargazeApp(logger, db, nil, true, map[int64]bool{}, dir, 0,
 		simapp.EmptyAppOptions{}, stargazeapp.EmptyWasmOpts, stargazeapp.GetEnabledProposals())
 
 	stateBytes, err := json.MarshalIndent(stargazeapp.ModuleBasics.DefaultGenesis(encoding.Codec), "", " ")
@@ -44,6 +44,7 @@ func New(dir string) *stargazeapp.App {
 	}
 	// InitChain updates deliverState which is required when app.NewContext is called
 	a.InitChain(abci.RequestInitChain{
+		Validators:      []abci.ValidatorUpdate{},
 		ConsensusParams: defaultConsensusParams,
 		AppStateBytes:   stateBytes,
 	})
@@ -71,7 +72,7 @@ func setup(withGenesis bool, invCheckPeriod uint, dir string) (*stargazeapp.App,
 	db := tmdb.NewMemDB()
 	encoding := stargazeapp.MakeEncodingConfig()
 	a := stargazeapp.NewStargazeApp(log.NewNopLogger(), db, nil, true,
-		map[int64]bool{}, dir, invCheckPeriod, encoding, simapp.EmptyAppOptions{}, stargazeapp.EmptyWasmOpts, stargazeapp.GetEnabledProposals())
+		map[int64]bool{}, dir, invCheckPeriod, simapp.EmptyAppOptions{}, stargazeapp.EmptyWasmOpts, stargazeapp.GetEnabledProposals())
 	if withGenesis {
 		return a, stargazeapp.NewDefaultGenesisState(encoding.Codec)
 	}
@@ -202,7 +203,8 @@ func SignCheckDeliver(
 	chainID string, accNums, accSeqs []uint64, simulate bool, expSimPass, expPass bool, priv ...cryptotypes.PrivKey,
 ) (sdk.GasInfo, *sdk.Result, error) {
 	t.Helper()
-	tx, err := GenTx(
+	tx, err := simapp.GenSignedMockTx(
+		rand.New(rand.NewSource(time.Now().UnixNano())),
 		txCfg,
 		msgs,
 		sdk.Coins{sdk.NewInt64Coin(sdk.DefaultBondDenom, 0)},
@@ -228,7 +230,7 @@ func SignCheckDeliver(
 		}
 	}
 	// Simulate a sending a transaction and committing a block
-	app.BeginBlock(abci.RequestBeginBlock{Header: header})
+	// app.BeginBlock(abci.RequestBeginBlock{Header: header})
 	gInfo, res, err := app.SimDeliver(txCfg.TxEncoder(), tx)
 
 	if expPass {
@@ -239,8 +241,8 @@ func SignCheckDeliver(
 		require.Nil(t, res)
 	}
 
-	app.EndBlock(abci.RequestEndBlock{})
-	app.Commit()
+	// app.EndBlock(abci.RequestEndBlock{})
+	// app.Commit()
 	return gInfo, res, err
 }
 

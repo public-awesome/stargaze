@@ -60,7 +60,6 @@ func genApp(withGenesis bool, invCheckPeriod uint, homePath string) (*stargazeap
 		map[int64]bool{},
 		homePath,
 		invCheckPeriod,
-		encCdc,
 		simapp.EmptyAppOptions{},
 		nil,
 		wasm.DisableAllProposals,
