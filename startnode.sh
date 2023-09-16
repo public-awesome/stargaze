@@ -1,5 +1,5 @@
 #!/bin/sh
-
+set -eux
 # create users
 rm -rf $HOME/.starsd
 starsd config chain-id localnet-1
