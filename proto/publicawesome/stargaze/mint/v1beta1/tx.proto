@@ -4,5 +4,4 @@ package publicawesome.stargaze.mint.v1beta1;
 option go_package = "github.com/public-awesome/stargaze/v12/x/mint/types";
 
 // Msg defines the mint Msg service.
-service Msg {
-}
+service Msg {}

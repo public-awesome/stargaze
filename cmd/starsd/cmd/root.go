@@ -40,6 +40,8 @@ import (
 	"github.com/public-awesome/stargaze/v12/app/params"
 )
 
+const EnvironmentPrefix = "STARGAZE"
+
 // NewRootCmd creates a new root command for wasmd. It is called once in the
 // main function.
 func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
@@ -60,7 +62,7 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 		WithInput(os.Stdin).
 		WithAccountRetriever(authtypes.AccountRetriever{}).
 		WithHomeDir(app.DefaultNodeHome).
-		WithViper("STARGAZE")
+		WithViper(EnvironmentPrefix)
 
 	rootCmd := &cobra.Command{
 		Use:   version.AppName,
