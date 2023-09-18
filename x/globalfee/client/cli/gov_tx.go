@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/gov/client/cli"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/public-awesome/stargaze/v12/x/globalfee/types"
 	"github.com/spf13/cobra"
 )
@@ -53,7 +53,7 @@ func CmdProposalSetCodeAuthorization() *cobra.Command {
 	}
 
 	cmd.Flags().String(cli.FlagTitle, "", "Title of proposal")
-	cmd.Flags().String(cli.FlagDescription, "", "Description of proposal")
+	cmd.Flags().String(cli.FlagDescription, "", "Description of proposal") //nolint:staticcheck
 	cmd.Flags().String(cli.FlagDeposit, "", "Deposit of proposal")
 
 	return cmd
@@ -94,7 +94,7 @@ func CmdProposalRemoveCodeAuthorization() *cobra.Command {
 	}
 
 	cmd.Flags().String(cli.FlagTitle, "", "Title of proposal")
-	cmd.Flags().String(cli.FlagDescription, "", "Description of proposal")
+	cmd.Flags().String(cli.FlagDescription, "", "Description of proposal") //nolint:staticcheck
 	cmd.Flags().String(cli.FlagDeposit, "", "Deposit of proposal")
 
 	return cmd
@@ -134,7 +134,7 @@ func CmdProposalSetContractAuthorization() *cobra.Command {
 	}
 
 	cmd.Flags().String(cli.FlagTitle, "", "Title of proposal")
-	cmd.Flags().String(cli.FlagDescription, "", "Description of proposal")
+	cmd.Flags().String(cli.FlagDescription, "", "Description of proposal") //nolint:staticcheck
 	cmd.Flags().String(cli.FlagDeposit, "", "Deposit of proposal")
 
 	return cmd
@@ -168,7 +168,7 @@ func CmdProposalRemoveContractAuthorization() *cobra.Command {
 	}
 
 	cmd.Flags().String(cli.FlagTitle, "", "Title of proposal")
-	cmd.Flags().String(cli.FlagDescription, "", "Description of proposal")
+	cmd.Flags().String(cli.FlagDescription, "", "Description of proposal") //nolint:staticcheck
 	cmd.Flags().String(cli.FlagDeposit, "", "Deposit of proposal")
 
 	return cmd
@@ -185,7 +185,7 @@ func getProposalInfo(cmd *cobra.Command) (client.Context, string, string, sdk.Co
 		return clientCtx, proposalTitle, "", nil, err
 	}
 
-	proposalDescr, err := cmd.Flags().GetString(cli.FlagDescription)
+	proposalDescr, err := cmd.Flags().GetString(cli.FlagDescription) //nolint:staticcheck
 	if err != nil {
 		return client.Context{}, proposalTitle, proposalDescr, nil, err
 	}

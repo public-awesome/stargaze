@@ -1,9 +1,10 @@
 package keeper
 
 import (
+	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/public-awesome/stargaze/v12/x/globalfee/types"
 )
 
@@ -31,7 +32,7 @@ func NewProposalHandlerX(k govKeeper) govtypes.Handler {
 		case *types.RemoveContractAuthorizationProposal:
 			return handleDeleteContractAuthorizationProposal(ctx, k, *c)
 		default:
-			return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unrecognized globalfee srcProposal content type: %T", c)
+			return errorsmod.Wrapf(sdkerrors.ErrUnknownRequest, "unrecognized globalfee srcProposal content type: %T", c)
 		}
 	}
 }
@@ -68,7 +69,7 @@ func handleDeleteContractAuthorizationProposal(ctx sdk.Context, k govKeeper, p t
 
 	contractAddr, err := sdk.AccAddressFromBech32(p.GetContractAddress())
 	if err != nil {
-		return sdkerrors.Wrap(err, "invalid contract address")
+		return errorsmod.Wrap(err, "invalid contract address")
 	}
 
 	k.DeleteContractAuthorization(ctx, contractAddr)

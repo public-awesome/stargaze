@@ -11,10 +11,10 @@ import (
 	"github.com/public-awesome/stargaze/v12/x/alloc/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/tendermint/tendermint/libs/log"
+	"github.com/cometbft/cometbft/libs/log"
 
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-	dbm "github.com/tendermint/tm-db"
+	dbm "github.com/cometbft/cometbft-db"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 )

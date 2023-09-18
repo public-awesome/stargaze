@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	errorsmod "cosmossdk.io/errors"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -35,7 +36,7 @@ func Encoder(contract sdk.AccAddress, data json.RawMessage, _ string) ([]sdk.Msg
 	msg := &AllocMsg{}
 	err := json.Unmarshal(data, msg)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errorsmod.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	if msg.FundFairburnPool != nil {
 		return msg.FundFairburnPool.Encode(contract)

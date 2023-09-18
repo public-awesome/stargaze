@@ -8,6 +8,7 @@ import "publicawesome/stargaze/globalfee/v1/globalfee.proto";
 option go_package = "github.com/public-awesome/stargaze/v12/x/globalfee/types";
 
 message SetCodeAuthorizationProposal {
+  // option deprecated = true;
   option (cosmos_proto.implements_interface) = "cosmos.gov.v1beta1.Content";
 
   string title = 1 [ (gogoproto.moretags) = "yaml:\"title\"" ];
@@ -17,6 +18,7 @@ message SetCodeAuthorizationProposal {
 }
 
 message RemoveCodeAuthorizationProposal {
+  // option deprecated = true;
   option (cosmos_proto.implements_interface) = "cosmos.gov.v1beta1.Content";
 
   string title = 1 [ (gogoproto.moretags) = "yaml:\"title\"" ];
@@ -28,6 +30,7 @@ message RemoveCodeAuthorizationProposal {
 }
 
 message SetContractAuthorizationProposal {
+  // option deprecated = true;
   option (cosmos_proto.implements_interface) = "cosmos.gov.v1beta1.Content";
 
   string title = 1 [ (gogoproto.moretags) = "yaml:\"title\"" ];
@@ -37,6 +40,7 @@ message SetContractAuthorizationProposal {
 }
 
 message RemoveContractAuthorizationProposal {
+  // option deprecated = true;
   option (cosmos_proto.implements_interface) = "cosmos.gov.v1beta1.Content";
 
   string title = 1 [ (gogoproto.moretags) = "yaml:\"title\"" ];

@@ -6,6 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	legacygovtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/public-awesome/stargaze/v12/x/globalfee/keeper"
 	"github.com/public-awesome/stargaze/v12/x/globalfee/types"
 	"github.com/stretchr/testify/assert"
@@ -17,18 +18,18 @@ func TestGovHandler(t *testing.T) {
 		capturedContractAddrs []string
 		capturedCodeIds       []uint64
 	)
-	notHandler := func(ctx sdk.Context, content govtypes.Content) error {
+	notHandler := func(ctx sdk.Context, content legacygovtypes.Content) error {
 		return sdkerrors.ErrUnknownRequest
 	}
 
 	specs := map[string]struct {
-		wasmHandler           govtypes.Handler
+		wasmHandler           legacygovtypes.Handler
 		setupGovKeeper        func(*MockGovKeeper)
-		srcProposal           govtypes.Content
+		srcProposal           legacygovtypes.Content
 		expErr                *sdkerrors.Error
 		expCapturedAddrs      []string
 		expCapturedCodeIds    []uint64
-		expCapturedGovContent []govtypes.Content
+		expCapturedGovContent []legacygovtypes.Content
 	}{
 		"set code auth proposal": {
 			wasmHandler: notHandler,
@@ -185,16 +186,16 @@ func (m MockGovKeeper) DeleteContractAuthorization(ctx sdk.Context, contractAddr
 }
 
 type CapturingGovRouter struct {
-	govtypes.Router
-	captured []govtypes.Content
+	legacygovtypes.Router
+	captured []legacygovtypes.Content
 }
 
 func (m CapturingGovRouter) HasRoute(r string) bool {
 	return true
 }
 
-func (m *CapturingGovRouter) GetRoute(path string) (h govtypes.Handler) {
-	return func(ctx sdk.Context, content govtypes.Content) error {
+func (m *CapturingGovRouter) GetRoute(path string) (h legacygovtypes.Handler) {
+	return func(ctx sdk.Context, content legacygovtypes.Content) error {
 		m.captured = append(m.captured, content)
 		return nil
 	}

@@ -6,13 +6,13 @@ import (
 	"runtime/debug"
 	"time"
 
+	abci "github.com/cometbft/cometbft/abci/types"
+	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/public-awesome/stargaze/v12/x/cron/contract"
 	"github.com/public-awesome/stargaze/v12/x/cron/keeper"
 	"github.com/public-awesome/stargaze/v12/x/cron/types"
-	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
 )
 
 // BeginBlocker sends a BeginBlock SudoMsg to all privileged contracts
