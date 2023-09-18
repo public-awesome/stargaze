@@ -2,6 +2,11 @@
 
 set -eo pipefail
 
+protoc_install_proto_gen_doc() {
+  echo "Installing protobuf protoc-gen-doc plugin"
+  (go install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@latest 2> /dev/null)
+}
+
 echo "Generating gogo proto code"
 cd proto
 proto_dirs=$(find ./publicawesome -path -prune -o -name '*.proto' -print0 | xargs -0 -n1 dirname | sort | uniq)
@@ -12,9 +17,13 @@ for dir in $proto_dirs; do
     fi
   done
 done
+
+protoc_install_proto_gen_doc
+
+echo "Generating proto docs"
+buf generate --template buf.gen.doc.yaml
+
 cd ..
-
-
 
 # move proto files to the right places
 cp -r github.com/public-awesome/stargaze/v12/* ./

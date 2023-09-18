@@ -36,9 +36,12 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+	tmtypes "github.com/cometbft/cometbft/types"
 	"github.com/public-awesome/stargaze/v12/app"
 	"github.com/public-awesome/stargaze/v12/app/params"
 )
+
+const EnvironmentPrefix = "STARGAZE"
 
 // NewRootCmd creates a new root command for wasmd. It is called once in the
 // main function.
@@ -60,7 +63,7 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 		WithInput(os.Stdin).
 		WithAccountRetriever(authtypes.AccountRetriever{}).
 		WithHomeDir(app.DefaultNodeHome).
-		WithViper("STARGAZE")
+		WithViper(EnvironmentPrefix)
 
 	rootCmd := &cobra.Command{
 		Use:   version.AppName,
@@ -220,11 +223,19 @@ func newApp(
 		iavlCacheSize = 781_250
 	}
 
+	homeDir := cast.ToString(appOpts.Get(flags.FlagHome))
 	chainID := cast.ToString(appOpts.Get(flags.FlagChainID))
 	if chainID == "" {
-		chainID = "stargaze-1"
+		// fallback to genesis chain-id
+		appGenesis, err := tmtypes.GenesisDocFromFile(filepath.Join(homeDir, "config", "genesis.json"))
+		if err != nil {
+			panic(err)
+		}
+		chainID = appGenesis.ChainID
 	}
 
+	// TODO: swtich to default base options
+	// server.DefaultBaseappOptions(appOpts)
 	encCfg := app.MakeEncodingConfig()
 	return app.NewStargazeApp(logger, db, traceStore, true, skipUpgradeHeights,
 		cast.ToString(appOpts.Get(flags.FlagHome)),
