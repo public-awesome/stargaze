@@ -36,12 +36,19 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 		govParams.BurnVoteQuorum = true
 		govParams.BurnVoteVeto = true
 		govParams.MinInitialDepositRatio = sdk.NewDecWithPrec(20, 2).String()
-		app.GovKeeper.SetParams(ctx, govParams)
+		err = app.GovKeeper.SetParams(ctx, govParams)
+		if err != nil {
+			return nil, err
+		}
 
 		// set min commission to 5%
 		stakingParams := app.StakingKeeper.GetParams(ctx)
 		stakingParams.MinCommissionRate = sdk.NewDecWithPrec(5, 2)
-		app.StakingKeeper.SetParams(ctx, stakingParams)
+		err = app.StakingKeeper.SetParams(ctx, stakingParams)
+		if err != nil {
+			return nil, err
+		}
+
 		return migrations, nil
 	})
 
