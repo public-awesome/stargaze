@@ -186,7 +186,7 @@ func GetEnabledProposals() []wasm.ProposalType {
 }
 
 func getGovProposalHandlers() []govclient.ProposalHandler {
-	govProposalHandlers := append(make([]govclient.ProposalHandler, 0))
+	govProposalHandlers := make([]govclient.ProposalHandler, 0)
 	// this line is used by starport scaffolding # stargate/app/govProposalHandlers
 
 	govProposalHandlers = append(govProposalHandlers,
