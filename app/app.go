@@ -163,22 +163,22 @@ var (
 	// https://github.com/CosmWasm/wasmd/blob/02a54d33ff2c064f3539ae12d75d027d9c665f05/x/wasm/internal/types/proposal.go#L28-L34
 	EnableSpecificProposals = ""
 
-	EmptyWasmOpts []wasm.Option
+	EmptyWasmOpts []wasmkeeper.Option
 )
 
 // this line is used by starport scaffolding # stargate/wasm/app/enabledProposals
 
 // GetEnabledProposals parses the ProposalsEnabled / EnableSpecificProposals values to
 // produce a list of enabled proposals to pass into wasmd app.
-func GetEnabledProposals() []wasm.ProposalType {
+func GetEnabledProposals() []wasm.ProposalType { //nolint:staticcheck
 	if EnableSpecificProposals == "" {
 		if ProposalsEnabled == "true" {
-			return wasm.EnableAllProposals
+			return wasm.EnableAllProposals //nolint:staticcheck
 		}
-		return wasm.DisableAllProposals
+		return wasm.DisableAllProposals //nolint:staticcheck
 	}
 	chunks := strings.Split(EnableSpecificProposals, ",")
-	proposals, err := wasm.ConvertToProposals(chunks)
+	proposals, err := wasm.ConvertToProposals(chunks) //nolint:staticcheck
 	if err != nil {
 		panic(err)
 	}
@@ -309,7 +309,7 @@ type App struct {
 	TransferKeeper ibctransferkeeper.Keeper
 	FeeGrantKeeper feegrantkeeper.Keeper
 	AuthzKeeper    authzkeeper.Keeper
-	WasmKeeper     wasm.Keeper
+	WasmKeeper     wasmkeeper.Keeper
 	ContractKeeper *wasmkeeper.PermissionedKeeper
 
 	// IBC
@@ -353,8 +353,8 @@ func NewStargazeApp(
 	invCheckPeriod uint,
 	encodingConfig sgappparams.EncodingConfig,
 	appOpts servertypes.AppOptions,
-	wasmOpts []wasm.Option,
-	enabledProposals []wasm.ProposalType,
+	wasmOpts []wasmkeeper.Option,
+	enabledProposals []wasm.ProposalType, //nolint:staticcheck
 	baseAppOptions ...func(*baseapp.BaseApp),
 ) *App {
 	appCodec, cdc := encodingConfig.Codec, encodingConfig.Amino
@@ -556,8 +556,6 @@ func NewStargazeApp(
 		app.HooksICS4Wrapper,
 	)
 
-	transferModule := transfer.NewAppModule(app.TransferKeeper)
-
 	/*
 		Create Transfer Stack, execution flow of packets between the application stack and IBC core is described below.
 
@@ -595,7 +593,6 @@ func NewStargazeApp(
 		bApp.MsgServiceRouter(),
 	)
 
-	icaModule := ica.NewAppModule(nil, &app.ICAHostKeeper)
 	icaHostIBCModule := icahost.NewIBCModule(app.ICAHostKeeper)
 
 	// Create static IBC router, add transfer route, then set and seal it
@@ -669,7 +666,7 @@ func NewStargazeApp(
 
 	// The gov proposal types can be individually enabled
 	if len(enabledProposals) != 0 {
-		govRouter.AddRoute(wasmtypes.RouterKey, wasm.NewWasmProposalHandler(app.WasmKeeper, enabledProposals))
+		govRouter.AddRoute(wasmtypes.RouterKey, wasm.NewWasmProposalHandler(app.WasmKeeper, enabledProposals)) //nolint:staticcheck
 	}
 
 	ibcRouter.AddRoute(wasmtypes.ModuleName, wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper, app.IBCKeeper.ChannelKeeper))
@@ -737,9 +734,9 @@ func NewStargazeApp(
 		upgrade.NewAppModule(&app.UpgradeKeeper),
 		evidence.NewAppModule(app.EvidenceKeeper),
 		ibc.NewAppModule(app.IBCKeeper),
-		icaModule,
+		ica.NewAppModule(nil, &app.ICAHostKeeper),
 		params.NewAppModule(app.ParamsKeeper),
-		transferModule,
+		transfer.NewAppModule(app.TransferKeeper),
 		allocModule,
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.MsgServiceRouter(), app.GetSubspace(wasmtypes.ModuleName)),
 		cronModule,
@@ -768,7 +765,7 @@ func NewStargazeApp(
 		group.ModuleName,
 		authz.ModuleName, feegrant.ModuleName,
 		paramstypes.ModuleName, vestingtypes.ModuleName, consensusparamtypes.ModuleName,
-		wasm.ModuleName,
+		wasmtypes.ModuleName,
 		cronmoduletypes.ModuleName,
 		globalfeemoduletypes.ModuleName,
 		ibchookstypes.ModuleName,
@@ -787,7 +784,7 @@ func NewStargazeApp(
 		ibcexported.ModuleName, ibctransfertypes.ModuleName,
 		icatypes.ModuleName,
 		allocmoduletypes.ModuleName,
-		wasm.ModuleName,
+		wasmtypes.ModuleName,
 		cronmoduletypes.ModuleName,
 		globalfeemoduletypes.ModuleName,
 		ibchookstypes.ModuleName,
@@ -823,7 +820,7 @@ func NewStargazeApp(
 		allocmoduletypes.ModuleName,
 		tokenfactorytypes.ModuleName,
 		// wasm after ibc transfer
-		wasm.ModuleName,
+		wasmtypes.ModuleName,
 		cronmoduletypes.ModuleName,
 		globalfeemoduletypes.ModuleName, // should be after wasm
 		ibchookstypes.ModuleName,
