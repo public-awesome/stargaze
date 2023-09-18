@@ -13,7 +13,6 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	ibcante "github.com/cosmos/ibc-go/v7/modules/core/ante"
 	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
-	stargazeante "github.com/public-awesome/stargaze/v12/internal/ante"
 	globalfeeante "github.com/public-awesome/stargaze/v12/x/globalfee/ante"
 	globalfeekeeper "github.com/public-awesome/stargaze/v12/x/globalfee/keeper"
 )
@@ -64,8 +63,6 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		ante.NewSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
 		// limit simulation gas
 		wasmkeeper.NewLimitSimulationGasDecorator(options.WasmConfig.SimulationGasLimit),
-		stargazeante.NewMinCommissionDecorator(options.Codec),
-		stargazeante.NewMinDepositDecorator(options.Codec, options.govKeeper),
 		globalfeeante.NewFeeDecorator(options.Codec, options.globalfeeKeeper, options.stakingKeeper),
 		wasmkeeper.NewCountTXDecorator(options.TXCounterStoreKey),
 		ante.NewExtensionOptionsDecorator(options.ExtensionOptionChecker),
