@@ -44,7 +44,7 @@ var (
 	}
 )
 
-func startChain(t *testing.T, version string) (*cosmos.CosmosChain, *client.Client, context.Context) {
+func startChain(t *testing.T, version string, chainConfig ibc.ChainConfig) (*cosmos.CosmosChain, *client.Client, context.Context) {
 	// Configuring the chain factory. We are building Stargaze chain with the version that matches the `initialVersion` value
 	numOfVals := 5
 	cf := interchaintest.NewBuiltinChainFactory(zaptest.NewLogger(t), []*interchaintest.ChainSpec{
@@ -52,7 +52,7 @@ func startChain(t *testing.T, version string) (*cosmos.CosmosChain, *client.Clie
 			Name:          "stargaze",
 			ChainName:     "stargaze-1",
 			Version:       version,
-			ChainConfig:   stargazeCfg,
+			ChainConfig:   chainConfig,
 			NumValidators: &numOfVals,
 			NumFullNodes:  &numOfVals,
 		},

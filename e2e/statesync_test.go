@@ -36,7 +36,7 @@ func TestStateSync(t *testing.T) {
 
 	configFileOverrides["config/app.toml"] = appTomlOverrides
 
-	stargazeChain, _, ctx := startChain(t, "local-dev")
+	stargazeChain, _, ctx := startChain(t, "local-dev", stargazeCfg)
 	// Wait for blocks so that nodes have a few state sync snapshot available
 	require.NoError(t, testutil.WaitForBlocks(ctx, stateSyncSnapshotInterval*2, stargazeChain))
 

@@ -27,7 +27,9 @@ func TestChainUpgrade(t *testing.T) {
 		t.Skip("skipping in short mode")
 	}
 
-	stargazeChain, client, ctx := startChain(t, initialVersion)
+	stargazeChain, client, ctx := startChain(t, initialVersion, ibc.ChainConfig{
+		ModifyGenesis: stargazeCfg.ModifyGenesis,
+	})
 	chainUser := fundChainUser(t, ctx, stargazeChain)
 	haltHeight := submitUpgradeProposalAndVote(t, ctx, stargazeChain, chainUser)
 
