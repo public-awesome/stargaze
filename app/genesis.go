@@ -26,12 +26,12 @@ const (
 // NewDefaultGenesisState generates the default state for the application.
 func NewDefaultGenesisState(cdc codec.JSONCodec) GenesisState {
 	genesis := ModuleBasics.DefaultGenesis(cdc)
-	wasmGen := wasm.GenesisState{
+	wasmGen := wasm.GenesisState{ //nolint:staticcheck
 		Params: wasmtypes.Params{
 			CodeUploadAccess:             wasmtypes.AllowNobody,
 			InstantiateDefaultPermission: wasmtypes.AccessTypeEverybody,
 		},
 	}
-	genesis[wasm.ModuleName] = cdc.MustMarshalJSON(&wasmGen)
+	genesis[wasm.ModuleName] = cdc.MustMarshalJSON(&wasmGen) //nolint:staticcheck
 	return genesis
 }

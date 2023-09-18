@@ -6,15 +6,21 @@ import (
 	"testing"
 	"time"
 
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	dbm "github.com/cometbft/cometbft-db"
 	tmdb "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
+	tmjson "github.com/cometbft/cometbft/libs/json"
 	"github.com/cometbft/cometbft/libs/log"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	tmtypes "github.com/cometbft/cometbft/types"
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+	servertypes "github.com/cosmos/cosmos-sdk/server/types"
+	"github.com/cosmos/cosmos-sdk/testutil/mock"
 	simapp "github.com/cosmos/cosmos-sdk/testutil/sims"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
@@ -29,26 +35,49 @@ import (
 )
 
 // New creates application instance with in-memory database and disabled logging.
-func New(dir string) *stargazeapp.App {
+func New(t *testing.T) *stargazeapp.App {
+	t.Helper()
+
+	dir := t.TempDir()
 	db := tmdb.NewMemDB()
 	logger := log.NewNopLogger()
-
 	encoding := stargazeapp.MakeEncodingConfig()
 
-	a := stargazeapp.NewStargazeApp(logger, db, nil, true, map[int64]bool{}, dir, 0, encoding,
+	privValidator := mock.NewPV()
+	pubKey, err := privValidator.GetPubKey()
+	require.NoError(t, err)
+
+	// create validator set with single validator
+	validator := tmtypes.NewValidator(pubKey, 1)
+	valSet := tmtypes.NewValidatorSet([]*tmtypes.Validator{validator})
+
+	// generate genesis account
+	senderPrivKey := secp256k1.GenPrivKey()
+	acc := authtypes.NewBaseAccount(senderPrivKey.PubKey().Address().Bytes(), senderPrivKey.PubKey(), 0, 0)
+	balance := banktypes.Balance{
+		Address: acc.GetAddress().String(),
+		Coins:   sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(100000000000000))),
+	}
+
+	app := stargazeapp.NewStargazeApp(logger, db, nil, true, map[int64]bool{}, dir, 0, encoding,
 		simapp.EmptyAppOptions{}, stargazeapp.EmptyWasmOpts, stargazeapp.GetEnabledProposals())
 
-	stateBytes, err := json.MarshalIndent(stargazeapp.ModuleBasics.DefaultGenesis(encoding.Codec), "", " ")
-	if err != nil {
-		panic(err)
-	}
-	// InitChain updates deliverState which is required when app.NewContext is called
-	a.InitChain(abci.RequestInitChain{
-		Validators:      []abci.ValidatorUpdate{},
-		ConsensusParams: defaultConsensusParams,
-		AppStateBytes:   stateBytes,
-	})
-	return a
+	genesisState := stargazeapp.NewDefaultGenesisState(app.AppCodec())
+	genesisState = genesisStateWithValSet(t, app, genesisState, valSet, []authtypes.GenesisAccount{acc}, balance)
+
+	// init chain must be called to stop deliverState from being nil
+	stateBytes, err := tmjson.MarshalIndent(genesisState, "", " ")
+	require.NoError(t, err)
+
+	app.InitChain(
+		abci.RequestInitChain{
+			Validators:      []abci.ValidatorUpdate{},
+			ConsensusParams: simapp.DefaultConsensusParams,
+			AppStateBytes:   stateBytes,
+		},
+	)
+
+	return app
 }
 
 var defaultConsensusParams = &tmproto.ConsensusParams{
@@ -249,4 +278,12 @@ func SignCheckDeliver(
 func GenTx(gen client.TxConfig, msgs []sdk.Msg, feeAmt sdk.Coins, gas uint64, chainID string, accNums, accSeqs []uint64, priv ...cryptotypes.PrivKey) (sdk.Tx, error) {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	return simapp.GenSignedMockTx(r, gen, msgs, feeAmt, gas, chainID, accNums, accSeqs, priv...)
+}
+
+// SetupOptions defines arguments that are passed into `WasmApp` constructor.
+type SetupOptions struct {
+	Logger   log.Logger
+	DB       *dbm.MemDB
+	AppOpts  servertypes.AppOptions
+	WasmOpts []wasmkeeper.Option
 }

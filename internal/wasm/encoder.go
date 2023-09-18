@@ -14,8 +14,8 @@ import (
 type Encoder func(contract sdk.AccAddress, data json.RawMessage, version string) ([]sdk.Msg, error)
 
 // MessageEncoders provides stargaze custom encoder for contracts
-func MessageEncoders(registry *EncoderRegistry) *wasm.MessageEncoders {
-	return &wasm.MessageEncoders{
+func MessageEncoders(registry *EncoderRegistry) *wasm.MessageEncoders { //nolint:staticcheck
+	return &wasm.MessageEncoders{ //nolint:staticcheck
 		Custom: customEncoders(registry),
 	}
 }
@@ -26,7 +26,7 @@ type MessageEncodeRequest struct {
 	Version string          `json:"version"`
 }
 
-func customEncoders(registry *EncoderRegistry) wasm.CustomEncoder {
+func customEncoders(registry *EncoderRegistry) wasm.CustomEncoder { //nolint:staticcheck
 	return func(sender sdk.AccAddress, m json.RawMessage) ([]sdk.Msg, error) {
 		encodeRequest := &MessageEncodeRequest{}
 		err := json.Unmarshal(m, encodeRequest)

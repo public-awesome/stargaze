@@ -30,11 +30,11 @@ func TestParamsValidate(t *testing.T) {
 			false,
 		},
 		{
-			"fail: zero fees",
+			"ok: zero fees",
 			types.Params{
 				MinimumGasPrices: sdk.NewDecCoinsFromCoins(sdk.NewCoin("stars", sdk.ZeroInt())),
 			},
-			true,
+			false,
 		},
 		{
 			"fail: duplicate denom fees",

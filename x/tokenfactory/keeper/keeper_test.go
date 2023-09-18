@@ -75,7 +75,7 @@ func (suite *KeeperTestSuite) CreateDefaultDenom() {
 }
 
 func (suite *KeeperTestSuite) Setup() {
-	suite.App = simapp.New(suite.T().TempDir())
+	suite.App = simapp.New(suite.T())
 	suite.Ctx = suite.App.BaseApp.NewContext(false, tmproto.Header{})
 	suite.QueryHelper = &baseapp.QueryServiceTestHelper{
 		GRPCQueryRouter: suite.App.GRPCQueryRouter(),
@@ -86,7 +86,7 @@ func (suite *KeeperTestSuite) Setup() {
 
 func (suite *KeeperTestSuite) SetupTestForInitGenesis() {
 	// Setting to True, leads to init genesis not running
-	suite.App = simapp.New(suite.T().TempDir())
+	suite.App = simapp.New(suite.T())
 	suite.Ctx = suite.App.BaseApp.NewContext(true, tmproto.Header{})
 }
 

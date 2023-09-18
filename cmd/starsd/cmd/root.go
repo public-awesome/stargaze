@@ -179,10 +179,6 @@ func txCommand() *cobra.Command {
 	return cmd
 }
 
-type appCreator struct {
-	encCfg params.EncodingConfig
-}
-
 func newApp(
 	logger log.Logger,
 	db dbm.DB,
@@ -214,7 +210,7 @@ func newApp(
 	if err != nil {
 		panic(err)
 	}
-	var wasmOpts []wasm.Option
+	var wasmOpts []wasm.Option //nolint:staticcheck
 	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
 		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
 	}
@@ -280,7 +276,7 @@ func appExport(
 
 	loadLatest := height == -1
 	encCfg := app.MakeEncodingConfig()
-	var emptyWasmOpts []wasm.Option
+	var emptyWasmOpts []wasm.Option //nolint:staticcheck
 	stargazeApp = app.NewStargazeApp(
 		logger,
 		db,
