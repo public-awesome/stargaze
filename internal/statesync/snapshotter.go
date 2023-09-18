@@ -3,13 +3,12 @@ package statesync
 import (
 	"io"
 
+	errorsmod "cosmossdk.io/errors"
+	"github.com/cometbft/cometbft/libs/log"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	snapshot "github.com/cosmos/cosmos-sdk/snapshots/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	protoio "github.com/gogo/protobuf/io"
-	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+	protoio "github.com/cosmos/gogoproto/io"
 )
 
 const (
@@ -20,7 +19,7 @@ const (
 var _ snapshot.ExtensionSnapshotter = &VersionSnapshotter{}
 
 type ConsensusParamsGetter interface {
-	GetConsensusParams(ctx sdk.Context) *abci.ConsensusParams
+	GetConsensusParams(ctx sdk.Context) *tmproto.ConsensusParams
 }
 
 type ProtocolVersionSetter interface {
@@ -56,10 +55,10 @@ func (vs *VersionSnapshotter) Snapshot(height uint64, protoWriter protoio.Writer
 	// default to 1 for stargaze
 	appVersion := uint64(1)
 	if params != nil && params.Version != nil {
-		appVersion = params.Version.GetAppVersion()
+		appVersion = params.Version.GetApp()
 	}
 	bz := sdk.Uint64ToBigEndian(appVersion)
-	return snapshot.WriteExtensionItem(protoWriter, bz)
+	return snapshot.WriteExtensionPayload(protoWriter, bz)
 }
 
 // Restore restores a state snapshot from the protobuf items read from the reader.
@@ -72,7 +71,7 @@ func (vs *VersionSnapshotter) Restore(_ uint64, format uint32, protoReader proto
 			if err == io.EOF {
 				break
 			} else if err != nil {
-				return snapshot.SnapshotItem{}, sdkerrors.Wrap(err, "invalid protobuf message")
+				return snapshot.SnapshotItem{}, errorsmod.Wrap(err, "invalid protobuf message")
 			}
 			payload := item.GetExtensionPayload()
 			if payload == nil {
@@ -92,4 +91,12 @@ func (vs *VersionSnapshotter) SnapshotFormat() uint32 {
 
 func (vs *VersionSnapshotter) SupportedFormats() []uint32 {
 	return []uint32{SnapshotFormat}
+}
+
+func (vs *VersionSnapshotter) RestoreExtension(height uint64, format uint32, payloadReader func() ([]byte, error)) error {
+	return vs.RestoreExtension(height, format, payloadReader)
+}
+
+func (vs *VersionSnapshotter) SnapshotExtension(height uint64, payloadWriter func([]byte) error) error {
+	return vs.SnapshotExtension(height, payloadWriter)
 }

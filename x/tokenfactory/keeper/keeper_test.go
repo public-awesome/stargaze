@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/cometbft/cometbft/crypto/ed25519"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -13,7 +14,6 @@ import (
 	"github.com/public-awesome/stargaze/v12/x/tokenfactory/keeper"
 	"github.com/public-awesome/stargaze/v12/x/tokenfactory/types"
 	"github.com/stretchr/testify/suite"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
 type KeeperTestSuite struct {
@@ -75,7 +75,7 @@ func (suite *KeeperTestSuite) CreateDefaultDenom() {
 }
 
 func (suite *KeeperTestSuite) Setup() {
-	suite.App = simapp.New(suite.T().TempDir())
+	suite.App = simapp.New(suite.T())
 	suite.Ctx = suite.App.BaseApp.NewContext(false, tmproto.Header{})
 	suite.QueryHelper = &baseapp.QueryServiceTestHelper{
 		GRPCQueryRouter: suite.App.GRPCQueryRouter(),
@@ -86,7 +86,7 @@ func (suite *KeeperTestSuite) Setup() {
 
 func (suite *KeeperTestSuite) SetupTestForInitGenesis() {
 	// Setting to True, leads to init genesis not running
-	suite.App = simapp.New(suite.T().TempDir())
+	suite.App = simapp.New(suite.T())
 	suite.Ctx = suite.App.BaseApp.NewContext(true, tmproto.Header{})
 }
 

@@ -3,6 +3,7 @@ package publicawesome.stargaze.alloc.v1beta1;
 
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
+import "cosmos/msg/v1/msg.proto";
 
 // this line is used by starport scaffolding # proto/tx/import
 
@@ -24,6 +25,7 @@ service Msg {
 // MsgCreateVestingAccount defines a message that enables creating a vesting
 // account.
 message MsgCreateVestingAccount {
+  option (cosmos.msg.v1.signer) = "from_address";
   option (gogoproto.equal) = true;
 
   string from_address = 1 [ (gogoproto.moretags) = "yaml:\"from_address\"" ];
@@ -45,6 +47,7 @@ message MsgCreateVestingAccountResponse {}
 // MsgFundFairburnPool allows an account to directly
 // fund the fee collector pool.
 message MsgFundFairburnPool {
+  option (cosmos.msg.v1.signer) = "sender";
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 

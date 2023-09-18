@@ -3,15 +3,16 @@ package keeper_test
 import (
 	"testing"
 
+	"github.com/cometbft/cometbft/libs/rand"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/address"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	legacygovtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/public-awesome/stargaze/v12/x/cron/keeper"
 	"github.com/public-awesome/stargaze/v12/x/cron/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/tendermint/tendermint/libs/rand"
 )
 
 func TestGovHandler(t *testing.T) {
@@ -19,17 +20,17 @@ func TestGovHandler(t *testing.T) {
 		myAddr                sdk.AccAddress = rand.Bytes(address.Len)
 		capturedContractAddrs []sdk.AccAddress
 	)
-	notHandler := func(ctx sdk.Context, content govtypes.Content) error {
+	notHandler := func(ctx sdk.Context, content legacygovtypes.Content) error {
 		return sdkerrors.ErrUnknownRequest
 	}
 
 	specs := map[string]struct {
-		wasmHandler           govtypes.Handler
+		wasmHandler           legacygovtypes.Handler
 		setupGovKeeper        func(*MockGovKeeper)
-		srcProposal           govtypes.Content
+		srcProposal           legacygovtypes.Content
 		expErr                *sdkerrors.Error
 		expCapturedAddrs      []sdk.AccAddress
-		expCapturedGovContent []govtypes.Content
+		expCapturedGovContent []legacygovtypes.Content
 	}{
 		"promote proposal": {
 			wasmHandler: notHandler,
@@ -112,16 +113,16 @@ func (m MockGovKeeper) UnsetPrivileged(ctx sdk.Context, contractAddr sdk.AccAddr
 }
 
 type CapturingGovRouter struct {
-	govtypes.Router
-	captured []govtypes.Content
+	legacygovtypes.Router
+	captured []legacygovtypes.Content
 }
 
 func (m CapturingGovRouter) HasRoute(_ string) bool {
 	return true
 }
 
-func (m *CapturingGovRouter) GetRoute(_ string) (h govtypes.Handler) {
-	return func(ctx sdk.Context, content govtypes.Content) error {
+func (m *CapturingGovRouter) GetRoute(_ string) (h legacygovtypes.Handler) {
+	return func(ctx sdk.Context, content legacygovtypes.Content) error {
 		m.captured = append(m.captured, content)
 		return nil
 	}

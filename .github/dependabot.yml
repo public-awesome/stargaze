@@ -7,7 +7,7 @@ updates:
     time: "10:00"
   open-pull-requests-limit: 10
   ignore:
-    - dependency-name: "github.com/tendermint/tendermint"
+    - dependency-name: "github.com/cometbft/cometbft"
       update-types: ["version-update:semver-major", "version-update:semver-minor"]
   ignore:
     - dependency-name: "github.com/cosmos/cosmos-sdk"

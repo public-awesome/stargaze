@@ -11,9 +11,9 @@ package keeper
 // 	"github.com/public-awesome/stargaze/x/alloc/keeper"
 // 	"github.com/public-awesome/stargaze/x/alloc/types"
 // 	"github.com/stretchr/testify/require"
-// 	"github.com/tendermint/tendermint/libs/log"
-// 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-// 	tmdb "github.com/tendermint/tm-db"
+// 	"github.com/cometbft/cometbft/libs/log"
+// 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+// 	tmdb "github.com/cometbft/cometbft-db"
 // )
 
 // func AllocKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {

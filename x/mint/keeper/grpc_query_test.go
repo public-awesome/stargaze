@@ -4,12 +4,13 @@ import (
 	gocontext "context"
 	"testing"
 
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/stretchr/testify/suite"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/public-awesome/stargaze/v12/app"
+	"github.com/public-awesome/stargaze/v12/testutil/simapp"
 	"github.com/public-awesome/stargaze/v12/x/mint/types"
 )
 
@@ -22,7 +23,7 @@ type MintTestSuite struct {
 }
 
 func (suite *MintTestSuite) SetupTest() {
-	app := setup(false)
+	app := simapp.New(suite.T())
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
 	queryHelper := baseapp.NewQueryServerTestHelper(ctx, app.InterfaceRegistry())
