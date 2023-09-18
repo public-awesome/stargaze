@@ -132,6 +132,9 @@ test-pfm:
 test-chain-upgrade:
 	cd e2e && go test -v -race -run TestChainUpgrade .
 
+test-statesync:
+	cd e2e && go test -v -race -run TestStateSync .
+
 .PHONY: test test-e2e build-linux docker-test lint build install format
 
 format:
