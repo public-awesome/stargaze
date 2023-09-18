@@ -5,13 +5,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/docker/docker/client"
 	interchaintest "github.com/strangelove-ventures/interchaintest/v4"
 	"github.com/strangelove-ventures/interchaintest/v4/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v4/ibc"
 	"github.com/strangelove-ventures/interchaintest/v4/testutil"
 	"github.com/stretchr/testify/require"
-	"go.uber.org/zap/zaptest"
 )
 
 const (
@@ -22,9 +20,6 @@ const (
 const (
 	haltHeightDelta    = uint64(10) // The number of blocks after which to apply upgrade after creation of proposal.
 	blocksAfterUpgrade = uint64(10) // The number of blocks to wait for after the upgrade has been applied.
-	votingPeriod       = "10s"      // Reducing voting period for testing
-	maxDepositPeriod   = "10s"      // Reducing max deposit period for testing
-	depositDenom       = "ustars"   // The bond denom to be used to deposit for propsals
 )
 
 func TestChainUpgrade(t *testing.T) {
@@ -32,7 +27,7 @@ func TestChainUpgrade(t *testing.T) {
 		t.Skip("skipping in short mode")
 	}
 
-	stargazeChain, client, ctx := startChain(t)
+	stargazeChain, client, ctx := startChain(t, initialVersion)
 	chainUser := fundChainUser(t, ctx, stargazeChain)
 	haltHeight := submitUpgradeProposalAndVote(t, ctx, stargazeChain, chainUser)
 
@@ -100,54 +95,4 @@ func fundChainUser(t *testing.T, ctx context.Context, stargazeChain *cosmos.Cosm
 	const userFunds = int64(10_000_000_000_000)
 	users := interchaintest.GetAndFundTestUsers(t, ctx, t.Name(), userFunds, stargazeChain)
 	return users[0]
-}
-
-func startChain(t *testing.T) (*cosmos.CosmosChain, *client.Client, context.Context) {
-	// Configuring the chain factory. We are building Stargaze chain with the version that matches the `initialVersion` value
-	numOfVals := 5
-	cf := interchaintest.NewBuiltinChainFactory(zaptest.NewLogger(t), []*interchaintest.ChainSpec{
-		{
-			Name:      "stargaze",
-			ChainName: "stargaze-1",
-			Version:   initialVersion,
-			ChainConfig: ibc.ChainConfig{
-				ModifyGenesis: cosmos.ModifyGenesis(getTestGenesis()), // Modifying genesis to have test-friendly gov params
-			},
-			NumValidators: &numOfVals,
-		},
-	})
-	chains, err := cf.Chains(t.Name())
-	require.NoError(t, err)
-	stargazeChain := chains[0].(*cosmos.CosmosChain)
-
-	ic := interchaintest.NewInterchain().AddChain(stargazeChain)
-	client, network := interchaintest.DockerSetup(t)
-	ctx := context.Background()
-	require.NoError(t, ic.Build(ctx, nil, interchaintest.InterchainBuildOptions{
-		TestName:         t.Name(),
-		Client:           client,
-		NetworkID:        network,
-		SkipPathCreation: true,
-	}))
-	t.Cleanup(func() {
-		_ = ic.Close()
-	})
-	return stargazeChain, client, ctx
-}
-
-func getTestGenesis() []cosmos.GenesisKV {
-	return []cosmos.GenesisKV{
-		{
-			Key:   "app_state.gov.voting_params.voting_period",
-			Value: votingPeriod,
-		},
-		{
-			Key:   "app_state.gov.deposit_params.max_deposit_period",
-			Value: maxDepositPeriod,
-		},
-		{
-			Key:   "app_state.gov.deposit_params.min_deposit.0.denom",
-			Value: depositDenom,
-		},
-	}
 }
