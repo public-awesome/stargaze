@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmvmapi "github.com/CosmWasm/wasmvm"
 	"github.com/spf13/cobra"
 )
@@ -19,11 +18,6 @@ func CheckLibwasmVersion(_ *cobra.Command, _ []string) error {
 		return fmt.Errorf("libwasmversion mismatch. got: %s; expected: %s", version, LibwasmVersion)
 	}
 	return nil
-}
-
-func CustomStart(startCmd *cobra.Command) {
-	wasm.AddModuleInitFlags(startCmd)
-	startCmd.PreRunE = chainPreRuns(CheckLibwasmVersion, startCmd.PreRunE)
 }
 
 type preRunFn func(cmd *cobra.Command, args []string) error
