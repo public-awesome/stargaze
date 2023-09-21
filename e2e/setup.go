@@ -3,7 +3,7 @@ package e2e
 import (
 	"fmt"
 
-	"github.com/strangelove-ventures/interchaintest/v4/ibc"
+	"github.com/strangelove-ventures/interchaintest/v7/ibc"
 )
 
 var (
@@ -33,6 +33,6 @@ var (
 		PreGenesis:             nil,
 		ModifyGenesis:          nil,
 		ConfigFileOverrides:    nil,
-		UsingNewGenesisCommand: false,
+		UsingNewGenesisCommand: true,
 	}
 )
