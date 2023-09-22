@@ -36,6 +36,7 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/public-awesome/stargaze/v12/app"
 	"github.com/public-awesome/stargaze/v12/app/params"
+	tmcmd "github.com/tendermint/tendermint/cmd/cometbft/commands"
 )
 
 // NewRootCmd creates a new root command for wasmd. It is called once in the
