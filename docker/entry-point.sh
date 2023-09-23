@@ -13,12 +13,12 @@ MEMORY_CACHE_SIZE=${MEMORY_CACHE_SIZE:-1000}
 coins="10000000000000000$DENOM"
 starsd init --chain-id $CHAINID $CHAINID
 starsd keys add validator --keyring-backend="test"
-starsd add-genesis-account validator $coins --keyring-backend="test"
+starsd genesis add-genesis-account validator $coins --keyring-backend="test"
 
 # create account for each passed in address
 for addr in "$@"; do
   echo "creating genesis account: $addr"
-  starsd add-genesis-account $addr $coins --keyring-backend="test"
+  starsd genesis add-genesis-account $addr $coins --keyring-backend="test"
 done
 
 starsd gentx validator 10000000000$DENOM --chain-id $CHAINID --keyring-backend="test"
