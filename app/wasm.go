@@ -15,6 +15,7 @@ var wasmCapabilities = []string{
 	"cosmwasm_1_1",
 	"cosmwasm_1_2",
 	"cosmwasm_1_3",
+	"cosmwasm_1_4",
 	"token_factory",
 }
 
