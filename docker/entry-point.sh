@@ -21,8 +21,8 @@ for addr in "$@"; do
   starsd genesis add-genesis-account $addr $coins --keyring-backend="test"
 done
 
-starsd gentx validator 10000000000$DENOM --chain-id $CHAINID --keyring-backend="test"
-starsd collect-gentxs
+starsd genesis gentx validator 10000000000$DENOM --chain-id $CHAINID --keyring-backend="test"
+starsd genesis collect-gentxs
 
 
 # Set proper defaults and change ports
