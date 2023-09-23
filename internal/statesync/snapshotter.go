@@ -61,7 +61,7 @@ func (vs *VersionSnapshotter) SnapshotExtension(height uint64, payloadWriter sna
 }
 
 // Restore restores a state snapshot from the protobuf items read from the reader.
-func (vs *VersionSnapshotter) RestoreExtension(height uint64, format uint32, payloadReader snapshot.ExtensionPayloadReader) error {
+func (vs *VersionSnapshotter) RestoreExtension(_ uint64, format uint32, payloadReader snapshot.ExtensionPayloadReader) error {
 	if format == SnapshotFormat {
 		for {
 			payload, err := payloadReader()
