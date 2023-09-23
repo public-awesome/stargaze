@@ -10,7 +10,7 @@ replace (
 )
 
 require (
-	github.com/cosmos/ibc-go/v7 v7.2.0
+	github.com/cosmos/ibc-go/v7 v7.3.0
 	github.com/strangelove-ventures/interchaintest/v7 v7.0.0-20230721183422-fb937bb0e165
 	github.com/stretchr/testify v1.8.4
 	go.uber.org/zap v1.24.0
