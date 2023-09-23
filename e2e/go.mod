@@ -11,7 +11,7 @@ replace (
 
 require (
 	github.com/cosmos/cosmos-sdk v0.47.5
-	github.com/cosmos/ibc-go/v7 v7.2.0
+	github.com/cosmos/ibc-go/v7 v7.3.0
 	github.com/docker/docker v24.0.4+incompatible
 	github.com/strangelove-ventures/interchaintest/v7 v7.0.0-20230721183422-fb937bb0e165
 	github.com/stretchr/testify v1.8.4
