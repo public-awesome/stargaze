@@ -146,6 +146,7 @@ import (
 	stargazerest "github.com/public-awesome/stargaze/v12/internal/rest"
 
 	sgappparams "github.com/public-awesome/stargaze/v12/app/params"
+	sgstatesync "github.com/public-awesome/stargaze/v12/internal/statesync"
 )
 
 const (
@@ -884,6 +885,7 @@ func NewStargazeApp(
 	if manager := app.SnapshotManager(); manager != nil {
 		err := manager.RegisterExtensions(
 			wasmkeeper.NewWasmSnapshotter(app.CommitMultiStore(), &app.WasmKeeper),
+			sgstatesync.NewVersionSnapshotter(app.CommitMultiStore(), app, app),
 		)
 		if err != nil {
 			panic(fmt.Errorf("failed to register snapshot extension: %s", err))
