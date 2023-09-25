@@ -67,6 +67,12 @@ func (m msgServer) DemoteFromPrivilegedContract(goCtx context.Context, msg *type
 	return &types.MsgDemoteFromPrivilegedContractResponse{}, nil
 }
 
-func (m msgServer) isAuthorized(ctx context.Context, actor string) bool {
-	return actor == m.Keeper.GetAuthority()
+func (m msgServer) isAuthorized(ctx sdk.Context, actor string) bool {
+	if actor == m.Keeper.GetAuthority() {
+		return true
+	}
+	if m.Keeper.IsPrivilegedAddress(ctx, actor) {
+		return true
+	}
+	return false
 }

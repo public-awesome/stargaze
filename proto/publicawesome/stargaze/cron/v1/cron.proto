@@ -1,0 +1,13 @@
+syntax = "proto3";
+package publicawesome.stargaze.cron.v1;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/public-awesome/stargaze/v12/x/cron/types";
+
+// Params holds parameters for the cron module.
+message Params {
+    option (gogoproto.goproto_stringer) = false;
+    // Addresses which are whitelisted to modify the priivlege status of contracts
+    repeated string privileged_addresses = 1;
+  }

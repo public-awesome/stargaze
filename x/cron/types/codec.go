@@ -3,7 +3,8 @@ package types
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/msgservice"
 	// this line is used by starport scaffolding # 1
 )
 
@@ -11,6 +12,8 @@ import (
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&PromoteToPrivilegedContractProposal{}, "cron/PromoteToPrivilegedContractProposal", nil)
 	cdc.RegisterConcrete(&DemotePrivilegedContractProposal{}, "cron/DemotePrivilegedContractProposal", nil)
+	cdc.RegisterConcrete(&MsgPromoteToPrivilegedContract{}, "cron/MsgPromoteToPrivilegedContract", nil)
+	cdc.RegisterConcrete(&MsgDemoteFromPrivilegedContract{}, "cron/MsgDemoteFromPrivilegedContract", nil)
 }
 
 func RegisterCodec(_ *codec.LegacyAmino) {
@@ -20,11 +23,12 @@ func RegisterCodec(_ *codec.LegacyAmino) {
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	// this line is used by starport scaffolding # 3
 
-	registry.RegisterImplementations(
-		(*govtypes.Content)(nil),
-		&PromoteToPrivilegedContractProposal{},
-		&DemotePrivilegedContractProposal{},
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgPromoteToPrivilegedContract{},
+		&MsgDemoteFromPrivilegedContract{},
 	)
+
+	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
 
 var (

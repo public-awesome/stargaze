@@ -29,7 +29,7 @@ func TestPromoteToPrivilegedContract(t *testing.T) {
 			true,
 		},
 		{
-			"sender not gov module",
+			"sender not gov module or whitelisted addr",
 			func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgPromoteToPrivilegedContract {
 				sender := sample.AccAddress()
 				msg := types.MsgPromoteToPrivilegedContract{
@@ -53,11 +53,28 @@ func TestPromoteToPrivilegedContract(t *testing.T) {
 			true,
 		},
 		{
-			"valid",
+			"valid via x/gov",
 			func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgPromoteToPrivilegedContract {
 				govModuleAddr := keeper.GetAuthority()
 				msg := types.MsgPromoteToPrivilegedContract{
 					Authority: govModuleAddr,
+					Contract:  "cosmos1qyqszqgpqyqszqgpqyqszqgpqyqszqgpjnp7du",
+				}
+				return &msg
+			},
+			false,
+		},
+		{
+			"valid via whitelisted addr",
+			func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgPromoteToPrivilegedContract {
+				sender := sample.AccAddress()
+
+				params := types.DefaultParams()
+				params.PrivilegedAddresses = []string{sender.String()}
+				keeper.SetParams(ctx, params)
+
+				msg := types.MsgPromoteToPrivilegedContract{
+					Authority: sender.String(),
 					Contract:  "cosmos1qyqszqgpqyqszqgpqyqszqgpqyqszqgpjnp7du",
 				}
 				return &msg
@@ -107,7 +124,7 @@ func TestDemoteFromPrivilegedContract(t *testing.T) {
 			true,
 		},
 		{
-			"sender not gov module",
+			"sender not gov module or whitelisted addr",
 			func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgDemoteFromPrivilegedContract {
 				sender := sample.AccAddress()
 				msg := types.MsgDemoteFromPrivilegedContract{
@@ -144,7 +161,7 @@ func TestDemoteFromPrivilegedContract(t *testing.T) {
 			true,
 		},
 		{
-			"valid",
+			"valid via x/gov",
 			func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgDemoteFromPrivilegedContract {
 				contractAddr := "cosmos1qyqszqgpqyqszqgpqyqszqgpqyqszqgpjnp7du"
 				err := keeper.SetPrivileged(ctx, sdk.MustAccAddressFromBech32(contractAddr))
@@ -153,6 +170,26 @@ func TestDemoteFromPrivilegedContract(t *testing.T) {
 				govModuleAddr := keeper.GetAuthority()
 				msg := types.MsgDemoteFromPrivilegedContract{
 					Authority: govModuleAddr,
+					Contract:  contractAddr,
+				}
+				return &msg
+			},
+			false,
+		},
+		{
+			"valid via whitelisted addr",
+			func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgDemoteFromPrivilegedContract {
+				sender := sample.AccAddress()
+				params := types.DefaultParams()
+				params.PrivilegedAddresses = []string{sender.String()}
+				keeper.SetParams(ctx, params)
+
+				contractAddr := "cosmos1qyqszqgpqyqszqgpqyqszqgpqyqszqgpjnp7du"
+				err := keeper.SetPrivileged(ctx, sdk.MustAccAddressFromBech32(contractAddr))
+				require.NoError(t, err)
+
+				msg := types.MsgDemoteFromPrivilegedContract{
+					Authority: sender.String(),
 					Contract:  contractAddr,
 				}
 				return &msg
