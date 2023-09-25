@@ -18,6 +18,7 @@ type (
 		memKey     storetypes.StoreKey
 		paramstore paramtypes.Subspace
 		wasmKeeper types.WasmKeeper
+		authority  string // this should be the x/gov module account
 	}
 )
 
@@ -27,14 +28,21 @@ func NewKeeper(
 	memKey storetypes.StoreKey,
 	ps paramtypes.Subspace,
 	wk types.WasmKeeper,
-) *Keeper {
-	return &Keeper{
+	authority string,
+) Keeper {
+	return Keeper{
 		cdc:        cdc,
 		storeKey:   storeKey,
 		memKey:     memKey,
 		paramstore: ps,
 		wasmKeeper: wk,
+		authority:  authority,
 	}
+}
+
+// GetAuthority returns the x/wasm module's authority.
+func (k Keeper) GetAuthority() string {
+	return k.authority
 }
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {

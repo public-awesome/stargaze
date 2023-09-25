@@ -656,7 +656,13 @@ func NewStargazeApp(
 	app.ContractKeeper = wasmkeeper.NewDefaultPermissionKeeper(app.WasmKeeper)
 	app.Ics20WasmHooks.ContractKeeper = &app.WasmKeeper
 
-	app.CronKeeper = *cronmodulekeeper.NewKeeper(appCodec, keys[cronmoduletypes.StoreKey], keys[cronmoduletypes.MemStoreKey], app.GetSubspace(cronmoduletypes.ModuleName), app.WasmKeeper)
+	app.CronKeeper = cronmodulekeeper.NewKeeper(
+		appCodec,
+		keys[cronmoduletypes.StoreKey],
+		keys[cronmoduletypes.MemStoreKey],
+		app.GetSubspace(cronmoduletypes.ModuleName),
+		app.WasmKeeper,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String())
 	cronModule := cronmodule.NewAppModule(appCodec, app.CronKeeper, app.WasmKeeper)
 	govRouter.AddRoute(cronmoduletypes.RouterKey, cronmodulekeeper.NewProposalHandler(app.CronKeeper))
 

@@ -19,7 +19,7 @@ import (
 )
 
 // CronKeeper creates a testing keeper for the x/cron module
-func CronKeeper(tb testing.TB) (*keeper.Keeper, sdk.Context) {
+func CronKeeper(tb testing.TB) (keeper.Keeper, sdk.Context) {
 	tb.Helper()
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
@@ -62,6 +62,7 @@ func CronKeeper(tb testing.TB) (*keeper.Keeper, sdk.Context) {
 		memStoreKey,
 		paramsSubspace,
 		wk,
+		"cosmos1a48wdtjn3egw7swhfkeshwdtjvs6hq9nlyrwut", // random addr for gov module
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
