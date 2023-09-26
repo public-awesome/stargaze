@@ -70,7 +70,7 @@ func TestPromoteToPrivilegedContract(t *testing.T) {
 				sender := sample.AccAddress()
 
 				params := types.DefaultParams()
-				params.PrivilegedAddresses = []string{sender.String()}
+				params.AdminAddress = []string{sender.String()}
 				keeper.SetParams(ctx, params)
 
 				msg := types.MsgPromoteToPrivilegedContract{
@@ -181,7 +181,7 @@ func TestDemoteFromPrivilegedContract(t *testing.T) {
 			func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgDemoteFromPrivilegedContract {
 				sender := sample.AccAddress()
 				params := types.DefaultParams()
-				params.PrivilegedAddresses = []string{sender.String()}
+				params.AdminAddress = []string{sender.String()}
 				keeper.SetParams(ctx, params)
 
 				contractAddr := "cosmos1qyqszqgpqyqszqgpqyqszqgpqyqszqgpjnp7du"

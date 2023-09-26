@@ -21,7 +21,7 @@ func (k Keeper) GetParams(ctx sdk.Context) types.Params {
 }
 
 func (k Keeper) IsPrivilegedAddress(ctx sdk.Context, address string) bool {
-	privilegedAddresses := k.GetParams(ctx).PrivilegedAddresses
+	privilegedAddresses := k.GetParams(ctx).AdminAddress
 	for _, paddr := range privilegedAddresses {
 		if address == paddr {
 			return true

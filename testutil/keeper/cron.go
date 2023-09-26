@@ -67,7 +67,7 @@ func CronKeeper(tb testing.TB) (keeper.Keeper, sdk.Context) {
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
 
-	params := types.Params{PrivilegedAddresses: []string{}}
+	params := types.Params{AdminAddress: []string{}}
 	k.SetParams(ctx, params)
 
 	return k, ctx

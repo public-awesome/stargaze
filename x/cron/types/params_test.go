@@ -3,7 +3,7 @@ package types_test
 import (
 	"testing"
 
-	"github.com/public-awesome/stargaze/v12/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v12/x/cron/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -20,12 +20,12 @@ func TestParamsValidate(t *testing.T) {
 		},
 		{
 			"fail: invalid addr",
-			types.Params{PrivilegedAddresses: []string{"👻"}},
+			types.Params{AdminAddress: []string{"👻"}},
 			true,
 		},
 		{
 			"ok: valid addr",
-			types.Params{PrivilegedAddresses: []string{"cosmos1c4k24jzduc365kywrsvf5ujz4ya6mwymy8vq4q"}},
+			types.Params{AdminAddress: []string{"cosmos1c4k24jzduc365kywrsvf5ujz4ya6mwymy8vq4q"}},
 			false,
 		},
 		{

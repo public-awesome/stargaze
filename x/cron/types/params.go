@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	KeyPrivilegedAddresses = []byte("PrivilegedAddresses")
+	KeyAdminAddress = []byte("AdminAddress")
 )
 
 var _ paramtypes.ParamSet = (*Params)(nil)
@@ -21,27 +21,27 @@ func ParamKeyTable() paramtypes.KeyTable {
 // default module parameters
 func DefaultParams() Params {
 	return Params{
-		PrivilegedAddresses: []string{},
+		AdminAddress: []string{},
 	}
 }
 
 func NewParams(addresses []string) Params {
 	return Params{
-		PrivilegedAddresses: addresses,
+		AdminAddress: addresses,
 	}
 }
 
 func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
-		paramtypes.NewParamSetPair(KeyPrivilegedAddresses, &p.PrivilegedAddresses, validatePriviligedAddresses),
+		paramtypes.NewParamSetPair(KeyAdminAddress, &p.AdminAddress, validateAdminAddress),
 	}
 }
 
 func (p Params) Validate() error {
-	return validatePriviligedAddresses(p.PrivilegedAddresses)
+	return validateAdminAddress(p.AdminAddress)
 }
 
-func validatePriviligedAddresses(i interface{}) error {
+func validateAdminAddress(i interface{}) error {
 	privilegedAddress, ok := i.([]string)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
