@@ -8,9 +8,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var (
-	KeyAdminAddress = []byte("AdminAddress")
-)
+var KeyAdminAddress = []byte("AdminAddress")
 
 var _ paramtypes.ParamSet = (*Params)(nil)
 
