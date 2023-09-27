@@ -11,6 +11,7 @@ import (
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgPromoteToPrivilegedContract{}, "cron/MsgPromoteToPrivilegedContract", nil)
 	cdc.RegisterConcrete(&MsgDemoteFromPrivilegedContract{}, "cron/MsgDemoteFromPrivilegedContract", nil)
+	cdc.RegisterConcrete(&MsgUpdateParams{}, "cron/MsgUpdateParams", nil)
 }
 
 func RegisterCodec(_ *codec.LegacyAmino) {
@@ -20,6 +21,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgPromoteToPrivilegedContract{},
 		&MsgDemoteFromPrivilegedContract{},
+		&MsgUpdateParams{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

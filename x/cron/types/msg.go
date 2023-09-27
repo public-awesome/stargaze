@@ -96,3 +96,38 @@ func (msg MsgDemoteFromPrivilegedContract) ValidateBasic() error {
 	}
 	return nil
 }
+
+func (msg MsgUpdateParams) Route() string {
+	return RouterKey
+}
+
+func (msg MsgUpdateParams) Type() string {
+	return TypeMsgRemoveCodeAuthorization
+}
+
+func (msg MsgUpdateParams) GetSigners() []sdk.AccAddress {
+	sender, err := sdk.AccAddressFromBech32(msg.Authority)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{sender}
+}
+
+func (msg MsgUpdateParams) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(&msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg MsgUpdateParams) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Authority)
+	if err != nil {
+		return errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "invalid sender address (%s)", err)
+	}
+	for _, a := range msg.Params.GetAdminAddresses() {
+		_, err = sdk.AccAddressFromBech32(a)
+		if err != nil {
+			return errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "invalid admin address (%s)", err)
+		}
+	}
+	return nil
+}

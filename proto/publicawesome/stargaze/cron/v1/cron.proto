@@ -9,5 +9,5 @@ option go_package = "github.com/public-awesome/stargaze/v12/x/cron/types";
 message Params {
     option (gogoproto.goproto_stringer) = false;
     // Addresses which act as admins of the module. They can promote and demote contracts without having to go via governance.
-    repeated string admin_address = 1;
+    repeated string admin_addresses = 1;
   }

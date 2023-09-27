@@ -20,12 +20,12 @@ func TestParamsValidate(t *testing.T) {
 		},
 		{
 			"fail: invalid addr",
-			types.Params{AdminAddress: []string{"👻"}},
+			types.Params{AdminAddresses: []string{"👻"}},
 			true,
 		},
 		{
 			"ok: valid addr",
-			types.Params{AdminAddress: []string{"cosmos1c4k24jzduc365kywrsvf5ujz4ya6mwymy8vq4q"}},
+			types.Params{AdminAddresses: []string{"cosmos1c4k24jzduc365kywrsvf5ujz4ya6mwymy8vq4q"}},
 			false,
 		},
 		{

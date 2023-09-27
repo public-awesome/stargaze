@@ -21,24 +21,24 @@ func ParamKeyTable() paramtypes.KeyTable {
 // default module parameters
 func DefaultParams() Params {
 	return Params{
-		AdminAddress: []string{},
+		AdminAddresses: []string{},
 	}
 }
 
 func NewParams(addresses []string) Params {
 	return Params{
-		AdminAddress: addresses,
+		AdminAddresses: addresses,
 	}
 }
 
 func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
-		paramtypes.NewParamSetPair(KeyAdminAddress, &p.AdminAddress, validateAdminAddress),
+		paramtypes.NewParamSetPair(KeyAdminAddress, &p.AdminAddresses, validateAdminAddress),
 	}
 }
 
 func (p Params) Validate() error {
-	return validateAdminAddress(p.AdminAddress)
+	return validateAdminAddress(p.AdminAddresses)
 }
 
 func validateAdminAddress(i interface{}) error {

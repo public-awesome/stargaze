@@ -3,6 +3,7 @@ package publicawesome.stargaze.cron.v1;
 
 import "gogoproto/gogo.proto";
 import "cosmos/msg/v1/msg.proto";
+import "publicawesome/stargaze/cron/v1/cron.proto";
 
 option go_package = "github.com/public-awesome/stargaze/v12/x/cron/types";
 
@@ -13,6 +14,9 @@ service Msg {
 
   rpc DemoteFromPrivilegedContract(MsgDemoteFromPrivilegedContract)
       returns (MsgDemoteFromPrivilegedContractResponse);
+
+  rpc UpdateParams(MsgUpdateParams)
+      returns (MsgUpdateParamsResponse);
 }
 
 message MsgPromoteToPrivilegedContract {
@@ -34,3 +38,16 @@ message MsgDemoteFromPrivilegedContract {
 }
 
 message MsgDemoteFromPrivilegedContractResponse {}
+
+message MsgUpdateParams {
+  option (cosmos.msg.v1.signer) = "authority";
+  // Authority is the address of the governance account.
+  string authority = 1;
+  // NOTE: All parameters must be supplied.
+  Params params = 2  [
+    (gogoproto.jsontag) = "params,omitempty",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message MsgUpdateParamsResponse {}

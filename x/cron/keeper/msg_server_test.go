@@ -70,7 +70,7 @@ func TestPromoteToPrivilegedContract(t *testing.T) {
 				sender := sample.AccAddress()
 
 				params := types.DefaultParams()
-				params.AdminAddress = []string{sender.String()}
+				params.AdminAddresses = []string{sender.String()}
 				keeper.SetParams(ctx, params)
 
 				msg := types.MsgPromoteToPrivilegedContract{
@@ -181,7 +181,7 @@ func TestDemoteFromPrivilegedContract(t *testing.T) {
 			func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgDemoteFromPrivilegedContract {
 				sender := sample.AccAddress()
 				params := types.DefaultParams()
-				params.AdminAddress = []string{sender.String()}
+				params.AdminAddresses = []string{sender.String()}
 				keeper.SetParams(ctx, params)
 
 				contractAddr := "cosmos1qyqszqgpqyqszqgpqyqszqgpqyqszqgpjnp7du"
@@ -214,6 +214,86 @@ func TestDemoteFromPrivilegedContract(t *testing.T) {
 				require.NoError(t, err, tc)
 				isPrivileged := k.IsPrivileged(c, sdk.MustAccAddressFromBech32(msg.Contract))
 				require.False(t, isPrivileged)
+			}
+		})
+	}
+}
+
+func TestUpdateParams(t *testing.T) {
+	testCases := []struct {
+		testCase    string
+		prepare     func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgUpdateParams
+		expectError bool
+	}{
+		{
+			"invalid sender address",
+			func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgUpdateParams {
+				msg := types.MsgUpdateParams{
+					Authority: "👻",
+					Params:    types.DefaultParams(),
+				}
+				return &msg
+			},
+			true,
+		},
+		{
+			"sender not gov module",
+			func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgUpdateParams {
+				sender := sample.AccAddress()
+				msg := types.MsgUpdateParams{
+					Authority: sender.String(),
+					Params:    types.DefaultParams(),
+				}
+				return &msg
+			},
+			true,
+		},
+		{
+			"params admin address invalid",
+			func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgUpdateParams {
+				govModuleAddr := keeper.GetAuthority()
+				msg := types.MsgUpdateParams{
+					Authority: govModuleAddr,
+					Params: types.Params{
+						AdminAddresses: []string{"👻"},
+					},
+				}
+				return &msg
+			},
+			true,
+		},
+		{
+			"valid via x/gov",
+			func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgUpdateParams {
+				govModuleAddr := keeper.GetAuthority()
+				msg := types.MsgUpdateParams{
+					Authority: govModuleAddr,
+					Params: types.Params{
+						AdminAddresses: []string{
+							sample.AccAddress().String(),
+						},
+					},
+				}
+				return &msg
+			},
+			false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.testCase, func(t *testing.T) {
+			k, c := keepertest.CronKeeper(t)
+			msgSrvr, ctx := keeper.NewMsgServerImpl(k), sdk.WrapSDKContext(c)
+
+			msg := tc.prepare(c, k)
+
+			_, err := msgSrvr.UpdateParams(ctx, msg)
+
+			if tc.expectError {
+				require.Error(t, err, tc)
+			} else {
+				require.NoError(t, err, tc)
 			}
 		})
 	}
