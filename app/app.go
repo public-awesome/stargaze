@@ -125,7 +125,6 @@ import (
 	cronmoduletypes "github.com/public-awesome/stargaze/v12/x/cron/types"
 
 	globalfeemodule "github.com/public-awesome/stargaze/v12/x/globalfee"
-	globalfeeclient "github.com/public-awesome/stargaze/v12/x/globalfee/client"
 	globalfeemodulekeeper "github.com/public-awesome/stargaze/v12/x/globalfee/keeper"
 	globalfeemoduletypes "github.com/public-awesome/stargaze/v12/x/globalfee/types"
 
@@ -195,8 +194,6 @@ func getGovProposalHandlers() []govclient.ProposalHandler {
 		upgradeclient.LegacyCancelProposalHandler,
 		ibcclientclient.UpdateClientProposalHandler, ibcclientclient.UpgradeProposalHandler,
 		cronclient.SetPrivilegeProposalHandler, cronclient.UnsetPrivilegeProposalHandler,
-		globalfeeclient.SetCodeAuthorizationProposalHandler, globalfeeclient.RemoveCodeAuthorizationProposalHandler,
-		globalfeeclient.SetContractAuthorizationProposalHandler, globalfeeclient.RemoveContractAuthorizationProposalHandler,
 		// this line is used by starport scaffolding # stargate/app/govProposalHandler
 	)
 	return govProposalHandlers
@@ -662,7 +659,6 @@ func NewStargazeApp(
 
 	app.GlobalFeeKeeper = globalfeemodulekeeper.NewKeeper(appCodec, keys[globalfeemoduletypes.StoreKey], app.GetSubspace(globalfeemoduletypes.ModuleName), app.WasmKeeper)
 	globalfeeModule := globalfeemodule.NewAppModule(appCodec, app.GlobalFeeKeeper)
-	govRouter.AddRoute(globalfeemoduletypes.RouterKey, globalfeemodulekeeper.NewProposalHandler(app.GlobalFeeKeeper))
 
 	// The gov proposal types can be individually enabled
 	if len(enabledProposals) != 0 {
