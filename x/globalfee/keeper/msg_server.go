@@ -28,7 +28,7 @@ func (k msgServer) SetCodeAuthorization(goCtx context.Context, msg *types.MsgSet
 		return nil, err
 	}
 	if !k.IsPrivilegedAddress(ctx, msg.Sender) {
-		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender address is not privileged address")
+		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender address is not authorized address to set code authorization")
 	}
 	err = k.Keeper.SetCodeAuthorization(ctx, *msg.CodeAuthorization)
 	if err != nil {
@@ -43,8 +43,8 @@ func (k msgServer) RemoveCodeAuthorization(goCtx context.Context, msg *types.Msg
 	if err != nil {
 		return nil, err
 	}
-	if !k.IsPrivilegedAddress(ctx, msg.Sender) {
-		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender address is not privileged address")
+	if !k.isAuthorized(ctx, msg.Sender) {
+		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender address is not authorized address to remove code authorization")
 	}
 	k.Keeper.DeleteCodeAuthorization(ctx, msg.GetCodeID())
 	return &types.MsgRemoveCodeAuthorizationResponse{}, nil
@@ -56,8 +56,8 @@ func (k msgServer) SetContractAuthorization(goCtx context.Context, msg *types.Ms
 	if err != nil {
 		return nil, err
 	}
-	if !k.IsPrivilegedAddress(ctx, msg.Sender) {
-		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender address is not privileged address")
+	if !k.isAuthorized(ctx, msg.Sender) {
+		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender address is not authorized address to set contract authorization")
 	}
 	err = k.Keeper.SetContractAuthorization(ctx, *msg.ContractAuthorization)
 	if err != nil {
@@ -72,8 +72,8 @@ func (k msgServer) RemoveContractAuthorization(goCtx context.Context, msg *types
 	if err != nil {
 		return nil, err
 	}
-	if !k.IsPrivilegedAddress(ctx, msg.Sender) {
-		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender address is not privileged address")
+	if !k.isAuthorized(ctx, msg.Sender) {
+		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender address is not authorized address to remove contract authorization")
 	}
 	contractAddr, err := sdk.AccAddressFromBech32(msg.ContractAddress)
 	if err != nil {
@@ -104,12 +104,12 @@ func (k msgServer) UpdateParams(goCtx context.Context, msg *types.MsgUpdateParam
 	return &types.MsgUpdateParamsResponse{}, nil
 }
 
-// func (m msgServer) isAuthorized(ctx sdk.Context, actor string) bool {
-// 	if actor == m.Keeper.GetAuthority() {
-// 		return true
-// 	}
-// 	if m.Keeper.IsAdminAddress(ctx, actor) {
-// 		return true
-// 	}
-// 	return false
-// }
+func (m msgServer) isAuthorized(ctx sdk.Context, actor string) bool {
+	if actor == m.Keeper.GetAuthority() {
+		return true
+	}
+	if m.Keeper.IsPrivilegedAddress(ctx, actor) {
+		return true
+	}
+	return false
+}
