@@ -657,7 +657,13 @@ func NewStargazeApp(
 	cronModule := cronmodule.NewAppModule(appCodec, app.CronKeeper, app.WasmKeeper)
 	govRouter.AddRoute(cronmoduletypes.RouterKey, cronmodulekeeper.NewProposalHandler(app.CronKeeper))
 
-	app.GlobalFeeKeeper = globalfeemodulekeeper.NewKeeper(appCodec, keys[globalfeemoduletypes.StoreKey], app.GetSubspace(globalfeemoduletypes.ModuleName), app.WasmKeeper)
+	app.GlobalFeeKeeper = globalfeemodulekeeper.NewKeeper(
+		appCodec,
+		keys[globalfeemoduletypes.StoreKey],
+		app.GetSubspace(globalfeemoduletypes.ModuleName),
+		app.WasmKeeper,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+	)
 	globalfeeModule := globalfeemodule.NewAppModule(appCodec, app.GlobalFeeKeeper)
 
 	// The gov proposal types can be individually enabled

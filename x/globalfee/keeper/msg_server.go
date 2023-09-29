@@ -104,11 +104,11 @@ func (k msgServer) UpdateParams(goCtx context.Context, msg *types.MsgUpdateParam
 	return &types.MsgUpdateParamsResponse{}, nil
 }
 
-func (m msgServer) isAuthorized(ctx sdk.Context, actor string) bool {
-	if actor == m.Keeper.GetAuthority() {
+func (k msgServer) isAuthorized(ctx sdk.Context, actor string) bool {
+	if actor == k.Keeper.GetAuthority() {
 		return true
 	}
-	if m.Keeper.IsPrivilegedAddress(ctx, actor) {
+	if k.Keeper.IsPrivilegedAddress(ctx, actor) {
 		return true
 	}
 	return false
