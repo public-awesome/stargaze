@@ -4,63 +4,99 @@
 
 ## Table of Contents
 
-- [publicawesome/stargaze/mint/v1beta1/mint.proto](#publicawesome/stargaze/mint/v1beta1/mint.proto)
-    - [Minter](#publicawesome.stargaze.mint.v1beta1.Minter)
-    - [Params](#publicawesome.stargaze.mint.v1beta1.Params)
+- [publicawesome/stargaze/globalfee/v1/globalfee.proto](#publicawesome/stargaze/globalfee/v1/globalfee.proto)
+    - [CodeAuthorization](#publicawesome.stargaze.globalfee.v1.CodeAuthorization)
+    - [ContractAuthorization](#publicawesome.stargaze.globalfee.v1.ContractAuthorization)
+    - [Params](#publicawesome.stargaze.globalfee.v1.Params)
   
-- [publicawesome/stargaze/mint/v1beta1/genesis.proto](#publicawesome/stargaze/mint/v1beta1/genesis.proto)
-    - [GenesisState](#publicawesome.stargaze.mint.v1beta1.GenesisState)
+- [publicawesome/stargaze/globalfee/v1/genesis.proto](#publicawesome/stargaze/globalfee/v1/genesis.proto)
+    - [GenesisState](#publicawesome.stargaze.globalfee.v1.GenesisState)
   
-- [publicawesome/stargaze/mint/v1beta1/query.proto](#publicawesome/stargaze/mint/v1beta1/query.proto)
-    - [QueryAnnualProvisionsRequest](#publicawesome.stargaze.mint.v1beta1.QueryAnnualProvisionsRequest)
-    - [QueryAnnualProvisionsResponse](#publicawesome.stargaze.mint.v1beta1.QueryAnnualProvisionsResponse)
-    - [QueryParamsRequest](#publicawesome.stargaze.mint.v1beta1.QueryParamsRequest)
-    - [QueryParamsResponse](#publicawesome.stargaze.mint.v1beta1.QueryParamsResponse)
+- [publicawesome/stargaze/globalfee/v1/proposal.proto](#publicawesome/stargaze/globalfee/v1/proposal.proto)
+    - [RemoveCodeAuthorizationProposal](#publicawesome.stargaze.globalfee.v1.RemoveCodeAuthorizationProposal)
+    - [RemoveContractAuthorizationProposal](#publicawesome.stargaze.globalfee.v1.RemoveContractAuthorizationProposal)
+    - [SetCodeAuthorizationProposal](#publicawesome.stargaze.globalfee.v1.SetCodeAuthorizationProposal)
+    - [SetContractAuthorizationProposal](#publicawesome.stargaze.globalfee.v1.SetContractAuthorizationProposal)
   
-    - [Query](#publicawesome.stargaze.mint.v1beta1.Query)
+- [publicawesome/stargaze/globalfee/v1/query.proto](#publicawesome/stargaze/globalfee/v1/query.proto)
+    - [QueryAuthorizationsRequest](#publicawesome.stargaze.globalfee.v1.QueryAuthorizationsRequest)
+    - [QueryAuthorizationsResponse](#publicawesome.stargaze.globalfee.v1.QueryAuthorizationsResponse)
+    - [QueryCodeAuthorizationRequest](#publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationRequest)
+    - [QueryCodeAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationResponse)
+    - [QueryContractAuthorizationRequest](#publicawesome.stargaze.globalfee.v1.QueryContractAuthorizationRequest)
+    - [QueryContractAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.QueryContractAuthorizationResponse)
+    - [QueryParamsRequest](#publicawesome.stargaze.globalfee.v1.QueryParamsRequest)
+    - [QueryParamsResponse](#publicawesome.stargaze.globalfee.v1.QueryParamsResponse)
   
-- [publicawesome/stargaze/mint/v1beta1/tx.proto](#publicawesome/stargaze/mint/v1beta1/tx.proto)
-    - [Msg](#publicawesome.stargaze.mint.v1beta1.Msg)
+    - [Query](#publicawesome.stargaze.globalfee.v1.Query)
+  
+- [publicawesome/stargaze/globalfee/v1/tx.proto](#publicawesome/stargaze/globalfee/v1/tx.proto)
+    - [MsgRemoveCodeAuthorization](#publicawesome.stargaze.globalfee.v1.MsgRemoveCodeAuthorization)
+    - [MsgRemoveCodeAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.MsgRemoveCodeAuthorizationResponse)
+    - [MsgRemoveContractAuthorization](#publicawesome.stargaze.globalfee.v1.MsgRemoveContractAuthorization)
+    - [MsgRemoveContractAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.MsgRemoveContractAuthorizationResponse)
+    - [MsgSetCodeAuthorization](#publicawesome.stargaze.globalfee.v1.MsgSetCodeAuthorization)
+    - [MsgSetCodeAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.MsgSetCodeAuthorizationResponse)
+    - [MsgSetContractAuthorization](#publicawesome.stargaze.globalfee.v1.MsgSetContractAuthorization)
+    - [MsgSetContractAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.MsgSetContractAuthorizationResponse)
+    - [MsgUpdateParams](#publicawesome.stargaze.globalfee.v1.MsgUpdateParams)
+    - [MsgUpdateParamsResponse](#publicawesome.stargaze.globalfee.v1.MsgUpdateParamsResponse)
+  
+    - [Msg](#publicawesome.stargaze.globalfee.v1.Msg)
   
 - [Scalar Value Types](#scalar-value-types)
 
 
 
-<a name="publicawesome/stargaze/mint/v1beta1/mint.proto"></a>
+<a name="publicawesome/stargaze/globalfee/v1/globalfee.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/mint/v1beta1/mint.proto
+## publicawesome/stargaze/globalfee/v1/globalfee.proto
 
 
 
-<a name="publicawesome.stargaze.mint.v1beta1.Minter"></a>
+<a name="publicawesome.stargaze.globalfee.v1.CodeAuthorization"></a>
 
-### Minter
-Minter represents the minting state.
+### CodeAuthorization
+Configuration for code Ids which can have zero gas operations
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `annual_provisions` | [string](#string) |  | current annual expected provisions |
+| `code_id` | [uint64](#uint64) |  | authorized code ids |
+| `methods` | [string](#string) | repeated | authorized contract operation methods |
 
 
 
 
 
 
-<a name="publicawesome.stargaze.mint.v1beta1.Params"></a>
+<a name="publicawesome.stargaze.globalfee.v1.ContractAuthorization"></a>
+
+### ContractAuthorization
+Configuration for contract addresses which can have zero gas operations
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `contract_address` | [string](#string) |  | authorized contract addresses |
+| `methods` | [string](#string) | repeated | authorized contract operation methods |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.Params"></a>
 
 ### Params
-Params holds parameters for the mint module.
+Params holds parameters for the globalfee module.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `mint_denom` | [string](#string) |  | type of coin to mint |
-| `start_time` | [google.protobuf.Timestamp](#google.protobuf.Timestamp) |  | the time the chain starts |
-| `initial_annual_provisions` | [string](#string) |  | initial annual provisions |
-| `reduction_factor` | [string](#string) |  | factor to reduce inflation by each year |
-| `blocks_per_year` | [uint64](#uint64) |  | expected blocks per year |
+| `privileged_addresses` | [string](#string) | repeated | Addresses which are whitelisted to modify the gas free operations |
+| `minimum_gas_prices` | [cosmos.base.v1beta1.DecCoin](#cosmos.base.v1beta1.DecCoin) | repeated | Minimum stores the minimum gas price(s) for all TX on the chain. |
 
 
 
@@ -76,23 +112,24 @@ Params holds parameters for the mint module.
 
 
 
-<a name="publicawesome/stargaze/mint/v1beta1/genesis.proto"></a>
+<a name="publicawesome/stargaze/globalfee/v1/genesis.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/mint/v1beta1/genesis.proto
+## publicawesome/stargaze/globalfee/v1/genesis.proto
 
 
 
-<a name="publicawesome.stargaze.mint.v1beta1.GenesisState"></a>
+<a name="publicawesome.stargaze.globalfee.v1.GenesisState"></a>
 
 ### GenesisState
-GenesisState defines the mint module's genesis state.
+GenesisState defines the globalfee module's genesis state.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `minter` | [Minter](#publicawesome.stargaze.mint.v1beta1.Minter) |  | minter is a space for holding current inflation information. |
-| `params` | [Params](#publicawesome.stargaze.mint.v1beta1.Params) |  | params defines all the paramaters of the module. |
+| `params` | [Params](#publicawesome.stargaze.globalfee.v1.Params) |  | Module params |
+| `code_authorizations` | [CodeAuthorization](#publicawesome.stargaze.globalfee.v1.CodeAuthorization) | repeated | Authorizations configured by code id |
+| `contract_authorizations` | [ContractAuthorization](#publicawesome.stargaze.globalfee.v1.ContractAuthorization) | repeated | Authorizations configured by contract addresses |
 
 
 
@@ -108,59 +145,202 @@ GenesisState defines the mint module's genesis state.
 
 
 
-<a name="publicawesome/stargaze/mint/v1beta1/query.proto"></a>
+<a name="publicawesome/stargaze/globalfee/v1/proposal.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/mint/v1beta1/query.proto
+## publicawesome/stargaze/globalfee/v1/proposal.proto
 
 
 
-<a name="publicawesome.stargaze.mint.v1beta1.QueryAnnualProvisionsRequest"></a>
+<a name="publicawesome.stargaze.globalfee.v1.RemoveCodeAuthorizationProposal"></a>
 
-### QueryAnnualProvisionsRequest
-QueryAnnualProvisionsRequest is the request type for the
-Query/AnnualProvisions RPC method.
+### RemoveCodeAuthorizationProposal
 
-
-
-
-
-
-<a name="publicawesome.stargaze.mint.v1beta1.QueryAnnualProvisionsResponse"></a>
-
-### QueryAnnualProvisionsResponse
-QueryAnnualProvisionsResponse is the response type for the
-Query/AnnualProvisions RPC method.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `annual_provisions` | [bytes](#bytes) |  | annual_provisions is the current minting annual provisions value. |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) |  |  |
+| `code_id` | [uint64](#uint64) |  |  |
 
 
 
 
 
 
-<a name="publicawesome.stargaze.mint.v1beta1.QueryParamsRequest"></a>
+<a name="publicawesome.stargaze.globalfee.v1.RemoveContractAuthorizationProposal"></a>
+
+### RemoveContractAuthorizationProposal
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) |  |  |
+| `contract_address` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.SetCodeAuthorizationProposal"></a>
+
+### SetCodeAuthorizationProposal
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) |  |  |
+| `code_authorization` | [CodeAuthorization](#publicawesome.stargaze.globalfee.v1.CodeAuthorization) |  |  |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.SetContractAuthorizationProposal"></a>
+
+### SetContractAuthorizationProposal
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) |  |  |
+| `contract_authorization` | [ContractAuthorization](#publicawesome.stargaze.globalfee.v1.ContractAuthorization) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="publicawesome/stargaze/globalfee/v1/query.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## publicawesome/stargaze/globalfee/v1/query.proto
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.QueryAuthorizationsRequest"></a>
+
+### QueryAuthorizationsRequest
+
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.QueryAuthorizationsResponse"></a>
+
+### QueryAuthorizationsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `code_authorizations` | [CodeAuthorization](#publicawesome.stargaze.globalfee.v1.CodeAuthorization) | repeated |  |
+| `contract_authorizations` | [ContractAuthorization](#publicawesome.stargaze.globalfee.v1.ContractAuthorization) | repeated |  |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationRequest"></a>
+
+### QueryCodeAuthorizationRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `code_id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationResponse"></a>
+
+### QueryCodeAuthorizationResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `methods` | [string](#string) | repeated |  |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.QueryContractAuthorizationRequest"></a>
+
+### QueryContractAuthorizationRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `contract_address` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.QueryContractAuthorizationResponse"></a>
+
+### QueryContractAuthorizationResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `methods` | [string](#string) | repeated |  |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.QueryParamsRequest"></a>
 
 ### QueryParamsRequest
-QueryParamsRequest is the request type for the Query/Params RPC method.
 
 
 
 
 
 
-<a name="publicawesome.stargaze.mint.v1beta1.QueryParamsResponse"></a>
+
+<a name="publicawesome.stargaze.globalfee.v1.QueryParamsResponse"></a>
 
 ### QueryParamsResponse
-QueryParamsResponse is the response type for the Query/Params RPC method.
+
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `params` | [Params](#publicawesome.stargaze.mint.v1beta1.Params) |  | params defines the parameters of the module. |
+| `params` | [Params](#publicawesome.stargaze.globalfee.v1.Params) |  |  |
 
 
 
@@ -173,24 +353,156 @@ QueryParamsResponse is the response type for the Query/Params RPC method.
  <!-- end HasExtensions -->
 
 
-<a name="publicawesome.stargaze.mint.v1beta1.Query"></a>
+<a name="publicawesome.stargaze.globalfee.v1.Query"></a>
 
 ### Query
-Query provides defines the gRPC querier service.
+Query defines the gRPC querier service.
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `Params` | [QueryParamsRequest](#publicawesome.stargaze.mint.v1beta1.QueryParamsRequest) | [QueryParamsResponse](#publicawesome.stargaze.mint.v1beta1.QueryParamsResponse) | Params returns the total set of minting parameters. | GET|/stargaze/mint/v1beta1/params|
-| `AnnualProvisions` | [QueryAnnualProvisionsRequest](#publicawesome.stargaze.mint.v1beta1.QueryAnnualProvisionsRequest) | [QueryAnnualProvisionsResponse](#publicawesome.stargaze.mint.v1beta1.QueryAnnualProvisionsResponse) | AnnualProvisions current minting annual provisions value. | GET|/stargaze/mint/v1beta1/annual_provisions|
+| `CodeAuthorization` | [QueryCodeAuthorizationRequest](#publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationRequest) | [QueryCodeAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationResponse) |  | GET|/stargaze/globalfee/v1/code_authorization/{code_id}|
+| `ContractAuthorization` | [QueryContractAuthorizationRequest](#publicawesome.stargaze.globalfee.v1.QueryContractAuthorizationRequest) | [QueryContractAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.QueryContractAuthorizationResponse) |  | GET|/stargaze/globalfee/v1/contract_authorization/{contract_address}|
+| `Params` | [QueryParamsRequest](#publicawesome.stargaze.globalfee.v1.QueryParamsRequest) | [QueryParamsResponse](#publicawesome.stargaze.globalfee.v1.QueryParamsResponse) |  | GET|/stargaze/globalfee/v1/params|
+| `Authorizations` | [QueryAuthorizationsRequest](#publicawesome.stargaze.globalfee.v1.QueryAuthorizationsRequest) | [QueryAuthorizationsResponse](#publicawesome.stargaze.globalfee.v1.QueryAuthorizationsResponse) |  | GET|/stargaze/globalfee/v1/authorizations|
 
  <!-- end services -->
 
 
 
-<a name="publicawesome/stargaze/mint/v1beta1/tx.proto"></a>
+<a name="publicawesome/stargaze/globalfee/v1/tx.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/mint/v1beta1/tx.proto
+## publicawesome/stargaze/globalfee/v1/tx.proto
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.MsgRemoveCodeAuthorization"></a>
+
+### MsgRemoveCodeAuthorization
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `sender` | [string](#string) |  |  |
+| `code_id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.MsgRemoveCodeAuthorizationResponse"></a>
+
+### MsgRemoveCodeAuthorizationResponse
+
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.MsgRemoveContractAuthorization"></a>
+
+### MsgRemoveContractAuthorization
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `sender` | [string](#string) |  |  |
+| `contract_address` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.MsgRemoveContractAuthorizationResponse"></a>
+
+### MsgRemoveContractAuthorizationResponse
+
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.MsgSetCodeAuthorization"></a>
+
+### MsgSetCodeAuthorization
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `sender` | [string](#string) |  |  |
+| `code_authorization` | [CodeAuthorization](#publicawesome.stargaze.globalfee.v1.CodeAuthorization) |  |  |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.MsgSetCodeAuthorizationResponse"></a>
+
+### MsgSetCodeAuthorizationResponse
+
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.MsgSetContractAuthorization"></a>
+
+### MsgSetContractAuthorization
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `sender` | [string](#string) |  |  |
+| `contract_authorization` | [ContractAuthorization](#publicawesome.stargaze.globalfee.v1.ContractAuthorization) |  |  |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.MsgSetContractAuthorizationResponse"></a>
+
+### MsgSetContractAuthorizationResponse
+
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.MsgUpdateParams"></a>
+
+### MsgUpdateParams
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `sender` | [string](#string) |  |  |
+| `params` | [Params](#publicawesome.stargaze.globalfee.v1.Params) |  | NOTE: All parameters must be supplied. |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.MsgUpdateParamsResponse"></a>
+
+### MsgUpdateParamsResponse
+
+
+
+
 
 
  <!-- end messages -->
@@ -200,13 +512,18 @@ Query provides defines the gRPC querier service.
  <!-- end HasExtensions -->
 
 
-<a name="publicawesome.stargaze.mint.v1beta1.Msg"></a>
+<a name="publicawesome.stargaze.globalfee.v1.Msg"></a>
 
 ### Msg
-Msg defines the mint Msg service.
+Msg defines the alloc Msg service.
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
+| `SetCodeAuthorization` | [MsgSetCodeAuthorization](#publicawesome.stargaze.globalfee.v1.MsgSetCodeAuthorization) | [MsgSetCodeAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.MsgSetCodeAuthorizationResponse) |  | |
+| `RemoveCodeAuthorization` | [MsgRemoveCodeAuthorization](#publicawesome.stargaze.globalfee.v1.MsgRemoveCodeAuthorization) | [MsgRemoveCodeAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.MsgRemoveCodeAuthorizationResponse) |  | |
+| `SetContractAuthorization` | [MsgSetContractAuthorization](#publicawesome.stargaze.globalfee.v1.MsgSetContractAuthorization) | [MsgSetContractAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.MsgSetContractAuthorizationResponse) |  | |
+| `RemoveContractAuthorization` | [MsgRemoveContractAuthorization](#publicawesome.stargaze.globalfee.v1.MsgRemoveContractAuthorization) | [MsgRemoveContractAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.MsgRemoveContractAuthorizationResponse) |  | |
+| `UpdateParams` | [MsgUpdateParams](#publicawesome.stargaze.globalfee.v1.MsgUpdateParams) | [MsgUpdateParamsResponse](#publicawesome.stargaze.globalfee.v1.MsgUpdateParamsResponse) |  | |
 
  <!-- end services -->
 

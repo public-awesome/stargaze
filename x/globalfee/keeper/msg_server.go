@@ -82,3 +82,34 @@ func (k msgServer) RemoveContractAuthorization(goCtx context.Context, msg *types
 	k.Keeper.DeleteContractAuthorization(ctx, contractAddr)
 	return &types.MsgRemoveContractAuthorizationResponse{}, nil
 }
+
+func (k msgServer) UpdateParams(goCtx context.Context, msg *types.MsgUpdateParams) (*types.MsgUpdateParamsResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	_, err := sdk.AccAddressFromBech32(msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+
+	if msg.Sender != k.Keeper.GetAuthority() {
+		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender address is not authorized address to update module params")
+	}
+
+	err = msg.GetParams().Validate() // need to explicitly validate as x/gov invokes this msg and it does not validate
+	if err != nil {
+		return nil, err
+	}
+
+	k.SetParams(ctx, msg.GetParams())
+
+	return &types.MsgUpdateParamsResponse{}, nil
+}
+
+// func (m msgServer) isAuthorized(ctx sdk.Context, actor string) bool {
+// 	if actor == m.Keeper.GetAuthority() {
+// 		return true
+// 	}
+// 	if m.Keeper.IsAdminAddress(ctx, actor) {
+// 		return true
+// 	}
+// 	return false
+// }

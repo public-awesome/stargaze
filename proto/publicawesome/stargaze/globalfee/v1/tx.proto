@@ -20,6 +20,9 @@ service Msg {
 
   rpc RemoveContractAuthorization(MsgRemoveContractAuthorization)
       returns (MsgRemoveContractAuthorizationResponse);
+
+  rpc UpdateParams(MsgUpdateParams)
+      returns (MsgUpdateParamsResponse);
 }
 
 message MsgSetCodeAuthorization {
@@ -53,3 +56,15 @@ message MsgRemoveContractAuthorization {
 }
 
 message MsgRemoveContractAuthorizationResponse {}
+
+message MsgUpdateParams {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  // NOTE: All parameters must be supplied.
+  Params params = 2  [
+    (gogoproto.jsontag) = "params,omitempty",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message MsgUpdateParamsResponse {}
