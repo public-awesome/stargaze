@@ -13,8 +13,9 @@ var (
 
 // msg types
 const (
-	TypeMsgPromoteToPrivilegedContract = "promote_to_privileged_contract"
-	TypeMsgRemoveCodeAuthorization     = "demote_from_privileged_contract"
+	TypeMsgPromoteToPrivilegedContract  = "promote_to_privileged_contract"
+	TypeMsgDemoteFromPrivilegedContract = "demote_from_privileged_contract"
+	TypeMsgUpdateParams                 = "update_params"
 )
 
 func NewMsgPromoteToPrivilegedContract(sender string, contractAddr string) *MsgPromoteToPrivilegedContract {
@@ -29,7 +30,7 @@ func (msg MsgPromoteToPrivilegedContract) Route() string {
 }
 
 func (msg MsgPromoteToPrivilegedContract) Type() string {
-	return TypeMsgRemoveCodeAuthorization
+	return TypeMsgPromoteToPrivilegedContract
 }
 
 func (msg MsgPromoteToPrivilegedContract) GetSigners() []sdk.AccAddress {
@@ -69,7 +70,7 @@ func (msg MsgDemoteFromPrivilegedContract) Route() string {
 }
 
 func (msg MsgDemoteFromPrivilegedContract) Type() string {
-	return TypeMsgRemoveCodeAuthorization
+	return TypeMsgDemoteFromPrivilegedContract
 }
 
 func (msg MsgDemoteFromPrivilegedContract) GetSigners() []sdk.AccAddress {
@@ -102,7 +103,7 @@ func (msg MsgUpdateParams) Route() string {
 }
 
 func (msg MsgUpdateParams) Type() string {
-	return TypeMsgRemoveCodeAuthorization
+	return TypeMsgUpdateParams
 }
 
 func (msg MsgUpdateParams) GetSigners() []sdk.AccAddress {
