@@ -79,9 +79,7 @@ func (p Params) String() string {
 	return string(out)
 }
 
-var (
-	_ sdk.Msg = &MsgUpdateParams{}
-)
+var _ sdk.Msg = &MsgUpdateParams{}
 
 // msg types
 const (
