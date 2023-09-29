@@ -78,3 +78,51 @@ func (p Params) String() string {
 	out, _ := yaml.Marshal(p)
 	return string(out)
 }
+
+var (
+	_ sdk.Msg = &MsgUpdateParams{}
+)
+
+// msg types
+const (
+	TypeMsgUpdateParams = "update_params"
+)
+
+func NewMsgUpdateParams(sender string, minimumGasPrices sdk.DecCoins, privilegedAddresses []string) *MsgUpdateParams {
+	return &MsgUpdateParams{
+		Sender: sender,
+		Params: Params{
+			MinimumGasPrices:    minimumGasPrices,
+			PrivilegedAddresses: privilegedAddresses,
+		},
+	}
+}
+
+func (msg MsgUpdateParams) Route() string {
+	return RouterKey
+}
+
+func (msg MsgUpdateParams) Type() string {
+	return TypeMsgUpdateParams
+}
+
+func (msg MsgUpdateParams) GetSigners() []sdk.AccAddress {
+	sender, err := sdk.AccAddressFromBech32(msg.Sender)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{sender}
+}
+
+func (msg MsgUpdateParams) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(&msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg MsgUpdateParams) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Sender)
+	if err != nil {
+		return errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "invalid sender address (%s)", err)
+	}
+	return msg.Params.Validate()
+}
