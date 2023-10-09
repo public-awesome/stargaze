@@ -1,0 +1,42 @@
+package keeper
+
+import (
+	"context"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/public-awesome/stargaze/v12/x/authority/types"
+)
+
+type msgServer struct {
+	Keeper
+}
+
+// NewMsgServerImpl returns an implementation of the MsgServer interface
+// for the provided Keeper.
+func NewMsgServerImpl(keeper Keeper) types.MsgServer {
+	return &msgServer{Keeper: keeper}
+}
+
+var _ types.MsgServer = msgServer{}
+
+// SubmitProposal implements types.MsgServer.
+func (m msgServer) SubmitProposal(goCtx context.Context, msg *types.MsgSubmitProposal) (*types.MsgSubmitProposalResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	proposalMsgs, err := msg.GetMsgs()
+	if err != nil {
+		return nil, err
+	}
+
+	proposer, err := sdk.AccAddressFromBech32(msg.GetProposer())
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = m.Keeper.SubmitProposal(ctx, proposalMsgs, proposer)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.MsgSubmitProposalResponse{}, nil
+}

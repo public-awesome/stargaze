@@ -129,6 +129,10 @@ import (
 	globalfeemodulekeeper "github.com/public-awesome/stargaze/v12/x/globalfee/keeper"
 	globalfeemoduletypes "github.com/public-awesome/stargaze/v12/x/globalfee/types"
 
+	authoritymodule "github.com/public-awesome/stargaze/v12/x/authority"
+	authoritykeeper "github.com/public-awesome/stargaze/v12/x/authority/keeper"
+	authoritytypes "github.com/public-awesome/stargaze/v12/x/authority/types"
+
 	ibchooks "github.com/cosmos/ibc-apps/modules/ibc-hooks/v7"
 	ibchookskeeper "github.com/cosmos/ibc-apps/modules/ibc-hooks/v7/keeper"
 	ibchookstypes "github.com/cosmos/ibc-apps/modules/ibc-hooks/v7/types"
@@ -234,6 +238,7 @@ var (
 		allocmodule.AppModuleBasic{},
 		cronmodule.AppModuleBasic{},
 		globalfeemodule.AppModuleBasic{},
+		authoritymodule.AppModuleBasic{},
 		tokenfactory.AppModuleBasic{},
 		wasm.AppModuleBasic{},
 		ica.AppModuleBasic{},
@@ -258,6 +263,7 @@ var (
 		cronmoduletypes.ModuleName:          nil,
 		globalfeemoduletypes.ModuleName:     nil,
 		tokenfactorytypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
+		authoritytypes.ModuleName:           nil,
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 )
@@ -326,6 +332,7 @@ type App struct {
 	AllocKeeper        allocmodulekeeper.Keeper
 	CronKeeper         cronmodulekeeper.Keeper
 	GlobalFeeKeeper    globalfeemodulekeeper.Keeper
+	AuthorityKeeper    authoritykeeper.Keeper
 	IBCHooksKeeper     ibchookskeeper.Keeper
 	TokenFactoryKeeper tokenfactorykeeper.Keeper
 
@@ -378,6 +385,7 @@ func NewStargazeApp(
 		tokenfactorytypes.StoreKey,
 		icahosttypes.StoreKey,
 		globalfeemoduletypes.StoreKey,
+		authoritytypes.StoreKey,
 		ibchookstypes.StoreKey,
 		packetforwardtypes.StoreKey,
 		crisistypes.StoreKey,
@@ -453,7 +461,7 @@ func NewStargazeApp(
 		app.BankKeeper,
 		app.StakingKeeper,
 		authtypes.FeeCollectorName,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		authtypes.NewModuleAddress(authoritytypes.ModuleName).String(),
 	)
 	app.SlashingKeeper = slashingkeeper.NewKeeper(
 		appCodec,
@@ -664,6 +672,15 @@ func NewStargazeApp(
 	globalfeeModule := globalfeemodule.NewAppModule(appCodec, app.GlobalFeeKeeper)
 	govRouter.AddRoute(globalfeemoduletypes.RouterKey, globalfeemodulekeeper.NewProposalHandler(app.GlobalFeeKeeper))
 
+	app.AuthorityKeeper = authoritykeeper.NewKeeper(
+		appCodec,
+		keys[authoritytypes.StoreKey],
+		app.GetSubspace(authoritytypes.ModuleName),
+		bApp.MsgServiceRouter(),
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+	)
+	authoritymodule := authoritymodule.NewAppModule(appCodec, app.AuthorityKeeper)
+
 	// The gov proposal types can be individually enabled
 	if len(enabledProposals) != 0 {
 		govRouter.AddRoute(wasmtypes.RouterKey, wasm.NewWasmProposalHandler(app.WasmKeeper, enabledProposals)) //nolint:staticcheck
@@ -741,6 +758,7 @@ func NewStargazeApp(
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.MsgServiceRouter(), app.GetSubspace(wasmtypes.ModuleName)),
 		cronModule,
 		globalfeeModule,
+		authoritymodule,
 		ibchooks.NewAppModule(app.AccountKeeper),
 		tokenfactory.NewAppModule(app.TokenFactoryKeeper, app.AccountKeeper, app.BankKeeper),
 		packetforward.NewAppModule(app.PacketForwardKeeper),
@@ -768,6 +786,7 @@ func NewStargazeApp(
 		wasmtypes.ModuleName,
 		cronmoduletypes.ModuleName,
 		globalfeemoduletypes.ModuleName,
+		authoritytypes.ModuleName,
 		ibchookstypes.ModuleName,
 		tokenfactorytypes.ModuleName,
 		packetforwardtypes.ModuleName,
@@ -787,6 +806,7 @@ func NewStargazeApp(
 		wasmtypes.ModuleName,
 		cronmoduletypes.ModuleName,
 		globalfeemoduletypes.ModuleName,
+		authoritytypes.ModuleName,
 		ibchookstypes.ModuleName,
 		tokenfactorytypes.ModuleName,
 		packetforwardtypes.ModuleName,
@@ -823,6 +843,7 @@ func NewStargazeApp(
 		wasmtypes.ModuleName,
 		cronmoduletypes.ModuleName,
 		globalfeemoduletypes.ModuleName, // should be after wasm
+		authoritytypes.ModuleName,
 		ibchookstypes.ModuleName,
 		packetforwardtypes.ModuleName,
 	)
@@ -1078,6 +1099,7 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(cronmoduletypes.ModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(globalfeemoduletypes.ModuleName)
+	paramsKeeper.Subspace(authoritytypes.ModuleName)
 	paramsKeeper.Subspace(packetforwardtypes.ModuleName).WithKeyTable(packetforwardtypes.ParamKeyTable())
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
