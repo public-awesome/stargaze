@@ -4,30 +4,39 @@
 
 ## Table of Contents
 
-- [publicawesome/stargaze/authority/v1/genesis.proto](#publicawesome/stargaze/authority/v1/genesis.proto)
-    - [GenesisState](#publicawesome.stargaze.authority.v1.GenesisState)
+- [publicawesome/stargaze/cron/v1/genesis.proto](#publicawesome/stargaze/cron/v1/genesis.proto)
+    - [GenesisState](#publicawesome.stargaze.cron.v1.GenesisState)
   
-- [publicawesome/stargaze/authority/v1/tx.proto](#publicawesome/stargaze/authority/v1/tx.proto)
-    - [MsgSubmitProposal](#publicawesome.stargaze.authority.v1.MsgSubmitProposal)
-    - [MsgSubmitProposalResponse](#publicawesome.stargaze.authority.v1.MsgSubmitProposalResponse)
+- [publicawesome/stargaze/cron/v1/proposal.proto](#publicawesome/stargaze/cron/v1/proposal.proto)
+    - [DemotePrivilegedContractProposal](#publicawesome.stargaze.cron.v1.DemotePrivilegedContractProposal)
+    - [PromoteToPrivilegedContractProposal](#publicawesome.stargaze.cron.v1.PromoteToPrivilegedContractProposal)
   
-    - [Msg](#publicawesome.stargaze.authority.v1.Msg)
+- [publicawesome/stargaze/cron/v1/query.proto](#publicawesome/stargaze/cron/v1/query.proto)
+    - [QueryListPrivilegedRequest](#publicawesome.stargaze.cron.v1.QueryListPrivilegedRequest)
+    - [QueryListPrivilegedResponse](#publicawesome.stargaze.cron.v1.QueryListPrivilegedResponse)
+  
+    - [Query](#publicawesome.stargaze.cron.v1.Query)
   
 - [Scalar Value Types](#scalar-value-types)
 
 
 
-<a name="publicawesome/stargaze/authority/v1/genesis.proto"></a>
+<a name="publicawesome/stargaze/cron/v1/genesis.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/authority/v1/genesis.proto
+## publicawesome/stargaze/cron/v1/genesis.proto
 
 
 
-<a name="publicawesome.stargaze.authority.v1.GenesisState"></a>
+<a name="publicawesome.stargaze.cron.v1.GenesisState"></a>
 
 ### GenesisState
+GenesisState defines the cron module's genesis state.
 
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `privileged_contract_addresses` | [string](#string) | repeated | List of all the contracts that have been given the privilege status via governance. They can set up hooks to abci.EndBlocker |
 
 
 
@@ -43,36 +52,86 @@
 
 
 
-<a name="publicawesome/stargaze/authority/v1/tx.proto"></a>
+<a name="publicawesome/stargaze/cron/v1/proposal.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/authority/v1/tx.proto
+## publicawesome/stargaze/cron/v1/proposal.proto
 
 
 
-<a name="publicawesome.stargaze.authority.v1.MsgSubmitProposal"></a>
+<a name="publicawesome.stargaze.cron.v1.DemotePrivilegedContractProposal"></a>
 
-### MsgSubmitProposal
-MsgSubmitProposal defines an sdk.Msg type that supports submitting arbitrary
-proposal Content.
+### DemotePrivilegedContractProposal
+DemotePrivilegedContractProposal gov proposal content type to remove
+"privileges" from a contract
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `messages` | [google.protobuf.Any](#google.protobuf.Any) | repeated |  |
-| `proposer` | [string](#string) |  |  |
+| `title` | [string](#string) |  | Title is a short summary |
+| `description` | [string](#string) |  | Description is a human readable text |
+| `contract` | [string](#string) |  | Contract is the bech32 address of the smart contract |
 
 
 
 
 
 
-<a name="publicawesome.stargaze.authority.v1.MsgSubmitProposalResponse"></a>
+<a name="publicawesome.stargaze.cron.v1.PromoteToPrivilegedContractProposal"></a>
 
-### MsgSubmitProposalResponse
-MsgSubmitProposalResponse defines the Msg/SubmitProposal response type.
+### PromoteToPrivilegedContractProposal
+PromoteToPrivilegedContractProposal gov proposal content type to add
+"privileges" to a contract
 
-uint64 proposal_id = 1 [(gogoproto.jsontag) = "proposal_id", (gogoproto.moretags) = "yaml:\"proposal_id\""];
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `title` | [string](#string) |  | Title is a short summary |
+| `description` | [string](#string) |  | Description is a human readable text |
+| `contract` | [string](#string) |  | Contract is the bech32 address of the smart contract |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="publicawesome/stargaze/cron/v1/query.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## publicawesome/stargaze/cron/v1/query.proto
+
+
+
+<a name="publicawesome.stargaze.cron.v1.QueryListPrivilegedRequest"></a>
+
+### QueryListPrivilegedRequest
+QueryListPrivilegedRequest is request type for the Query/ListPrivileged RPC
+method.
+
+
+
+
+
+
+<a name="publicawesome.stargaze.cron.v1.QueryListPrivilegedResponse"></a>
+
+### QueryListPrivilegedResponse
+QueryListPrivilegedResponse is response type for the Query/ListPrivileged RPC
+method.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `contract_addresses` | [string](#string) | repeated | contract_addresses holds all the smart contract addresses which have privilege status. |
 
 
 
@@ -85,14 +144,14 @@ uint64 proposal_id = 1 [(gogoproto.jsontag) = "proposal_id", (gogoproto.moretags
  <!-- end HasExtensions -->
 
 
-<a name="publicawesome.stargaze.authority.v1.Msg"></a>
+<a name="publicawesome.stargaze.cron.v1.Query"></a>
 
-### Msg
-Msg defines the authority Msg service.
+### Query
+Query defines the gRPC querier service.
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `SubmitProposal` | [MsgSubmitProposal](#publicawesome.stargaze.authority.v1.MsgSubmitProposal) | [MsgSubmitProposalResponse](#publicawesome.stargaze.authority.v1.MsgSubmitProposalResponse) |  | |
+| `ListPrivileged` | [QueryListPrivilegedRequest](#publicawesome.stargaze.cron.v1.QueryListPrivilegedRequest) | [QueryListPrivilegedResponse](#publicawesome.stargaze.cron.v1.QueryListPrivilegedResponse) | ListPrivileged queries the contracts which have the priviledge status | GET|/stargaze/cron/v1/list-privileged|
 
  <!-- end services -->
 

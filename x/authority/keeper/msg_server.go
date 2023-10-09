@@ -19,8 +19,8 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 
 var _ types.MsgServer = msgServer{}
 
-// SubmitProposal implements types.MsgServer.
-func (m msgServer) SubmitProposal(goCtx context.Context, msg *types.MsgSubmitProposal) (*types.MsgSubmitProposalResponse, error) {
+// ExecuteProposal implements types.MsgServer.
+func (m msgServer) ExecuteProposal(goCtx context.Context, msg *types.MsgExecuteProposal) (*types.MsgExecuteProposalResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	proposalMsgs, err := msg.GetMsgs()
@@ -38,5 +38,5 @@ func (m msgServer) SubmitProposal(goCtx context.Context, msg *types.MsgSubmitPro
 		return nil, err
 	}
 
-	return &types.MsgSubmitProposalResponse{}, nil
+	return &types.MsgExecuteProposalResponse{}, nil
 }

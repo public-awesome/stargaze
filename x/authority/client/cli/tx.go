@@ -45,7 +45,7 @@ func CmdSubmitProposal() *cobra.Command {
 				return err
 			}
 
-			msg, err := types.NewMsgSubmitProposal(msgs, clientCtx.GetFromAddress().String())
+			msg, err := types.NewMsgExecuteProposal(msgs, clientCtx.GetFromAddress().String())
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

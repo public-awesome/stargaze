@@ -3,6 +3,7 @@ package types
 import (
 	"fmt"
 
+	errorsmod "cosmossdk.io/errors"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -12,15 +13,15 @@ import (
 )
 
 var (
-	_ sdk.Msg                            = &MsgSubmitProposal{}
-	_ codectypes.UnpackInterfacesMessage = &MsgSubmitProposal{}
+	_ sdk.Msg                            = &MsgExecuteProposal{}
+	_ codectypes.UnpackInterfacesMessage = &MsgExecuteProposal{}
 )
 
-// NewMsgSubmitProposal creates a new MsgSubmitProposal.
+// NewMsgExecuteProposal creates a new MsgExecuteProposal.
 //
 //nolint:interfacer
-func NewMsgSubmitProposal(messages []sdk.Msg, proposer string) (*MsgSubmitProposal, error) {
-	m := &MsgSubmitProposal{
+func NewMsgExecuteProposal(messages []sdk.Msg, proposer string) (*MsgExecuteProposal, error) {
+	m := &MsgExecuteProposal{
 		Proposer: proposer,
 	}
 
@@ -35,13 +36,13 @@ func NewMsgSubmitProposal(messages []sdk.Msg, proposer string) (*MsgSubmitPropos
 }
 
 // GetMsgs unpacks m.Messages Any's into sdk.Msg's
-func (m *MsgSubmitProposal) GetMsgs() ([]sdk.Msg, error) {
+func (m *MsgExecuteProposal) GetMsgs() ([]sdk.Msg, error) {
 	return sdktx.GetMsgs(m.Messages, "sdk.MsgProposal")
 }
 
 // SetMsgs packs sdk.Msg's into m.Messages Any's
 // NOTE: this will overwrite any existing messages
-func (m *MsgSubmitProposal) SetMsgs(msgs []sdk.Msg) error {
+func (m *MsgExecuteProposal) SetMsgs(msgs []sdk.Msg) error {
 	anys, err := sdktx.SetMsgs(msgs)
 	if err != nil {
 		return err
@@ -52,13 +53,13 @@ func (m *MsgSubmitProposal) SetMsgs(msgs []sdk.Msg) error {
 }
 
 // Route implements the sdk.Msg interface.
-func (m MsgSubmitProposal) Route() string { return RouterKey }
+func (m MsgExecuteProposal) Route() string { return RouterKey }
 
 // Type implements the sdk.Msg interface.
-func (m MsgSubmitProposal) Type() string { return sdk.MsgTypeURL(&m) }
+func (m MsgExecuteProposal) Type() string { return sdk.MsgTypeURL(&m) }
 
 // ValidateBasic implements the sdk.Msg interface.
-func (m MsgSubmitProposal) ValidateBasic() error {
+func (m MsgExecuteProposal) ValidateBasic() error {
 
 	if _, err := sdk.AccAddressFromBech32(m.Proposer); err != nil {
 		return sdkerrors.ErrInvalidAddress.Wrapf("invalid proposer address: %s", err)
@@ -66,7 +67,7 @@ func (m MsgSubmitProposal) ValidateBasic() error {
 
 	// Check that either metadata or Msgs length is non nil.
 	if len(m.Messages) == 0 {
-		return sdkerrors.Wrap(govtypes.ErrNoProposalMsgs, "Msgs length must be non-nil")
+		return errorsmod.Wrap(govtypes.ErrNoProposalMsgs, "Msgs length must be non-nil")
 	}
 
 	msgs, err := m.GetMsgs()
@@ -76,7 +77,7 @@ func (m MsgSubmitProposal) ValidateBasic() error {
 
 	for idx, msg := range msgs {
 		if err := msg.ValidateBasic(); err != nil {
-			return sdkerrors.Wrap(govtypes.ErrInvalidProposalMsg,
+			return errorsmod.Wrap(govtypes.ErrInvalidProposalMsg,
 				fmt.Sprintf("msg: %d, err: %s", idx, err.Error()))
 		}
 	}
@@ -85,18 +86,18 @@ func (m MsgSubmitProposal) ValidateBasic() error {
 }
 
 // GetSignBytes returns the message bytes to sign over.
-func (m MsgSubmitProposal) GetSignBytes() []byte {
+func (m MsgExecuteProposal) GetSignBytes() []byte {
 	bz := codec.ModuleCdc.MustMarshalJSON(&m)
 	return sdk.MustSortJSON(bz)
 }
 
-// GetSigners returns the expected signers for a MsgSubmitProposal.
-func (m MsgSubmitProposal) GetSigners() []sdk.AccAddress {
+// GetSigners returns the expected signers for a MsgExecuteProposal.
+func (m MsgExecuteProposal) GetSigners() []sdk.AccAddress {
 	proposer, _ := sdk.AccAddressFromBech32(m.Proposer)
 	return []sdk.AccAddress{proposer}
 }
 
 // UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
-func (m MsgSubmitProposal) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+func (m MsgExecuteProposal) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	return sdktx.UnpackInterfaces(unpacker, m.Messages)
 }

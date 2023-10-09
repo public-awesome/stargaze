@@ -30,25 +30,25 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// MsgSubmitProposal defines an sdk.Msg type that supports submitting arbitrary
+// MsgExecuteProposal defines an sdk.Msg type that supports submitting arbitrary
 // proposal Content.
-type MsgSubmitProposal struct {
+type MsgExecuteProposal struct {
 	Messages []*types.Any `protobuf:"bytes,1,rep,name=messages,proto3" json:"messages,omitempty"`
 	Proposer string       `protobuf:"bytes,2,opt,name=proposer,proto3" json:"proposer,omitempty"`
 }
 
-func (m *MsgSubmitProposal) Reset()         { *m = MsgSubmitProposal{} }
-func (m *MsgSubmitProposal) String() string { return proto.CompactTextString(m) }
-func (*MsgSubmitProposal) ProtoMessage()    {}
-func (*MsgSubmitProposal) Descriptor() ([]byte, []int) {
+func (m *MsgExecuteProposal) Reset()         { *m = MsgExecuteProposal{} }
+func (m *MsgExecuteProposal) String() string { return proto.CompactTextString(m) }
+func (*MsgExecuteProposal) ProtoMessage()    {}
+func (*MsgExecuteProposal) Descriptor() ([]byte, []int) {
 	return fileDescriptor_a59b6a5ac2f6d30b, []int{0}
 }
-func (m *MsgSubmitProposal) XXX_Unmarshal(b []byte) error {
+func (m *MsgExecuteProposal) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgSubmitProposal) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgExecuteProposal) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgSubmitProposal.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgExecuteProposal.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -58,48 +58,48 @@ func (m *MsgSubmitProposal) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return b[:n], nil
 	}
 }
-func (m *MsgSubmitProposal) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgSubmitProposal.Merge(m, src)
+func (m *MsgExecuteProposal) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgExecuteProposal.Merge(m, src)
 }
-func (m *MsgSubmitProposal) XXX_Size() int {
+func (m *MsgExecuteProposal) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgSubmitProposal) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgSubmitProposal.DiscardUnknown(m)
+func (m *MsgExecuteProposal) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgExecuteProposal.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgSubmitProposal proto.InternalMessageInfo
+var xxx_messageInfo_MsgExecuteProposal proto.InternalMessageInfo
 
-func (m *MsgSubmitProposal) GetMessages() []*types.Any {
+func (m *MsgExecuteProposal) GetMessages() []*types.Any {
 	if m != nil {
 		return m.Messages
 	}
 	return nil
 }
 
-func (m *MsgSubmitProposal) GetProposer() string {
+func (m *MsgExecuteProposal) GetProposer() string {
 	if m != nil {
 		return m.Proposer
 	}
 	return ""
 }
 
-// MsgSubmitProposalResponse defines the Msg/SubmitProposal response type.
-type MsgSubmitProposalResponse struct {
+// MsgExecuteProposalResponse defines the Msg/ExecuteProposal response type.
+type MsgExecuteProposalResponse struct {
 }
 
-func (m *MsgSubmitProposalResponse) Reset()         { *m = MsgSubmitProposalResponse{} }
-func (m *MsgSubmitProposalResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgSubmitProposalResponse) ProtoMessage()    {}
-func (*MsgSubmitProposalResponse) Descriptor() ([]byte, []int) {
+func (m *MsgExecuteProposalResponse) Reset()         { *m = MsgExecuteProposalResponse{} }
+func (m *MsgExecuteProposalResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgExecuteProposalResponse) ProtoMessage()    {}
+func (*MsgExecuteProposalResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_a59b6a5ac2f6d30b, []int{1}
 }
-func (m *MsgSubmitProposalResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgExecuteProposalResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgSubmitProposalResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgExecuteProposalResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgSubmitProposalResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgExecuteProposalResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -109,21 +109,21 @@ func (m *MsgSubmitProposalResponse) XXX_Marshal(b []byte, deterministic bool) ([
 		return b[:n], nil
 	}
 }
-func (m *MsgSubmitProposalResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgSubmitProposalResponse.Merge(m, src)
+func (m *MsgExecuteProposalResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgExecuteProposalResponse.Merge(m, src)
 }
-func (m *MsgSubmitProposalResponse) XXX_Size() int {
+func (m *MsgExecuteProposalResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgSubmitProposalResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgSubmitProposalResponse.DiscardUnknown(m)
+func (m *MsgExecuteProposalResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgExecuteProposalResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgSubmitProposalResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgExecuteProposalResponse proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*MsgSubmitProposal)(nil), "publicawesome.stargaze.authority.v1.MsgSubmitProposal")
-	proto.RegisterType((*MsgSubmitProposalResponse)(nil), "publicawesome.stargaze.authority.v1.MsgSubmitProposalResponse")
+	proto.RegisterType((*MsgExecuteProposal)(nil), "publicawesome.stargaze.authority.v1.MsgExecuteProposal")
+	proto.RegisterType((*MsgExecuteProposalResponse)(nil), "publicawesome.stargaze.authority.v1.MsgExecuteProposalResponse")
 }
 
 func init() {
@@ -131,27 +131,28 @@ func init() {
 }
 
 var fileDescriptor_a59b6a5ac2f6d30b = []byte{
-	// 320 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x91, 0xb1, 0x4a, 0x3b, 0x41,
-	0x10, 0xc6, 0xb3, 0xff, 0xc0, 0x9f, 0xb8, 0xa2, 0xe0, 0x11, 0x30, 0x39, 0x61, 0x09, 0xb1, 0x09,
-	0xa2, 0xbb, 0x26, 0x82, 0x88, 0x85, 0xa0, 0x7d, 0x40, 0xce, 0xce, 0x6e, 0x2f, 0xac, 0x9b, 0x83,
-	0x6c, 0x66, 0xb9, 0xd9, 0x8b, 0x39, 0x4b, 0x2b, 0xcb, 0x3c, 0x8a, 0x8f, 0x61, 0x99, 0xd2, 0x52,
-	0x92, 0xc2, 0xd7, 0x90, 0xdc, 0x99, 0x43, 0xbd, 0x46, 0xec, 0xe6, 0x63, 0x7e, 0xdf, 0x37, 0xc3,
-	0x0c, 0x3d, 0xb4, 0x49, 0x38, 0x8a, 0x06, 0xf2, 0x5e, 0x21, 0x18, 0x25, 0xd0, 0xc9, 0x58, 0xcb,
-	0x07, 0x25, 0x64, 0xe2, 0x86, 0x10, 0x47, 0x2e, 0x15, 0x93, 0xae, 0x70, 0x53, 0x6e, 0x63, 0x70,
-	0xe0, 0xed, 0x7f, 0xa3, 0xf9, 0x9a, 0xe6, 0x05, 0xcd, 0x27, 0x5d, 0xbf, 0xae, 0x41, 0x43, 0xc6,
-	0x8b, 0x55, 0x95, 0x5b, 0xfd, 0xdd, 0x01, 0xa0, 0x01, 0x14, 0x06, 0xf5, 0x2a, 0xd2, 0xa0, 0xfe,
-	0x6c, 0x34, 0x35, 0x80, 0x1e, 0x29, 0x91, 0xa9, 0x30, 0xb9, 0x13, 0x72, 0x9c, 0xe6, 0xad, 0xb6,
-	0xa5, 0x3b, 0x7d, 0xd4, 0x37, 0x49, 0x68, 0x22, 0x77, 0x1d, 0x83, 0x05, 0x94, 0x23, 0xef, 0x98,
-	0xd6, 0x8c, 0x42, 0x94, 0x5a, 0x61, 0x83, 0xb4, 0xaa, 0x9d, 0xcd, 0x5e, 0x9d, 0xe7, 0x11, 0x7c,
-	0x1d, 0xc1, 0x2f, 0xc7, 0x69, 0x50, 0x50, 0x9e, 0x4f, 0x6b, 0x36, 0x73, 0xab, 0xb8, 0xf1, 0xaf,
-	0x45, 0x3a, 0x1b, 0x41, 0xa1, 0xcf, 0xb7, 0x1e, 0xdf, 0x9f, 0x0f, 0x0a, 0xd9, 0xde, 0xa3, 0xcd,
-	0xd2, 0xc4, 0x40, 0xa1, 0x85, 0x31, 0xaa, 0xde, 0x8c, 0xd0, 0x6a, 0x1f, 0xb5, 0xf7, 0x44, 0xe8,
-	0xf6, 0x8f, 0xa5, 0x4e, 0xf9, 0x2f, 0x2e, 0xc3, 0x4b, 0xd1, 0xfe, 0xc5, 0xdf, 0x7c, 0xeb, 0x95,
-	0xae, 0x82, 0x97, 0x05, 0x23, 0xf3, 0x05, 0x23, 0x6f, 0x0b, 0x46, 0x66, 0x4b, 0x56, 0x99, 0x2f,
-	0x59, 0xe5, 0x75, 0xc9, 0x2a, 0xb7, 0x67, 0x3a, 0x72, 0xc3, 0x24, 0xe4, 0x03, 0x30, 0x22, 0x9f,
-	0x71, 0x54, 0x7a, 0xf2, 0xa4, 0xdb, 0x13, 0xd3, 0x2f, 0xaf, 0x76, 0xa9, 0x55, 0x18, 0xfe, 0xcf,
-	0xce, 0x78, 0xf2, 0x11, 0x00, 0x00, 0xff, 0xff, 0xad, 0x14, 0xfb, 0xa3, 0x1b, 0x02, 0x00, 0x00,
+	// 321 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x91, 0xb1, 0x4a, 0x03, 0x41,
+	0x10, 0x86, 0xb3, 0x06, 0x24, 0xae, 0x88, 0x70, 0x04, 0x8c, 0x87, 0x1c, 0x21, 0x36, 0x41, 0x74,
+	0xd7, 0xc4, 0x42, 0xb1, 0x11, 0x05, 0xcb, 0x80, 0x5c, 0x69, 0xb7, 0x77, 0x8c, 0x9b, 0x40, 0x2e,
+	0xb3, 0xde, 0xec, 0xc5, 0x9c, 0xa5, 0xad, 0x8d, 0xe0, 0x8b, 0xf8, 0x18, 0x96, 0x29, 0x2d, 0x25,
+	0x29, 0x7c, 0x0d, 0xc9, 0x9d, 0x39, 0xd4, 0x6b, 0xc4, 0x6e, 0x7e, 0xe6, 0xfb, 0xff, 0x19, 0x66,
+	0xf8, 0xbe, 0x49, 0x82, 0xe1, 0x20, 0x54, 0x77, 0x40, 0x18, 0x81, 0x24, 0xab, 0x62, 0xad, 0xee,
+	0x41, 0xaa, 0xc4, 0xf6, 0x31, 0x1e, 0xd8, 0x54, 0x8e, 0x3b, 0xd2, 0x4e, 0x84, 0x89, 0xd1, 0xa2,
+	0xb3, 0xfb, 0x83, 0x16, 0x4b, 0x5a, 0x14, 0xb4, 0x18, 0x77, 0xdc, 0xba, 0x46, 0x8d, 0x19, 0x2f,
+	0x17, 0x55, 0x6e, 0x75, 0xb7, 0x42, 0xa4, 0x08, 0x49, 0x46, 0xa4, 0x17, 0x91, 0x11, 0xe9, 0xaf,
+	0xc6, 0xb6, 0x46, 0xd4, 0x43, 0x90, 0x99, 0x0a, 0x92, 0x1b, 0xa9, 0x46, 0x69, 0xde, 0x6a, 0xdd,
+	0x72, 0xa7, 0x47, 0xfa, 0x72, 0x02, 0x61, 0x62, 0xe1, 0x2a, 0x46, 0x83, 0xa4, 0x86, 0xce, 0x21,
+	0xaf, 0x45, 0x40, 0xa4, 0x34, 0x50, 0x83, 0x35, 0xab, 0xed, 0xf5, 0x6e, 0x5d, 0xe4, 0x19, 0x62,
+	0x99, 0x21, 0xce, 0x47, 0xa9, 0x5f, 0x50, 0x8e, 0xcb, 0x6b, 0x26, 0x73, 0x43, 0xdc, 0x58, 0x69,
+	0xb2, 0xf6, 0x9a, 0x5f, 0xe8, 0xd3, 0x8d, 0x87, 0x8f, 0x97, 0xbd, 0x42, 0xb6, 0x76, 0xb8, 0x5b,
+	0x1e, 0xe9, 0x03, 0x19, 0x1c, 0x11, 0x74, 0x9f, 0x19, 0xaf, 0xf6, 0x48, 0x3b, 0x8f, 0x8c, 0x6f,
+	0xfe, 0x5e, 0xeb, 0x58, 0xfc, 0xe1, 0x38, 0xa2, 0x1c, 0xee, 0x9e, 0xfd, 0xd3, 0xb8, 0xdc, 0xea,
+	0xc2, 0x7f, 0x9d, 0x79, 0x6c, 0x3a, 0xf3, 0xd8, 0xfb, 0xcc, 0x63, 0x4f, 0x73, 0xaf, 0x32, 0x9d,
+	0x7b, 0x95, 0xb7, 0xb9, 0x57, 0xb9, 0x3e, 0xd1, 0x03, 0xdb, 0x4f, 0x02, 0x11, 0x62, 0x24, 0xf3,
+	0x21, 0x07, 0xa5, 0x4f, 0x8f, 0x3b, 0x5d, 0x39, 0xf9, 0xf6, 0x6f, 0x9b, 0x1a, 0xa0, 0x60, 0x35,
+	0x3b, 0xe5, 0xd1, 0x67, 0x00, 0x00, 0x00, 0xff, 0xff, 0xe8, 0x26, 0x7f, 0xd3, 0x20, 0x02, 0x00,
+	0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -166,7 +167,7 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
-	SubmitProposal(ctx context.Context, in *MsgSubmitProposal, opts ...grpc.CallOption) (*MsgSubmitProposalResponse, error)
+	ExecuteProposal(ctx context.Context, in *MsgExecuteProposal, opts ...grpc.CallOption) (*MsgExecuteProposalResponse, error)
 }
 
 type msgClient struct {
@@ -177,9 +178,9 @@ func NewMsgClient(cc grpc1.ClientConn) MsgClient {
 	return &msgClient{cc}
 }
 
-func (c *msgClient) SubmitProposal(ctx context.Context, in *MsgSubmitProposal, opts ...grpc.CallOption) (*MsgSubmitProposalResponse, error) {
-	out := new(MsgSubmitProposalResponse)
-	err := c.cc.Invoke(ctx, "/publicawesome.stargaze.authority.v1.Msg/SubmitProposal", in, out, opts...)
+func (c *msgClient) ExecuteProposal(ctx context.Context, in *MsgExecuteProposal, opts ...grpc.CallOption) (*MsgExecuteProposalResponse, error) {
+	out := new(MsgExecuteProposalResponse)
+	err := c.cc.Invoke(ctx, "/publicawesome.stargaze.authority.v1.Msg/ExecuteProposal", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -188,35 +189,35 @@ func (c *msgClient) SubmitProposal(ctx context.Context, in *MsgSubmitProposal, o
 
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
-	SubmitProposal(context.Context, *MsgSubmitProposal) (*MsgSubmitProposalResponse, error)
+	ExecuteProposal(context.Context, *MsgExecuteProposal) (*MsgExecuteProposalResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
 type UnimplementedMsgServer struct {
 }
 
-func (*UnimplementedMsgServer) SubmitProposal(ctx context.Context, req *MsgSubmitProposal) (*MsgSubmitProposalResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SubmitProposal not implemented")
+func (*UnimplementedMsgServer) ExecuteProposal(ctx context.Context, req *MsgExecuteProposal) (*MsgExecuteProposalResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ExecuteProposal not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
 	s.RegisterService(&_Msg_serviceDesc, srv)
 }
 
-func _Msg_SubmitProposal_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgSubmitProposal)
+func _Msg_ExecuteProposal_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgExecuteProposal)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).SubmitProposal(ctx, in)
+		return srv.(MsgServer).ExecuteProposal(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/publicawesome.stargaze.authority.v1.Msg/SubmitProposal",
+		FullMethod: "/publicawesome.stargaze.authority.v1.Msg/ExecuteProposal",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).SubmitProposal(ctx, req.(*MsgSubmitProposal))
+		return srv.(MsgServer).ExecuteProposal(ctx, req.(*MsgExecuteProposal))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -226,15 +227,15 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*MsgServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "SubmitProposal",
-			Handler:    _Msg_SubmitProposal_Handler,
+			MethodName: "ExecuteProposal",
+			Handler:    _Msg_ExecuteProposal_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "publicawesome/stargaze/authority/v1/tx.proto",
 }
 
-func (m *MsgSubmitProposal) Marshal() (dAtA []byte, err error) {
+func (m *MsgExecuteProposal) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -244,12 +245,12 @@ func (m *MsgSubmitProposal) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgSubmitProposal) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgExecuteProposal) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgSubmitProposal) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgExecuteProposal) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -278,7 +279,7 @@ func (m *MsgSubmitProposal) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgSubmitProposalResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgExecuteProposalResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -288,12 +289,12 @@ func (m *MsgSubmitProposalResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgSubmitProposalResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgExecuteProposalResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgSubmitProposalResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgExecuteProposalResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -312,7 +313,7 @@ func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *MsgSubmitProposal) Size() (n int) {
+func (m *MsgExecuteProposal) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -331,7 +332,7 @@ func (m *MsgSubmitProposal) Size() (n int) {
 	return n
 }
 
-func (m *MsgSubmitProposalResponse) Size() (n int) {
+func (m *MsgExecuteProposalResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -346,7 +347,7 @@ func sovTx(x uint64) (n int) {
 func sozTx(x uint64) (n int) {
 	return sovTx(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *MsgSubmitProposal) Unmarshal(dAtA []byte) error {
+func (m *MsgExecuteProposal) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -369,10 +370,10 @@ func (m *MsgSubmitProposal) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgSubmitProposal: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgExecuteProposal: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgSubmitProposal: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgExecuteProposal: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -462,7 +463,7 @@ func (m *MsgSubmitProposal) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgSubmitProposalResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgExecuteProposalResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -485,10 +486,10 @@ func (m *MsgSubmitProposalResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgSubmitProposalResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgExecuteProposalResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgSubmitProposalResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgExecuteProposalResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
