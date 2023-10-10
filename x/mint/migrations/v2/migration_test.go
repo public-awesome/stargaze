@@ -9,10 +9,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	moduletestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
 
-	"github.com/public-awesome/stargaze/v12/x/globalfee"
-	"github.com/public-awesome/stargaze/v12/x/globalfee/exported"
-	v2 "github.com/public-awesome/stargaze/v12/x/globalfee/migrations/v2"
-	"github.com/public-awesome/stargaze/v12/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v12/x/mint"
+	"github.com/public-awesome/stargaze/v12/x/mint/exported"
+	v2 "github.com/public-awesome/stargaze/v12/x/mint/migrations/v2"
+	"github.com/public-awesome/stargaze/v12/x/mint/types"
 )
 
 type mockSubspace struct {
@@ -28,7 +28,7 @@ func (ms mockSubspace) GetParamSet(_ sdk.Context, ps exported.ParamSet) {
 }
 
 func TestMigrateStore(t *testing.T) {
-	encCfg := moduletestutil.MakeTestEncodingConfig(globalfee.AppModuleBasic{})
+	encCfg := moduletestutil.MakeTestEncodingConfig(mint.AppModuleBasic{})
 	cdc := encCfg.Codec
 
 	storeKey := sdk.NewKVStoreKey(types.ModuleName)
@@ -42,6 +42,8 @@ func TestMigrateStore(t *testing.T) {
 	var res types.Params
 	bz := store.Get(types.ParamsKey)
 	require.NoError(t, cdc.Unmarshal(bz, &res))
-	require.Len(t, res.MinimumGasPrices, len(legacySubspace.ps.MinimumGasPrices))
-	require.Len(t, res.PrivilegedAddresses, len(legacySubspace.ps.PrivilegedAddresses))
+	require.Equal(t, legacySubspace.ps.BlocksPerYear, res.BlocksPerYear)
+	require.Equal(t, legacySubspace.ps.InitialAnnualProvisions, res.InitialAnnualProvisions)
+	require.Equal(t, legacySubspace.ps.MintDenom, res.MintDenom)
+	require.Equal(t, legacySubspace.ps.ReductionFactor, res.ReductionFactor)
 }

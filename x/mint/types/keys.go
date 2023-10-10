@@ -17,3 +17,8 @@ const (
 	QueryParameters       = "parameters"
 	QueryAnnualProvisions = "annual_provisions"
 )
+
+var (
+	// ParamsKey stores the module params
+	ParamsKey = []byte{0x01}
+)

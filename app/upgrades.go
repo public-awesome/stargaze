@@ -16,7 +16,6 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	govv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	"github.com/cosmos/cosmos-sdk/x/group"
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -29,6 +28,7 @@ import (
 
 	alloctypes "github.com/public-awesome/stargaze/v12/x/alloc/types"
 	globalfeetypes "github.com/public-awesome/stargaze/v12/x/globalfee/types"
+	minttypes "github.com/public-awesome/stargaze/v12/x/mint/types"
 )
 
 // next upgrade name
@@ -50,8 +50,6 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 			keyTable = banktypes.ParamKeyTable() //nolint:staticcheck
 		case stakingtypes.ModuleName:
 			keyTable = stakingtypes.ParamKeyTable()
-		case minttypes.ModuleName:
-			keyTable = minttypes.ParamKeyTable() //nolint:staticcheck
 		case distrtypes.ModuleName:
 			keyTable = distrtypes.ParamKeyTable() //nolint:staticcheck
 		case slashingtypes.ModuleName:
@@ -76,6 +74,8 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 			keyTable = alloctypes.ParamKeyTable()
 		case globalfeetypes.ModuleName:
 			keyTable = globalfeetypes.ParamKeyTable()
+		case minttypes.ModuleName:
+			keyTable = minttypes.ParamKeyTable()
 		default:
 			continue
 		}
