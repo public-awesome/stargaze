@@ -17,6 +17,7 @@ const (
 )
 
 var PrivilegedContractsPrefix = []byte{0x01}
+var ParamsKey = []byte{0x02}
 
 func PrivilegedContractsKey(contractAddr sdk.AccAddress) []byte {
 	return append(PrivilegedContractsPrefix, contractAddr...)
