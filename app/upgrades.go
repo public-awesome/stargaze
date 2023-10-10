@@ -26,6 +26,8 @@ import (
 	ibctransfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
 
 	ibctmmigrations "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint/migrations"
+
+	alloctypes "github.com/public-awesome/stargaze/v12/x/alloc/types"
 )
 
 // next upgrade name
@@ -67,6 +69,10 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 			// wasm
 		case wasmtypes.ModuleName:
 			keyTable = wasmtypes.ParamKeyTable() //nolint:staticcheck
+
+			// stargaze modules
+		case alloctypes.ModuleName:
+			keyTable = alloctypes.ParamKeyTable()
 		default:
 			continue
 		}
