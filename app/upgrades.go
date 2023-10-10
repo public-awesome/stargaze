@@ -28,6 +28,7 @@ import (
 	ibctmmigrations "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint/migrations"
 
 	alloctypes "github.com/public-awesome/stargaze/v12/x/alloc/types"
+	globalfeetypes "github.com/public-awesome/stargaze/v12/x/globalfee/types"
 )
 
 // next upgrade name
@@ -73,6 +74,8 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 			// stargaze modules
 		case alloctypes.ModuleName:
 			keyTable = alloctypes.ParamKeyTable()
+		case globalfeetypes.ModuleName:
+			keyTable = globalfeetypes.ParamKeyTable()
 		default:
 			continue
 		}
