@@ -9,7 +9,9 @@ import (
 // InitGenesis initializes the alloc module's state from a provided genesis
 // state.
 func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) {
-	k.SetParams(ctx, genState.Params)
+	if err := k.SetParams(ctx, genState.Params); err != nil {
+		panic(err)
+	}
 	k.GetModuleAccount(ctx, types.FairburnPoolName)
 	k.GetModuleAccount(ctx, types.SupplementPoolName)
 	err := k.FundCommunityPool(ctx)

@@ -31,10 +31,8 @@ var (
 	AdminPrefixKey            = "admin"
 )
 
-var (
-	// ParamsKey stores the module params
-	ParamsKey = []byte{0x01}
-)
+// ParamsKey stores the module params
+var ParamsKey = []byte{0x01}
 
 // GetDenomPrefixStore returns the store prefix where all the data associated with a specific denom
 // is stored
