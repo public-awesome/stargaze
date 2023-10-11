@@ -9,7 +9,9 @@ import (
 // InitGenesis initializes the module's state from a provided genesis state.
 func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) {
 	params := genState.GetParams()
-	k.SetParams(ctx, params)
+	if err := k.SetParams(ctx, params); err != nil {
+		panic(err)
+	}
 
 	for _, addr := range genState.GetPrivilegedContractAddresses() {
 		contractAddr, err := sdk.AccAddressFromBech32(addr)

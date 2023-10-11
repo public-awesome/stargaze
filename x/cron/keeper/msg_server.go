@@ -83,7 +83,10 @@ func (m msgServer) UpdateParams(goCtx context.Context, msg *types.MsgUpdateParam
 		return nil, err
 	}
 
-	m.SetParams(ctx, msg.GetParams())
+	err = m.SetParams(ctx, msg.GetParams())
+	if err != nil {
+		return nil, err
+	}
 
 	return &types.MsgUpdateParamsResponse{}, nil
 }
