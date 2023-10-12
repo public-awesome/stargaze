@@ -25,4 +25,8 @@ starsd genesis add-genesis-account stars103y4f6h80lc45nr8chuzr3fyzqywm9n0gnr394 
 starsd genesis gentx validator 900000000$DENOM --keyring-backend test --chain-id $CHAINID
 starsd genesis collect-gentxs
 
+
+cat ~/.starsd/config/app.toml
+cat ~/.starsd/config/config.toml
+cat ~/.starsd/config/genesis.json
 starsd start --pruning nothing
