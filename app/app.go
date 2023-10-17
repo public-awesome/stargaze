@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 	reflectionv1 "cosmossdk.io/api/cosmos/reflection/v1"
@@ -165,25 +164,6 @@ var (
 
 	EmptyWasmOpts []wasmkeeper.Option
 )
-
-// this line is used by starport scaffolding # stargate/wasm/app/enabledProposals
-
-// GetEnabledProposals parses the ProposalsEnabled / EnableSpecificProposals values to
-// produce a list of enabled proposals to pass into wasmd app.
-func GetEnabledProposals() []wasm.ProposalType { //nolint:staticcheck
-	if EnableSpecificProposals == "" {
-		if ProposalsEnabled == "true" {
-			return wasm.EnableAllProposals //nolint:staticcheck
-		}
-		return wasm.DisableAllProposals //nolint:staticcheck
-	}
-	chunks := strings.Split(EnableSpecificProposals, ",")
-	proposals, err := wasm.ConvertToProposals(chunks) //nolint:staticcheck
-	if err != nil {
-		panic(err)
-	}
-	return proposals
-}
 
 func getGovProposalHandlers() []govclient.ProposalHandler {
 	govProposalHandlers := make([]govclient.ProposalHandler, 0)
@@ -354,7 +334,6 @@ func NewStargazeApp(
 	encodingConfig sgappparams.EncodingConfig,
 	appOpts servertypes.AppOptions,
 	wasmOpts []wasmkeeper.Option,
-	enabledProposals []wasm.ProposalType, //nolint:staticcheck
 	baseAppOptions ...func(*baseapp.BaseApp),
 ) *App {
 	appCodec, cdc := encodingConfig.Codec, encodingConfig.Amino
@@ -526,7 +505,6 @@ func NewStargazeApp(
 	govRouter := legacygovtypes.NewRouter()
 	govRouter.AddRoute(govtypes.RouterKey, legacygovtypes.ProposalHandler).
 		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.ParamsKeeper)).
-		// AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.DistrKeeper)). // COME HERE
 		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(&app.UpgradeKeeper)).
 		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper))
 
@@ -663,11 +641,6 @@ func NewStargazeApp(
 	app.GlobalFeeKeeper = globalfeemodulekeeper.NewKeeper(appCodec, keys[globalfeemoduletypes.StoreKey], app.GetSubspace(globalfeemoduletypes.ModuleName), app.WasmKeeper)
 	globalfeeModule := globalfeemodule.NewAppModule(appCodec, app.GlobalFeeKeeper)
 	govRouter.AddRoute(globalfeemoduletypes.RouterKey, globalfeemodulekeeper.NewProposalHandler(app.GlobalFeeKeeper))
-
-	// The gov proposal types can be individually enabled
-	if len(enabledProposals) != 0 {
-		govRouter.AddRoute(wasmtypes.RouterKey, wasm.NewWasmProposalHandler(app.WasmKeeper, enabledProposals)) //nolint:staticcheck
-	}
 
 	ibcRouter.AddRoute(wasmtypes.ModuleName, wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper, app.IBCKeeper.ChannelKeeper))
 	app.IBCKeeper.SetRouter(ibcRouter)
