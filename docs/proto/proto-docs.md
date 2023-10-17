@@ -4,84 +4,63 @@
 
 ## Table of Contents
 
-- [publicawesome/stargaze/alloc/v1beta1/params.proto](#publicawesome/stargaze/alloc/v1beta1/params.proto)
-    - [DistributionProportions](#publicawesome.stargaze.alloc.v1beta1.DistributionProportions)
-    - [Params](#publicawesome.stargaze.alloc.v1beta1.Params)
-    - [WeightedAddress](#publicawesome.stargaze.alloc.v1beta1.WeightedAddress)
+- [publicawesome/stargaze/mint/v1beta1/mint.proto](#publicawesome/stargaze/mint/v1beta1/mint.proto)
+    - [Minter](#publicawesome.stargaze.mint.v1beta1.Minter)
+    - [Params](#publicawesome.stargaze.mint.v1beta1.Params)
   
-- [publicawesome/stargaze/alloc/v1beta1/genesis.proto](#publicawesome/stargaze/alloc/v1beta1/genesis.proto)
-    - [GenesisState](#publicawesome.stargaze.alloc.v1beta1.GenesisState)
+- [publicawesome/stargaze/mint/v1beta1/genesis.proto](#publicawesome/stargaze/mint/v1beta1/genesis.proto)
+    - [GenesisState](#publicawesome.stargaze.mint.v1beta1.GenesisState)
   
-- [publicawesome/stargaze/alloc/v1beta1/query.proto](#publicawesome/stargaze/alloc/v1beta1/query.proto)
-    - [QueryParamsRequest](#publicawesome.stargaze.alloc.v1beta1.QueryParamsRequest)
-    - [QueryParamsResponse](#publicawesome.stargaze.alloc.v1beta1.QueryParamsResponse)
+- [publicawesome/stargaze/mint/v1beta1/query.proto](#publicawesome/stargaze/mint/v1beta1/query.proto)
+    - [QueryAnnualProvisionsRequest](#publicawesome.stargaze.mint.v1beta1.QueryAnnualProvisionsRequest)
+    - [QueryAnnualProvisionsResponse](#publicawesome.stargaze.mint.v1beta1.QueryAnnualProvisionsResponse)
+    - [QueryParamsRequest](#publicawesome.stargaze.mint.v1beta1.QueryParamsRequest)
+    - [QueryParamsResponse](#publicawesome.stargaze.mint.v1beta1.QueryParamsResponse)
   
-    - [Query](#publicawesome.stargaze.alloc.v1beta1.Query)
+    - [Query](#publicawesome.stargaze.mint.v1beta1.Query)
   
-- [publicawesome/stargaze/alloc/v1beta1/tx.proto](#publicawesome/stargaze/alloc/v1beta1/tx.proto)
-    - [MsgCreateVestingAccount](#publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccount)
-    - [MsgCreateVestingAccountResponse](#publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccountResponse)
-    - [MsgFundFairburnPool](#publicawesome.stargaze.alloc.v1beta1.MsgFundFairburnPool)
-    - [MsgFundFairburnPoolResponse](#publicawesome.stargaze.alloc.v1beta1.MsgFundFairburnPoolResponse)
-  
-    - [Msg](#publicawesome.stargaze.alloc.v1beta1.Msg)
+- [publicawesome/stargaze/mint/v1beta1/tx.proto](#publicawesome/stargaze/mint/v1beta1/tx.proto)
+    - [Msg](#publicawesome.stargaze.mint.v1beta1.Msg)
   
 - [Scalar Value Types](#scalar-value-types)
 
 
 
-<a name="publicawesome/stargaze/alloc/v1beta1/params.proto"></a>
+<a name="publicawesome/stargaze/mint/v1beta1/mint.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/alloc/v1beta1/params.proto
+## publicawesome/stargaze/mint/v1beta1/mint.proto
 
 
 
-<a name="publicawesome.stargaze.alloc.v1beta1.DistributionProportions"></a>
+<a name="publicawesome.stargaze.mint.v1beta1.Minter"></a>
 
-### DistributionProportions
-
+### Minter
+Minter represents the minting state.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `nft_incentives` | [string](#string) |  |  |
-| `developer_rewards` | [string](#string) |  |  |
-| `community_pool` | [string](#string) |  |  |
+| `annual_provisions` | [string](#string) |  | current annual expected provisions |
 
 
 
 
 
 
-<a name="publicawesome.stargaze.alloc.v1beta1.Params"></a>
+<a name="publicawesome.stargaze.mint.v1beta1.Params"></a>
 
 ### Params
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `distribution_proportions` | [DistributionProportions](#publicawesome.stargaze.alloc.v1beta1.DistributionProportions) |  | distribution_proportions defines the proportion of the minted denom |
-| `weighted_developer_rewards_receivers` | [WeightedAddress](#publicawesome.stargaze.alloc.v1beta1.WeightedAddress) | repeated | addresses to receive developer rewards |
-| `weighted_incentives_rewards_receivers` | [WeightedAddress](#publicawesome.stargaze.alloc.v1beta1.WeightedAddress) | repeated | addresses to receive incentive rewards |
-| `supplement_amount` | [cosmos.base.v1beta1.Coin](#cosmos.base.v1beta1.Coin) | repeated | SupplementAmount is the amount to be supplemented from the pool on top of newly minted coins. |
-
-
-
-
-
-
-<a name="publicawesome.stargaze.alloc.v1beta1.WeightedAddress"></a>
-
-### WeightedAddress
-
+Params holds parameters for the mint module.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `address` | [string](#string) |  |  |
-| `weight` | [string](#string) |  |  |
+| `mint_denom` | [string](#string) |  | type of coin to mint |
+| `start_time` | [google.protobuf.Timestamp](#google.protobuf.Timestamp) |  | the time the chain starts |
+| `initial_annual_provisions` | [string](#string) |  | initial annual provisions |
+| `reduction_factor` | [string](#string) |  | factor to reduce inflation by each year |
+| `blocks_per_year` | [uint64](#uint64) |  | expected blocks per year |
 
 
 
@@ -97,22 +76,23 @@
 
 
 
-<a name="publicawesome/stargaze/alloc/v1beta1/genesis.proto"></a>
+<a name="publicawesome/stargaze/mint/v1beta1/genesis.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/alloc/v1beta1/genesis.proto
+## publicawesome/stargaze/mint/v1beta1/genesis.proto
 
 
 
-<a name="publicawesome.stargaze.alloc.v1beta1.GenesisState"></a>
+<a name="publicawesome.stargaze.mint.v1beta1.GenesisState"></a>
 
 ### GenesisState
-GenesisState defines the alloc module's genesis state.
+GenesisState defines the mint module's genesis state.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `params` | [Params](#publicawesome.stargaze.alloc.v1beta1.Params) |  | this line is used by starport scaffolding # genesis/proto/state |
+| `minter` | [Minter](#publicawesome.stargaze.mint.v1beta1.Minter) |  | minter is a space for holding current inflation information. |
+| `params` | [Params](#publicawesome.stargaze.mint.v1beta1.Params) |  | params defines all the paramaters of the module. |
 
 
 
@@ -128,14 +108,41 @@ GenesisState defines the alloc module's genesis state.
 
 
 
-<a name="publicawesome/stargaze/alloc/v1beta1/query.proto"></a>
+<a name="publicawesome/stargaze/mint/v1beta1/query.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/alloc/v1beta1/query.proto
+## publicawesome/stargaze/mint/v1beta1/query.proto
 
 
 
-<a name="publicawesome.stargaze.alloc.v1beta1.QueryParamsRequest"></a>
+<a name="publicawesome.stargaze.mint.v1beta1.QueryAnnualProvisionsRequest"></a>
+
+### QueryAnnualProvisionsRequest
+QueryAnnualProvisionsRequest is the request type for the
+Query/AnnualProvisions RPC method.
+
+
+
+
+
+
+<a name="publicawesome.stargaze.mint.v1beta1.QueryAnnualProvisionsResponse"></a>
+
+### QueryAnnualProvisionsResponse
+QueryAnnualProvisionsResponse is the response type for the
+Query/AnnualProvisions RPC method.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `annual_provisions` | [bytes](#bytes) |  | annual_provisions is the current minting annual provisions value. |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.mint.v1beta1.QueryParamsRequest"></a>
 
 ### QueryParamsRequest
 QueryParamsRequest is the request type for the Query/Params RPC method.
@@ -145,7 +152,7 @@ QueryParamsRequest is the request type for the Query/Params RPC method.
 
 
 
-<a name="publicawesome.stargaze.alloc.v1beta1.QueryParamsResponse"></a>
+<a name="publicawesome.stargaze.mint.v1beta1.QueryParamsResponse"></a>
 
 ### QueryParamsResponse
 QueryParamsResponse is the response type for the Query/Params RPC method.
@@ -153,7 +160,7 @@ QueryParamsResponse is the response type for the Query/Params RPC method.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `params` | [Params](#publicawesome.stargaze.alloc.v1beta1.Params) |  | params defines the parameters of the module. |
+| `params` | [Params](#publicawesome.stargaze.mint.v1beta1.Params) |  | params defines the parameters of the module. |
 
 
 
@@ -166,83 +173,24 @@ QueryParamsResponse is the response type for the Query/Params RPC method.
  <!-- end HasExtensions -->
 
 
-<a name="publicawesome.stargaze.alloc.v1beta1.Query"></a>
+<a name="publicawesome.stargaze.mint.v1beta1.Query"></a>
 
 ### Query
-Query defines the gRPC querier service.
+Query provides defines the gRPC querier service.
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `Params` | [QueryParamsRequest](#publicawesome.stargaze.alloc.v1beta1.QueryParamsRequest) | [QueryParamsResponse](#publicawesome.stargaze.alloc.v1beta1.QueryParamsResponse) | this line is used by starport scaffolding # 2 | GET|/stargaze/alloc/v1beta1/params|
+| `Params` | [QueryParamsRequest](#publicawesome.stargaze.mint.v1beta1.QueryParamsRequest) | [QueryParamsResponse](#publicawesome.stargaze.mint.v1beta1.QueryParamsResponse) | Params returns the total set of minting parameters. | GET|/stargaze/mint/v1beta1/params|
+| `AnnualProvisions` | [QueryAnnualProvisionsRequest](#publicawesome.stargaze.mint.v1beta1.QueryAnnualProvisionsRequest) | [QueryAnnualProvisionsResponse](#publicawesome.stargaze.mint.v1beta1.QueryAnnualProvisionsResponse) | AnnualProvisions current minting annual provisions value. | GET|/stargaze/mint/v1beta1/annual_provisions|
 
  <!-- end services -->
 
 
 
-<a name="publicawesome/stargaze/alloc/v1beta1/tx.proto"></a>
+<a name="publicawesome/stargaze/mint/v1beta1/tx.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/alloc/v1beta1/tx.proto
-
-
-
-<a name="publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccount"></a>
-
-### MsgCreateVestingAccount
-MsgCreateVestingAccount defines a message that enables creating a vesting
-account.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `from_address` | [string](#string) |  |  |
-| `to_address` | [string](#string) |  |  |
-| `amount` | [cosmos.base.v1beta1.Coin](#cosmos.base.v1beta1.Coin) | repeated |  |
-| `start_time` | [int64](#int64) |  |  |
-| `end_time` | [int64](#int64) |  |  |
-| `delayed` | [bool](#bool) |  |  |
-
-
-
-
-
-
-<a name="publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccountResponse"></a>
-
-### MsgCreateVestingAccountResponse
-MsgCreateVestingAccountResponse defines the Msg/CreateVestingAccount response
-type.
-
-
-
-
-
-
-<a name="publicawesome.stargaze.alloc.v1beta1.MsgFundFairburnPool"></a>
-
-### MsgFundFairburnPool
-MsgFundFairburnPool allows an account to directly
-fund the fee collector pool.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `sender` | [string](#string) |  |  |
-| `amount` | [cosmos.base.v1beta1.Coin](#cosmos.base.v1beta1.Coin) | repeated |  |
-
-
-
-
-
-
-<a name="publicawesome.stargaze.alloc.v1beta1.MsgFundFairburnPoolResponse"></a>
-
-### MsgFundFairburnPoolResponse
-MsgFundFairburnPoolResponse defines the Msg/MsgFundFairburnPool response
-type.
-
-
-
+## publicawesome/stargaze/mint/v1beta1/tx.proto
 
 
  <!-- end messages -->
@@ -252,15 +200,13 @@ type.
  <!-- end HasExtensions -->
 
 
-<a name="publicawesome.stargaze.alloc.v1beta1.Msg"></a>
+<a name="publicawesome.stargaze.mint.v1beta1.Msg"></a>
 
 ### Msg
-Msg defines the alloc Msg service.
+Msg defines the mint Msg service.
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `CreateVestingAccount` | [MsgCreateVestingAccount](#publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccount) | [MsgCreateVestingAccountResponse](#publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccountResponse) | CreateVestingAccount defines a method that enables creating a vesting account. | |
-| `FundFairburnPool` | [MsgFundFairburnPool](#publicawesome.stargaze.alloc.v1beta1.MsgFundFairburnPool) | [MsgFundFairburnPoolResponse](#publicawesome.stargaze.alloc.v1beta1.MsgFundFairburnPoolResponse) | FundFairburnPool defines a method to allow an account to directly fund the fee collector module account. | |
 
  <!-- end services -->
 

@@ -12,33 +12,33 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
+	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/public-awesome/stargaze/v12/x/cron/keeper"
 	"github.com/public-awesome/stargaze/v12/x/cron/types"
 	"github.com/stretchr/testify/require"
 )
 
 // CronKeeper creates a testing keeper for the x/cron module
-func CronKeeper(tb testing.TB) (*keeper.Keeper, sdk.Context) {
+func CronKeeper(tb testing.TB) (keeper.Keeper, sdk.Context) {
 	tb.Helper()
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
+	tStoreKey := storetypes.NewTransientStoreKey("t_cron")
 
 	db := tmdb.NewMemDB()
 	stateStore := store.NewCommitMultiStore(db)
 	stateStore.MountStoreWithDB(storeKey, storetypes.StoreTypeIAVL, db)
 	stateStore.MountStoreWithDB(memStoreKey, storetypes.StoreTypeMemory, nil)
+	stateStore.MountStoreWithDB(tStoreKey, storetypes.StoreTypeTransient, db)
 	require.NoError(tb, stateStore.LoadLatestVersion())
 
 	registry := codectypes.NewInterfaceRegistry()
 	cdc := codec.NewProtoCodec(registry)
 
-	paramsSubspace := typesparams.NewSubspace(cdc,
-		types.Amino,
-		storeKey,
-		memStoreKey,
-		"CronParams",
-	)
+	paramsKeeper := paramskeeper.NewKeeper(cdc, types.Amino, storeKey, tStoreKey)
+	paramsKeeper.Subspace(types.ModuleName).WithKeyTable(types.ParamKeyTable())
+	subspace, _ := paramsKeeper.GetSubspace(types.ModuleName)
+
 	wk := MockWasmKeeper{
 		HasContractInfoFn: func(ctx sdk.Context, contractAddr sdk.AccAddress) bool {
 			switch contractAddr.String() {
@@ -60,11 +60,15 @@ func CronKeeper(tb testing.TB) (*keeper.Keeper, sdk.Context) {
 		cdc,
 		storeKey,
 		memStoreKey,
-		paramsSubspace,
+		subspace,
 		wk,
+		"cosmos1a48wdtjn3egw7swhfkeshwdtjvs6hq9nlyrwut", // random addr for gov module
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
+
+	params := types.Params{AdminAddresses: []string{}}
+	_ = k.SetParams(ctx, params)
 
 	return k, ctx
 }
