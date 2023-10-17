@@ -18,10 +18,11 @@ type Keeper struct {
 	paramStore paramTypes.Subspace
 	storeKey   storetypes.StoreKey
 	wasmKeeper types.WasmKeeper
+	authority  string // this should be the x/gov module account
 }
 
 // NewKeeper creates a new Keeper instance.
-func NewKeeper(cdc codec.Codec, storeKey storetypes.StoreKey, ps paramTypes.Subspace, wk types.WasmKeeper) Keeper {
+func NewKeeper(cdc codec.Codec, storeKey storetypes.StoreKey, ps paramTypes.Subspace, wk types.WasmKeeper, authority string) Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
 		ps = ps.WithKeyTable(types.ParamKeyTable())
@@ -32,6 +33,7 @@ func NewKeeper(cdc codec.Codec, storeKey storetypes.StoreKey, ps paramTypes.Subs
 		storeKey:   storeKey,
 		paramStore: ps,
 		wasmKeeper: wk,
+		authority:  authority,
 	}
 }
 
@@ -42,4 +44,9 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 
 func (k Keeper) GetContractInfo(ctx sdk.Context, contractAddr sdk.AccAddress) *wasmtypes.ContractInfo {
 	return k.wasmKeeper.GetContractInfo(ctx, contractAddr)
+}
+
+// GetAuthority returns the x/wasm module's authority.
+func (k Keeper) GetAuthority() string {
+	return k.authority
 }

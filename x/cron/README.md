@@ -8,16 +8,21 @@ This module enables smart contracts on chain to receive callbacks at the beginni
 
 ### Priviledged contracts
 
-An existing contract instantiated on chain which has been elevated to the status of priviledged contract via on-chain governance proposal.
+An existing contract instantiated on chain which has been elevated to the status of priviledged contract via on-chain governance proposal or via whitelisted admin addresses.
 Privileged contracts receive some extra superpowers where they can receive callbacks from the [`BeginBlocker & EndBlocker`](https://docs.cosmos.network/main/building-modules/beginblock-endblock.html) into their [`sudo`](https://book.cosmwasm.com/basics/entry-points.html?highlight=sudo#entry-points) entrypoint. More details on how to use this in [here](#how-to-use-in-cw-contract)
 
 ## State
 
-The module state is quite simple. It stores the bech32 address of all the Cosmwasm smart contracts that have been elevated via governance. Once the contract priviledge is demoted via governance, it is removed from state.
+The module state is quite simple. It stores the bech32 address of all the Cosmwasm smart contracts that have been elevated via governance or admins. Once the contract priviledge is demoted via governance, it is removed from state.
 
 Storage keys:
 
 - PriviledgedContract: `0x01 | contractAddress -> []byte{1}`
+
+## Params
+
+- AdminAddress: 
+  List of `sdk.AccAddress` for accounts which are whitelisted to promote and demote contracts     
 
 ## Begin Blockers
 
@@ -48,25 +53,121 @@ starsd q cron list-privileged
 
 List all privileged contract addresses in bech32 format
 
+#### **params**
+
+```
+starsd q cron params
+```
+
+List the module params
+
+### CLI - Gov
+
+```
+starsd tx gov submit-proposal proposal.json --from {user}
+```
+
+
+
+You will need the x/gov module address to set as authority for the proposal. You can fetch it by running:
+
+```starsd q auth module-account gov```
+
+This will get you the following response
+```jsonc
+account:
+  '@type': /cosmos.auth.v1beta1.ModuleAccount
+  base_account:
+    account_number: "7"
+    address: stars10d07y265gmmuvt4z0w9aw880jnsr700jw7ycaz // This is the address you need to use for authority value
+    pub_key: null
+    sequence: "0"
+  name: gov
+  permissions:
+  - burner
+```
+The expected format of the proposal.json is below. 
+
+#### Promote Contract
+
+```jsonc
+{
+    "messages": [
+     {
+      "@type": "/publicawesome.stargaze.cron.v1.MsgPromoteToPrivilegedContract",
+      "authority": "stars10d07y265gmmuvt4z0w9aw880jnsr700jw7ycaz", // x/gov address
+      "contract": "stars14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9srsl6sm" // the contract to promote
+     }
+    ],
+    "metadata": "metadata",
+    "deposit": "1000stake",
+    "title": "Promote contract",
+    "summary": "Contract will get begin and end blocker callbacks"
+}
+```
+
+#### Demote Contract
+
+```jsonc
+{
+    "messages": [
+     {
+      "@type": "/publicawesome.stargaze.cron.v1.MsgDemoteFromPrivilegedContract",
+      "authority": "stars10d07y265gmmuvt4z0w9aw880jnsr700jw7ycaz", // x/gov address
+      "contract": "stars14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9srsl6sm" // the contract to demote
+     }
+    ],
+    "metadata": "metadata",
+    "deposit": "1000stake",
+    "title": "Demote contract",
+    "summary": "Contract will lose begin and end blocker callbacks"
+}
+```
+
+#### Update Params
+
+```jsonc
+{
+    "messages": [
+     {
+      "@type": "/publicawesome.stargaze.cron.v1.MsgUpdateParams",
+      "authority": "stars10d07y265gmmuvt4z0w9aw880jnsr700jw7ycaz", // x/gov address
+      "params": { // note: the entire params field needs to be filled
+        "admin_address": [
+            "stars1mzgucqnfr2l8cj5apvdpllhzt4zeuh2cyt4fdd" 
+        ]
+      }
+     }
+    ],
+    "metadata": "metadata",
+    "deposit": "1000stake",
+    "title": "Update module params",
+    "summary": "This will add or remove the module admins"
+}
+```
+
 ### CLI - Tx
+
+> **Note**
+> Only whitelisted admin addresses can execute the following txs
 
 #### **promote-to-privilege-contract** || **promote-contract**
 
 ```
-starsd tx gov submit-proposal promote-contract {contractAddr} --title {proposalTitle} --deposit {depositAmount}
-starsd tx gov submit-proposal promote-contract stars19jq6mj84cnt9p7sagjxqf8hxtczwc8wlpuwe4sh62w45aheseues57n420 --title "Promote Contract Proposal" --deposit 1000ustars
+starsd tx cron promote-contract {contractAddr} --from {adminUser}
+starsd tx cron promote-contract stars19jq6mj84cnt9p7sagjxqf8hxtczwc8wlpuwe4sh62w45aheseues57n420 --from admin
 ```
 
-Creates a governance proposal which on passing will add the given contract address to the priviledged contract list
+Immediately adds the given contract address to the priviledged contract list
 
 #### **demote-from-privilege-contract** || **demote-contract**
 
 ```
-starsd tx gov submit-proposal demote-contract {contractAddr} --title {proposalTitle} --deposit {depositAmount}
-starsd tx gov submit-proposal demote-contract  stars19jq6mj84cnt9p7sagjxqf8hxtczwc8wlpuwe4sh62w45aheseues57n420 --title "Demote Contract Proposal" --deposit 1000ustars
+starsd tx cron demote-contract {contractAddr} --from {adminUser}
+starsd tx cron demote-contract stars19jq6mj84cnt9p7sagjxqf8hxtczwc8wlpuwe4sh62w45aheseues57n420 --from admin
 ```
 
-Creates a governance proposal which on passing will remove the given contract address from the priviledged contract list
+Immediately removes the given contract address to the priviledged contract list
 
 ## How to use in CW contract
 
