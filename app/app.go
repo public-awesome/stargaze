@@ -676,7 +676,7 @@ func NewStargazeApp(
 	)
 	allocModule := allocmodule.NewAppModule(appCodec, app.AllocKeeper)
 
-	tokenfactoryKeeper := tokenfactorykeeper.NewKeeper(keys[tokenfactorytypes.StoreKey], app.GetSubspace(tokenfactorytypes.ModuleName),
+	tokenfactoryKeeper := tokenfactorykeeper.NewKeeper(appCodec, keys[tokenfactorytypes.StoreKey], app.GetSubspace(tokenfactorytypes.ModuleName),
 		app.AccountKeeper, app.BankKeeper, app.DistrKeeper)
 	app.TokenFactoryKeeper = tokenfactoryKeeper
 

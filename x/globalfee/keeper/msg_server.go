@@ -99,9 +99,9 @@ func (k msgServer) UpdateParams(goCtx context.Context, msg *types.MsgUpdateParam
 		return nil, err
 	}
 
-	k.SetParams(ctx, msg.GetParams())
+	err = k.SetParams(ctx, msg.GetParams())
 
-	return &types.MsgUpdateParamsResponse{}, nil
+	return &types.MsgUpdateParamsResponse{}, err
 }
 
 func (k msgServer) isAuthorized(ctx sdk.Context, actor string) bool {

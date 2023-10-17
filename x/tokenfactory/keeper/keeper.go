@@ -6,6 +6,7 @@ import (
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/public-awesome/stargaze/v12/x/tokenfactory/types"
 
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -16,6 +17,7 @@ import (
 
 type (
 	Keeper struct {
+		cdc      codec.BinaryCodec
 		storeKey storetypes.StoreKey
 
 		paramSpace paramtypes.Subspace
@@ -28,6 +30,7 @@ type (
 
 // NewKeeper returns a new instance of the x/tokenfactory keeper
 func NewKeeper(
+	cdc codec.BinaryCodec,
 	storeKey storetypes.StoreKey,
 	paramSpace paramtypes.Subspace,
 	accountKeeper types.AccountKeeper,
@@ -39,6 +42,7 @@ func NewKeeper(
 	}
 
 	return Keeper{
+		cdc:        cdc,
 		storeKey:   storeKey,
 		paramSpace: paramSpace,
 
