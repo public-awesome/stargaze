@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/cometbft/cometbft/libs/log"
-	"github.com/public-awesome/stargaze/v12/x/tokenfactory/types"
+	"github.com/public-awesome/stargaze/v13/x/tokenfactory/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store/prefix"

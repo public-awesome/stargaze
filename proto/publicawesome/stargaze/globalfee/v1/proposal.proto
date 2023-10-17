@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
 import "publicawesome/stargaze/globalfee/v1/globalfee.proto";
 
-option go_package = "github.com/public-awesome/stargaze/v12/x/globalfee/types";
+option go_package = "github.com/public-awesome/stargaze/v13/x/globalfee/types";
 
 message SetCodeAuthorizationProposal {
   option deprecated = true;

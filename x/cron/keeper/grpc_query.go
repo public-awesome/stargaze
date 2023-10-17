@@ -8,7 +8,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/public-awesome/stargaze/v12/x/cron/types"
+	"github.com/public-awesome/stargaze/v13/x/cron/types"
 )
 
 var _ types.QueryServer = Keeper{}

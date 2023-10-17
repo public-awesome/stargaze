@@ -2,8 +2,8 @@ package mint
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v12/x/mint/keeper"
-	"github.com/public-awesome/stargaze/v12/x/mint/types"
+	"github.com/public-awesome/stargaze/v13/x/mint/keeper"
+	"github.com/public-awesome/stargaze/v13/x/mint/types"
 )
 
 // InitGenesis new mint genesis

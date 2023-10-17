@@ -26,10 +26,10 @@ import (
 
 	ibctmmigrations "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint/migrations"
 
-	alloctypes "github.com/public-awesome/stargaze/v12/x/alloc/types"
-	globalfeetypes "github.com/public-awesome/stargaze/v12/x/globalfee/types"
-	minttypes "github.com/public-awesome/stargaze/v12/x/mint/types"
-	tokenfactorytypes "github.com/public-awesome/stargaze/v12/x/tokenfactory/types"
+	alloctypes "github.com/public-awesome/stargaze/v13/x/alloc/types"
+	globalfeetypes "github.com/public-awesome/stargaze/v13/x/globalfee/types"
+	minttypes "github.com/public-awesome/stargaze/v13/x/mint/types"
+	tokenfactorytypes "github.com/public-awesome/stargaze/v13/x/tokenfactory/types"
 )
 
 // next upgrade name

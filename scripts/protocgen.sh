@@ -26,5 +26,5 @@ buf generate --template buf.gen.doc.yaml
 cd ..
 
 # move proto files to the right places
-cp -r github.com/public-awesome/stargaze/v12/* ./
+cp -r github.com/public-awesome/stargaze/v13/* ./
 rm -rf github.com
