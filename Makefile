@@ -1,4 +1,4 @@
-.PHONY: build proto check_go_version install
+.PHONY: build proto check_go_version install build-heighliner
 #!/usr/bin/make -f
 
 PACKAGES_SIMTEST=$(shell go list ./... | grep '/simulation')
@@ -119,6 +119,8 @@ build-linux:
 build-docker:
 	docker build -t publicawesome/stargaze:local-dev .
 
+build-heighliner:
+	heighliner build -c stargaze --local -f ./chains.yaml  -tag publicawesome/stargaze:local-dev
 docker-test: build-linux
 	docker build -f docker/Dockerfile.test -t rocketprotocol/stargaze-relayer-test:latest .
 
