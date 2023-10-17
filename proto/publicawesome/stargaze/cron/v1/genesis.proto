@@ -15,8 +15,7 @@ message GenesisState {
 
   // Module params
   Params params = 2 [
-        (gogoproto.jsontag) = "params,omitempty",
-        (gogoproto.nullable) = false
-      ];
-      
+    (gogoproto.jsontag) = "params,omitempty",
+    (gogoproto.nullable) = false
+  ];
 }

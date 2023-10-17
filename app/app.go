@@ -123,7 +123,6 @@ import (
 	cronmoduletypes "github.com/public-awesome/stargaze/v12/x/cron/types"
 
 	globalfeemodule "github.com/public-awesome/stargaze/v12/x/globalfee"
-	globalfeeclient "github.com/public-awesome/stargaze/v12/x/globalfee/client"
 	globalfeemodulekeeper "github.com/public-awesome/stargaze/v12/x/globalfee/keeper"
 	globalfeemoduletypes "github.com/public-awesome/stargaze/v12/x/globalfee/types"
 
@@ -173,8 +172,6 @@ func getGovProposalHandlers() []govclient.ProposalHandler {
 		upgradeclient.LegacyProposalHandler,
 		upgradeclient.LegacyCancelProposalHandler,
 		ibcclientclient.UpdateClientProposalHandler, ibcclientclient.UpgradeProposalHandler,
-		globalfeeclient.SetCodeAuthorizationProposalHandler, globalfeeclient.RemoveCodeAuthorizationProposalHandler,
-		globalfeeclient.SetContractAuthorizationProposalHandler, globalfeeclient.RemoveContractAuthorizationProposalHandler,
 		// this line is used by starport scaffolding # stargate/app/govProposalHandler
 	)
 	return govProposalHandlers
@@ -641,9 +638,14 @@ func NewStargazeApp(
 		authtypes.NewModuleAddress(govtypes.ModuleName).String())
 	cronModule := cronmodule.NewAppModule(appCodec, app.CronKeeper, app.WasmKeeper)
 
-	app.GlobalFeeKeeper = globalfeemodulekeeper.NewKeeper(appCodec, keys[globalfeemoduletypes.StoreKey], app.GetSubspace(globalfeemoduletypes.ModuleName), app.WasmKeeper)
+	app.GlobalFeeKeeper = globalfeemodulekeeper.NewKeeper(
+		appCodec,
+		keys[globalfeemoduletypes.StoreKey],
+		app.GetSubspace(globalfeemoduletypes.ModuleName),
+		app.WasmKeeper,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+	)
 	globalfeeModule := globalfeemodule.NewAppModule(appCodec, app.GlobalFeeKeeper)
-	govRouter.AddRoute(globalfeemoduletypes.RouterKey, globalfeemodulekeeper.NewProposalHandler(app.GlobalFeeKeeper))
 
 	ibcRouter.AddRoute(wasmtypes.ModuleName, wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper, app.IBCKeeper.ChannelKeeper))
 	app.IBCKeeper.SetRouter(ibcRouter)

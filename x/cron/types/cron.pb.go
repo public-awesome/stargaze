@@ -25,7 +25,8 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Params holds parameters for the cron module.
 type Params struct {
-	// Addresses which act as admins of the module. They can promote and demote contracts without having to go via governance.
+	// Addresses which act as admins of the module. They can promote and demote
+	// contracts without having to go via governance.
 	AdminAddresses []string `protobuf:"bytes,1,rep,name=admin_addresses,json=adminAddresses,proto3" json:"admin_addresses,omitempty"`
 }
 

@@ -30,7 +30,8 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type MsgPromoteToPrivilegedContract struct {
-	// Authority is the address of the governance account or any whitelisted address
+	// Authority is the address of the governance account or any whitelisted
+	// address
 	Authority string `protobuf:"bytes,1,opt,name=authority,proto3" json:"authority,omitempty"`
 	// Contract is the bech32 address of the smart contract
 	Contract string `protobuf:"bytes,2,opt,name=contract,proto3" json:"contract,omitempty"`
@@ -122,7 +123,8 @@ func (m *MsgPromoteToPrivilegedContractResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_MsgPromoteToPrivilegedContractResponse proto.InternalMessageInfo
 
 type MsgDemoteFromPrivilegedContract struct {
-	// Authority is the address of the governance account or any whitelisted address
+	// Authority is the address of the governance account or any whitelisted
+	// address
 	Authority string `protobuf:"bytes,1,opt,name=authority,proto3" json:"authority,omitempty"`
 	// Contract is the bech32 address of the smart contract
 	Contract string `protobuf:"bytes,2,opt,name=contract,proto3" json:"contract,omitempty"`

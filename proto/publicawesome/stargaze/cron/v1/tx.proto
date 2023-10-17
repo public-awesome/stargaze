@@ -15,13 +15,13 @@ service Msg {
   rpc DemoteFromPrivilegedContract(MsgDemoteFromPrivilegedContract)
       returns (MsgDemoteFromPrivilegedContractResponse);
 
-  rpc UpdateParams(MsgUpdateParams)
-      returns (MsgUpdateParamsResponse);
+  rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
 }
 
 message MsgPromoteToPrivilegedContract {
   option (cosmos.msg.v1.signer) = "authority";
-  // Authority is the address of the governance account or any whitelisted address
+  // Authority is the address of the governance account or any whitelisted
+  // address
   string authority = 1;
   // Contract is the bech32 address of the smart contract
   string contract = 2;
@@ -30,11 +30,12 @@ message MsgPromoteToPrivilegedContract {
 message MsgPromoteToPrivilegedContractResponse {}
 
 message MsgDemoteFromPrivilegedContract {
-    option (cosmos.msg.v1.signer) = "authority";
-    // Authority is the address of the governance account or any whitelisted address
-    string authority = 1;
-    // Contract is the bech32 address of the smart contract
-    string contract = 2;
+  option (cosmos.msg.v1.signer) = "authority";
+  // Authority is the address of the governance account or any whitelisted
+  // address
+  string authority = 1;
+  // Contract is the bech32 address of the smart contract
+  string contract = 2;
 }
 
 message MsgDemoteFromPrivilegedContractResponse {}
@@ -44,7 +45,7 @@ message MsgUpdateParams {
   // Authority is the address of the governance account.
   string authority = 1;
   // NOTE: All parameters must be supplied.
-  Params params = 2  [
+  Params params = 2 [
     (gogoproto.jsontag) = "params,omitempty",
     (gogoproto.nullable) = false
   ];

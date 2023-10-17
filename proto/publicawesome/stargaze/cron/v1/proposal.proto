@@ -6,8 +6,9 @@ import "cosmos_proto/cosmos.proto";
 
 option go_package = "github.com/public-awesome/stargaze/v12/x/cron/types";
 
-// Deprecated: Do not use. To promote a contract, a MsgPromoteToPrivilegedContract 
-// can be invoked from the x/gov module via a v1 governance proposal
+// Deprecated: Do not use. To promote a contract, a
+// MsgPromoteToPrivilegedContract can be invoked from the x/gov module via a v1
+// governance proposal
 message PromoteToPrivilegedContractProposal {
   option deprecated = true;
   option (cosmos_proto.implements_interface) = "cosmos.gov.v1beta1.Content";
@@ -20,8 +21,9 @@ message PromoteToPrivilegedContractProposal {
   string contract = 3 [ (gogoproto.moretags) = "yaml:\"contract\"" ];
 }
 
-// Deprecated: Do not use. To demote a contract, a MsgDemoteFromPrivilegedContract 
-// can be invoked from the x/gov module via a v1 governance proposal
+// Deprecated: Do not use. To demote a contract, a
+// MsgDemoteFromPrivilegedContract can be invoked from the x/gov module via a v1
+// governance proposal
 message DemotePrivilegedContractProposal {
   option deprecated = true;
   option (cosmos_proto.implements_interface) = "cosmos.gov.v1beta1.Content";

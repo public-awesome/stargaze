@@ -24,8 +24,9 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// Deprecated: Do not use. To promote a contract, a MsgPromoteToPrivilegedContract
-// can be invoked from the x/gov module via a v1 governance proposal
+// Deprecated: Do not use. To promote a contract, a
+// MsgPromoteToPrivilegedContract can be invoked from the x/gov module via a v1
+// governance proposal
 //
 // Deprecated: Do not use.
 type PromoteToPrivilegedContractProposal struct {
@@ -91,8 +92,9 @@ func (m *PromoteToPrivilegedContractProposal) GetContract() string {
 	return ""
 }
 
-// Deprecated: Do not use. To demote a contract, a MsgDemoteFromPrivilegedContract
-// can be invoked from the x/gov module via a v1 governance proposal
+// Deprecated: Do not use. To demote a contract, a
+// MsgDemoteFromPrivilegedContract can be invoked from the x/gov module via a v1
+// governance proposal
 //
 // Deprecated: Do not use.
 type DemotePrivilegedContractProposal struct {

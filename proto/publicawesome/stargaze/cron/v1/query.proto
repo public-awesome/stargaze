@@ -41,7 +41,7 @@ message QueryParamsRequest {}
 // method.
 message QueryParamsResponse {
   Params params = 1 [
-        (gogoproto.jsontag) = "params,omitempty",
-        (gogoproto.nullable) = false
-      ];
+    (gogoproto.jsontag) = "params,omitempty",
+    (gogoproto.nullable) = false
+  ];
 }

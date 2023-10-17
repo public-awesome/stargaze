@@ -79,6 +79,7 @@ func GlobalFeeKeeper(tb testing.TB) (keeper.Keeper, sdk.Context) {
 		storeKey,
 		subspace,
 		wk,
+		"cosmos1a48wdtjn3egw7swhfkeshwdtjvs6hq9nlyrwut", // random addr for gov module
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
