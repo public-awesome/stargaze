@@ -240,7 +240,6 @@ func newApp(
 		encCfg,
 		appOpts,
 		wasmOpts,
-		app.GetEnabledProposals(),
 		baseapp.SetPruning(pruningOpts),
 		baseapp.SetMinGasPrices(cast.ToString(appOpts.Get(server.FlagMinGasPrices))),
 		baseapp.SetHaltHeight(cast.ToUint64(appOpts.Get(server.FlagHaltHeight))),
@@ -288,7 +287,6 @@ func appExport(
 		encCfg,
 		appOpts,
 		emptyWasmOpts,
-		app.GetEnabledProposals(),
 	)
 
 	if height != -1 {

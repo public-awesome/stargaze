@@ -23,6 +23,7 @@ func GetQueryCmd(_ string) *cobra.Command {
 	}
 
 	cmd.AddCommand(GetCmdListPrivilegedContracts())
+	cmd.AddCommand(GetCmdParams())
 	// this line is used by starport scaffolding # 1
 
 	return cmd
@@ -46,6 +47,33 @@ func GetCmdListPrivilegedContracts() *cobra.Command {
 			res, err := queryClient.ListPrivileged(
 				cmd.Context(),
 				&types.QueryListPrivilegedRequest{},
+			)
+			if err != nil {
+				return err
+			}
+			return clientCtx.PrintProto(res)
+		},
+	}
+	flags.AddQueryFlagsToCmd(cmd)
+	return cmd
+}
+
+// GetCmdParams displays the module params
+func GetCmdParams() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "params",
+		Short: "Query the module params",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			queryClient := types.NewQueryClient(clientCtx)
+			res, err := queryClient.Params(
+				cmd.Context(),
+				&types.QueryParamsRequest{},
 			)
 			if err != nil {
 				return err
