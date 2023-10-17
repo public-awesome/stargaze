@@ -1,4 +1,4 @@
-module github.com/public-awesome/stargaze/v12
+module github.com/public-awesome/stargaze/v13
 
 go 1.21
 

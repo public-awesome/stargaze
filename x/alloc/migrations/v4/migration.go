@@ -5,8 +5,8 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/public-awesome/stargaze/v12/x/alloc/exported"
-	"github.com/public-awesome/stargaze/v12/x/alloc/types"
+	"github.com/public-awesome/stargaze/v13/x/alloc/exported"
+	"github.com/public-awesome/stargaze/v13/x/alloc/types"
 )
 
 // MigrateStore migrates the x/alloc module state from the consensus version 3 to

@@ -3,7 +3,7 @@ package types_test
 import (
 	"testing"
 
-	"github.com/public-awesome/stargaze/v12/x/cron/types"
+	"github.com/public-awesome/stargaze/v13/x/cron/types"
 	"github.com/stretchr/testify/require"
 )
 

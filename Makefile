@@ -124,7 +124,7 @@ docker-test: build-linux
 
 
 test:
-	go test -v -race github.com/public-awesome/stargaze/v12/x/...
+	go test -v -race github.com/public-awesome/stargaze/v13/x/...
 
 test-pfm:
 	cd e2e && go test -v -race -run TestPacketForwardMiddleware .
