@@ -68,7 +68,7 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 			keyTable = icacontrollertypes.ParamKeyTable()
 			// wasm
 		case wasmtypes.ModuleName:
-			keyTable = wasmtypes.ParamKeyTable() //nolint:staticcheck
+			keyTable = wasmtypes.ParamKeyTable() //nolint
 
 			// stargaze modules
 		case alloctypes.ModuleName:
