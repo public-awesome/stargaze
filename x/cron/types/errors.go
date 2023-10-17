@@ -10,4 +10,5 @@ import (
 var (
 	ErrContractDoesNotExist    = errorsmod.Register(ModuleName, 2, "contract does not exist to modify its privilege")
 	ErrContractPrivilegeNotSet = errorsmod.Register(ModuleName, 3, "contract does not have privilege set and therefore cannot unset its privilege")
+	ErrUnauthorized            = errorsmod.Register(ModuleName, 4, "sender is unauthorized to perform the operation")
 )
