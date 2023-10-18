@@ -31,7 +31,7 @@ starsd config keyring-backend test
 starsd config output json
 yes | starsd keys add validator
 
-starsd add-genesis-account $(starsd keys show validator -a) $VALIDATOR_COINS
+starsd genesis add-genesis-account $(starsd keys show validator -a) $VALIDATOR_COINS
 
 echo "Adding vesting accounts..."
 GENESIS_TIME=$(jq '.genesis_time' ~/.starsd/config/genesis.json | tr -d '"')
@@ -44,21 +44,21 @@ fi
 vesting_start_time=$(($GENESIS_UNIX_TIME + $LOCKUP))
 vesting_end_time=$(($vesting_start_time + $LOCKUP))
 
-starsd add-genesis-account stars1s4ckh9405q0a3jhkwx9wkf9hsjh66nmuu53dwe 350000000000000$DENOM
-starsd add-genesis-account stars13nh557xzyfdm6csyp0xslu939l753sdlgdc2q0 250000000000000$DENOM
-starsd add-genesis-account stars12yxedm78tpptyhhasxrytyfyj7rg7dcqfgrdk4 16666666666667$DENOM \
+starsd genesis add-genesis-account stars1s4ckh9405q0a3jhkwx9wkf9hsjh66nmuu53dwe 350000000000000$DENOM
+starsd genesis add-genesis-account stars13nh557xzyfdm6csyp0xslu939l753sdlgdc2q0 250000000000000$DENOM
+starsd genesis add-genesis-account stars12yxedm78tpptyhhasxrytyfyj7rg7dcqfgrdk4 16666666666667$DENOM \
     --vesting-amount 16666666666667$DENOM \
     --vesting-start-time $vesting_start_time \
     --vesting-end-time $vesting_end_time
-starsd add-genesis-account stars1nek5njjd7uqn5zwf5zyl3xhejvd36er3qzp6x3 16666666666667$DENOM \
+starsd genesis add-genesis-account stars1nek5njjd7uqn5zwf5zyl3xhejvd36er3qzp6x3 16666666666667$DENOM \
     --vesting-amount 16666666666667$DENOM \
     --vesting-start-time $vesting_start_time \
     --vesting-end-time $vesting_end_time
-starsd add-genesis-account stars1avlcqcn4hsxrds2dgxmgrj244hu630kfl89vrt 16666666666667$DENOM \
+starsd genesis add-genesis-account stars1avlcqcn4hsxrds2dgxmgrj244hu630kfl89vrt 16666666666667$DENOM \
     --vesting-amount 16666666666667$DENOM \
     --vesting-start-time $vesting_start_time \
     --vesting-end-time $vesting_end_time
-starsd add-genesis-account stars1wppujuuqrv52atyg8uw3x779r8w72ehrr5a4yx 50000000000000$DENOM \
+starsd genesis add-genesis-account stars1wppujuuqrv52atyg8uw3x779r8w72ehrr5a4yx 50000000000000$DENOM \
     --vesting-amount 50000000000000$DENOM \
     --vesting-start-time $vesting_start_time \
     --vesting-end-time $vesting_end_time

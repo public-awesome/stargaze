@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package publicawesome.stargaze.alloc.v1beta1;
 
-option go_package = "github.com/public-awesome/stargaze/v12/x/alloc/types";
+option go_package = "github.com/public-awesome/stargaze/v13/x/alloc/types";
 
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";

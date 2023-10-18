@@ -94,6 +94,136 @@ contract_authorizations:
   - *
 ```
 
+### Gov
+
+```starsd tx gov submit-proposal proposal.json --from {user}```
+
+You will need the x/gov module address to set as authority for the proposal. You can fetch it by running: `starsd q auth module-account gov`
+
+This will get you the following response
+
+```jsonc
+account:
+  '@type': /cosmos.auth.v1beta1.ModuleAccount
+  base_account:
+    account_number: "7"
+    address: stars10d07y265gmmuvt4z0w9aw880jnsr700jw7ycaz // This is the address you need to use for authority value
+    pub_key: null
+    sequence: "0"
+  name: gov
+  permissions:
+  - burner
+```
+The expected format of the proposal.json is below.
+
+#### Update Params
+
+```jsonc
+{
+    "messages": [
+     {
+      "@type": "/publicawesome.stargaze.globalfee.v1.MsgUpdateParams",
+      "authority": "stars10d07y265gmmuvt4z0w9aw880jnsr700jw7ycaz", // x/gov address
+      "params": { // note: the entire params field needs to be filled
+        "privileged_addresses": [
+            "stars1mzgucqnfr2l8cj5apvdpllhzt4zeuh2cyt4fdd" 
+        ],
+        "minimum_gas_prices": [
+          "1ustar"
+        ]
+      }
+     }
+    ],
+    "metadata": "metadata",
+    "deposit": "1000stake",
+    "title": "Update module params",
+    "summary": "This will update the module admins as well as the minimum gas price"
+}
+```
+
+#### Set Code Authorization
+
+```jsonc
+{
+    "messages": [
+     {
+      "@type": "/publicawesome.stargaze.globalfee.v1.MsgSetCodeAuthorization",
+      "sender": "stars10d07y265gmmuvt4z0w9aw880jnsr700jw7ycaz", // x/gov address
+      "code_authorization": {
+        "code_id": 1,
+        "methods": [
+          "mint"
+        ]
+      }
+     }
+    ],
+    "metadata": "metadata",
+    "deposit": "1000stake",
+    "title": "Set Code Authorization",
+    "summary": "Set Code Authorization for all contracts of given code id"
+}
+```
+
+#### Remove Code Authorization
+
+```jsonc
+{
+    "messages": [
+     {
+      "@type": "/publicawesome.stargaze.globalfee.v1.MsgRemoveCodeAuthorization",
+      "sender": "stars10d07y265gmmuvt4z0w9aw880jnsr700jw7ycaz", // x/gov address
+      "code_id": 1
+     }
+    ],
+    "metadata": "metadata",
+    "deposit": "1000stake",
+    "title": "Remove Code Authorization",
+    "summary": "Remove Code Authorization for all contracts of given code id"
+}
+```
+
+#### Set Contract Authorization
+
+```jsonc
+{
+    "messages": [
+     {
+      "@type": "/publicawesome.stargaze.globalfee.v1.MsgSetContractAuthorization",
+      "sender": "stars10d07y265gmmuvt4z0w9aw880jnsr700jw7ycaz", // x/gov address
+      "contract_authorization": {
+        "contract_address": "stars14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9srsl6sm",
+        "methods": [
+          "*"
+        ]
+      }
+     }
+    ],
+    "metadata": "metadata",
+    "deposit": "1000stake",
+    "title": "Set Contract Authorization",
+    "summary": "Set contract Authorization for contract of given address"
+}
+```
+
+#### Remove Contract Authorization
+
+```jsonc
+{
+    "messages": [
+     {
+      "@type": "/publicawesome.stargaze.globalfee.v1.MsgRemoveContractAuthorization",
+      "sender": "stars10d07y265gmmuvt4z0w9aw880jnsr700jw7ycaz", // x/gov address
+      "contract_address": "stars14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9srsl6sm"
+     }
+    ],
+    "metadata": "metadata",
+    "deposit": "1000stake",
+    "title": "Remove Contract Authorization",
+    "summary": "Remove contract Authorization for contract of given address"
+}
+```
+
+
 ### Transactions
 
 The `tx` commands allows a user to interact with the module.
@@ -186,94 +316,6 @@ Example:
 
 ```bash
 starsd tx globalfee remove-contract-authorization stars1fvhcnyddukcqfnt7nlwv3thm5we22lyxyxylr9h77cvgkcn43xfsvgv0pl \
-  --from myAccountKey \
-  --fees 1500ustars
-```
-
-#### set-code-authorization-proposal
-
-Creates a gov proposal to create or update the zero gas fee operation authorization for the given code ID and for the provided methods. The methods should be comma separated values.
-
-Any stargaze address can perform this operation.
-
-Usage:
-
-```bash
-starsd tx globalfee set-code-authorization-proposal [code-id] [methods]  [flags]
-```
-
-Example:
-
-```bash
-starsd tx globalfee set-code-authorization-proposal 3 "mint,unlist"  \
-  --title "Adding new code authorization" \
-  --deposit 1000ustars \
-  --from myAccountKey \
-  --fees 1500ustars
-```
-
-#### remove-code-authorization-proposal
-
-Creates a gov proposal to remove the zero gas fee operation authorization for the given code ID.
-
-Any stargaze address can perform this operation.
-
-Usage:
-
-```bash
-starsd tx globalfee remove-code-authorization-proposal [code-id] [flags]
-```
-
-Example:
-
-```bash
-starsd tx globalfee remove-code-authorization-proposal 3 \
-  --title "Removing the code authorization" \
-  --deposit 1000ustars \
-  --from myAccountKey \
-  --fees 1500ustars
-```
-
-#### set-contract-authorization-proposal
-
-Creates a gov proposal to create or update the gasless operation authorization for the given contract adress and for the provided methods. The methods should be comma separated values.
-
-Any stargaze address can perform this operation.
-
-Usage:
-
-```bash
-starsd tx globalfee set-contract-authorization-proposal [contract-address] [methods] [flags]
-```
-
-Example:
-
-```bash
-starsd tx globalfee set-contract-authorization-proposal stars1fvhcnyddukcqfnt7nlwv3thm5we22lyxyxylr9h77cvgkcn43xfsvgv0pl "*"  \
-  --title "Adding new contract authorization" \
-  --deposit 1000ustars \
-  --from myAccountKey \
-  --fees 1500ustars
-```
-
-#### remove-contract-authorization-proposal
-
-Creates a gov proposal to remove the zero gas fee operation authorization for the given contract adress.
-
-Any stargaze address can perform this operation.
-
-Usage:
-
-```bash
-starsd tx globalfee remove-contract-authorization-proposal [contract-address] [flags]
-```
-
-Example:
-
-```bash
-starsd tx globalfee remove-contract-authorization-proposal stars1fvhcnyddukcqfnt7nlwv3thm5we22lyxyxylr9h77cvgkcn43xfsvgv0pl  \
-  --title "Removing the contract authorization" \
-  --deposit 1000ustars \
   --from myAccountKey \
   --fees 1500ustars
 ```

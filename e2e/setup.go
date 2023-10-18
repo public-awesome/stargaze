@@ -6,9 +6,9 @@ import (
 	"testing"
 
 	"github.com/docker/docker/client"
-	"github.com/strangelove-ventures/interchaintest/v4"
-	"github.com/strangelove-ventures/interchaintest/v4/chain/cosmos"
-	"github.com/strangelove-ventures/interchaintest/v4/ibc"
+	"github.com/strangelove-ventures/interchaintest/v7"
+	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
+	"github.com/strangelove-ventures/interchaintest/v7/ibc"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap/zaptest"
 )
@@ -40,7 +40,7 @@ var (
 		PreGenesis:             nil,
 		ModifyGenesis:          cosmos.ModifyGenesis(getTestGenesis()), // Modifying genesis to have test-friendly gov params
 		ConfigFileOverrides:    nil,
-		UsingNewGenesisCommand: false,
+		UsingNewGenesisCommand: true,
 	}
 )
 

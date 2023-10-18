@@ -15,6 +15,7 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgRemoveCodeAuthorization{}, "globalfee/MsgRemoveCodeAuthorization", nil)
 	cdc.RegisterConcrete(&MsgSetContractAuthorization{}, "globalfee/MsgSetContractAuthorization", nil)
 	cdc.RegisterConcrete(&MsgRemoveContractAuthorization{}, "globalfee/MsgRemoveContractAuthorization", nil)
+	cdc.RegisterConcrete(&MsgUpdateParams{}, "globalfee/MsgUpdateParams", nil)
 }
 
 // RegisterInterfaces registers interfaces types with the interface registry.
@@ -24,6 +25,7 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgRemoveCodeAuthorization{},
 		&MsgSetContractAuthorization{},
 		&MsgRemoveContractAuthorization{},
+		&MsgUpdateParams{},
 	)
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }

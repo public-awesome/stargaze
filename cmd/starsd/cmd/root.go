@@ -37,8 +37,8 @@ import (
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	tmtypes "github.com/cometbft/cometbft/types"
-	"github.com/public-awesome/stargaze/v12/app"
-	"github.com/public-awesome/stargaze/v12/app/params"
+	"github.com/public-awesome/stargaze/v13/app"
+	"github.com/public-awesome/stargaze/v13/app/params"
 )
 
 const EnvironmentPrefix = "STARGAZE"
@@ -125,6 +125,7 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 func addModuleInitFlags(startCmd *cobra.Command) {
 	crisis.AddModuleInitFlags(startCmd)
 	wasm.AddModuleInitFlags(startCmd)
+	startCmd.PreRunE = chainPreRuns(CheckLibwasmVersion, startCmd.PreRunE)
 }
 
 func queryCommand() *cobra.Command {
@@ -239,7 +240,6 @@ func newApp(
 		encCfg,
 		appOpts,
 		wasmOpts,
-		app.GetEnabledProposals(),
 		baseapp.SetPruning(pruningOpts),
 		baseapp.SetMinGasPrices(cast.ToString(appOpts.Get(server.FlagMinGasPrices))),
 		baseapp.SetHaltHeight(cast.ToUint64(appOpts.Get(server.FlagHaltHeight))),
@@ -287,7 +287,6 @@ func appExport(
 		encCfg,
 		appOpts,
 		emptyWasmOpts,
-		app.GetEnabledProposals(),
 	)
 
 	if height != -1 {

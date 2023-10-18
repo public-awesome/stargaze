@@ -2,14 +2,16 @@ package globalfee
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v12/x/globalfee/keeper"
-	"github.com/public-awesome/stargaze/v12/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v13/x/globalfee/keeper"
+	"github.com/public-awesome/stargaze/v13/x/globalfee/types"
 )
 
 // InitGenesis initializes the module genesis state.
 func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) {
 	params := genState.GetParams()
-	k.SetParams(ctx, params)
+	if err := k.SetParams(ctx, params); err != nil {
+		panic(err)
+	}
 
 	for _, ca := range genState.GetCodeAuthorizations() {
 		err := k.SetCodeAuthorization(ctx, ca)

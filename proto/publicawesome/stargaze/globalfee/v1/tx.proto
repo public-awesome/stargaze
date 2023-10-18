@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 import "cosmos/msg/v1/msg.proto";
 import "publicawesome/stargaze/globalfee/v1/globalfee.proto";
 
-option go_package = "github.com/public-awesome/stargaze/v12/x/globalfee/types";
+option go_package = "github.com/public-awesome/stargaze/v13/x/globalfee/types";
 
 // Msg defines the alloc Msg service.
 service Msg {
@@ -20,6 +20,8 @@ service Msg {
 
   rpc RemoveContractAuthorization(MsgRemoveContractAuthorization)
       returns (MsgRemoveContractAuthorizationResponse);
+
+  rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
 }
 
 message MsgSetCodeAuthorization {
@@ -53,3 +55,15 @@ message MsgRemoveContractAuthorization {
 }
 
 message MsgRemoveContractAuthorizationResponse {}
+
+message MsgUpdateParams {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  // NOTE: All parameters must be supplied.
+  Params params = 2 [
+    (gogoproto.jsontag) = "params,omitempty",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message MsgUpdateParamsResponse {}

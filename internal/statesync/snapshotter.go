@@ -8,7 +8,6 @@ import (
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	snapshot "github.com/cosmos/cosmos-sdk/snapshots/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	protoio "github.com/cosmos/gogoproto/io"
 )
 
 const (
@@ -45,7 +44,7 @@ func (vs *VersionSnapshotter) SnapshotName() string {
 }
 
 // Snapshot writes snapshot items into the protobuf writer.
-func (vs *VersionSnapshotter) Snapshot(height uint64, protoWriter protoio.Writer) error {
+func (vs *VersionSnapshotter) SnapshotExtension(height uint64, payloadWriter snapshot.ExtensionPayloadWriter) error {
 	cms, err := vs.ms.CacheMultiStoreWithVersion(int64(height))
 	if err != nil {
 		return err
@@ -58,31 +57,28 @@ func (vs *VersionSnapshotter) Snapshot(height uint64, protoWriter protoio.Writer
 		appVersion = params.Version.GetApp()
 	}
 	bz := sdk.Uint64ToBigEndian(appVersion)
-	return snapshot.WriteExtensionPayload(protoWriter, bz)
+	return payloadWriter(bz)
 }
 
 // Restore restores a state snapshot from the protobuf items read from the reader.
-func (vs *VersionSnapshotter) Restore(_ uint64, format uint32, protoReader protoio.Reader) (snapshot.SnapshotItem, error) {
+func (vs *VersionSnapshotter) RestoreExtension(_ uint64, format uint32, payloadReader snapshot.ExtensionPayloadReader) error {
 	if format == SnapshotFormat {
-		var item snapshot.SnapshotItem
 		for {
-			item = snapshot.SnapshotItem{}
-			err := protoReader.ReadMsg(&item)
+			payload, err := payloadReader()
 			if err == io.EOF {
 				break
 			} else if err != nil {
-				return snapshot.SnapshotItem{}, errorsmod.Wrap(err, "invalid protobuf message")
+				return errorsmod.Wrap(err, "invalid protobuf message")
 			}
-			payload := item.GetExtensionPayload()
 			if payload == nil {
 				break
 			}
-			appVersion := sdk.BigEndianToUint64(payload.Payload)
+			appVersion := sdk.BigEndianToUint64(payload)
 			vs.versionSetter.SetProtocolVersion(appVersion)
 		}
-		return item, nil
+		return nil
 	}
-	return snapshot.SnapshotItem{}, snapshot.ErrUnknownFormat
+	return snapshot.ErrUnknownFormat
 }
 
 func (vs *VersionSnapshotter) SnapshotFormat() uint32 {
@@ -91,12 +87,4 @@ func (vs *VersionSnapshotter) SnapshotFormat() uint32 {
 
 func (vs *VersionSnapshotter) SupportedFormats() []uint32 {
 	return []uint32{SnapshotFormat}
-}
-
-func (vs *VersionSnapshotter) RestoreExtension(height uint64, format uint32, payloadReader func() ([]byte, error)) error {
-	return vs.RestoreExtension(height, format, payloadReader)
-}
-
-func (vs *VersionSnapshotter) SnapshotExtension(height uint64, payloadWriter func([]byte) error) error {
-	return vs.SnapshotExtension(height, payloadWriter)
 }

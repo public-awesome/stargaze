@@ -20,6 +20,9 @@ const (
 var (
 	CodeAuthorizationPrefix     = []byte{0x01}
 	ContractAuthorizationPrefix = []byte{0x02}
+
+	// ParamsKey stores the module params
+	ParamsKey = []byte{0x03}
 )
 
 func GetCodeAuthorizationPrefix(codeID uint64) []byte {

@@ -33,7 +33,7 @@ steps:
       branch: no-cache
 
   - name: test
-    image: publicawesome/golang:1.21.0-devtooling
+    image: publicawesome/golang:1.21.3-devtooling
     volumes:
       - name: cache
         path: /go
@@ -42,14 +42,14 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: build
-    image: golang:1.21.0-alpine3.17
+    image: golang:1.21.3-alpine3.17
     volumes:
       - name: cache
         path: /go
     commands:
       - apk add --no-cache ca-certificates build-base git
-      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.3.0/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.a
-      - echo "b4aad4480f9b4c46635b4943beedbb72c929eab1d1b9467fe3b43e6dbf617e32  /lib/libwasmvm_muslc.a" | sha256sum -c
+      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.4.0/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.a
+      - echo "8ea2e3b5fae83e671da2bb51115adc88591045953f509955ec38dc02ea5a7b94  /lib/libwasmvm_muslc.a" | sha256sum -c
       - LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true  make build
       - echo "Ensuring binary is statically linked ..." && (file $PWD/bin/starsd | grep "statically linked")
     environment:
@@ -98,7 +98,7 @@ steps:
         - tag
 
   - name: release
-    image: golang:1.21.0
+    image: golang:1.21.3
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -193,7 +193,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/golang:1.21.0-devtooling
+    image: publicawesome/golang:1.21.3-devtooling
     volumes:
       - name: cache
         path: /go
@@ -280,7 +280,7 @@ steps:
     when:
       branch: no-cache
   - name: build-wrapper
-    image: publicawesome/golang:1.21.0-devtooling
+    image: publicawesome/golang:1.21.3-devtooling
     volumes:
       - name: cache
         path: /go
@@ -313,7 +313,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:11.0.0
+    image: publicawesome/stargaze:12.0.0
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
@@ -416,6 +416,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 02da8ca441f7bd076cdb9d309b9bbaedf0aa0f37d164254bcc15b72bcb9e904c
+hmac: 46fe23976c6c247f19a426e0a9a60ae6083327b2c2dc4727e800749de1ddb227
 
 ...
