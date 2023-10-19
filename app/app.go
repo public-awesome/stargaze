@@ -118,6 +118,10 @@ import (
 	allocmoduletypes "github.com/public-awesome/stargaze/v13/x/alloc/types"
 	allocwasm "github.com/public-awesome/stargaze/v13/x/alloc/wasm"
 
+	authoritymodule "github.com/public-awesome/stargaze/v13/x/authority"
+	authoritykeeper "github.com/public-awesome/stargaze/v13/x/authority/keeper"
+	authoritytypes "github.com/public-awesome/stargaze/v13/x/authority/types"
+
 	cronmodule "github.com/public-awesome/stargaze/v13/x/cron"
 	cronmodulekeeper "github.com/public-awesome/stargaze/v13/x/cron/keeper"
 	cronmoduletypes "github.com/public-awesome/stargaze/v13/x/cron/types"
@@ -207,6 +211,7 @@ var (
 		transfer.AppModuleBasic{},
 		vesting.AppModuleBasic{},
 		allocmodule.AppModuleBasic{},
+		authoritymodule.AppModuleBasic{},
 		cronmodule.AppModuleBasic{},
 		globalfeemodule.AppModuleBasic{},
 		tokenfactory.AppModuleBasic{},
@@ -228,6 +233,7 @@ var (
 		allocmoduletypes.ModuleName:         {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		allocmoduletypes.FairburnPoolName:   nil,
 		allocmoduletypes.SupplementPoolName: nil,
+		authoritytypes.ModuleName:           {authtypes.Burner},
 		wasmtypes.ModuleName:                {authtypes.Burner},
 		icatypes.ModuleName:                 nil,
 		cronmoduletypes.ModuleName:          nil,
@@ -299,6 +305,7 @@ type App struct {
 
 	// stargaze modules
 	AllocKeeper        allocmodulekeeper.Keeper
+	AuthorityKeeper    authoritykeeper.Keeper
 	CronKeeper         cronmodulekeeper.Keeper
 	GlobalFeeKeeper    globalfeemodulekeeper.Keeper
 	IBCHooksKeeper     ibchookskeeper.Keeper
@@ -346,6 +353,7 @@ func NewStargazeApp(
 		govtypes.StoreKey, paramstypes.StoreKey, ibcexported.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		allocmoduletypes.StoreKey,
+		authoritytypes.StoreKey,
 		authzkeeper.StoreKey,
 		wasmtypes.StoreKey,
 		cronmoduletypes.StoreKey,
@@ -427,7 +435,7 @@ func NewStargazeApp(
 		app.BankKeeper,
 		app.StakingKeeper,
 		authtypes.FeeCollectorName,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		authtypes.NewModuleAddress(authoritytypes.ModuleName).String(),
 	)
 	app.SlashingKeeper = slashingkeeper.NewKeeper(
 		appCodec,
@@ -583,6 +591,14 @@ func NewStargazeApp(
 	)
 	// If evidence needs to be handled for the app, set routes in router here and seal
 	app.EvidenceKeeper = *evidenceKeeper
+	app.AuthorityKeeper = authoritykeeper.NewKeeper(
+		appCodec,
+		keys[authoritytypes.StoreKey],
+		app.GetSubspace(authoritytypes.ModuleName),
+		bApp.MsgServiceRouter(),
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+	)
+	authoritymodule := authoritymodule.NewAppModule(appCodec, app.AuthorityKeeper)
 
 	// wasm configuration
 
@@ -621,7 +637,7 @@ func NewStargazeApp(
 		wasmDir,
 		wasmConfig,
 		GetWasmCapabilities(),
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		authtypes.NewModuleAddress(authoritytypes.ModuleName).String(),
 		wasmOpts...,
 	)
 
@@ -716,6 +732,7 @@ func NewStargazeApp(
 		params.NewAppModule(app.ParamsKeeper),
 		transfer.NewAppModule(app.TransferKeeper),
 		allocModule,
+		authoritymodule,
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.MsgServiceRouter(), app.GetSubspace(wasmtypes.ModuleName)),
 		cronModule,
 		globalfeeModule,
@@ -743,6 +760,7 @@ func NewStargazeApp(
 		group.ModuleName,
 		authz.ModuleName, feegrant.ModuleName,
 		paramstypes.ModuleName, vestingtypes.ModuleName, consensusparamtypes.ModuleName,
+		authoritytypes.ModuleName,
 		wasmtypes.ModuleName,
 		cronmoduletypes.ModuleName,
 		globalfeemoduletypes.ModuleName,
@@ -762,6 +780,7 @@ func NewStargazeApp(
 		ibcexported.ModuleName, ibctransfertypes.ModuleName,
 		icatypes.ModuleName,
 		allocmoduletypes.ModuleName,
+		authoritytypes.ModuleName,
 		wasmtypes.ModuleName,
 		cronmoduletypes.ModuleName,
 		globalfeemoduletypes.ModuleName,
@@ -795,6 +814,7 @@ func NewStargazeApp(
 		authz.ModuleName,
 		paramstypes.ModuleName, upgradetypes.ModuleName, vestingtypes.ModuleName,
 		consensusparamtypes.ModuleName,
+		authoritytypes.ModuleName,
 		allocmoduletypes.ModuleName,
 		tokenfactorytypes.ModuleName,
 		// wasm after ibc transfer
@@ -1056,6 +1076,7 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(cronmoduletypes.ModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(globalfeemoduletypes.ModuleName)
+	paramsKeeper.Subspace(authoritytypes.ModuleName)
 	paramsKeeper.Subspace(packetforwardtypes.ModuleName).WithKeyTable(packetforwardtypes.ParamKeyTable())
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
