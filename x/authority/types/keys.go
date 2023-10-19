@@ -13,3 +13,7 @@ const (
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_authority"
 )
+
+var (
+	ParamsKey = []byte{0x01}
+)

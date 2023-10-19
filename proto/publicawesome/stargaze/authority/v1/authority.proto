@@ -13,5 +13,5 @@ message Params {
 
 message Authorization {
     string msgTypeUrl = 1; // The type url of a proposal sdk.Msg
-    string address = 2; // The address who is allowed to execute that proposal
+    repeated string addresses = 2; // The addresses who are allowed to execute that proposal
 }
