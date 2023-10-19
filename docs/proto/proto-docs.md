@@ -4,57 +4,24 @@
 
 ## Table of Contents
 
-- [publicawesome/stargaze/cron/v1/cron.proto](#publicawesome/stargaze/cron/v1/cron.proto)
-    - [Params](#publicawesome.stargaze.cron.v1.Params)
+- [publicawesome/stargaze/authority/v1/authority.proto](#publicawesome/stargaze/authority/v1/authority.proto)
+- [publicawesome/stargaze/authority/v1/genesis.proto](#publicawesome/stargaze/authority/v1/genesis.proto)
+    - [GenesisState](#publicawesome.stargaze.authority.v1.GenesisState)
   
-- [publicawesome/stargaze/cron/v1/genesis.proto](#publicawesome/stargaze/cron/v1/genesis.proto)
-    - [GenesisState](#publicawesome.stargaze.cron.v1.GenesisState)
+- [publicawesome/stargaze/authority/v1/tx.proto](#publicawesome/stargaze/authority/v1/tx.proto)
+    - [MsgExecuteProposal](#publicawesome.stargaze.authority.v1.MsgExecuteProposal)
+    - [MsgExecuteProposalResponse](#publicawesome.stargaze.authority.v1.MsgExecuteProposalResponse)
   
-- [publicawesome/stargaze/cron/v1/proposal.proto](#publicawesome/stargaze/cron/v1/proposal.proto)
-    - [DemotePrivilegedContractProposal](#publicawesome.stargaze.cron.v1.DemotePrivilegedContractProposal)
-    - [PromoteToPrivilegedContractProposal](#publicawesome.stargaze.cron.v1.PromoteToPrivilegedContractProposal)
-  
-- [publicawesome/stargaze/cron/v1/query.proto](#publicawesome/stargaze/cron/v1/query.proto)
-    - [QueryListPrivilegedRequest](#publicawesome.stargaze.cron.v1.QueryListPrivilegedRequest)
-    - [QueryListPrivilegedResponse](#publicawesome.stargaze.cron.v1.QueryListPrivilegedResponse)
-    - [QueryParamsRequest](#publicawesome.stargaze.cron.v1.QueryParamsRequest)
-    - [QueryParamsResponse](#publicawesome.stargaze.cron.v1.QueryParamsResponse)
-  
-    - [Query](#publicawesome.stargaze.cron.v1.Query)
-  
-- [publicawesome/stargaze/cron/v1/tx.proto](#publicawesome/stargaze/cron/v1/tx.proto)
-    - [MsgDemoteFromPrivilegedContract](#publicawesome.stargaze.cron.v1.MsgDemoteFromPrivilegedContract)
-    - [MsgDemoteFromPrivilegedContractResponse](#publicawesome.stargaze.cron.v1.MsgDemoteFromPrivilegedContractResponse)
-    - [MsgPromoteToPrivilegedContract](#publicawesome.stargaze.cron.v1.MsgPromoteToPrivilegedContract)
-    - [MsgPromoteToPrivilegedContractResponse](#publicawesome.stargaze.cron.v1.MsgPromoteToPrivilegedContractResponse)
-    - [MsgUpdateParams](#publicawesome.stargaze.cron.v1.MsgUpdateParams)
-    - [MsgUpdateParamsResponse](#publicawesome.stargaze.cron.v1.MsgUpdateParamsResponse)
-  
-    - [Msg](#publicawesome.stargaze.cron.v1.Msg)
+    - [Msg](#publicawesome.stargaze.authority.v1.Msg)
   
 - [Scalar Value Types](#scalar-value-types)
 
 
 
-<a name="publicawesome/stargaze/cron/v1/cron.proto"></a>
+<a name="publicawesome/stargaze/authority/v1/authority.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/cron/v1/cron.proto
-
-
-
-<a name="publicawesome.stargaze.cron.v1.Params"></a>
-
-### Params
-Params holds parameters for the cron module.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `admin_addresses` | [string](#string) | repeated | Addresses which act as admins of the module. They can promote and demote contracts without having to go via governance. |
-
-
-
+## publicawesome/stargaze/authority/v1/authority.proto
 
 
  <!-- end messages -->
@@ -67,23 +34,17 @@ Params holds parameters for the cron module.
 
 
 
-<a name="publicawesome/stargaze/cron/v1/genesis.proto"></a>
+<a name="publicawesome/stargaze/authority/v1/genesis.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/cron/v1/genesis.proto
+## publicawesome/stargaze/authority/v1/genesis.proto
 
 
 
-<a name="publicawesome.stargaze.cron.v1.GenesisState"></a>
+<a name="publicawesome.stargaze.authority.v1.GenesisState"></a>
 
 ### GenesisState
-GenesisState defines the cron module's genesis state.
 
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `privileged_contract_addresses` | [string](#string) | repeated | List of all the contracts that have been given the privilege status via governance. They can set up hooks to abci.EndBlocker |
-| `params` | [Params](#publicawesome.stargaze.cron.v1.Params) |  | Module params |
 
 
 
@@ -99,115 +60,34 @@ GenesisState defines the cron module's genesis state.
 
 
 
-<a name="publicawesome/stargaze/cron/v1/proposal.proto"></a>
+<a name="publicawesome/stargaze/authority/v1/tx.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/cron/v1/proposal.proto
+## publicawesome/stargaze/authority/v1/tx.proto
 
 
 
-<a name="publicawesome.stargaze.cron.v1.DemotePrivilegedContractProposal"></a>
+<a name="publicawesome.stargaze.authority.v1.MsgExecuteProposal"></a>
 
-### DemotePrivilegedContractProposal
-Deprecated: Do not use. To demote a contract, a
-MsgDemoteFromPrivilegedContract can be invoked from the x/gov module via a v1
-governance proposal
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `title` | [string](#string) |  | Title is a short summary |
-| `description` | [string](#string) |  | Description is a human readable text |
-| `contract` | [string](#string) |  | Contract is the bech32 address of the smart contract |
-
-
-
-
-
-
-<a name="publicawesome.stargaze.cron.v1.PromoteToPrivilegedContractProposal"></a>
-
-### PromoteToPrivilegedContractProposal
-Deprecated: Do not use. To promote a contract, a
-MsgPromoteToPrivilegedContract can be invoked from the x/gov module via a v1
-governance proposal
+### MsgExecuteProposal
+MsgExecuteProposal defines an sdk.Msg type that supports submitting arbitrary
+proposal Content.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `title` | [string](#string) |  | Title is a short summary |
-| `description` | [string](#string) |  | Description is a human readable text |
-| `contract` | [string](#string) |  | Contract is the bech32 address of the smart contract |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="publicawesome/stargaze/cron/v1/query.proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## publicawesome/stargaze/cron/v1/query.proto
-
-
-
-<a name="publicawesome.stargaze.cron.v1.QueryListPrivilegedRequest"></a>
-
-### QueryListPrivilegedRequest
-QueryListPrivilegedRequest is request type for the Query/ListPrivileged RPC
-method.
+| `authority` | [string](#string) |  |  |
+| `messages` | [google.protobuf.Any](#google.protobuf.Any) | repeated |  |
 
 
 
 
 
 
-<a name="publicawesome.stargaze.cron.v1.QueryListPrivilegedResponse"></a>
+<a name="publicawesome.stargaze.authority.v1.MsgExecuteProposalResponse"></a>
 
-### QueryListPrivilegedResponse
-QueryListPrivilegedResponse is response type for the Query/ListPrivileged RPC
-method.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `contract_addresses` | [string](#string) | repeated | contract_addresses holds all the smart contract addresses which have privilege status. |
-
-
-
-
-
-
-<a name="publicawesome.stargaze.cron.v1.QueryParamsRequest"></a>
-
-### QueryParamsRequest
-QueryParamsRequest is request type for the Query/Params RPC
-method.
-
-
-
-
-
-
-<a name="publicawesome.stargaze.cron.v1.QueryParamsResponse"></a>
-
-### QueryParamsResponse
-QueryParamsResponse is response type for the Query/Params RPC
-method.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `params` | [Params](#publicawesome.stargaze.cron.v1.Params) |  |  |
+### MsgExecuteProposalResponse
+MsgExecuteProposalResponse defines the Msg/ExecuteProposal response type.
 
 
 
@@ -220,121 +100,14 @@ method.
  <!-- end HasExtensions -->
 
 
-<a name="publicawesome.stargaze.cron.v1.Query"></a>
-
-### Query
-Query defines the gRPC querier service.
-
-| Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
-| ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `ListPrivileged` | [QueryListPrivilegedRequest](#publicawesome.stargaze.cron.v1.QueryListPrivilegedRequest) | [QueryListPrivilegedResponse](#publicawesome.stargaze.cron.v1.QueryListPrivilegedResponse) | ListPrivileged queries the contracts which have the priviledge status | GET|/stargaze/cron/v1/list-privileged|
-| `Params` | [QueryParamsRequest](#publicawesome.stargaze.cron.v1.QueryParamsRequest) | [QueryParamsResponse](#publicawesome.stargaze.cron.v1.QueryParamsResponse) |  | GET|/stargaze/cron/v1/params|
-
- <!-- end services -->
-
-
-
-<a name="publicawesome/stargaze/cron/v1/tx.proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## publicawesome/stargaze/cron/v1/tx.proto
-
-
-
-<a name="publicawesome.stargaze.cron.v1.MsgDemoteFromPrivilegedContract"></a>
-
-### MsgDemoteFromPrivilegedContract
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `authority` | [string](#string) |  | Authority is the address of the governance account or any whitelisted address |
-| `contract` | [string](#string) |  | Contract is the bech32 address of the smart contract |
-
-
-
-
-
-
-<a name="publicawesome.stargaze.cron.v1.MsgDemoteFromPrivilegedContractResponse"></a>
-
-### MsgDemoteFromPrivilegedContractResponse
-
-
-
-
-
-
-
-<a name="publicawesome.stargaze.cron.v1.MsgPromoteToPrivilegedContract"></a>
-
-### MsgPromoteToPrivilegedContract
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `authority` | [string](#string) |  | Authority is the address of the governance account or any whitelisted address |
-| `contract` | [string](#string) |  | Contract is the bech32 address of the smart contract |
-
-
-
-
-
-
-<a name="publicawesome.stargaze.cron.v1.MsgPromoteToPrivilegedContractResponse"></a>
-
-### MsgPromoteToPrivilegedContractResponse
-
-
-
-
-
-
-
-<a name="publicawesome.stargaze.cron.v1.MsgUpdateParams"></a>
-
-### MsgUpdateParams
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `authority` | [string](#string) |  | Authority is the address of the governance account. |
-| `params` | [Params](#publicawesome.stargaze.cron.v1.Params) |  | NOTE: All parameters must be supplied. |
-
-
-
-
-
-
-<a name="publicawesome.stargaze.cron.v1.MsgUpdateParamsResponse"></a>
-
-### MsgUpdateParamsResponse
-
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
-
-<a name="publicawesome.stargaze.cron.v1.Msg"></a>
+<a name="publicawesome.stargaze.authority.v1.Msg"></a>
 
 ### Msg
-Msg defines the alloc Msg service.
+Msg defines the authority Msg service.
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `PromoteToPrivilegedContract` | [MsgPromoteToPrivilegedContract](#publicawesome.stargaze.cron.v1.MsgPromoteToPrivilegedContract) | [MsgPromoteToPrivilegedContractResponse](#publicawesome.stargaze.cron.v1.MsgPromoteToPrivilegedContractResponse) |  | |
-| `DemoteFromPrivilegedContract` | [MsgDemoteFromPrivilegedContract](#publicawesome.stargaze.cron.v1.MsgDemoteFromPrivilegedContract) | [MsgDemoteFromPrivilegedContractResponse](#publicawesome.stargaze.cron.v1.MsgDemoteFromPrivilegedContractResponse) |  | |
-| `UpdateParams` | [MsgUpdateParams](#publicawesome.stargaze.cron.v1.MsgUpdateParams) | [MsgUpdateParamsResponse](#publicawesome.stargaze.cron.v1.MsgUpdateParamsResponse) |  | |
+| `ExecuteProposal` | [MsgExecuteProposal](#publicawesome.stargaze.authority.v1.MsgExecuteProposal) | [MsgExecuteProposalResponse](#publicawesome.stargaze.authority.v1.MsgExecuteProposalResponse) |  | |
 
  <!-- end services -->
 

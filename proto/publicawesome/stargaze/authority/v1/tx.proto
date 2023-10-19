@@ -1,0 +1,26 @@
+syntax = "proto3";
+package publicawesome.stargaze.authority.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos/msg/v1/msg.proto";
+import "google/protobuf/any.proto";
+
+option go_package = "github.com/public-awesome/stargaze/v13/x/authority/types";
+
+// Msg defines the authority Msg service.
+service Msg {
+    rpc ExecuteProposal(MsgExecuteProposal)
+        returns (MsgExecuteProposalResponse);
+  }
+
+// MsgExecuteProposal defines an sdk.Msg type that supports submitting arbitrary
+// proposal Content.
+message MsgExecuteProposal {
+    option (cosmos.msg.v1.signer) = "authority"; 
+  
+    string authority = 1;
+    repeated google.protobuf.Any messages = 2;
+  }
+  
+  // MsgExecuteProposalResponse defines the Msg/ExecuteProposal response type.
+  message MsgExecuteProposalResponse { }

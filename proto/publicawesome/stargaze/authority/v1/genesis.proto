@@ -1,0 +1,8 @@
+syntax = "proto3";
+package publicawesome.stargaze.authority.v1;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/public-awesome/stargaze/v13/x/authority/types";
+
+message GenesisState {}
