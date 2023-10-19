@@ -1,0 +1,17 @@
+syntax = "proto3";
+package publicawesome.stargaze.authority.v1;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/public-awesome/stargaze/v13/x/authority/types";
+
+// Params holds parameters for the authority module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  repeated Authorization authorizations = 1;
+}
+
+message Authorization {
+    string msgTypeUrl = 1; // The type url of a proposal sdk.Msg
+    string address = 2; // The address who is allowed to execute that proposal
+}
