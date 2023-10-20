@@ -1,6 +1,7 @@
 package authority
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 
@@ -70,10 +71,10 @@ func (AppModuleBasic) ValidateGenesis(cdc codec.JSONCodec, _ client.TxEncodingCo
 
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the module
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
-	// err := types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
-	// if err != nil {
-	// 	panic(err)
-	// }
+	err := types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
+	if err != nil {
+		panic(err)
+	}
 }
 
 // GetTxCmd returns the root Tx command for the module. The subcommands of this root command are used by end-users to generate new transactions containing messages defined in the module
@@ -83,7 +84,7 @@ func (a AppModuleBasic) GetTxCmd() *cobra.Command {
 
 // GetQueryCmd returns the root query command for the module. The subcommands of this root command are used by end-users to generate new queries to the subset of the state defined by the module
 func (AppModuleBasic) GetQueryCmd() *cobra.Command {
-	return nil //cli.GetQueryCmd(types.StoreKey)
+	return cli.GetQueryCmd(types.StoreKey)
 }
 
 // ----------------------------------------------------------------------------
@@ -111,7 +112,7 @@ func (AppModule) QuerierRoute() string { return types.RouterKey }
 
 // RegisterServices registers a gRPC query service to respond to the module-specific gRPC queries
 func (am AppModule) RegisterServices(cfg module.Configurator) {
-	//types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
+	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 }
 

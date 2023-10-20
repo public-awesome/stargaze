@@ -18,12 +18,13 @@ func (k Keeper) SetParams(ctx sdk.Context, params types.Params) error {
 
 // GetParams returns the total set of minting parameters.
 func (k Keeper) GetParams(ctx sdk.Context) (params types.Params) {
-	store := ctx.KVStore(k.storeKey)
-	bz := store.Get(types.ParamsKey)
-	if bz == nil {
-		return params
-	}
+	// store := ctx.KVStore(k.storeKey)
+	// bz := store.Get(types.ParamsKey)
+	// if bz == nil {
+	// 	return params
+	// }
 
-	k.cdc.MustUnmarshal(bz, &params)
-	return params
+	// k.cdc.MustUnmarshal(bz, &params)
+	//return params
+	return types.DefaultParams()
 }

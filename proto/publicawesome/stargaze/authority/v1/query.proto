@@ -1,0 +1,18 @@
+syntax = "proto3";
+package publicawesome.stargaze.authority.v1;
+
+import "google/api/annotations.proto";
+import "publicawesome/stargaze/authority/v1/authority.proto";
+
+option go_package = "github.com/public-awesome/stargaze/v13/x/authority/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/stargaze/authority/v1/params";
+  }
+}
+
+message QueryParamsRequest {}
+
+message QueryParamsResponse { Params params = 1; }

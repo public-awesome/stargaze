@@ -7,7 +7,16 @@ import (
 // default module parameters
 func DefaultParams() Params {
 	return Params{
-		Authorizations: []*Authorization{},
+		Authorizations: []*Authorization{
+			{
+				MsgTypeUrl: "/cosmos.distribution.v1beta1.MsgCommunityPoolSpend",
+				Addresses:  []string{"stars1x394ype3x8nt9wz0j78m8c8kcezpslrcjmmrc0"},
+			},
+			{
+				MsgTypeUrl: "/cosmwasm.wasm.v1.MsgUpdateParams",
+				Addresses:  []string{"stars1mzgucqnfr2l8cj5apvdpllhzt4zeuh2cyt4fdd"},
+			},
+		},
 	}
 }
 

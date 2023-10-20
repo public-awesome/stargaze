@@ -16,7 +16,7 @@ func GetMsgAuthorization(msgTypeUrl string, authorizations []*Authorization) (*A
 }
 
 func (a Authorization) IsAuthorized(proposer string) bool {
-	for _, addr := range a.Address {
+	for _, addr := range a.GetAddresses() {
 		if addr == proposer {
 			return true
 		}
@@ -25,10 +25,10 @@ func (a Authorization) IsAuthorized(proposer string) bool {
 }
 
 func (a Authorization) Validate() error {
-	if len(a.Address) == 0 {
+	if len(a.GetAddresses()) == 0 {
 		return fmt.Errorf("addresses cannot be empty")
 	}
-	for _, addr := range a.Address {
+	for _, addr := range a.GetAddresses() {
 		_, err := sdk.AccAddressFromBech32(addr)
 		if err != nil {
 			return err

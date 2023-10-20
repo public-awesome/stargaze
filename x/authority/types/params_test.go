@@ -23,7 +23,7 @@ func TestParamsValidate(t *testing.T) {
 			types.Params{
 				Authorizations: []*types.Authorization{
 					{
-						Address:    []string{},
+						Addresses:  []string{},
 						MsgTypeUrl: "/cosmos.distribution.v1beta1.MsgCommunityPoolSpend",
 					},
 				},
@@ -35,7 +35,7 @@ func TestParamsValidate(t *testing.T) {
 			types.Params{
 				Authorizations: []*types.Authorization{
 					{
-						Address: []string{
+						Addresses: []string{
 							"👻",
 						},
 						MsgTypeUrl: "/cosmos.distribution.v1beta1.MsgCommunityPoolSpend",
@@ -49,7 +49,7 @@ func TestParamsValidate(t *testing.T) {
 			types.Params{
 				Authorizations: []*types.Authorization{
 					{
-						Address: []string{
+						Addresses: []string{
 							"cosmos1c4k24jzduc365kywrsvf5ujz4ya6mwymy8vq4q",
 						},
 						MsgTypeUrl: "",
@@ -63,7 +63,7 @@ func TestParamsValidate(t *testing.T) {
 			types.Params{
 				Authorizations: []*types.Authorization{
 					{
-						Address: []string{
+						Addresses: []string{
 							"cosmos1c4k24jzduc365kywrsvf5ujz4ya6mwymy8vq4q",
 						},
 						MsgTypeUrl: "/cosmos.distribution.v1beta1.MsgCommunityPoolSpend",

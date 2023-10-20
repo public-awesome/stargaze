@@ -6,8 +6,9 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/gov/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	govV1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+	"github.com/public-awesome/stargaze/v13/x/authority/types"
 )
 
 // IterateActiveProposalsQueue iterates over the proposals in the active proposal queue
@@ -17,7 +18,7 @@ func (k Keeper) IterateActiveProposalsQueue(ctx sdk.Context, cb func(proposal go
 
 	defer iterator.Close()
 	for ; iterator.Valid(); iterator.Next() {
-		proposalID := types.GetProposalIDFromBytes(iterator.Value())
+		proposalID := govtypes.GetProposalIDFromBytes(iterator.Value())
 		proposal, found := k.GetProposal(ctx, proposalID)
 		if !found {
 			panic(fmt.Sprintf("proposal %d does not exist", proposalID))
@@ -31,7 +32,7 @@ func (k Keeper) IterateActiveProposalsQueue(ctx sdk.Context, cb func(proposal go
 
 // ActiveProposalQueueIterator returns an sdk.Iterator for all the proposals in the Active Queue
 func (k Keeper) ActiveProposalQueueIterator(ctx sdk.Context) sdk.Iterator {
-	prefixStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.ActiveProposalQueuePrefix)
+	prefixStore := prefix.NewStore(ctx.KVStore(k.storeKey), govtypes.ActiveProposalQueuePrefix)
 	return prefixStore.Iterator(nil, nil)
 }
 
@@ -39,7 +40,7 @@ func (k Keeper) ActiveProposalQueueIterator(ctx sdk.Context) sdk.Iterator {
 func (k Keeper) GetProposal(ctx sdk.Context, proposalID uint64) (govV1.Proposal, bool) {
 	store := ctx.KVStore(k.storeKey)
 
-	bz := store.Get(types.ProposalKey(proposalID))
+	bz := store.Get(govtypes.ProposalKey(proposalID))
 	if bz == nil {
 		return govV1.Proposal{}, false
 	}
@@ -81,27 +82,32 @@ func (keeper Keeper) SubmitProposal(ctx sdk.Context, messages []sdk.Msg, propose
 
 		// perform a basic validation of the message
 		if err := msg.ValidateBasic(); err != nil {
-			return 0, errorsmod.Wrap(types.ErrInvalidProposalMsg, err.Error())
+			return 0, errorsmod.Wrap(govtypes.ErrInvalidProposalMsg, err.Error())
 		}
 
 		signers := msg.GetSigners()
 		if len(signers) != 1 {
-			return 0, types.ErrInvalidSigner
+			return 0, govtypes.ErrInvalidSigner
 		}
 
-		// // assert that the governance module account is the only signer of the messages
+		// // assert that the authority module account is the only signer of the messages
 		// if !signers[0].Equals(keeper.GetGovernanceAccount(ctx).GetAddress()) {
 		// 	return v1.Proposal{}, sdkerrors.Wrapf(types.ErrInvalidSigner, signers[0].String())
 		// }
 
+		valid, err := keeper.IsAuthorized(ctx, msg, proposer.String())
+		if !valid {
+			return 0, err
+		}
+
 		// use the msg service router to see that there is a valid route for that message.
 		handler := keeper.router.Handler(msg)
 		if handler == nil {
-			return 0, errorsmod.Wrap(types.ErrUnroutableProposalMsg, sdk.MsgTypeURL(msg))
+			return 0, errorsmod.Wrap(govtypes.ErrUnroutableProposalMsg, sdk.MsgTypeURL(msg))
 		}
 
 		var res *sdk.Result
-		res, err := handler(ctx, msg)
+		res, err = handler(ctx, msg)
 		if err != nil {
 			return 0, err
 		}
@@ -111,6 +117,20 @@ func (keeper Keeper) SubmitProposal(ctx sdk.Context, messages []sdk.Msg, propose
 	}
 
 	return 0, nil
+}
+
+func (keeper Keeper) IsAuthorized(ctx sdk.Context, msg sdk.Msg, proposer string) (bool, error) {
+	authorizations := keeper.GetParams(ctx).Authorizations
+	msgType := sdk.MsgTypeURL(msg)
+	auth, found := types.GetMsgAuthorization(msgType, authorizations)
+	if !found {
+		return false, errorsmod.Wrap(types.ErrAuthorizationNotFound, "authorization not found for given msg type: "+msgType)
+	}
+
+	if !auth.IsAuthorized(proposer) {
+		return false, errorsmod.Wrap(govtypes.ErrInvalidSigner, "sender address"+proposer+" is not authorized address to execute"+msgType)
+	}
+	return true, nil
 }
 
 // // SetProposal set a proposal to store

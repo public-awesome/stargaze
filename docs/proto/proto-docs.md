@@ -4,54 +4,84 @@
 
 ## Table of Contents
 
-- [publicawesome/stargaze/cron/v1/cron.proto](#publicawesome/stargaze/cron/v1/cron.proto)
-    - [Params](#publicawesome.stargaze.cron.v1.Params)
+- [publicawesome/stargaze/alloc/v1beta1/params.proto](#publicawesome/stargaze/alloc/v1beta1/params.proto)
+    - [DistributionProportions](#publicawesome.stargaze.alloc.v1beta1.DistributionProportions)
+    - [Params](#publicawesome.stargaze.alloc.v1beta1.Params)
+    - [WeightedAddress](#publicawesome.stargaze.alloc.v1beta1.WeightedAddress)
   
-- [publicawesome/stargaze/cron/v1/genesis.proto](#publicawesome/stargaze/cron/v1/genesis.proto)
-    - [GenesisState](#publicawesome.stargaze.cron.v1.GenesisState)
+- [publicawesome/stargaze/alloc/v1beta1/genesis.proto](#publicawesome/stargaze/alloc/v1beta1/genesis.proto)
+    - [GenesisState](#publicawesome.stargaze.alloc.v1beta1.GenesisState)
   
-- [publicawesome/stargaze/cron/v1/proposal.proto](#publicawesome/stargaze/cron/v1/proposal.proto)
-    - [DemotePrivilegedContractProposal](#publicawesome.stargaze.cron.v1.DemotePrivilegedContractProposal)
-    - [PromoteToPrivilegedContractProposal](#publicawesome.stargaze.cron.v1.PromoteToPrivilegedContractProposal)
+- [publicawesome/stargaze/alloc/v1beta1/query.proto](#publicawesome/stargaze/alloc/v1beta1/query.proto)
+    - [QueryParamsRequest](#publicawesome.stargaze.alloc.v1beta1.QueryParamsRequest)
+    - [QueryParamsResponse](#publicawesome.stargaze.alloc.v1beta1.QueryParamsResponse)
   
-- [publicawesome/stargaze/cron/v1/query.proto](#publicawesome/stargaze/cron/v1/query.proto)
-    - [QueryListPrivilegedRequest](#publicawesome.stargaze.cron.v1.QueryListPrivilegedRequest)
-    - [QueryListPrivilegedResponse](#publicawesome.stargaze.cron.v1.QueryListPrivilegedResponse)
-    - [QueryParamsRequest](#publicawesome.stargaze.cron.v1.QueryParamsRequest)
-    - [QueryParamsResponse](#publicawesome.stargaze.cron.v1.QueryParamsResponse)
+    - [Query](#publicawesome.stargaze.alloc.v1beta1.Query)
   
-    - [Query](#publicawesome.stargaze.cron.v1.Query)
+- [publicawesome/stargaze/alloc/v1beta1/tx.proto](#publicawesome/stargaze/alloc/v1beta1/tx.proto)
+    - [MsgCreateVestingAccount](#publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccount)
+    - [MsgCreateVestingAccountResponse](#publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccountResponse)
+    - [MsgFundFairburnPool](#publicawesome.stargaze.alloc.v1beta1.MsgFundFairburnPool)
+    - [MsgFundFairburnPoolResponse](#publicawesome.stargaze.alloc.v1beta1.MsgFundFairburnPoolResponse)
   
-- [publicawesome/stargaze/cron/v1/tx.proto](#publicawesome/stargaze/cron/v1/tx.proto)
-    - [MsgDemoteFromPrivilegedContract](#publicawesome.stargaze.cron.v1.MsgDemoteFromPrivilegedContract)
-    - [MsgDemoteFromPrivilegedContractResponse](#publicawesome.stargaze.cron.v1.MsgDemoteFromPrivilegedContractResponse)
-    - [MsgPromoteToPrivilegedContract](#publicawesome.stargaze.cron.v1.MsgPromoteToPrivilegedContract)
-    - [MsgPromoteToPrivilegedContractResponse](#publicawesome.stargaze.cron.v1.MsgPromoteToPrivilegedContractResponse)
-    - [MsgUpdateParams](#publicawesome.stargaze.cron.v1.MsgUpdateParams)
-    - [MsgUpdateParamsResponse](#publicawesome.stargaze.cron.v1.MsgUpdateParamsResponse)
-  
-    - [Msg](#publicawesome.stargaze.cron.v1.Msg)
+    - [Msg](#publicawesome.stargaze.alloc.v1beta1.Msg)
   
 - [Scalar Value Types](#scalar-value-types)
 
 
 
-<a name="publicawesome/stargaze/cron/v1/cron.proto"></a>
+<a name="publicawesome/stargaze/alloc/v1beta1/params.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/cron/v1/cron.proto
+## publicawesome/stargaze/alloc/v1beta1/params.proto
 
 
 
-<a name="publicawesome.stargaze.cron.v1.Params"></a>
+<a name="publicawesome.stargaze.alloc.v1beta1.DistributionProportions"></a>
+
+### DistributionProportions
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `nft_incentives` | [string](#string) |  |  |
+| `developer_rewards` | [string](#string) |  |  |
+| `community_pool` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.alloc.v1beta1.Params"></a>
 
 ### Params
-Params holds parameters for the cron module.
+
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `admin_addresses` | [string](#string) | repeated | Addresses which act as admins of the module. They can promote and demote contracts without having to go via governance. |
+| `distribution_proportions` | [DistributionProportions](#publicawesome.stargaze.alloc.v1beta1.DistributionProportions) |  | distribution_proportions defines the proportion of the minted denom |
+| `weighted_developer_rewards_receivers` | [WeightedAddress](#publicawesome.stargaze.alloc.v1beta1.WeightedAddress) | repeated | addresses to receive developer rewards |
+| `weighted_incentives_rewards_receivers` | [WeightedAddress](#publicawesome.stargaze.alloc.v1beta1.WeightedAddress) | repeated | addresses to receive incentive rewards |
+| `supplement_amount` | [cosmos.base.v1beta1.Coin](#cosmos.base.v1beta1.Coin) | repeated | SupplementAmount is the amount to be supplemented from the pool on top of newly minted coins. |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.alloc.v1beta1.WeightedAddress"></a>
+
+### WeightedAddress
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `address` | [string](#string) |  |  |
+| `weight` | [string](#string) |  |  |
 
 
 
@@ -67,23 +97,22 @@ Params holds parameters for the cron module.
 
 
 
-<a name="publicawesome/stargaze/cron/v1/genesis.proto"></a>
+<a name="publicawesome/stargaze/alloc/v1beta1/genesis.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/cron/v1/genesis.proto
+## publicawesome/stargaze/alloc/v1beta1/genesis.proto
 
 
 
-<a name="publicawesome.stargaze.cron.v1.GenesisState"></a>
+<a name="publicawesome.stargaze.alloc.v1beta1.GenesisState"></a>
 
 ### GenesisState
-GenesisState defines the cron module's genesis state.
+GenesisState defines the alloc module's genesis state.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `privileged_contract_addresses` | [string](#string) | repeated | List of all the contracts that have been given the privilege status via governance. They can set up hooks to abci.EndBlocker |
-| `params` | [Params](#publicawesome.stargaze.cron.v1.Params) |  | Module params |
+| `params` | [Params](#publicawesome.stargaze.alloc.v1beta1.Params) |  | this line is used by starport scaffolding # genesis/proto/state |
 
 
 
@@ -99,115 +128,32 @@ GenesisState defines the cron module's genesis state.
 
 
 
-<a name="publicawesome/stargaze/cron/v1/proposal.proto"></a>
+<a name="publicawesome/stargaze/alloc/v1beta1/query.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/cron/v1/proposal.proto
+## publicawesome/stargaze/alloc/v1beta1/query.proto
 
 
 
-<a name="publicawesome.stargaze.cron.v1.DemotePrivilegedContractProposal"></a>
-
-### DemotePrivilegedContractProposal
-Deprecated: Do not use. To demote a contract, a
-MsgDemoteFromPrivilegedContract can be invoked from the x/gov module via a v1
-governance proposal
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `title` | [string](#string) |  | Title is a short summary |
-| `description` | [string](#string) |  | Description is a human readable text |
-| `contract` | [string](#string) |  | Contract is the bech32 address of the smart contract |
-
-
-
-
-
-
-<a name="publicawesome.stargaze.cron.v1.PromoteToPrivilegedContractProposal"></a>
-
-### PromoteToPrivilegedContractProposal
-Deprecated: Do not use. To promote a contract, a
-MsgPromoteToPrivilegedContract can be invoked from the x/gov module via a v1
-governance proposal
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `title` | [string](#string) |  | Title is a short summary |
-| `description` | [string](#string) |  | Description is a human readable text |
-| `contract` | [string](#string) |  | Contract is the bech32 address of the smart contract |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="publicawesome/stargaze/cron/v1/query.proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## publicawesome/stargaze/cron/v1/query.proto
-
-
-
-<a name="publicawesome.stargaze.cron.v1.QueryListPrivilegedRequest"></a>
-
-### QueryListPrivilegedRequest
-QueryListPrivilegedRequest is request type for the Query/ListPrivileged RPC
-method.
-
-
-
-
-
-
-<a name="publicawesome.stargaze.cron.v1.QueryListPrivilegedResponse"></a>
-
-### QueryListPrivilegedResponse
-QueryListPrivilegedResponse is response type for the Query/ListPrivileged RPC
-method.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `contract_addresses` | [string](#string) | repeated | contract_addresses holds all the smart contract addresses which have privilege status. |
-
-
-
-
-
-
-<a name="publicawesome.stargaze.cron.v1.QueryParamsRequest"></a>
+<a name="publicawesome.stargaze.alloc.v1beta1.QueryParamsRequest"></a>
 
 ### QueryParamsRequest
-QueryParamsRequest is request type for the Query/Params RPC
-method.
+QueryParamsRequest is the request type for the Query/Params RPC method.
 
 
 
 
 
 
-<a name="publicawesome.stargaze.cron.v1.QueryParamsResponse"></a>
+<a name="publicawesome.stargaze.alloc.v1beta1.QueryParamsResponse"></a>
 
 ### QueryParamsResponse
-QueryParamsResponse is response type for the Query/Params RPC
-method.
+QueryParamsResponse is the response type for the Query/Params RPC method.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `params` | [Params](#publicawesome.stargaze.cron.v1.Params) |  |  |
+| `params` | [Params](#publicawesome.stargaze.alloc.v1beta1.Params) |  | params defines the parameters of the module. |
 
 
 
@@ -220,99 +166,80 @@ method.
  <!-- end HasExtensions -->
 
 
-<a name="publicawesome.stargaze.cron.v1.Query"></a>
+<a name="publicawesome.stargaze.alloc.v1beta1.Query"></a>
 
 ### Query
 Query defines the gRPC querier service.
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `ListPrivileged` | [QueryListPrivilegedRequest](#publicawesome.stargaze.cron.v1.QueryListPrivilegedRequest) | [QueryListPrivilegedResponse](#publicawesome.stargaze.cron.v1.QueryListPrivilegedResponse) | ListPrivileged queries the contracts which have the priviledge status | GET|/stargaze/cron/v1/list-privileged|
-| `Params` | [QueryParamsRequest](#publicawesome.stargaze.cron.v1.QueryParamsRequest) | [QueryParamsResponse](#publicawesome.stargaze.cron.v1.QueryParamsResponse) |  | GET|/stargaze/cron/v1/params|
+| `Params` | [QueryParamsRequest](#publicawesome.stargaze.alloc.v1beta1.QueryParamsRequest) | [QueryParamsResponse](#publicawesome.stargaze.alloc.v1beta1.QueryParamsResponse) | this line is used by starport scaffolding # 2 | GET|/stargaze/alloc/v1beta1/params|
 
  <!-- end services -->
 
 
 
-<a name="publicawesome/stargaze/cron/v1/tx.proto"></a>
+<a name="publicawesome/stargaze/alloc/v1beta1/tx.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/cron/v1/tx.proto
+## publicawesome/stargaze/alloc/v1beta1/tx.proto
 
 
 
-<a name="publicawesome.stargaze.cron.v1.MsgDemoteFromPrivilegedContract"></a>
+<a name="publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccount"></a>
 
-### MsgDemoteFromPrivilegedContract
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `authority` | [string](#string) |  | Authority is the address of the governance account or any whitelisted address |
-| `contract` | [string](#string) |  | Contract is the bech32 address of the smart contract |
-
-
-
-
-
-
-<a name="publicawesome.stargaze.cron.v1.MsgDemoteFromPrivilegedContractResponse"></a>
-
-### MsgDemoteFromPrivilegedContractResponse
-
-
-
-
-
-
-
-<a name="publicawesome.stargaze.cron.v1.MsgPromoteToPrivilegedContract"></a>
-
-### MsgPromoteToPrivilegedContract
-
+### MsgCreateVestingAccount
+MsgCreateVestingAccount defines a message that enables creating a vesting
+account.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `authority` | [string](#string) |  | Authority is the address of the governance account or any whitelisted address |
-| `contract` | [string](#string) |  | Contract is the bech32 address of the smart contract |
+| `from_address` | [string](#string) |  |  |
+| `to_address` | [string](#string) |  |  |
+| `amount` | [cosmos.base.v1beta1.Coin](#cosmos.base.v1beta1.Coin) | repeated |  |
+| `start_time` | [int64](#int64) |  |  |
+| `end_time` | [int64](#int64) |  |  |
+| `delayed` | [bool](#bool) |  |  |
 
 
 
 
 
 
-<a name="publicawesome.stargaze.cron.v1.MsgPromoteToPrivilegedContractResponse"></a>
+<a name="publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccountResponse"></a>
 
-### MsgPromoteToPrivilegedContractResponse
-
-
-
-
+### MsgCreateVestingAccountResponse
+MsgCreateVestingAccountResponse defines the Msg/CreateVestingAccount response
+type.
 
 
 
-<a name="publicawesome.stargaze.cron.v1.MsgUpdateParams"></a>
 
-### MsgUpdateParams
 
+
+<a name="publicawesome.stargaze.alloc.v1beta1.MsgFundFairburnPool"></a>
+
+### MsgFundFairburnPool
+MsgFundFairburnPool allows an account to directly
+fund the fee collector pool.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `authority` | [string](#string) |  | Authority is the address of the governance account. |
-| `params` | [Params](#publicawesome.stargaze.cron.v1.Params) |  | NOTE: All parameters must be supplied. |
+| `sender` | [string](#string) |  |  |
+| `amount` | [cosmos.base.v1beta1.Coin](#cosmos.base.v1beta1.Coin) | repeated |  |
 
 
 
 
 
 
-<a name="publicawesome.stargaze.cron.v1.MsgUpdateParamsResponse"></a>
+<a name="publicawesome.stargaze.alloc.v1beta1.MsgFundFairburnPoolResponse"></a>
 
-### MsgUpdateParamsResponse
-
+### MsgFundFairburnPoolResponse
+MsgFundFairburnPoolResponse defines the Msg/MsgFundFairburnPool response
+type.
 
 
 
@@ -325,16 +252,15 @@ Query defines the gRPC querier service.
  <!-- end HasExtensions -->
 
 
-<a name="publicawesome.stargaze.cron.v1.Msg"></a>
+<a name="publicawesome.stargaze.alloc.v1beta1.Msg"></a>
 
 ### Msg
 Msg defines the alloc Msg service.
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `PromoteToPrivilegedContract` | [MsgPromoteToPrivilegedContract](#publicawesome.stargaze.cron.v1.MsgPromoteToPrivilegedContract) | [MsgPromoteToPrivilegedContractResponse](#publicawesome.stargaze.cron.v1.MsgPromoteToPrivilegedContractResponse) |  | |
-| `DemoteFromPrivilegedContract` | [MsgDemoteFromPrivilegedContract](#publicawesome.stargaze.cron.v1.MsgDemoteFromPrivilegedContract) | [MsgDemoteFromPrivilegedContractResponse](#publicawesome.stargaze.cron.v1.MsgDemoteFromPrivilegedContractResponse) |  | |
-| `UpdateParams` | [MsgUpdateParams](#publicawesome.stargaze.cron.v1.MsgUpdateParams) | [MsgUpdateParamsResponse](#publicawesome.stargaze.cron.v1.MsgUpdateParamsResponse) |  | |
+| `CreateVestingAccount` | [MsgCreateVestingAccount](#publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccount) | [MsgCreateVestingAccountResponse](#publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccountResponse) | CreateVestingAccount defines a method that enables creating a vesting account. | |
+| `FundFairburnPool` | [MsgFundFairburnPool](#publicawesome.stargaze.alloc.v1beta1.MsgFundFairburnPool) | [MsgFundFairburnPoolResponse](#publicawesome.stargaze.alloc.v1beta1.MsgFundFairburnPoolResponse) | FundFairburnPool defines a method to allow an account to directly fund the fee collector module account. | |
 
  <!-- end services -->
 
