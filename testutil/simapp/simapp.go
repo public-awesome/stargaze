@@ -31,7 +31,7 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	stargazeapp "github.com/public-awesome/stargaze/v12/app"
+	stargazeapp "github.com/public-awesome/stargaze/v13/app"
 )
 
 // New creates application instance with in-memory database and disabled logging.
@@ -60,7 +60,7 @@ func New(t *testing.T) *stargazeapp.App {
 	}
 
 	app := stargazeapp.NewStargazeApp(logger, db, nil, true, map[int64]bool{}, dir, 0, encoding,
-		simapp.EmptyAppOptions{}, stargazeapp.EmptyWasmOpts, stargazeapp.GetEnabledProposals())
+		simapp.EmptyAppOptions{}, stargazeapp.EmptyWasmOpts)
 
 	genesisState := stargazeapp.NewDefaultGenesisState(app.AppCodec())
 	genesisState = genesisStateWithValSet(t, app, genesisState, valSet, []authtypes.GenesisAccount{acc}, balance)
@@ -101,7 +101,7 @@ func setup(withGenesis bool, invCheckPeriod uint, dir string) (*stargazeapp.App,
 	db := tmdb.NewMemDB()
 	encoding := stargazeapp.MakeEncodingConfig()
 	a := stargazeapp.NewStargazeApp(log.NewNopLogger(), db, nil, true,
-		map[int64]bool{}, dir, invCheckPeriod, encoding, simapp.EmptyAppOptions{}, stargazeapp.EmptyWasmOpts, stargazeapp.GetEnabledProposals())
+		map[int64]bool{}, dir, invCheckPeriod, encoding, simapp.EmptyAppOptions{}, stargazeapp.EmptyWasmOpts)
 	if withGenesis {
 		return a, stargazeapp.NewDefaultGenesisState(encoding.Codec)
 	}

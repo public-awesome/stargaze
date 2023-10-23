@@ -10,9 +10,9 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	"github.com/public-awesome/stargaze/v12/app"
-	"github.com/public-awesome/stargaze/v12/x/globalfee/keeper"
-	"github.com/public-awesome/stargaze/v12/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v13/app"
+	"github.com/public-awesome/stargaze/v13/x/globalfee/keeper"
+	"github.com/public-awesome/stargaze/v13/x/globalfee/types"
 	"github.com/stretchr/testify/require"
 
 	tmdb "github.com/cometbft/cometbft-db"
@@ -79,12 +79,13 @@ func GlobalFeeKeeper(tb testing.TB) (keeper.Keeper, sdk.Context) {
 		storeKey,
 		subspace,
 		wk,
+		"cosmos1a48wdtjn3egw7swhfkeshwdtjvs6hq9nlyrwut", // random addr for gov module
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
 
 	params := types.Params{PrivilegedAddresses: []string{}}
-	k.SetParams(ctx, params)
+	_ = k.SetParams(ctx, params)
 
 	return k, ctx
 }

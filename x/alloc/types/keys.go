@@ -22,6 +22,11 @@ const (
 	MemStoreKey = "mem_alloc"
 )
 
+// ParamsKey stores the module params
+var (
+	ParamsKey = []byte{0x01}
+)
+
 func KeyPrefix(p string) []byte {
 	return []byte(p)
 }

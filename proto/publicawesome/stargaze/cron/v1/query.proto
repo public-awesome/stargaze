@@ -3,8 +3,9 @@ package publicawesome.stargaze.cron.v1;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
+import "publicawesome/stargaze/cron/v1/cron.proto";
 
-option go_package = "github.com/public-awesome/stargaze/v12/x/cron/types";
+option go_package = "github.com/public-awesome/stargaze/v13/x/cron/types";
 
 // Query defines the gRPC querier service.
 service Query {
@@ -12,6 +13,10 @@ service Query {
   rpc ListPrivileged(QueryListPrivilegedRequest)
       returns (QueryListPrivilegedResponse) {
     option (google.api.http).get = "/stargaze/cron/v1/list-privileged";
+  }
+
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/stargaze/cron/v1/params";
   }
 }
 
@@ -26,4 +31,17 @@ message QueryListPrivilegedResponse {
   // privilege status.
   repeated string contract_addresses = 1
       [ (gogoproto.jsontag) = "privileged_contract_addresses,omitempty" ];
+}
+
+// QueryParamsRequest is request type for the Query/Params RPC
+// method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC
+// method.
+message QueryParamsResponse {
+  Params params = 1 [
+    (gogoproto.jsontag) = "params,omitempty",
+    (gogoproto.nullable) = false
+  ];
 }

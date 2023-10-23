@@ -1,0 +1,14 @@
+syntax = "proto3";
+package publicawesome.stargaze.cron.v1;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/public-awesome/stargaze/v13/x/cron/types";
+
+// Params holds parameters for the cron module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  // Addresses which act as admins of the module. They can promote and demote
+  // contracts without having to go via governance.
+  repeated string admin_addresses = 1;
+}

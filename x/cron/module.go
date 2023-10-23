@@ -17,9 +17,9 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/public-awesome/stargaze/v12/x/cron/client/cli"
-	"github.com/public-awesome/stargaze/v12/x/cron/keeper"
-	"github.com/public-awesome/stargaze/v12/x/cron/types"
+	"github.com/public-awesome/stargaze/v13/x/cron/client/cli"
+	"github.com/public-awesome/stargaze/v13/x/cron/keeper"
+	"github.com/public-awesome/stargaze/v13/x/cron/types"
 )
 
 var (
@@ -117,6 +117,7 @@ func (AppModule) QuerierRoute() string { return types.RouterKey }
 // RegisterServices registers a gRPC query service to respond to the module-specific gRPC queries
 func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
+	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 }
 
 // RegisterInvariants registers the invariants of the module. If an invariant deviates from its predicted value, the InvariantRegistry triggers appropriate logic (most often the chain will be halted)

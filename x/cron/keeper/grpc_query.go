@@ -8,7 +8,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/public-awesome/stargaze/v12/x/cron/types"
+	"github.com/public-awesome/stargaze/v13/x/cron/types"
 )
 
 var _ types.QueryServer = Keeper{}
@@ -27,4 +27,17 @@ func (k Keeper) ListPrivileged(c context.Context, req *types.QueryListPrivileged
 	})
 
 	return &result, nil
+}
+
+// Params fetches all the params of x/cron module
+func (k Keeper) Params(c context.Context, req *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(c)
+	params := k.GetParams(ctx)
+
+	return &types.QueryParamsResponse{
+		Params: params,
+	}, nil
 }

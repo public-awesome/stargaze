@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 	reflectionv1 "cosmossdk.io/api/cosmos/reflection/v1"
@@ -94,40 +93,38 @@ import (
 	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
 	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
-	"github.com/public-awesome/stargaze/v12/x/mint"
-	mintkeeper "github.com/public-awesome/stargaze/v12/x/mint/keeper"
-	minttypes "github.com/public-awesome/stargaze/v12/x/mint/types"
-	"github.com/public-awesome/stargaze/v12/x/tokenfactory"
-	tokenfactorykeeper "github.com/public-awesome/stargaze/v12/x/tokenfactory/keeper"
-	tokenfactorytypes "github.com/public-awesome/stargaze/v12/x/tokenfactory/types"
+	"github.com/public-awesome/stargaze/v13/x/mint"
+	mintkeeper "github.com/public-awesome/stargaze/v13/x/mint/keeper"
+	minttypes "github.com/public-awesome/stargaze/v13/x/mint/types"
+	"github.com/public-awesome/stargaze/v13/x/tokenfactory"
+	tokenfactorykeeper "github.com/public-awesome/stargaze/v13/x/tokenfactory/keeper"
+	tokenfactorytypes "github.com/public-awesome/stargaze/v13/x/tokenfactory/types"
 	"github.com/spf13/cast"
 
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	authzmodule "github.com/cosmos/cosmos-sdk/x/authz/module"
 
-	"github.com/public-awesome/stargaze/v12/app/openapiconsole"
+	"github.com/public-awesome/stargaze/v13/app/openapiconsole"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
-	"github.com/public-awesome/stargaze/v12/docs"
-	sgwasm "github.com/public-awesome/stargaze/v12/internal/wasm"
-	allocmodule "github.com/public-awesome/stargaze/v12/x/alloc"
-	allocmodulekeeper "github.com/public-awesome/stargaze/v12/x/alloc/keeper"
-	allocmoduletypes "github.com/public-awesome/stargaze/v12/x/alloc/types"
-	allocwasm "github.com/public-awesome/stargaze/v12/x/alloc/wasm"
+	"github.com/public-awesome/stargaze/v13/docs"
+	sgwasm "github.com/public-awesome/stargaze/v13/internal/wasm"
+	allocmodule "github.com/public-awesome/stargaze/v13/x/alloc"
+	allocmodulekeeper "github.com/public-awesome/stargaze/v13/x/alloc/keeper"
+	allocmoduletypes "github.com/public-awesome/stargaze/v13/x/alloc/types"
+	allocwasm "github.com/public-awesome/stargaze/v13/x/alloc/wasm"
 
-	cronmodule "github.com/public-awesome/stargaze/v12/x/cron"
-	cronclient "github.com/public-awesome/stargaze/v12/x/cron/client"
-	cronmodulekeeper "github.com/public-awesome/stargaze/v12/x/cron/keeper"
-	cronmoduletypes "github.com/public-awesome/stargaze/v12/x/cron/types"
+	cronmodule "github.com/public-awesome/stargaze/v13/x/cron"
+	cronmodulekeeper "github.com/public-awesome/stargaze/v13/x/cron/keeper"
+	cronmoduletypes "github.com/public-awesome/stargaze/v13/x/cron/types"
 
-	globalfeemodule "github.com/public-awesome/stargaze/v12/x/globalfee"
-	globalfeeclient "github.com/public-awesome/stargaze/v12/x/globalfee/client"
-	globalfeemodulekeeper "github.com/public-awesome/stargaze/v12/x/globalfee/keeper"
-	globalfeemoduletypes "github.com/public-awesome/stargaze/v12/x/globalfee/types"
+	globalfeemodule "github.com/public-awesome/stargaze/v13/x/globalfee"
+	globalfeemodulekeeper "github.com/public-awesome/stargaze/v13/x/globalfee/keeper"
+	globalfeemoduletypes "github.com/public-awesome/stargaze/v13/x/globalfee/types"
 
 	ibchooks "github.com/cosmos/ibc-apps/modules/ibc-hooks/v7"
 	ibchookskeeper "github.com/cosmos/ibc-apps/modules/ibc-hooks/v7/keeper"
@@ -143,15 +140,15 @@ import (
 	icahostkeeper "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/host/keeper"
 	icahosttypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/host/types"
 	icatypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/types"
-	stargazerest "github.com/public-awesome/stargaze/v12/internal/rest"
-
-	sgappparams "github.com/public-awesome/stargaze/v12/app/params"
-	sgstatesync "github.com/public-awesome/stargaze/v12/internal/statesync"
+	stargazerest "github.com/public-awesome/stargaze/v13/internal/rest"
 
 	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs"
 	feeabsmodule "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs"
 	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
 	feeabstypes "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
+
+	sgappparams "github.com/public-awesome/stargaze/v13/app/params"
+	sgstatesync "github.com/public-awesome/stargaze/v13/internal/statesync"
 )
 
 const (
@@ -171,25 +168,6 @@ var (
 	EmptyWasmOpts []wasmkeeper.Option
 )
 
-// this line is used by starport scaffolding # stargate/wasm/app/enabledProposals
-
-// GetEnabledProposals parses the ProposalsEnabled / EnableSpecificProposals values to
-// produce a list of enabled proposals to pass into wasmd app.
-func GetEnabledProposals() []wasm.ProposalType { //nolint:staticcheck
-	if EnableSpecificProposals == "" {
-		if ProposalsEnabled == "true" {
-			return wasm.EnableAllProposals //nolint:staticcheck
-		}
-		return wasm.DisableAllProposals //nolint:staticcheck
-	}
-	chunks := strings.Split(EnableSpecificProposals, ",")
-	proposals, err := wasm.ConvertToProposals(chunks) //nolint:staticcheck
-	if err != nil {
-		panic(err)
-	}
-	return proposals
-}
-
 func getGovProposalHandlers() []govclient.ProposalHandler {
 	govProposalHandlers := make([]govclient.ProposalHandler, 0)
 	// this line is used by starport scaffolding # stargate/app/govProposalHandlers
@@ -199,9 +177,6 @@ func getGovProposalHandlers() []govclient.ProposalHandler {
 		upgradeclient.LegacyProposalHandler,
 		upgradeclient.LegacyCancelProposalHandler,
 		ibcclientclient.UpdateClientProposalHandler, ibcclientclient.UpgradeProposalHandler,
-		cronclient.SetPrivilegeProposalHandler, cronclient.UnsetPrivilegeProposalHandler,
-		globalfeeclient.SetCodeAuthorizationProposalHandler, globalfeeclient.RemoveCodeAuthorizationProposalHandler,
-		globalfeeclient.SetContractAuthorizationProposalHandler, globalfeeclient.RemoveContractAuthorizationProposalHandler,
 		feeabsmodule.UpdateAddHostZoneClientProposalHandler, feeabsmodule.UpdateDeleteHostZoneClientProposalHandler,
 		feeabsmodule.UpdateSetHostZoneClientProposalHandler,
 		// this line is used by starport scaffolding # stargate/app/govProposalHandler
@@ -367,7 +342,6 @@ func NewStargazeApp(
 	encodingConfig sgappparams.EncodingConfig,
 	appOpts servertypes.AppOptions,
 	wasmOpts []wasmkeeper.Option,
-	enabledProposals []wasm.ProposalType, //nolint:staticcheck
 	baseAppOptions ...func(*baseapp.BaseApp),
 ) *App {
 	appCodec, cdc := encodingConfig.Codec, encodingConfig.Amino
@@ -541,7 +515,6 @@ func NewStargazeApp(
 	govRouter := legacygovtypes.NewRouter()
 	govRouter.AddRoute(govtypes.RouterKey, legacygovtypes.ProposalHandler).
 		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.ParamsKeeper)).
-		// AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.DistrKeeper)). // COME HERE
 		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(&app.UpgradeKeeper)).
 		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper))
 
@@ -690,18 +663,23 @@ func NewStargazeApp(
 	app.ContractKeeper = wasmkeeper.NewDefaultPermissionKeeper(app.WasmKeeper)
 	app.Ics20WasmHooks.ContractKeeper = &app.WasmKeeper
 
-	app.CronKeeper = *cronmodulekeeper.NewKeeper(appCodec, keys[cronmoduletypes.StoreKey], keys[cronmoduletypes.MemStoreKey], app.GetSubspace(cronmoduletypes.ModuleName), app.WasmKeeper)
+	app.CronKeeper = cronmodulekeeper.NewKeeper(
+		appCodec,
+		keys[cronmoduletypes.StoreKey],
+		keys[cronmoduletypes.MemStoreKey],
+		app.GetSubspace(cronmoduletypes.ModuleName),
+		app.WasmKeeper,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String())
 	cronModule := cronmodule.NewAppModule(appCodec, app.CronKeeper, app.WasmKeeper)
-	govRouter.AddRoute(cronmoduletypes.RouterKey, cronmodulekeeper.NewProposalHandler(app.CronKeeper))
 
-	app.GlobalFeeKeeper = globalfeemodulekeeper.NewKeeper(appCodec, keys[globalfeemoduletypes.StoreKey], app.GetSubspace(globalfeemoduletypes.ModuleName), app.WasmKeeper)
+	app.GlobalFeeKeeper = globalfeemodulekeeper.NewKeeper(
+		appCodec,
+		keys[globalfeemoduletypes.StoreKey],
+		app.GetSubspace(globalfeemoduletypes.ModuleName),
+		app.WasmKeeper,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+	)
 	globalfeeModule := globalfeemodule.NewAppModule(appCodec, app.GlobalFeeKeeper)
-	govRouter.AddRoute(globalfeemoduletypes.RouterKey, globalfeemodulekeeper.NewProposalHandler(app.GlobalFeeKeeper))
-
-	// The gov proposal types can be individually enabled
-	if len(enabledProposals) != 0 {
-		govRouter.AddRoute(wasmtypes.RouterKey, wasm.NewWasmProposalHandler(app.WasmKeeper, enabledProposals)) //nolint:staticcheck
-	}
 
 	ibcRouter.AddRoute(wasmtypes.ModuleName, wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper, app.IBCKeeper.ChannelKeeper))
 	app.IBCKeeper.SetRouter(ibcRouter)
@@ -732,7 +710,7 @@ func NewStargazeApp(
 	)
 	allocModule := allocmodule.NewAppModule(appCodec, app.AllocKeeper)
 
-	tokenfactoryKeeper := tokenfactorykeeper.NewKeeper(keys[tokenfactorytypes.StoreKey], app.GetSubspace(tokenfactorytypes.ModuleName),
+	tokenfactoryKeeper := tokenfactorykeeper.NewKeeper(appCodec, keys[tokenfactorytypes.StoreKey], app.GetSubspace(tokenfactorytypes.ModuleName),
 		app.AccountKeeper, app.BankKeeper, app.DistrKeeper)
 	app.TokenFactoryKeeper = tokenfactoryKeeper
 
