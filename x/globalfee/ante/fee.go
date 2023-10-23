@@ -9,6 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	feeabstypes "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 	"github.com/public-awesome/stargaze/v12/x/globalfee/types"
 )
 
@@ -125,63 +126,96 @@ func isAuthorizedMethod(jsonBytes wasmtypes.RawContractMessage, methods []string
 // The fee checking ante mechanism below is based on the x/GlobalFee/ante from cosmos/gaia
 // https://github.com/cosmos/gaia/blob/6fe097e3280baa360a28b59a29b8cca964a5ae97/x/globalfee/ante/fee.go
 func (mfd FeeDecorator) checkFees(ctx sdk.Context, feeTx sdk.FeeTx, tx sdk.Tx, onlyZeroFeeMsgs bool, simulate bool, next sdk.AnteHandler) (sdk.Context, error) {
-	feeCoins := feeTx.GetFee().Sort()
-	gas := feeTx.GetGas()
-
-	// Get required Global Fee set by module
-	requiredGlobalFees, err := mfd.getGlobalFee(ctx, feeTx)
+	// Get the required fees according to the CheckTx or DeliverTx modes
+	minGasPrices, err := mfd.GetTxGasPrices(ctx)
 	if err != nil {
 		return ctx, err
 	}
 
-	// Get local minimum-gas-prices set by the validator node
-	localFees := getMinGasPrice(ctx, int64(gas))
-
-	// CombinedFeeRequirement should never be empty since
-	// global fee is set to its default value, i.e. 0ustars, if empty
-	combinedFeeRequired := combinedFeeRequirement(requiredGlobalFees, localFees)
-	if len(combinedFeeRequired) == 0 {
-		return ctx, errorsmod.Wrapf(sdkerrors.ErrNotFound, "required fees are not setup.")
+	if onlyZeroFeeMsgs {
+		return next(ctx.WithValue(feeabstypes.ByPassMsgKey{}, true).WithValue(feeabstypes.GlobalFeeKey{}, true), tx, simulate)
 	}
 
-	nonZeroCoinFeesReq, zeroCoinFeesDenomReq := getNonZeroFees(combinedFeeRequired)
+	return next(ctx.WithMinGasPrices(minGasPrices).WithValue(feeabstypes.GlobalFeeKey{}, true), tx, simulate)
+}
 
-	// feeCoinsNonZeroDenom contains non-zero denominations from the combinedFeeRequirement
-	//
-	// feeCoinsNoZeroDenom is used to check if the fees meets the requirement imposed by nonZeroCoinFeesReq
-	// when feeCoins does not contain zero coins' denoms in combinedFeeRequirement
-	// feeCoinsNonZeroDenom, feeCoinsZeroDenom := splitCoinsByDenoms(feeCoins, zeroCoinFeesDenomReq)
-	feeCoinsNonZeroDenom, feeCoinsZeroDenom := splitCoinsByDenoms(feeCoins, zeroCoinFeesDenomReq)
-
-	// Check that the fees are in expected denominations.
-	// if feeCoinsNoZeroDenom=[], DenomsSubsetOf returns true
-	// if feeCoinsNoZeroDenom is not empty, but nonZeroCoinFeesReq empty, return false
-	if !feeCoinsNonZeroDenom.DenomsSubsetOf(nonZeroCoinFeesReq) {
-		return ctx, errorsmod.Wrapf(sdkerrors.ErrInsufficientFee, "fee is not a subset of required fees; got %s, required: %s", feeCoins, combinedFeeRequired)
+// GetTxGasPrices returns the min-gas-prices for the given FeeTx.
+// In case the FeeTx's mode is CheckTx, it returns the combined requirements
+// of local min gas prices and global fees. Otherwise, in DeliverTx, it returns the global fee.
+func (mfd FeeDecorator) GetTxGasPrices(ctx sdk.Context) (sdk.DecCoins, error) {
+	// Get required global fee min gas prices
+	// Note that it should never be empty since its default value is set to coin={"StakingBondDenom", 0}
+	globalGasPrices, err := mfd.GetGlobalGasPrices(ctx)
+	if err != nil {
+		return sdk.DecCoins{}, err
 	}
 
-	// only check feeCoinsNoZeroDenom has coins IsAnyGTE than nonZeroCoinFeesReq
-	// when feeCoins does not contain denoms of zero denoms in combinedFeeRequirement
-	if !onlyZeroFeeMsgs && len(feeCoinsZeroDenom) == 0 {
-		// special case: when feeCoins=[] and there is zero coin in fee requirement
-		if len(feeCoins) == 0 && len(zeroCoinFeesDenomReq) != 0 {
-			return next(ctx, tx, simulate)
+	// In DeliverTx, the global fee min gas prices are the only tx fee requirements.
+	if !ctx.IsCheckTx() {
+		return globalGasPrices, nil
+	}
+
+	// In CheckTx mode, the local and global fee min gas prices are combined
+	// to form the tx fee requirements
+
+	// Get local minimum-gas-prices
+	localGasPrices := ctx.MinGasPrices().Sort()
+
+	// Return combined min-gas-prices
+	return CombinedMinGasPrices(globalGasPrices, localGasPrices)
+}
+
+// GetGlobalGasPrices returns the global min-gas-prices
+// sorted in ascending order.
+// Note that ParamStoreKeyMinGasPrices type requires coins sorted.
+func (mfd FeeDecorator) GetGlobalGasPrices(ctx sdk.Context) (sdk.DecCoins, error) {
+	var (
+		globalMinGasPrices sdk.DecCoins
+		err                error
+	)
+
+	globalMinGasPrices = mfd.feeKeeper.GetParams(ctx).MinimumGasPrices
+
+	// global fee is empty set, set global fee to 0uatom
+	if len(globalMinGasPrices) == 0 {
+		globalMinGasPrices, err = mfd.defaultZeroGlobalFee(ctx)
+		if err != nil {
+			return sdk.DecCoins{}, err
 		}
+	}
 
-		// Check that the amounts of the fees are greater or equal than
-		// the expected amounts, i.e., at least one feeCoin amount must
-		// be greater or equal to one of the combined required fees.
+	return globalMinGasPrices.Sort(), nil
+}
 
-		// if feeCoinsNoZeroDenom=[], return false
-		// if nonZeroCoinFeesReq=[], return false (this situation should not happen
-		// because when nonZeroCoinFeesReq empty, and DenomsSubsetOf check passed,
-		// the tx should already passed before)
-		if !feeCoinsNonZeroDenom.IsAnyGTE(nonZeroCoinFeesReq) {
-			return ctx, errorsmod.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, combinedFeeRequired)
+// CombinedMinGasPrices returns the globalfee's gas-prices and local min_gas_price combined and sorted.
+// Both globalfee's gas-prices and local min_gas_price must be valid, but CombinedMinGasPrices
+// does not validate them, so it may return 0denom.
+// if globalfee is empty, CombinedMinGasPrices return sdk.DecCoins{}
+func CombinedMinGasPrices(globalGasPrices, minGasPrices sdk.DecCoins) (sdk.DecCoins, error) {
+	// global fees should never be empty
+	// since it has a default value using the staking module's bond denom
+	if len(globalGasPrices) == 0 {
+		return sdk.DecCoins{}, errorsmod.Wrapf(sdkerrors.ErrNotFound, "global fee cannot be empty")
+	}
+
+	// empty min_gas_price
+	if len(minGasPrices) == 0 {
+		return globalGasPrices, nil
+	}
+
+	// if min_gas_price denom is in globalfee, and the amount is higher than globalfee, add min_gas_price to allFees
+	var allFees sdk.DecCoins
+	for _, fee := range globalGasPrices {
+		// min_gas_price denom in global fee
+		ok, c := FindDecCoins(minGasPrices, fee.Denom)
+		if ok && c.Amount.GT(fee.Amount) {
+			allFees = append(allFees, c)
+		} else {
+			allFees = append(allFees, fee)
 		}
 	}
 
-	return next(ctx, tx, simulate)
+	return allFees.Sort(), nil
 }
 
 // getGlobalFee returns the global fees for a given fee tx's gas
@@ -329,6 +363,33 @@ func find(coins sdk.Coins, denom string) (bool, sdk.Coin) {
 			return true, coin
 		default:
 			return find(coins[midIdx+1:], denom)
+		}
+	}
+}
+
+// Clone from Find() func above for DecCoins
+func FindDecCoins(coins sdk.DecCoins, denom string) (bool, sdk.DecCoin) {
+	switch len(coins) {
+	case 0:
+		return false, sdk.DecCoin{}
+
+	case 1:
+		coin := coins[0]
+		if coin.Denom == denom {
+			return true, coin
+		}
+		return false, sdk.DecCoin{}
+
+	default:
+		midIdx := len(coins) / 2 // 2:1, 3:1, 4:2
+		coin := coins[midIdx]
+		switch {
+		case denom < coin.Denom:
+			return FindDecCoins(coins[:midIdx], denom)
+		case denom == coin.Denom:
+			return true, coin
+		default:
+			return FindDecCoins(coins[midIdx+1:], denom)
 		}
 	}
 }

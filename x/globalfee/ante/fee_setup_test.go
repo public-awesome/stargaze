@@ -19,6 +19,7 @@ import (
 	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	feeabsante "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/ante"
 	stargazeapp "github.com/public-awesome/stargaze/v12/app"
 	"github.com/public-awesome/stargaze/v12/testutil/simapp"
 	"github.com/public-awesome/stargaze/v12/x/globalfee/ante"
@@ -80,9 +81,11 @@ func (s *AnteHandlerTestSuite) SetupTestGlobalFeeStoreAndMinGasPrice(minGasPrice
 
 	// build fee decorator
 	feeDecorator := ante.NewFeeDecorator(s.app.AppCodec(), s.app.GlobalFeeKeeper, s.app.StakingKeeper)
+	// Add fee-abstraction decorator
+	feeabsMempoolDecorator := feeabsante.NewFeeAbstrationMempoolFeeDecorator(s.app.FeeabsKeeper)
 
 	// chain fee decorator to antehandler
-	antehandler := sdk.ChainAnteDecorators(feeDecorator)
+	antehandler := sdk.ChainAnteDecorators(feeDecorator, feeabsMempoolDecorator)
 
 	return feeDecorator, antehandler
 }
