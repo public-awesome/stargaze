@@ -33,7 +33,7 @@ func (m msgServer) ExecuteProposal(goCtx context.Context, msg *types.MsgExecuteP
 		return nil, err
 	}
 
-	_, err = m.Keeper.SubmitProposal(ctx, proposalMsgs, proposer)
+	_, err = m.Keeper.ExecuteProposalMessages(ctx, proposalMsgs, proposer)
 	if err != nil {
 		return nil, err
 	}
