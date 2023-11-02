@@ -23,7 +23,6 @@ func GetQueryCmd(_ string) *cobra.Command {
 	}
 
 	cmd.AddCommand(GetCmdParams())
-	// this line is used by starport scaffolding # 1
 
 	return cmd
 }

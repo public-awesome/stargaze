@@ -2,7 +2,13 @@ syntax = "proto3";
 package publicawesome.stargaze.authority.v1;
 
 import "gogoproto/gogo.proto";
+import "publicawesome/stargaze/authority/v1/authority.proto";
 
 option go_package = "github.com/public-awesome/stargaze/v13/x/authority/types";
 
-message GenesisState {}
+message GenesisState {
+    Params params = 1 [
+    (gogoproto.jsontag) = "params,omitempty",
+    (gogoproto.nullable) = false
+  ];
+}
