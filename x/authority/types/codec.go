@@ -12,12 +12,14 @@ import (
 // These types are used for Amino JSON serialization.
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgExecuteProposal{}, "authority/MsgExecuteProposal", nil)
+	cdc.RegisterConcrete(&MsgUpdateParams{}, "authority/MsgUpdateParams", nil)
 }
 
 // RegisterInterfaces registers interfaces types with the interface registry.
 func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgExecuteProposal{},
+		&MsgUpdateParams{},
 	)
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }

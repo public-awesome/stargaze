@@ -33,6 +33,7 @@ func CmdSubmitProposal() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "submit-proposal [path/to/proposal.json]",
 		Short: "Submit a proposal along with some messages",
+		Long:  "Submit a proposal along with some messages. All the nessages in the proposal should have their authoriazation set in the module params and the modules the msg belongs to should be using x/authority module as its authority account",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -46,6 +47,9 @@ func CmdSubmitProposal() *cobra.Command {
 			}
 
 			msg, err := types.NewMsgExecuteProposal(msgs, clientCtx.GetFromAddress().String())
+			if err != nil {
+				return err
+			}
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

@@ -14,6 +14,4 @@ const (
 	MemStoreKey = "mem_authority"
 )
 
-var (
-	ParamsKey = []byte{0x01}
-)
+var ParamsKey = []byte{0x01}

@@ -58,7 +58,6 @@ func (m MsgExecuteProposal) Type() string { return sdk.MsgTypeURL(&m) }
 
 // ValidateBasic implements the sdk.Msg interface.
 func (m MsgExecuteProposal) ValidateBasic() error {
-
 	if _, err := sdk.AccAddressFromBech32(m.GetAuthority()); err != nil {
 		return sdkerrors.ErrInvalidAddress.Wrapf("invalid proposer address: %s", err)
 	}
@@ -103,9 +102,10 @@ func (m MsgExecuteProposal) UnpackInterfaces(unpacker codectypes.AnyUnpacker) er
 // NewMsgUpdateParams creates a new MsgUpdateParams.
 //
 //nolint:interfacer
-func NewMsgUpdateParams(messages []sdk.Msg, authority string) (*MsgUpdateParams, error) {
+func NewMsgUpdateParams(params Params, authority string) (*MsgUpdateParams, error) {
 	m := &MsgUpdateParams{
 		Authority: authority,
+		Params:    params,
 	}
 
 	return m, nil
@@ -120,11 +120,7 @@ func (m MsgUpdateParams) ValidateBasic() error {
 		return sdkerrors.ErrInvalidAddress.Wrapf("invalid proposer address: %s", err)
 	}
 
-	if err := m.Params.Validate(); err != nil {
-		return err
-	}
-
-	return nil
+	return m.Params.Validate()
 }
 
 // GetSignBytes returns the message bytes to sign over.

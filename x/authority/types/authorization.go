@@ -6,9 +6,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func GetMsgAuthorization(msgTypeUrl string, authorizations []*Authorization) (*Authorization, bool) {
+func GetMsgAuthorization(msgTypeURL string, authorizations []*Authorization) (*Authorization, bool) {
 	for _, auth := range authorizations {
-		if auth.MsgTypeUrl == msgTypeUrl {
+		if auth.MsgTypeUrl == msgTypeURL {
 			return auth, true
 		}
 	}

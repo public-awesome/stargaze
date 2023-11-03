@@ -435,7 +435,7 @@ func NewStargazeApp(
 		app.BankKeeper,
 		app.StakingKeeper,
 		authtypes.FeeCollectorName,
-		authtypes.NewModuleAddress(authoritytypes.ModuleName).String(),
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 	app.SlashingKeeper = slashingkeeper.NewKeeper(
 		appCodec,
@@ -637,7 +637,7 @@ func NewStargazeApp(
 		wasmDir,
 		wasmConfig,
 		GetWasmCapabilities(),
-		authtypes.NewModuleAddress(authoritytypes.ModuleName).String(),
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 		wasmOpts...,
 	)
 
