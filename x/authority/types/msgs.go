@@ -15,6 +15,7 @@ import (
 var (
 	_ sdk.Msg                            = &MsgExecuteProposal{}
 	_ codectypes.UnpackInterfacesMessage = &MsgExecuteProposal{}
+	_ sdk.Msg                            = &MsgUpdateParams{}
 )
 
 // NewMsgExecuteProposal creates a new MsgExecuteProposal.
@@ -97,4 +98,43 @@ func (m MsgExecuteProposal) GetSigners() []sdk.AccAddress {
 // UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
 func (m MsgExecuteProposal) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	return sdktx.UnpackInterfaces(unpacker, m.Messages)
+}
+
+// NewMsgUpdateParams creates a new MsgUpdateParams.
+//
+//nolint:interfacer
+func NewMsgUpdateParams(messages []sdk.Msg, authority string) (*MsgUpdateParams, error) {
+	m := &MsgUpdateParams{
+		Authority: authority,
+	}
+
+	return m, nil
+}
+
+// Type implements the sdk.Msg interface.
+func (m MsgUpdateParams) Type() string { return sdk.MsgTypeURL(&m) }
+
+// ValidateBasic implements the sdk.Msg interface.
+func (m MsgUpdateParams) ValidateBasic() error {
+	if _, err := sdk.AccAddressFromBech32(m.GetAuthority()); err != nil {
+		return sdkerrors.ErrInvalidAddress.Wrapf("invalid proposer address: %s", err)
+	}
+
+	if err := m.Params.Validate(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// GetSignBytes returns the message bytes to sign over.
+func (m MsgUpdateParams) GetSignBytes() []byte {
+	bz := codec.ModuleCdc.MustMarshalJSON(&m)
+	return sdk.MustSortJSON(bz)
+}
+
+// GetSigners returns the expected signers for a MsgExecuteProposal.
+func (m MsgUpdateParams) GetSigners() []sdk.AccAddress {
+	proposer, _ := sdk.AccAddressFromBech32(m.GetAuthority())
+	return []sdk.AccAddress{proposer}
 }

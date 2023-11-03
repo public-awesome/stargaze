@@ -4,61 +4,78 @@
 
 ## Table of Contents
 
-- [publicawesome/stargaze/authority/v1/authority.proto](#publicawesome/stargaze/authority/v1/authority.proto)
-    - [Authorization](#publicawesome.stargaze.authority.v1.Authorization)
-    - [Params](#publicawesome.stargaze.authority.v1.Params)
+- [osmosis/tokenfactory/v1beta1/tokenfactory.proto](#osmosis/tokenfactory/v1beta1/tokenfactory.proto)
+    - [DenomAuthorityMetadata](#osmosis.tokenfactory.v1beta1.DenomAuthorityMetadata)
+    - [Params](#osmosis.tokenfactory.v1beta1.Params)
   
-- [publicawesome/stargaze/authority/v1/genesis.proto](#publicawesome/stargaze/authority/v1/genesis.proto)
-    - [GenesisState](#publicawesome.stargaze.authority.v1.GenesisState)
+- [osmosis/tokenfactory/v1beta1/genesis.proto](#osmosis/tokenfactory/v1beta1/genesis.proto)
+    - [GenesisDenom](#osmosis.tokenfactory.v1beta1.GenesisDenom)
+    - [GenesisState](#osmosis.tokenfactory.v1beta1.GenesisState)
   
-- [publicawesome/stargaze/authority/v1/query.proto](#publicawesome/stargaze/authority/v1/query.proto)
-    - [QueryParamsRequest](#publicawesome.stargaze.authority.v1.QueryParamsRequest)
-    - [QueryParamsResponse](#publicawesome.stargaze.authority.v1.QueryParamsResponse)
+- [osmosis/tokenfactory/v1beta1/query.proto](#osmosis/tokenfactory/v1beta1/query.proto)
+    - [QueryDenomAuthorityMetadataRequest](#osmosis.tokenfactory.v1beta1.QueryDenomAuthorityMetadataRequest)
+    - [QueryDenomAuthorityMetadataResponse](#osmosis.tokenfactory.v1beta1.QueryDenomAuthorityMetadataResponse)
+    - [QueryDenomsFromCreatorRequest](#osmosis.tokenfactory.v1beta1.QueryDenomsFromCreatorRequest)
+    - [QueryDenomsFromCreatorResponse](#osmosis.tokenfactory.v1beta1.QueryDenomsFromCreatorResponse)
+    - [QueryParamsRequest](#osmosis.tokenfactory.v1beta1.QueryParamsRequest)
+    - [QueryParamsResponse](#osmosis.tokenfactory.v1beta1.QueryParamsResponse)
   
-    - [Query](#publicawesome.stargaze.authority.v1.Query)
+    - [Query](#osmosis.tokenfactory.v1beta1.Query)
   
-- [publicawesome/stargaze/authority/v1/tx.proto](#publicawesome/stargaze/authority/v1/tx.proto)
-    - [MsgExecuteProposal](#publicawesome.stargaze.authority.v1.MsgExecuteProposal)
-    - [MsgExecuteProposalResponse](#publicawesome.stargaze.authority.v1.MsgExecuteProposalResponse)
+- [osmosis/tokenfactory/v1beta1/tx.proto](#osmosis/tokenfactory/v1beta1/tx.proto)
+    - [MsgBurn](#osmosis.tokenfactory.v1beta1.MsgBurn)
+    - [MsgBurnResponse](#osmosis.tokenfactory.v1beta1.MsgBurnResponse)
+    - [MsgChangeAdmin](#osmosis.tokenfactory.v1beta1.MsgChangeAdmin)
+    - [MsgChangeAdminResponse](#osmosis.tokenfactory.v1beta1.MsgChangeAdminResponse)
+    - [MsgCreateDenom](#osmosis.tokenfactory.v1beta1.MsgCreateDenom)
+    - [MsgCreateDenomResponse](#osmosis.tokenfactory.v1beta1.MsgCreateDenomResponse)
+    - [MsgMint](#osmosis.tokenfactory.v1beta1.MsgMint)
+    - [MsgMintResponse](#osmosis.tokenfactory.v1beta1.MsgMintResponse)
+    - [MsgSetDenomMetadata](#osmosis.tokenfactory.v1beta1.MsgSetDenomMetadata)
+    - [MsgSetDenomMetadataResponse](#osmosis.tokenfactory.v1beta1.MsgSetDenomMetadataResponse)
   
-    - [Msg](#publicawesome.stargaze.authority.v1.Msg)
+    - [Msg](#osmosis.tokenfactory.v1beta1.Msg)
   
 - [Scalar Value Types](#scalar-value-types)
 
 
 
-<a name="publicawesome/stargaze/authority/v1/authority.proto"></a>
+<a name="osmosis/tokenfactory/v1beta1/tokenfactory.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/authority/v1/authority.proto
+## osmosis/tokenfactory/v1beta1/tokenfactory.proto
 
 
 
-<a name="publicawesome.stargaze.authority.v1.Authorization"></a>
+<a name="osmosis.tokenfactory.v1beta1.DenomAuthorityMetadata"></a>
 
-### Authorization
-
+### DenomAuthorityMetadata
+DenomAuthorityMetadata specifies metadata for addresses that have specific
+capabilities over a token factory denom. Right now there is only one Admin
+permission, but is planned to be extended to the future.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `msgTypeUrl` | [string](#string) |  | The type url of a proposal sdk.Msg |
-| `addresses` | [string](#string) | repeated | The addresses who are allowed to execute that proposal |
+| `admin` | [string](#string) |  | Can be empty for no admin, or a valid stargaze address |
 
 
 
 
 
 
-<a name="publicawesome.stargaze.authority.v1.Params"></a>
+<a name="osmosis.tokenfactory.v1beta1.Params"></a>
 
 ### Params
-Params holds parameters for the authority module.
+Params defines the parameters for the tokenfactory module.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `authorizations` | [Authorization](#publicawesome.stargaze.authority.v1.Authorization) | repeated |  |
+| `denom_creation_fee` | [cosmos.base.v1beta1.Coin](#cosmos.base.v1beta1.Coin) | repeated | DenomCreationFee defines the fee to be charged on the creation of a new denom. The fee is drawn from the MsgCreateDenom's sender account, and transferred to the community pool. |
+| `denom_creation_gas_consume` | [uint64](#uint64) |  | DenomCreationGasConsume defines the gas cost for creating a new denom. This is intended as a spam deterrence mechanism.
+
+See: https://github.com/CosmWasm/token-factory/issues/11 |
 
 
 
@@ -74,22 +91,41 @@ Params holds parameters for the authority module.
 
 
 
-<a name="publicawesome/stargaze/authority/v1/genesis.proto"></a>
+<a name="osmosis/tokenfactory/v1beta1/genesis.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/authority/v1/genesis.proto
+## osmosis/tokenfactory/v1beta1/genesis.proto
 
 
 
-<a name="publicawesome.stargaze.authority.v1.GenesisState"></a>
+<a name="osmosis.tokenfactory.v1beta1.GenesisDenom"></a>
+
+### GenesisDenom
+GenesisDenom defines a tokenfactory denom that is defined within genesis
+state. The structure contains DenomAuthorityMetadata which defines the
+denom's admin.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `denom` | [string](#string) |  |  |
+| `authority_metadata` | [DenomAuthorityMetadata](#osmosis.tokenfactory.v1beta1.DenomAuthorityMetadata) |  |  |
+
+
+
+
+
+
+<a name="osmosis.tokenfactory.v1beta1.GenesisState"></a>
 
 ### GenesisState
-
+GenesisState defines the tokenfactory module's genesis state.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `params` | [Params](#publicawesome.stargaze.authority.v1.Params) |  |  |
+| `params` | [Params](#osmosis.tokenfactory.v1beta1.Params) |  | params defines the paramaters of the module. |
+| `factory_denoms` | [GenesisDenom](#osmosis.tokenfactory.v1beta1.GenesisDenom) | repeated |  |
 
 
 
@@ -105,32 +141,96 @@ Params holds parameters for the authority module.
 
 
 
-<a name="publicawesome/stargaze/authority/v1/query.proto"></a>
+<a name="osmosis/tokenfactory/v1beta1/query.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/authority/v1/query.proto
+## osmosis/tokenfactory/v1beta1/query.proto
 
 
 
-<a name="publicawesome.stargaze.authority.v1.QueryParamsRequest"></a>
+<a name="osmosis.tokenfactory.v1beta1.QueryDenomAuthorityMetadataRequest"></a>
 
-### QueryParamsRequest
-
-
-
-
-
-
-
-<a name="publicawesome.stargaze.authority.v1.QueryParamsResponse"></a>
-
-### QueryParamsResponse
-
+### QueryDenomAuthorityMetadataRequest
+QueryDenomAuthorityMetadataRequest defines the request structure for the
+DenomAuthorityMetadata gRPC query.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `params` | [Params](#publicawesome.stargaze.authority.v1.Params) |  |  |
+| `denom` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="osmosis.tokenfactory.v1beta1.QueryDenomAuthorityMetadataResponse"></a>
+
+### QueryDenomAuthorityMetadataResponse
+QueryDenomAuthorityMetadataResponse defines the response structure for the
+DenomAuthorityMetadata gRPC query.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `authority_metadata` | [DenomAuthorityMetadata](#osmosis.tokenfactory.v1beta1.DenomAuthorityMetadata) |  |  |
+
+
+
+
+
+
+<a name="osmosis.tokenfactory.v1beta1.QueryDenomsFromCreatorRequest"></a>
+
+### QueryDenomsFromCreatorRequest
+QueryDenomsFromCreatorRequest defines the request structure for the
+DenomsFromCreator gRPC query.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `creator` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="osmosis.tokenfactory.v1beta1.QueryDenomsFromCreatorResponse"></a>
+
+### QueryDenomsFromCreatorResponse
+QueryDenomsFromCreatorRequest defines the response structure for the
+DenomsFromCreator gRPC query.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `denoms` | [string](#string) | repeated |  |
+
+
+
+
+
+
+<a name="osmosis.tokenfactory.v1beta1.QueryParamsRequest"></a>
+
+### QueryParamsRequest
+QueryParamsRequest is the request type for the Query/Params RPC method.
+
+
+
+
+
+
+<a name="osmosis.tokenfactory.v1beta1.QueryParamsResponse"></a>
+
+### QueryParamsResponse
+QueryParamsResponse is the response type for the Query/Params RPC method.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `params` | [Params](#osmosis.tokenfactory.v1beta1.Params) |  | params defines the parameters of the module. |
 
 
 
@@ -143,47 +243,175 @@ Params holds parameters for the authority module.
  <!-- end HasExtensions -->
 
 
-<a name="publicawesome.stargaze.authority.v1.Query"></a>
+<a name="osmosis.tokenfactory.v1beta1.Query"></a>
 
 ### Query
 Query defines the gRPC querier service.
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `Params` | [QueryParamsRequest](#publicawesome.stargaze.authority.v1.QueryParamsRequest) | [QueryParamsResponse](#publicawesome.stargaze.authority.v1.QueryParamsResponse) |  | GET|/stargaze/authority/v1/params|
+| `Params` | [QueryParamsRequest](#osmosis.tokenfactory.v1beta1.QueryParamsRequest) | [QueryParamsResponse](#osmosis.tokenfactory.v1beta1.QueryParamsResponse) | Params defines a gRPC query method that returns the tokenfactory module's parameters. | GET|/stargaze/tokenfactory/v1/params|
+| `DenomAuthorityMetadata` | [QueryDenomAuthorityMetadataRequest](#osmosis.tokenfactory.v1beta1.QueryDenomAuthorityMetadataRequest) | [QueryDenomAuthorityMetadataResponse](#osmosis.tokenfactory.v1beta1.QueryDenomAuthorityMetadataResponse) | DenomAuthorityMetadata defines a gRPC query method for fetching DenomAuthorityMetadata for a particular denom. | GET|/stargaze/tokenfactory/v1/denoms/{denom}/authority_metadata|
+| `DenomsFromCreator` | [QueryDenomsFromCreatorRequest](#osmosis.tokenfactory.v1beta1.QueryDenomsFromCreatorRequest) | [QueryDenomsFromCreatorResponse](#osmosis.tokenfactory.v1beta1.QueryDenomsFromCreatorResponse) | DenomsFromCreator defines a gRPC query method for fetching all denominations created by a specific admin/creator. | GET|/stargaze/tokenfactory/v1/denoms_from_creator/{creator}|
 
  <!-- end services -->
 
 
 
-<a name="publicawesome/stargaze/authority/v1/tx.proto"></a>
+<a name="osmosis/tokenfactory/v1beta1/tx.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/authority/v1/tx.proto
+## osmosis/tokenfactory/v1beta1/tx.proto
 
 
 
-<a name="publicawesome.stargaze.authority.v1.MsgExecuteProposal"></a>
+<a name="osmosis.tokenfactory.v1beta1.MsgBurn"></a>
 
-### MsgExecuteProposal
-MsgExecuteProposal defines an sdk.Msg type that supports submitting arbitrary
-proposal Content.
+### MsgBurn
+MsgBurn is the sdk.Msg type for allowing an admin account to burn
+a token.  For now, we only support burning from the sender account.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `authority` | [string](#string) |  |  |
-| `messages` | [google.protobuf.Any](#google.protobuf.Any) | repeated |  |
+| `sender` | [string](#string) |  |  |
+| `amount` | [cosmos.base.v1beta1.Coin](#cosmos.base.v1beta1.Coin) |  |  |
+| `burnFromAddress` | [string](#string) |  |  |
 
 
 
 
 
 
-<a name="publicawesome.stargaze.authority.v1.MsgExecuteProposalResponse"></a>
+<a name="osmosis.tokenfactory.v1beta1.MsgBurnResponse"></a>
 
-### MsgExecuteProposalResponse
-MsgExecuteProposalResponse defines the Msg/ExecuteProposal response type.
+### MsgBurnResponse
+
+
+
+
+
+
+
+<a name="osmosis.tokenfactory.v1beta1.MsgChangeAdmin"></a>
+
+### MsgChangeAdmin
+MsgChangeAdmin is the sdk.Msg type for allowing an admin account to reassign
+adminship of a denom to a new account
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `sender` | [string](#string) |  |  |
+| `denom` | [string](#string) |  |  |
+| `new_admin` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="osmosis.tokenfactory.v1beta1.MsgChangeAdminResponse"></a>
+
+### MsgChangeAdminResponse
+MsgChangeAdminResponse defines the response structure for an executed
+MsgChangeAdmin message.
+
+
+
+
+
+
+<a name="osmosis.tokenfactory.v1beta1.MsgCreateDenom"></a>
+
+### MsgCreateDenom
+MsgCreateDenom defines the message structure for the CreateDenom gRPC service
+method. It allows an account to create a new denom. It requires a sender
+address and a sub denomination. The (sender_address, sub_denomination) tuple
+must be unique and cannot be re-used.
+
+The resulting denom created is defined as
+<factory/{creatorAddress}/{subdenom}>. The resulting denom's admin is
+originally set to be the creator, but this can be changed later. The token
+denom does not indicate the current admin.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `sender` | [string](#string) |  |  |
+| `subdenom` | [string](#string) |  | subdenom can be up to 44 "alphanumeric" characters long. |
+
+
+
+
+
+
+<a name="osmosis.tokenfactory.v1beta1.MsgCreateDenomResponse"></a>
+
+### MsgCreateDenomResponse
+MsgCreateDenomResponse is the return value of MsgCreateDenom
+It returns the full string of the newly created denom
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `new_token_denom` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="osmosis.tokenfactory.v1beta1.MsgMint"></a>
+
+### MsgMint
+MsgMint is the sdk.Msg type for allowing an admin account to mint
+more of a token.  For now, we only support minting to the sender account
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `sender` | [string](#string) |  |  |
+| `amount` | [cosmos.base.v1beta1.Coin](#cosmos.base.v1beta1.Coin) |  |  |
+| `mintToAddress` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="osmosis.tokenfactory.v1beta1.MsgMintResponse"></a>
+
+### MsgMintResponse
+
+
+
+
+
+
+
+<a name="osmosis.tokenfactory.v1beta1.MsgSetDenomMetadata"></a>
+
+### MsgSetDenomMetadata
+MsgSetDenomMetadata is the sdk.Msg type for allowing an admin account to set
+the denom's bank metadata
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `sender` | [string](#string) |  |  |
+| `metadata` | [cosmos.bank.v1beta1.Metadata](#cosmos.bank.v1beta1.Metadata) |  |  |
+
+
+
+
+
+
+<a name="osmosis.tokenfactory.v1beta1.MsgSetDenomMetadataResponse"></a>
+
+### MsgSetDenomMetadataResponse
+MsgSetDenomMetadataResponse defines the response structure for an executed
+MsgSetDenomMetadata message.
 
 
 
@@ -196,14 +424,18 @@ MsgExecuteProposalResponse defines the Msg/ExecuteProposal response type.
  <!-- end HasExtensions -->
 
 
-<a name="publicawesome.stargaze.authority.v1.Msg"></a>
+<a name="osmosis.tokenfactory.v1beta1.Msg"></a>
 
 ### Msg
-Msg defines the authority Msg service.
+Msg defines the tokefactory module's gRPC message service.
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `ExecuteProposal` | [MsgExecuteProposal](#publicawesome.stargaze.authority.v1.MsgExecuteProposal) | [MsgExecuteProposalResponse](#publicawesome.stargaze.authority.v1.MsgExecuteProposalResponse) |  | |
+| `CreateDenom` | [MsgCreateDenom](#osmosis.tokenfactory.v1beta1.MsgCreateDenom) | [MsgCreateDenomResponse](#osmosis.tokenfactory.v1beta1.MsgCreateDenomResponse) |  | |
+| `Mint` | [MsgMint](#osmosis.tokenfactory.v1beta1.MsgMint) | [MsgMintResponse](#osmosis.tokenfactory.v1beta1.MsgMintResponse) |  | |
+| `Burn` | [MsgBurn](#osmosis.tokenfactory.v1beta1.MsgBurn) | [MsgBurnResponse](#osmosis.tokenfactory.v1beta1.MsgBurnResponse) |  | |
+| `ChangeAdmin` | [MsgChangeAdmin](#osmosis.tokenfactory.v1beta1.MsgChangeAdmin) | [MsgChangeAdminResponse](#osmosis.tokenfactory.v1beta1.MsgChangeAdminResponse) |  | |
+| `SetDenomMetadata` | [MsgSetDenomMetadata](#osmosis.tokenfactory.v1beta1.MsgSetDenomMetadata) | [MsgSetDenomMetadataResponse](#osmosis.tokenfactory.v1beta1.MsgSetDenomMetadataResponse) |  | |
 
  <!-- end services -->
 
