@@ -868,6 +868,7 @@ func NewStargazeApp(
 			keeper:            app.IBCKeeper,
 			govKeeper:         app.GovKeeper,
 			globalfeeKeeper:   app.GlobalFeeKeeper,
+			FeeAbskeeper:      app.FeeabsKeeper,
 			stakingKeeper:     app.StakingKeeper,
 			WasmConfig:        &wasmConfig,
 			TXCounterStoreKey: keys[wasmtypes.StoreKey],
