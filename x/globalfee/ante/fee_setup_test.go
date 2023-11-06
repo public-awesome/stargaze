@@ -44,19 +44,19 @@ type storeCache struct {
 var contractsCache = storeCache{contracts: make(map[string][]byte)}
 
 func (s *AnteHandlerTestSuite) SetupTest() {
-	_, _, acc1_addr := getTestAccount()
-	_, _, acc2_addr := getTestAccount()
+	_, _, acc1Addr := getTestAccount()
+	_, _, acc2Addr := getTestAccount()
 	genAccounts := authtypes.GenesisAccounts{
-		&authtypes.BaseAccount{Address: acc1_addr.String()},
-		&authtypes.BaseAccount{Address: acc2_addr.String()},
+		&authtypes.BaseAccount{Address: acc1Addr.String()},
+		&authtypes.BaseAccount{Address: acc2Addr.String()},
 	}
 	genBalances := []banktypes.Balance{
 		{
-			Address: acc1_addr.String(),
+			Address: acc1Addr.String(),
 			Coins:   sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 5_000_000_000)),
 		},
 		{
-			Address: acc2_addr.String(),
+			Address: acc2Addr.String(),
 			Coins:   sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 5_000_000_000)),
 		},
 	}
@@ -75,7 +75,9 @@ func (s *AnteHandlerTestSuite) SetupTest() {
 }
 
 func (s *AnteHandlerTestSuite) SetupTestGlobalFeeStoreAndMinGasPrice(minGasPrice []sdk.DecCoin, globalFees sdk.DecCoins) (ante.FeeDecorator, sdk.AnteHandler) {
-	s.app.GlobalFeeKeeper.SetParams(s.ctx, types.Params{MinimumGasPrices: globalFees})
+	err := s.app.GlobalFeeKeeper.SetParams(s.ctx, types.Params{MinimumGasPrices: globalFees})
+	s.Require().NoError(err)
+
 	s.ctx = s.ctx.WithMinGasPrices(minGasPrice).WithIsCheckTx(true)
 
 	// build fee decorator
@@ -90,24 +92,25 @@ func (s *AnteHandlerTestSuite) SetupTestGlobalFeeStoreAndMinGasPrice(minGasPrice
 func (s *AnteHandlerTestSuite) SetupWasmMsgServer() {
 	wasmParams := s.app.WasmKeeper.GetParams(s.ctx)
 	wasmParams.CodeUploadAccess = wasmtypes.AllowEverybody
-	s.app.WasmKeeper.SetParams(s.ctx, wasmParams)
+	err := s.app.WasmKeeper.SetParams(s.ctx, wasmParams)
+	s.Require().NoError(err)
 	s.msgServer = wasmkeeper.NewMsgServerImpl(&s.app.WasmKeeper)
 }
 
 func (s *AnteHandlerTestSuite) SetupContractWithCodeAuth(senderAddr string, contractBinary string, authMethods []string) string {
-	codeId, err := storeContract(s.ctx, s.msgServer, senderAddr, contractBinary)
+	codeID, err := storeContract(s.ctx, s.msgServer, senderAddr, contractBinary)
 	s.Require().NoError(err)
 
 	instantiageMsg := CounterInsantiateMsg{Count: 0}
 	instantiateMsgRaw, err := json.Marshal(&instantiageMsg)
 	s.Require().NoError(err)
 
-	initMsg := wasmtypes.MsgInstantiateContract{Sender: senderAddr, Admin: senderAddr, CodeID: codeId, Label: "Counter Contract", Msg: instantiateMsgRaw, Funds: sdk.NewCoins()}
+	initMsg := wasmtypes.MsgInstantiateContract{Sender: senderAddr, Admin: senderAddr, CodeID: codeID, Label: "Counter Contract", Msg: instantiateMsgRaw, Funds: sdk.NewCoins()}
 	instantiateRes, err := s.msgServer.InstantiateContract(sdk.WrapSDKContext(s.ctx), &initMsg)
 	s.Require().NoError(err)
 
 	err = s.app.GlobalFeeKeeper.SetCodeAuthorization(s.ctx, types.CodeAuthorization{
-		CodeID:  codeId,
+		CodeID:  codeID,
 		Methods: authMethods,
 	})
 	s.Require().NoError(err)
@@ -116,14 +119,14 @@ func (s *AnteHandlerTestSuite) SetupContractWithCodeAuth(senderAddr string, cont
 }
 
 func (s *AnteHandlerTestSuite) SetupContractWithContractAuth(senderAddr string, contractBinary string, authMethods []string) string {
-	codeId, err := storeContract(s.ctx, s.msgServer, senderAddr, contractBinary)
+	codeID, err := storeContract(s.ctx, s.msgServer, senderAddr, contractBinary)
 	s.Require().NoError(err)
 
 	instantiageMsg := CounterInsantiateMsg{Count: 0}
 	instantiateMsgRaw, err := json.Marshal(&instantiageMsg)
 	s.Require().NoError(err)
 
-	initMsg := wasmtypes.MsgInstantiateContract{Sender: senderAddr, Admin: senderAddr, CodeID: codeId, Label: "Counter Contract", Msg: instantiateMsgRaw, Funds: sdk.NewCoins()}
+	initMsg := wasmtypes.MsgInstantiateContract{Sender: senderAddr, Admin: senderAddr, CodeID: codeID, Label: "Counter Contract", Msg: instantiateMsgRaw, Funds: sdk.NewCoins()}
 	instantiateRes, err := s.msgServer.InstantiateContract(sdk.WrapSDKContext(s.ctx), &initMsg)
 	s.Require().NoError(err)
 

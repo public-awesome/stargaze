@@ -71,7 +71,8 @@ func TestPromoteToPrivilegedContract(t *testing.T) {
 
 				params := types.DefaultParams()
 				params.AdminAddresses = []string{sender.String()}
-				keeper.SetParams(ctx, params)
+				err := keeper.SetParams(ctx, params)
+				require.NoError(t, err)
 
 				msg := types.MsgPromoteToPrivilegedContract{
 					Authority: sender.String(),
@@ -182,10 +183,11 @@ func TestDemoteFromPrivilegedContract(t *testing.T) {
 				sender := sample.AccAddress()
 				params := types.DefaultParams()
 				params.AdminAddresses = []string{sender.String()}
-				keeper.SetParams(ctx, params)
+				err := keeper.SetParams(ctx, params)
+				require.NoError(t, err)
 
 				contractAddr := "cosmos1qyqszqgpqyqszqgpqyqszqgpqyqszqgpjnp7du"
-				err := keeper.SetPrivileged(ctx, sdk.MustAccAddressFromBech32(contractAddr))
+				err = keeper.SetPrivileged(ctx, sdk.MustAccAddressFromBech32(contractAddr))
 				require.NoError(t, err)
 
 				msg := types.MsgDemoteFromPrivilegedContract{

@@ -34,7 +34,7 @@ func (suite *KeeperTestSuite) TestMsgCreateDenom() {
 	suite.Require().True(preCreateBalance.Sub(postCreateBalance).IsEqual(denomCreationFee[0]))
 
 	// Make sure that a second version of the same denom can't be recreated
-	res, err = suite.msgServer.CreateDenom(sdk.WrapSDKContext(suite.Ctx), types.NewMsgCreateDenom(suite.TestAccs[0].String(), "testy"))
+	_, err = suite.msgServer.CreateDenom(sdk.WrapSDKContext(suite.Ctx), types.NewMsgCreateDenom(suite.TestAccs[0].String(), "testy"))
 	suite.Require().Error(err)
 
 	// Creating a second denom should work
@@ -55,7 +55,7 @@ func (suite *KeeperTestSuite) TestMsgCreateDenom() {
 	suite.Require().NotEmpty(res.GetNewTokenDenom())
 
 	// Make sure that an address with a "/" in it can't create denoms
-	res, err = suite.msgServer.CreateDenom(sdk.WrapSDKContext(suite.Ctx), types.NewMsgCreateDenom("stargaze.stars/creator", "testy"))
+	_, err = suite.msgServer.CreateDenom(sdk.WrapSDKContext(suite.Ctx), types.NewMsgCreateDenom("stargaze.stars/creator", "testy"))
 	suite.Require().Error(err)
 }
 
@@ -130,7 +130,8 @@ func (suite *KeeperTestSuite) TestCreateDenom() {
 			tokenFactoryKeeper := suite.App.TokenFactoryKeeper
 			bankKeeper := suite.App.BankKeeper
 			// Set denom creation fee in params
-			tokenFactoryKeeper.SetParams(suite.Ctx, tc.denomCreationFee)
+			err := tokenFactoryKeeper.SetParams(suite.Ctx, tc.denomCreationFee)
+			suite.Require().NoError(err)
 			denomCreationFee := tokenFactoryKeeper.GetParams(suite.Ctx).DenomCreationFee
 			suite.Require().Equal(tc.denomCreationFee.DenomCreationFee, denomCreationFee)
 
@@ -204,13 +205,14 @@ func (suite *KeeperTestSuite) TestGasConsume() {
 		suite.SetupTest()
 		suite.Run(fmt.Sprintf("Case %s", tc.desc), func() {
 			// set params with the gas consume amount
-			suite.App.TokenFactoryKeeper.SetParams(suite.Ctx, types.NewParams(nil, tc.gasConsume))
+			err := suite.App.TokenFactoryKeeper.SetParams(suite.Ctx, types.NewParams(nil, tc.gasConsume))
+			suite.Require().NoError(err)
 
 			// amount of gas consumed prior to the denom creation
 			gasConsumedBefore := suite.Ctx.GasMeter().GasConsumed()
 
 			// create a denom
-			_, err := suite.msgServer.CreateDenom(sdk.WrapSDKContext(suite.Ctx), types.NewMsgCreateDenom(suite.TestAccs[0].String(), "larry"))
+			_, err = suite.msgServer.CreateDenom(sdk.WrapSDKContext(suite.Ctx), types.NewMsgCreateDenom(suite.TestAccs[0].String(), "larry"))
 			suite.Require().NoError(err)
 
 			// amount of gas consumed after the denom creation
