@@ -30,7 +30,7 @@ func (suite *KeeperTestSuite) TestAdminMsgs() {
 
 	// Test burning from own account
 	_, err = suite.msgServer.Burn(sdk.WrapSDKContext(suite.Ctx), types.NewMsgBurn(suite.TestAccs[0].String(), sdk.NewInt64Coin(suite.defaultDenom, 5)))
-	addr0bal -= 5
+	addr0bal -= 5 //nolint:golint,ineffassign
 	suite.Require().NoError(err)
 	suite.Require().True(bankKeeper.GetBalance(suite.Ctx, suite.TestAccs[1], suite.defaultDenom).Amount.Int64() == addr1bal)
 
@@ -381,6 +381,7 @@ func (suite *KeeperTestSuite) TestSetDenomMetaData() {
 		},
 	} {
 		suite.Run(fmt.Sprintf("Case %s", tc.desc), func() {
+			tc := tc
 			bankKeeper := suite.App.BankKeeper
 			res, err := suite.msgServer.SetDenomMetadata(sdk.WrapSDKContext(suite.Ctx), &tc.msgSetDenomMetadata)
 			if tc.expectedPass {

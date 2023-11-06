@@ -140,7 +140,7 @@ func (s *AnteHandlerTestSuite) SetupContractWithContractAuth(senderAddr string, 
 }
 
 func (s *AnteHandlerTestSuite) CreateTestTx(privs []cryptotypes.PrivKey, accNums []uint64, accSeqs []uint64, chainID string) (xauthsigning.Tx, error) {
-	var sigsV2 []signing.SignatureV2
+	var sigsV2 []signing.SignatureV2 //nolint:golint,prealloc
 	for i, priv := range privs {
 		sigV2 := signing.SignatureV2{
 			PubKey: priv.PubKey(),
@@ -202,7 +202,7 @@ func storeContract(ctx sdk.Context, msgServer wasmtypes.MsgServer, creator strin
 	return res.CodeID, nil
 }
 
-func getTestAccount() (privateKey secp256k1.PrivKey, publicKey crypto.PubKey, accountAddress sdk.AccAddress) {
+func getTestAccount() (privateKey secp256k1.PrivKey, publicKey crypto.PubKey, accountAddress sdk.AccAddress) { //nolint:golint,unparam
 	privateKey = secp256k1.GenPrivKey()
 	publicKey = privateKey.PubKey()
 	accountAddress = sdk.AccAddress(publicKey.Address())
