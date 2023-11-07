@@ -20,9 +20,9 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 	s.txBuilder = s.clientCtx.TxConfig.NewTxBuilder()
 	priv1, _, addr1 := testdata.KeyTestPubAddr()
 	privs, accNums, accSeqs := []cryptotypes.PrivKey{priv1}, []uint64{0}, []uint64{0}
-	contract_with_code_auth := s.SetupContractWithCodeAuth(addr1.String(), "counter.wasm", []string{"increment"})
-	contract_with_addr_auth := s.SetupContractWithContractAuth(addr1.String(), "counter.wasm", []string{"increment"})
-	contract_with_addr_auth_all := s.SetupContractWithContractAuth(addr1.String(), "counter.wasm", []string{"*"})
+	contractWithCodeAuth := s.SetupContractWithCodeAuth(addr1.String(), "counter.wasm", []string{"increment"})
+	contractWithAddrAuth := s.SetupContractWithContractAuth(addr1.String(), "counter.wasm", []string{"increment"})
+	contractWithAddrAuthAll := s.SetupContractWithContractAuth(addr1.String(), "counter.wasm", []string{"*"})
 	counterIncrementMsg := []byte(`{"increment": {}}`)
 	counterResetMsg := []byte(`{"reset": 0}`)
 
@@ -42,7 +42,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contract_with_code_auth,
+					Contract: contractWithCodeAuth,
 					Msg:      counterResetMsg,
 				},
 			},
@@ -56,7 +56,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contract_with_code_auth,
+					Contract: contractWithCodeAuth,
 					Msg:      counterResetMsg,
 				},
 			},
@@ -70,7 +70,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contract_with_code_auth,
+					Contract: contractWithCodeAuth,
 					Msg:      counterResetMsg,
 				},
 			},
@@ -84,7 +84,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contract_with_code_auth,
+					Contract: contractWithCodeAuth,
 					Msg:      counterResetMsg,
 				},
 			},
@@ -98,7 +98,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contract_with_code_auth,
+					Contract: contractWithCodeAuth,
 					Msg:      counterResetMsg,
 				},
 			},
@@ -112,7 +112,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contract_with_code_auth,
+					Contract: contractWithCodeAuth,
 					Msg:      counterResetMsg,
 				},
 			},
@@ -126,7 +126,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contract_with_code_auth,
+					Contract: contractWithCodeAuth,
 					Msg:      counterResetMsg,
 				},
 			},
@@ -140,7 +140,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contract_with_code_auth,
+					Contract: contractWithCodeAuth,
 					Msg:      counterIncrementMsg,
 				},
 			},
@@ -154,7 +154,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contract_with_addr_auth,
+					Contract: contractWithAddrAuth,
 					Msg:      counterResetMsg,
 				},
 			},
@@ -168,7 +168,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contract_with_addr_auth,
+					Contract: contractWithAddrAuth,
 					Msg:      counterIncrementMsg,
 				},
 			},
@@ -182,7 +182,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contract_with_addr_auth_all,
+					Contract: contractWithAddrAuthAll,
 					Msg:      counterIncrementMsg,
 				},
 			},
@@ -196,7 +196,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contract_with_addr_auth_all,
+					Contract: contractWithAddrAuthAll,
 					Msg:      counterResetMsg,
 				},
 			},
@@ -210,17 +210,17 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contract_with_code_auth,
+					Contract: contractWithCodeAuth,
 					Msg:      counterIncrementMsg,
 				},
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contract_with_addr_auth,
+					Contract: contractWithAddrAuth,
 					Msg:      counterIncrementMsg,
 				},
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contract_with_addr_auth_all,
+					Contract: contractWithAddrAuthAll,
 					Msg:      counterResetMsg,
 				},
 			},
@@ -234,17 +234,17 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contract_with_code_auth,
+					Contract: contractWithCodeAuth,
 					Msg:      counterIncrementMsg,
 				},
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contract_with_code_auth,
+					Contract: contractWithCodeAuth,
 					Msg:      counterResetMsg,
 				},
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contract_with_code_auth,
+					Contract: contractWithCodeAuth,
 					Msg:      counterResetMsg,
 				},
 			},
@@ -258,12 +258,12 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			[]sdk.Msg{
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contract_with_code_auth,
+					Contract: contractWithCodeAuth,
 					Msg:      counterIncrementMsg,
 				},
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
-					Contract: contract_with_code_auth,
+					Contract: contractWithCodeAuth,
 					Msg:      counterResetMsg,
 				},
 			},

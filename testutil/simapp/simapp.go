@@ -8,7 +8,6 @@ import (
 
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	dbm "github.com/cometbft/cometbft-db"
-	tmdb "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
 	tmjson "github.com/cometbft/cometbft/libs/json"
 	"github.com/cometbft/cometbft/libs/log"
@@ -39,7 +38,7 @@ func New(t *testing.T) *stargazeapp.App {
 	t.Helper()
 
 	dir := t.TempDir()
-	db := tmdb.NewMemDB()
+	db := dbm.NewMemDB()
 	logger := log.NewNopLogger()
 	encoding := stargazeapp.MakeEncodingConfig()
 
@@ -98,7 +97,7 @@ var defaultConsensusParams = &tmproto.ConsensusParams{
 }
 
 func setup(withGenesis bool, invCheckPeriod uint, dir string) (*stargazeapp.App, stargazeapp.GenesisState) {
-	db := tmdb.NewMemDB()
+	db := dbm.NewMemDB()
 	encoding := stargazeapp.MakeEncodingConfig()
 	a := stargazeapp.NewStargazeApp(log.NewNopLogger(), db, nil, true,
 		map[int64]bool{}, dir, invCheckPeriod, encoding, simapp.EmptyAppOptions{}, stargazeapp.EmptyWasmOpts)
@@ -228,7 +227,7 @@ func genesisStateWithValSet(t *testing.T,
 // the parameter 'expPass' against the result. A corresponding result is
 // returned.
 func SignCheckDeliver(
-	t *testing.T, txCfg client.TxConfig, app *bam.BaseApp, header tmproto.Header, msgs []sdk.Msg,
+	t *testing.T, txCfg client.TxConfig, app *bam.BaseApp, _ tmproto.Header, msgs []sdk.Msg,
 	chainID string, accNums, accSeqs []uint64, simulate bool, expSimPass, expPass bool, priv ...cryptotypes.PrivKey,
 ) (sdk.GasInfo, *sdk.Result, error) {
 	t.Helper()

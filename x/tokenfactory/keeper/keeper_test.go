@@ -105,9 +105,9 @@ func (suite *KeeperTestSuite) AssertEventEmitted(ctx sdk.Context, eventTypeExpec
 }
 
 // FundAcc funds target address with specified amount.
-func (s *KeeperTestSuite) FundAcc(acc sdk.AccAddress, amounts sdk.Coins) {
-	err := FundAccount(s.App.BankKeeper, s.Ctx, acc, amounts)
-	s.Require().NoError(err)
+func (suite *KeeperTestSuite) FundAcc(acc sdk.AccAddress, amounts sdk.Coins) {
+	err := FundAccount(suite.App.BankKeeper, suite.Ctx, acc, amounts)
+	suite.Require().NoError(err)
 }
 
 // FundAccount is a utility function that funds an account by minting and

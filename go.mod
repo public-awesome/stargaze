@@ -3,8 +3,8 @@ module github.com/public-awesome/stargaze/v13
 go 1.21
 
 require (
-	github.com/CosmWasm/wasmd v0.43.0
-	github.com/CosmWasm/wasmvm v1.4.1
+	github.com/CosmWasm/wasmd v0.44.0
+	github.com/CosmWasm/wasmvm v1.5.0
 	github.com/armon/go-metrics v0.4.1
 	github.com/cometbft/cometbft v0.37.2
 	github.com/cosmos/cosmos-proto v1.0.0-beta.3
@@ -16,7 +16,7 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cast v1.5.1
-	github.com/spf13/cobra v1.7.0
+	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.8.4
 	google.golang.org/genproto v0.0.0-20230803162519-f966b187b2e5 // indirect
 	google.golang.org/grpc v1.57.0
