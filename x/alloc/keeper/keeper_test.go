@@ -26,7 +26,8 @@ type KeeperTestSuite struct {
 func (suite *KeeperTestSuite) SetupTest() {
 	suite.app = simapp.New(suite.T())
 	suite.ctx = suite.app.BaseApp.NewContext(false, tmproto.Header{Height: 1, ChainID: "stargaze-1", Time: time.Now().UTC()})
-	suite.app.AllocKeeper.SetParams(suite.ctx, types.DefaultParams())
+	err := suite.app.AllocKeeper.SetParams(suite.ctx, types.DefaultParams())
+	suite.Require().NoError(err)
 }
 
 func TestKeeperTestSuite(t *testing.T) {
@@ -56,9 +57,10 @@ func (suite *KeeperTestSuite) TestZeroAllocation() {
 
 	params.DistributionProportions.NftIncentives = sdk.ZeroDec()
 
-	suite.app.AllocKeeper.SetParams(suite.ctx, params)
+	err := suite.app.AllocKeeper.SetParams(suite.ctx, params)
+	suite.Require().NoError(err)
 
-	err := allocKeeper.DistributeInflation(suite.ctx)
+	err = allocKeeper.DistributeInflation(suite.ctx)
 	suite.Require().NoError(err)
 }
 
@@ -91,7 +93,8 @@ func (suite *KeeperTestSuite) TestDistribution() {
 			Weight:  sdk.NewDec(1),
 		},
 	}
-	suite.app.AllocKeeper.SetParams(suite.ctx, params)
+	err := suite.app.AllocKeeper.SetParams(suite.ctx, params)
+	suite.Require().NoError(err)
 
 	feePool := suite.app.DistrKeeper.GetFeePool(suite.ctx)
 	feeCollector := suite.app.AccountKeeper.GetModuleAddress(authtypes.FeeCollectorName)
@@ -118,7 +121,7 @@ func (suite *KeeperTestSuite) TestDistribution() {
 		sdk.NewDec(0),
 		feePool.CommunityPool.AmountOf(denom))
 
-	err := allocKeeper.DistributeInflation(suite.ctx)
+	err = allocKeeper.DistributeInflation(suite.ctx)
 	suite.Require().NoError(err)
 
 	feeCollector = suite.app.AccountKeeper.GetModuleAddress(authtypes.FeeCollectorName)
@@ -168,7 +171,8 @@ func (suite *KeeperTestSuite) TestFairburnPool() {
 			Weight:  sdk.NewDec(1),
 		},
 	}
-	allocKeeper.SetParams(suite.ctx, params)
+	err := allocKeeper.SetParams(suite.ctx, params)
+	suite.Require().NoError(err)
 	fundAmount := sdk.NewCoins(sdk.NewCoin(denom, sdk.NewInt(100_000_000)))
 
 	fairBurnPool := suite.app.AccountKeeper.GetModuleAddress(types.FairburnPoolName)
@@ -177,7 +181,7 @@ func (suite *KeeperTestSuite) TestFairburnPool() {
 	// should be 0
 	suite.Require().True(suite.app.BankKeeper.GetBalance(suite.ctx, fairBurnPool, denom).IsZero())
 	suite.Require().True(suite.app.BankKeeper.GetBalance(suite.ctx, feeCollector, denom).IsZero())
-	err := allocKeeper.DistributeInflation(suite.ctx)
+	err = allocKeeper.DistributeInflation(suite.ctx)
 	suite.Require().NoError(err)
 
 	// should be 0
@@ -232,7 +236,8 @@ func (suite *KeeperTestSuite) TestDistributionWithSupplement() {
 			Weight:  sdk.NewDec(1),
 		},
 	}
-	suite.app.AllocKeeper.SetParams(suite.ctx, params)
+	err := suite.app.AllocKeeper.SetParams(suite.ctx, params)
+	suite.Require().NoError(err)
 	suite.Require().False(suite.app.AllocKeeper.GetParams(suite.ctx).SupplementAmount.IsZero())
 
 	feePool := suite.app.DistrKeeper.GetFeePool(suite.ctx)
@@ -268,7 +273,7 @@ func (suite *KeeperTestSuite) TestDistributionWithSupplement() {
 		sdk.NewDec(0),
 		feePool.CommunityPool.AmountOf(denom))
 
-	err := allocKeeper.DistributeInflation(suite.ctx)
+	err = allocKeeper.DistributeInflation(suite.ctx)
 	suite.Require().NoError(err)
 
 	feeCollector = suite.app.AccountKeeper.GetModuleAddress(authtypes.FeeCollectorName)
