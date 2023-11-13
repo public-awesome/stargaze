@@ -19,7 +19,7 @@ COPY . /code/
 RUN case "${TARGETPLATFORM}" in \
       "linux/amd64") \
         WASMVM_URL="https://github.com/CosmWasm/wasmvm/releases/download/v1.3.0/libwasmvm_muslc.x86_64.a" && \
-        WASMVM_CHECKSUM="b1610f9c8ad8bdebf5b8f819f71d238466f83521c74a2deb799078932e862722" \
+        WASMVM_CHECKSUM="b4aad4480f9b4c46635b4943beedbb72c929eab1d1b9467fe3b43e6dbf617e32" \
         ;; \
       "linux/arm64") \
         WASMVM_URL="https://github.com/CosmWasm/wasmvm/releases/download/v1.3.0/libwasmvm_muslc.aarch64.a" && \
