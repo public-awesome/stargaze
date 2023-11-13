@@ -83,7 +83,7 @@ steps:
       event:
         - push
       branch:
-        - jhernandezb/v12-upgrade
+        - tasiov/v12-backport-docker-build-arm
   - name: docker_release
     image: plugins/docker
     settings:
