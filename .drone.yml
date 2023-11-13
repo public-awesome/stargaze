@@ -76,8 +76,9 @@ steps:
         from_secret: docker_username
       password:
         from_secret: docker_password
+      platforms: linux/arm64
       tags:
-        - 12.0.0-alpha.1
+        - 12.1.0-arm64
     when:
       event:
         - push
@@ -92,6 +93,7 @@ steps:
         from_secret: docker_username
       password:
         from_secret: docker_password
+      platforms: linux/arm64,linux/amd64
       auto_tag: true
     when:
       event:
