@@ -26,6 +26,7 @@ import (
 
 	ibctmmigrations "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint/migrations"
 
+	feeabstypes "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 	alloctypes "github.com/public-awesome/stargaze/v13/x/alloc/types"
 	globalfeetypes "github.com/public-awesome/stargaze/v13/x/globalfee/types"
 	minttypes "github.com/public-awesome/stargaze/v13/x/mint/types"
@@ -137,6 +138,7 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 				consensustypes.ModuleName,
 				crisistypes.ModuleName,
 				group.ModuleName,
+				feeabstypes.ModuleName,
 			},
 			Deleted: []string{
 				claimModuleName,

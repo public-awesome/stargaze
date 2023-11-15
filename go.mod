@@ -14,6 +14,7 @@ require (
 	github.com/golang/protobuf v1.5.3
 	github.com/gorilla/mux v1.8.1
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
+	github.com/osmosis-labs/fee-abstraction/v7 v7.0.0-20231023060033-12fb759d4acd
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cast v1.5.1
 	github.com/spf13/cobra v1.8.0

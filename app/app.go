@@ -142,6 +142,11 @@ import (
 	icatypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/types"
 	stargazerest "github.com/public-awesome/stargaze/v13/internal/rest"
 
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs"
+	feeabsmodule "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs"
+	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
+	feeabstypes "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
+
 	sgappparams "github.com/public-awesome/stargaze/v13/app/params"
 	sgstatesync "github.com/public-awesome/stargaze/v13/internal/statesync"
 )
@@ -172,6 +177,8 @@ func getGovProposalHandlers() []govclient.ProposalHandler {
 		upgradeclient.LegacyProposalHandler,
 		upgradeclient.LegacyCancelProposalHandler,
 		ibcclientclient.UpdateClientProposalHandler, ibcclientclient.UpgradeProposalHandler,
+		feeabsmodule.UpdateAddHostZoneClientProposalHandler, feeabsmodule.UpdateDeleteHostZoneClientProposalHandler,
+		feeabsmodule.UpdateSetHostZoneClientProposalHandler,
 		// this line is used by starport scaffolding # stargate/app/govProposalHandler
 	)
 	return govProposalHandlers
@@ -214,6 +221,7 @@ var (
 		ica.AppModuleBasic{},
 		ibchooks.AppModuleBasic{},
 		packetforward.AppModuleBasic{},
+		feeabsmodule.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -233,6 +241,7 @@ var (
 		cronmoduletypes.ModuleName:          nil,
 		globalfeemoduletypes.ModuleName:     nil,
 		tokenfactorytypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
+		feeabstypes.ModuleName:              nil,
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 )
@@ -296,6 +305,7 @@ type App struct {
 	ScopedICAHostKeeper  capabilitykeeper.ScopedKeeper
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
 	ScopedWasmKeeper     capabilitykeeper.ScopedKeeper
+	ScopedFeeabsKeeper   capabilitykeeper.ScopedKeeper
 
 	// stargaze modules
 	AllocKeeper        allocmodulekeeper.Keeper
@@ -310,6 +320,9 @@ type App struct {
 
 	// IBC Packet Forward Middleware
 	PacketForwardKeeper *packetforwardkeeper.Keeper
+
+	// Feeabs
+	FeeabsKeeper feeabskeeper.Keeper
 
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
@@ -356,6 +369,7 @@ func NewStargazeApp(
 		packetforwardtypes.StoreKey,
 		crisistypes.StoreKey,
 		group.StoreKey,
+		feeabstypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -390,6 +404,7 @@ func NewStargazeApp(
 	scopedTransferKeeper := app.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
 	scopedWasmKeeper := app.CapabilityKeeper.ScopeToModule(wasmtypes.ModuleName)
 	scopedICAHostKeeper := app.CapabilityKeeper.ScopeToModule(icahosttypes.SubModuleName)
+	scopedFeeabsKeeper := app.CapabilityKeeper.ScopeToModule(feeabstypes.ModuleName)
 	app.CapabilityKeeper.Seal()
 	// this line is used by starport scaffolding # stargate/app/scopedKeeper
 
@@ -568,12 +583,31 @@ func NewStargazeApp(
 
 	icaHostIBCModule := icahost.NewIBCModule(app.ICAHostKeeper)
 
+	// Feeabs
+	app.FeeabsKeeper = feeabskeeper.NewKeeper(
+		appCodec,
+		keys[feeabstypes.StoreKey],
+		app.GetSubspace(feeabstypes.ModuleName),
+		app.StakingKeeper,
+		app.AccountKeeper,
+		app.BankKeeper,
+		app.TransferKeeper,
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
+		scopedFeeabsKeeper,
+	)
+
+	feeabsModule := feeabs.NewAppModule(appCodec, app.FeeabsKeeper)
+	feeabsIBCModule := feeabs.NewIBCModule(appCodec, app.FeeabsKeeper)
+	govRouter.AddRoute(feeabstypes.RouterKey, feeabs.NewHostZoneProposal(app.FeeabsKeeper))
+
 	// Create static IBC router, add transfer route, then set and seal it
 
 	ibcRouter := ibcporttypes.NewRouter()
 	ibcRouter.
 		AddRoute(icahosttypes.SubModuleName, icaHostIBCModule).
-		AddRoute(ibctransfertypes.ModuleName, transferStack)
+		AddRoute(ibctransfertypes.ModuleName, transferStack).
+		AddRoute(feeabstypes.ModuleName, feeabsIBCModule)
 
 	// this line is used by starport scaffolding # ibc/app/router
 
@@ -719,6 +753,7 @@ func NewStargazeApp(
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.MsgServiceRouter(), app.GetSubspace(wasmtypes.ModuleName)),
 		cronModule,
 		globalfeeModule,
+		feeabsModule,
 		ibchooks.NewAppModule(app.AccountKeeper),
 		tokenfactory.NewAppModule(app.TokenFactoryKeeper, app.AccountKeeper, app.BankKeeper),
 		packetforward.NewAppModule(app.PacketForwardKeeper),
@@ -749,6 +784,7 @@ func NewStargazeApp(
 		ibchookstypes.ModuleName,
 		tokenfactorytypes.ModuleName,
 		packetforwardtypes.ModuleName,
+		feeabstypes.ModuleName,
 	)
 
 	app.mm.SetOrderEndBlockers(
@@ -768,6 +804,7 @@ func NewStargazeApp(
 		ibchookstypes.ModuleName,
 		tokenfactorytypes.ModuleName,
 		packetforwardtypes.ModuleName,
+		feeabstypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -803,6 +840,7 @@ func NewStargazeApp(
 		globalfeemoduletypes.ModuleName, // should be after wasm
 		ibchookstypes.ModuleName,
 		packetforwardtypes.ModuleName,
+		feeabstypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -830,6 +868,7 @@ func NewStargazeApp(
 			keeper:            app.IBCKeeper,
 			govKeeper:         app.GovKeeper,
 			globalfeeKeeper:   app.GlobalFeeKeeper,
+			FeeAbskeeper:      app.FeeabsKeeper,
 			stakingKeeper:     app.StakingKeeper,
 			WasmConfig:        &wasmConfig,
 			TXCounterStoreKey: keys[wasmtypes.StoreKey],
@@ -886,6 +925,7 @@ func NewStargazeApp(
 	app.ScopedIBCKeeper = scopedIBCKeeper
 	app.ScopedTransferKeeper = scopedTransferKeeper
 	app.ScopedIBCKeeper = scopedWasmKeeper
+	app.ScopedFeeabsKeeper = scopedFeeabsKeeper
 	// this line is used by starport scaffolding # stargate/app/beforeInitReturn
 	return app
 }
@@ -936,6 +976,7 @@ func (app *App) BlockedAddrs() map[string]bool {
 	}
 	// allow supplement pool amount to receive tokens
 	delete(modAccAddrs, authtypes.NewModuleAddress(allocmoduletypes.SupplementPoolName).String())
+	delete(modAccAddrs, authtypes.NewModuleAddress(feeabstypes.ModuleName).String())
 	return modAccAddrs
 }
 
@@ -1056,6 +1097,7 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(cronmoduletypes.ModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(globalfeemoduletypes.ModuleName)
+	paramsKeeper.Subspace(feeabstypes.ModuleName)
 	paramsKeeper.Subspace(packetforwardtypes.ModuleName).WithKeyTable(packetforwardtypes.ParamKeyTable())
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
