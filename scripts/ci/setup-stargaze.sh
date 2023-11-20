@@ -15,7 +15,7 @@ sed -i 's/pruning = "syncable"/pruning = "nothing"/g' ~/.starsd/config/app.toml
 sed -i 's/enable = false/enable = true/g' ~/.starsd/config/app.toml
 sed -i -e 's/timeout_commit = "5s"/timeout_commit = "100ms"/g' ~/.starsd/config/config.toml
 sed -i -e 's/timeout_propose = "3s"/timeout_propose = "100ms"/g' ~/.starsd/config/config.toml
-sed -i -e 's/\"allow_messages\":.*/\"allow_messages\": [\"\/cosmos.bank.v1beta1.MsgSend\", \"\/cosmos.staking.v1beta1.MsgDelegate\"]/g' ~/.starsd/config/genesis.json
+# sed -i -e 's/\"allow_messages\":.*/\"allow_messages\": [\"\/cosmos.bank.v1beta1.MsgSend\", \"\/cosmos.staking.v1beta1.MsgDelegate\"]/g' ~/.starsd/config/genesis.json
 starsd keys --keyring-backend test add validator
 
 starsd genesis add-genesis-account $(starsd keys --keyring-backend test show validator -a) 1000000000000$DENOM

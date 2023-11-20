@@ -18,7 +18,7 @@ icad add-genesis-account $(icad keys --keyring-backend test show validator -a) 1
 icad add-genesis-account $RLYKEY 1000000000000$DENOM
 icad add-genesis-account cosmos1y8tcah6r989vna00ag65xcqn6mpasjjdd2e5u2 1000000000000$DENOM
 # Update host chain genesis to allow x/bank/MsgSend ICA tx execution
-sed -i -e 's/\"allow_messages\":.*/\"allow_messages\": [\"\/cosmos.bank.v1beta1.MsgSend\", \"\/cosmos.staking.v1beta1.MsgDelegate\"]/g' ~/.ica/config/genesis.json
+# sed -i -e 's/\"allow_messages\":.*/\"allow_messages\": [\"\/cosmos.bank.v1beta1.MsgSend\", \"\/cosmos.staking.v1beta1.MsgDelegate\"]/g' ~/.ica/config/genesis.json
 icad gentx validator 900000000$DENOM --keyring-backend test --chain-id $CHAINID
 icad collect-gentxs
 
