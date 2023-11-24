@@ -104,7 +104,7 @@ jobs:
 
   cleanup:
     name: Delete artifacts 🗑️
-    needs: [run_gaia_interchaintest,run_osmosis_interchaintest,run_pfm_interchaintest,run_chain_upgrade_interchaintest]
+    needs: [run_gaia_interchaintest,run_osmosis_interchaintest,run_ica_interchaintest,run_pfm_interchaintest,run_chain_upgrade_interchaintest]
     runs-on: ubuntu-latest
 
     steps:
