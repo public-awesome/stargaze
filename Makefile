@@ -135,6 +135,9 @@ test-pfm:
 test-chain-upgrade:
 	cd e2e && go test -v -race -run TestChainUpgrade .
 
+test-ica:
+	cd e2e && go test -v -race -run TestInterchainAccounts .
+
 .PHONY: test test-e2e build-linux docker-test lint build install format
 
 format:
