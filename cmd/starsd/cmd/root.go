@@ -65,6 +65,9 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 		WithHomeDir(app.DefaultNodeHome).
 		WithViper(EnvironmentPrefix)
 
+	// Enables extra params in client.toml like gas, gas-price, gas-adjustment, fees, note, etc.
+	SetCustomEnvVariablesFromClientToml(initClientCtx)
+
 	rootCmd := &cobra.Command{
 		Use:   version.AppName,
 		Short: "Stargaze App",
@@ -100,12 +103,53 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 	return rootCmd, encodingConfig
 }
 
+// Reads the custom extra values in the config.toml file if set.
+// If they are, then use them.
+func SetCustomEnvVariablesFromClientToml(ctx client.Context) {
+	configFilePath := filepath.Join(ctx.HomeDir, "config", "client.toml")
+
+	if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
+		return
+	}
+
+	viper := ctx.Viper
+	viper.SetConfigFile(configFilePath)
+
+	if err := viper.ReadInConfig(); err != nil {
+		panic(err)
+	}
+
+	setEnvFromConfig := func(key string, envVar string) {
+		// if the user sets the env key manually, then we don't want to override it
+		if os.Getenv(envVar) != "" {
+			return
+		}
+
+		// reads from the config file
+		val := viper.GetString(key)
+		if val != "" {
+			// Sets the env for this instance of the app only.
+			os.Setenv(envVar, val)
+		}
+	}
+
+	// gas
+	setEnvFromConfig("gas", "STARSD_GAS")
+	setEnvFromConfig("gas-prices", "STARSD_GAS_PRICES")
+	setEnvFromConfig("gas-adjustment", "STARSD_GAS_ADJUSTMENT")
+	// fees
+	setEnvFromConfig("fees", "STARSD_FEES")
+	setEnvFromConfig("fee-account", "STARSD_FEE_ACCOUNT")
+	// memo
+	setEnvFromConfig("note", "STARSD_NOTE")
+}
+
 func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 	rootCmd.AddCommand(
 		genutilcli.InitCmd(app.ModuleBasics, app.DefaultNodeHome),
 		tmcli.NewCompletionCmd(rootCmd, true),
 		debug.Cmd(),
-		config.Cmd(),
+		ConfigCmd(),
 		Bech32Cmd(),
 		pruning.PruningCmd(newApp),
 	)

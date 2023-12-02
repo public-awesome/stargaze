@@ -19,3 +19,5 @@ vue/dist
 release/
 mytestnet/
 github.com/
+
+.vscode/
