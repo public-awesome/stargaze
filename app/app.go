@@ -993,8 +993,8 @@ func (app *App) RegisterAPIRoutes(apiSvr *api.Server, apiCfg config.APIConfig) {
 
 	// register app's OpenAPI routes.
 	if apiCfg.Swagger {
-		apiSvr.Router.Handle("/static/openapi.yml", http.FileServer(http.FS(docs.Docs)))
-		apiSvr.Router.HandleFunc("/", openapiconsole.Handler(Name, "/static/openapi.yml"))
+		apiSvr.Router.Handle("/static/swagger.json", http.FileServer(http.FS(docs.Docs)))
+		apiSvr.Router.HandleFunc("/", openapiconsole.Handler(Name, "/static/swagger.json"))
 	}
 
 	apiSvr.Router.Handle("/stargaze/wasm/smart", stargazerest.BatchedQuerierHandler(clientCtx))
