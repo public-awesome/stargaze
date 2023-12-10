@@ -179,4 +179,6 @@ proto-format:
 	find ./ -name *.proto -exec clang-format -i {} \;
 
 proto-swagger-gen:
-	@./scripts/protoc-swagger-gen.sh
+	$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace $(PROTO_BUILDER_IMAGE) sh ./scripts/protoc-swagger-gen.sh
+	docker run --rm -v "${PWD}":/workdir mikefarah/yq -p yaml -o json ./docs/static/swagger.yaml > ./docs/static/swagger.json
+	rm docs/static/swagger.yaml
