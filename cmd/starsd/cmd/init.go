@@ -93,8 +93,7 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 			// pre-fill seeds for mainnet
 			if chainID == "stargaze-1" {
 				seeds = []string{
-					"70ed826888f102c7c1ceb4d07287956628a53508@174.138.124.7:36656",
-					"722079345d941cd2da3daedea548c909d9b83ec5@104.248.101.113:36656",
+					"ade4d8bc8cbe014af6ebdf3cb7b1e9ad36f412c0@seeds.polkachu.com:13756",
 					"d5fc4f479c4e212c96dff5704bb2468ea03b8ae3@sg-seed.blockpane.com:26656",
 					"babc3f3f7804933265ec9c40ad94f4da8e9e0017@stargaze.seed.rhinostake.com:16656",
 				}
@@ -106,7 +105,6 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 			config.P2P.MaxNumOutboundPeers = 60
 			config.Mempool.Size = 10000
 			config.StateSync.TrustPeriod = 112 * time.Hour
-			// config.FastSync.Version = "v0" // COMEBACK HERE
 
 			// Get bip39 mnemonic
 			var mnemonic string
