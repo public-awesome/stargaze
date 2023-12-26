@@ -135,6 +135,9 @@ test-pfm:
 test-chain-upgrade:
 	cd e2e && go test -v -race -run TestChainUpgrade .
 
+test-ica:
+	cd e2e && go test -v -race -run TestInterchainAccounts .
+
 .PHONY: test test-e2e build-linux docker-test lint build install format
 
 format:
@@ -176,4 +179,6 @@ proto-format:
 	find ./ -name *.proto -exec clang-format -i {} \;
 
 proto-swagger-gen:
-	@./scripts/protoc-swagger-gen.sh
+	$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace $(PROTO_BUILDER_IMAGE) sh ./scripts/protoc-swagger-gen.sh
+	docker run --rm -v "${PWD}":/workdir mikefarah/yq -p yaml -o json ./docs/static/swagger.yaml > ./docs/static/swagger.json
+	rm docs/static/swagger.yaml
