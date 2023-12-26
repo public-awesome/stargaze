@@ -215,7 +215,7 @@ steps:
         - http://osmosis:26657
         - http://icad:26657
   - name: relayer
-    image: publicawesome/hermes:0.15.0
+    image: publicawesome/hermes:1.7.1
     commands:
       - /bin/bash ./scripts/ci/setup-hermes-1.7.sh
 
@@ -417,6 +417,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 57050bf4dc67ab6aa3e4219ba51747b94e95c493544580ce81b4be9b69781ea5
+hmac: 60607155c8c99d235926194480d278b466d86d6fc76132192e51da69f1125019
 
 ...
