@@ -61,7 +61,7 @@ max_block_time = "30s"
 ccv_consumer_chain = false
 memo_prefix = ""
 sequential_batch_tx = false
-compat_mode = '0.37'
+compat_mode = "0.37"
 
 [chains.event_source]
 mode = "push"
@@ -108,6 +108,7 @@ max_block_time = "30s"
 ccv_consumer_chain = false
 memo_prefix = ""
 sequential_batch_tx = false
+compat_mode = "0.34"
 
 [chains.event_source]
 mode = "push"
@@ -153,6 +154,7 @@ max_block_time = "30s"
 ccv_consumer_chain = false
 memo_prefix = ""
 sequential_batch_tx = false
+compat_mode = "0.34"
 
 [chains.event_source]
 mode = "push"
@@ -198,7 +200,7 @@ max_block_time = "30s"
 ccv_consumer_chain = false
 memo_prefix = ""
 sequential_batch_tx = false
-
+compat_mode = "0.34"
 [chains.event_source]
 mode = "push"
 url = "ws://icad:26657/websocket"
