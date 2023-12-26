@@ -8,6 +8,6 @@ hermes keys add --chain icad --key-name relayer --key-file $PWD/scripts/ci/herme
 hermes create connection --a-chain stargaze --b-chain gaia
 hermes create connection --a-chain stargaze --b-chain osmosis
 hermes create connection --a-chain stargaze --b-chain icad
-hermes create channel --port-a transfer --port-b transfer --a-chain stargaze connection-0
-hermes create channel --port-a transfer --port-b transfer --a-chain stargaze connection-1
+hermes create channel --a-port transfer --b-port transfer --a-chain stargaze --a-connection connection-0
+hermes create channel --a-port transfer --b-port transfer --a-chain stargaze --a-connection connection-1
 
