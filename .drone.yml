@@ -217,7 +217,7 @@ steps:
   - name: relayer
     image: publicawesome/hermes:0.15.0
     commands:
-      - /bin/bash ./scripts/ci/setup-relayer.sh
+      - /bin/bash ./scripts/ci/setup-hermes-1.7.sh
 
   - name: relayer-start
     image: publicawesome/hermes:0.15.0
@@ -417,6 +417,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 3bea2aa83c54b2740e9bd7c5849322e3e09fdf40fcb68b6bb6325058d239ae82
+hmac: 57050bf4dc67ab6aa3e4219ba51747b94e95c493544580ce81b4be9b69781ea5
 
 ...

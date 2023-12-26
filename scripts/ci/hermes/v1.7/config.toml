@@ -1,0 +1,225 @@
+[global]
+log_level = "info"
+
+[mode.clients]
+enabled = true
+refresh = true
+misbehaviour = true
+
+[mode.connections]
+enabled = false
+
+[mode.channels]
+enabled = false
+
+[mode.packets]
+enabled = true
+clear_interval = 100
+clear_on_start = true
+tx_confirmation = false
+auto_register_counterparty_payee = false
+
+[rest]
+enabled = false
+host = "127.0.0.1"
+port = 3000
+
+[telemetry]
+enabled = false
+host = "127.0.0.1"
+port = 3001
+
+[telemetry.buckets.latency_submitted]
+start = 500
+end = 20000
+buckets = 10
+
+[telemetry.buckets.latency_confirmed]
+start = 1000
+end = 30000
+buckets = 10
+
+[[chains]]
+id = "stargaze"
+type = "CosmosSdk"
+rpc_addr = "http://stargaze:26657"
+grpc_addr = "http://stargaze:9090"
+rpc_timeout = "10s"
+trusted_node = false
+account_prefix = "stars"
+key_name = "stargaze"
+key_store_type = "Test"
+store_prefix = "ibc"
+default_gas = 100000
+max_gas = 400000
+gas_multiplier = 1.1
+max_msg_num = 30
+max_tx_size = 180000
+max_grpc_decoding_size = 33554432
+clock_drift = "5s"
+max_block_time = "30s"
+ccv_consumer_chain = false
+memo_prefix = ""
+sequential_batch_tx = false
+
+[chains.event_source]
+mode = "push"
+url = "ws://stargaze:26657/websocket"
+batch_delay = "500ms"
+
+[chains.trust_threshold]
+numerator = "1"
+denominator = "3"
+
+[chains.gas_price]
+price = 1.1
+denom = "ustars"
+
+[chains.packet_filter]
+policy = "allowall"
+
+[chains.packet_filter.min_fees]
+
+[chains.address_type]
+derivation = "cosmos"
+
+
+# Gaia
+[[chains]]
+id = "gaia"
+type = "CosmosSdk"
+rpc_addr = "http://gaia:26657"
+grpc_addr = "http://gaia:9090"
+rpc_timeout = "10s"
+trusted_node = false
+account_prefix = "cosmos"
+key_name = "gaia"
+key_store_type = "Test"
+store_prefix = "ibc"
+default_gas = 100000
+max_gas = 400000
+gas_multiplier = 1.1
+max_msg_num = 30
+max_tx_size = 180000
+max_grpc_decoding_size = 33554432
+clock_drift = "5s"
+max_block_time = "30s"
+ccv_consumer_chain = false
+memo_prefix = ""
+sequential_batch_tx = false
+
+[chains.event_source]
+mode = "push"
+url = "ws://gaia:26657/websocket"
+batch_delay = "500ms"
+
+[chains.trust_threshold]
+numerator = "1"
+denominator = "3"
+
+[chains.gas_price]
+price = 1.1
+denom = "stake"
+
+[chains.packet_filter]
+policy = "allowall"
+
+[chains.packet_filter.min_fees]
+
+[chains.address_type]
+derivation = "cosmos"
+
+# Osmosis
+[[chains]]
+id = "osmosis"
+type = "CosmosSdk"
+rpc_addr = "http://osmosis:26657"
+grpc_addr = "http://osmosis:9090"
+rpc_timeout = "10s"
+trusted_node = false
+account_prefix = "osmo"
+key_name = "osmosis"
+key_store_type = "Test"
+store_prefix = "ibc"
+default_gas = 100000
+max_gas = 400000
+gas_multiplier = 1.1
+max_msg_num = 30
+max_tx_size = 180000
+max_grpc_decoding_size = 33554432
+clock_drift = "5s"
+max_block_time = "30s"
+ccv_consumer_chain = false
+memo_prefix = ""
+sequential_batch_tx = false
+
+[chains.event_source]
+mode = "push"
+url = "ws://osmosis:26657/websocket"
+batch_delay = "500ms"
+
+[chains.trust_threshold]
+numerator = "1"
+denominator = "3"
+
+[chains.gas_price]
+price = 1.1
+denom = "uosmo"
+
+[chains.packet_filter]
+policy = "allowall"
+
+[chains.packet_filter.min_fees]
+
+[chains.address_type]
+derivation = "cosmos"
+
+# ICAD
+[[chains]]
+id = "icad"
+type = "CosmosSdk"
+rpc_addr = "http://icad:26657"
+grpc_addr = "http://icad:9090"
+rpc_timeout = "10s"
+trusted_node = false
+account_prefix = "cosmos"
+key_name = "icad"
+key_store_type = "Test"
+store_prefix = "ibc"
+default_gas = 100000
+max_gas = 400000
+gas_multiplier = 1.1
+max_msg_num = 30
+max_tx_size = 180000
+max_grpc_decoding_size = 33554432
+clock_drift = "5s"
+max_block_time = "30s"
+ccv_consumer_chain = false
+memo_prefix = ""
+sequential_batch_tx = false
+
+[chains.event_source]
+mode = "push"
+url = "ws://icad:26657/websocket"
+batch_delay = "500ms"
+
+[chains.trust_threshold]
+numerator = "1"
+denominator = "3"
+
+[chains.gas_price]
+price = 1.1
+denom = "stake"
+
+[chains.packet_filter]
+policy = "allowall"
+
+[chains.packet_filter.min_fees]
+
+[chains.address_type]
+derivation = "cosmos"
+
+
+[tracing_server]
+enabled = false
+port = 5555
