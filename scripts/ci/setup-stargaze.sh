@@ -8,7 +8,7 @@ STARGAZE_HOME=/stargaze/starsd
 
 
 # Setup stargaze
-starsd init --chain-id $CHAINID $CHAINID
+starsd init --chain-id $CHAINID $CHAINID --home $STARGAZE_HOME
 sed -i 's#tcp://127.0.0.1:26657#tcp://0.0.0.0:26657#g' $STARGAZE_HOME/config/config.toml
 sed -i "s/\"stake\"/\"$DENOM\"/g" $STARGAZE_HOME/config/genesis.json
 sed -i 's/pruning = "syncable"/pruning = "nothing"/g' $STARGAZE_HOME/config/app.toml
