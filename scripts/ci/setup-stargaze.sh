@@ -26,4 +26,4 @@ starsd genesis add-genesis-account stars103y4f6h80lc45nr8chuzr3fyzqywm9n0gnr394 
 starsd genesis gentx validator 900000000$DENOM --keyring-backend test --chain-id $CHAINID
 starsd genesis collect-gentxs
 
-starsd start --pruning nothing
+starsd start --pruning nothing --grpc.address 0.0.0.0:9090 --rpc.laddr tcp://0.0.0.0:26657
