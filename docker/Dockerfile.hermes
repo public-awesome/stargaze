@@ -3,23 +3,26 @@
 # Used for running hermes in docker containers
 #
 # Usage:
-#   docker build . --build-arg TAG=v1.0.0 -t publicawesome/hermes:1.0.0 -f docker/Dockerfile.hermes
+#   docker build . --build-arg TAG=v1.7.1 -t publicawesome/hermes:1.7.1 -f docker/Dockerfile.hermes
 
-FROM rust:1.62-buster AS build-env
+FROM rust:1-buster AS build-env
 
 ARG TAG
 WORKDIR /root
 
-RUN git clone https://github.com/informalsystems/ibc-rs
-RUN cd ibc-rs && git checkout $TAG && cargo build --release
-
-
-FROM debian:buster-slim
+RUN git clone https://github.com/informalsystems/hermes
+RUN cd hermes && git checkout $TAG && cargo build --release
+FROM ubuntu:latest
 LABEL maintainer="hello@informal.systems"
-RUN apt update && apt install curl jq -y
+ARG UID=1000
+ARG GID=1000
+
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates
+RUN update-ca-certificates
+RUN groupadd -g ${GID} hermes && useradd -l -m hermes -s /bin/bash -u ${UID} -g ${GID}
+
 WORKDIR /home/hermes
+USER hermes:hermes
 ENTRYPOINT ["/usr/bin/hermes"]
 
-COPY --chown=0:0 --from=build-env /usr/lib/x86_64-linux-gnu/libssl.so.1.1 /usr/lib/x86_64-linux-gnu/libssl.so.1.1
-COPY --chown=0:0 --from=build-env /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1
-COPY --chown=0:0 --from=build-env /root/ibc-rs/target/release/hermes /usr/bin/hermes
+COPY --chown=hermes:hermes --from=build-env /root/hermes/target/release/hermes /usr/bin/hermes
