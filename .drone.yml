@@ -77,13 +77,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 13.0.0-alpha.3
+        - 13.0.0-alpha.4
     when:
       event:
         - push
       branch:
-        - spoorrthi/remove-claim
-        - jhernandez/fix-ci
+        - spoorthi/upgrade-sdk-to-latest
   - name: docker_release
     image: plugins/docker
     settings:
@@ -351,7 +350,7 @@ steps:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:13.0.0-alpha.3
+    image: publicawesome/stargaze:13.0.0-alpha.4
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -370,7 +369,7 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:13.0.0-alpha.3
+    image: publicawesome/stargaze:13.0.0-alpha.4
     commands:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
@@ -418,6 +417,6 @@ volumes:
 
 ---
 kind: signature
-hmac: a04c3f64897b2f98463520baec39b7d8112b730ef5bf1b513ef9f46cd6d5af8a
+hmac: a94ec15a4b7dc43521bc42bf102b7c511a650b2cc6a179e564bc5df4f61b4f66
 
 ...
