@@ -25,7 +25,8 @@ echo "$MNEMONIC" | starsd keys add ica-test --recover --keyring-backend test
 STARGAZE_WALLET_ADDRESS=$(starsd keys show ica-test -a --keyring-backend test)
 echo $STARGAZE_WALLET_ADDRESS
 starsd q bank balances $ICA_ADDR 
-starsd tx bank send ica-test $ICA_ADDR 100000000ustars --chain-id stargaze -y -b block --from ica-test
+starsd tx bank send ica-test $ICA_ADDR 100000000ustars --chain-id stargaze -y --from ica-test
+sleep 10
 starsd q bank balances $ICA_ADDR 
 
 VALIDATOR=$(starsd q  staking validators --limit 1 -o json | jq '.validators[0].operator_address' -r)
