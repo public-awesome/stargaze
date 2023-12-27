@@ -42,8 +42,8 @@ buckets = 10
 [[chains]]
 id = "stargaze"
 type = "CosmosSdk"
-rpc_addr = "http://stargaze:26657"
-grpc_addr = "http://stargaze:9090"
+rpc_addr = "http://stargaze-upgraded:26657"
+grpc_addr = "http://stargaze-upgraded:9090"
 rpc_timeout = "10s"
 trusted_node = false
 account_prefix = "stars"
@@ -65,7 +65,7 @@ sequential_batch_tx = false
 
 [chains.event_source]
 mode = "push"
-url = "ws://stargaze:26657/websocket"
+url = "ws://stargaze-upgraded:26657/websocket"
 batch_delay = "100ms"
 
 [chains.trust_threshold]
