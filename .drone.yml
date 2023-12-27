@@ -381,14 +381,14 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: relayer-upgrade-start
-    image: publicawesome/hermes:0.15.0
+    image: publicawesome/hermes:1.7.3
     commands:
-      - /bin/bash ./scripts/ci/upgrade/start-relayer.sh
+      - /bin/bash ./scripts/ci/upgrade/start-relayer-v1.7.sh
     detach: true
   - name: relayer-upgrade-sender
-    image: publicawesome/hermes:0.15.0
+    image: publicawesome/hermes:1.7.3
     commands:
-      - /bin/bash ./scripts/ci/upgrade/transfer-relayer.sh
+      - /bin/bash ./scripts/ci/upgrade/transfer-relayer-v1.7.sh
   - name: ica-upgrade-test
     image: publicawesome/icad:0.1.6-stargaze.1
     pull: always
@@ -417,6 +417,6 @@ volumes:
 
 ---
 kind: signature
-hmac: f5843ab4c7742c1c771cef0e6f599a5c11a3fc84a4b5914751ab57d061921d5e
+hmac: 6d83eca35ef0532cde4a0deebff933833d4a921dc8f37a8e6d6ae85405a9824b
 
 ...
