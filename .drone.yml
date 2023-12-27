@@ -220,14 +220,14 @@ steps:
       - /bin/bash ./scripts/ci/setup-hermes-1.7.sh
 
   - name: relayer-start
-    image: publicawesome/hermes:0.15.0
+    image: publicawesome/hermes:1.7.1
     commands:
-      - /bin/bash ./scripts/ci/start-relayer.sh
+      - /bin/bash ./scripts/ci/start-relayer-v1.7.sh
     detach: true
   - name: relayer-sender
-    image: publicawesome/hermes:0.15.0
+    image: publicawesome/hermes:1.7.1
     commands:
-      - /bin/bash ./scripts/ci/transfer-relayer.sh
+      - /bin/bash ./scripts/ci/transfer-relayer-v1.7.sh
   - name: ica-test
     image: publicawesome/icad:0.1.6-stargaze.1
     pull: always
@@ -417,6 +417,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 60607155c8c99d235926194480d278b466d86d6fc76132192e51da69f1125019
+hmac: 6bfd2dcd6064b568668ce9d4f8307d614e51b5fb0adfe66e4effc086238ddc74
 
 ...
