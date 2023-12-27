@@ -48,8 +48,8 @@ steps:
         path: /go
     commands:
       - apk add --no-cache ca-certificates build-base git
-      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.4.0/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.a
-      - echo "8ea2e3b5fae83e671da2bb51115adc88591045953f509955ec38dc02ea5a7b94  /lib/libwasmvm_muslc.a" | sha256sum -c
+      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.5.0/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.a
+      - echo "465e3a088e96fd009a11bfd234c69fb8a0556967677e54511c084f815cf9ce63  /lib/libwasmvm_muslc.a" | sha256sum -c
       - LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true  make build
       - echo "Ensuring binary is statically linked ..." && (file $PWD/bin/starsd | grep "statically linked")
     environment:
@@ -77,12 +77,13 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 12.0.0-alpha.1
+        - 13.0.0-alpha.3
     when:
       event:
         - push
       branch:
         - spoorrthi/remove-claim
+        - jhernandez/fix-ci
   - name: docker_release
     image: plugins/docker
     settings:
@@ -214,19 +215,19 @@ steps:
         - http://osmosis:26657
         - http://icad:26657
   - name: relayer
-    image: publicawesome/hermes:0.15.0
+    image: publicawesome/hermes:1.7.3
     commands:
-      - /bin/bash ./scripts/ci/setup-relayer.sh
+      - /bin/bash ./scripts/ci/setup-hermes-1.7.sh
 
   - name: relayer-start
-    image: publicawesome/hermes:0.15.0
+    image: publicawesome/hermes:1.7.3
     commands:
-      - /bin/bash ./scripts/ci/start-relayer.sh
+      - /bin/bash ./scripts/ci/start-relayer-v1.7.sh
     detach: true
   - name: relayer-sender
-    image: publicawesome/hermes:0.15.0
+    image: publicawesome/hermes:1.7.3
     commands:
-      - /bin/bash ./scripts/ci/transfer-relayer.sh
+      - /bin/bash ./scripts/ci/transfer-relayer-v1.7.sh
   - name: ica-test
     image: publicawesome/icad:0.1.6-stargaze.1
     pull: always
@@ -345,12 +346,12 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: proposal
-    image: publicawesome/stargaze:11.0.0
+    image: publicawesome/stargaze:12.1.0
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:12.0.0-alpha.1
+    image: publicawesome/stargaze:13.0.0-alpha.3
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -369,7 +370,7 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:12.0.0-alpha.1
+    image: publicawesome/stargaze:13.0.0-alpha.3
     commands:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
@@ -377,17 +378,18 @@ steps:
       - starsd q bank balances stars1mnyrspq208uv5m2krdctan2dkyht0szje9s43h --node http://stargaze-upgraded:26657
       - starsd q bank balances stars103y4f6h80lc45nr8chuzr3fyzqywm9n0gnr394 --node http://stargaze-upgraded:26657
       - starsd q distribution community-pool --node http://stargaze-upgraded:26657
+      - starsd q interchain-accounts host params --node http://stargaze-upgraded:26657
     environment:
       GOPROXY: http://goproxy
   - name: relayer-upgrade-start
-    image: publicawesome/hermes:0.15.0
+    image: publicawesome/hermes:1.7.3
     commands:
-      - /bin/bash ./scripts/ci/upgrade/start-relayer.sh
+      - /bin/bash ./scripts/ci/upgrade/start-relayer-v1.7.sh
     detach: true
   - name: relayer-upgrade-sender
-    image: publicawesome/hermes:0.15.0
+    image: publicawesome/hermes:1.7.3
     commands:
-      - /bin/bash ./scripts/ci/upgrade/transfer-relayer.sh
+      - /bin/bash ./scripts/ci/upgrade/transfer-relayer-v1.7.sh
   - name: ica-upgrade-test
     image: publicawesome/icad:0.1.6-stargaze.1
     pull: always
@@ -416,6 +418,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 46fe23976c6c247f19a426e0a9a60ae6083327b2c2dc4727e800749de1ddb227
+hmac: a04c3f64897b2f98463520baec39b7d8112b730ef5bf1b513ef9f46cd6d5af8a
 
 ...
