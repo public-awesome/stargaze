@@ -378,6 +378,7 @@ steps:
       - starsd q bank balances stars1mnyrspq208uv5m2krdctan2dkyht0szje9s43h --node http://stargaze-upgraded:26657
       - starsd q bank balances stars103y4f6h80lc45nr8chuzr3fyzqywm9n0gnr394 --node http://stargaze-upgraded:26657
       - starsd q distribution community-pool --node http://stargaze-upgraded:26657
+      - starsd q interchain-accounts host params --node http://stargaze-upgraded:26657
     environment:
       GOPROXY: http://goproxy
   - name: relayer-upgrade-start
@@ -417,6 +418,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 6d83eca35ef0532cde4a0deebff933833d4a921dc8f37a8e6d6ae85405a9824b
+hmac: a04c3f64897b2f98463520baec39b7d8112b730ef5bf1b513ef9f46cd6d5af8a
 
 ...
