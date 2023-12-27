@@ -3,7 +3,7 @@
 # Used for running hermes in docker containers
 #
 # Usage:
-#   docker build . --build-arg TAG=v1.7.1 -t publicawesome/hermes:1.7.1 -f docker/Dockerfile.hermes
+#   docker build . --build-arg TAG=v1.7.3 -t publicawesome/hermes:1.7.3 -f docker/Dockerfile.hermes
 
 FROM rust:1-buster AS build-env
 
@@ -17,7 +17,7 @@ LABEL maintainer="hello@informal.systems"
 ARG UID=1000
 ARG GID=1000
 
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl jq
 RUN update-ca-certificates
 RUN groupadd -g ${GID} hermes && useradd -l -m hermes -s /bin/bash -u ${UID} -g ${GID}
 

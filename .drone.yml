@@ -215,17 +215,17 @@ steps:
         - http://osmosis:26657
         - http://icad:26657
   - name: relayer
-    image: publicawesome/hermes:1.7.1
+    image: publicawesome/hermes:1.7.3
     commands:
       - /bin/bash ./scripts/ci/setup-hermes-1.7.sh
 
   - name: relayer-start
-    image: publicawesome/hermes:1.7.1
+    image: publicawesome/hermes:1.7.3
     commands:
       - /bin/bash ./scripts/ci/start-relayer-v1.7.sh
     detach: true
   - name: relayer-sender
-    image: publicawesome/hermes:1.7.1
+    image: publicawesome/hermes:1.7.3
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer-v1.7.sh
   - name: ica-test
@@ -417,6 +417,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 6bfd2dcd6064b568668ce9d4f8307d614e51b5fb0adfe66e4effc086238ddc74
+hmac: f5843ab4c7742c1c771cef0e6f599a5c11a3fc84a4b5914751ab57d061921d5e
 
 ...
