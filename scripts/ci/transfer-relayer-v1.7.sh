@@ -6,7 +6,7 @@ hermes keys add --chain gaia --key-name relayer --key-file $PWD/scripts/ci/herme
 hermes keys add --chain osmosis --key-name relayer --key-file $PWD/scripts/ci/hermes/osmosis.json
 hermes keys add --chain icad --key-name relayer --key-file $PWD/scripts/ci/hermes/icad.json
 sleep 10
-hermes tx ft-transfer --dst-chain gaia --src-chain stargaze --src-port transfer --src-channel channel-0 --amount 1000ustars
+hermes tx ft-transfer --dst-chain gaia --src-chain stargaze --src-port transfer --src-channel channel-0 --amount 1000 --denom ustars --timeout-seconds 30
 # hermes tx raw ft-transfer stargaze gaia transfer channel-0 9999 -d stake -o 1000 -n 2
 # sleep 10
 # hermes tx raw ft-transfer gaia stargaze transfer channel-0 9999 -d ustars -o 1000 -n 2
