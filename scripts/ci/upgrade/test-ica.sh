@@ -68,6 +68,6 @@ EOF
 )
 echo $DELEGATE_MSG > delegate.json
 # Submit a staking delegation tx using the interchain account via ibc
-icad tx intertx submit delegate.json --connection-id connection-0 --from $ICA_WALLET_ADDRESS --chain-id icad -y -b block --timeout-height 2500
+icad tx intertx submit delegate.json --connection-id connection-0 --from $ICA_WALLET_ADDRESS --chain-id icad -y -b block --timeout-height 5000
 sleep 30
 starsd query staking delegations $ICA_ADDR
