@@ -77,7 +77,8 @@ price = 1.1
 denom = "ustars"
 
 [chains.packet_filter]
-policy = "allowall"
+policy = "allow"
+list = [["ica*", "*"], ["transfer", "*"]]
 
 [chains.packet_filter.min_fees]
 
@@ -215,8 +216,8 @@ price = 1.1
 denom = "stake"
 
 [chains.packet_filter]
-policy = "allowall"
-
+policy = "allow"
+list = [["ica*", "*"], ["transfer", "*"]]
 [chains.packet_filter.min_fees]
 
 [chains.address_type]
