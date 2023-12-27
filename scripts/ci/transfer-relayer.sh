@@ -6,11 +6,11 @@ hermes keys add gaia -f $PWD/scripts/ci/hermes/gaia.json
 hermes keys add osmosis -f $PWD/scripts/ci/hermes/osmosis.json
 sleep 10
 hermes tx raw ft-transfer stargaze gaia transfer channel-0 9999 -d stake -o 1000 -n 2
-sleep 10
+sleep 15
 hermes tx raw ft-transfer gaia stargaze transfer channel-0 9999 -d ustars -o 1000 -n 2
-sleep 10
+sleep 15
 hermes tx raw ft-transfer stargaze osmosis transfer channel-0 9999 -d uosmo -o 1000 -n 2
-sleep 10
+sleep 15
 hermes tx raw ft-transfer osmosis stargaze transfer channel-1 9999 -d ustars -o 1000 -n 2
 
 sleep 30
