@@ -19,6 +19,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/pruning"
 	"github.com/cosmos/cosmos-sdk/client/rpc"
 	"github.com/cosmos/cosmos-sdk/server"
+	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	"github.com/cosmos/cosmos-sdk/snapshots"
 	snapshottypes "github.com/cosmos/cosmos-sdk/snapshots/types"
@@ -89,7 +90,7 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 			if err := client.SetCmdClientContextHandler(initClientCtx, cmd); err != nil {
 				return err
 			}
-			customTemplate, customParams := params.DefaultConfig()
+			customTemplate, customParams := initAppConfig()
 			tmconfig := tmcfg.DefaultConfig()
 			return server.InterceptConfigsPreRunHandler(cmd, customTemplate, customParams, tmconfig)
 		},
@@ -100,12 +101,94 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 	return rootCmd, encodingConfig
 }
 
+// initAppConfig helps to override default appConfig template and configs.
+// return "", nil if no custom configuration is required for the application.
+func initAppConfig() (string, interface{}) {
+	// The following code snippet is just for reference.
+
+	type CustomAppConfig struct {
+		serverconfig.Config
+
+		Wasm wasmtypes.WasmConfig `mapstructure:"wasm"`
+	}
+
+	// Optionally allow the chain developer to overwrite the SDK's default
+	// server config.
+	srvCfg := serverconfig.DefaultConfig()
+	// The SDK's default minimum gas price is set to "" (empty value) inside
+	// app.toml. If left empty by validators, the node will halt on startup.
+	// However, the chain developer can set a default app.toml value for their
+	// validators here.
+	//
+	// In summary:
+	// - if you leave srvCfg.MinGasPrices = "", all validators MUST tweak their
+	//   own app.toml config,
+	// - if you set srvCfg.MinGasPrices non-empty, validators CAN tweak their
+	//   own app.toml to override, or use this default value.
+	//
+	// In simapp, we set the min gas prices to 0.
+	srvCfg.MinGasPrices = "0stake"
+	// srvCfg.BaseConfig.IAVLDisableFastNode = true // disable fastnode by default
+
+	customAppConfig := CustomAppConfig{
+		Config: *srvCfg,
+		Wasm:   wasmtypes.DefaultWasmConfig(),
+	}
+
+	customAppTemplate := serverconfig.DefaultConfigTemplate +
+		wasmtypes.DefaultConfigTemplate()
+
+	return customAppTemplate, customAppConfig
+}
+
+// Reads the custom extra values in the config.toml file if set.
+// If they are, then use them.
+func SetCustomEnvVariablesFromClientToml(ctx client.Context) {
+	configFilePath := filepath.Join(ctx.HomeDir, "config", "client.toml")
+
+	if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
+		return
+	}
+
+	viper := ctx.Viper
+	viper.SetConfigFile(configFilePath)
+
+	if err := viper.ReadInConfig(); err != nil {
+		panic(err)
+	}
+
+	setEnvFromConfig := func(key string, envVar string) {
+		// if the user sets the env key manually, then we don't want to override it
+		if os.Getenv(envVar) != "" {
+			return
+		}
+
+		// reads from the config file
+		val := viper.GetString(key)
+		if val != "" {
+			// Sets the env for this instance of the app only.
+			os.Setenv(envVar, val)
+		}
+	}
+
+	// gas
+	setEnvFromConfig("gas", "STARGAZE_GAS")
+	setEnvFromConfig("gas-prices", "STARGAZE_GAS_PRICES")
+	setEnvFromConfig("gas-adjustment", "STARGAZE_GAS_ADJUSTMENT")
+	// fees
+	setEnvFromConfig("fees", "STARGAZE_FEES")
+	setEnvFromConfig("fee-account", "STARGAZE_FEE_ACCOUNT")
+	// memo
+	setEnvFromConfig("note", "STARGAZE_NOTE")
+}
+
 func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
+
 	rootCmd.AddCommand(
 		genutilcli.InitCmd(app.ModuleBasics, app.DefaultNodeHome),
 		tmcli.NewCompletionCmd(rootCmd, true),
-		debug.Cmd(),
-		config.Cmd(),
+		debug.Cmd(), // 	DebugCmd(),
+		ConfigCmd(),
 		Bech32Cmd(),
 		pruning.PruningCmd(newApp),
 	)
