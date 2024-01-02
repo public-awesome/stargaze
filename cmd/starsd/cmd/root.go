@@ -66,6 +66,10 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 		WithHomeDir(app.DefaultNodeHome).
 		WithViper(EnvironmentPrefix)
 
+	// Allows you to add extra params to your client.toml
+	// gas, gas-price, gas-adjustment, fees, note, etc.
+	SetCustomEnvVariablesFromClientToml(initClientCtx)
+
 	rootCmd := &cobra.Command{
 		Use:   version.AppName,
 		Short: "Stargaze App",
@@ -335,8 +339,8 @@ func newApp(
 		baseapp.SetIAVLCacheSize(iavlCacheSize),
 		baseapp.SetIAVLDisableFastNode(true),
 		baseapp.SetChainID(chainID),
-		// TODO: enable streaming service
-		// baseapp.SetStreamingService(app.NewStreamingService()),
+	// TODO: enable streaming service
+	// baseapp.SetStreamingService(app.NewStreamingService()),
 	)
 }
 
