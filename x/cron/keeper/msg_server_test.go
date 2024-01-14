@@ -88,7 +88,7 @@ func TestPromoteToPrivilegedContract(t *testing.T) {
 		tc := tc
 		t.Run(tc.testCase, func(t *testing.T) {
 			k, c := keepertest.CronKeeper(t)
-			msgSrvr, ctx := keeper.NewMsgServerImpl(k), sdk.WrapSDKContext(c)
+			msgSrvr, ctx := keeper.NewMsgServerImpl(k), c
 
 			msg := tc.prepare(c, k)
 
@@ -204,7 +204,7 @@ func TestDemoteFromPrivilegedContract(t *testing.T) {
 		tc := tc
 		t.Run(tc.testCase, func(t *testing.T) {
 			k, c := keepertest.CronKeeper(t)
-			msgSrvr, ctx := keeper.NewMsgServerImpl(k), sdk.WrapSDKContext(c)
+			msgSrvr, ctx := keeper.NewMsgServerImpl(k), c
 
 			msg := tc.prepare(c, k)
 
@@ -286,7 +286,7 @@ func TestUpdateParams(t *testing.T) {
 		tc := tc
 		t.Run(tc.testCase, func(t *testing.T) {
 			k, c := keepertest.CronKeeper(t)
-			msgSrvr, ctx := keeper.NewMsgServerImpl(k), sdk.WrapSDKContext(c)
+			msgSrvr, ctx := keeper.NewMsgServerImpl(k), c
 
 			msg := tc.prepare(c, k)
 

@@ -8,6 +8,7 @@ import (
 
 	yaml "gopkg.in/yaml.v2"
 
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )
@@ -27,7 +28,7 @@ func ParamKeyTable() paramtypes.KeyTable {
 }
 
 func NewParams(
-	mintDenom string, startTime time.Time, initialAnnualProvisions, reductionFactor sdk.Dec, blocksPerYear uint64,
+	mintDenom string, startTime time.Time, initialAnnualProvisions, reductionFactor math.LegacyDec, blocksPerYear uint64,
 ) Params {
 	return Params{
 		MintDenom:               mintDenom,
@@ -42,10 +43,10 @@ func NewParams(
 func DefaultParams() Params {
 	return Params{
 		MintDenom:               sdk.DefaultBondDenom,
-		StartTime:               time.Now().AddDate(1, 0, 0),       // 1 year from now
-		InitialAnnualProvisions: sdk.NewDec(1_000_000_000_000_000), // 1B
-		ReductionFactor:         sdk.NewDec(2).QuoInt64(3),         // 2/3
-		BlocksPerYear:           uint64(6311520),                   // 60 * 60 * 8766 / 5 = 6,311,520
+		StartTime:               time.Now().AddDate(1, 0, 0),              // 1 year from now
+		InitialAnnualProvisions: math.LegacyNewDec(1_000_000_000_000_000), // 1B
+		ReductionFactor:         math.LegacyNewDec(2).QuoInt64(3),         // 2/3
+		BlocksPerYear:           uint64(6311520),                          // 60 * 60 * 8766 / 5 = 6,311,520
 		//  assuming 5 second block times
 	}
 }
@@ -112,7 +113,7 @@ func validateStartTime(i interface{}) error {
 }
 
 func validateStartProvisions(i interface{}) error {
-	v, ok := i.(sdk.Dec)
+	v, ok := i.(math.LegacyDec)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
 	}
@@ -125,12 +126,12 @@ func validateStartProvisions(i interface{}) error {
 }
 
 func validateReductionFactor(i interface{}) error {
-	v, ok := i.(sdk.Dec)
+	v, ok := i.(math.LegacyDec)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
 	}
 
-	if v.GT(sdk.NewDec(1)) {
+	if v.GT(math.LegacyNewDec(1)) {
 		return fmt.Errorf("reduction factor cannot be greater than 1")
 	}
 

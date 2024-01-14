@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )
@@ -35,9 +36,9 @@ func NewParams(
 func DefaultParams() Params {
 	return Params{
 		DistributionProportions: DistributionProportions{
-			NftIncentives:    sdk.NewDecWithPrec(20, 2), // 20%
-			DeveloperRewards: sdk.NewDecWithPrec(15, 2), // 15%
-			CommunityPool:    sdk.NewDecWithPrec(5, 2),  // 5%
+			NftIncentives:    math.LegacyNewDecWithPrec(20, 2), // 20%
+			DeveloperRewards: math.LegacyNewDecWithPrec(15, 2), // 15%
+			CommunityPool:    math.LegacyNewDecWithPrec(5, 2),  // 5%
 		},
 		WeightedDeveloperRewardsReceivers:  []WeightedAddress{},
 		WeightedIncentivesRewardsReceivers: []WeightedAddress{},
@@ -101,7 +102,7 @@ func validateDistributionProportions(i interface{}) error {
 
 	totalProportions := v.NftIncentives.Add(v.DeveloperRewards).Add(v.CommunityPool)
 
-	if totalProportions.GT(sdk.OneDec()) {
+	if totalProportions.GT(math.LegacyOneDec()) {
 		return errors.New("total distributions can not be higher than 100%")
 	}
 
@@ -119,7 +120,7 @@ func validateWeightedRewardsReceivers(i interface{}) error {
 		return nil
 	}
 
-	weightSum := sdk.NewDec(0)
+	weightSum := math.LegacyNewDec(0)
 	for i, w := range v {
 		// we allow address to be "" to go to community pool
 		if w.Address != "" {
@@ -131,13 +132,13 @@ func validateWeightedRewardsReceivers(i interface{}) error {
 		if !w.Weight.IsPositive() {
 			return fmt.Errorf("non-positive weight at %dth", i)
 		}
-		if w.Weight.GT(sdk.NewDec(1)) {
+		if w.Weight.GT(math.LegacyNewDec(1)) {
 			return fmt.Errorf("more than 1 weight at %dth", i)
 		}
 		weightSum = weightSum.Add(w.Weight)
 	}
 
-	if !weightSum.Equal(sdk.NewDec(1)) {
+	if !weightSum.Equal(math.LegacyNewDec(1)) {
 		return fmt.Errorf("invalid weight sum: %s", weightSum.String())
 	}
 

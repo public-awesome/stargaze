@@ -3,6 +3,7 @@ package types_test
 import (
 	"testing"
 
+	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/public-awesome/stargaze/v13/x/globalfee/types"
 	"github.com/stretchr/testify/require"
@@ -32,28 +33,28 @@ func TestParamsValidate(t *testing.T) {
 		{
 			"ok: zero fees",
 			types.Params{
-				MinimumGasPrices: sdk.NewDecCoinsFromCoins(sdk.NewCoin("stars", sdk.ZeroInt())),
+				MinimumGasPrices: sdk.NewDecCoinsFromCoins(sdk.NewCoin("stars", sdkmath.ZeroInt())),
 			},
 			false,
 		},
 		{
 			"fail: duplicate denom fees",
 			types.Params{
-				MinimumGasPrices: sdk.DecCoins{sdk.NewDecCoin("stars", sdk.OneInt()), sdk.NewDecCoin("stars", sdk.OneInt())},
+				MinimumGasPrices: sdk.DecCoins{sdk.NewDecCoin("stars", sdkmath.OneInt()), sdk.NewDecCoin("stars", sdkmath.OneInt())},
 			},
 			true,
 		},
 		{
 			"fail: unordered by denom",
 			types.Params{
-				MinimumGasPrices: sdk.DecCoins{sdk.NewDecCoin("stars", sdk.OneInt()), sdk.NewDecCoin("atom", sdk.OneInt())},
+				MinimumGasPrices: sdk.DecCoins{sdk.NewDecCoin("stars", sdkmath.OneInt()), sdk.NewDecCoin("atom", sdkmath.OneInt())},
 			},
 			true,
 		},
 		{
 			"ok: valid min gas fees",
 			types.Params{
-				MinimumGasPrices: sdk.DecCoins{sdk.NewDecCoin("atom", sdk.OneInt()), sdk.NewDecCoin("stars", sdk.OneInt())},
+				MinimumGasPrices: sdk.DecCoins{sdk.NewDecCoin("atom", sdkmath.OneInt()), sdk.NewDecCoin("stars", sdkmath.OneInt())},
 			},
 			false,
 		},

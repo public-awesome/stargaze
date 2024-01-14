@@ -6,8 +6,9 @@ import (
 	"runtime/debug"
 	"time"
 
+	"cosmossdk.io/log"
+	storetypes "cosmossdk.io/store/types"
 	abci "github.com/cometbft/cometbft/abci/types"
-	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/public-awesome/stargaze/v13/x/cron/contract"
@@ -73,7 +74,7 @@ func RecoverToLog(logger log.Logger, contractAddr sdk.AccAddress) func() {
 		if r := recover(); r != nil {
 			var cause string
 			switch rType := r.(type) {
-			case sdk.ErrorOutOfGas:
+			case storetypes.ErrorOutOfGas:
 				cause = fmt.Sprintf("out of gas in location: %v", rType.Descriptor)
 			default:
 				cause = fmt.Sprintf("%s", r)

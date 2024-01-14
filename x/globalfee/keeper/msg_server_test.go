@@ -88,7 +88,7 @@ func TestSetCodeAuthorization(t *testing.T) {
 		tc := tc
 		t.Run(tc.testCase, func(t *testing.T) {
 			k, c := keepertest.GlobalFeeKeeper(t)
-			msgSrvr, ctx := keeper.NewMsgServerImpl(k), sdk.WrapSDKContext(c)
+			msgSrvr, ctx := keeper.NewMsgServerImpl(k), c
 
 			msg := tc.prepare(c, k)
 
@@ -156,7 +156,7 @@ func TestRemoveCodeAuthorization(t *testing.T) {
 		tc := tc
 		t.Run(tc.testCase, func(t *testing.T) {
 			k, c := keepertest.GlobalFeeKeeper(t)
-			msgSrvr, ctx := keeper.NewMsgServerImpl(k), sdk.WrapSDKContext(c)
+			msgSrvr, ctx := keeper.NewMsgServerImpl(k), c
 			err := k.SetCodeAuthorization(c, types.CodeAuthorization{
 				CodeID:  2,
 				Methods: []string{"mint"},
@@ -296,7 +296,7 @@ func TestSetContractAuthorization(t *testing.T) {
 		tc := tc
 		t.Run(tc.testCase, func(t *testing.T) {
 			k, c := keepertest.GlobalFeeKeeper(t)
-			msgSrvr, ctx := keeper.NewMsgServerImpl(k), sdk.WrapSDKContext(c)
+			msgSrvr, ctx := keeper.NewMsgServerImpl(k), c
 
 			msg := tc.prepare(c, k)
 
@@ -380,7 +380,7 @@ func TestRemoveContractAuthorization(t *testing.T) {
 		tc := tc
 		t.Run(tc.testCase, func(t *testing.T) {
 			k, c := keepertest.GlobalFeeKeeper(t)
-			msgSrvr, ctx := keeper.NewMsgServerImpl(k), sdk.WrapSDKContext(c)
+			msgSrvr, ctx := keeper.NewMsgServerImpl(k), c
 			contractAddr := sdk.MustAccAddressFromBech32("cosmos1qyqszqgpqyqszqgpqyqszqgpqyqszqgpjnp7du")
 			err := k.SetContractAuthorization(c, types.ContractAuthorization{
 				ContractAddress: contractAddr.String(),

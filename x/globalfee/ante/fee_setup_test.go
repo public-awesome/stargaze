@@ -1,21 +1,23 @@
 package ante_test
 
 import (
+	"context"
 	"encoding/json"
 	"os"
 	"sync"
 	"time"
 
+	header "cosmossdk.io/core/header"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cometbft/cometbft/crypto"
 	"github.com/cometbft/cometbft/crypto/secp256k1"
-	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
+	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -61,7 +63,7 @@ func (s *AnteHandlerTestSuite) SetupTest() {
 		},
 	}
 	app := simapp.SetupWithGenesisAccounts(s.T(), s.T().TempDir(), genAccounts, genBalances...)
-	ctx := app.BaseApp.NewContext(false, tmproto.Header{
+	ctx := app.BaseApp.NewContext(false).WithHeaderInfo(header.Info{
 		ChainID: "ante-test-1",
 		Height:  1,
 		Time:    time.Now(),
@@ -106,7 +108,7 @@ func (s *AnteHandlerTestSuite) SetupContractWithCodeAuth(senderAddr string, cont
 	s.Require().NoError(err)
 
 	initMsg := wasmtypes.MsgInstantiateContract{Sender: senderAddr, Admin: senderAddr, CodeID: codeID, Label: "Counter Contract", Msg: instantiateMsgRaw, Funds: sdk.NewCoins()}
-	instantiateRes, err := s.msgServer.InstantiateContract(sdk.WrapSDKContext(s.ctx), &initMsg)
+	instantiateRes, err := s.msgServer.InstantiateContract(s.ctx, &initMsg)
 	s.Require().NoError(err)
 
 	err = s.app.GlobalFeeKeeper.SetCodeAuthorization(s.ctx, types.CodeAuthorization{
@@ -127,7 +129,7 @@ func (s *AnteHandlerTestSuite) SetupContractWithContractAuth(senderAddr string, 
 	s.Require().NoError(err)
 
 	initMsg := wasmtypes.MsgInstantiateContract{Sender: senderAddr, Admin: senderAddr, CodeID: codeID, Label: "Counter Contract", Msg: instantiateMsgRaw, Funds: sdk.NewCoins()}
-	instantiateRes, err := s.msgServer.InstantiateContract(sdk.WrapSDKContext(s.ctx), &initMsg)
+	instantiateRes, err := s.msgServer.InstantiateContract(s.ctx, &initMsg)
 	s.Require().NoError(err)
 
 	err = s.app.GlobalFeeKeeper.SetContractAuthorization(s.ctx, types.ContractAuthorization{
@@ -139,13 +141,18 @@ func (s *AnteHandlerTestSuite) SetupContractWithContractAuth(senderAddr string, 
 	return instantiateRes.Address
 }
 
-func (s *AnteHandlerTestSuite) CreateTestTx(privs []cryptotypes.PrivKey, accNums []uint64, accSeqs []uint64, chainID string) (xauthsigning.Tx, error) {
+func (s *AnteHandlerTestSuite) CreateTestTx(ctx context.Context, privs []cryptotypes.PrivKey, accNums []uint64, accSeqs []uint64, chainID string) (xauthsigning.Tx, error) {
 	var sigsV2 []signing.SignatureV2 //nolint:golint,prealloc
+
+	defaultSignMode, err := authsigning.APISignModeToInternal(s.clientCtx.TxConfig.SignModeHandler().DefaultMode())
+	if err != nil {
+		return nil, err
+	}
 	for i, priv := range privs {
 		sigV2 := signing.SignatureV2{
 			PubKey: priv.PubKey(),
 			Data: &signing.SingleSignatureData{
-				SignMode:  s.clientCtx.TxConfig.SignModeHandler().DefaultMode(),
+				SignMode:  defaultSignMode,
 				Signature: nil,
 			},
 			Sequence: accSeqs[i],
@@ -166,7 +173,8 @@ func (s *AnteHandlerTestSuite) CreateTestTx(privs []cryptotypes.PrivKey, accNums
 			Sequence:      accSeqs[i],
 		}
 		sigV2, err := tx.SignWithPrivKey(
-			s.clientCtx.TxConfig.SignModeHandler().DefaultMode(),
+			ctx,
+			defaultSignMode,
 			signerData,
 			s.txBuilder,
 			priv,
@@ -192,7 +200,7 @@ func storeContract(ctx sdk.Context, msgServer wasmtypes.MsgServer, creator strin
 	if err != nil {
 		return 0, err
 	}
-	res, err := msgServer.StoreCode(sdk.WrapSDKContext(ctx), &wasmtypes.MsgStoreCode{
+	res, err := msgServer.StoreCode(ctx, &wasmtypes.MsgStoreCode{
 		Sender:       creator,
 		WASMByteCode: b,
 	})

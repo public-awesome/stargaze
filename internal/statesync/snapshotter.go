@@ -4,9 +4,11 @@ import (
 	"io"
 
 	errorsmod "cosmossdk.io/errors"
-	"github.com/cometbft/cometbft/libs/log"
+	log "cosmossdk.io/log"
+	snapshot "cosmossdk.io/store/snapshots/types"
+	storetypes "cosmossdk.io/store/types"
+	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
-	snapshot "github.com/cosmos/cosmos-sdk/snapshots/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -18,7 +20,7 @@ const (
 var _ snapshot.ExtensionSnapshotter = &VersionSnapshotter{}
 
 type ConsensusParamsGetter interface {
-	GetConsensusParams(ctx sdk.Context) *tmproto.ConsensusParams
+	GetConsensusParams(ctx sdk.Context) cmtproto.ConsensusParams
 }
 
 type ProtocolVersionSetter interface {
@@ -28,10 +30,10 @@ type ProtocolVersionSetter interface {
 type VersionSnapshotter struct {
 	consensusParamGetter ConsensusParamsGetter
 	versionSetter        ProtocolVersionSetter
-	ms                   sdk.MultiStore
+	ms                   storetypes.MultiStore
 }
 
-func NewVersionSnapshotter(ms sdk.MultiStore, cpg ConsensusParamsGetter, vs ProtocolVersionSetter) *VersionSnapshotter {
+func NewVersionSnapshotter(ms storetypes.MultiStore, cpg ConsensusParamsGetter, vs ProtocolVersionSetter) *VersionSnapshotter {
 	return &VersionSnapshotter{
 		consensusParamGetter: cpg,
 		versionSetter:        vs,
@@ -53,7 +55,7 @@ func (vs *VersionSnapshotter) SnapshotExtension(height uint64, payloadWriter sna
 	params := vs.consensusParamGetter.GetConsensusParams(ctx)
 	// default to 1 for stargaze
 	appVersion := uint64(1)
-	if params != nil && params.Version != nil {
+	if params.Version != nil {
 		appVersion = params.Version.GetApp()
 	}
 	bz := sdk.Uint64ToBigEndian(appVersion)

@@ -4,54 +4,99 @@
 
 ## Table of Contents
 
-- [publicawesome/stargaze/cron/v1/cron.proto](#publicawesome/stargaze/cron/v1/cron.proto)
-    - [Params](#publicawesome.stargaze.cron.v1.Params)
+- [publicawesome/stargaze/globalfee/v1/globalfee.proto](#publicawesome/stargaze/globalfee/v1/globalfee.proto)
+    - [CodeAuthorization](#publicawesome.stargaze.globalfee.v1.CodeAuthorization)
+    - [ContractAuthorization](#publicawesome.stargaze.globalfee.v1.ContractAuthorization)
+    - [Params](#publicawesome.stargaze.globalfee.v1.Params)
   
-- [publicawesome/stargaze/cron/v1/genesis.proto](#publicawesome/stargaze/cron/v1/genesis.proto)
-    - [GenesisState](#publicawesome.stargaze.cron.v1.GenesisState)
+- [publicawesome/stargaze/globalfee/v1/genesis.proto](#publicawesome/stargaze/globalfee/v1/genesis.proto)
+    - [GenesisState](#publicawesome.stargaze.globalfee.v1.GenesisState)
   
-- [publicawesome/stargaze/cron/v1/proposal.proto](#publicawesome/stargaze/cron/v1/proposal.proto)
-    - [DemotePrivilegedContractProposal](#publicawesome.stargaze.cron.v1.DemotePrivilegedContractProposal)
-    - [PromoteToPrivilegedContractProposal](#publicawesome.stargaze.cron.v1.PromoteToPrivilegedContractProposal)
+- [publicawesome/stargaze/globalfee/v1/proposal.proto](#publicawesome/stargaze/globalfee/v1/proposal.proto)
+    - [RemoveCodeAuthorizationProposal](#publicawesome.stargaze.globalfee.v1.RemoveCodeAuthorizationProposal)
+    - [RemoveContractAuthorizationProposal](#publicawesome.stargaze.globalfee.v1.RemoveContractAuthorizationProposal)
+    - [SetCodeAuthorizationProposal](#publicawesome.stargaze.globalfee.v1.SetCodeAuthorizationProposal)
+    - [SetContractAuthorizationProposal](#publicawesome.stargaze.globalfee.v1.SetContractAuthorizationProposal)
   
-- [publicawesome/stargaze/cron/v1/query.proto](#publicawesome/stargaze/cron/v1/query.proto)
-    - [QueryListPrivilegedRequest](#publicawesome.stargaze.cron.v1.QueryListPrivilegedRequest)
-    - [QueryListPrivilegedResponse](#publicawesome.stargaze.cron.v1.QueryListPrivilegedResponse)
-    - [QueryParamsRequest](#publicawesome.stargaze.cron.v1.QueryParamsRequest)
-    - [QueryParamsResponse](#publicawesome.stargaze.cron.v1.QueryParamsResponse)
+- [publicawesome/stargaze/globalfee/v1/query.proto](#publicawesome/stargaze/globalfee/v1/query.proto)
+    - [QueryAuthorizationsRequest](#publicawesome.stargaze.globalfee.v1.QueryAuthorizationsRequest)
+    - [QueryAuthorizationsResponse](#publicawesome.stargaze.globalfee.v1.QueryAuthorizationsResponse)
+    - [QueryCodeAuthorizationRequest](#publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationRequest)
+    - [QueryCodeAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationResponse)
+    - [QueryContractAuthorizationRequest](#publicawesome.stargaze.globalfee.v1.QueryContractAuthorizationRequest)
+    - [QueryContractAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.QueryContractAuthorizationResponse)
+    - [QueryParamsRequest](#publicawesome.stargaze.globalfee.v1.QueryParamsRequest)
+    - [QueryParamsResponse](#publicawesome.stargaze.globalfee.v1.QueryParamsResponse)
   
-    - [Query](#publicawesome.stargaze.cron.v1.Query)
+    - [Query](#publicawesome.stargaze.globalfee.v1.Query)
   
-- [publicawesome/stargaze/cron/v1/tx.proto](#publicawesome/stargaze/cron/v1/tx.proto)
-    - [MsgDemoteFromPrivilegedContract](#publicawesome.stargaze.cron.v1.MsgDemoteFromPrivilegedContract)
-    - [MsgDemoteFromPrivilegedContractResponse](#publicawesome.stargaze.cron.v1.MsgDemoteFromPrivilegedContractResponse)
-    - [MsgPromoteToPrivilegedContract](#publicawesome.stargaze.cron.v1.MsgPromoteToPrivilegedContract)
-    - [MsgPromoteToPrivilegedContractResponse](#publicawesome.stargaze.cron.v1.MsgPromoteToPrivilegedContractResponse)
-    - [MsgUpdateParams](#publicawesome.stargaze.cron.v1.MsgUpdateParams)
-    - [MsgUpdateParamsResponse](#publicawesome.stargaze.cron.v1.MsgUpdateParamsResponse)
+- [publicawesome/stargaze/globalfee/v1/tx.proto](#publicawesome/stargaze/globalfee/v1/tx.proto)
+    - [MsgRemoveCodeAuthorization](#publicawesome.stargaze.globalfee.v1.MsgRemoveCodeAuthorization)
+    - [MsgRemoveCodeAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.MsgRemoveCodeAuthorizationResponse)
+    - [MsgRemoveContractAuthorization](#publicawesome.stargaze.globalfee.v1.MsgRemoveContractAuthorization)
+    - [MsgRemoveContractAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.MsgRemoveContractAuthorizationResponse)
+    - [MsgSetCodeAuthorization](#publicawesome.stargaze.globalfee.v1.MsgSetCodeAuthorization)
+    - [MsgSetCodeAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.MsgSetCodeAuthorizationResponse)
+    - [MsgSetContractAuthorization](#publicawesome.stargaze.globalfee.v1.MsgSetContractAuthorization)
+    - [MsgSetContractAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.MsgSetContractAuthorizationResponse)
+    - [MsgUpdateParams](#publicawesome.stargaze.globalfee.v1.MsgUpdateParams)
+    - [MsgUpdateParamsResponse](#publicawesome.stargaze.globalfee.v1.MsgUpdateParamsResponse)
   
-    - [Msg](#publicawesome.stargaze.cron.v1.Msg)
+    - [Msg](#publicawesome.stargaze.globalfee.v1.Msg)
   
 - [Scalar Value Types](#scalar-value-types)
 
 
 
-<a name="publicawesome/stargaze/cron/v1/cron.proto"></a>
+<a name="publicawesome/stargaze/globalfee/v1/globalfee.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/cron/v1/cron.proto
+## publicawesome/stargaze/globalfee/v1/globalfee.proto
 
 
 
-<a name="publicawesome.stargaze.cron.v1.Params"></a>
+<a name="publicawesome.stargaze.globalfee.v1.CodeAuthorization"></a>
+
+### CodeAuthorization
+Configuration for code Ids which can have zero gas operations
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `code_id` | [uint64](#uint64) |  | authorized code ids |
+| `methods` | [string](#string) | repeated | authorized contract operation methods |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.ContractAuthorization"></a>
+
+### ContractAuthorization
+Configuration for contract addresses which can have zero gas operations
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `contract_address` | [string](#string) |  | authorized contract addresses |
+| `methods` | [string](#string) | repeated | authorized contract operation methods |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.Params"></a>
 
 ### Params
-Params holds parameters for the cron module.
+Params holds parameters for the globalfee module.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `admin_addresses` | [string](#string) | repeated | Addresses which act as admins of the module. They can promote and demote contracts without having to go via governance. |
+| `privileged_addresses` | [string](#string) | repeated | Addresses which are whitelisted to modify the gas free operations |
+| `minimum_gas_prices` | [cosmos.base.v1beta1.DecCoin](#cosmos.base.v1beta1.DecCoin) | repeated | Minimum stores the minimum gas price(s) for all TX on the chain. |
 
 
 
@@ -67,23 +112,24 @@ Params holds parameters for the cron module.
 
 
 
-<a name="publicawesome/stargaze/cron/v1/genesis.proto"></a>
+<a name="publicawesome/stargaze/globalfee/v1/genesis.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/cron/v1/genesis.proto
+## publicawesome/stargaze/globalfee/v1/genesis.proto
 
 
 
-<a name="publicawesome.stargaze.cron.v1.GenesisState"></a>
+<a name="publicawesome.stargaze.globalfee.v1.GenesisState"></a>
 
 ### GenesisState
-GenesisState defines the cron module's genesis state.
+GenesisState defines the globalfee module's genesis state.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `privileged_contract_addresses` | [string](#string) | repeated | List of all the contracts that have been given the privilege status via governance. They can set up hooks to abci.EndBlocker |
-| `params` | [Params](#publicawesome.stargaze.cron.v1.Params) |  | Module params |
+| `params` | [Params](#publicawesome.stargaze.globalfee.v1.Params) |  | Module params |
+| `code_authorizations` | [CodeAuthorization](#publicawesome.stargaze.globalfee.v1.CodeAuthorization) | repeated | Authorizations configured by code id |
+| `contract_authorizations` | [ContractAuthorization](#publicawesome.stargaze.globalfee.v1.ContractAuthorization) | repeated | Authorizations configured by contract addresses |
 
 
 
@@ -99,45 +145,75 @@ GenesisState defines the cron module's genesis state.
 
 
 
-<a name="publicawesome/stargaze/cron/v1/proposal.proto"></a>
+<a name="publicawesome/stargaze/globalfee/v1/proposal.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/cron/v1/proposal.proto
+## publicawesome/stargaze/globalfee/v1/proposal.proto
 
 
 
-<a name="publicawesome.stargaze.cron.v1.DemotePrivilegedContractProposal"></a>
+<a name="publicawesome.stargaze.globalfee.v1.RemoveCodeAuthorizationProposal"></a>
 
-### DemotePrivilegedContractProposal
-Deprecated: Do not use. To demote a contract, a
-MsgDemoteFromPrivilegedContract can be invoked from the x/gov module via a v1
-governance proposal
+### RemoveCodeAuthorizationProposal
+
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `title` | [string](#string) |  | Title is a short summary |
-| `description` | [string](#string) |  | Description is a human readable text |
-| `contract` | [string](#string) |  | Contract is the bech32 address of the smart contract |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) |  |  |
+| `code_id` | [uint64](#uint64) |  |  |
 
 
 
 
 
 
-<a name="publicawesome.stargaze.cron.v1.PromoteToPrivilegedContractProposal"></a>
+<a name="publicawesome.stargaze.globalfee.v1.RemoveContractAuthorizationProposal"></a>
 
-### PromoteToPrivilegedContractProposal
-Deprecated: Do not use. To promote a contract, a
-MsgPromoteToPrivilegedContract can be invoked from the x/gov module via a v1
-governance proposal
+### RemoveContractAuthorizationProposal
+
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `title` | [string](#string) |  | Title is a short summary |
-| `description` | [string](#string) |  | Description is a human readable text |
-| `contract` | [string](#string) |  | Contract is the bech32 address of the smart contract |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) |  |  |
+| `contract_address` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.SetCodeAuthorizationProposal"></a>
+
+### SetCodeAuthorizationProposal
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) |  |  |
+| `code_authorization` | [CodeAuthorization](#publicawesome.stargaze.globalfee.v1.CodeAuthorization) |  |  |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.SetContractAuthorizationProposal"></a>
+
+### SetContractAuthorizationProposal
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) |  |  |
+| `contract_authorization` | [ContractAuthorization](#publicawesome.stargaze.globalfee.v1.ContractAuthorization) |  |  |
 
 
 
@@ -153,61 +229,118 @@ governance proposal
 
 
 
-<a name="publicawesome/stargaze/cron/v1/query.proto"></a>
+<a name="publicawesome/stargaze/globalfee/v1/query.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/cron/v1/query.proto
+## publicawesome/stargaze/globalfee/v1/query.proto
 
 
 
-<a name="publicawesome.stargaze.cron.v1.QueryListPrivilegedRequest"></a>
+<a name="publicawesome.stargaze.globalfee.v1.QueryAuthorizationsRequest"></a>
 
-### QueryListPrivilegedRequest
-QueryListPrivilegedRequest is request type for the Query/ListPrivileged RPC
-method.
-
-
+### QueryAuthorizationsRequest
 
 
 
 
-<a name="publicawesome.stargaze.cron.v1.QueryListPrivilegedResponse"></a>
 
-### QueryListPrivilegedResponse
-QueryListPrivilegedResponse is response type for the Query/ListPrivileged RPC
-method.
+
+
+<a name="publicawesome.stargaze.globalfee.v1.QueryAuthorizationsResponse"></a>
+
+### QueryAuthorizationsResponse
+
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `contract_addresses` | [string](#string) | repeated | contract_addresses holds all the smart contract addresses which have privilege status. |
+| `code_authorizations` | [CodeAuthorization](#publicawesome.stargaze.globalfee.v1.CodeAuthorization) | repeated |  |
+| `contract_authorizations` | [ContractAuthorization](#publicawesome.stargaze.globalfee.v1.ContractAuthorization) | repeated |  |
 
 
 
 
 
 
-<a name="publicawesome.stargaze.cron.v1.QueryParamsRequest"></a>
+<a name="publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationRequest"></a>
+
+### QueryCodeAuthorizationRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `code_id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationResponse"></a>
+
+### QueryCodeAuthorizationResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `methods` | [string](#string) | repeated |  |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.QueryContractAuthorizationRequest"></a>
+
+### QueryContractAuthorizationRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `contract_address` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.QueryContractAuthorizationResponse"></a>
+
+### QueryContractAuthorizationResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `methods` | [string](#string) | repeated |  |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.QueryParamsRequest"></a>
 
 ### QueryParamsRequest
-QueryParamsRequest is request type for the Query/Params RPC
-method.
 
 
 
 
 
 
-<a name="publicawesome.stargaze.cron.v1.QueryParamsResponse"></a>
+
+<a name="publicawesome.stargaze.globalfee.v1.QueryParamsResponse"></a>
 
 ### QueryParamsResponse
-QueryParamsResponse is response type for the Query/Params RPC
-method.
+
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `params` | [Params](#publicawesome.stargaze.cron.v1.Params) |  |  |
+| `params` | [Params](#publicawesome.stargaze.globalfee.v1.Params) |  |  |
 
 
 
@@ -220,80 +353,134 @@ method.
  <!-- end HasExtensions -->
 
 
-<a name="publicawesome.stargaze.cron.v1.Query"></a>
+<a name="publicawesome.stargaze.globalfee.v1.Query"></a>
 
 ### Query
 Query defines the gRPC querier service.
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `ListPrivileged` | [QueryListPrivilegedRequest](#publicawesome.stargaze.cron.v1.QueryListPrivilegedRequest) | [QueryListPrivilegedResponse](#publicawesome.stargaze.cron.v1.QueryListPrivilegedResponse) | ListPrivileged queries the contracts which have the priviledge status | GET|/stargaze/cron/v1/list-privileged|
-| `Params` | [QueryParamsRequest](#publicawesome.stargaze.cron.v1.QueryParamsRequest) | [QueryParamsResponse](#publicawesome.stargaze.cron.v1.QueryParamsResponse) |  | GET|/stargaze/cron/v1/params|
+| `CodeAuthorization` | [QueryCodeAuthorizationRequest](#publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationRequest) | [QueryCodeAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationResponse) |  | GET|/stargaze/globalfee/v1/code_authorization/{code_id}|
+| `ContractAuthorization` | [QueryContractAuthorizationRequest](#publicawesome.stargaze.globalfee.v1.QueryContractAuthorizationRequest) | [QueryContractAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.QueryContractAuthorizationResponse) |  | GET|/stargaze/globalfee/v1/contract_authorization/{contract_address}|
+| `Params` | [QueryParamsRequest](#publicawesome.stargaze.globalfee.v1.QueryParamsRequest) | [QueryParamsResponse](#publicawesome.stargaze.globalfee.v1.QueryParamsResponse) |  | GET|/stargaze/globalfee/v1/params|
+| `Authorizations` | [QueryAuthorizationsRequest](#publicawesome.stargaze.globalfee.v1.QueryAuthorizationsRequest) | [QueryAuthorizationsResponse](#publicawesome.stargaze.globalfee.v1.QueryAuthorizationsResponse) |  | GET|/stargaze/globalfee/v1/authorizations|
 
  <!-- end services -->
 
 
 
-<a name="publicawesome/stargaze/cron/v1/tx.proto"></a>
+<a name="publicawesome/stargaze/globalfee/v1/tx.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## publicawesome/stargaze/cron/v1/tx.proto
+## publicawesome/stargaze/globalfee/v1/tx.proto
 
 
 
-<a name="publicawesome.stargaze.cron.v1.MsgDemoteFromPrivilegedContract"></a>
+<a name="publicawesome.stargaze.globalfee.v1.MsgRemoveCodeAuthorization"></a>
 
-### MsgDemoteFromPrivilegedContract
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `authority` | [string](#string) |  | Authority is the address of the governance account or any whitelisted address |
-| `contract` | [string](#string) |  | Contract is the bech32 address of the smart contract |
-
-
-
-
-
-
-<a name="publicawesome.stargaze.cron.v1.MsgDemoteFromPrivilegedContractResponse"></a>
-
-### MsgDemoteFromPrivilegedContractResponse
-
-
-
-
-
-
-
-<a name="publicawesome.stargaze.cron.v1.MsgPromoteToPrivilegedContract"></a>
-
-### MsgPromoteToPrivilegedContract
+### MsgRemoveCodeAuthorization
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `authority` | [string](#string) |  | Authority is the address of the governance account or any whitelisted address |
-| `contract` | [string](#string) |  | Contract is the bech32 address of the smart contract |
+| `sender` | [string](#string) |  |  |
+| `code_id` | [uint64](#uint64) |  |  |
 
 
 
 
 
 
-<a name="publicawesome.stargaze.cron.v1.MsgPromoteToPrivilegedContractResponse"></a>
+<a name="publicawesome.stargaze.globalfee.v1.MsgRemoveCodeAuthorizationResponse"></a>
 
-### MsgPromoteToPrivilegedContractResponse
-
-
+### MsgRemoveCodeAuthorizationResponse
 
 
 
 
 
-<a name="publicawesome.stargaze.cron.v1.MsgUpdateParams"></a>
+
+
+<a name="publicawesome.stargaze.globalfee.v1.MsgRemoveContractAuthorization"></a>
+
+### MsgRemoveContractAuthorization
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `sender` | [string](#string) |  |  |
+| `contract_address` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.MsgRemoveContractAuthorizationResponse"></a>
+
+### MsgRemoveContractAuthorizationResponse
+
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.MsgSetCodeAuthorization"></a>
+
+### MsgSetCodeAuthorization
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `sender` | [string](#string) |  |  |
+| `code_authorization` | [CodeAuthorization](#publicawesome.stargaze.globalfee.v1.CodeAuthorization) |  |  |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.MsgSetCodeAuthorizationResponse"></a>
+
+### MsgSetCodeAuthorizationResponse
+
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.MsgSetContractAuthorization"></a>
+
+### MsgSetContractAuthorization
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `sender` | [string](#string) |  |  |
+| `contract_authorization` | [ContractAuthorization](#publicawesome.stargaze.globalfee.v1.ContractAuthorization) |  |  |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.MsgSetContractAuthorizationResponse"></a>
+
+### MsgSetContractAuthorizationResponse
+
+
+
+
+
+
+
+<a name="publicawesome.stargaze.globalfee.v1.MsgUpdateParams"></a>
 
 ### MsgUpdateParams
 
@@ -301,15 +488,15 @@ Query defines the gRPC querier service.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `authority` | [string](#string) |  | Authority is the address of the governance account. |
-| `params` | [Params](#publicawesome.stargaze.cron.v1.Params) |  | NOTE: All parameters must be supplied. |
+| `sender` | [string](#string) |  |  |
+| `params` | [Params](#publicawesome.stargaze.globalfee.v1.Params) |  | NOTE: All parameters must be supplied. |
 
 
 
 
 
 
-<a name="publicawesome.stargaze.cron.v1.MsgUpdateParamsResponse"></a>
+<a name="publicawesome.stargaze.globalfee.v1.MsgUpdateParamsResponse"></a>
 
 ### MsgUpdateParamsResponse
 
@@ -325,16 +512,18 @@ Query defines the gRPC querier service.
  <!-- end HasExtensions -->
 
 
-<a name="publicawesome.stargaze.cron.v1.Msg"></a>
+<a name="publicawesome.stargaze.globalfee.v1.Msg"></a>
 
 ### Msg
 Msg defines the alloc Msg service.
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `PromoteToPrivilegedContract` | [MsgPromoteToPrivilegedContract](#publicawesome.stargaze.cron.v1.MsgPromoteToPrivilegedContract) | [MsgPromoteToPrivilegedContractResponse](#publicawesome.stargaze.cron.v1.MsgPromoteToPrivilegedContractResponse) |  | |
-| `DemoteFromPrivilegedContract` | [MsgDemoteFromPrivilegedContract](#publicawesome.stargaze.cron.v1.MsgDemoteFromPrivilegedContract) | [MsgDemoteFromPrivilegedContractResponse](#publicawesome.stargaze.cron.v1.MsgDemoteFromPrivilegedContractResponse) |  | |
-| `UpdateParams` | [MsgUpdateParams](#publicawesome.stargaze.cron.v1.MsgUpdateParams) | [MsgUpdateParamsResponse](#publicawesome.stargaze.cron.v1.MsgUpdateParamsResponse) |  | |
+| `SetCodeAuthorization` | [MsgSetCodeAuthorization](#publicawesome.stargaze.globalfee.v1.MsgSetCodeAuthorization) | [MsgSetCodeAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.MsgSetCodeAuthorizationResponse) |  | |
+| `RemoveCodeAuthorization` | [MsgRemoveCodeAuthorization](#publicawesome.stargaze.globalfee.v1.MsgRemoveCodeAuthorization) | [MsgRemoveCodeAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.MsgRemoveCodeAuthorizationResponse) |  | |
+| `SetContractAuthorization` | [MsgSetContractAuthorization](#publicawesome.stargaze.globalfee.v1.MsgSetContractAuthorization) | [MsgSetContractAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.MsgSetContractAuthorizationResponse) |  | |
+| `RemoveContractAuthorization` | [MsgRemoveContractAuthorization](#publicawesome.stargaze.globalfee.v1.MsgRemoveContractAuthorization) | [MsgRemoveContractAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.MsgRemoveContractAuthorizationResponse) |  | |
+| `UpdateParams` | [MsgUpdateParams](#publicawesome.stargaze.globalfee.v1.MsgUpdateParams) | [MsgUpdateParamsResponse](#publicawesome.stargaze.globalfee.v1.MsgUpdateParamsResponse) |  | |
 
  <!-- end services -->
 

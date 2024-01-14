@@ -3,11 +3,12 @@ package types
 import (
 	"time"
 
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // NewMinter returns a new Minter object with the given annual provisions values
-func NewMinter(annualProvisions sdk.Dec) Minter {
+func NewMinter(annualProvisions math.LegacyDec) Minter {
 	return Minter{
 		AnnualProvisions: annualProvisions,
 	}
@@ -16,7 +17,7 @@ func NewMinter(annualProvisions sdk.Dec) Minter {
 // InitialMinter returns an initial Minter object
 func InitialMinter() Minter {
 	return NewMinter(
-		sdk.NewDec(0),
+		math.LegacyNewDec(0),
 	)
 }
 
@@ -31,9 +32,9 @@ func ValidateMinter(_ Minter) error {
 }
 
 // NextAnnualProvisions returns the next annual provisions
-func (m Minter) NextAnnualProvisions(blockTime time.Time, params Params) sdk.Dec {
+func (m Minter) NextAnnualProvisions(blockTime time.Time, params Params) math.LegacyDec {
 	if params.StartTime.After(blockTime) {
-		return sdk.ZeroDec()
+		return math.LegacyZeroDec()
 	}
 
 	return params.InitialAnnualProvisions.
@@ -43,13 +44,13 @@ func (m Minter) NextAnnualProvisions(blockTime time.Time, params Params) sdk.Dec
 // BlockProvision returns the provisions for a block based on the annual
 // provisions rate.
 func (m Minter) BlockProvision(params Params) sdk.Coin {
-	provisionAmt := m.AnnualProvisions.QuoInt(sdk.NewInt(int64(params.BlocksPerYear)))
+	provisionAmt := m.AnnualProvisions.QuoInt(math.NewInt(int64(params.BlocksPerYear)))
 	return sdk.NewCoin(params.MintDenom, provisionAmt.TruncateInt())
 }
 
 func currentYear(blockTime time.Time, startTime time.Time) uint64 {
 	delta := blockTime.Sub(startTime)
-	year := sdk.NewInt(int64(delta)).QuoRaw(int64(365 * 24 * time.Hour))
+	year := math.NewInt(int64(delta)).QuoRaw(int64(365 * 24 * time.Hour))
 
 	return year.Uint64()
 }

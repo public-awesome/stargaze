@@ -277,7 +277,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			s.Require().NoError(s.txBuilder.SetMsgs(tc.msg...))
 			s.txBuilder.SetFeeAmount(tc.feeSent)
 			s.txBuilder.SetGasLimit(1)
-			tx, err := s.CreateTestTx(privs, accNums, accSeqs, s.ctx.ChainID())
+			tx, err := s.CreateTestTx(s.ctx, privs, accNums, accSeqs, s.ctx.ChainID())
 			s.Require().NoError(err)
 
 			_, err = antehandler(s.ctx, tx, false)
