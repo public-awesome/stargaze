@@ -9,14 +9,12 @@ import (
 
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
 func TestCurrentYear(t *testing.T) {
 	genesisTime := time.Now()
 	actualYear := currentYear(time.Now().AddDate(0, 1, 0), genesisTime)
 	require.Equal(t, uint64(0), actualYear)
-	require.Equal(t, authtypes.NewModuleAddress("gov").String(), authtypes.NewModuleAddress("distribution").String())
 }
 
 func TestCurrentYear1(t *testing.T) {
