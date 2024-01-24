@@ -9,15 +9,21 @@ option go_package = "github.com/public-awesome/stargaze/v13/x/cron/types";
 
 // Msg defines the alloc Msg service.
 service Msg {
+  option (cosmos.msg.v1.service) = true;
+
+  // PromoteToPrivilegedContract promotes a contract to privileged status.
   rpc PromoteToPrivilegedContract(MsgPromoteToPrivilegedContract)
       returns (MsgPromoteToPrivilegedContractResponse);
 
+  // DemoteFromPrivilegedContract demotes a contract from privileged status.
   rpc DemoteFromPrivilegedContract(MsgDemoteFromPrivilegedContract)
       returns (MsgDemoteFromPrivilegedContractResponse);
 
+  // UpdateParams updates the cron module's parameters.
   rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
 }
 
+// MsgPromoteToPrivilegedContract defines the Msg/PromoteToPrivilegedContract
 message MsgPromoteToPrivilegedContract {
   option (cosmos.msg.v1.signer) = "authority";
   // Authority is the address of the governance account or any whitelisted
