@@ -33,6 +33,7 @@ import (
 
 	confixcmd "cosmossdk.io/tools/confix/cmd"
 	"github.com/CosmWasm/wasmd/x/wasm"
+	wasmcli "github.com/CosmWasm/wasmd/x/wasm/client/cli"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -129,10 +130,11 @@ func initRootCmd(
 		debug.Cmd(),
 		confixcmd.ConfigCommand(),
 		Bech32Cmd(),
-		//pruning.Cmd(newApp, app.DefaultNodeHome),
+		// pruning.Cmd(newApp, app.DefaultNodeHome),
 	//	snapshot.Cmd(newApp),
 	)
 	server.AddCommands(rootCmd, app.DefaultNodeHome, newApp, appExport, addModuleInitFlags)
+	wasmcli.ExtendUnsafeResetAllCmd(rootCmd)
 
 	// add keybase, auxiliary RPC, query, genesis, and tx child commands
 	rootCmd.AddCommand(
@@ -145,31 +147,6 @@ func initRootCmd(
 
 }
 
-// func oldInitRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
-// 	rootCmd.AddCommand(
-// 		genutilcli.InitCmd(app.ModuleBasics, app.DefaultNodeHome),
-// 		tmcli.NewCompletionCmd(rootCmd, true),
-// 		debug.Cmd(),
-// 		config.Cmd(),
-// 		Bech32Cmd(),
-// 		pruning.PruningCmd(newApp),
-// 		snapshot.Cmd(newApp),
-// 	)
-
-// 	server.AddCommands(rootCmd, app.DefaultNodeHome, newApp, appExport, addModuleInitFlags)
-
-// 	wasmcli.ExtendUnsafeResetAllCmd(rootCmd)
-
-// 	// add keybase, auxiliary RPC, query, and tx child commands
-// 	rootCmd.AddCommand(
-// 		server.StatusCommand(),
-// 		genutilcli.GenesisCoreCommand(encodingConfig.TxConfig, app.ModuleBasics, app.DefaultNodeHome),
-// 		queryCommand(),
-// 		txCommand(),
-// 		keys.Commands(),
-// 	)
-// }
-
 func addModuleInitFlags(startCmd *cobra.Command) {
 	crisis.AddModuleInitFlags(startCmd)
 	wasm.AddModuleInitFlags(startCmd)
@@ -181,7 +158,7 @@ func queryCommand() *cobra.Command {
 		Use:                        "query",
 		Aliases:                    []string{"q"},
 		Short:                      "Querying subcommands",
-		DisableFlagParsing:         true,
+		DisableFlagParsing:         false,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
@@ -189,13 +166,11 @@ func queryCommand() *cobra.Command {
 	cmd.AddCommand(
 		rpc.QueryEventForTxCmd(),
 		server.QueryBlockCmd(),
+		server.QueryBlocksCmd(),
 		server.QueryBlockResultsCmd(),
 		authcmd.QueryTxsByEventsCmd(),
 		authcmd.QueryTxCmd(),
 	)
-
-	app.ModuleBasics.AddQueryCommands(cmd)
-	cmd.PersistentFlags().String(flags.FlagChainID, "", "The network chain ID")
 
 	return cmd
 }
