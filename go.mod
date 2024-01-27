@@ -210,6 +210,8 @@ replace (
 	github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v8 => github.com/public-awesome/ibc-apps/middleware/packet-forward-middleware/v8 v8.0.0-20240112154558-ac156266345d
 	github.com/cosmos/ibc-apps/modules/ibc-hooks/v8 => github.com/public-awesome/ibc-apps/modules/ibc-hooks/v8 v8.0.0-20240112154558-ac156266345d
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.8.1
+	// TODO: remove after https://github.com/spf13/viper/issues/1706 gets fixed
+	github.com/spf13/viper => github.com/spf13/viper v1.17.0
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 
 )
