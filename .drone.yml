@@ -77,7 +77,7 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 13.0.0-alpha.4
+        - 13.0.0-beta.1
     when:
       event:
         - push
@@ -132,9 +132,9 @@ steps:
   - name: discord
     image: appleboy/drone-discord
     settings:
-      webhook_id: 
+      webhook_id:
         from_secret: discord_webhook_id
-      webhook_token: 
+      webhook_token:
         from_secret: discord_webhook_token
     when:
       status: [success, failure]
@@ -235,9 +235,9 @@ steps:
   - name: discord
     image: appleboy/drone-discord
     settings:
-      webhook_id: 
+      webhook_id:
         from_secret: discord_webhook_id
-      webhook_token: 
+      webhook_token:
         from_secret: discord_webhook_token
     when:
       status: [success, failure]
@@ -350,7 +350,7 @@ steps:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:13.0.0-alpha.4
+    image: publicawesome/stargaze:13.0.0-beta.1
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -369,7 +369,7 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:13.0.0-alpha.4
+    image: publicawesome/stargaze:13.0.0-beta.1
     commands:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
@@ -397,9 +397,9 @@ steps:
   - name: discord
     image: appleboy/drone-discord
     settings:
-      webhook_id: 
+      webhook_id:
         from_secret: discord_webhook_id
-      webhook_token: 
+      webhook_token:
         from_secret: discord_webhook_token
     when:
       status: [success, failure]
@@ -417,6 +417,6 @@ volumes:
 
 ---
 kind: signature
-hmac: a94ec15a4b7dc43521bc42bf102b7c511a650b2cc6a179e564bc5df4f61b4f66
+hmac: 2cda3b7f737fe9168f65a1ab89af4f35e35d56144b6a070c08325d875cea34e2
 
 ...
