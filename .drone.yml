@@ -82,7 +82,7 @@ steps:
       event:
         - push
       branch:
-        - spoorthi/upgrade-sdk-to-latest
+        - jhernandezb/prepare-v12-beta
   - name: docker_release
     image: plugins/docker
     settings:
@@ -417,6 +417,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 2cda3b7f737fe9168f65a1ab89af4f35e35d56144b6a070c08325d875cea34e2
+hmac: 7511f21cb940df5cbe780b21f7caecdcdb825a17baba2e30315cd181be888ba8
 
 ...
