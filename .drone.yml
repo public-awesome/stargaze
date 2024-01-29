@@ -410,6 +410,8 @@ trigger:
   event:
     - pull_request
     - push
+depends_on:
+  - ibc-integration-test
 volumes:
 - name: cache
   temp: {}
@@ -417,6 +419,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 8ff54551a7e3937ac63a5dd8176579a8975e0cede5f6be676af96a20f8a5a0d1
+hmac: 09100358e827f91073cee9dbfd1bb3e87a604d378f21f0899bacdb67606de3c5
 
 ...
