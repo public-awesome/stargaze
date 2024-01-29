@@ -216,6 +216,7 @@ steps:
   - name: relayer
     image: publicawesome/hermes:1.7.3
     commands:
+      - sleep 10
       - /bin/bash ./scripts/ci/setup-hermes-1.7.sh
 
   - name: relayer-start
@@ -419,6 +420,6 @@ volumes:
 
 ---
 kind: signature
-hmac: a6ba5a23a8b20354911d6307f89ab20b4243d7505a361ca241dbe4230fd560b3
+hmac: 2dd1636af98cfbb8ae51105951240152cadf999f1dff23fbc5cb578d35e91e2b
 
 ...
