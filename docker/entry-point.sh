@@ -38,6 +38,9 @@ sed -i "s/iavl-cache-size = 781250/iavl-cache-size = $IAVL_CACHE_SIZE/g" ~/.star
 sed -i "s/query_gas_limit = 50000000/query_gas_limit = $QUERY_GAS_LIMIT/g" ~/.starsd/config/app.toml
 sed -i "s/simulation_gas_limit = 25000000/simulation_gas_limit = $SIMULATION_GAS_LIMIT/g" ~/.starsd/config/app.toml
 sed -i "s/memory_cache_size = 512/memory_cache_size = $MEMORY_CACHE_SIZE/g" ~/.starsd/config/app.toml
+sed -i "s/enable = false/enable = true/g" ~/.starsd/config/app.toml
+sed -i "s/localhost:9090/0.0.0.0:9090/g" ~/.starsd/config/app.toml
+
 
 # Start the stake
 starsd start --pruning=nothing
