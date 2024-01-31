@@ -80,11 +80,5 @@ func (k msgServer) CreateVestingAccount(goCtx context.Context, msg *types.MsgCre
 		return nil, err
 	}
 
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			sdk.EventTypeMessage,
-		),
-	)
-
 	return &types.MsgCreateVestingAccountResponse{}, nil
 }

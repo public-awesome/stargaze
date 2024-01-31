@@ -20,9 +20,6 @@ func (k msgServer) FundFairburnPool(goCtx context.Context, msg *types.MsgFundFai
 	}
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			sdk.EventTypeMessage,
-		),
-		sdk.NewEvent(
 			types.EventTypeFundFairburnPool,
 			sdk.NewAttribute(sdk.AttributeKeyAmount, msg.Amount.String()),
 		),
