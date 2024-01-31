@@ -1,50 +1,56 @@
 syntax = "proto3";
 package publicawesome.stargaze.globalfee.v1;
 
-import "gogoproto/gogo.proto";
+import "amino/amino.proto";
 import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
 import "publicawesome/stargaze/globalfee/v1/globalfee.proto";
 
 option go_package = "github.com/public-awesome/stargaze/v13/x/globalfee/types";
 
+// SetCodeAuthorizationProposal ...
 message SetCodeAuthorizationProposal {
   option deprecated = true;
+  option (amino.name) = "globalfee/SetCodeAuthorizationProposal";
   option (cosmos_proto.implements_interface) = "cosmos.gov.v1beta1.Content";
 
-  string title = 1 [ (gogoproto.moretags) = "yaml:\"title\"" ];
-  string description = 2 [ (gogoproto.moretags) = "yaml:\"description\"" ];
-  CodeAuthorization code_authorization = 3
-      [ (gogoproto.moretags) = "yaml:\"code_authorization\"" ];
+  string title = 1 [(gogoproto.moretags) = "yaml:\"title\""];
+  string description = 2 [(gogoproto.moretags) = "yaml:\"description\""];
+  CodeAuthorization code_authorization = 3 [(gogoproto.moretags) = "yaml:\"code_authorization\""];
 }
 
+// RemoveCodeAuthorizationProposal
 message RemoveCodeAuthorizationProposal {
   option deprecated = true;
+  option (amino.name) = "globalfee/RemoveCodeAuthorizationProposal";
   option (cosmos_proto.implements_interface) = "cosmos.gov.v1beta1.Content";
 
-  string title = 1 [ (gogoproto.moretags) = "yaml:\"title\"" ];
-  string description = 2 [ (gogoproto.moretags) = "yaml:\"description\"" ];
+  string title = 1 [(gogoproto.moretags) = "yaml:\"title\""];
+  string description = 2 [(gogoproto.moretags) = "yaml:\"description\""];
   uint64 code_id = 3 [
     (gogoproto.customname) = "CodeID",
     (gogoproto.moretags) = "yaml:\"code_id\""
   ];
 }
 
+// RemoveCodeAuthorizationProposal ...
 message SetContractAuthorizationProposal {
   option deprecated = true;
+  option (amino.name) = "globalfee/SetContractAuthorizationProposal";
   option (cosmos_proto.implements_interface) = "cosmos.gov.v1beta1.Content";
 
-  string title = 1 [ (gogoproto.moretags) = "yaml:\"title\"" ];
-  string description = 2 [ (gogoproto.moretags) = "yaml:\"description\"" ];
-  ContractAuthorization contract_authorization = 3
-      [ (gogoproto.moretags) = "yaml:\"contract_authorization\"" ];
+  string title = 1 [(gogoproto.moretags) = "yaml:\"title\""];
+  string description = 2 [(gogoproto.moretags) = "yaml:\"description\""];
+  ContractAuthorization contract_authorization = 3 [(gogoproto.moretags) = "yaml:\"contract_authorization\""];
 }
 
+// RemoveCodeAuthorizationProposal ...
 message RemoveContractAuthorizationProposal {
   option deprecated = true;
+  option (amino.name) = "globalfee/RemoveContractAuthorizationProposal";
   option (cosmos_proto.implements_interface) = "cosmos.gov.v1beta1.Content";
 
-  string title = 1 [ (gogoproto.moretags) = "yaml:\"title\"" ];
-  string description = 2 [ (gogoproto.moretags) = "yaml:\"description\"" ];
-  string contract_address = 3
-      [ (gogoproto.moretags) = "yaml:\"contract_address\"" ];
+  string title = 1 [(gogoproto.moretags) = "yaml:\"title\""];
+  string description = 2 [(gogoproto.moretags) = "yaml:\"description\""];
+  string contract_address = 3 [(gogoproto.moretags) = "yaml:\"contract_address\""];
 }

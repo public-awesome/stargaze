@@ -27,8 +27,6 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgPromoteToPrivilegedContract{},
 		&MsgDemoteFromPrivilegedContract{},
 		&MsgUpdateParams{},
-		&PromoteToPrivilegedContractProposal{},
-		&DemotePrivilegedContractProposal{},
 	)
 
 	// support for legacy proposals
