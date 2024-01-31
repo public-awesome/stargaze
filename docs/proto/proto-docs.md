@@ -270,7 +270,7 @@ Query defines the gRPC querier service.
 <a name="publicawesome.stargaze.cron.v1.MsgPromoteToPrivilegedContract"></a>
 
 ### MsgPromoteToPrivilegedContract
-
+MsgPromoteToPrivilegedContract defines the Msg/PromoteToPrivilegedContract
 
 
 | Field | Type | Label | Description |
@@ -332,9 +332,9 @@ Msg defines the alloc Msg service.
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `PromoteToPrivilegedContract` | [MsgPromoteToPrivilegedContract](#publicawesome.stargaze.cron.v1.MsgPromoteToPrivilegedContract) | [MsgPromoteToPrivilegedContractResponse](#publicawesome.stargaze.cron.v1.MsgPromoteToPrivilegedContractResponse) |  | |
-| `DemoteFromPrivilegedContract` | [MsgDemoteFromPrivilegedContract](#publicawesome.stargaze.cron.v1.MsgDemoteFromPrivilegedContract) | [MsgDemoteFromPrivilegedContractResponse](#publicawesome.stargaze.cron.v1.MsgDemoteFromPrivilegedContractResponse) |  | |
-| `UpdateParams` | [MsgUpdateParams](#publicawesome.stargaze.cron.v1.MsgUpdateParams) | [MsgUpdateParamsResponse](#publicawesome.stargaze.cron.v1.MsgUpdateParamsResponse) |  | |
+| `PromoteToPrivilegedContract` | [MsgPromoteToPrivilegedContract](#publicawesome.stargaze.cron.v1.MsgPromoteToPrivilegedContract) | [MsgPromoteToPrivilegedContractResponse](#publicawesome.stargaze.cron.v1.MsgPromoteToPrivilegedContractResponse) | PromoteToPrivilegedContract promotes a contract to privileged status. | |
+| `DemoteFromPrivilegedContract` | [MsgDemoteFromPrivilegedContract](#publicawesome.stargaze.cron.v1.MsgDemoteFromPrivilegedContract) | [MsgDemoteFromPrivilegedContractResponse](#publicawesome.stargaze.cron.v1.MsgDemoteFromPrivilegedContractResponse) | DemoteFromPrivilegedContract demotes a contract from privileged status. | |
+| `UpdateParams` | [MsgUpdateParams](#publicawesome.stargaze.cron.v1.MsgUpdateParams) | [MsgUpdateParamsResponse](#publicawesome.stargaze.cron.v1.MsgUpdateParamsResponse) | UpdateParams updates the cron module's parameters. | |
 
  <!-- end services -->
 
