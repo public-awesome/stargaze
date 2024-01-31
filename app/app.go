@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"io"
+	"io/fs"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -102,8 +103,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	authzmodule "github.com/cosmos/cosmos-sdk/x/authz/module"
-
-	"github.com/public-awesome/stargaze/v13/app/openapiconsole"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
@@ -993,8 +992,11 @@ func (app *App) RegisterAPIRoutes(apiSvr *api.Server, apiCfg config.APIConfig) {
 
 	// register app's OpenAPI routes.
 	if apiCfg.Swagger {
-		apiSvr.Router.Handle("/static/swagger.json", http.FileServer(http.FS(docs.SwaggerUI)))
-		apiSvr.Router.HandleFunc("/", openapiconsole.Handler(Name, "/static/swagger.json"))
+		swagger, err := fs.Sub(docs.SwaggerUI, "swagger-ui")
+		if err != nil {
+			panic(err)
+		}
+		apiSvr.Router.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger/", http.FileServer(http.FS(swagger))))
 	}
 
 	apiSvr.Router.Handle("/stargaze/wasm/smart", stargazerest.BatchedQuerierHandler(clientCtx))
