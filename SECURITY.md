@@ -4,7 +4,7 @@ The Stargaze core team and community takes all security issues and vulnerabiliti
 
 Thanks for improving the security of Stargaze. We appreciate your efforts. Following these responsible disclosure guidelines will make sure your contribution is acknowledged.
 
-Please report security vulnerabilities to <security@stargaze.zone>. _Please avoid opening a public Github issue or posting on social media or Discord_.
+Please report security vulnerabilities to <security@stargaze.dev>. _Please avoid opening a public Github issue or posting on social media or Discord_.
 
 The Stargaze team will respond with the next steps following the email. The team will keep you informed on the remediation process and may ask for additional guidance/information.
 

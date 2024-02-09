@@ -72,7 +72,7 @@ func Test_ContractAuthorization(t *testing.T) {
 
 		count := 0
 		k.IterateContractAuthorizations(ctx, func(ca types.ContractAuthorization) bool {
-			count += 1
+			count++
 			return false
 		})
 		require.Equal(t, 3, count)

@@ -1,0 +1,233 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Stargaze gRPC Gateway docs",
+    "description": "A REST interface for state queries.",
+    "version": "1.0.0"
+  },
+  "apis": [
+    {
+      "url": "./tmp-swagger-gen/publicawesome/stargaze/alloc/v1beta1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "AllocParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/publicawesome/stargaze/cron/v1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "CronParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/publicawesome/stargaze/globalfee/v1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "GlobalFeeParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/publicawesome/stargaze/mint/v1beta1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "MintParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/osmosis/tokenfactory/v1beta1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "TokenFactoryParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/cosmwasm/wasm/v1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "WasmParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/cosmos/auth/v1beta1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "AuthParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/cosmos/bank/v1beta1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "BankParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/cosmos/base/tendermint/v1beta1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "BaseParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/cosmos/distribution/v1beta1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "DistributionParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/cosmos/evidence/v1beta1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "EvidenceParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/cosmos/gov/v1beta1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "GovParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/cosmos/gov/v1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "GovV1Params",
+          "Proposal": "GovV1Proposal",
+          "Proposals": "GovV1Proposal",
+          "Vote": "GovV1Vote",
+          "Votes": "GovV1Votes",
+          "Deposit": "GovV1Deposit",
+          "Deposits": "GovV1Deposit",
+          "TallyResult": "GovV1TallyResult"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/cosmos/params/v1beta1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "Params"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/cosmos/slashing/v1beta1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "SlashingParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/cosmos/staking/v1beta1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "StakingParams",
+          "DelegatorValidators": "StakingDelegatorValidators"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/cosmos/tx/v1beta1/service.swagger.json",
+      "dereference": {
+        "circular": "ignore"
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/cosmos/upgrade/v1beta1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "UpgradeParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/cosmos/authz/v1beta1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "AuthzParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/cosmos/feegrant/v1beta1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "FeegrantParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/ibc/applications/transfer/v1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "TransferParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/ibc/applications/interchain_accounts/controller/v1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "InterchainAccountsControllerParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/ibc/applications/interchain_accounts/host/v1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "InterchainAccountsHostParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/ibc/applications/fee/v1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "FeeParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/ibc/core/client/v1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "ClientParams",
+          "UpgradedConsensusState": "IBCUpgradedConsensusState"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/ibc/core/connection/v1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "ConnectionParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/ibc/core/channel/v1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "ChannelParams"
+        }
+      }
+    }
+  ]
+}
