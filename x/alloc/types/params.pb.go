@@ -27,6 +27,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+// WeightedAddress defines an address with a weight.
 type WeightedAddress struct {
 	Address string                      `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty" yaml:"address"`
 	Weight  cosmossdk_io_math.LegacyDec `protobuf:"bytes,2,opt,name=weight,proto3,customtype=cosmossdk.io/math.LegacyDec" json:"weight" yaml:"weight"`
@@ -72,6 +73,7 @@ func (m *WeightedAddress) GetAddress() string {
 	return ""
 }
 
+// DistributionProportions defines the proportion that each bucket  receives.
 type DistributionProportions struct {
 	NftIncentives    cosmossdk_io_math.LegacyDec `protobuf:"bytes,1,opt,name=nft_incentives,json=nftIncentives,proto3,customtype=cosmossdk.io/math.LegacyDec" json:"nft_incentives" yaml:"nft_incentives"`
 	DeveloperRewards cosmossdk_io_math.LegacyDec `protobuf:"bytes,2,opt,name=developer_rewards,json=developerRewards,proto3,customtype=cosmossdk.io/math.LegacyDec" json:"developer_rewards" yaml:"developer_rewards"`
@@ -111,6 +113,7 @@ func (m *DistributionProportions) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_DistributionProportions proto.InternalMessageInfo
 
+// Params defines the parameters for the alloc module.
 type Params struct {
 	// distribution_proportions defines the proportion of the minted denom
 	DistributionProportions DistributionProportions `protobuf:"bytes,1,opt,name=distribution_proportions,json=distributionProportions,proto3" json:"distribution_proportions"`
