@@ -89,6 +89,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	ibcwasm "github.com/cosmos/ibc-go/modules/light-clients/08-wasm"
+	ibcwasmkeeper "github.com/cosmos/ibc-go/modules/light-clients/08-wasm/keeper"
+	ibcwasmtypes "github.com/cosmos/ibc-go/modules/light-clients/08-wasm/types"
 	"github.com/cosmos/ibc-go/v8/modules/apps/transfer"
 	ibctransferkeeper "github.com/cosmos/ibc-go/v8/modules/apps/transfer/keeper"
 	ibctransfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
@@ -113,6 +116,7 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+	wasmvm "github.com/CosmWasm/wasmvm"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	"github.com/public-awesome/stargaze/v13/docs"
 	sgwasm "github.com/public-awesome/stargaze/v13/internal/wasm"
@@ -216,6 +220,7 @@ var (
 		ica.AppModuleBasic{},
 		ibchooks.AppModuleBasic{},
 		packetforward.AppModuleBasic{},
+		ibcwasm.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -314,6 +319,9 @@ type App struct {
 
 	// IBC Packet Forward Middleware
 	PacketForwardKeeper *packetforwardkeeper.Keeper
+
+	// IBC Wasm Client
+	IBCWasmKeeper ibcwasmkeeper.Keeper
 }
 
 // NewStargazeApp returns a reference to an initialized Gaia.
@@ -368,6 +376,7 @@ func NewStargazeApp(
 		ibchookstypes.StoreKey,
 		packetforwardtypes.StoreKey,
 		crisistypes.StoreKey,
+		ibcwasmtypes.StoreKey,
 	)
 	tkeys := storetypes.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := storetypes.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -637,13 +646,40 @@ func NewStargazeApp(
 	// If evidence needs to be handled for the app, set routes in router here and seal
 	app.EvidenceKeeper = *evidenceKeeper
 
-	// wasm configuration
-
+	// IBC Wasm Client
 	wasmDir := filepath.Join(homePath, "wasm")
 	wasmConfig, err := wasm.ReadWasmConfig(appOpts)
 	if err != nil {
 		panic(fmt.Sprintf("error while reading wasm config: %s", err))
 	}
+	wasmdVm, err := wasmvm.NewVM(wasmDir, GetWasmCapabilities(), 32, wasmConfig.ContractDebugMode, wasmConfig.MemoryCacheSize)
+	if err != nil {
+		panic(fmt.Sprintf("error creating wasmvm for x/wasmd: %s", err))
+	}
+	lcWasmDir := filepath.Join(homePath, "light-client-wasm")
+	ibcWasmVM, err := wasmvm.NewVM(lcWasmDir, GetWasmCapabilities(), 32, wasmConfig.ContractDebugMode, wasmConfig.MemoryCacheSize)
+	if err != nil {
+		panic(fmt.Sprintf("error creating wasmvm for ibc wasm client: %s", err))
+	}
+	acceptedStargateQueries := make([]string, 0)
+	for k := range AcceptedStargateQueries() {
+		acceptedStargateQueries = append(acceptedStargateQueries, k)
+	}
+	ibcWasmClientQueries := ibcwasmtypes.QueryPlugins{
+		Stargate: ibcwasmtypes.AcceptListStargateQuerier(acceptedStargateQueries),
+	}
+
+	app.IBCWasmKeeper = ibcwasmkeeper.NewKeeperWithVM(
+		appCodec,
+		runtime.NewKVStoreService(keys[ibcwasmtypes.StoreKey]),
+		app.IBCKeeper.ClientKeeper,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		ibcWasmVM,
+		app.GRPCQueryRouter(),
+		ibcwasmkeeper.WithQueryPlugins(&ibcWasmClientQueries),
+	)
+
+	// wasm configuration
 
 	// custom messages
 	registry := sgwasm.NewEncoderRegistry()
@@ -656,6 +692,7 @@ func NewStargazeApp(
 		wasmkeeper.WithQueryPlugins(&wasmkeeper.QueryPlugins{
 			Stargate: wasmkeeper.AcceptListStargateQuerier(AcceptedStargateQueries(), app.GRPCQueryRouter(), appCodec),
 		}),
+		wasmkeeper.WithWasmEngine(wasmdVm),
 	)
 	app.WasmKeeper = wasmkeeper.NewKeeper(
 		appCodec,
@@ -779,6 +816,7 @@ func NewStargazeApp(
 		tokenfactory.NewAppModule(app.TokenFactoryKeeper, app.AccountKeeper, app.BankKeeper),
 		packetforward.NewAppModule(app.PacketForwardKeeper, app.GetSubspace(packetforwardtypes.ModuleName)),
 		consensus.NewAppModule(appCodec, app.ConsensusParamsKeeper),
+		ibcwasm.NewAppModule(app.IBCWasmKeeper),
 		// always be last to make sure that it checks for all invariants and not only part of them
 		crisis.NewAppModule(app.CrisisKeeper, skipGenesisInvariants, app.GetSubspace(crisistypes.ModuleName)),
 	)
@@ -820,6 +858,7 @@ func NewStargazeApp(
 		ibchookstypes.ModuleName,
 		tokenfactorytypes.ModuleName,
 		packetforwardtypes.ModuleName,
+		ibcwasmtypes.ModuleName,
 	)
 
 	app.ModuleManager.SetOrderEndBlockers(
@@ -838,6 +877,7 @@ func NewStargazeApp(
 		ibchookstypes.ModuleName,
 		tokenfactorytypes.ModuleName,
 		packetforwardtypes.ModuleName,
+		ibcwasmtypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -872,6 +912,7 @@ func NewStargazeApp(
 		globalfeemoduletypes.ModuleName, // should be after wasm
 		ibchookstypes.ModuleName,
 		packetforwardtypes.ModuleName,
+		ibcwasmtypes.ModuleName,
 	)
 
 	app.ModuleManager.RegisterInvariants(app.CrisisKeeper)
@@ -935,6 +976,7 @@ func NewStargazeApp(
 		err := manager.RegisterExtensions(
 			wasmkeeper.NewWasmSnapshotter(app.CommitMultiStore(), &app.WasmKeeper),
 			sgstatesync.NewVersionSnapshotter(app.CommitMultiStore(), app, app),
+			ibcwasmkeeper.NewWasmSnapshotter(app.CommitMultiStore(), &app.IBCWasmKeeper),
 		)
 		if err != nil {
 			panic(fmt.Errorf("failed to register snapshot extension: %s", err))
@@ -947,9 +989,13 @@ func NewStargazeApp(
 		}
 		ctx := app.BaseApp.NewUncachedContext(true, tmproto.Header{})
 
+		if err := ibcwasmkeeper.InitializePinnedCodes(ctx); err != nil {
+			tmos.Exit(fmt.Sprintf("ibcwasmclient: failed to initialize pinned codes %s", err))
+		}
+
 		// Initialize pinned codes in wasmvm as they are not persisted there
 		if err := app.WasmKeeper.InitializePinnedCodes(ctx); err != nil {
-			tmos.Exit(fmt.Sprintf("failed initialize pinned codes %s", err))
+			tmos.Exit(fmt.Sprintf("wasmd: failed to initialize pinned codes %s", err))
 		}
 	}
 
