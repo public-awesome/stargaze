@@ -25,7 +25,7 @@ echo "$MNEMONIC" | starsd keys add ica-test --recover --keyring-backend test
 STARGAZE_WALLET_ADDRESS=$(starsd keys show ica-test -a --keyring-backend test)
 echo $STARGAZE_WALLET_ADDRESS
 starsd q bank balances $ICA_ADDR 
-starsd tx bank send ica-test $ICA_ADDR 100000000ustars --chain-id stargaze -y -b block --from ica-test
+starsd tx bank send ica-test $ICA_ADDR 100000000ustars --chain-id stargaze -y --from ica-test
 starsd q bank balances $ICA_ADDR 
 
 VALIDATOR=$(starsd q  staking validators --limit 1 -o json | jq '.validators[0].operator_address' -r)
@@ -46,6 +46,7 @@ TX_MSG=$(cat <<EOF
 EOF
 )
 echo "$TX_MSG" > send.json
+starsd q bank balances stars1ly5qeh4xjept0udwny9edwzgw95qmvekms3na8
 # Submit a bank send tx using the interchain account via ibc
 icad tx intertx submit send.json --connection-id connection-0 --from $ICA_WALLET_ADDRESS --chain-id icad -y -b block
 sleep 20
@@ -67,6 +68,6 @@ EOF
 )
 echo $DELEGATE_MSG > delegate.json
 # Submit a staking delegation tx using the interchain account via ibc
-icad tx intertx submit delegate.json --connection-id connection-0 --from $ICA_WALLET_ADDRESS --chain-id icad -y -b block 
-sleep 20
+icad tx intertx submit delegate.json --connection-id connection-0 --from $ICA_WALLET_ADDRESS --chain-id icad -y -b block --timeout-height 5000
+sleep 30
 starsd query staking delegations $ICA_ADDR

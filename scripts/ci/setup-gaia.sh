@@ -10,8 +10,9 @@ sed -i 's#tcp://127.0.0.1:26657#tcp://0.0.0.0:26657#g' ~/.gaia/config/config.tom
 sed -i "s/\"stake\"/\"$DENOM\"/g" ~/.gaia/config/genesis.json
 sed -i 's/pruning = "syncable"/pruning = "nothing"/g' ~/.gaia/config/app.toml
 sed -i 's/enable = false/enable = true/g' ~/.gaia/config/app.toml
-sed -i -e 's/timeout_commit = "5s"/timeout_commit = "1s"/g' ~/.gaia/config/config.toml
-sed -i -e 's/timeout_propose = "3s"/timeout_propose = "1s"/g' ~/.gaia/config/config.toml
+sed -i 's/localhost:9090/0.0.0.0:9090/g' ~/.gaia/config/app.toml
+sed -i -e 's/timeout_commit = "5s"/timeout_commit = "100ms"/g' ~/.gaia/config/config.toml
+sed -i -e 's/timeout_propose = "3s"/timeout_propose = "100ms"/g' ~/.gaia/config/config.toml
 gaiad keys --keyring-backend test add validator
 
 gaiad add-genesis-account $(gaiad keys --keyring-backend test show validator -a) 100000000000$DENOM

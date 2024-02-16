@@ -48,8 +48,8 @@ steps:
         path: /go
     commands:
       - apk add --no-cache ca-certificates build-base git
-      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.4.0/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.a
-      - echo "8ea2e3b5fae83e671da2bb51115adc88591045953f509955ec38dc02ea5a7b94  /lib/libwasmvm_muslc.a" | sha256sum -c
+      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.5.2/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.a
+      - echo "e660a38efb2930b34ee6f6b0bb12730adccb040b6ab701b8f82f34453a426ae7  /lib/libwasmvm_muslc.a" | sha256sum -c
       - LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true  make build
       - echo "Ensuring binary is statically linked ..." && (file $PWD/bin/starsd | grep "statically linked")
     environment:
@@ -77,12 +77,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 12.0.0-alpha.1
+        - 13.0.0-beta.5
     when:
       event:
         - push
       branch:
-        - spoorrthi/remove-claim
+        - jhernandezb/fix-wiring
   - name: docker_release
     image: plugins/docker
     settings:
@@ -132,9 +132,9 @@ steps:
   - name: discord
     image: appleboy/drone-discord
     settings:
-      webhook_id: 
+      webhook_id:
         from_secret: discord_webhook_id
-      webhook_token: 
+      webhook_token:
         from_secret: discord_webhook_token
     when:
       status: [success, failure]
@@ -214,19 +214,20 @@ steps:
         - http://osmosis:26657
         - http://icad:26657
   - name: relayer
-    image: publicawesome/hermes:0.15.0
+    image: publicawesome/hermes:1.7.3
     commands:
-      - /bin/bash ./scripts/ci/setup-relayer.sh
+      - sleep 10
+      - /bin/bash ./scripts/ci/setup-hermes-1.7.sh
 
   - name: relayer-start
-    image: publicawesome/hermes:0.15.0
+    image: publicawesome/hermes:1.7.3
     commands:
-      - /bin/bash ./scripts/ci/start-relayer.sh
+      - /bin/bash ./scripts/ci/start-relayer-v1.7.sh
     detach: true
   - name: relayer-sender
-    image: publicawesome/hermes:0.15.0
+    image: publicawesome/hermes:1.7.3
     commands:
-      - /bin/bash ./scripts/ci/transfer-relayer.sh
+      - /bin/bash ./scripts/ci/transfer-relayer-v1.7.sh
   - name: ica-test
     image: publicawesome/icad:0.1.6-stargaze.1
     pull: always
@@ -235,9 +236,9 @@ steps:
   - name: discord
     image: appleboy/drone-discord
     settings:
-      webhook_id: 
+      webhook_id:
         from_secret: discord_webhook_id
-      webhook_token: 
+      webhook_token:
         from_secret: discord_webhook_token
     when:
       status: [success, failure]
@@ -345,12 +346,12 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: proposal
-    image: publicawesome/stargaze:11.0.0
+    image: publicawesome/stargaze:12.1.0
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:12.0.0-alpha.1
+    image: publicawesome/stargaze:13.0.0-beta.5
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -369,7 +370,7 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:12.0.0-alpha.1
+    image: publicawesome/stargaze:13.0.0-beta.5
     commands:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
@@ -377,17 +378,18 @@ steps:
       - starsd q bank balances stars1mnyrspq208uv5m2krdctan2dkyht0szje9s43h --node http://stargaze-upgraded:26657
       - starsd q bank balances stars103y4f6h80lc45nr8chuzr3fyzqywm9n0gnr394 --node http://stargaze-upgraded:26657
       - starsd q distribution community-pool --node http://stargaze-upgraded:26657
+      - starsd q interchain-accounts host params --node http://stargaze-upgraded:26657
     environment:
       GOPROXY: http://goproxy
   - name: relayer-upgrade-start
-    image: publicawesome/hermes:0.15.0
+    image: publicawesome/hermes:1.7.3
     commands:
-      - /bin/bash ./scripts/ci/upgrade/start-relayer.sh
+      - /bin/bash ./scripts/ci/upgrade/start-relayer-v1.7.sh
     detach: true
   - name: relayer-upgrade-sender
-    image: publicawesome/hermes:0.15.0
+    image: publicawesome/hermes:1.7.3
     commands:
-      - /bin/bash ./scripts/ci/upgrade/transfer-relayer.sh
+      - /bin/bash ./scripts/ci/upgrade/transfer-relayer-v1.7.sh
   - name: ica-upgrade-test
     image: publicawesome/icad:0.1.6-stargaze.1
     pull: always
@@ -396,9 +398,9 @@ steps:
   - name: discord
     image: appleboy/drone-discord
     settings:
-      webhook_id: 
+      webhook_id:
         from_secret: discord_webhook_id
-      webhook_token: 
+      webhook_token:
         from_secret: discord_webhook_token
     when:
       status: [success, failure]
@@ -409,6 +411,8 @@ trigger:
   event:
     - pull_request
     - push
+depends_on:
+  - ibc-integration-test
 volumes:
 - name: cache
   temp: {}
@@ -416,6 +420,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 46fe23976c6c247f19a426e0a9a60ae6083327b2c2dc4727e800749de1ddb227
+hmac: 1df2eedf650be74b415384f333e2e20ffe23210b9908ee9bc89df0ccb5906fba
 
 ...

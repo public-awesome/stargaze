@@ -163,20 +163,22 @@ DOCKER_BUF := $(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace $(
 ###############################################################################
 ###                                Protobuf                                 ###
 ###############################################################################
-PROTO_BUILDER_IMAGE=ghcr.io/cosmos/proto-builder:0.14.0
-PROTO_FORMATTER_IMAGE=tendermintdev/docker-build-proto@sha256:aabcfe2fc19c31c0f198d4cd26393f5e5ca9502d7ea3feafbfe972448fee7cae
+protoVer=0.14.0
+protoImageName=ghcr.io/cosmos/proto-builder:$(protoVer)
+protoImage=$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace $(protoImageName)
 
-proto-all: proto-format proto-lint proto-gen format
+proto-all: proto-format proto-lint proto-gen
 
 proto-gen:
 	@echo "Generating Protobuf files"
-	$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace $(PROTO_BUILDER_IMAGE) sh ./scripts/protocgen.sh
-
-proto-format:
-	@echo "Formatting Protobuf files"
-	$(DOCKER) run --rm -v $(CURDIR):/workspace \
-	--workdir /workspace $(PROTO_FORMATTER_IMAGE) \
-	find ./ -name *.proto -exec clang-format -i {} \;
+	@$(protoImage) sh ./scripts/protocgen.sh
 
 proto-swagger-gen:
-	@./scripts/protoc-swagger-gen.sh
+	@echo "Generating Protobuf Swagger"
+	@$(protoImage) sh ./scripts/protoc-swagger-gen.sh
+
+proto-format:
+	@$(protoImage) find ./ -name "*.proto" -exec clang-format -i {} \;
+
+proto-lint:
+	@$(protoImage) buf lint --error-format=json

@@ -9,6 +9,8 @@ option go_package = "github.com/public-awesome/stargaze/v13/x/globalfee/types";
 
 // Msg defines the alloc Msg service.
 service Msg {
+  option (cosmos.msg.v1.service) = true;
+  
   rpc SetCodeAuthorization(MsgSetCodeAuthorization)
       returns (MsgSetCodeAuthorizationResponse);
 
