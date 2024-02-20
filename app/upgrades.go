@@ -10,7 +10,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	consensustypes "github.com/cosmos/cosmos-sdk/x/consensus/types"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
@@ -23,8 +22,6 @@ import (
 	icahosttypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/host/types"
 	ibctransfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
 
-	ibctmmigrations "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint/migrations"
-
 	alloctypes "github.com/public-awesome/stargaze/v13/x/alloc/types"
 	globalfeetypes "github.com/public-awesome/stargaze/v13/x/globalfee/types"
 	minttypes "github.com/public-awesome/stargaze/v13/x/mint/types"
@@ -32,9 +29,7 @@ import (
 )
 
 // next upgrade name
-const upgradeName = "v13"
-
-const claimModuleName = "claim"
+const upgradeName = "v13-rc4-testnet"
 
 // RegisterUpgradeHandlers returns upgrade handlers
 func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
@@ -93,35 +88,11 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 		// Migrate Tendermint consensus parameters from x/params module to a dedicated x/consensus module.
 		baseapp.MigrateParams(ctx, baseAppLegacySS, &app.ConsensusParamsKeeper)
 
-		_, err := ibctmmigrations.PruneExpiredConsensusStates(ctx, app.appCodec, app.IBCKeeper.ClientKeeper)
-		if err != nil {
-			return nil, err
-		}
-
 		// run migrations before modifying state
 		migrations, err := app.mm.RunMigrations(ctx, cfg, fromVM)
 		if err != nil {
 			return nil, err
 		}
-		// set min deposit ratio to 20%
-		govParams := app.GovKeeper.GetParams(ctx)
-		govParams.BurnProposalDepositPrevote = true
-		govParams.BurnVoteQuorum = true
-		govParams.BurnVoteVeto = true
-		govParams.MinInitialDepositRatio = sdk.NewDecWithPrec(20, 2).String()
-		err = app.GovKeeper.SetParams(ctx, govParams)
-		if err != nil {
-			return nil, err
-		}
-
-		// set min commission to 5%
-		stakingParams := app.StakingKeeper.GetParams(ctx)
-		stakingParams.MinCommissionRate = sdk.NewDecWithPrec(5, 2)
-		err = app.StakingKeeper.SetParams(ctx, stakingParams)
-		if err != nil {
-			return nil, err
-		}
-
 		return migrations, nil
 	})
 
@@ -132,13 +103,8 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 
 	if upgradeInfo.Name == upgradeName && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
 		storeUpgrades := store.StoreUpgrades{
-			Added: []string{
-				consensustypes.ModuleName,
-				crisistypes.ModuleName,
-			},
-			Deleted: []string{
-				claimModuleName,
-			},
+			Added:   []string{},
+			Deleted: []string{},
 		}
 		// configure store loader that checks if version == upgradeHeight and applies store upgrades
 		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades))
