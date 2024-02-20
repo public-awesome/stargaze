@@ -77,12 +77,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 13.0.0-beta.5
+        - 13.0.0-beta.6
     when:
       event:
         - push
       branch:
-        - jhernandezb/fix-wiring
+        - jhernandezb/bump-sdk-0479
   - name: docker_release
     image: plugins/docker
     settings:
@@ -351,7 +351,7 @@ steps:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:13.0.0-beta.5
+    image: publicawesome/stargaze:13.0.0-beta.6
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -370,7 +370,7 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:13.0.0-beta.5
+    image: publicawesome/stargaze:13.0.0-beta.6
     commands:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
@@ -420,6 +420,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 1df2eedf650be74b415384f333e2e20ffe23210b9908ee9bc89df0ccb5906fba
+hmac: dbcdddbf9aa69ec1897f6a02aa72e91c6b1f086139abcf61bd1269d97794174e
 
 ...
