@@ -8,19 +8,22 @@ import (
 
 	"cosmossdk.io/log"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	dbm "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
 	tmjson "github.com/cometbft/cometbft/libs/json"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	tmtypes "github.com/cometbft/cometbft/types"
+	dbm "github.com/cosmos/cosmos-db"
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+	"github.com/cosmos/cosmos-sdk/server"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	"github.com/cosmos/cosmos-sdk/testutil/mock"
-	simapp "github.com/cosmos/cosmos-sdk/testutil/sims"
+
+	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
@@ -40,8 +43,6 @@ func New(t *testing.T) *stargazeapp.App {
 
 	dir := t.TempDir()
 	db := dbm.NewMemDB()
-	logger := log.NewNopLogger()
-	encoding := stargazeapp.MakeEncodingConfig()
 
 	privValidator := mock.NewPV()
 	pubKey, err := privValidator.GetPubKey()
@@ -59,8 +60,9 @@ func New(t *testing.T) *stargazeapp.App {
 		Coins:   sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdkmath.NewInt(100000000000000))),
 	}
 
-	app := stargazeapp.NewStargazeApp(logger, db, nil, true, map[int64]bool{}, dir, 0, encoding,
-		simapp.EmptyAppOptions{}, stargazeapp.EmptyWasmOpts)
+	appOptions := make(simtestutil.AppOptionsMap, 0)
+	appOptions[flags.FlagHome] = dir
+	app := stargazeapp.NewStargazeApp(log.NewNopLogger(), db, nil, true, appOptions, nil)
 
 	genesisState := stargazeapp.NewDefaultGenesisState(app.AppCodec())
 	genesisState = genesisStateWithValSet(t, app, genesisState, valSet, []authtypes.GenesisAccount{acc}, balance)
@@ -72,7 +74,7 @@ func New(t *testing.T) *stargazeapp.App {
 	app.InitChain(
 		&abci.RequestInitChain{
 			Validators:      []abci.ValidatorUpdate{},
-			ConsensusParams: simapp.DefaultConsensusParams,
+			ConsensusParams: simtestutil.DefaultConsensusParams,
 			AppStateBytes:   stateBytes,
 		},
 	)
@@ -99,19 +101,20 @@ var defaultConsensusParams = &tmproto.ConsensusParams{
 
 func setup(withGenesis bool, invCheckPeriod uint, dir string) (*stargazeapp.App, stargazeapp.GenesisState) {
 	db := dbm.NewMemDB()
-	encoding := stargazeapp.MakeEncodingConfig()
-	a := stargazeapp.NewStargazeApp(log.NewNopLogger(), db, nil, true,
-		map[int64]bool{}, dir, encoding, simapp.EmptyAppOptions{}, stargazeapp.EmptyWasmOpts)
+	appOptions := make(simtestutil.AppOptionsMap, 0)
+	appOptions[flags.FlagHome] = dir
+	appOptions[server.FlagInvCheckPeriod] = invCheckPeriod
+	app := stargazeapp.NewStargazeApp(log.NewNopLogger(), db, nil, true, appOptions, nil)
 	if withGenesis {
-		return a, stargazeapp.NewDefaultGenesisState(encoding.Codec)
+		return app, stargazeapp.NewDefaultGenesisState(app.AppCodec())
 	}
-	return a, stargazeapp.GenesisState{}
+	return app, stargazeapp.GenesisState{}
 }
 
 // SetupWithGenesisValSet initializes a new SimApp with a validator set and genesis accounts
 // that also act as delegators. For simplicity, each validator is bonded with a delegation
 // of one consensus engine unit in the default token of the simapp from first genesis
-// account. A Nop logger is set in SimApp.
+// account. A Nop logger is set in simtestutil.
 func SetupWithGenesisValSet(t *testing.T, dir string, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, balances ...banktypes.Balance) *stargazeapp.App {
 	t.Helper()
 
@@ -229,12 +232,12 @@ func SignCheckDeliver(
 	chainID string, accNums, accSeqs []uint64, simulate bool, expSimPass, expPass bool, priv ...cryptotypes.PrivKey,
 ) (sdk.GasInfo, *sdk.Result, error) {
 	t.Helper()
-	tx, err := simapp.GenSignedMockTx(
+	tx, err := simtestutil.GenSignedMockTx(
 		rand.New(rand.NewSource(time.Now().UnixNano())),
 		txCfg,
 		msgs,
 		sdk.Coins{sdk.NewInt64Coin(sdk.DefaultBondDenom, 0)},
-		simapp.DefaultGenTxGas,
+		simtestutil.DefaultGenTxGas,
 		chainID,
 		accNums,
 		accSeqs,
@@ -274,7 +277,7 @@ func SignCheckDeliver(
 
 func GenTx(gen client.TxConfig, msgs []sdk.Msg, feeAmt sdk.Coins, gas uint64, chainID string, accNums, accSeqs []uint64, priv ...cryptotypes.PrivKey) (sdk.Tx, error) {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	return simapp.GenSignedMockTx(r, gen, msgs, feeAmt, gas, chainID, accNums, accSeqs, priv...)
+	return simtestutil.GenSignedMockTx(r, gen, msgs, feeAmt, gas, chainID, accNums, accSeqs, priv...)
 }
 
 // SetupOptions defines arguments that are passed into `WasmApp` constructor.
