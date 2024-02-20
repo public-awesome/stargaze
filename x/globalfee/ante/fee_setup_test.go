@@ -7,7 +7,8 @@ import (
 	"sync"
 	"time"
 
-	header "cosmossdk.io/core/header"
+	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
+
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cometbft/cometbft/crypto"
@@ -63,11 +64,8 @@ func (s *AnteHandlerTestSuite) SetupTest() {
 		},
 	}
 	app := simapp.SetupWithGenesisAccounts(s.T(), s.T().TempDir(), genAccounts, genBalances...)
-	ctx := app.BaseApp.NewContext(false).WithHeaderInfo(header.Info{
-		ChainID: "ante-test-1",
-		Height:  1,
-		Time:    time.Now(),
-	})
+	h := cmtproto.Header{Height: app.LastBlockHeight() + 1}
+	ctx := sdk.NewContext(app.CommitMultiStore(), h, false, app.Logger()).WithBlockTime(time.Now())
 
 	encodingConfig := stargazeapp.MakeEncodingConfig()
 
