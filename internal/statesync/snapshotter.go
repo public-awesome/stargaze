@@ -8,7 +8,7 @@ import (
 	snapshot "cosmossdk.io/store/snapshots/types"
 	storetypes "cosmossdk.io/store/types"
 	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
-	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -51,7 +51,7 @@ func (vs *VersionSnapshotter) SnapshotExtension(height uint64, payloadWriter sna
 	if err != nil {
 		return err
 	}
-	ctx := sdk.NewContext(cms, tmproto.Header{}, false, log.NewNopLogger())
+	ctx := sdk.NewContext(cms, cmtproto.Header{}, false, log.NewNopLogger())
 	params := vs.consensusParamGetter.GetConsensusParams(ctx)
 	// default to 1 for stargaze
 	appVersion := uint64(1)

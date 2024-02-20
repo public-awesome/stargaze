@@ -122,7 +122,6 @@ func NewRootCmd() *cobra.Command {
 			customAppTemplate, customAppConfig := params.DefaultConfig()
 			customCMTConfig := cmtcfg.DefaultConfig()
 			return server.InterceptConfigsPreRunHandler(cmd, customAppTemplate, customAppConfig, customCMTConfig)
-
 		},
 	}
 
@@ -178,7 +177,6 @@ func initRootCmd(
 		txCommand(),
 		keys.Commands(),
 	)
-
 }
 
 func addModuleInitFlags(startCmd *cobra.Command) {
@@ -252,7 +250,6 @@ func newApp(
 		wasmOpts,
 		baseappOptions...,
 	)
-
 }
 
 func appExport(

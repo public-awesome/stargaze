@@ -156,7 +156,7 @@ func (a AppModule) WeightedOperations(_ module.SimulationState) []simTypes.Weigh
 }
 
 // IsOnePerModuleType implements the depinject.OnePerModuleType interface.
-func (am AppModule) IsOnePerModuleType() {}
+func (a AppModule) IsOnePerModuleType() {}
 
 // IsAppModule implements the appmodule.AppModule interface.
-func (am AppModule) IsAppModule() {}
+func (a AppModule) IsAppModule() {}

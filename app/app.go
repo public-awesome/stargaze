@@ -1011,13 +1011,13 @@ func NewStargazeApp(
 func (app *App) Name() string { return app.BaseApp.Name() }
 
 // BeginBlocker application updates every begin block
-func (a *App) BeginBlocker(ctx sdk.Context) (sdk.BeginBlock, error) {
-	return a.ModuleManager.BeginBlock(ctx)
+func (app *App) BeginBlocker(ctx sdk.Context) (sdk.BeginBlock, error) {
+	return app.ModuleManager.BeginBlock(ctx)
 }
 
 // EndBlocker application updates every end block
-func (a *App) EndBlocker(ctx sdk.Context) (sdk.EndBlock, error) {
-	return a.ModuleManager.EndBlock(ctx)
+func (app *App) EndBlocker(ctx sdk.Context) (sdk.EndBlock, error) {
+	return app.ModuleManager.EndBlock(ctx)
 }
 
 // InitChainer application update at chain initialization

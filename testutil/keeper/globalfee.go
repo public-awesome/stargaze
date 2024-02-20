@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"context"
 	"testing"
 
 	"cosmossdk.io/store"
@@ -14,8 +15,6 @@ import (
 	"github.com/public-awesome/stargaze/v13/x/globalfee/keeper"
 	"github.com/public-awesome/stargaze/v13/x/globalfee/types"
 	"github.com/stretchr/testify/require"
-
-	"context"
 
 	"cosmossdk.io/log"
 	storemetrics "cosmossdk.io/store/metrics"

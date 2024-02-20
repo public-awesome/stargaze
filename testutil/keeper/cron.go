@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"context"
 	"testing"
 
 	"cosmossdk.io/log"
@@ -8,8 +9,6 @@ import (
 	storetypes "cosmossdk.io/store/types"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	dbm "github.com/cosmos/cosmos-db"
-
-	"context"
 
 	storemetrics "cosmossdk.io/store/metrics"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"

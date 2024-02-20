@@ -27,7 +27,7 @@ type MessageEncodeRequest struct {
 	Version string          `json:"version"`
 }
 
-func customEncoders(registry *EncoderRegistry) wasmkeepr.CustomEncoder { //nolint:staticcheck
+func customEncoders(registry *EncoderRegistry) wasmkeepr.CustomEncoder {
 	return func(sender sdk.AccAddress, m json.RawMessage) ([]sdk.Msg, error) {
 		encodeRequest := &MessageEncodeRequest{}
 		err := json.Unmarshal(m, encodeRequest)
