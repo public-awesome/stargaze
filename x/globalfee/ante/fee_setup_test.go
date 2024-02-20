@@ -1,7 +1,6 @@
 package ante_test
 
 import (
-	"context"
 	"encoding/json"
 	"os"
 	"sync"
@@ -18,7 +17,6 @@ import (
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
-	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -139,18 +137,19 @@ func (s *AnteHandlerTestSuite) SetupContractWithContractAuth(senderAddr string, 
 	return instantiateRes.Address
 }
 
-func (s *AnteHandlerTestSuite) CreateTestTx(ctx context.Context, privs []cryptotypes.PrivKey, accNums []uint64, accSeqs []uint64, chainID string) (xauthsigning.Tx, error) {
-	var sigsV2 []signing.SignatureV2 //nolint:golint,prealloc
-
-	defaultSignMode, err := authsigning.APISignModeToInternal(s.clientCtx.TxConfig.SignModeHandler().DefaultMode())
-	if err != nil {
-		return nil, err
-	}
+func (s *AnteHandlerTestSuite) CreateTestTx(
+	ctx sdk.Context, privs []cryptotypes.PrivKey,
+	accNums, accSeqs []uint64,
+	chainID string, signMode signing.SignMode,
+) (xauthsigning.Tx, error) {
+	// First round: we gather all the signer infos. We use the "set empty
+	// signature" hack to do that.
+	var sigsV2 []signing.SignatureV2
 	for i, priv := range privs {
 		sigV2 := signing.SignatureV2{
 			PubKey: priv.PubKey(),
 			Data: &signing.SingleSignatureData{
-				SignMode:  defaultSignMode,
+				SignMode:  signMode,
 				Signature: nil,
 			},
 			Sequence: accSeqs[i],
@@ -158,35 +157,32 @@ func (s *AnteHandlerTestSuite) CreateTestTx(ctx context.Context, privs []cryptot
 
 		sigsV2 = append(sigsV2, sigV2)
 	}
-
-	if err := s.txBuilder.SetSignatures(sigsV2...); err != nil {
+	err := s.txBuilder.SetSignatures(sigsV2...)
+	if err != nil {
 		return nil, err
 	}
 
+	// Second round: all signer infos are set, so each signer can sign.
 	sigsV2 = []signing.SignatureV2{}
 	for i, priv := range privs {
 		signerData := xauthsigning.SignerData{
+			Address:       sdk.AccAddress(priv.PubKey().Address()).String(),
 			ChainID:       chainID,
 			AccountNumber: accNums[i],
 			Sequence:      accSeqs[i],
+			PubKey:        priv.PubKey(),
 		}
 		sigV2, err := tx.SignWithPrivKey(
-			ctx,
-			defaultSignMode,
-			signerData,
-			s.txBuilder,
-			priv,
-			s.clientCtx.TxConfig,
-			accSeqs[i],
-		)
+			ctx, signMode, signerData,
+			s.txBuilder, priv, s.clientCtx.TxConfig, accSeqs[i])
 		if err != nil {
 			return nil, err
 		}
 
 		sigsV2 = append(sigsV2, sigV2)
 	}
-
-	if err := s.txBuilder.SetSignatures(sigsV2...); err != nil {
+	err = s.txBuilder.SetSignatures(sigsV2...)
+	if err != nil {
 		return nil, err
 	}
 

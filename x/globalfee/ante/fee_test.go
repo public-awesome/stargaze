@@ -7,6 +7,7 @@ import (
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -277,7 +278,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			s.Require().NoError(s.txBuilder.SetMsgs(tc.msg...))
 			s.txBuilder.SetFeeAmount(tc.feeSent)
 			s.txBuilder.SetGasLimit(1)
-			tx, err := s.CreateTestTx(s.ctx, privs, accNums, accSeqs, s.ctx.ChainID())
+			tx, err := s.CreateTestTx(s.ctx, privs, accNums, accSeqs, s.ctx.ChainID(), signing.SignMode_SIGN_MODE_DIRECT)
 			s.Require().NoError(err)
 
 			_, err = antehandler(s.ctx, tx, false)
