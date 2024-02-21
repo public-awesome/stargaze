@@ -654,7 +654,7 @@ func NewStargazeApp(
 	)
 
 	app.GovKeeper = *govKeeper.SetHooks(govtypes.NewMultiGovHooks())
-
+	app.GovKeeper.SetLegacyRouter(govRouter)
 	app.AllocKeeper = *allocmodulekeeper.NewKeeper(
 		appCodec,
 		keys[allocmoduletypes.StoreKey],
