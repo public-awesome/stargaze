@@ -652,7 +652,7 @@ func NewStargazeApp(
 	if err != nil {
 		panic(fmt.Sprintf("error while reading wasm config: %s", err))
 	}
-	wasmdVm, err := wasmvm.NewVM(wasmDir, GetWasmCapabilities(), 32, wasmConfig.ContractDebugMode, wasmConfig.MemoryCacheSize)
+	wasmdVM, err := wasmvm.NewVM(wasmDir, GetWasmCapabilities(), 32, wasmConfig.ContractDebugMode, wasmConfig.MemoryCacheSize)
 	if err != nil {
 		panic(fmt.Sprintf("error creating wasmvm for x/wasmd: %s", err))
 	}
@@ -692,7 +692,7 @@ func NewStargazeApp(
 		wasmkeeper.WithQueryPlugins(&wasmkeeper.QueryPlugins{
 			Stargate: wasmkeeper.AcceptListStargateQuerier(AcceptedStargateQueries(), app.GRPCQueryRouter(), appCodec),
 		}),
-		wasmkeeper.WithWasmEngine(wasmdVm),
+		wasmkeeper.WithWasmEngine(wasmdVM),
 	)
 	app.WasmKeeper = wasmkeeper.NewKeeper(
 		appCodec,
@@ -917,7 +917,9 @@ func NewStargazeApp(
 
 	app.ModuleManager.RegisterInvariants(app.CrisisKeeper)
 	configurator := module.NewConfigurator(app.appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
-	app.ModuleManager.RegisterServices(configurator)
+	if err = app.ModuleManager.RegisterServices(configurator); err != nil {
+		panic(err)
+	}
 
 	// initialize stores
 	app.MountKVStores(keys)

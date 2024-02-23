@@ -41,6 +41,7 @@ func TestStoreMigration(t *testing.T) {
 
 // DefaultContext creates a sdk.Context with a fresh MemDB that can be used in tests.
 func DefaultContext(t *testing.T, key storetypes.StoreKey, tkey storetypes.StoreKey) sdk.Context {
+	t.Helper()
 	db := dbm.NewMemDB()
 	cms := store.NewCommitMultiStore(db, log.NewTestLogger(t), storemetrics.NewNoOpMetrics())
 	cms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, db)

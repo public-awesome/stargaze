@@ -144,7 +144,7 @@ func (s *AnteHandlerTestSuite) CreateTestTx(
 ) (xauthsigning.Tx, error) {
 	// First round: we gather all the signer infos. We use the "set empty
 	// signature" hack to do that.
-	var sigsV2 []signing.SignatureV2
+	sigsV2 := make([]signing.SignatureV2, 0, len(privs))
 	for i, priv := range privs {
 		sigV2 := signing.SignatureV2{
 			PubKey: priv.PubKey(),
