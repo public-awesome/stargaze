@@ -54,7 +54,7 @@ func CronKeeper(tb testing.TB) (keeper.Keeper, sdk.Context) {
 			}
 			return false
 		},
-		SudoFn: func(_ context.Context, contractAddress sdk.AccAddress, msg []byte) ([]byte, error) {
+		SudoFn: func(_ context.Context, _ sdk.AccAddress, _ []byte) ([]byte, error) {
 			return nil, nil
 		},
 	}
