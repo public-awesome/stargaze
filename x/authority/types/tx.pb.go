@@ -33,8 +33,10 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 // MsgExecuteProposal defines an sdk.Msg type that supports submitting arbitrary
 // proposal Content.
 type MsgExecuteProposal struct {
-	Authority string       `protobuf:"bytes,1,opt,name=authority,proto3" json:"authority,omitempty"`
-	Messages  []*types.Any `protobuf:"bytes,2,rep,name=messages,proto3" json:"messages,omitempty"`
+	// authority is the address of the account authorized to execute the proposal.
+	Authority string `protobuf:"bytes,1,opt,name=authority,proto3" json:"authority,omitempty"`
+	// messages is the list of messages to execute.
+	Messages []*types.Any `protobuf:"bytes,2,rep,name=messages,proto3" json:"messages,omitempty"`
 }
 
 func (m *MsgExecuteProposal) Reset()         { *m = MsgExecuteProposal{} }
@@ -121,6 +123,7 @@ func (m *MsgExecuteProposalResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgExecuteProposalResponse proto.InternalMessageInfo
 
+// MsgUpdateParams defines an sdk.Msg type that supports updating the authority
 type MsgUpdateParams struct {
 	// Authority is the address of the governance account.
 	Authority string `protobuf:"bytes,1,opt,name=authority,proto3" json:"authority,omitempty"`
@@ -175,6 +178,7 @@ func (m *MsgUpdateParams) GetParams() Params {
 	return Params{}
 }
 
+// MsgUpdateParamsResponse defines the Msg/UpdateParams response type.
 type MsgUpdateParamsResponse struct {
 }
 
@@ -265,7 +269,9 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
+	// ExecuteProposal defines a method to execute a proposal.
 	ExecuteProposal(ctx context.Context, in *MsgExecuteProposal, opts ...grpc.CallOption) (*MsgExecuteProposalResponse, error)
+	// UpdateParams defines a method to update the authority parameters.
 	UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error)
 }
 
@@ -297,7 +303,9 @@ func (c *msgClient) UpdateParams(ctx context.Context, in *MsgUpdateParams, opts 
 
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
+	// ExecuteProposal defines a method to execute a proposal.
 	ExecuteProposal(context.Context, *MsgExecuteProposal) (*MsgExecuteProposalResponse, error)
+	// UpdateParams defines a method to update the authority parameters.
 	UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error)
 }
 

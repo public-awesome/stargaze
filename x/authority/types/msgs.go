@@ -1,14 +1,11 @@
 package types
 
 import (
-	"fmt"
-
 	errorsmod "cosmossdk.io/errors"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	sdktx "github.com/cosmos/cosmos-sdk/types/tx"
-	"github.com/cosmos/cosmos-sdk/x/gov/codec"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 )
 
@@ -67,24 +64,13 @@ func (m MsgExecuteProposal) ValidateBasic() error {
 		return errorsmod.Wrap(govtypes.ErrNoProposalMsgs, "Msgs length must be non-nil")
 	}
 
-	msgs, err := m.GetMsgs()
-	if err != nil {
-		return err
-	}
-
-	for idx, msg := range msgs {
-		if err := msg.ValidateBasic(); err != nil {
-			return errorsmod.Wrap(govtypes.ErrInvalidProposalMsg,
-				fmt.Sprintf("msg: %d, err: %s", idx, err.Error()))
-		}
-	}
-
-	return nil
+	_, err := m.GetMsgs()
+	return err
 }
 
 // GetSignBytes returns the message bytes to sign over.
 func (m MsgExecuteProposal) GetSignBytes() []byte {
-	bz := codec.ModuleCdc.MustMarshalJSON(&m)
+	bz := Amino.MustMarshalJSON(&m)
 	return sdk.MustSortJSON(bz)
 }
 
@@ -125,7 +111,7 @@ func (m MsgUpdateParams) ValidateBasic() error {
 
 // GetSignBytes returns the message bytes to sign over.
 func (m MsgUpdateParams) GetSignBytes() []byte {
-	bz := codec.ModuleCdc.MustMarshalJSON(&m)
+	bz := Amino.MustMarshalJSON(&m)
 	return sdk.MustSortJSON(bz)
 }
 

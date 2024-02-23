@@ -39,13 +39,14 @@
 <a name="publicawesome.stargaze.authority.v1.Authorization"></a>
 
 ### Authorization
-
+Authorization is a struct that holds the addresses that are allowed to
+execute a proposal
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `msgTypeUrl` | [string](#string) |  | The type url of a proposal sdk.Msg |
-| `addresses` | [string](#string) | repeated | The addresses who are allowed to execute that proposal |
+| `msg_type_url` | [string](#string) |  | msgTypeUrl is the type url of a proposal sdk.Msg |
+| `addresses` | [string](#string) | repeated | addresses is a list of addresses that are allowed to execute the proposal |
 
 
 
@@ -60,7 +61,7 @@ Params holds parameters for the authority module.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `authorizations` | [Authorization](#publicawesome.stargaze.authority.v1.Authorization) | repeated |  |
+| `authorizations` | [Authorization](#publicawesome.stargaze.authority.v1.Authorization) | repeated | authorizations is a list of authorizations that are allowed to execute a proposal |
 
 
 
@@ -86,12 +87,12 @@ Params holds parameters for the authority module.
 <a name="publicawesome.stargaze.authority.v1.GenesisState"></a>
 
 ### GenesisState
-
+GenesisState defines the authority module's genesis state.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `params` | [Params](#publicawesome.stargaze.authority.v1.Params) |  |  |
+| `params` | [Params](#publicawesome.stargaze.authority.v1.Params) |  | params defines all the parameters of the module. |
 
 
 
@@ -117,7 +118,7 @@ Params holds parameters for the authority module.
 <a name="publicawesome.stargaze.authority.v1.QueryParamsRequest"></a>
 
 ### QueryParamsRequest
-
+QueryParamsRequest is the request type for the Query/Params RPC method.
 
 
 
@@ -127,7 +128,7 @@ Params holds parameters for the authority module.
 <a name="publicawesome.stargaze.authority.v1.QueryParamsResponse"></a>
 
 ### QueryParamsResponse
-
+QueryParamsResponse is the response type for the Query/Params RPC method.
 
 
 | Field | Type | Label | Description |
@@ -152,7 +153,7 @@ Query defines the gRPC querier service.
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `Params` | [QueryParamsRequest](#publicawesome.stargaze.authority.v1.QueryParamsRequest) | [QueryParamsResponse](#publicawesome.stargaze.authority.v1.QueryParamsResponse) |  | GET|/stargaze/authority/v1/params|
+| `Params` | [QueryParamsRequest](#publicawesome.stargaze.authority.v1.QueryParamsRequest) | [QueryParamsResponse](#publicawesome.stargaze.authority.v1.QueryParamsResponse) | Params queries the parameters of the authority module. | GET|/stargaze/authority/v1/params|
 
  <!-- end services -->
 
@@ -174,8 +175,8 @@ proposal Content.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `authority` | [string](#string) |  |  |
-| `messages` | [google.protobuf.Any](#google.protobuf.Any) | repeated |  |
+| `authority` | [string](#string) |  | authority is the address of the account authorized to execute the proposal. |
+| `messages` | [google.protobuf.Any](#google.protobuf.Any) | repeated | messages is the list of messages to execute. |
 
 
 
@@ -195,7 +196,7 @@ MsgExecuteProposalResponse defines the Msg/ExecuteProposal response type.
 <a name="publicawesome.stargaze.authority.v1.MsgUpdateParams"></a>
 
 ### MsgUpdateParams
-
+MsgUpdateParams defines an sdk.Msg type that supports updating the authority
 
 
 | Field | Type | Label | Description |
@@ -211,7 +212,7 @@ MsgExecuteProposalResponse defines the Msg/ExecuteProposal response type.
 <a name="publicawesome.stargaze.authority.v1.MsgUpdateParamsResponse"></a>
 
 ### MsgUpdateParamsResponse
-
+MsgUpdateParamsResponse defines the Msg/UpdateParams response type.
 
 
 
@@ -231,8 +232,8 @@ Msg defines the authority Msg service.
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `ExecuteProposal` | [MsgExecuteProposal](#publicawesome.stargaze.authority.v1.MsgExecuteProposal) | [MsgExecuteProposalResponse](#publicawesome.stargaze.authority.v1.MsgExecuteProposalResponse) |  | |
-| `UpdateParams` | [MsgUpdateParams](#publicawesome.stargaze.authority.v1.MsgUpdateParams) | [MsgUpdateParamsResponse](#publicawesome.stargaze.authority.v1.MsgUpdateParamsResponse) |  | |
+| `ExecuteProposal` | [MsgExecuteProposal](#publicawesome.stargaze.authority.v1.MsgExecuteProposal) | [MsgExecuteProposalResponse](#publicawesome.stargaze.authority.v1.MsgExecuteProposalResponse) | ExecuteProposal defines a method to execute a proposal. | |
+| `UpdateParams` | [MsgUpdateParams](#publicawesome.stargaze.authority.v1.MsgUpdateParams) | [MsgUpdateParamsResponse](#publicawesome.stargaze.authority.v1.MsgUpdateParamsResponse) | UpdateParams defines a method to update the authority parameters. | |
 
  <!-- end services -->
 

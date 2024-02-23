@@ -13,16 +13,6 @@ func (keeper Keeper) ExecuteProposalMessages(ctx sdk.Context, messages []sdk.Msg
 
 	// Loop through all messages and confirm that each has a handler and the authorizations for the msg are valid
 	for _, msg := range messages {
-		// perform a basic validation of the message
-		if err := msg.ValidateBasic(); err != nil {
-			return 0, errorsmod.Wrap(govtypes.ErrInvalidProposalMsg, err.Error())
-		}
-
-		signers := msg.GetSigners()
-		if len(signers) != 1 {
-			return 0, govtypes.ErrInvalidSigner
-		}
-
 		valid, err := keeper.IsAuthorized(ctx, msg, proposer.String())
 		if !valid {
 			return 0, err

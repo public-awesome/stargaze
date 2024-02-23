@@ -10,22 +10,27 @@ option go_package = "github.com/public-awesome/stargaze/v13/x/authority/types";
 
 // Msg defines the authority Msg service.
 service Msg {
-    rpc ExecuteProposal(MsgExecuteProposal) returns (MsgExecuteProposalResponse);
-    rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
-  }
+  // ExecuteProposal defines a method to execute a proposal.
+  rpc ExecuteProposal(MsgExecuteProposal) returns (MsgExecuteProposalResponse);
+  // UpdateParams defines a method to update the authority parameters.
+  rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
+}
 
 // MsgExecuteProposal defines an sdk.Msg type that supports submitting arbitrary
 // proposal Content.
 message MsgExecuteProposal {
-    option (cosmos.msg.v1.signer) = "authority"; 
-  
-    string authority = 1;
-    repeated google.protobuf.Any messages = 2;
-  }
-  
-  // MsgExecuteProposalResponse defines the Msg/ExecuteProposal response type.
-message MsgExecuteProposalResponse { }
+  option (cosmos.msg.v1.signer) = "authority";
 
+  // authority is the address of the account authorized to execute the proposal.
+  string authority = 1;
+  // messages is the list of messages to execute.
+  repeated google.protobuf.Any messages = 2;
+}
+
+// MsgExecuteProposalResponse defines the Msg/ExecuteProposal response type.
+message MsgExecuteProposalResponse {}
+
+// MsgUpdateParams defines an sdk.Msg type that supports updating the authority
 message MsgUpdateParams {
   option (cosmos.msg.v1.signer) = "authority";
   // Authority is the address of the governance account.
@@ -37,4 +42,5 @@ message MsgUpdateParams {
   ];
 }
 
+// MsgUpdateParamsResponse defines the Msg/UpdateParams response type.
 message MsgUpdateParamsResponse {}

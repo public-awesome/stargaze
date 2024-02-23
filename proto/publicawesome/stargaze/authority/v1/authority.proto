@@ -8,10 +8,16 @@ option go_package = "github.com/public-awesome/stargaze/v13/x/authority/types";
 // Params holds parameters for the authority module.
 message Params {
   option (gogoproto.goproto_stringer) = false;
+  // authorizations is a list of authorizations that are allowed to execute a
+  // proposal
   repeated Authorization authorizations = 1;
 }
 
+// Authorization is a struct that holds the addresses that are allowed to
+// execute a proposal
 message Authorization {
-    string msgTypeUrl = 1; // The type url of a proposal sdk.Msg
-    repeated string addresses = 2; // The addresses who are allowed to execute that proposal
+  // msgTypeUrl is the type url of a proposal sdk.Msg
+  string msg_type_url = 1;
+  // addresses is a list of addresses that are allowed to execute the proposal
+  repeated string addresses = 2;
 }

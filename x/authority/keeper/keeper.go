@@ -3,10 +3,10 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/cometbft/cometbft/libs/log"
+	log "cosmossdk.io/log"
+	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/public-awesome/stargaze/v13/x/authority/types"
@@ -49,9 +49,5 @@ func (k Keeper) Router() *baseapp.MsgServiceRouter {
 }
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
-	return ModuleLogger(ctx)
-}
-
-func ModuleLogger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
