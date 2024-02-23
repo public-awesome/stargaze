@@ -138,10 +138,10 @@ func (a AppModule) ConsensusVersion() uint64 {
 }
 
 // BeginBlock returns the begin blocker for the module.
-func (a AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {}
+func (a AppModule) BeginBlock(_ sdk.Context) {}
 
 // EndBlock returns the end blocker for the module. It returns no validator updates.
-func (a AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
+func (a AppModule) EndBlock(_ sdk.Context) []abci.ValidatorUpdate {
 	return []abci.ValidatorUpdate{}
 }
 
@@ -150,11 +150,13 @@ func (a AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.Valida
 // GenerateGenesisState creates a randomized GenState of the module.
 func (a AppModule) GenerateGenesisState(_ *module.SimulationState) {}
 
-// RegisterStoreDecoder registers a decoder for the module's types.
-func (a AppModule) RegisterStoreDecoder(_ sdk.StoreDecoderRegistry) {
-}
-
 // WeightedOperations returns all the module operations with their respective weights.
 func (a AppModule) WeightedOperations(_ module.SimulationState) []simTypes.WeightedOperation {
 	return []simTypes.WeightedOperation{}
 }
+
+// IsOnePerModuleType implements the depinject.OnePerModuleType interface.
+func (a AppModule) IsOnePerModuleType() {}
+
+// IsAppModule implements the appmodule.AppModule interface.
+func (a AppModule) IsAppModule() {}

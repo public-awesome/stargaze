@@ -6,10 +6,10 @@ SWAGGER_DIR=./swagger-proto
 mkdir -p "$SWAGGER_DIR"
 THIRD_PARTY_DIR="$SWAGGER_DIR/third_party"
 mkdir -p "$THIRD_PARTY_DIR"
-buf export buf.build/cosmos/cosmos-sdk:v0.47.0 -o "$THIRD_PARTY_DIR"
-# wasmd 0.45.0
-buf export buf.build/cosmwasm/wasmd:2a82e352430f5ce799c1926f203cd43b39221387 -o "$THIRD_PARTY_DIR"
-# IBC Go 7
+buf export buf.build/cosmos/cosmos-sdk:v0.50.0 -o "$THIRD_PARTY_DIR"
+# wasmd 0.50.0
+buf export buf.build/cosmwasm/wasmd:651abcff89fc2da24c183fb4592021c680a8f156 -o "$THIRD_PARTY_DIR"
+# IBC Go 8
 buf export buf.build/cosmos/ibc:60b2859500a7d1c01a1d6c49aebffa2d34c8a6b9 -o "$THIRD_PARTY_DIR"
 mkdir -p "$SWAGGER_DIR/proto"
 cp -r ./proto/osmosis "$SWAGGER_DIR/proto"

@@ -3,8 +3,8 @@ package keeper_test
 import (
 	"testing"
 
+	"cosmossdk.io/math"
 	"github.com/cometbft/cometbft/crypto/ed25519"
-	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -42,7 +42,7 @@ func (suite *KeeperTestSuite) TestCreateModuleAccount() {
 	app.AccountKeeper.RemoveAccount(suite.Ctx, tokenfactoryModuleAccount)
 
 	// ensure module account was removed
-	suite.Ctx = app.BaseApp.NewContext(false, tmproto.Header{})
+	suite.Ctx = app.BaseApp.NewContext(false)
 	tokenfactoryModuleAccount = app.AccountKeeper.GetAccount(suite.Ctx, app.AccountKeeper.GetModuleAddress(types.ModuleName))
 	suite.Require().Nil(tokenfactoryModuleAccount)
 
@@ -59,7 +59,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	// Fund every TestAcc with two denoms, one of which is the denom creation fee
 	fundAccsAmount := sdk.NewCoins(
 		sdk.NewCoin(types.DefaultParams().DenomCreationFee[0].Denom, types.DefaultParams().DenomCreationFee[0].Amount.MulRaw(100)),
-		sdk.NewCoin("utest", sdk.NewInt(5000000000)),
+		sdk.NewCoin("utest", math.NewInt(5000000000)),
 	)
 	for _, acc := range suite.TestAccs {
 		suite.FundAcc(acc, fundAccsAmount)
@@ -70,13 +70,13 @@ func (suite *KeeperTestSuite) SetupTest() {
 }
 
 func (suite *KeeperTestSuite) CreateDefaultDenom() {
-	res, _ := suite.msgServer.CreateDenom(sdk.WrapSDKContext(suite.Ctx), types.NewMsgCreateDenom(suite.TestAccs[0].String(), "bitcoin"))
+	res, _ := suite.msgServer.CreateDenom(suite.Ctx, types.NewMsgCreateDenom(suite.TestAccs[0].String(), "bitcoin"))
 	suite.defaultDenom = res.GetNewTokenDenom()
 }
 
 func (suite *KeeperTestSuite) Setup() {
 	suite.App = simapp.New(suite.T())
-	suite.Ctx = suite.App.BaseApp.NewContext(false, tmproto.Header{})
+	suite.Ctx = suite.App.BaseApp.NewContext(false)
 	suite.QueryHelper = &baseapp.QueryServiceTestHelper{
 		GRPCQueryRouter: suite.App.GRPCQueryRouter(),
 		Ctx:             suite.Ctx,
@@ -87,7 +87,7 @@ func (suite *KeeperTestSuite) Setup() {
 func (suite *KeeperTestSuite) SetupTestForInitGenesis() {
 	// Setting to True, leads to init genesis not running
 	suite.App = simapp.New(suite.T())
-	suite.Ctx = suite.App.BaseApp.NewContext(true, tmproto.Header{})
+	suite.Ctx = suite.App.BaseApp.NewContext(true)
 }
 
 // AssertEventEmitted asserts that ctx's event manager has emitted the given number of events

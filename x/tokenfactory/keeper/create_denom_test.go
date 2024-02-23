@@ -3,6 +3,7 @@ package keeper_test
 import (
 	"fmt"
 
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/public-awesome/stargaze/v13/x/tokenfactory/types"
 )
@@ -18,7 +19,7 @@ func (suite *KeeperTestSuite) TestMsgCreateDenom() {
 	preCreateBalance := bankKeeper.GetBalance(suite.Ctx, suite.TestAccs[0], denomCreationFee[0].Denom)
 
 	// Creating a denom should work
-	res, err := suite.msgServer.CreateDenom(sdk.WrapSDKContext(suite.Ctx), types.NewMsgCreateDenom(suite.TestAccs[0].String(), "testy"))
+	res, err := suite.msgServer.CreateDenom(suite.Ctx, types.NewMsgCreateDenom(suite.TestAccs[0].String(), "testy"))
 	suite.Require().NoError(err)
 	suite.Require().NotEmpty(res.GetNewTokenDenom())
 
@@ -34,11 +35,11 @@ func (suite *KeeperTestSuite) TestMsgCreateDenom() {
 	suite.Require().True(preCreateBalance.Sub(postCreateBalance).IsEqual(denomCreationFee[0]))
 
 	// Make sure that a second version of the same denom can't be recreated
-	_, err = suite.msgServer.CreateDenom(sdk.WrapSDKContext(suite.Ctx), types.NewMsgCreateDenom(suite.TestAccs[0].String(), "testy"))
+	_, err = suite.msgServer.CreateDenom(suite.Ctx, types.NewMsgCreateDenom(suite.TestAccs[0].String(), "testy"))
 	suite.Require().Error(err)
 
 	// Creating a second denom should work
-	res, err = suite.msgServer.CreateDenom(sdk.WrapSDKContext(suite.Ctx), types.NewMsgCreateDenom(suite.TestAccs[0].String(), "minty"))
+	res, err = suite.msgServer.CreateDenom(suite.Ctx, types.NewMsgCreateDenom(suite.TestAccs[0].String(), "minty"))
 	suite.Require().NoError(err)
 	suite.Require().NotEmpty(res.GetNewTokenDenom())
 
@@ -50,22 +51,22 @@ func (suite *KeeperTestSuite) TestMsgCreateDenom() {
 	suite.Require().Len(queryRes2.Denoms, 2)
 
 	// Make sure that a second account can create a denom with the same subdenom
-	res, err = suite.msgServer.CreateDenom(sdk.WrapSDKContext(suite.Ctx), types.NewMsgCreateDenom(suite.TestAccs[1].String(), "testy"))
+	res, err = suite.msgServer.CreateDenom(suite.Ctx, types.NewMsgCreateDenom(suite.TestAccs[1].String(), "testy"))
 	suite.Require().NoError(err)
 	suite.Require().NotEmpty(res.GetNewTokenDenom())
 
 	// Make sure that an address with a "/" in it can't create denoms
-	_, err = suite.msgServer.CreateDenom(sdk.WrapSDKContext(suite.Ctx), types.NewMsgCreateDenom("stargaze.stars/creator", "testy"))
+	_, err = suite.msgServer.CreateDenom(suite.Ctx, types.NewMsgCreateDenom("stargaze.stars/creator", "testy"))
 	suite.Require().Error(err)
 }
 
 func (suite *KeeperTestSuite) TestCreateDenom() {
 	var (
 		primaryDenom            = types.DefaultParams().DenomCreationFee[0].Denom
-		defaultDenomCreationFee = types.Params{DenomCreationFee: sdk.NewCoins(sdk.NewCoin(primaryDenom, sdk.NewInt(50000000)))}
-		twoDenomCreationFee     = types.Params{DenomCreationFee: sdk.NewCoins(sdk.NewCoin(primaryDenom, sdk.NewInt(50000000)), sdk.NewCoin("utest", sdk.NewInt(50000000)))}
+		defaultDenomCreationFee = types.Params{DenomCreationFee: sdk.NewCoins(sdk.NewCoin(primaryDenom, math.NewInt(50000000)))}
+		twoDenomCreationFee     = types.Params{DenomCreationFee: sdk.NewCoins(sdk.NewCoin(primaryDenom, math.NewInt(50000000)), sdk.NewCoin("utest", math.NewInt(50000000)))}
 		nilCreationFee          = types.Params{DenomCreationFee: nil}
-		largeCreationFee        = types.Params{DenomCreationFee: sdk.NewCoins(sdk.NewCoin(primaryDenom, sdk.NewInt(5000000000)))}
+		largeCreationFee        = types.Params{DenomCreationFee: sdk.NewCoins(sdk.NewCoin(primaryDenom, math.NewInt(5000000000)))}
 	)
 
 	for _, tc := range []struct {
@@ -85,7 +86,7 @@ func (suite *KeeperTestSuite) TestCreateDenom() {
 			desc:             "subdenom and creator pair already exists",
 			denomCreationFee: defaultDenomCreationFee,
 			setup: func() {
-				_, err := suite.msgServer.CreateDenom(sdk.WrapSDKContext(suite.Ctx), types.NewMsgCreateDenom(suite.TestAccs[0].String(), "testy"))
+				_, err := suite.msgServer.CreateDenom(suite.Ctx, types.NewMsgCreateDenom(suite.TestAccs[0].String(), "testy"))
 				suite.Require().NoError(err)
 			},
 			subdenom: "testy",
@@ -137,11 +138,11 @@ func (suite *KeeperTestSuite) TestCreateDenom() {
 
 			// note balance, create a tokenfactory denom, then note balance again
 			preCreateBalance := bankKeeper.GetAllBalances(suite.Ctx, suite.TestAccs[0])
-			res, err := suite.msgServer.CreateDenom(sdk.WrapSDKContext(suite.Ctx), types.NewMsgCreateDenom(suite.TestAccs[0].String(), tc.subdenom))
+			res, err := suite.msgServer.CreateDenom(suite.Ctx, types.NewMsgCreateDenom(suite.TestAccs[0].String(), tc.subdenom))
 			postCreateBalance := bankKeeper.GetAllBalances(suite.Ctx, suite.TestAccs[0])
 			if tc.valid {
 				suite.Require().NoError(err)
-				suite.Require().True(preCreateBalance.Sub(postCreateBalance...).IsEqual(denomCreationFee))
+				suite.Require().True(preCreateBalance.Sub(postCreateBalance...).Equal(denomCreationFee))
 
 				// Make sure that the admin is set correctly
 				queryRes, err := suite.queryClient.DenomAuthorityMetadata(suite.Ctx.Context(), &types.QueryDenomAuthorityMetadataRequest{
@@ -154,7 +155,7 @@ func (suite *KeeperTestSuite) TestCreateDenom() {
 			} else {
 				suite.Require().Error(err)
 				// Ensure we don't charge if we expect an error
-				suite.Require().True(preCreateBalance.IsEqual(postCreateBalance))
+				suite.Require().True(preCreateBalance.Equal(postCreateBalance))
 			}
 		})
 	}
@@ -212,7 +213,7 @@ func (suite *KeeperTestSuite) TestGasConsume() {
 			gasConsumedBefore := suite.Ctx.GasMeter().GasConsumed()
 
 			// create a denom
-			_, err = suite.msgServer.CreateDenom(sdk.WrapSDKContext(suite.Ctx), types.NewMsgCreateDenom(suite.TestAccs[0].String(), "larry"))
+			_, err = suite.msgServer.CreateDenom(suite.Ctx, types.NewMsgCreateDenom(suite.TestAccs[0].String(), "larry"))
 			suite.Require().NoError(err)
 
 			// amount of gas consumed after the denom creation

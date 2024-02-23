@@ -5,13 +5,15 @@ option go_package = "github.com/public-awesome/stargaze/v13/x/mint/types";
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
+import "cosmos_proto/cosmos.proto";
 
 // Minter represents the minting state.
 message Minter {
   // current annual expected provisions
   string annual_provisions = 1 [
     (gogoproto.moretags) = "yaml:\"annual_provisions\"",
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
     (gogoproto.nullable) = false
   ];
 }
@@ -31,13 +33,15 @@ message Params {
   // initial annual provisions
   string initial_annual_provisions = 3 [
     (gogoproto.moretags) = "yaml:\"initial_annual_provisions\"",
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
     (gogoproto.nullable) = false
   ];
   // factor to reduce inflation by each year
   string reduction_factor = 4 [
     (gogoproto.moretags) = "yaml:\"reduction_factor\"",
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
     (gogoproto.nullable) = false
   ];
   // expected blocks per year

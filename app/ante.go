@@ -1,18 +1,21 @@
 package app
 
 import (
+	corestoretypes "cosmossdk.io/core/store"
 	errorsmod "cosmossdk.io/errors"
+
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmTypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/codec"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
+
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-	ibcante "github.com/cosmos/ibc-go/v7/modules/core/ante"
-	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
+	ibcante "github.com/cosmos/ibc-go/v8/modules/core/ante"
+	ibcore "github.com/cosmos/ibc-go/v8/modules/core/keeper"
+
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	globalfeeante "github.com/public-awesome/stargaze/v13/x/globalfee/ante"
 	globalfeekeeper "github.com/public-awesome/stargaze/v13/x/globalfee/keeper"
 )
@@ -21,13 +24,13 @@ import (
 // channel keeper.
 type HandlerOptions struct {
 	ante.HandlerOptions
-	keeper            *ibckeeper.Keeper
-	govKeeper         govkeeper.Keeper
-	globalfeeKeeper   globalfeekeeper.Keeper
-	stakingKeeper     *stakingkeeper.Keeper
-	WasmConfig        *wasmTypes.WasmConfig
-	TXCounterStoreKey storetypes.StoreKey
-	Codec             codec.BinaryCodec
+	keeper                *ibcore.Keeper
+	govKeeper             govkeeper.Keeper
+	globalfeeKeeper       globalfeekeeper.Keeper
+	stakingKeeper         *stakingkeeper.Keeper
+	WasmConfig            *wasmTypes.WasmConfig
+	TXCounterStoreService corestoretypes.KVStoreService
+	Codec                 codec.BinaryCodec
 }
 
 // NewAnteHandler returns an AnteHandler that checks and increments sequence
@@ -50,7 +53,7 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, "wasm config is required for ante builder")
 	}
 
-	if options.TXCounterStoreKey == nil {
+	if options.TXCounterStoreService == nil {
 		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, "tx counter key is required for ante builder")
 	}
 
@@ -64,7 +67,7 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		// limit simulation gas
 		wasmkeeper.NewLimitSimulationGasDecorator(options.WasmConfig.SimulationGasLimit),
 		globalfeeante.NewFeeDecorator(options.Codec, options.globalfeeKeeper, options.stakingKeeper),
-		wasmkeeper.NewCountTXDecorator(options.TXCounterStoreKey),
+		wasmkeeper.NewCountTXDecorator(options.TXCounterStoreService),
 		ante.NewExtensionOptionsDecorator(options.ExtensionOptionChecker),
 		ante.NewValidateBasicDecorator(),
 		ante.NewTxTimeoutHeightDecorator(),
