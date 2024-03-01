@@ -14,9 +14,10 @@ message SetCodeAuthorizationProposal {
   option (amino.name) = "globalfee/SetCodeAuthorizationProposal";
   option (cosmos_proto.implements_interface) = "cosmos.gov.v1beta1.Content";
 
-  string title = 1 [(gogoproto.moretags) = "yaml:\"title\""];
-  string description = 2 [(gogoproto.moretags) = "yaml:\"description\""];
-  CodeAuthorization code_authorization = 3 [(gogoproto.moretags) = "yaml:\"code_authorization\""];
+  string title = 1 [ (gogoproto.moretags) = "yaml:\"title\"" ];
+  string description = 2 [ (gogoproto.moretags) = "yaml:\"description\"" ];
+  CodeAuthorization code_authorization = 3
+      [ (gogoproto.moretags) = "yaml:\"code_authorization\"" ];
 }
 
 // RemoveCodeAuthorizationProposal
@@ -25,8 +26,8 @@ message RemoveCodeAuthorizationProposal {
   option (amino.name) = "globalfee/RemoveCodeAuthorizationProposal";
   option (cosmos_proto.implements_interface) = "cosmos.gov.v1beta1.Content";
 
-  string title = 1 [(gogoproto.moretags) = "yaml:\"title\""];
-  string description = 2 [(gogoproto.moretags) = "yaml:\"description\""];
+  string title = 1 [ (gogoproto.moretags) = "yaml:\"title\"" ];
+  string description = 2 [ (gogoproto.moretags) = "yaml:\"description\"" ];
   uint64 code_id = 3 [
     (gogoproto.customname) = "CodeID",
     (gogoproto.moretags) = "yaml:\"code_id\""
@@ -39,9 +40,10 @@ message SetContractAuthorizationProposal {
   option (amino.name) = "globalfee/SetContractAuthorizationProposal";
   option (cosmos_proto.implements_interface) = "cosmos.gov.v1beta1.Content";
 
-  string title = 1 [(gogoproto.moretags) = "yaml:\"title\""];
-  string description = 2 [(gogoproto.moretags) = "yaml:\"description\""];
-  ContractAuthorization contract_authorization = 3 [(gogoproto.moretags) = "yaml:\"contract_authorization\""];
+  string title = 1 [ (gogoproto.moretags) = "yaml:\"title\"" ];
+  string description = 2 [ (gogoproto.moretags) = "yaml:\"description\"" ];
+  ContractAuthorization contract_authorization = 3
+      [ (gogoproto.moretags) = "yaml:\"contract_authorization\"" ];
 }
 
 // RemoveCodeAuthorizationProposal ...
@@ -50,7 +52,8 @@ message RemoveContractAuthorizationProposal {
   option (amino.name) = "globalfee/RemoveContractAuthorizationProposal";
   option (cosmos_proto.implements_interface) = "cosmos.gov.v1beta1.Content";
 
-  string title = 1 [(gogoproto.moretags) = "yaml:\"title\""];
-  string description = 2 [(gogoproto.moretags) = "yaml:\"description\""];
-  string contract_address = 3 [(gogoproto.moretags) = "yaml:\"contract_address\""];
+  string title = 1 [ (gogoproto.moretags) = "yaml:\"title\"" ];
+  string description = 2 [ (gogoproto.moretags) = "yaml:\"description\"" ];
+  string contract_address = 3
+      [ (gogoproto.moretags) = "yaml:\"contract_address\"" ];
 }

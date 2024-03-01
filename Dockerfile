@@ -18,12 +18,12 @@ COPY . /code/
 # Download the correct version of libwasmvm for the given platform and verify checksum
 RUN case "${TARGETPLATFORM}" in \
       "linux/amd64") \
-        WASMVM_URL="https://github.com/CosmWasm/wasmvm/releases/download/v1.5.0/libwasmvm_muslc.x86_64.a" && \
-        WASMVM_CHECKSUM="465e3a088e96fd009a11bfd234c69fb8a0556967677e54511c084f815cf9ce63" \
+        WASMVM_URL="https://github.com/CosmWasm/wasmvm/releases/download/v1.5.2/libwasmvm_muslc.x86_64.a" && \
+        WASMVM_CHECKSUM="e660a38efb2930b34ee6f6b0bb12730adccb040b6ab701b8f82f34453a426ae7" \
         ;; \
       "linux/arm64") \
-        WASMVM_URL="https://github.com/CosmWasm/wasmvm/releases/download/v1.5.0/libwasmvm_muslc.aarch64.a" && \
-        WASMVM_CHECKSUM="2687afbdae1bc6c7c8b05ae20dfb8ffc7ddc5b4e056697d0f37853dfe294e913" \
+        WASMVM_URL="https://github.com/CosmWasm/wasmvm/releases/download/v1.5.2/libwasmvm_muslc.aarch64.a" && \
+        WASMVM_CHECKSUM="e78b224c15964817a3b75a40e59882b4d0e06fd055b39514d61646689cef8c6e" \
         ;; \
       *) \
         echo "Unsupported platform: ${TARGETPLATFORM}" ; \
