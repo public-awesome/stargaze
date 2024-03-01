@@ -6,6 +6,7 @@ import (
 
 	store "cosmossdk.io/store/types"
 	upgradetypes "cosmossdk.io/x/upgrade/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	authoritytypes "github.com/public-awesome/stargaze/v13/x/authority/types"
 )
@@ -19,7 +20,10 @@ const claimModuleName = "claim"
 func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 
 	app.UpgradeKeeper.SetUpgradeHandler(upgradeName, func(ctx context.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
-		return app.ModuleManager.RunMigrations(ctx, cfg, fromVM)
+		migrations, err := app.ModuleManager.RunMigrations(ctx, cfg, fromVM)
+
+		app.AuthorityKeeper.SetParams(sdk.UnwrapSDKContext(ctx), authoritytypes.DefaultParams())
+		return migrations, err
 	})
 
 	upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
