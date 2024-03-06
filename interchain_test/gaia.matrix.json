@@ -4,9 +4,9 @@
     [
       {
         "Name": "gaia",
-        "Version": "latest",
         "GasPrices": "0.1uatom",
-        "GasAdjustment": 1.7
+        "GasAdjustment": 1.7,
+        "Version": "v14.1.0"
       },
       {
         "NumValidators": 2,
