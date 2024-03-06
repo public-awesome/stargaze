@@ -40,7 +40,7 @@ func CronKeeper(tb testing.TB) (keeper.Keeper, sdk.Context) {
 	subspace, _ := paramsKeeper.GetSubspace(types.ModuleName)
 
 	wk := MockWasmKeeper{
-		HasContractInfoFn: func(ctx sdk.Context, contractAddr sdk.AccAddress) bool {
+		HasContractInfoFn: func(_ sdk.Context, contractAddr sdk.AccAddress) bool {
 			switch contractAddr.String() {
 			case "cosmos1qyqszqgpqyqszqgpqyqszqgpqyqszqgpjnp7du":
 				return true
@@ -51,7 +51,7 @@ func CronKeeper(tb testing.TB) (keeper.Keeper, sdk.Context) {
 			}
 			return false
 		},
-		SudoFn: func(ctx sdk.Context, contractAddress sdk.AccAddress, msg []byte) ([]byte, error) {
+		SudoFn: func(_ sdk.Context, _ sdk.AccAddress, _ []byte) ([]byte, error) {
 			return nil, nil
 		},
 	}

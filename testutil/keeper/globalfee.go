@@ -43,7 +43,7 @@ func GlobalFeeKeeper(tb testing.TB) (keeper.Keeper, sdk.Context) {
 	subspace, _ := paramsKeeper.GetSubspace(types.ModuleName)
 
 	wk := MockWasmKeeper{
-		HasContractInfoFn: func(ctx sdk.Context, contractAddr sdk.AccAddress) bool {
+		HasContractInfoFn: func(_ sdk.Context, contractAddr sdk.AccAddress) bool {
 			switch contractAddr.String() {
 			case "cosmos1qyqszqgpqyqszqgpqyqszqgpqyqszqgpjnp7du":
 				return true
@@ -54,7 +54,7 @@ func GlobalFeeKeeper(tb testing.TB) (keeper.Keeper, sdk.Context) {
 			}
 			return false
 		},
-		GetCodeInfoFn: func(ctx sdk.Context, codeID uint64) *wasmtypes.CodeInfo {
+		GetCodeInfoFn: func(_ sdk.Context, codeID uint64) *wasmtypes.CodeInfo {
 			if codeID == 1 {
 				return &wasmtypes.CodeInfo{
 					Creator: "cosmos144sh8vyv5nqfylmg4mlydnpe3l4w780jsrmf4k",
