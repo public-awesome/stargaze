@@ -5,6 +5,7 @@
       {
         "Name": "gaia",
         "Version": "latest",
+        "GasPrices": "0.1uatom",
         "GasAdjustment": 1.7
       },
       {
