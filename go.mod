@@ -10,7 +10,7 @@ require (
 	github.com/cosmos/cosmos-proto v1.0.0-beta.4
 	github.com/cosmos/cosmos-sdk v0.47.10
 	github.com/cosmos/go-bip39 v1.0.0
-	github.com/cosmos/gogoproto v1.4.10
+	github.com/cosmos/gogoproto v1.4.11
 	github.com/golang/protobuf v1.5.3
 	github.com/gorilla/mux v1.8.1
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
@@ -25,7 +25,7 @@ require (
 )
 
 require (
-	cosmossdk.io/api v0.3.1
+	cosmossdk.io/api v0.7.3
 	cosmossdk.io/errors v1.0.1
 	github.com/cometbft/cometbft-db v0.8.0
 	github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7 v7.1.2
