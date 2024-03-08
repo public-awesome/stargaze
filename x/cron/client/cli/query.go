@@ -37,7 +37,7 @@ func GetCmdListPrivilegedContracts() *cobra.Command {
 		Long:    "List all contract addresses which have been elevated to privileged status",
 		Aliases: []string{"privileged-contracts", "privileged", "lpc"},
 		Args:    cobra.ExactArgs(0),
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *cobra.Command, _ []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
 				return err
@@ -64,7 +64,7 @@ func GetCmdParams() *cobra.Command {
 		Use:   "params",
 		Short: "Query the module params",
 		Args:  cobra.NoArgs,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *cobra.Command, _ []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
 				return err

@@ -30,7 +30,6 @@ func waitFor(timeout time.Duration, blocks int, url string, ch chan<- error) {
 			if resp.StatusCode == http.StatusOK {
 				status := &ChainStatus{}
 				err = json.NewDecoder(resp.Body).Decode(&status)
-
 				if err != nil {
 					log.Printf("%s: error decoding response %s\n", url, err.Error())
 					if err = resp.Body.Close(); err != nil {
