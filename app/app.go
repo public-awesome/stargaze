@@ -141,6 +141,10 @@ import (
 
 	sgappparams "github.com/public-awesome/stargaze/v13/app/params"
 	sgstatesync "github.com/public-awesome/stargaze/v13/internal/statesync"
+
+	pepmodule "github.com/Fairblock/fairyring/x/pep"
+	pepmodulekeeper "github.com/Fairblock/fairyring/x/pep/keeper"
+	pepmoduletypes "github.com/Fairblock/fairyring/x/pep/types"
 )
 
 const (
@@ -210,6 +214,7 @@ var (
 		ica.AppModuleBasic{},
 		ibchooks.AppModuleBasic{},
 		packetforward.AppModuleBasic{},
+		pepmodule.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -307,6 +312,9 @@ type App struct {
 	// IBC Packet Forward Middleware
 	PacketForwardKeeper *packetforwardkeeper.Keeper
 
+	ScopedPepKeeper capabilitykeeper.ScopedKeeper
+	PepKeeper       pepmodulekeeper.Keeper
+
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// the module manager
@@ -350,11 +358,12 @@ func NewStargazeApp(
 		globalfeemoduletypes.StoreKey,
 		ibchookstypes.StoreKey,
 		packetforwardtypes.StoreKey,
+		pepmoduletypes.StoreKey,
 		crisistypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
-	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
+	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey, pepmoduletypes.MemStoreKey)
 
 	app := &App{
 		BaseApp:           bApp,
@@ -385,6 +394,7 @@ func NewStargazeApp(
 	scopedTransferKeeper := app.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
 	scopedWasmKeeper := app.CapabilityKeeper.ScopeToModule(wasmtypes.ModuleName)
 	scopedICAHostKeeper := app.CapabilityKeeper.ScopeToModule(icahosttypes.SubModuleName)
+	scopedPepKeeper := app.CapabilityKeeper.ScopeToModule(pepmoduletypes.ModuleName)
 	app.CapabilityKeeper.Seal()
 	// this line is used by starport scaffolding # stargate/app/scopedKeeper
 
@@ -561,11 +571,12 @@ func NewStargazeApp(
 	icaHostIBCModule := icahost.NewIBCModule(app.ICAHostKeeper)
 
 	// Create static IBC router, add transfer route, then set and seal it
-
+	pepIBCModule := pepmodule.NewIBCModule(app.PepKeeper)
 	ibcRouter := ibcporttypes.NewRouter()
 	ibcRouter.
 		AddRoute(icahosttypes.SubModuleName, icaHostIBCModule).
-		AddRoute(ibctransfertypes.ModuleName, transferStack)
+		AddRoute(ibctransfertypes.ModuleName, transferStack).
+		AddRoute(pepmoduletypes.ModuleName, pepIBCModule)
 
 	// this line is used by starport scaffolding # ibc/app/router
 
@@ -615,6 +626,18 @@ func NewStargazeApp(
 		GetWasmCapabilities(),
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 		wasmOpts...,
+	)
+
+	app.PepKeeper = *pepmodulekeeper.NewKeeper(
+		appCodec,
+		keys[pepmoduletypes.StoreKey],
+		keys[pepmoduletypes.MemStoreKey],
+		app.GetSubspace(pepmoduletypes.ModuleName),
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
+		scopedPepKeeper,
+		app.IBCKeeper.ConnectionKeeper,
+		app.BankKeeper,
 	)
 
 	// set the contract keeper for the Ics20WasmHooks
@@ -714,6 +737,7 @@ func NewStargazeApp(
 		tokenfactory.NewAppModule(app.TokenFactoryKeeper, app.AccountKeeper, app.BankKeeper),
 		packetforward.NewAppModule(app.PacketForwardKeeper, app.GetSubspace(packetforwardtypes.ModuleName)),
 		consensus.NewAppModule(appCodec, app.ConsensusParamsKeeper),
+		pepmodule.NewAppModule(appCodec, app.PepKeeper, app.AccountKeeper, app.BankKeeper, app.MsgServiceRouter(), encodingConfig.TxConfig, app.SimCheck),
 		// this line is used by starport scaffolding # stargate/app/appModule
 
 		crisis.NewAppModule(&app.CrisisKeeper, skipGenesisInvariants, app.GetSubspace(crisistypes.ModuleName)), // always be last to make sure that it checks for all invariants and not only part of them
@@ -739,6 +763,7 @@ func NewStargazeApp(
 		ibchookstypes.ModuleName,
 		tokenfactorytypes.ModuleName,
 		packetforwardtypes.ModuleName,
+		pepmoduletypes.ModuleName,
 	)
 
 	app.mm.SetOrderEndBlockers(
@@ -757,6 +782,7 @@ func NewStargazeApp(
 		ibchookstypes.ModuleName,
 		tokenfactorytypes.ModuleName,
 		packetforwardtypes.ModuleName,
+		pepmoduletypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -791,6 +817,7 @@ func NewStargazeApp(
 		globalfeemoduletypes.ModuleName, // should be after wasm
 		ibchookstypes.ModuleName,
 		packetforwardtypes.ModuleName,
+		pepmoduletypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -874,6 +901,7 @@ func NewStargazeApp(
 	app.ScopedIBCKeeper = scopedIBCKeeper
 	app.ScopedTransferKeeper = scopedTransferKeeper
 	app.ScopedIBCKeeper = scopedWasmKeeper
+	app.ScopedPepKeeper = scopedPepKeeper
 	// this line is used by starport scaffolding # stargate/app/beforeInitReturn
 	return app
 }
@@ -1050,6 +1078,7 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(globalfeemoduletypes.ModuleName)
 	paramsKeeper.Subspace(packetforwardtypes.ModuleName).WithKeyTable(packetforwardtypes.ParamKeyTable())
+	paramsKeeper.Subspace(pepmoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper
