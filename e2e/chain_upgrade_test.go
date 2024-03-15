@@ -36,7 +36,7 @@ func TestChainUpgrade(t *testing.T) {
 	}
 
 	stargazeChain, client, ctx := startChain(t)
-	chainUser := fundChainUser(t, ctx, stargazeChain)
+	chainUser := fundChainUser(t, ctx, t.Name(), stargazeChain)
 	haltHeight := submitUpgradeProposalAndVote(t, ctx, stargazeChain, chainUser)
 
 	height, err := stargazeChain.Height(ctx)
@@ -101,9 +101,9 @@ func submitUpgradeProposalAndVote(t *testing.T, ctx context.Context, stargazeCha
 	return haltHeight
 }
 
-func fundChainUser(t *testing.T, ctx context.Context, stargazeChain *cosmos.CosmosChain) ibc.Wallet {
+func fundChainUser(t *testing.T, ctx context.Context, userName string, stargazeChain *cosmos.CosmosChain) ibc.Wallet {
 	userFunds := math.NewInt(10_000_000_000_000)
-	users := interchaintest.GetAndFundTestUsers(t, ctx, t.Name(), userFunds, stargazeChain)
+	users := interchaintest.GetAndFundTestUsers(t, ctx, userName, userFunds, stargazeChain)
 	return users[0]
 }
 
