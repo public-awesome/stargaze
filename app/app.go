@@ -133,10 +133,14 @@ import (
 
 	//  ica
 	ica "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts"
+	icacontroller "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller"
+	icacontrollerkeeper "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller/keeper"
+	icacontrollertypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller/types"
 	icahost "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/host"
 	icahostkeeper "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/host/keeper"
 	icahosttypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/host/types"
 	icatypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/types"
+
 	stargazerest "github.com/public-awesome/stargaze/v13/internal/rest"
 
 	sgappparams "github.com/public-awesome/stargaze/v13/app/params"
@@ -284,14 +288,16 @@ type App struct {
 	ContractKeeper *wasmkeeper.PermissionedKeeper
 
 	// IBC
-	IBCKeeper     *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
-	ICAHostKeeper icahostkeeper.Keeper
+	IBCKeeper           *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
+	ICAHostKeeper       icahostkeeper.Keeper
+	ICAControllerKeeper icacontrollerkeeper.Keeper
 
 	// make scoped keepers public for test purposes
-	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
-	ScopedICAHostKeeper  capabilitykeeper.ScopedKeeper
-	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
-	ScopedWasmKeeper     capabilitykeeper.ScopedKeeper
+	ScopedIBCKeeper           capabilitykeeper.ScopedKeeper
+	ScopedICAHostKeeper       capabilitykeeper.ScopedKeeper
+	ScopecICAControllerKeeper capabilitykeeper.ScopedKeeper
+	ScopedTransferKeeper      capabilitykeeper.ScopedKeeper
+	ScopedWasmKeeper          capabilitykeeper.ScopedKeeper
 
 	// stargaze modules
 	AllocKeeper        allocmodulekeeper.Keeper
@@ -347,6 +353,7 @@ func NewStargazeApp(
 		cronmoduletypes.StoreKey,
 		tokenfactorytypes.StoreKey,
 		icahosttypes.StoreKey,
+		icacontrollertypes.StoreKey,
 		globalfeemoduletypes.StoreKey,
 		ibchookstypes.StoreKey,
 		packetforwardtypes.StoreKey,
@@ -385,6 +392,7 @@ func NewStargazeApp(
 	scopedTransferKeeper := app.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
 	scopedWasmKeeper := app.CapabilityKeeper.ScopeToModule(wasmtypes.ModuleName)
 	scopedICAHostKeeper := app.CapabilityKeeper.ScopeToModule(icahosttypes.SubModuleName)
+	scopedICAControllerKeeper := app.CapabilityKeeper.ScopeToModule(icacontrollertypes.SubModuleName)
 	app.CapabilityKeeper.Seal()
 	// this line is used by starport scaffolding # stargate/app/scopedKeeper
 
@@ -560,11 +568,26 @@ func NewStargazeApp(
 
 	icaHostIBCModule := icahost.NewIBCModule(app.ICAHostKeeper)
 
+	app.ICAControllerKeeper = icacontrollerkeeper.NewKeeper(
+		appCodec,
+		app.keys[icacontrollertypes.StoreKey],
+		app.GetSubspace(icacontrollertypes.SubModuleName),
+		app.IBCKeeper.ChannelKeeper,
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
+		scopedIBCKeeper,
+		app.MsgServiceRouter(),
+	)
+
+	var icaControllerStack ibcporttypes.IBCModule
+	icaControllerStack = icacontroller.NewIBCMiddleware(icaControllerStack, app.ICAControllerKeeper)
+
 	// Create static IBC router, add transfer route, then set and seal it
 
 	ibcRouter := ibcporttypes.NewRouter()
 	ibcRouter.
 		AddRoute(icahosttypes.SubModuleName, icaHostIBCModule).
+		AddRoute(icacontrollertypes.SubModuleName, icaControllerStack).
 		AddRoute(ibctransfertypes.ModuleName, transferStack)
 
 	// this line is used by starport scaffolding # ibc/app/router
@@ -703,7 +726,7 @@ func NewStargazeApp(
 		upgrade.NewAppModule(&app.UpgradeKeeper),
 		evidence.NewAppModule(app.EvidenceKeeper),
 		ibc.NewAppModule(app.IBCKeeper),
-		ica.NewAppModule(nil, &app.ICAHostKeeper),
+		ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper),
 		params.NewAppModule(app.ParamsKeeper),
 		transfer.NewAppModule(app.TransferKeeper),
 		allocModule,
@@ -871,6 +894,7 @@ func NewStargazeApp(
 	}
 
 	app.ScopedICAHostKeeper = scopedICAHostKeeper
+	app.ScopecICAControllerKeeper = scopedICAControllerKeeper
 	app.ScopedIBCKeeper = scopedIBCKeeper
 	app.ScopedTransferKeeper = scopedTransferKeeper
 	app.ScopedIBCKeeper = scopedWasmKeeper
@@ -1048,6 +1072,7 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(wasmtypes.ModuleName)
 	paramsKeeper.Subspace(cronmoduletypes.ModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
+	paramsKeeper.Subspace(icacontrollertypes.SubModuleName).WithKeyTable(icacontrollertypes.ParamKeyTable())
 	paramsKeeper.Subspace(globalfeemoduletypes.ModuleName)
 	paramsKeeper.Subspace(packetforwardtypes.ModuleName).WithKeyTable(packetforwardtypes.ParamKeyTable())
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
