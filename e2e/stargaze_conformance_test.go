@@ -25,6 +25,25 @@ func TestStargazeConformance(t *testing.T) {
 
 	// TESTING MODULE : Tokenfactory - from user
 	tokenFactoryConformance(t, ctx, stargazeChain, chainUser1)
+
+	// TODO
+	// TESTING MODULE : Tokenfactory - from contract
+	// Create denom
+	// Mint
+	// Burn
+
+	// TESTING MODULE : Alloc
+	// Fund Fairburn Pool
+
+	// TESTING MODULE : Cron
+	// Promote to priviledged contract - from governance
+	// Update params to add admin address
+	// Demote from priviledged contract - from admin
+
+	// TESTING MODULE : Globalfee
+	// Set code authorization - from governance
+	// Update params to add admin address
+	// Remove code authorization - from admin
 }
 
 func wasmdConformance(ctx context.Context, stargazeChain *cosmos.CosmosChain, chainUser1 ibc.Wallet, t *testing.T) {

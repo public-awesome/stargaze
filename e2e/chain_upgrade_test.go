@@ -37,6 +37,18 @@ func TestChainUpgrade(t *testing.T) {
 
 	stargazeChain, client, ctx := startChain(t)
 	chainUser := fundChainUser(t, ctx, t.Name(), stargazeChain)
+
+	// Creating a contract before upgrade and ensuring expected state
+	codeId, err := stargazeChain.StoreContract(ctx, chainUser.KeyName(), "artifacts/cron_counter.wasm")
+	require.NoError(t, err)
+	initMsg := `{}`
+	contractAddress, err := InstantiateContract(stargazeChain, chainUser, ctx, codeId, initMsg)
+	require.NoError(t, err)
+	var queryRes QueryContractResponse
+	err = stargazeChain.QueryContract(ctx, contractAddress, QueryMsg{GetCount: &struct{}{}}, &queryRes)
+	require.NoError(t, err)
+	require.Equal(t, int64(0), queryRes.Data.UpCount)
+
 	haltHeight := submitUpgradeProposalAndVote(t, ctx, stargazeChain, chainUser)
 
 	height, err := stargazeChain.Height(ctx)
@@ -72,6 +84,14 @@ func TestChainUpgrade(t *testing.T) {
 
 	err = testutil.WaitForBlocks(timeoutCtx, int(blocksAfterUpgrade), stargazeChain)
 	require.NoError(t, err, "chain did not produce blocks after upgrade")
+
+	// Ensure contract behavior is as expected after upgrade
+	execMsg := `{"increment":{}}`
+	err = ExecuteContract(stargazeChain, chainUser, ctx, contractAddress, execMsg)
+	require.NoError(t, err)
+	err = stargazeChain.QueryContract(ctx, contractAddress, QueryMsg{GetCount: &struct{}{}}, &queryRes)
+	require.NoError(t, err)
+	require.Equal(t, int64(1), queryRes.Data.UpCount)
 }
 
 func submitUpgradeProposalAndVote(t *testing.T, ctx context.Context, stargazeChain *cosmos.CosmosChain, chainUser ibc.Wallet) uint64 {
