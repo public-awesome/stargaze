@@ -7,7 +7,7 @@
       [
         {
           "Name": "gaia",
-          "Version": "latest"
+          "Version": "v14.1.0"
         },
         {
           "NumValidators": 2,
