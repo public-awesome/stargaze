@@ -135,6 +135,7 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 			Added: []string{
 				consensustypes.ModuleName,
 				crisistypes.ModuleName,
+				icacontrollertypes.StoreKey,
 			},
 			Deleted: []string{
 				claimModuleName,
