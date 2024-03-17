@@ -295,7 +295,7 @@ type App struct {
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper           capabilitykeeper.ScopedKeeper
 	ScopedICAHostKeeper       capabilitykeeper.ScopedKeeper
-	ScopecICAControllerKeeper capabilitykeeper.ScopedKeeper
+	ScopedICAControllerKeeper capabilitykeeper.ScopedKeeper
 	ScopedTransferKeeper      capabilitykeeper.ScopedKeeper
 	ScopedWasmKeeper          capabilitykeeper.ScopedKeeper
 
@@ -894,7 +894,7 @@ func NewStargazeApp(
 	}
 
 	app.ScopedICAHostKeeper = scopedICAHostKeeper
-	app.ScopecICAControllerKeeper = scopedICAControllerKeeper
+	app.ScopedICAControllerKeeper = scopedICAControllerKeeper
 	app.ScopedIBCKeeper = scopedIBCKeeper
 	app.ScopedTransferKeeper = scopedTransferKeeper
 	app.ScopedIBCKeeper = scopedWasmKeeper
