@@ -93,6 +93,9 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 		if err != nil {
 			return nil, err
 		}
+		icaParams := app.ICAControllerKeeper.GetParams(ctx)
+		icaParams.ControllerEnabled = true
+		app.ICAControllerKeeper.SetParams(ctx, icaParams)
 		return migrations, nil
 	})
 
@@ -103,7 +106,9 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 
 	if upgradeInfo.Name == upgradeName && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
 		storeUpgrades := store.StoreUpgrades{
-			Added:   []string{},
+			Added: []string{
+				icacontrollertypes.StoreKey,
+			},
 			Deleted: []string{},
 		}
 		// configure store loader that checks if version == upgradeHeight and applies store upgrades
