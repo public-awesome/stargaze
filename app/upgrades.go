@@ -93,7 +93,7 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 		if err != nil {
 			return nil, err
 		}
-		icaParams := app.ICAControllerKeeper.GetParams(ctx)
+		icaParams := icacontrollertypes.DefaultParams()
 		icaParams.ControllerEnabled = true
 		app.ICAControllerKeeper.SetParams(ctx, icaParams)
 		return migrations, nil
