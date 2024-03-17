@@ -122,7 +122,8 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 			return nil, err
 		}
 
-		icaParams := app.ICAControllerKeeper.GetParams(ctx)
+		// since params where never initialized start with enabled
+		icaParams := icacontrollertypes.DefaultParams()
 		icaParams.ControllerEnabled = true
 		app.ICAControllerKeeper.SetParams(ctx, icaParams)
 
