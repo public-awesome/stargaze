@@ -575,7 +575,7 @@ func NewStargazeApp(
 		app.IBCKeeper.ChannelKeeper,
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
-		scopedIBCKeeper,
+		scopedICAControllerKeeper,
 		app.MsgServiceRouter(),
 	)
 
