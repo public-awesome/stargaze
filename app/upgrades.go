@@ -29,7 +29,7 @@ import (
 )
 
 // next upgrade name
-const upgradeName = "v13-rc6-testnet"
+const upgradeName = "v13-rc7-testnet"
 
 // RegisterUpgradeHandlers returns upgrade handlers
 func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
