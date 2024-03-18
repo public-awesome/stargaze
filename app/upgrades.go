@@ -10,6 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	consensustypes "github.com/cosmos/cosmos-sdk/x/consensus/types"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
@@ -108,6 +109,7 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 		storeUpgrades := store.StoreUpgrades{
 			Added: []string{
 				icacontrollertypes.StoreKey,
+				consensustypes.ModuleName,
 			},
 			Deleted: []string{},
 		}
