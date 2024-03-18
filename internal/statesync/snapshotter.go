@@ -51,8 +51,8 @@ func (vs *VersionSnapshotter) SnapshotExtension(height uint64, payloadWriter sna
 	}
 	ctx := sdk.NewContext(cms, tmproto.Header{}, false, log.NewNopLogger())
 	params := vs.consensusParamGetter.GetConsensusParams(ctx)
-	// default to 1 for stargaze
-	appVersion := uint64(1)
+	// default to 1 for testnet
+	appVersion := uint64(0)
 	if params != nil && params.Version != nil {
 		appVersion = params.Version.GetApp()
 	}
