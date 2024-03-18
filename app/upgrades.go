@@ -122,6 +122,11 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 			return nil, err
 		}
 
+		// since params where never initialized start with enabled
+		icaParams := icacontrollertypes.DefaultParams()
+		icaParams.ControllerEnabled = true
+		app.ICAControllerKeeper.SetParams(ctx, icaParams)
+
 		return migrations, nil
 	})
 
@@ -135,6 +140,7 @@ func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
 			Added: []string{
 				consensustypes.ModuleName,
 				crisistypes.ModuleName,
+				icacontrollertypes.StoreKey,
 			},
 			Deleted: []string{
 				claimModuleName,
