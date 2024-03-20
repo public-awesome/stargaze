@@ -49,7 +49,7 @@ steps:
     commands:
       - apk add --no-cache ca-certificates build-base git
       - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.5.2/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.a
-      - echo "465e3a088e96fd009a11bfd234c69fb8a0556967677e54511c084f815cf9ce63  /lib/libwasmvm_muslc.a" | sha256sum -c
+      - echo "e660a38efb2930b34ee6f6b0bb12730adccb040b6ab701b8f82f34453a426ae7  /lib/libwasmvm_muslc.a" | sha256sum -c
       - LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true  make build
       - echo "Ensuring binary is statically linked ..." && (file $PWD/bin/starsd | grep "statically linked")
     environment:
@@ -77,12 +77,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 13.0.0-alpha.4
+        - 13.0.0-beta.9
     when:
       event:
         - push
       branch:
-        - spoorthi/upgrade-sdk-to-latest
+        - spoorthi/ica-controller
   - name: docker_release
     image: plugins/docker
     settings:
@@ -132,9 +132,9 @@ steps:
   - name: discord
     image: appleboy/drone-discord
     settings:
-      webhook_id: 
+      webhook_id:
         from_secret: discord_webhook_id
-      webhook_token: 
+      webhook_token:
         from_secret: discord_webhook_token
     when:
       status: [success, failure]
@@ -216,6 +216,7 @@ steps:
   - name: relayer
     image: publicawesome/hermes:1.7.3
     commands:
+      - sleep 10
       - /bin/bash ./scripts/ci/setup-hermes-1.7.sh
 
   - name: relayer-start
@@ -235,9 +236,9 @@ steps:
   - name: discord
     image: appleboy/drone-discord
     settings:
-      webhook_id: 
+      webhook_id:
         from_secret: discord_webhook_id
-      webhook_token: 
+      webhook_token:
         from_secret: discord_webhook_token
     when:
       status: [success, failure]
@@ -350,7 +351,7 @@ steps:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:13.0.0-alpha.4
+    image: publicawesome/stargaze:13.0.0-beta.9
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -369,7 +370,7 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:13.0.0-alpha.4
+    image: publicawesome/stargaze:13.0.0-beta.9
     commands:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
@@ -397,9 +398,9 @@ steps:
   - name: discord
     image: appleboy/drone-discord
     settings:
-      webhook_id: 
+      webhook_id:
         from_secret: discord_webhook_id
-      webhook_token: 
+      webhook_token:
         from_secret: discord_webhook_token
     when:
       status: [success, failure]
@@ -410,6 +411,8 @@ trigger:
   event:
     - pull_request
     - push
+depends_on:
+  - ibc-integration-test
 volumes:
 - name: cache
   temp: {}
@@ -417,6 +420,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 11b2f12adbb4be5b4d9a5abe7cf6c9e29192284275c814cfbf3b98e3f5a0bdc3
+hmac: 5731053a92a730984ac3a569c36c712eb78d3c917641f67cf733ddbf9db91a35
 
 ...
