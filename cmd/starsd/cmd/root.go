@@ -40,8 +40,8 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
-	"github.com/public-awesome/stargaze/v13/app"
-	"github.com/public-awesome/stargaze/v13/app/params"
+	"github.com/public-awesome/stargaze/v14/app"
+	"github.com/public-awesome/stargaze/v14/app/params"
 )
 
 const EnvironmentPrefix = "STARGAZE"

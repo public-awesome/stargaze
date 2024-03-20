@@ -5,12 +5,12 @@ import "gogoproto/gogo.proto";
 import "cosmos/msg/v1/msg.proto";
 import "publicawesome/stargaze/globalfee/v1/globalfee.proto";
 
-option go_package = "github.com/public-awesome/stargaze/v13/x/globalfee/types";
+option go_package = "github.com/public-awesome/stargaze/v14/x/globalfee/types";
 
 // Msg defines the alloc Msg service.
 service Msg {
   option (cosmos.msg.v1.service) = true;
-  
+
   rpc SetCodeAuthorization(MsgSetCodeAuthorization)
       returns (MsgSetCodeAuthorizationResponse);
 

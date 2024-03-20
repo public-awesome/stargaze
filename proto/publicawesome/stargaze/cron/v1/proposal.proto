@@ -5,7 +5,7 @@ import "amino/amino.proto";
 import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/public-awesome/stargaze/v13/x/cron/types";
+option go_package = "github.com/public-awesome/stargaze/v14/x/cron/types";
 
 // Deprecated: Do not use. To promote a contract, a
 // MsgPromoteToPrivilegedContract can be invoked from the x/gov module via a v1
@@ -16,11 +16,11 @@ message PromoteToPrivilegedContractProposal {
   option (cosmos_proto.implements_interface) = "cosmos.gov.v1beta1.Content";
 
   // Title is a short summary
-  string title = 1 [(gogoproto.moretags) = "yaml:\"title\""];
+  string title = 1 [ (gogoproto.moretags) = "yaml:\"title\"" ];
   // Description is a human readable text
-  string description = 2 [(gogoproto.moretags) = "yaml:\"description\""];
+  string description = 2 [ (gogoproto.moretags) = "yaml:\"description\"" ];
   // Contract is the bech32 address of the smart contract
-  string contract = 3 [(gogoproto.moretags) = "yaml:\"contract\""];
+  string contract = 3 [ (gogoproto.moretags) = "yaml:\"contract\"" ];
 }
 
 // Deprecated: Do not use. To demote a contract, a
@@ -32,9 +32,9 @@ message DemotePrivilegedContractProposal {
   option (cosmos_proto.implements_interface) = "cosmos.gov.v1beta1.Content";
 
   // Title is a short summary
-  string title = 1 [(gogoproto.moretags) = "yaml:\"title\""];
+  string title = 1 [ (gogoproto.moretags) = "yaml:\"title\"" ];
   // Description is a human readable text
-  string description = 2 [(gogoproto.moretags) = "yaml:\"description\""];
+  string description = 2 [ (gogoproto.moretags) = "yaml:\"description\"" ];
   // Contract is the bech32 address of the smart contract
-  string contract = 3 [(gogoproto.moretags) = "yaml:\"contract\""];
+  string contract = 3 [ (gogoproto.moretags) = "yaml:\"contract\"" ];
 }

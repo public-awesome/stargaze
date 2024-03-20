@@ -3,8 +3,8 @@ package keeper_test
 import (
 	"testing"
 
-	"github.com/public-awesome/stargaze/v13/testutil/keeper"
-	"github.com/public-awesome/stargaze/v13/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v14/testutil/keeper"
+	"github.com/public-awesome/stargaze/v14/x/globalfee/types"
 	"github.com/stretchr/testify/require"
 )
 
