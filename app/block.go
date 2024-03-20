@@ -12,10 +12,14 @@ func (a *App) PreBlocker(ctx sdk.Context, _ *abci.RequestFinalizeBlock) (*sdk.Re
 
 // Precommiter application updates every commit
 func (a *App) Precommiter(ctx sdk.Context) {
-	a.ModuleManager.Precommit(ctx)
+	if err := a.ModuleManager.Precommit(ctx); err != nil {
+		panic(err)
+	}
 }
 
 // PrepareCheckStater application updates every commit
 func (a *App) PrepareCheckStater(ctx sdk.Context) {
-	a.ModuleManager.PrepareCheckState(ctx)
+	if err := a.ModuleManager.PrepareCheckState(ctx); err != nil {
+		panic(err)
+	}
 }

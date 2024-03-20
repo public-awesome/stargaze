@@ -62,13 +62,14 @@ func New(t *testing.T) *stargazeapp.App {
 	stateBytes, err := tmjson.MarshalIndent(genesisState, "", " ")
 	require.NoError(t, err)
 
-	app.InitChain(
+	_, err = app.InitChain(
 		&abci.RequestInitChain{
 			Validators:      []abci.ValidatorUpdate{},
 			ConsensusParams: simtestutil.DefaultConsensusParams,
 			AppStateBytes:   stateBytes,
 		},
 	)
+	require.NoError(t, err)
 
 	return app
 }

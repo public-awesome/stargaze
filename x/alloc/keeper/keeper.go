@@ -61,7 +61,7 @@ func (k Keeper) GetModuleAccountAddress(_ sdk.Context) sdk.AccAddress {
 }
 
 // GetModuleAccountBalance gets the airdrop coin balance of module account
-func (k Keeper) GetModuleAccount(ctx sdk.Context, moduleName string) authtypes.AccountI {
+func (k Keeper) GetModuleAccount(ctx sdk.Context, moduleName string) sdk.AccountI {
 	return k.accountKeeper.GetModuleAccount(ctx, moduleName)
 }
 

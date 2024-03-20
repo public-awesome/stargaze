@@ -138,6 +138,9 @@ test-chain-upgrade:
 test-ica:
 	cd e2e && go test -v -race -run TestInterchainAccounts .
 
+test-chain-conformance:
+	cd e2e && go test -v -race -run TestStargazeConformance .
+
 .PHONY: test test-e2e build-linux docker-test lint build install format
 
 format:

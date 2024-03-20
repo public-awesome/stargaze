@@ -33,7 +33,7 @@ func GetCmdParams() *cobra.Command {
 		Use:   "params",
 		Short: "List the module params",
 		Args:  cobra.NoArgs,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *cobra.Command, _ []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
 				return err
@@ -119,8 +119,8 @@ func GetCmdAuthorizations() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "auth-all",
 		Short: "Gets all the authorizations",
-		Args:  cobra.ExactArgs(0),
-		RunE: func(cmd *cobra.Command, args []string) error {
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, _ []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
 				return err
