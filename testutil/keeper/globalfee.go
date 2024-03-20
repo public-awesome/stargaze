@@ -11,9 +11,9 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	"github.com/public-awesome/stargaze/v13/app"
-	"github.com/public-awesome/stargaze/v13/x/globalfee/keeper"
-	"github.com/public-awesome/stargaze/v13/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v14/app"
+	"github.com/public-awesome/stargaze/v14/x/globalfee/keeper"
+	"github.com/public-awesome/stargaze/v14/x/globalfee/types"
 	"github.com/stretchr/testify/require"
 
 	"cosmossdk.io/log"

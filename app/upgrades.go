@@ -25,10 +25,10 @@ package app
 
 // 	ibctmmigrations "github.com/cosmos/ibc-go/v8/modules/light-clients/07-tendermint/migrations"
 
-// 	alloctypes "github.com/public-awesome/stargaze/v13/x/alloc/types"
-// 	globalfeetypes "github.com/public-awesome/stargaze/v13/x/globalfee/types"
-// 	minttypes "github.com/public-awesome/stargaze/v13/x/mint/types"
-// 	tokenfactorytypes "github.com/public-awesome/stargaze/v13/x/tokenfactory/types"
+// 	alloctypes "github.com/public-awesome/stargaze/v14/x/alloc/types"
+// 	globalfeetypes "github.com/public-awesome/stargaze/v14/x/globalfee/types"
+// 	minttypes "github.com/public-awesome/stargaze/v14/x/mint/types"
+// 	tokenfactorytypes "github.com/public-awesome/stargaze/v14/x/tokenfactory/types"
 // )
 
 // // next upgrade name
