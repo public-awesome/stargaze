@@ -3,6 +3,7 @@ package e2e
 import (
 	"context"
 	"encoding/json"
+	"os"
 	"strings"
 	"testing"
 
@@ -33,24 +34,27 @@ func TestInterchainAccounts(t *testing.T) {
 	eRep := rep.RelayerExecReporter(t)
 	ctx := context.Background()
 
+	stargazeCfg1 := stargazeCfg
+	stargazeCfg1.ChainID = "stargaze-1"
+	stargazeCfg2 := stargazeCfg
+	stargazeCfg2.ChainID = "stargaze-2"
+
 	// Get both chains
 	cf := interchaintest.NewBuiltinChainFactory(zaptest.NewLogger(t), []*interchaintest.ChainSpec{
 		{
-			Name: "icad",
-			ChainConfig: ibc.ChainConfig{
-				Images: []ibc.DockerImage{{Repository: "ghcr.io/cosmos/ibc-go-icad", Version: "v0.1.7", UidGid: "1025:1025"}},
-			},
+			Name:        "stargaze",
+			ChainConfig: stargazeCfg1,
 		},
 		{
 			Name:        "stargaze",
-			ChainConfig: stargazeCfg,
+			ChainConfig: stargazeCfg2,
 		},
 	})
 
 	chains, err := cf.Chains(t.Name())
 	require.NoError(t, err)
 
-	icadChain, starsdChain := chains[0].(*cosmos.CosmosChain), chains[1].(*cosmos.CosmosChain)
+	controllerChain, hostChain := chains[0].(*cosmos.CosmosChain), chains[1].(*cosmos.CosmosChain)
 
 	// Get a relayer instance
 	r := interchaintest.NewBuiltinRelayerFactory(
@@ -64,12 +68,12 @@ func TestInterchainAccounts(t *testing.T) {
 	const relayerName = "relayer"
 
 	ic := interchaintest.NewInterchain().
-		AddChain(icadChain).
-		AddChain(starsdChain).
+		AddChain(controllerChain).
+		AddChain(hostChain).
 		AddRelayer(r, relayerName).
 		AddLink(interchaintest.InterchainLink{
-			Chain1:  icadChain,
-			Chain2:  starsdChain,
+			Chain1:  controllerChain,
+			Chain2:  hostChain,
 			Relayer: r,
 			Path:    pathName,
 		})
@@ -83,32 +87,34 @@ func TestInterchainAccounts(t *testing.T) {
 
 	// Fund a user account on chain1 and chain2
 	const userFunds = int64(10_000_000_000)
-	users := interchaintest.GetAndFundTestUsers(t, ctx, t.Name(), userFunds, icadChain, starsdChain)
-	icadUser := users[0]
-	starsdUser := users[1]
+	users := interchaintest.GetAndFundTestUsers(t, ctx, t.Name(), userFunds, controllerChain, hostChain)
+	controllerUser := users[0]
+	hostUser := users[1]
 
 	// Generate a new IBC path
-	err = r.GeneratePath(ctx, eRep, icadChain.Config().ChainID, starsdChain.Config().ChainID, pathName)
+	err = r.GeneratePath(ctx, eRep, controllerChain.Config().ChainID, hostChain.Config().ChainID, pathName)
 	require.NoError(t, err)
 
 	// Create new clients
 	err = r.CreateClients(ctx, eRep, pathName, ibc.CreateClientOptions{TrustingPeriod: "330h"})
 	require.NoError(t, err)
 
-	err = testutil.WaitForBlocks(ctx, 2, icadChain, starsdChain)
+	err = testutil.WaitForBlocks(ctx, 2, controllerChain, hostChain)
 	require.NoError(t, err)
 
 	// Create a new connection
 	err = r.CreateConnections(ctx, eRep, pathName)
 	require.NoError(t, err)
 
-	err = testutil.WaitForBlocks(ctx, 2, icadChain, starsdChain)
+	err = testutil.WaitForBlocks(ctx, 2, controllerChain, hostChain)
 	require.NoError(t, err)
 
 	// Query for the newly created connection
-	connections, err := r.GetConnections(ctx, eRep, icadChain.Config().ChainID)
+	connections, err := r.GetConnections(ctx, eRep, controllerChain.Config().ChainID)
 	require.NoError(t, err)
-	require.Equal(t, 1, len(connections))
+	require.Equal(t, 2, len(connections))
+
+	connection := connections[0]
 
 	// Start the relayer and set the cleanup function.
 	err = r.StartRelayer(ctx, eRep, pathName)
@@ -120,27 +126,29 @@ func TestInterchainAccounts(t *testing.T) {
 			if err != nil {
 				t.Logf("an error occurred while stopping the relayer: %s", err)
 			}
+			// err = os.Remove("msg.json")
+			// if err != nil {
+			// 	t.Logf("an error occurred while removing the msg.json file: %s", err)
+			// }
 		},
 	)
 
 	// Register a new interchain account on starsdChain, on behalf of the user acc on icadChain
-	icadAddr := icadUser.(*cosmos.CosmosWallet).FormattedAddressWithPrefix(icadChain.Config().Bech32Prefix)
 	registerICA := []string{
-		icadChain.Config().Bin, "tx", "intertx", "register",
-		"--from", icadAddr,
-		"--connection-id", connections[0].ID,
-		"--chain-id", icadChain.Config().ChainID,
-		"--home", icadChain.HomeDir(),
-		"--node", icadChain.GetRPCAddress(),
+		controllerChain.Config().Bin, "tx", "interchain-accounts", "controller", "register", connection.ID,
+		"--from", controllerUser.FormattedAddress(),
+		"--chain-id", controllerChain.Config().ChainID,
+		"--home", controllerChain.HomeDir(),
+		"--node", controllerChain.GetRPCAddress(),
 		"--keyring-backend", keyring.BackendTest,
 		"-y",
 	}
-	_, _, err = icadChain.Exec(ctx, registerICA, nil)
+	_, _, err = controllerChain.Exec(ctx, registerICA, nil)
 	require.NoError(t, err)
 
 	ir := cosmos.DefaultEncoding().InterfaceRegistry
 
-	c2h, err := starsdChain.Height(ctx)
+	c2h, err := hostChain.Height(ctx)
 	require.NoError(t, err)
 
 	channelFound := func(found *chantypes.MsgChannelOpenConfirm) bool {
@@ -148,47 +156,47 @@ func TestInterchainAccounts(t *testing.T) {
 	}
 
 	// Wait for channel open confirm
-	_, err = cosmos.PollForMessage(ctx, starsdChain, ir,
+	_, err = cosmos.PollForMessage(ctx, hostChain, ir,
 		c2h, c2h+30, channelFound)
 	require.NoError(t, err)
 
 	// Query for the newly registered interchain account
 	queryICA := []string{
-		icadChain.Config().Bin, "query", "intertx", "interchainaccounts", connections[0].ID, icadAddr,
-		"--chain-id", icadChain.Config().ChainID,
-		"--home", icadChain.HomeDir(),
-		"--node", icadChain.GetRPCAddress(),
+		controllerChain.Config().Bin, "query", "interchain-accounts", "controller", "interchain-account", controllerUser.FormattedAddress(), connection.ID,
+		"--chain-id", controllerChain.Config().ChainID,
+		"--home", controllerChain.HomeDir(),
+		"--node", controllerChain.GetRPCAddress(),
 	}
-	stdout, _, err := icadChain.Exec(ctx, queryICA, nil)
+	stdout, _, err := controllerChain.Exec(ctx, queryICA, nil)
 	require.NoError(t, err)
+	t.Log(string(stdout))
 
 	icaAddr := parseInterchainAccountField(stdout)
 	require.NotEmpty(t, icaAddr)
 
 	// Get initial account balances
-	starsdAddr := starsdUser.(*cosmos.CosmosWallet).FormattedAddressWithPrefix(starsdChain.Config().Bech32Prefix)
 
-	starsdOrigBal, err := starsdChain.GetBalance(ctx, starsdAddr, starsdChain.Config().Denom)
+	starsdOrigBal, err := hostChain.GetBalance(ctx, hostUser.FormattedAddress(), hostChain.Config().Denom)
 	require.NoError(t, err)
 
-	icaOrigBal, err := starsdChain.GetBalance(ctx, icaAddr, starsdChain.Config().Denom)
+	icaOrigBal, err := hostChain.GetBalance(ctx, icaAddr, hostChain.Config().Denom)
 	require.NoError(t, err)
 
 	// Send funds to ICA from user account on starsd
 	transferAmount := math.NewInt(1000)
 	transfer := ibc.WalletAmount{
 		Address: icaAddr,
-		Denom:   starsdChain.Config().Denom,
+		Denom:   hostChain.Config().Denom,
 		Amount:  transferAmount,
 	}
-	err = starsdChain.SendFunds(ctx, starsdUser.KeyName(), transfer)
+	err = hostChain.SendFunds(ctx, hostUser.KeyName(), transfer)
 	require.NoError(t, err)
 
-	starsdBal, err := starsdChain.GetBalance(ctx, starsdAddr, starsdChain.Config().Denom)
+	starsdBal, err := hostChain.GetBalance(ctx, hostUser.FormattedAddress(), hostChain.Config().Denom)
 	require.NoError(t, err)
 	require.Equal(t, starsdBal, starsdOrigBal.Sub(transferAmount))
 
-	icaBal, err := starsdChain.GetBalance(ctx, icaAddr, starsdChain.Config().Denom)
+	icaBal, err := hostChain.GetBalance(ctx, icaAddr, hostChain.Config().Denom)
 	require.NoError(t, err)
 	require.Equal(t, icaBal, icaOrigBal.Add(transferAmount))
 
@@ -196,51 +204,52 @@ func TestInterchainAccounts(t *testing.T) {
 	rawMsg, err := json.Marshal(map[string]any{
 		"@type":        "/cosmos.bank.v1beta1.MsgSend",
 		"from_address": icaAddr,
-		"to_address":   starsdAddr,
+		"to_address":   hostUser.FormattedAddress(),
 		"amount": []map[string]any{
 			{
-				"denom":  starsdChain.Config().Denom,
+				"denom":  hostChain.Config().Denom,
 				"amount": transferAmount.String(),
 			},
 		},
 	})
 	require.NoError(t, err)
+	err = os.WriteFile("msg.json", rawMsg, 0644)
+	require.NoError(t, err)
 
 	// Send bank transfer msg to ICA on starsd from the user account on icad
 	sendICATransfer := []string{
-		icadChain.Config().Bin, "tx", "intertx", "submit", string(rawMsg),
-		"--connection-id", connections[0].ID,
-		"--from", icadAddr,
-		"--chain-id", icadChain.Config().ChainID,
-		"--home", icadChain.HomeDir(),
-		"--node", icadChain.GetRPCAddress(),
+		controllerChain.Config().Bin, "tx", "interchain-accounts", "controller", "send-tx", connection.ID, string(rawMsg),
+		"--from", controllerUser.FormattedAddress(),
+		"--chain-id", controllerChain.Config().ChainID,
+		"--home", controllerChain.HomeDir(),
+		"--node", controllerChain.GetRPCAddress(),
 		"--keyring-backend", keyring.BackendTest,
 		"-y",
 	}
-	_, _, err = icadChain.Exec(ctx, sendICATransfer, nil)
+	_, _, err = controllerChain.Exec(ctx, sendICATransfer, nil)
 	require.NoError(t, err)
 
 	// Wait for tx to be relayed
-	c1h, err := icadChain.Height(ctx)
+	c1h, err := controllerChain.Height(ctx)
 	require.NoError(t, err)
 
 	ackFound := func(found *chantypes.MsgAcknowledgement) bool {
 		return found.Packet.Sequence == 1 &&
-			found.Packet.SourcePort == "icacontroller-"+icadAddr &&
+			found.Packet.SourcePort == "icacontroller-"+controllerUser.FormattedAddress() &&
 			found.Packet.DestinationPort == "icahost"
 	}
 
 	// Wait for ack
-	_, err = cosmos.PollForMessage(ctx, icadChain, ir, c1h, c1h+10, ackFound)
+	_, err = cosmos.PollForMessage(ctx, controllerChain, ir, c1h, c1h+10, ackFound)
 	require.NoError(t, err)
 
 	// Assert that the funds have been received by the user account on starsd
-	starsdBal, err = starsdChain.GetBalance(ctx, starsdAddr, starsdChain.Config().Denom)
+	starsdBal, err = hostChain.GetBalance(ctx, hostUser.FormattedAddress(), hostChain.Config().Denom)
 	require.NoError(t, err)
 	require.Equal(t, starsdBal, starsdOrigBal)
 
 	// Assert that the funds have been removed from the ICA on chain2
-	icaBal, err = starsdChain.GetBalance(ctx, icaAddr, starsdChain.Config().Denom)
+	icaBal, err = hostChain.GetBalance(ctx, icaAddr, hostChain.Config().Denom)
 	require.NoError(t, err)
 	require.Equal(t, icaBal, icaOrigBal)
 }
