@@ -181,7 +181,7 @@ proto-swagger-gen:
 	@$(protoImage) sh ./scripts/protoc-swagger-gen.sh
 
 proto-format:
-	@$(protoImage) find ./ -name "*.proto" -exec clang-format -i {} \;
+	@$(protoImage) buf format --write proto/
 
 proto-lint:
 	@$(protoImage) buf lint --error-format=json

@@ -1,10 +1,10 @@
 syntax = "proto3";
 package publicawesome.stargaze.mint.v1beta1;
 
+import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "publicawesome/stargaze/mint/v1beta1/mint.proto";
-import "cosmos_proto/cosmos.proto";
 
 option go_package = "github.com/public-awesome/stargaze/v14/x/mint/types";
 
@@ -16,8 +16,7 @@ service Query {
   }
 
   // AnnualProvisions current minting annual provisions value.
-  rpc AnnualProvisions(QueryAnnualProvisionsRequest)
-      returns (QueryAnnualProvisionsResponse) {
+  rpc AnnualProvisions(QueryAnnualProvisionsRequest) returns (QueryAnnualProvisionsResponse) {
     option (google.api.http).get = "/stargaze/mint/v1beta1/annual_provisions";
   }
 }
@@ -28,7 +27,7 @@ message QueryParamsRequest {}
 // QueryParamsResponse is the response type for the Query/Params RPC method.
 message QueryParamsResponse {
   // params defines the parameters of the module.
-  Params params = 1 [ (gogoproto.nullable) = false ];
+  Params params = 1 [(gogoproto.nullable) = false];
 }
 
 // QueryAnnualProvisionsRequest is the request type for the

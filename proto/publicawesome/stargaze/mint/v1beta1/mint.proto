@@ -1,11 +1,11 @@
 syntax = "proto3";
 package publicawesome.stargaze.mint.v1beta1;
 
-option go_package = "github.com/public-awesome/stargaze/v14/x/mint/types";
-
+import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
-import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/public-awesome/stargaze/v14/x/mint/types";
 
 // Minter represents the minting state.
 message Minter {
@@ -45,6 +45,5 @@ message Params {
     (gogoproto.nullable) = false
   ];
   // expected blocks per year
-  uint64 blocks_per_year = 5
-      [ (gogoproto.moretags) = "yaml:\"blocks_per_year\"" ];
+  uint64 blocks_per_year = 5 [(gogoproto.moretags) = "yaml:\"blocks_per_year\""];
 }

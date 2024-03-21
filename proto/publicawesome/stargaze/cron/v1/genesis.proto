@@ -10,8 +10,7 @@ option go_package = "github.com/public-awesome/stargaze/v14/x/cron/types";
 message GenesisState {
   // List of all the contracts that have been given the privilege status via
   // governance. They can set up hooks to abci.EndBlocker
-  repeated string privileged_contract_addresses = 1
-      [ (gogoproto.jsontag) = "privileged_contract_addresses,omitempty" ];
+  repeated string privileged_contract_addresses = 1 [(gogoproto.jsontag) = "privileged_contract_addresses,omitempty"];
 
   // Module params
   Params params = 2 [

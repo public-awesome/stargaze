@@ -1,9 +1,9 @@
 syntax = "proto3";
 package publicawesome.stargaze.alloc.v1beta1;
 
-import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "cosmos/msg/v1/msg.proto";
+import "gogoproto/gogo.proto";
 
 // this line is used by starport scaffolding # proto/tx/import
 
@@ -15,13 +15,11 @@ service Msg {
 
   // CreateVestingAccount defines a method that enables creating a vesting
   // account.
-  rpc CreateVestingAccount(MsgCreateVestingAccount)
-      returns (MsgCreateVestingAccountResponse);
+  rpc CreateVestingAccount(MsgCreateVestingAccount) returns (MsgCreateVestingAccountResponse);
 
   // FundFairburnPool defines a method to allow an account to directly
   // fund the fee collector module account.
-  rpc FundFairburnPool(MsgFundFairburnPool)
-      returns (MsgFundFairburnPoolResponse);
+  rpc FundFairburnPool(MsgFundFairburnPool) returns (MsgFundFairburnPoolResponse);
 }
 
 // MsgCreateVestingAccount defines a message that enables creating a vesting
@@ -30,15 +28,15 @@ message MsgCreateVestingAccount {
   option (cosmos.msg.v1.signer) = "from_address";
   option (gogoproto.equal) = true;
 
-  string from_address = 1 [ (gogoproto.moretags) = "yaml:\"from_address\"" ];
-  string to_address = 2 [ (gogoproto.moretags) = "yaml:\"to_address\"" ];
+  string from_address = 1 [(gogoproto.moretags) = "yaml:\"from_address\""];
+  string to_address = 2 [(gogoproto.moretags) = "yaml:\"to_address\""];
   repeated cosmos.base.v1beta1.Coin amount = 3 [
     (gogoproto.nullable) = false,
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
   ];
 
-  int64 start_time = 4 [ (gogoproto.moretags) = "yaml:\"start_time\"" ];
-  int64 end_time = 5 [ (gogoproto.moretags) = "yaml:\"end_time\"" ];
+  int64 start_time = 4 [(gogoproto.moretags) = "yaml:\"start_time\""];
+  int64 end_time = 5 [(gogoproto.moretags) = "yaml:\"end_time\""];
   bool delayed = 6;
 }
 

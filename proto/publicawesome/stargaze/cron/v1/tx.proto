@@ -12,12 +12,10 @@ service Msg {
   option (cosmos.msg.v1.service) = true;
 
   // PromoteToPrivilegedContract promotes a contract to privileged status.
-  rpc PromoteToPrivilegedContract(MsgPromoteToPrivilegedContract)
-      returns (MsgPromoteToPrivilegedContractResponse);
+  rpc PromoteToPrivilegedContract(MsgPromoteToPrivilegedContract) returns (MsgPromoteToPrivilegedContractResponse);
 
   // DemoteFromPrivilegedContract demotes a contract from privileged status.
-  rpc DemoteFromPrivilegedContract(MsgDemoteFromPrivilegedContract)
-      returns (MsgDemoteFromPrivilegedContractResponse);
+  rpc DemoteFromPrivilegedContract(MsgDemoteFromPrivilegedContract) returns (MsgDemoteFromPrivilegedContractResponse);
 
   // UpdateParams updates the cron module's parameters.
   rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);

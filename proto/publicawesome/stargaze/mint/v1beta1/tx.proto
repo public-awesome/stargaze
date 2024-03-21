@@ -6,4 +6,6 @@ import "cosmos/msg/v1/msg.proto";
 option go_package = "github.com/public-awesome/stargaze/v14/x/mint/types";
 
 // Msg defines the mint Msg service.
-service Msg { option (cosmos.msg.v1.service) = true; }
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+}
