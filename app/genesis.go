@@ -3,7 +3,6 @@ package app
 import (
 	"encoding/json"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 )
@@ -26,12 +25,12 @@ const (
 // NewDefaultGenesisState generates the default state for the application.
 func NewDefaultGenesisState(cdc codec.JSONCodec) GenesisState {
 	genesis := ModuleBasics.DefaultGenesis(cdc)
-	wasmGen := wasm.GenesisState{ //nolint:staticcheck
+	wasmGen := wasmtypes.GenesisState{
 		Params: wasmtypes.Params{
-			CodeUploadAccess:             wasmtypes.AllowNobody,
+			CodeUploadAccess:             wasmtypes.AllowEverybody,
 			InstantiateDefaultPermission: wasmtypes.AccessTypeEverybody,
 		},
 	}
-	genesis[wasm.ModuleName] = cdc.MustMarshalJSON(&wasmGen) //nolint:staticcheck
+	genesis[wasmtypes.ModuleName] = cdc.MustMarshalJSON(&wasmGen)
 	return genesis
 }

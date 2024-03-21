@@ -3,14 +3,14 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/cometbft/cometbft/libs/log"
-
+	log "cosmossdk.io/log"
+	sdkmath "cosmossdk.io/math"
+	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/codec"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/public-awesome/stargaze/v13/x/alloc/types"
+	"github.com/public-awesome/stargaze/v14/x/alloc/types"
 )
 
 type (
@@ -61,7 +61,7 @@ func (k Keeper) GetModuleAccountAddress(_ sdk.Context) sdk.AccAddress {
 }
 
 // GetModuleAccountBalance gets the airdrop coin balance of module account
-func (k Keeper) GetModuleAccount(ctx sdk.Context, moduleName string) authtypes.AccountI {
+func (k Keeper) GetModuleAccount(ctx sdk.Context, moduleName string) sdk.AccountI {
 	return k.accountKeeper.GetModuleAccount(ctx, moduleName)
 }
 
@@ -72,7 +72,11 @@ func (k Keeper) sendToFairburnPool(ctx sdk.Context, sender sdk.AccAddress, amoun
 
 // DistributeInflation distributes module-specific inflation
 func (k Keeper) DistributeInflation(ctx sdk.Context) error {
-	denom := k.stakingKeeper.BondDenom(ctx)
+	denom, err := k.stakingKeeper.BondDenom(ctx)
+	if err != nil {
+		return err
+	}
+
 	// get allocation params to retrieve distribution proportions
 	params := k.GetParams(ctx)
 
@@ -106,7 +110,7 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 	distributionEvent = distributionEvent.AppendAttributes(sdk.NewAttribute(types.AttributeKeyFeePoolAmount, blockInflation.String()))
 	proportions := params.DistributionProportions
 
-	if proportions.NftIncentives.GT(sdk.ZeroDec()) {
+	if proportions.NftIncentives.GT(sdkmath.LegacyZeroDec()) {
 		incentiveRewards := k.GetProportions(ctx, blockInflation, proportions.NftIncentives)
 
 		// Distribute NFT incentives to the community pool until a future update
@@ -118,7 +122,7 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 	}
 
 	// fund community pool if the value is not nil and greater than zero
-	if !proportions.CommunityPool.IsNil() && proportions.CommunityPool.GT(sdk.ZeroDec()) {
+	if !proportions.CommunityPool.IsNil() && proportions.CommunityPool.GT(sdkmath.LegacyZeroDec()) {
 		communityPoolTax := k.GetProportions(ctx, blockInflation, proportions.CommunityPool)
 		err := k.distrKeeper.FundCommunityPool(ctx, sdk.NewCoins(communityPoolTax), blockInflationAddr)
 		if err != nil {
@@ -129,7 +133,7 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 
 	devRewards := k.GetProportions(ctx, blockInflation, proportions.DeveloperRewards)
 	distributionEvent = distributionEvent.AppendAttributes(sdk.NewAttribute(types.AttributeKeyDevRewardsAmount, devRewards.String()))
-	err := k.DistributeWeightedRewards(ctx, blockInflationAddr, devRewards, params.WeightedDeveloperRewardsReceivers)
+	err = k.DistributeWeightedRewards(ctx, blockInflationAddr, devRewards, params.WeightedDeveloperRewardsReceivers)
 	if err != nil {
 		return err
 	}
@@ -155,8 +159,8 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 
 // GetProportions gets the balance of the `MintedDenom` from minted coins
 // and returns coins according to the `AllocationRatio`
-func (k Keeper) GetProportions(_ sdk.Context, mintedCoin sdk.Coin, ratio sdk.Dec) sdk.Coin {
-	return sdk.NewCoin(mintedCoin.Denom, sdk.NewDecFromInt(mintedCoin.Amount).Mul(ratio).TruncateInt())
+func (k Keeper) GetProportions(_ sdk.Context, mintedCoin sdk.Coin, ratio sdkmath.LegacyDec) sdk.Coin {
+	return sdk.NewCoin(mintedCoin.Denom, sdkmath.LegacyNewDecFromInt(mintedCoin.Amount).Mul(ratio).TruncateInt())
 }
 
 func (k Keeper) DistributeWeightedRewards(ctx sdk.Context, feeCollectorAddress sdk.AccAddress, totalAllocation sdk.Coin, accounts []types.WeightedAddress) error {

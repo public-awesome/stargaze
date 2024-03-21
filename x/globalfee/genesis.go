@@ -2,8 +2,8 @@ package globalfee
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v13/x/globalfee/keeper"
-	"github.com/public-awesome/stargaze/v13/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v14/x/globalfee/keeper"
+	"github.com/public-awesome/stargaze/v14/x/globalfee/types"
 )
 
 // InitGenesis initializes the module genesis state.

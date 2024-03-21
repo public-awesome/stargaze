@@ -1,15 +1,17 @@
 package ante
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 
 	errorsmod "cosmossdk.io/errors"
+	sdkmath "cosmossdk.io/math"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/public-awesome/stargaze/v13/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v14/x/globalfee/types"
 )
 
 var _ sdk.AnteDecorator = FeeDecorator{}
@@ -22,7 +24,7 @@ type GlobalFeeReaderExpected interface {
 }
 
 type StakingReaderExpected interface {
-	BondDenom(ctx sdk.Context) string
+	BondDenom(ctx context.Context) (string, error)
 }
 
 type FeeDecorator struct {
@@ -206,7 +208,7 @@ func (mfd FeeDecorator) getGlobalFee(ctx sdk.Context, feeTx sdk.FeeTx) (sdk.Coin
 	requiredGlobalFees := make(sdk.Coins, len(globalMinGasPrices))
 	// Determine the required fees by multiplying each required minimum gas
 	// price by the gas limit, where fee = ceil(minGasPrice * gasLimit).
-	glDec := sdk.NewDec(int64(feeTx.GetGas()))
+	glDec := sdkmath.LegacyNewDec(int64(feeTx.GetGas()))
 	for i, gp := range globalMinGasPrices {
 		fee := gp.Amount.Mul(glDec)
 		requiredGlobalFees[i] = sdk.NewCoin(gp.Denom, fee.Ceil().RoundInt())
@@ -227,7 +229,7 @@ func getMinGasPrice(ctx sdk.Context, gasLimit int64) sdk.Coins {
 	requiredFees := make(sdk.Coins, len(minGasPrices))
 	// Determine the required fees by multiplying each required minimum gas
 	// price by the gas limit, where fee = ceil(minGasPrice * gasLimit).
-	glDec := sdk.NewDec(gasLimit)
+	glDec := sdkmath.LegacyNewDec(gasLimit)
 	for i, gp := range minGasPrices {
 		fee := gp.Amount.Mul(glDec)
 		requiredFees[i] = sdk.NewCoin(gp.Denom, fee.Ceil().RoundInt())
@@ -298,12 +300,14 @@ func splitCoinsByDenoms(feeCoins sdk.Coins, denomMap map[string]bool) (feeCoinsN
 }
 
 func (mfd FeeDecorator) defaultZeroGlobalFee(ctx sdk.Context) ([]sdk.DecCoin, error) {
-	bondDenom := mfd.getBondDenom(ctx)
+	bondDenom, err := mfd.getBondDenom(ctx)
+	if err != nil {
+		return nil, err
+	}
 	if bondDenom == "" {
 		return nil, errors.New("empty staking bond denomination")
 	}
-
-	return []sdk.DecCoin{sdk.NewDecCoinFromDec(bondDenom, sdk.NewDec(0))}, nil
+	return []sdk.DecCoin{sdk.NewDecCoinFromDec(bondDenom, sdkmath.LegacyNewDec(0))}, nil
 }
 
 // find replaces the functionality of Coins.find from SDK v0.46.x
@@ -333,6 +337,6 @@ func find(coins sdk.Coins, denom string) (bool, sdk.Coin) {
 	}
 }
 
-func (mfd FeeDecorator) getBondDenom(ctx sdk.Context) string {
+func (mfd FeeDecorator) getBondDenom(ctx sdk.Context) (string, error) {
 	return mfd.stakingKeeper.BondDenom(ctx)
 }

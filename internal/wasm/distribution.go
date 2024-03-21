@@ -27,7 +27,7 @@ func (fcp FundCommunityPool) Encode(contract sdk.AccAddress) ([]sdk.Msg, error) 
 	if err != nil {
 		return nil, err
 	}
-	msg := distributiontypes.NewMsgFundCommunityPool(amount, contract)
+	msg := distributiontypes.NewMsgFundCommunityPool(amount, contract.String())
 	return []sdk.Msg{msg}, nil
 }
 

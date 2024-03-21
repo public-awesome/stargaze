@@ -1,32 +1,35 @@
 package keeper
 
 import (
+	"context"
 	"testing"
 
+	"cosmossdk.io/log"
+	"cosmossdk.io/store"
+	storetypes "cosmossdk.io/store/types"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-	tmdb "github.com/cometbft/cometbft-db"
-	"github.com/cometbft/cometbft/libs/log"
+	dbm "github.com/cosmos/cosmos-db"
+
+	storemetrics "cosmossdk.io/store/metrics"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	"github.com/cosmos/cosmos-sdk/store"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	"github.com/public-awesome/stargaze/v13/x/cron/keeper"
-	"github.com/public-awesome/stargaze/v13/x/cron/types"
+	"github.com/public-awesome/stargaze/v14/x/cron/keeper"
+	"github.com/public-awesome/stargaze/v14/x/cron/types"
 	"github.com/stretchr/testify/require"
 )
 
 // CronKeeper creates a testing keeper for the x/cron module
 func CronKeeper(tb testing.TB) (keeper.Keeper, sdk.Context) {
 	tb.Helper()
-	storeKey := sdk.NewKVStoreKey(types.StoreKey)
+	storeKey := storetypes.NewKVStoreKey(types.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
 	tStoreKey := storetypes.NewTransientStoreKey("t_cron")
 
-	db := tmdb.NewMemDB()
-	stateStore := store.NewCommitMultiStore(db)
+	db := dbm.NewMemDB()
+	stateStore := store.NewCommitMultiStore(db, log.NewTestLogger(tb), storemetrics.NewNoOpMetrics())
 	stateStore.MountStoreWithDB(storeKey, storetypes.StoreTypeIAVL, db)
 	stateStore.MountStoreWithDB(memStoreKey, storetypes.StoreTypeMemory, nil)
 	stateStore.MountStoreWithDB(tStoreKey, storetypes.StoreTypeTransient, db)
@@ -40,7 +43,7 @@ func CronKeeper(tb testing.TB) (keeper.Keeper, sdk.Context) {
 	subspace, _ := paramsKeeper.GetSubspace(types.ModuleName)
 
 	wk := MockWasmKeeper{
-		HasContractInfoFn: func(_ sdk.Context, contractAddr sdk.AccAddress) bool {
+		HasContractInfoFn: func(_ context.Context, contractAddr sdk.AccAddress) bool {
 			switch contractAddr.String() {
 			case "cosmos1qyqszqgpqyqszqgpqyqszqgpqyqszqgpjnp7du":
 				return true
@@ -51,7 +54,7 @@ func CronKeeper(tb testing.TB) (keeper.Keeper, sdk.Context) {
 			}
 			return false
 		},
-		SudoFn: func(_ sdk.Context, _ sdk.AccAddress, _ []byte) ([]byte, error) {
+		SudoFn: func(_ context.Context, _ sdk.AccAddress, _ []byte) ([]byte, error) {
 			return nil, nil
 		},
 	}
@@ -74,34 +77,34 @@ func CronKeeper(tb testing.TB) (keeper.Keeper, sdk.Context) {
 }
 
 type MockWasmKeeper struct {
-	HasContractInfoFn func(ctx sdk.Context, contractAddr sdk.AccAddress) bool
-	SudoFn            func(ctx sdk.Context, contractAddress sdk.AccAddress, msg []byte) ([]byte, error)
-	GetCodeInfoFn     func(ctx sdk.Context, codeID uint64) *wasmtypes.CodeInfo
-	GetContractInfoFn func(ctx sdk.Context, contractAddress sdk.AccAddress) *wasmtypes.ContractInfo
+	HasContractInfoFn func(ctx context.Context, contractAddr sdk.AccAddress) bool
+	SudoFn            func(ctx context.Context, contractAddress sdk.AccAddress, msg []byte) ([]byte, error)
+	GetCodeInfoFn     func(ctx context.Context, codeID uint64) *wasmtypes.CodeInfo
+	GetContractInfoFn func(ctx context.Context, contractAddress sdk.AccAddress) *wasmtypes.ContractInfo
 }
 
-func (k MockWasmKeeper) HasContractInfo(ctx sdk.Context, contractAddress sdk.AccAddress) bool {
+func (k MockWasmKeeper) HasContractInfo(ctx context.Context, contractAddress sdk.AccAddress) bool {
 	if k.HasContractInfoFn == nil {
 		panic("not supposed to be called!")
 	}
 	return k.HasContractInfoFn(ctx, contractAddress)
 }
 
-func (k MockWasmKeeper) Sudo(ctx sdk.Context, contractAddress sdk.AccAddress, msg []byte) ([]byte, error) {
+func (k MockWasmKeeper) Sudo(ctx context.Context, contractAddress sdk.AccAddress, msg []byte) ([]byte, error) {
 	if k.SudoFn == nil {
 		panic("not supposed to be called!")
 	}
 	return k.SudoFn(ctx, contractAddress, msg)
 }
 
-func (k MockWasmKeeper) GetCodeInfo(ctx sdk.Context, codeID uint64) *wasmtypes.CodeInfo {
+func (k MockWasmKeeper) GetCodeInfo(ctx context.Context, codeID uint64) *wasmtypes.CodeInfo {
 	if k.GetCodeInfoFn == nil {
 		panic("not supposed to be called!")
 	}
 	return k.GetCodeInfoFn(ctx, codeID)
 }
 
-func (k MockWasmKeeper) GetContractInfo(ctx sdk.Context, contractAddress sdk.AccAddress) *wasmtypes.ContractInfo {
+func (k MockWasmKeeper) GetContractInfo(ctx context.Context, contractAddress sdk.AccAddress) *wasmtypes.ContractInfo {
 	if k.GetContractInfoFn == nil {
 		panic("not supposed to be called!")
 	}

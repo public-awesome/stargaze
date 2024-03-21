@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	errorsmod "cosmossdk.io/errors"
-	"github.com/CosmWasm/wasmd/x/wasm"
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -14,8 +14,8 @@ import (
 type Encoder func(contract sdk.AccAddress, data json.RawMessage, version string) ([]sdk.Msg, error)
 
 // MessageEncoders provides stargaze custom encoder for contracts
-func MessageEncoders(registry *EncoderRegistry) *wasm.MessageEncoders { //nolint:staticcheck
-	return &wasm.MessageEncoders{ //nolint:staticcheck
+func MessageEncoders(registry *EncoderRegistry) *wasmkeeper.MessageEncoders {
+	return &wasmkeeper.MessageEncoders{
 		Custom: customEncoders(registry),
 	}
 }
@@ -26,7 +26,7 @@ type MessageEncodeRequest struct {
 	Version string          `json:"version"`
 }
 
-func customEncoders(registry *EncoderRegistry) wasm.CustomEncoder { //nolint:staticcheck
+func customEncoders(registry *EncoderRegistry) wasmkeeper.CustomEncoder {
 	return func(sender sdk.AccAddress, m json.RawMessage) ([]sdk.Msg, error) {
 		encodeRequest := &MessageEncodeRequest{}
 		err := json.Unmarshal(m, encodeRequest)
@@ -43,7 +43,11 @@ func customEncoders(registry *EncoderRegistry) wasm.CustomEncoder { //nolint:sta
 			return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
 		for _, msg := range msgs {
-			if err := msg.ValidateBasic(); err != nil {
+			m, ok := msg.(sdk.HasValidateBasic)
+			if !ok {
+				continue
+			}
+			if err := m.ValidateBasic(); err != nil {
 				return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 			}
 		}

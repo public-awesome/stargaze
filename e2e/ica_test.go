@@ -89,7 +89,7 @@ func TestInterchainAccounts(t *testing.T) {
 	}))
 
 	// Fund a user account on chain1 and chain2
-	const userFunds = int64(10_000_000_000)
+	userFunds := math.NewInt(10_000_000_000)
 	users := interchaintest.GetAndFundTestUsers(t, ctx, t.Name(), userFunds, controllerChain, hostChain)
 	controllerUser := users[0]
 	hostUser := users[1]

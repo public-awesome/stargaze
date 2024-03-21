@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 
-	"github.com/public-awesome/stargaze/v13/x/cron/types"
+	"github.com/public-awesome/stargaze/v14/x/cron/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module
@@ -36,7 +36,7 @@ func GetCmdListPrivilegedContracts() *cobra.Command {
 		Short:   "List all privileged contract addresses",
 		Long:    "List all contract addresses which have been elevated to privileged status",
 		Aliases: []string{"privileged-contracts", "privileged", "lpc"},
-		Args:    cobra.ExactArgs(0),
+		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {

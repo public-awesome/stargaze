@@ -1,12 +1,12 @@
 package v2
 
 import (
+	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/codec"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/public-awesome/stargaze/v13/x/mint/exported"
-	"github.com/public-awesome/stargaze/v13/x/mint/types"
+	"github.com/public-awesome/stargaze/v14/x/mint/exported"
+	"github.com/public-awesome/stargaze/v14/x/mint/types"
 )
 
 // MigrateStore migrates the x/mint module state from the consensus version 1 to

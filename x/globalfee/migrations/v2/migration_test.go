@@ -9,10 +9,11 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	moduletestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
 
-	"github.com/public-awesome/stargaze/v13/x/globalfee"
-	"github.com/public-awesome/stargaze/v13/x/globalfee/exported"
-	v2 "github.com/public-awesome/stargaze/v13/x/globalfee/migrations/v2"
-	"github.com/public-awesome/stargaze/v13/x/globalfee/types"
+	storetype "cosmossdk.io/store/types"
+	"github.com/public-awesome/stargaze/v14/x/globalfee"
+	"github.com/public-awesome/stargaze/v14/x/globalfee/exported"
+	v2 "github.com/public-awesome/stargaze/v14/x/globalfee/migrations/v2"
+	"github.com/public-awesome/stargaze/v14/x/globalfee/types"
 )
 
 type mockSubspace struct {
@@ -31,8 +32,8 @@ func TestMigrateStore(t *testing.T) {
 	encCfg := moduletestutil.MakeTestEncodingConfig(globalfee.AppModuleBasic{})
 	cdc := encCfg.Codec
 
-	storeKey := sdk.NewKVStoreKey(types.ModuleName)
-	tKey := sdk.NewTransientStoreKey("transient_test")
+	storeKey := storetype.NewKVStoreKey(types.ModuleName)
+	tKey := storetype.NewTransientStoreKey("transient_test")
 	ctx := testutil.DefaultContext(storeKey, tKey)
 	store := ctx.KVStore(storeKey)
 

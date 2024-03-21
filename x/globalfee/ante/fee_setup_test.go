@@ -6,11 +6,12 @@ import (
 	"sync"
 	"time"
 
+	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
+
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cometbft/cometbft/crypto"
 	"github.com/cometbft/cometbft/crypto/secp256k1"
-	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -19,10 +20,10 @@ import (
 	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	stargazeapp "github.com/public-awesome/stargaze/v13/app"
-	"github.com/public-awesome/stargaze/v13/testutil/simapp"
-	"github.com/public-awesome/stargaze/v13/x/globalfee/ante"
-	"github.com/public-awesome/stargaze/v13/x/globalfee/types"
+	stargazeapp "github.com/public-awesome/stargaze/v14/app"
+	"github.com/public-awesome/stargaze/v14/testutil/simapp"
+	"github.com/public-awesome/stargaze/v14/x/globalfee/ante"
+	"github.com/public-awesome/stargaze/v14/x/globalfee/types"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -61,11 +62,8 @@ func (s *AnteHandlerTestSuite) SetupTest() {
 		},
 	}
 	app := simapp.SetupWithGenesisAccounts(s.T(), s.T().TempDir(), genAccounts, genBalances...)
-	ctx := app.BaseApp.NewContext(false, tmproto.Header{
-		ChainID: "ante-test-1",
-		Height:  1,
-		Time:    time.Now(),
-	})
+	h := cmtproto.Header{Height: app.LastBlockHeight() + 1}
+	ctx := sdk.NewContext(app.CommitMultiStore(), h, false, app.Logger()).WithBlockTime(time.Now())
 
 	encodingConfig := stargazeapp.MakeEncodingConfig()
 
@@ -106,7 +104,7 @@ func (s *AnteHandlerTestSuite) SetupContractWithCodeAuth(senderAddr string, cont
 	s.Require().NoError(err)
 
 	initMsg := wasmtypes.MsgInstantiateContract{Sender: senderAddr, Admin: senderAddr, CodeID: codeID, Label: "Counter Contract", Msg: instantiateMsgRaw, Funds: sdk.NewCoins()}
-	instantiateRes, err := s.msgServer.InstantiateContract(sdk.WrapSDKContext(s.ctx), &initMsg)
+	instantiateRes, err := s.msgServer.InstantiateContract(s.ctx, &initMsg)
 	s.Require().NoError(err)
 
 	err = s.app.GlobalFeeKeeper.SetCodeAuthorization(s.ctx, types.CodeAuthorization{
@@ -127,7 +125,7 @@ func (s *AnteHandlerTestSuite) SetupContractWithContractAuth(senderAddr string, 
 	s.Require().NoError(err)
 
 	initMsg := wasmtypes.MsgInstantiateContract{Sender: senderAddr, Admin: senderAddr, CodeID: codeID, Label: "Counter Contract", Msg: instantiateMsgRaw, Funds: sdk.NewCoins()}
-	instantiateRes, err := s.msgServer.InstantiateContract(sdk.WrapSDKContext(s.ctx), &initMsg)
+	instantiateRes, err := s.msgServer.InstantiateContract(s.ctx, &initMsg)
 	s.Require().NoError(err)
 
 	err = s.app.GlobalFeeKeeper.SetContractAuthorization(s.ctx, types.ContractAuthorization{
@@ -139,13 +137,19 @@ func (s *AnteHandlerTestSuite) SetupContractWithContractAuth(senderAddr string, 
 	return instantiateRes.Address
 }
 
-func (s *AnteHandlerTestSuite) CreateTestTx(privs []cryptotypes.PrivKey, accNums []uint64, accSeqs []uint64, chainID string) (xauthsigning.Tx, error) {
-	var sigsV2 []signing.SignatureV2 //nolint:golint,prealloc
+func (s *AnteHandlerTestSuite) CreateTestTx(
+	ctx sdk.Context, privs []cryptotypes.PrivKey,
+	accNums, accSeqs []uint64,
+	chainID string, signMode signing.SignMode,
+) (xauthsigning.Tx, error) {
+	// First round: we gather all the signer infos. We use the "set empty
+	// signature" hack to do that.
+	sigsV2 := make([]signing.SignatureV2, 0, len(privs))
 	for i, priv := range privs {
 		sigV2 := signing.SignatureV2{
 			PubKey: priv.PubKey(),
 			Data: &signing.SingleSignatureData{
-				SignMode:  s.clientCtx.TxConfig.SignModeHandler().DefaultMode(),
+				SignMode:  signMode,
 				Signature: nil,
 			},
 			Sequence: accSeqs[i],
@@ -153,34 +157,32 @@ func (s *AnteHandlerTestSuite) CreateTestTx(privs []cryptotypes.PrivKey, accNums
 
 		sigsV2 = append(sigsV2, sigV2)
 	}
-
-	if err := s.txBuilder.SetSignatures(sigsV2...); err != nil {
+	err := s.txBuilder.SetSignatures(sigsV2...)
+	if err != nil {
 		return nil, err
 	}
 
+	// Second round: all signer infos are set, so each signer can sign.
 	sigsV2 = []signing.SignatureV2{}
 	for i, priv := range privs {
 		signerData := xauthsigning.SignerData{
+			Address:       sdk.AccAddress(priv.PubKey().Address()).String(),
 			ChainID:       chainID,
 			AccountNumber: accNums[i],
 			Sequence:      accSeqs[i],
+			PubKey:        priv.PubKey(),
 		}
 		sigV2, err := tx.SignWithPrivKey(
-			s.clientCtx.TxConfig.SignModeHandler().DefaultMode(),
-			signerData,
-			s.txBuilder,
-			priv,
-			s.clientCtx.TxConfig,
-			accSeqs[i],
-		)
+			ctx, signMode, signerData,
+			s.txBuilder, priv, s.clientCtx.TxConfig, accSeqs[i])
 		if err != nil {
 			return nil, err
 		}
 
 		sigsV2 = append(sigsV2, sigV2)
 	}
-
-	if err := s.txBuilder.SetSignatures(sigsV2...); err != nil {
+	err = s.txBuilder.SetSignatures(sigsV2...)
+	if err != nil {
 		return nil, err
 	}
 
@@ -192,7 +194,7 @@ func storeContract(ctx sdk.Context, msgServer wasmtypes.MsgServer, creator strin
 	if err != nil {
 		return 0, err
 	}
-	res, err := msgServer.StoreCode(sdk.WrapSDKContext(ctx), &wasmtypes.MsgStoreCode{
+	res, err := msgServer.StoreCode(ctx, &wasmtypes.MsgStoreCode{
 		Sender:       creator,
 		WASMByteCode: b,
 	})
