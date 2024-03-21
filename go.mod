@@ -38,7 +38,7 @@ require (
 	cosmossdk.io/x/tx v0.13.0
 	cosmossdk.io/x/upgrade v0.1.1
 	github.com/cosmos/cosmos-db v1.0.0
-	github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v8 v8.0.0-20231226225155-84a39dda1805
+	github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v8 v8.0.1
 	github.com/cosmos/ibc-apps/modules/ibc-hooks/v8 v8.0.0-00010101000000-000000000000
 	github.com/cosmos/ibc-go/modules/capability v1.0.0
 	github.com/cosmos/ibc-go/modules/light-clients/08-wasm v0.0.0-20240208183954-71fa5c9fd708
@@ -207,7 +207,6 @@ require (
 
 replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
-	github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v8 => github.com/public-awesome/ibc-apps/middleware/packet-forward-middleware/v8 v8.0.0-20240112154558-ac156266345d
 	github.com/cosmos/ibc-apps/modules/ibc-hooks/v8 => github.com/public-awesome/ibc-apps/modules/ibc-hooks/v8 v8.0.0-20240112154558-ac156266345d
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.8.1
 	// TODO: remove after https://github.com/spf13/viper/issues/1706 gets fixed

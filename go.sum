@@ -968,6 +968,8 @@ github.com/cosmos/gogoproto v1.4.11 h1:LZcMHrx4FjUgrqQSWeaGC1v/TeuVFqSLa43CC6aWR
 github.com/cosmos/gogoproto v1.4.11/go.mod h1:/g39Mh8m17X8Q/GDEs5zYTSNaNnInBSohtaxzQnYq1Y=
 github.com/cosmos/iavl v1.0.1 h1:D+mYbcRO2wptYzOM1Hxl9cpmmHU1ZEt9T2Wv5nZTeUw=
 github.com/cosmos/iavl v1.0.1/go.mod h1:8xIUkgVvwvVrBu81scdPty+/Dx9GqwHnAvXz4cwF7RY=
+github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v8 v8.0.1 h1:BHn+JWZILxkUT9IrlP1ctUfo9ENGi+EmiZ9om1XSHIw=
+github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v8 v8.0.1/go.mod h1:82hPO/tRawbuFad2gPwChvpZ0JEIoNi91LwVneAYCeM=
 github.com/cosmos/ibc-go/modules/capability v1.0.0 h1:r/l++byFtn7jHYa09zlAdSeevo8ci1mVZNO9+V0xsLE=
 github.com/cosmos/ibc-go/modules/capability v1.0.0/go.mod h1:D81ZxzjZAe0ZO5ambnvn1qedsFQ8lOwtqicG6liLBco=
 github.com/cosmos/ibc-go/modules/light-clients/08-wasm v0.0.0-20240208183954-71fa5c9fd708 h1:KOdpcf8gEAMrKQCkNyyxPNVG2fcQiO0GHKmPjD4U8CA=
@@ -1636,8 +1638,6 @@ github.com/prometheus/procfs v0.3.0/go.mod h1:lV6e/gmhEcM9IjHGsFOCxxuZ+z1YqCvr4O
 github.com/prometheus/procfs v0.6.0/go.mod h1:cz+aTbrPOrUb4q7XlbU9ygM+/jj0fzG6c1xBZuNvfVA=
 github.com/prometheus/procfs v0.12.0 h1:jluTpSng7V9hY0O2R9DzzJHYb2xULk9VTR1V1R/k6Bo=
 github.com/prometheus/procfs v0.12.0/go.mod h1:pcuDEFsWDnvcgNzo4EEweacyhjeA9Zk3cnaOZAZEfOo=
-github.com/public-awesome/ibc-apps/middleware/packet-forward-middleware/v8 v8.0.0-20240112154558-ac156266345d h1:LN9Qp3fOlZqirxCC0wz2S9wEHaAxb5gxyXcaBNnnpbE=
-github.com/public-awesome/ibc-apps/middleware/packet-forward-middleware/v8 v8.0.0-20240112154558-ac156266345d/go.mod h1:5Q9LDrxxZnVjRkhWPwf90iukWc1o3/Uf0wlxggZz4QQ=
 github.com/public-awesome/ibc-apps/modules/ibc-hooks/v8 v8.0.0-20240112154558-ac156266345d h1:qS1yYeQ3DdQToHYf0KgJYbhNDvCAaG7ZWfMUG79iGME=
 github.com/public-awesome/ibc-apps/modules/ibc-hooks/v8 v8.0.0-20240112154558-ac156266345d/go.mod h1:FCEMQKIWfF9Sxe0ehKJJ+tcMosGcnmWefwYOQMR5Z40=
 github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a/go.mod h1:bCqnVzQkZxMG4s8nGwiZ5l3QUCyqpo9Y+/ZMZ9VjZe4=
