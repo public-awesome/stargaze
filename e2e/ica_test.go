@@ -2,13 +2,16 @@ package e2e
 
 import (
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"strings"
 	"testing"
 
 	"cosmossdk.io/math"
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/gogoproto/proto"
+	icatypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/types"
 	chantypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
 	"github.com/strangelove-ventures/interchaintest/v7"
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
@@ -191,31 +194,35 @@ func TestInterchainAccounts(t *testing.T) {
 	require.Equal(t, icaBal, controllerOrigBal.Add(transferAmount)) // after receiving funds from faucet
 
 	// Build bank transfer msg
-	rawMsg, err := json.Marshal(map[string]any{
-		"@type":        "/cosmos.bank.v1beta1.MsgSend",
-		"from_address": icaAddr,
-		"to_address":   hostUser.FormattedAddress(),
-		"amount": []map[string]any{
+	msg := SendMsg{
+		Type:        "/cosmos.bank.v1beta1.MsgSend",
+		FromAddress: icaAddr,
+		ToAddress:   hostUser.FormattedAddress(),
+		Amount: []Amount{
 			{
-				"denom":  hostChain.Config().Denom,
-				"amount": transferAmount.String(),
+				Denom:  hostChain.Config().Denom,
+				Amount: transferAmount.String(),
 			},
 		},
-	})
-	require.NoError(t, err)
-
-	// encode the ica msgs to expected ica packet format and marshal it to bytearray
-	packetMsgData := ICAPacketData{
-		Type: "TYPE_EXECUTE_TX",
-		Data: []byte(base64.StdEncoding.EncodeToString(rawMsg)),
-		Memo: "test ica",
 	}
-	packetMsgBytes, err := json.Marshal(packetMsgData)
+	msgBytes, err := json.Marshal(msg)
+	require.NoError(t, err)
+	var sdkmsg sdk.Msg
+	cdc := codec.NewProtoCodec(ir)
+	err = cdc.UnmarshalInterfaceJSON(msgBytes, &sdkmsg)
+	require.NoError(t, err)
+	icaPacketDataBytes, err := icatypes.SerializeCosmosTx(cdc, []proto.Message{sdkmsg})
+	require.NoError(t, err)
+	icaPacketBytes, err := cdc.MarshalJSON(&icatypes.InterchainAccountPacketData{
+		Type: icatypes.EXECUTE_TX,
+		Data: icaPacketDataBytes,
+		Memo: "icatest",
+	})
 	require.NoError(t, err)
 
 	// Send bank transfer msg to ICA on host chain from the user account on icad
 	sendICATransfer := []string{
-		controllerChain.Config().Bin, "tx", "interchain-accounts", "controller", "send-tx", connection.ID, string(packetMsgBytes),
+		controllerChain.Config().Bin, "tx", "interchain-accounts", "controller", "send-tx", connection.ID, string(icaPacketBytes),
 		"--from", controllerUser.FormattedAddress(),
 		"--chain-id", controllerChain.Config().ChainID,
 		"--home", controllerChain.HomeDir(),
@@ -236,10 +243,10 @@ func TestInterchainAccounts(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	// Assert that the funds have been received by the user account on starsd
-	// hostBal, err = hostChain.GetBalance(ctx, hostUser.FormattedAddress(), hostChain.Config().Denom)
-	// require.NoError(t, err)
-	// require.Equal(t, hostBal.Int64(), hostOrigBal.Int64())
+	//Assert that the funds have been received by the user account on host
+	hostBal, err = hostChain.GetBalance(ctx, hostUser.FormattedAddress(), hostChain.Config().Denom)
+	require.NoError(t, err)
+	require.Equal(t, hostBal.Int64(), hostOrigBal.Int64())
 
 	// Assert that the funds have been removed from the ICA on chain2
 	icaBal, err = hostChain.GetBalance(ctx, icaAddr, hostChain.Config().Denom)
@@ -258,8 +265,13 @@ func parseInterchainAccountField(stdout []byte) string {
 	return icaAddr
 }
 
-type ICAPacketData struct {
-	Type string `json:"type"`
-	Data []byte `json:"data"`
-	Memo string `json:"memo"`
+type SendMsg struct {
+	Type        string   `json:"@type"`
+	FromAddress string   `json:"from_address"`
+	ToAddress   string   `json:"to_address"`
+	Amount      []Amount `json:"amount"`
+}
+type Amount struct {
+	Denom  string `json:"denom"`
+	Amount string `json:"amount"`
 }
