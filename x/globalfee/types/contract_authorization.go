@@ -44,7 +44,7 @@ func (msg MsgSetContractAuthorization) GetSigners() []sdk.AccAddress {
 }
 
 func (msg MsgSetContractAuthorization) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(&msg)
+	bz := Amino.MustMarshalJSON(&msg)
 	return sdk.MustSortJSON(bz)
 }
 
@@ -80,7 +80,7 @@ func (msg MsgRemoveContractAuthorization) GetSigners() []sdk.AccAddress {
 }
 
 func (msg MsgRemoveContractAuthorization) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(&msg)
+	bz := Amino.MustMarshalJSON(&msg)
 	return sdk.MustSortJSON(bz)
 }
 

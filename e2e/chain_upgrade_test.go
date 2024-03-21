@@ -2,14 +2,17 @@ package e2e
 
 import (
 	"context"
+	"strconv"
 	"testing"
 	"time"
 
+	"cosmossdk.io/math"
+	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/docker/docker/client"
-	interchaintest "github.com/strangelove-ventures/interchaintest/v7"
-	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
-	"github.com/strangelove-ventures/interchaintest/v7/ibc"
-	"github.com/strangelove-ventures/interchaintest/v7/testutil"
+	interchaintest "github.com/strangelove-ventures/interchaintest/v8"
+	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
+	"github.com/strangelove-ventures/interchaintest/v8/ibc"
+	"github.com/strangelove-ventures/interchaintest/v8/testutil"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap/zaptest"
 )
@@ -33,7 +36,19 @@ func TestChainUpgrade(t *testing.T) {
 	}
 
 	stargazeChain, client, ctx := startChain(t)
-	chainUser := fundChainUser(t, ctx, stargazeChain)
+	chainUser := fundChainUser(t, ctx, t.Name(), stargazeChain)
+
+	// Creating a contract before upgrade and ensuring expected state
+	codeId, err := stargazeChain.StoreContract(ctx, chainUser.KeyName(), "artifacts/cron_counter.wasm")
+	require.NoError(t, err)
+	initMsg := `{}`
+	contractAddress, err := InstantiateContract(stargazeChain, chainUser, ctx, codeId, initMsg)
+	require.NoError(t, err)
+	var queryRes QueryContractResponse
+	err = stargazeChain.QueryContract(ctx, contractAddress, QueryMsg{GetCount: &struct{}{}}, &queryRes)
+	require.NoError(t, err)
+	require.Equal(t, int64(0), queryRes.Data.UpCount)
+
 	haltHeight := submitUpgradeProposalAndVote(t, ctx, stargazeChain, chainUser)
 
 	height, err := stargazeChain.Height(ctx)
@@ -69,6 +84,14 @@ func TestChainUpgrade(t *testing.T) {
 
 	err = testutil.WaitForBlocks(timeoutCtx, int(blocksAfterUpgrade), stargazeChain)
 	require.NoError(t, err, "chain did not produce blocks after upgrade")
+
+	// Ensure contract behavior is as expected after upgrade
+	execMsg := `{"increment":{}}`
+	err = ExecuteContract(stargazeChain, chainUser, ctx, contractAddress, execMsg)
+	require.NoError(t, err)
+	err = stargazeChain.QueryContract(ctx, contractAddress, QueryMsg{GetCount: &struct{}{}}, &queryRes)
+	require.NoError(t, err)
+	require.Equal(t, int64(1), queryRes.Data.UpCount)
 }
 
 func submitUpgradeProposalAndVote(t *testing.T, ctx context.Context, stargazeChain *cosmos.CosmosChain, chainUser ibc.Wallet) uint64 {
@@ -91,14 +114,16 @@ func submitUpgradeProposalAndVote(t *testing.T, ctx context.Context, stargazeCha
 	err = stargazeChain.VoteOnProposalAllValidators(ctx, upgradeTx.ProposalID, cosmos.ProposalVoteYes)
 	require.NoError(t, err, "failed to submit votes")
 
-	_, err = cosmos.PollForProposalStatus(ctx, stargazeChain, height, height+haltHeightDelta, upgradeTx.ProposalID, cosmos.ProposalStatusPassed)
+	proposalId, err := strconv.ParseUint(upgradeTx.ProposalID, 10, 64)
+	require.NoError(t, err, "failed to parse proposal id")
+	_, err = cosmos.PollForProposalStatus(ctx, stargazeChain, height, height+haltHeightDelta, proposalId, govv1beta1.StatusPassed)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 	return haltHeight
 }
 
-func fundChainUser(t *testing.T, ctx context.Context, stargazeChain *cosmos.CosmosChain) ibc.Wallet {
-	const userFunds = int64(10_000_000_000_000)
-	users := interchaintest.GetAndFundTestUsers(t, ctx, t.Name(), userFunds, stargazeChain)
+func fundChainUser(t *testing.T, ctx context.Context, userName string, stargazeChain *cosmos.CosmosChain) ibc.Wallet {
+	userFunds := math.NewInt(10_000_000_000_000)
+	users := interchaintest.GetAndFundTestUsers(t, ctx, userName, userFunds, stargazeChain)
 	return users[0]
 }
 

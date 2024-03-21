@@ -13,13 +13,13 @@ package network
 // 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 // 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 // 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
-// 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+// 	storetypes "cosmossdk.io/store/types"
 // 	"github.com/cosmos/cosmos-sdk/testutil/network"
 // 	simapp "github.com/cosmos/cosmos-sdk/testutil/sims"
 // 	sdk "github.com/cosmos/cosmos-sdk/types"
 // 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-// 	"github.com/public-awesome/stargaze/v13/app"
+// 	"github.com/public-awesome/stargaze/v14/app"
 // )
 
 // type (

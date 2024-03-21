@@ -3,9 +3,10 @@ set -eux
 # create users
 rm -rf $HOME/.starsd
 STARSD_FILE=./bin/starsd
-$STARSD_FILE config chain-id localnet-1
-$STARSD_FILE config keyring-backend test
-$STARSD_FILE config output json
+$STARSD_FILE config set client chain-id localnet-1
+$STARSD_FILE config set client keyring-backend test
+$STARSD_FILE config set client output json
+
 yes | $STARSD_FILE keys add validator
 yes | $STARSD_FILE keys add creator
 yes | $STARSD_FILE keys add investor

@@ -127,7 +127,7 @@ docker-test: build-linux
 
 
 test:
-	go test -v -race github.com/public-awesome/stargaze/v13/x/...
+	go test -v -race github.com/public-awesome/stargaze/v14/x/...
 
 test-pfm:
 	cd e2e && go test -v -race -run TestPacketForwardMiddleware .
@@ -137,6 +137,9 @@ test-chain-upgrade:
 
 test-ica:
 	cd e2e && go test -v -race -run TestInterchainAccounts .
+
+test-chain-conformance:
+	cd e2e && go test -v -race -run TestStargazeConformance .
 
 .PHONY: test test-e2e build-linux docker-test lint build install format
 
@@ -178,7 +181,7 @@ proto-swagger-gen:
 	@$(protoImage) sh ./scripts/protoc-swagger-gen.sh
 
 proto-format:
-	@$(protoImage) find ./ -name "*.proto" -exec clang-format -i {} \;
+	@$(protoImage) buf format --write proto/
 
 proto-lint:
 	@$(protoImage) buf lint --error-format=json

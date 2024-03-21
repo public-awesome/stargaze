@@ -2,42 +2,49 @@ syntax = "proto3";
 
 package publicawesome.stargaze.alloc.v1beta1;
 
-option go_package = "github.com/public-awesome/stargaze/v13/x/alloc/types";
-
-import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
 
+option go_package = "github.com/public-awesome/stargaze/v14/x/alloc/types";
+
+// WeightedAddress defines an address with a weight.
 message WeightedAddress {
-  string address = 1 [ (gogoproto.moretags) = "yaml:\"address\"" ];
+  string address = 1 [(gogoproto.moretags) = "yaml:\"address\""];
   string weight = 2 [
     (gogoproto.moretags) = "yaml:\"weight\"",
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
     (gogoproto.nullable) = false
   ];
 }
 
+// DistributionProportions defines the proportion that each bucket  receives.
 message DistributionProportions {
   string nft_incentives = 1 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
     (gogoproto.moretags) = "yaml:\"nft_incentives\"",
     (gogoproto.nullable) = false
   ];
   string developer_rewards = 2 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
     (gogoproto.moretags) = "yaml:\"developer_rewards\"",
     (gogoproto.nullable) = false
   ];
   string community_pool = 3 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
     (gogoproto.moretags) = "yaml:\"community_pool\"",
     (gogoproto.nullable) = false
   ];
 }
 
+// Params defines the parameters for the alloc module.
 message Params {
   // distribution_proportions defines the proportion of the minted denom
-  DistributionProportions distribution_proportions = 1
-      [ (gogoproto.nullable) = false ];
+  DistributionProportions distribution_proportions = 1 [(gogoproto.nullable) = false];
 
   // addresses to receive developer rewards
   repeated WeightedAddress weighted_developer_rewards_receivers = 2 [

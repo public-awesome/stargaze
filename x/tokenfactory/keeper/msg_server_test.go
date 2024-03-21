@@ -3,9 +3,10 @@ package keeper_test
 import (
 	"fmt"
 
+	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	"github.com/public-awesome/stargaze/v13/x/tokenfactory/types"
+	"github.com/public-awesome/stargaze/v14/x/tokenfactory/types"
 )
 
 // TestMintDenomMsg tests TypeMsgMint message is emitted on a successful mint
@@ -41,7 +42,7 @@ func (suite *KeeperTestSuite) TestMintDenomMsg() {
 			ctx := suite.Ctx.WithEventManager(sdk.NewEventManager())
 			suite.Require().Equal(0, len(ctx.EventManager().Events()))
 			// Test mint message
-			_, err := suite.msgServer.Mint(sdk.WrapSDKContext(ctx), types.NewMsgMint(tc.admin, sdk.NewInt64Coin(tc.mintDenom, 10)))
+			_, err := suite.msgServer.Mint(ctx, types.NewMsgMint(tc.admin, sdk.NewInt64Coin(tc.mintDenom, 10)))
 			if tc.valid {
 				suite.Require().NoError(err)
 			}
@@ -56,7 +57,7 @@ func (suite *KeeperTestSuite) TestBurnDenomMsg() {
 	// Create a denom.
 	suite.CreateDefaultDenom()
 	// mint 10 default token for testAcc[0]
-	_, err := suite.msgServer.Mint(sdk.WrapSDKContext(suite.Ctx), types.NewMsgMint(suite.TestAccs[0].String(), sdk.NewInt64Coin(suite.defaultDenom, 10)))
+	_, err := suite.msgServer.Mint(suite.Ctx, types.NewMsgMint(suite.TestAccs[0].String(), sdk.NewInt64Coin(suite.defaultDenom, 10)))
 	suite.Require().NoError(err)
 
 	for _, tc := range []struct {
@@ -85,7 +86,7 @@ func (suite *KeeperTestSuite) TestBurnDenomMsg() {
 			ctx := suite.Ctx.WithEventManager(sdk.NewEventManager())
 			suite.Require().Equal(0, len(ctx.EventManager().Events()))
 			// Test burn message
-			_, err := suite.msgServer.Burn(sdk.WrapSDKContext(ctx), types.NewMsgBurn(tc.admin, sdk.NewInt64Coin(tc.burnDenom, 10)))
+			_, err := suite.msgServer.Burn(ctx, types.NewMsgBurn(tc.admin, sdk.NewInt64Coin(tc.burnDenom, 10)))
 			if tc.valid {
 				suite.Require().NoError(err)
 			}
@@ -97,7 +98,7 @@ func (suite *KeeperTestSuite) TestBurnDenomMsg() {
 
 // TestCreateDenomMsg tests TypeMsgCreateDenom message is emitted on a successful denom creation
 func (suite *KeeperTestSuite) TestCreateDenomMsg() {
-	defaultDenomCreationFee := types.Params{DenomCreationFee: sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(50000000)))}
+	defaultDenomCreationFee := types.Params{DenomCreationFee: sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdkmath.NewInt(50000000)))}
 	for _, tc := range []struct {
 		desc                  string
 		denomCreationFee      types.Params
@@ -128,7 +129,7 @@ func (suite *KeeperTestSuite) TestCreateDenomMsg() {
 			err := tokenFactoryKeeper.SetParams(suite.Ctx, tc.denomCreationFee)
 			suite.Require().NoError(err)
 			// Test create denom message
-			_, err = suite.msgServer.CreateDenom(sdk.WrapSDKContext(ctx), types.NewMsgCreateDenom(suite.TestAccs[0].String(), tc.subdenom))
+			_, err = suite.msgServer.CreateDenom(ctx, types.NewMsgCreateDenom(suite.TestAccs[0].String(), tc.subdenom))
 			if tc.valid {
 				suite.Require().NoError(err)
 			}
@@ -177,13 +178,13 @@ func (suite *KeeperTestSuite) TestChangeAdminDenomMsg() {
 			ctx := suite.Ctx.WithEventManager(sdk.NewEventManager())
 			suite.Require().Equal(0, len(ctx.EventManager().Events()))
 			// Create a denom and mint
-			res, err := suite.msgServer.CreateDenom(sdk.WrapSDKContext(ctx), types.NewMsgCreateDenom(suite.TestAccs[0].String(), "bitcoin"))
+			res, err := suite.msgServer.CreateDenom(ctx, types.NewMsgCreateDenom(suite.TestAccs[0].String(), "bitcoin"))
 			suite.Require().NoError(err)
 			testDenom := res.GetNewTokenDenom()
-			_, err = suite.msgServer.Mint(sdk.WrapSDKContext(ctx), types.NewMsgMint(suite.TestAccs[0].String(), sdk.NewInt64Coin(testDenom, 10)))
+			_, err = suite.msgServer.Mint(ctx, types.NewMsgMint(suite.TestAccs[0].String(), sdk.NewInt64Coin(testDenom, 10)))
 			suite.Require().NoError(err)
 			// Test change admin message
-			_, err = suite.msgServer.ChangeAdmin(sdk.WrapSDKContext(ctx), tc.msgChangeAdmin(testDenom))
+			_, err = suite.msgServer.ChangeAdmin(ctx, tc.msgChangeAdmin(testDenom))
 			if tc.expectedChangeAdminPass {
 				suite.Require().NoError(err)
 			}
@@ -254,7 +255,7 @@ func (suite *KeeperTestSuite) TestSetDenomMetaDataMsg() {
 			ctx := suite.Ctx.WithEventManager(sdk.NewEventManager())
 			suite.Require().Equal(0, len(ctx.EventManager().Events()))
 			// Test set denom metadata message
-			_, err := suite.msgServer.SetDenomMetadata(sdk.WrapSDKContext(ctx), &tc.msgSetDenomMetadata)
+			_, err := suite.msgServer.SetDenomMetadata(ctx, &tc.msgSetDenomMetadata)
 			if tc.expectedPass {
 				suite.Require().NoError(err)
 			}

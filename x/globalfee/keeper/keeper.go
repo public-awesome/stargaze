@@ -1,15 +1,15 @@
 package keeper
 
 import (
+	"cosmossdk.io/log"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
-	"github.com/public-awesome/stargaze/v13/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v14/x/globalfee/types"
 
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	storetypes "cosmossdk.io/store/types"
 )
 
 // Keeper provides module state operations.

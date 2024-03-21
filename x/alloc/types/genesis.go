@@ -3,8 +3,8 @@ package types
 import (
 	"encoding/json"
 
+	"cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // DefaultIndex is the default capability global index
@@ -15,9 +15,9 @@ func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		Params: Params{
 			DistributionProportions: DistributionProportions{
-				NftIncentives:    sdk.NewDecWithPrec(45, 2), // 45%
-				DeveloperRewards: sdk.NewDecWithPrec(15, 2), // 15%
-				CommunityPool:    sdk.NewDecWithPrec(5, 2),  // 5%
+				NftIncentives:    math.LegacyNewDecWithPrec(45, 2), // 45%
+				DeveloperRewards: math.LegacyNewDecWithPrec(15, 2), // 15%
+				CommunityPool:    math.LegacyNewDecWithPrec(5, 2),  // 5%
 			},
 			WeightedDeveloperRewardsReceivers:  []WeightedAddress{},
 			WeightedIncentivesRewardsReceivers: []WeightedAddress{},
