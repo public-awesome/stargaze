@@ -11,14 +11,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/gogoproto/proto"
-	icatypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/types"
-	chantypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
-	"github.com/strangelove-ventures/interchaintest/v7"
-	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
-	"github.com/strangelove-ventures/interchaintest/v7/ibc"
-	"github.com/strangelove-ventures/interchaintest/v7/relayer"
-	"github.com/strangelove-ventures/interchaintest/v7/testreporter"
-	"github.com/strangelove-ventures/interchaintest/v7/testutil"
+	icatypes "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/types"
+	chantypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
+	"github.com/strangelove-ventures/interchaintest/v8"
+	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
+	"github.com/strangelove-ventures/interchaintest/v8/ibc"
+	"github.com/strangelove-ventures/interchaintest/v8/relayer"
+	"github.com/strangelove-ventures/interchaintest/v8/testreporter"
+	"github.com/strangelove-ventures/interchaintest/v8/testutil"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap/zaptest"
 )
@@ -211,7 +211,7 @@ func TestInterchainAccounts(t *testing.T) {
 	cdc := codec.NewProtoCodec(ir)
 	err = cdc.UnmarshalInterfaceJSON(msgBytes, &sdkmsg)
 	require.NoError(t, err)
-	icaPacketDataBytes, err := icatypes.SerializeCosmosTx(cdc, []proto.Message{sdkmsg})
+	icaPacketDataBytes, err := icatypes.SerializeCosmosTx(cdc, []proto.Message{sdkmsg}, "proto3")
 	require.NoError(t, err)
 	icaPacketBytes, err := cdc.MarshalJSON(&icatypes.InterchainAccountPacketData{
 		Type: icatypes.EXECUTE_TX,
