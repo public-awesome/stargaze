@@ -1,35 +1,38 @@
 package app
 
 import (
-	"context"
+	"fmt"
 
-	storetypes "cosmossdk.io/store/types"
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	upgrades "github.com/public-awesome/stargaze/v14/app/upgrades"
+	upgradesv14 "github.com/public-awesome/stargaze/v14/app/upgrades/v14"
 )
 
-// next upgrade name
-const UpgradeName = "v14"
+var Upgrades = []upgrades.Upgrade{
+	upgradesv14.Upgrade,
+}
 
 func (app App) RegisterUpgradeHandlers(configurator module.Configurator) {
-	app.UpgradeKeeper.SetUpgradeHandler(
-		UpgradeName,
-		func(ctx context.Context, _ upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
-			return app.ModuleManager.RunMigrations(ctx, configurator, fromVM)
-		},
-	)
+	for _, u := range Upgrades {
+		app.UpgradeKeeper.SetUpgradeHandler(
+			u.UpgradeName,
+			u.CreateUpgradeHandler(app.ModuleManager, configurator),
+		)
+	}
 
 	upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
 	if err != nil {
-		panic(err)
+		panic(fmt.Sprintf("failed to read upgrade info from disk %s", err))
 	}
 
-	if upgradeInfo.Name == UpgradeName && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
-		storeUpgrades := storetypes.StoreUpgrades{
-			Added: []string{},
-		}
+	if app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
+		return
+	}
 
-		// configure store loader that checks if version == upgradeHeight and applies store upgrades
-		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades))
+	for _, u := range Upgrades {
+		if upgradeInfo.Name == u.UpgradeName {
+			app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &u.StoreUpgrades))
+		}
 	}
 }

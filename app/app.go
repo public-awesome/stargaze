@@ -986,7 +986,6 @@ func NewStargazeApp(
 
 	app.SetAnteHandler(anteHandler)
 	app.SetPostHandler(postHandler)
-	// TODO: enable upgrades
 	app.RegisterUpgradeHandlers(configurator)
 
 	autocliv1.RegisterQueryServer(app.GRPCQueryRouter(), runtimeservices.NewAutoCLIQueryService(app.ModuleManager.Modules))
