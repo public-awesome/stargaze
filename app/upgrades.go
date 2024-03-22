@@ -31,6 +31,7 @@ func (app App) RegisterUpgradeHandlers(configurator module.Configurator) {
 	}
 
 	for _, u := range Upgrades {
+		u := u
 		if upgradeInfo.Name == u.UpgradeName {
 			app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &u.StoreUpgrades))
 		}
