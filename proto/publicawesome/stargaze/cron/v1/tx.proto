@@ -1,6 +1,7 @@
 syntax = "proto3";
 package publicawesome.stargaze.cron.v1;
 
+import "amino/amino.proto";
 import "cosmos/msg/v1/msg.proto";
 import "gogoproto/gogo.proto";
 import "publicawesome/stargaze/cron/v1/cron.proto";
@@ -44,6 +45,7 @@ message MsgDemoteFromPrivilegedContract {
 
 message MsgDemoteFromPrivilegedContractResponse {}
 
+// MsgUpdateParams updates module's params through governance proposal
 message MsgUpdateParams {
   option (cosmos.msg.v1.signer) = "authority";
   // Authority is the address of the governance account.
@@ -51,7 +53,8 @@ message MsgUpdateParams {
   // NOTE: All parameters must be supplied.
   Params params = 2 [
     (gogoproto.jsontag) = "params,omitempty",
-    (gogoproto.nullable) = false
+    (gogoproto.nullable) = false,
+    (amino.field_name) = "params"
   ];
 }
 
