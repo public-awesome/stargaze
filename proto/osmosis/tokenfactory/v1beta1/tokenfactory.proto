@@ -1,6 +1,7 @@
 syntax = "proto3";
 package osmosis.tokenfactory.v1beta1;
 
+import "amino/amino.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
@@ -25,7 +26,9 @@ message Params {
   repeated cosmos.base.v1beta1.Coin denom_creation_fee = 1 [
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
     (gogoproto.moretags) = "yaml:\"denom_creation_fee\"",
-    (gogoproto.nullable) = false
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true,
+    (amino.encoding) = "legacy_coins"
   ];
 
   // DenomCreationGasConsume defines the gas cost for creating a new denom.

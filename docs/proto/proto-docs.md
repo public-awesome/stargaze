@@ -1045,7 +1045,7 @@ MsgPromoteToPrivilegedContract defines the Msg/PromoteToPrivilegedContract
 <a name="publicawesome.stargaze.cron.v1.MsgUpdateParams"></a>
 
 ### MsgUpdateParams
-
+MsgUpdateParams updates module's params through governance proposal
 
 
 | Field | Type | Label | Description |
