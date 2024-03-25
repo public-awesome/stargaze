@@ -22,6 +22,9 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 var _ types.MsgServer = msgServer{}
 
 func (m msgServer) PromoteToPrivilegedContract(goCtx context.Context, msg *types.MsgPromoteToPrivilegedContract) (*types.MsgPromoteToPrivilegedContractResponse, error) {
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	authorityAddr, err := sdk.AccAddressFromBech32(msg.GetAuthority())
@@ -46,6 +49,9 @@ func (m msgServer) PromoteToPrivilegedContract(goCtx context.Context, msg *types
 }
 
 func (m msgServer) DemoteFromPrivilegedContract(goCtx context.Context, msg *types.MsgDemoteFromPrivilegedContract) (*types.MsgDemoteFromPrivilegedContractResponse, error) {
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	authorityAddr, err := sdk.AccAddressFromBech32(msg.GetAuthority())
 	if err != nil {
@@ -68,22 +74,21 @@ func (m msgServer) DemoteFromPrivilegedContract(goCtx context.Context, msg *type
 }
 
 func (m msgServer) UpdateParams(goCtx context.Context, msg *types.MsgUpdateParams) (*types.MsgUpdateParamsResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-	_, err := sdk.AccAddressFromBech32(msg.GetAuthority())
-	if err != nil {
+	if err := msg.ValidateBasic(); err != nil {
 		return nil, err
 	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	if msg.GetAuthority() != m.Keeper.GetAuthority() {
 		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender address is not authorized address to update module params")
 	}
 
-	err = msg.GetParams().Validate() // need to explicitly validate as x/gov invokes this msg and it does not validate
-	if err != nil {
+	// need to explicitly validate as x/gov invokes this msg and it does not validate
+	if err := msg.GetParams().Validate(); err != nil {
 		return nil, err
 	}
 
-	err = m.SetParams(ctx, msg.GetParams())
+	err := m.SetParams(ctx, msg.GetParams())
 	if err != nil {
 		return nil, err
 	}
