@@ -2,10 +2,28 @@ syntax = "proto3";
 package publicawesome.stargaze.mint.v1beta1;
 
 import "cosmos/msg/v1/msg.proto";
+import "gogoproto/gogo.proto";
+import "publicawesome/stargaze/mint/v1beta1/mint.proto";
 
 option go_package = "github.com/public-awesome/stargaze/v14/x/mint/types";
 
 // Msg defines the mint Msg service.
 service Msg {
   option (cosmos.msg.v1.service) = true;
+  // UpdateParams updates the mint module's parameters.
+  rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
 }
+
+message MsgUpdateParams {
+  option (cosmos.msg.v1.signer) = "authority";
+  // Authority is the address of the governance account.
+  string authority = 1;
+  // NOTE: All parameters must be supplied.
+  Params params = 2 [
+    (gogoproto.jsontag) = "params,omitempty",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message MsgUpdateParamsResponse {}
+
