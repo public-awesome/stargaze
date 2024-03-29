@@ -55,6 +55,8 @@
     - [MsgCreateVestingAccountResponse](#publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccountResponse)
     - [MsgFundFairburnPool](#publicawesome.stargaze.alloc.v1beta1.MsgFundFairburnPool)
     - [MsgFundFairburnPoolResponse](#publicawesome.stargaze.alloc.v1beta1.MsgFundFairburnPoolResponse)
+    - [MsgUpdateParams](#publicawesome.stargaze.alloc.v1beta1.MsgUpdateParams)
+    - [MsgUpdateParamsResponse](#publicawesome.stargaze.alloc.v1beta1.MsgUpdateParamsResponse)
   
     - [Msg](#publicawesome.stargaze.alloc.v1beta1.Msg)
   
@@ -764,6 +766,32 @@ type.
 
 
 
+
+<a name="publicawesome.stargaze.alloc.v1beta1.MsgUpdateParams"></a>
+
+### MsgUpdateParams
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `authority` | [string](#string) |  | Authority is the address of the governance account. |
+| `params` | [Params](#publicawesome.stargaze.alloc.v1beta1.Params) |  | NOTE: All parameters must be supplied. |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.alloc.v1beta1.MsgUpdateParamsResponse"></a>
+
+### MsgUpdateParamsResponse
+
+
+
+
+
+
  <!-- end messages -->
 
  <!-- end enums -->
@@ -780,6 +808,7 @@ Msg defines the alloc Msg service.
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
 | `CreateVestingAccount` | [MsgCreateVestingAccount](#publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccount) | [MsgCreateVestingAccountResponse](#publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccountResponse) | CreateVestingAccount defines a method that enables creating a vesting account. | |
 | `FundFairburnPool` | [MsgFundFairburnPool](#publicawesome.stargaze.alloc.v1beta1.MsgFundFairburnPool) | [MsgFundFairburnPoolResponse](#publicawesome.stargaze.alloc.v1beta1.MsgFundFairburnPoolResponse) | FundFairburnPool defines a method to allow an account to directly fund the fee collector module account. | |
+| `UpdateParams` | [MsgUpdateParams](#publicawesome.stargaze.alloc.v1beta1.MsgUpdateParams) | [MsgUpdateParamsResponse](#publicawesome.stargaze.alloc.v1beta1.MsgUpdateParamsResponse) | UpdateParams updates the alloc module's parameters. | |
 
  <!-- end services -->
 

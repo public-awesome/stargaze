@@ -4,6 +4,7 @@ package publicawesome.stargaze.alloc.v1beta1;
 import "cosmos/base/v1beta1/coin.proto";
 import "cosmos/msg/v1/msg.proto";
 import "gogoproto/gogo.proto";
+import "publicawesome/stargaze/alloc/v1beta1/params.proto";
 
 // this line is used by starport scaffolding # proto/tx/import
 
@@ -20,6 +21,9 @@ service Msg {
   // FundFairburnPool defines a method to allow an account to directly
   // fund the fee collector module account.
   rpc FundFairburnPool(MsgFundFairburnPool) returns (MsgFundFairburnPoolResponse);
+
+  // UpdateParams updates the alloc module's parameters.
+  rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
 }
 
 // MsgCreateVestingAccount defines a message that enables creating a vesting
@@ -62,3 +66,16 @@ message MsgFundFairburnPool {
 // MsgFundFairburnPoolResponse defines the Msg/MsgFundFairburnPool response
 // type.
 message MsgFundFairburnPoolResponse {}
+
+message MsgUpdateParams {
+  option (cosmos.msg.v1.signer) = "authority";
+  // Authority is the address of the governance account.
+  string authority = 1;
+  // NOTE: All parameters must be supplied.
+  Params params = 2 [
+    (gogoproto.jsontag) = "params,omitempty",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message MsgUpdateParamsResponse {}
