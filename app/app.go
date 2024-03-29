@@ -788,6 +788,7 @@ func NewStargazeApp(
 		app.StakingKeeper,
 		app.DistrKeeper,
 		app.GetSubspace(allocmoduletypes.ModuleName),
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 	allocModule := allocmodule.NewAppModule(appCodec, app.AllocKeeper)
 
