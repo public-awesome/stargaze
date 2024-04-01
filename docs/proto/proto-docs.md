@@ -1744,7 +1744,9 @@ Query provides defines the gRPC querier service.
 <a name="publicawesome.stargaze.mint.v1beta1.MsgUpdateParams"></a>
 
 ### MsgUpdateParams
+MsgUpdateParams is the request type for updating module's params.
 
+Since: v14
 
 
 | Field | Type | Label | Description |
@@ -1760,7 +1762,9 @@ Query provides defines the gRPC querier service.
 <a name="publicawesome.stargaze.mint.v1beta1.MsgUpdateParamsResponse"></a>
 
 ### MsgUpdateParamsResponse
-
+MsgUpdateParamsResponse is the response type for executing
+an update.
+Since: v14
 
 
 
