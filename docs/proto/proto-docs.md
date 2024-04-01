@@ -142,6 +142,9 @@
     - [Query](#publicawesome.stargaze.mint.v1beta1.Query)
   
 - [publicawesome/stargaze/mint/v1beta1/tx.proto](#publicawesome/stargaze/mint/v1beta1/tx.proto)
+    - [MsgUpdateParams](#publicawesome.stargaze.mint.v1beta1.MsgUpdateParams)
+    - [MsgUpdateParamsResponse](#publicawesome.stargaze.mint.v1beta1.MsgUpdateParamsResponse)
+  
     - [Msg](#publicawesome.stargaze.mint.v1beta1.Msg)
   
 - [Scalar Value Types](#scalar-value-types)
@@ -1737,6 +1740,36 @@ Query provides defines the gRPC querier service.
 ## publicawesome/stargaze/mint/v1beta1/tx.proto
 
 
+
+<a name="publicawesome.stargaze.mint.v1beta1.MsgUpdateParams"></a>
+
+### MsgUpdateParams
+MsgUpdateParams is the request type for updating module's params.
+
+Since: v14
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `authority` | [string](#string) |  | Authority is the address of the governance account. |
+| `params` | [Params](#publicawesome.stargaze.mint.v1beta1.Params) |  | NOTE: All parameters must be supplied. |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.mint.v1beta1.MsgUpdateParamsResponse"></a>
+
+### MsgUpdateParamsResponse
+MsgUpdateParamsResponse is the response type for executing
+an update.
+Since: v14
+
+
+
+
+
  <!-- end messages -->
 
  <!-- end enums -->
@@ -1751,6 +1784,7 @@ Msg defines the mint Msg service.
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
+| `UpdateParams` | [MsgUpdateParams](#publicawesome.stargaze.mint.v1beta1.MsgUpdateParams) | [MsgUpdateParamsResponse](#publicawesome.stargaze.mint.v1beta1.MsgUpdateParamsResponse) | UpdateParams updates the mint module's parameters. | |
 
  <!-- end services -->
 
