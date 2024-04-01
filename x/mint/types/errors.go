@@ -6,5 +6,5 @@ import (
 
 // x/mint module sentinel errors
 var (
-	ErrUnauthorized = errorsmod.Register(ModuleName, 3, "sender is unauthorized to perform the operation")
+	ErrUnauthorized = errorsmod.Register(ModuleName, 2, "sender is unauthorized to perform the operation")
 )
