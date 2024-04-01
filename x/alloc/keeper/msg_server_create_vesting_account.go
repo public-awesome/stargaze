@@ -9,6 +9,6 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-func (k msgServer) CreateVestingAccount(_ context.Context, _ *types.MsgCreateVestingAccount) (*types.MsgCreateVestingAccountResponse, error) {
+func (k msgServer) CreateVestingAccount(_ context.Context, _ *types.MsgCreateVestingAccount) (*types.MsgCreateVestingAccountResponse, error) { //nolint:staticcheck
 	return nil, errorsmod.Wrapf(sdkerrors.ErrNotSupported, "support for creating vesting account has been removed in favor of sdk's version")
 }
