@@ -475,7 +475,7 @@ func NewStargazeApp(
 
 	app.MintKeeper = mintkeeper.NewKeeper(
 		appCodec, keys[minttypes.StoreKey], app.GetSubspace(minttypes.ModuleName),
-		app.AccountKeeper, app.BankKeeper, authtypes.FeeCollectorName,
+		app.AccountKeeper, app.BankKeeper, authtypes.FeeCollectorName, authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 	app.DistrKeeper = distrkeeper.NewKeeper(
 		appCodec,
@@ -788,6 +788,7 @@ func NewStargazeApp(
 		app.StakingKeeper,
 		app.DistrKeeper,
 		app.GetSubspace(allocmoduletypes.ModuleName),
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 	allocModule := allocmodule.NewAppModule(appCodec, app.AllocKeeper)
 
