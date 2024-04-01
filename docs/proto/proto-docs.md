@@ -55,6 +55,8 @@
     - [MsgCreateVestingAccountResponse](#publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccountResponse)
     - [MsgFundFairburnPool](#publicawesome.stargaze.alloc.v1beta1.MsgFundFairburnPool)
     - [MsgFundFairburnPoolResponse](#publicawesome.stargaze.alloc.v1beta1.MsgFundFairburnPoolResponse)
+    - [MsgUpdateParams](#publicawesome.stargaze.alloc.v1beta1.MsgUpdateParams)
+    - [MsgUpdateParamsResponse](#publicawesome.stargaze.alloc.v1beta1.MsgUpdateParamsResponse)
   
     - [Msg](#publicawesome.stargaze.alloc.v1beta1.Msg)
   
@@ -711,8 +713,7 @@ Query defines the gRPC querier service.
 <a name="publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccount"></a>
 
 ### MsgCreateVestingAccount
-MsgCreateVestingAccount defines a message that enables creating a vesting
-account.
+Deprecated: Cosmos SDK's CreateVestingAccount now supports start time.
 
 
 | Field | Type | Label | Description |
@@ -767,6 +768,36 @@ type.
 
 
 
+
+<a name="publicawesome.stargaze.alloc.v1beta1.MsgUpdateParams"></a>
+
+### MsgUpdateParams
+MsgUpdateParams is the request type for updating module's params.
+
+Since: v14
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `authority` | [string](#string) |  | Authority is the address of the governance account. |
+| `params` | [Params](#publicawesome.stargaze.alloc.v1beta1.Params) |  | NOTE: All parameters must be supplied. |
+
+
+
+
+
+
+<a name="publicawesome.stargaze.alloc.v1beta1.MsgUpdateParamsResponse"></a>
+
+### MsgUpdateParamsResponse
+MsgUpdateParamsResponse is the response type for executing
+an update.
+Since: v14
+
+
+
+
+
  <!-- end messages -->
 
  <!-- end enums -->
@@ -783,6 +814,7 @@ Msg defines the alloc Msg service.
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
 | `CreateVestingAccount` | [MsgCreateVestingAccount](#publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccount) | [MsgCreateVestingAccountResponse](#publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccountResponse) | CreateVestingAccount defines a method that enables creating a vesting account. | |
 | `FundFairburnPool` | [MsgFundFairburnPool](#publicawesome.stargaze.alloc.v1beta1.MsgFundFairburnPool) | [MsgFundFairburnPoolResponse](#publicawesome.stargaze.alloc.v1beta1.MsgFundFairburnPoolResponse) | FundFairburnPool defines a method to allow an account to directly fund the fee collector module account. | |
+| `UpdateParams` | [MsgUpdateParams](#publicawesome.stargaze.alloc.v1beta1.MsgUpdateParams) | [MsgUpdateParamsResponse](#publicawesome.stargaze.alloc.v1beta1.MsgUpdateParamsResponse) | UpdateParams updates the alloc module's parameters. | |
 
  <!-- end services -->
 
