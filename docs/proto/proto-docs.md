@@ -713,8 +713,7 @@ Query defines the gRPC querier service.
 <a name="publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccount"></a>
 
 ### MsgCreateVestingAccount
-MsgCreateVestingAccount defines a message that enables creating a vesting
-account.
+Deprecated: Cosmos SDK's CreateVestingAccount now supports start time.
 
 
 | Field | Type | Label | Description |
@@ -773,7 +772,9 @@ type.
 <a name="publicawesome.stargaze.alloc.v1beta1.MsgUpdateParams"></a>
 
 ### MsgUpdateParams
+MsgUpdateParams is the request type for updating module's params.
 
+Since: v14
 
 
 | Field | Type | Label | Description |
@@ -789,7 +790,9 @@ type.
 <a name="publicawesome.stargaze.alloc.v1beta1.MsgUpdateParamsResponse"></a>
 
 ### MsgUpdateParamsResponse
-
+MsgUpdateParamsResponse is the response type for executing
+an update.
+Since: v14
 
 
 

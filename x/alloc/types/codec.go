@@ -19,11 +19,5 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgFundFairburnPool{},
 		&MsgUpdateParams{},
 	)
-	// this line is used by starport scaffolding # 3
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
-
-var (
-	amino     = codec.NewLegacyAmino()
-	ModuleCdc = codec.NewProtoCodec(cdctypes.NewInterfaceRegistry())
-)
