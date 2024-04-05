@@ -25,10 +25,11 @@ const (
 const KeySeparator = "|"
 
 var (
-	DenomAuthorityMetadataKey = "authoritymetadata"
-	DenomsPrefixKey           = "denoms"
-	CreatorPrefixKey          = "creator"
-	AdminPrefixKey            = "admin"
+	DenomAuthorityMetadataKey      = "authoritymetadata"
+	DenomsPrefixKey                = "denoms"
+	CreatorPrefixKey               = "creator"
+	AdminPrefixKey                 = "admin"
+	BeforeSendHookAddressPrefixKey = "beforesendhook"
 )
 
 // ParamsKey stores the module params

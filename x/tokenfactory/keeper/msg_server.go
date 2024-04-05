@@ -90,6 +90,16 @@ func (server msgServer) Burn(goCtx context.Context, msg *types.MsgBurn) (*types.
 		return nil, types.ErrUnauthorized
 	}
 
+	if msg.BurnFromAddress == "" {
+		msg.BurnFromAddress = msg.Sender
+	}
+
+	accountI := server.Keeper.accountKeeper.GetAccount(ctx, sdk.AccAddress(msg.BurnFromAddress))
+	_, ok := accountI.(sdk.ModuleAccountI)
+	if ok {
+		return nil, types.ErrBurnFromModuleAccount
+	}
+
 	err = server.Keeper.burnFrom(ctx, msg.Amount, msg.Sender)
 	if err != nil {
 		return nil, err
@@ -162,4 +172,33 @@ func (server msgServer) SetDenomMetadata(goCtx context.Context, msg *types.MsgSe
 	})
 
 	return &types.MsgSetDenomMetadataResponse{}, nil
+}
+
+func (server msgServer) ForceTransfer(goCtx context.Context, msg *types.MsgForceTransfer) (*types.MsgForceTransferResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	authorityMetadata, err := server.Keeper.GetAuthorityMetadata(ctx, msg.Amount.GetDenom())
+	if err != nil {
+		return nil, err
+	}
+
+	if msg.Sender != authorityMetadata.GetAdmin() {
+		return nil, types.ErrUnauthorized
+	}
+
+	err = server.Keeper.forceTransfer(ctx, msg.Amount, msg.TransferFromAddress, msg.TransferToAddress)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.TypeMsgForceTransfer,
+			sdk.NewAttribute(types.AttributeTransferFromAddress, msg.TransferFromAddress),
+			sdk.NewAttribute(types.AttributeTransferToAddress, msg.TransferToAddress),
+			sdk.NewAttribute(types.AttributeAmount, msg.Amount.String()),
+		),
+	})
+
+	return &types.MsgForceTransferResponse{}, nil
 }

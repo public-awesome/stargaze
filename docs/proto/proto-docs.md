@@ -29,6 +29,8 @@
     - [MsgChangeAdminResponse](#osmosis.tokenfactory.v1beta1.MsgChangeAdminResponse)
     - [MsgCreateDenom](#osmosis.tokenfactory.v1beta1.MsgCreateDenom)
     - [MsgCreateDenomResponse](#osmosis.tokenfactory.v1beta1.MsgCreateDenomResponse)
+    - [MsgForceTransfer](#osmosis.tokenfactory.v1beta1.MsgForceTransfer)
+    - [MsgForceTransferResponse](#osmosis.tokenfactory.v1beta1.MsgForceTransferResponse)
     - [MsgMint](#osmosis.tokenfactory.v1beta1.MsgMint)
     - [MsgMintResponse](#osmosis.tokenfactory.v1beta1.MsgMintResponse)
     - [MsgSetDenomMetadata](#osmosis.tokenfactory.v1beta1.MsgSetDenomMetadata)
@@ -475,6 +477,34 @@ It returns the full string of the newly created denom
 
 
 
+<a name="osmosis.tokenfactory.v1beta1.MsgForceTransfer"></a>
+
+### MsgForceTransfer
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `sender` | [string](#string) |  |  |
+| `amount` | [cosmos.base.v1beta1.Coin](#cosmos.base.v1beta1.Coin) |  |  |
+| `transferFromAddress` | [string](#string) |  |  |
+| `transferToAddress` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="osmosis.tokenfactory.v1beta1.MsgForceTransferResponse"></a>
+
+### MsgForceTransferResponse
+
+
+
+
+
+
+
 <a name="osmosis.tokenfactory.v1beta1.MsgMint"></a>
 
 ### MsgMint
@@ -549,6 +579,7 @@ Msg defines the tokefactory module's gRPC message service.
 | `Burn` | [MsgBurn](#osmosis.tokenfactory.v1beta1.MsgBurn) | [MsgBurnResponse](#osmosis.tokenfactory.v1beta1.MsgBurnResponse) | Burn | |
 | `ChangeAdmin` | [MsgChangeAdmin](#osmosis.tokenfactory.v1beta1.MsgChangeAdmin) | [MsgChangeAdminResponse](#osmosis.tokenfactory.v1beta1.MsgChangeAdminResponse) | ChangeAdmin | |
 | `SetDenomMetadata` | [MsgSetDenomMetadata](#osmosis.tokenfactory.v1beta1.MsgSetDenomMetadata) | [MsgSetDenomMetadataResponse](#osmosis.tokenfactory.v1beta1.MsgSetDenomMetadataResponse) | SetDenomMetadata | |
+| `ForceTransfer` | [MsgForceTransfer](#osmosis.tokenfactory.v1beta1.MsgForceTransfer) | [MsgForceTransferResponse](#osmosis.tokenfactory.v1beta1.MsgForceTransferResponse) |  | |
 
  <!-- end services -->
 

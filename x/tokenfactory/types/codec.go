@@ -12,6 +12,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgMint{}, "tokenfactory/mint", nil)
 	cdc.RegisterConcrete(&MsgBurn{}, "tokenfactory/burn", nil)
 	cdc.RegisterConcrete(&MsgChangeAdmin{}, "tokenfactory/change-admin", nil)
+	cdc.RegisterConcrete(&MsgForceTransfer{}, "tokenfactory/force-transfer", nil)
 }
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
@@ -21,6 +22,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgMint{},
 		&MsgBurn{},
 		&MsgChangeAdmin{},
+		&MsgForceTransfer{},
 	)
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }

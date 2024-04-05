@@ -23,6 +23,7 @@ type (
 
 		accountKeeper       types.AccountKeeper
 		bankKeeper          types.BankKeeper
+		contractKeeper      types.ContractKeeper
 		communityPoolKeeper types.CommunityPoolKeeper
 	}
 )
@@ -80,4 +81,9 @@ func (k Keeper) GetCreatorsPrefixStore(ctx sdk.Context) prefix.Store {
 // and sends to the relevant address.
 func (k Keeper) CreateModuleAccount(ctx sdk.Context) {
 	k.accountKeeper.GetModuleAccount(ctx, types.ModuleName)
+}
+
+// Set the wasm keeper.
+func (k *Keeper) SetContractKeeper(contractKeeper types.ContractKeeper) {
+	k.contractKeeper = contractKeeper
 }

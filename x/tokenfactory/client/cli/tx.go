@@ -64,9 +64,9 @@ func NewCreateDenomCmd() *cobra.Command {
 // NewMintCmd broadcast MsgMint
 func NewMintCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "mint [amount] [flags]",
+		Use:   "mint [amount] [mint-to-address] [flags]",
 		Short: "Mint a denom to an address. Must have admin authority to do so.",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -85,9 +85,10 @@ func NewMintCmd() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgMint(
+			msg := types.NewMsgMintTo(
 				clientCtx.GetFromAddress().String(),
 				amount,
+				args[1],
 			)
 
 			return tx.GenerateOrBroadcastTxWithFactory(clientCtx, txf, msg)
@@ -101,9 +102,9 @@ func NewMintCmd() *cobra.Command {
 // NewBurnCmd broadcast MsgBurn
 func NewBurnCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "burn [amount] [flags]",
+		Use:   "burn [amount] [burn-from-address] [flags]",
 		Short: "Burn tokens from an address. Must have admin authority to do so.",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -122,9 +123,10 @@ func NewBurnCmd() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgBurn(
+			msg := types.NewMsgBurnFrom(
 				clientCtx.GetFromAddress().String(),
 				amount,
+				args[1],
 			)
 
 			return tx.GenerateOrBroadcastTxWithFactory(clientCtx, txf, msg)
