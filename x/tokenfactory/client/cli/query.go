@@ -23,6 +23,7 @@ func GetQueryCmd() *cobra.Command {
 
 	cmd.AddCommand(GetCmdDenomAuthorityMetadata())
 	cmd.AddCommand(GetCmdDenomsFromCreator())
+	cmd.AddCommand(GetCmdDenomBeforeSendHook())
 	cmd.AddCommand(GetParams())
 
 	return cmd
@@ -82,6 +83,35 @@ func GetCmdDenomsFromCreator() *cobra.Command {
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
+	return cmd
+}
+
+// GetCmdDenomAuthorityMetadata returns the authority metadata for a queried denom
+func GetCmdDenomBeforeSendHook() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "denom-before-send-hook [denom] [flags]",
+		Short: "Get the BeforeSend hook for a specific denom",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			res, err := queryClient.BeforeSendHookAddress(cmd.Context(), &types.QueryBeforeSendHookAddressRequest{
+				Denom: args[0],
+			})
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
 	return cmd
 }
 

@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"cosmossdk.io/math"
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cometbft/cometbft/crypto/ed25519"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -14,6 +16,8 @@ import (
 	"github.com/public-awesome/stargaze/v14/x/tokenfactory/keeper"
 	"github.com/public-awesome/stargaze/v14/x/tokenfactory/types"
 	"github.com/stretchr/testify/suite"
+
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 )
 
 type KeeperTestSuite struct {
@@ -24,8 +28,10 @@ type KeeperTestSuite struct {
 	QueryHelper *baseapp.QueryServiceTestHelper
 	TestAccs    []sdk.AccAddress
 
-	queryClient types.QueryClient
-	msgServer   types.MsgServer
+	queryClient    types.QueryClient
+	msgServer      types.MsgServer
+	contractKeeper wasmtypes.ContractOpsKeeper
+	bankMsgServer  banktypes.MsgServer
 	// defaultDenom is on the suite, as it depends on the creator test address.
 	defaultDenom string
 }
@@ -64,9 +70,10 @@ func (suite *KeeperTestSuite) SetupTest() {
 	for _, acc := range suite.TestAccs {
 		suite.FundAcc(acc, fundAccsAmount)
 	}
-
+	suite.contractKeeper = wasmkeeper.NewGovPermissionKeeper(suite.App.WasmKeeper)
 	suite.queryClient = types.NewQueryClient(suite.QueryHelper)
 	suite.msgServer = keeper.NewMsgServerImpl(suite.App.TokenFactoryKeeper)
+	suite.bankMsgServer = bankkeeper.NewMsgServerImpl(suite.App.BankKeeper)
 }
 
 func (suite *KeeperTestSuite) CreateDefaultDenom() {

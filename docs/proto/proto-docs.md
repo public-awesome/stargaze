@@ -13,6 +13,8 @@
     - [GenesisState](#osmosis.tokenfactory.v1beta1.GenesisState)
   
 - [osmosis/tokenfactory/v1beta1/query.proto](#osmosis/tokenfactory/v1beta1/query.proto)
+    - [QueryBeforeSendHookAddressRequest](#osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest)
+    - [QueryBeforeSendHookAddressResponse](#osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse)
     - [QueryDenomAuthorityMetadataRequest](#osmosis.tokenfactory.v1beta1.QueryDenomAuthorityMetadataRequest)
     - [QueryDenomAuthorityMetadataResponse](#osmosis.tokenfactory.v1beta1.QueryDenomAuthorityMetadataResponse)
     - [QueryDenomsFromCreatorRequest](#osmosis.tokenfactory.v1beta1.QueryDenomsFromCreatorRequest)
@@ -33,6 +35,8 @@
     - [MsgForceTransferResponse](#osmosis.tokenfactory.v1beta1.MsgForceTransferResponse)
     - [MsgMint](#osmosis.tokenfactory.v1beta1.MsgMint)
     - [MsgMintResponse](#osmosis.tokenfactory.v1beta1.MsgMintResponse)
+    - [MsgSetBeforeSendHook](#osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook)
+    - [MsgSetBeforeSendHookResponse](#osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHookResponse)
     - [MsgSetDenomMetadata](#osmosis.tokenfactory.v1beta1.MsgSetDenomMetadata)
     - [MsgSetDenomMetadataResponse](#osmosis.tokenfactory.v1beta1.MsgSetDenomMetadataResponse)
   
@@ -263,6 +267,37 @@ GenesisState defines the tokenfactory module's genesis state.
 
 
 
+<a name="osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest"></a>
+
+### QueryBeforeSendHookAddressRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `denom` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse"></a>
+
+### QueryBeforeSendHookAddressResponse
+QueryBeforeSendHookAddressResponse defines the response structure for the
+DenomBeforeSendHook gRPC query.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `cosmwasm_address` | [string](#string) |  |  |
+
+
+
+
+
+
 <a name="osmosis.tokenfactory.v1beta1.QueryDenomAuthorityMetadataRequest"></a>
 
 ### QueryDenomAuthorityMetadataRequest
@@ -368,6 +403,7 @@ Query defines the gRPC querier service.
 | `Params` | [QueryParamsRequest](#osmosis.tokenfactory.v1beta1.QueryParamsRequest) | [QueryParamsResponse](#osmosis.tokenfactory.v1beta1.QueryParamsResponse) | Params defines a gRPC query method that returns the tokenfactory module's parameters. | GET|/stargaze/tokenfactory/v1/params|
 | `DenomAuthorityMetadata` | [QueryDenomAuthorityMetadataRequest](#osmosis.tokenfactory.v1beta1.QueryDenomAuthorityMetadataRequest) | [QueryDenomAuthorityMetadataResponse](#osmosis.tokenfactory.v1beta1.QueryDenomAuthorityMetadataResponse) | DenomAuthorityMetadata defines a gRPC query method for fetching DenomAuthorityMetadata for a particular denom. | GET|/stargaze/tokenfactory/v1/denoms/{denom}/authority_metadata|
 | `DenomsFromCreator` | [QueryDenomsFromCreatorRequest](#osmosis.tokenfactory.v1beta1.QueryDenomsFromCreatorRequest) | [QueryDenomsFromCreatorResponse](#osmosis.tokenfactory.v1beta1.QueryDenomsFromCreatorResponse) | DenomsFromCreator defines a gRPC query method for fetching all denominations created by a specific admin/creator. | GET|/stargaze/tokenfactory/v1/denoms_from_creator/{creator}|
+| `BeforeSendHookAddress` | [QueryBeforeSendHookAddressRequest](#osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest) | [QueryBeforeSendHookAddressResponse](#osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse) | BeforeSendHookAddress defines a gRPC query method for getting the address registered for the before send hook. | GET|/osmosis/tokenfactory/v1beta1/denoms/{denom}/before_send_hook|
 
  <!-- end services -->
 
@@ -533,6 +569,35 @@ more of a token.  For now, we only support minting to the sender account
 
 
 
+<a name="osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook"></a>
+
+### MsgSetBeforeSendHook
+MsgSetBeforeSendHook is the sdk.Msg type for allowing an admin account to
+assign a CosmWasm contract to call with a BeforeSend hook
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `sender` | [string](#string) |  |  |
+| `denom` | [string](#string) |  |  |
+| `cosmwasm_address` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHookResponse"></a>
+
+### MsgSetBeforeSendHookResponse
+MsgSetBeforeSendHookResponse defines the response structure for an executed
+MsgSetBeforeSendHook message.
+
+
+
+
+
+
 <a name="osmosis.tokenfactory.v1beta1.MsgSetDenomMetadata"></a>
 
 ### MsgSetDenomMetadata
@@ -580,6 +645,7 @@ Msg defines the tokefactory module's gRPC message service.
 | `ChangeAdmin` | [MsgChangeAdmin](#osmosis.tokenfactory.v1beta1.MsgChangeAdmin) | [MsgChangeAdminResponse](#osmosis.tokenfactory.v1beta1.MsgChangeAdminResponse) | ChangeAdmin | |
 | `SetDenomMetadata` | [MsgSetDenomMetadata](#osmosis.tokenfactory.v1beta1.MsgSetDenomMetadata) | [MsgSetDenomMetadataResponse](#osmosis.tokenfactory.v1beta1.MsgSetDenomMetadataResponse) | SetDenomMetadata | |
 | `ForceTransfer` | [MsgForceTransfer](#osmosis.tokenfactory.v1beta1.MsgForceTransfer) | [MsgForceTransferResponse](#osmosis.tokenfactory.v1beta1.MsgForceTransferResponse) |  | |
+| `SetBeforeSendHook` | [MsgSetBeforeSendHook](#osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook) | [MsgSetBeforeSendHookResponse](#osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHookResponse) |  | |
 
  <!-- end services -->
 

@@ -1,6 +1,6 @@
 # Token Factory
 
-The code of x/tokenfactory is taken from Osmosis [v16.1.1](https://github.com/osmosis-labs/osmosis/releases/tag/v16.1.1)
+The code of x/tokenfactory is taken from Osmosis [v23.0.8](https://github.com/osmosis-labs/osmosis/releases/tag/v23.0.8)
 
 The module additionally includes the changes by [larry0x](https://github.com/larry0x) which allows the denom creation to consume gas if denom creation fee is set to zero. https://github.com/osmosis-labs/osmosis/pull/4983
 

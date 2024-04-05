@@ -448,6 +448,7 @@ func NewStargazeApp(
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 		logger,
 	)
+
 	// optional: enable sign mode textual by overwriting the default tx config (after setting the bank keeper)
 	// enabledSignModes := append(tx.DefaultSignModes, sigtypes.SignMode_SIGN_MODE_TEXTUAL)
 	// txConfigOpts := tx.ConfigOptions{

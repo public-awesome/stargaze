@@ -23,3 +23,7 @@ type BlockBeforeSendMsg struct {
 	To     string           `json:"to"`
 	Amount wasmvmtypes.Coin `json:"amount"`
 }
+
+var (
+	TrackBeforeSendGasLimit = uint64(100_000)
+)
