@@ -153,6 +153,7 @@ import (
 	stargazerest "github.com/public-awesome/stargaze/v14/internal/rest"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	sgstatesync "github.com/public-awesome/stargaze/v14/internal/statesync"
 )
 
@@ -843,6 +844,7 @@ func NewStargazeApp(
 		ibcwasm.NewAppModule(app.IBCWasmKeeper),
 		// always be last to make sure that it checks for all invariants and not only part of them
 		crisis.NewAppModule(app.CrisisKeeper, skipGenesisInvariants, app.GetSubspace(crisistypes.ModuleName)),
+		ibctm.NewAppModule(),
 	)
 
 	// BasicModuleManager defines the module BasicManager is in charge of setting up basic,
