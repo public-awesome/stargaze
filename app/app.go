@@ -674,16 +674,17 @@ func NewStargazeApp(
 	app.EvidenceKeeper = *evidenceKeeper
 
 	// IBC Wasm Client
-	wasmDir := filepath.Join(homePath, "wasm")
+	dataDir := filepath.Join(homePath, "data")
 	wasmConfig, err := wasm.ReadWasmConfig(appOpts)
 	if err != nil {
 		panic(fmt.Sprintf("error while reading wasm config: %s", err))
 	}
+	wasmDir := filepath.Join(dataDir, "wasm")
 	wasmdVM, err := wasmvm.NewVM(wasmDir, GetWasmCapabilities(), 32, wasmConfig.ContractDebugMode, wasmConfig.MemoryCacheSize)
 	if err != nil {
 		panic(fmt.Sprintf("error creating wasmvm for x/wasmd: %s", err))
 	}
-	lcWasmDir := filepath.Join(homePath, "light-client-wasm")
+	lcWasmDir := filepath.Join(dataDir, "light-client-wasm")
 	ibcWasmVM, err := wasmvm.NewVM(lcWasmDir, GetWasmCapabilities(), 32, wasmConfig.ContractDebugMode, wasmConfig.MemoryCacheSize)
 	if err != nil {
 		panic(fmt.Sprintf("error creating wasmvm for ibc wasm client: %s", err))
