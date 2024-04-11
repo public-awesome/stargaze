@@ -30,9 +30,9 @@ func (suite *UpgradeTestSuite) SetupTest() {
 
 func (suite *UpgradeTestSuite) TestUpgrade() {
 	testCases := []struct {
-		name         string
-		pre_upgrade  func()
-		post_upgrade func()
+		name        string
+		preUpgrade  func()
+		postUpgrade func()
 	}{
 		{
 			"Ensure any state transitions are handled correctly during the upgrade process",
@@ -49,7 +49,7 @@ func (suite *UpgradeTestSuite) TestUpgrade() {
 		suite.Run(fmt.Sprintf("Case %s", tc.name), func() {
 			suite.SetupTest() // reset
 
-			tc.pre_upgrade()
+			tc.preUpgrade()
 
 			ctx := suite.App.BaseApp.NewContext(false).WithBlockHeight(dummyUpgradeHeight - 1)
 			plan := upgradetypes.Plan{Name: "v14", Height: dummyUpgradeHeight}
@@ -59,11 +59,10 @@ func (suite *UpgradeTestSuite) TestUpgrade() {
 			_, err = upgradekeeper.GetUpgradePlan(ctx)
 			suite.Require().NoError(err)
 			ctx = ctx.WithBlockHeight(dummyUpgradeHeight)
-			suite.Require().NotPanics(func() {
-				suite.App.BeginBlocker(ctx)
-			})
+			_, err = suite.App.BeginBlocker(ctx)
+			suite.Require().NoError(err)
 
-			tc.post_upgrade()
+			tc.postUpgrade()
 		})
 	}
 }
