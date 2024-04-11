@@ -17,7 +17,7 @@ func (app App) RegisterUpgradeHandlers(configurator module.Configurator) {
 	for _, u := range Upgrades {
 		app.UpgradeKeeper.SetUpgradeHandler(
 			u.UpgradeName,
-			u.CreateUpgradeHandler(app.ModuleManager, configurator),
+			u.CreateUpgradeHandler(app.ModuleManager, configurator, app.Keepers),
 		)
 	}
 
