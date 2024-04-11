@@ -25,6 +25,7 @@ type (
 		distrKeeper   types.DistrKeeper
 
 		paramstore paramtypes.Subspace
+		authority  string
 	}
 )
 
@@ -35,6 +36,7 @@ func NewKeeper(
 
 	accountKeeper types.AccountKeeper, bankKeeper types.BankKeeper, stakingKeeper types.StakingKeeper, distrKeeper types.DistrKeeper,
 	ps paramtypes.Subspace,
+	authority string,
 ) *Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -48,6 +50,7 @@ func NewKeeper(
 
 		accountKeeper: accountKeeper, bankKeeper: bankKeeper, stakingKeeper: stakingKeeper, distrKeeper: distrKeeper,
 		paramstore: ps,
+		authority:  authority,
 	}
 }
 
@@ -195,4 +198,9 @@ func (k Keeper) FundCommunityPool(ctx sdk.Context) error {
 		return nil
 	}
 	return k.distrKeeper.FundCommunityPool(ctx, balances, funder)
+}
+
+// GetAuthority returns the x/alloc module's authority.
+func (k Keeper) GetAuthority() string {
+	return k.authority
 }
