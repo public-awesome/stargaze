@@ -683,11 +683,7 @@ func NewStargazeApp(
 	if err != nil {
 		panic(fmt.Sprintf("error creating wasmvm: %s", err))
 	}
-	// lcWasmDir := filepath.Join(homePath, "light-client-wasm")
-	// ibcWasmVM, err := wasmvm.NewVM(lcWasmDir, GetWasmCapabilities(), 32, wasmConfig.ContractDebugMode, wasmConfig.MemoryCacheSize)
-	// if err != nil {
-	// 	panic(fmt.Sprintf("error creating wasmvm for ibc wasm client: %s", err))
-	// }
+
 	acceptedStargateQueries := make([]string, 0)
 	for k := range AcceptedStargateQueries() {
 		acceptedStargateQueries = append(acceptedStargateQueries, k)
