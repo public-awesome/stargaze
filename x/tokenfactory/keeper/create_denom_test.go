@@ -11,7 +11,7 @@ import (
 func (suite *KeeperTestSuite) TestMsgCreateDenom() {
 	var (
 		tokenFactoryKeeper = suite.App.Keepers.TokenFactoryKeeper
-		bankKeeper         = suite.App.BankKeeper
+		bankKeeper         = suite.App.Keepers.BankKeeper
 		denomCreationFee   = tokenFactoryKeeper.GetParams(suite.Ctx).DenomCreationFee
 	)
 
@@ -129,7 +129,7 @@ func (suite *KeeperTestSuite) TestCreateDenom() {
 				tc.setup()
 			}
 			tokenFactoryKeeper := suite.App.Keepers.TokenFactoryKeeper
-			bankKeeper := suite.App.BankKeeper
+			bankKeeper := suite.App.Keepers.BankKeeper
 			// Set denom creation fee in params
 			err := tokenFactoryKeeper.SetParams(suite.Ctx, tc.denomCreationFee)
 			suite.Require().NoError(err)

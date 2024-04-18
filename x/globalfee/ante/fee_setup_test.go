@@ -79,7 +79,7 @@ func (s *AnteHandlerTestSuite) SetupTestGlobalFeeStoreAndMinGasPrice(minGasPrice
 	s.ctx = s.ctx.WithMinGasPrices(minGasPrice).WithIsCheckTx(true)
 
 	// build fee decorator
-	feeDecorator := ante.NewFeeDecorator(s.app.AppCodec(), s.app.Keepers.GlobalFeeKeeper, s.app.StakingKeeper)
+	feeDecorator := ante.NewFeeDecorator(s.app.AppCodec(), s.app.Keepers.GlobalFeeKeeper, s.app.Keepers.StakingKeeper)
 
 	// chain fee decorator to antehandler
 	antehandler := sdk.ChainAnteDecorators(feeDecorator)
@@ -88,11 +88,11 @@ func (s *AnteHandlerTestSuite) SetupTestGlobalFeeStoreAndMinGasPrice(minGasPrice
 }
 
 func (s *AnteHandlerTestSuite) SetupWasmMsgServer() {
-	wasmParams := s.app.WasmKeeper.GetParams(s.ctx)
+	wasmParams := s.app.Keepers.WasmKeeper.GetParams(s.ctx)
 	wasmParams.CodeUploadAccess = wasmtypes.AllowEverybody
-	err := s.app.WasmKeeper.SetParams(s.ctx, wasmParams)
+	err := s.app.Keepers.WasmKeeper.SetParams(s.ctx, wasmParams)
 	s.Require().NoError(err)
-	s.msgServer = wasmkeeper.NewMsgServerImpl(&s.app.WasmKeeper)
+	s.msgServer = wasmkeeper.NewMsgServerImpl(&s.app.Keepers.WasmKeeper)
 }
 
 func (s *AnteHandlerTestSuite) SetupContractWithCodeAuth(senderAddr string, contractBinary string, authMethods []string) string {
