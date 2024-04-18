@@ -303,10 +303,6 @@ type App struct {
 	WasmKeeper     wasmkeeper.Keeper
 	ContractKeeper *wasmkeeper.PermissionedKeeper
 
-	// IBC
-	ICAHostKeeper       icahostkeeper.Keeper
-	ICAControllerKeeper icacontrollerkeeper.Keeper
-
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper           capabilitykeeper.ScopedKeeper
 	ScopedICAHostKeeper       capabilitykeeper.ScopedKeeper
@@ -319,18 +315,7 @@ type App struct {
 	CronKeeper      cronmodulekeeper.Keeper
 	GlobalFeeKeeper globalfeemodulekeeper.Keeper
 
-	IBCHooksKeeper     ibchookskeeper.Keeper
 	TokenFactoryKeeper tokenfactorykeeper.Keeper
-
-	// Middleware wrapper
-	Ics20WasmHooks   *ibchooks.WasmHooks
-	HooksICS4Wrapper ibchooks.ICS4Middleware
-
-	// IBC Packet Forward Middleware
-	PacketForwardKeeper *packetforwardkeeper.Keeper
-
-	// IBC Wasm Client
-	IBCWasmKeeper ibcwasmkeeper.Keeper
 }
 
 // NewStargazeApp returns a reference to an initialized Gaia.
@@ -555,14 +540,14 @@ func NewStargazeApp(
 	hooksKeeper := ibchookskeeper.NewKeeper(
 		keys[ibchookstypes.StoreKey],
 	)
-	app.IBCHooksKeeper = hooksKeeper
+	app.Keepers.IBCHooksKeeper = hooksKeeper
 
 	stargazePrefix := sdk.GetConfig().GetBech32AccountAddrPrefix()
-	wasmHooks := ibchooks.NewWasmHooks(&app.IBCHooksKeeper, nil, stargazePrefix) // The contract keeper needs to be set later
-	app.Ics20WasmHooks = &wasmHooks
-	app.HooksICS4Wrapper = ibchooks.NewICS4Middleware(
+	wasmHooks := ibchooks.NewWasmHooks(&app.Keepers.IBCHooksKeeper, nil, stargazePrefix) // The contract keeper needs to be set later
+	app.Keepers.Ics20WasmHooks = &wasmHooks
+	app.Keepers.HooksICS4Wrapper = ibchooks.NewICS4Middleware(
 		app.Keepers.IBCKeeper.ChannelKeeper,
-		app.Ics20WasmHooks,
+		app.Keepers.Ics20WasmHooks,
 	)
 
 	// register the proposal types
@@ -574,7 +559,7 @@ func NewStargazeApp(
 		appCodec,
 		keys[ibctransfertypes.StoreKey],
 		app.GetSubspace(ibctransfertypes.ModuleName),
-		app.HooksICS4Wrapper,
+		app.Keepers.HooksICS4Wrapper,
 		app.Keepers.IBCKeeper.ChannelKeeper,
 		app.Keepers.IBCKeeper.PortKeeper,
 		app.AccountKeeper,
@@ -584,7 +569,7 @@ func NewStargazeApp(
 	)
 
 	// Initialize the packet forward middleware Keeper
-	app.PacketForwardKeeper = packetforwardkeeper.NewKeeper(
+	app.Keepers.PacketForwardKeeper = packetforwardkeeper.NewKeeper(
 		appCodec,
 		app.keys[packetforwardtypes.StoreKey],
 		app.TransferKeeper,
@@ -592,7 +577,7 @@ func NewStargazeApp(
 		app.DistrKeeper,
 		app.BankKeeper,
 		// The ICS4Wrapper is replaced by the HooksICS4Wrapper instead of the channel so that sending can be overridden by the middleware
-		app.HooksICS4Wrapper,
+		app.Keepers.HooksICS4Wrapper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
@@ -614,18 +599,18 @@ func NewStargazeApp(
 	transferStack = transfer.NewIBCModule(app.TransferKeeper)
 	transferStack = packetforward.NewIBCMiddleware(
 		transferStack,
-		app.PacketForwardKeeper,
+		app.Keepers.PacketForwardKeeper,
 		0, // retries on timeout
 		packetforwardkeeper.DefaultForwardTransferPacketTimeoutTimestamp, // forward timeout
 		packetforwardkeeper.DefaultRefundTransferPacketTimeoutTimestamp,  // refund timeout
 	)
-	transferStack = ibchooks.NewIBCMiddleware(transferStack, &app.HooksICS4Wrapper)
+	transferStack = ibchooks.NewIBCMiddleware(transferStack, &app.Keepers.HooksICS4Wrapper)
 
-	app.ICAHostKeeper = icahostkeeper.NewKeeper(
+	app.Keepers.ICAHostKeeper = icahostkeeper.NewKeeper(
 		appCodec,
 		app.keys[icahosttypes.StoreKey],
 		app.GetSubspace(icahosttypes.SubModuleName),
-		app.HooksICS4Wrapper,
+		app.Keepers.HooksICS4Wrapper,
 		app.Keepers.IBCKeeper.ChannelKeeper,
 		app.Keepers.IBCKeeper.PortKeeper,
 		app.AccountKeeper,
@@ -634,9 +619,9 @@ func NewStargazeApp(
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
-	icaHostIBCModule := icahost.NewIBCModule(app.ICAHostKeeper)
+	icaHostIBCModule := icahost.NewIBCModule(app.Keepers.ICAHostKeeper)
 
-	app.ICAControllerKeeper = icacontrollerkeeper.NewKeeper(
+	app.Keepers.ICAControllerKeeper = icacontrollerkeeper.NewKeeper(
 		appCodec,
 		app.keys[icacontrollertypes.StoreKey],
 		app.GetSubspace(icacontrollertypes.SubModuleName),
@@ -649,7 +634,7 @@ func NewStargazeApp(
 	)
 
 	var icaControllerStack ibcporttypes.IBCModule
-	icaControllerStack = icacontroller.NewIBCMiddleware(icaControllerStack, app.ICAControllerKeeper)
+	icaControllerStack = icacontroller.NewIBCMiddleware(icaControllerStack, app.Keepers.ICAControllerKeeper)
 
 	// Create static IBC router, add transfer route, then set and seal it
 
@@ -692,7 +677,7 @@ func NewStargazeApp(
 		Stargate: ibcwasmtypes.AcceptListStargateQuerier(acceptedStargateQueries),
 	}
 
-	app.IBCWasmKeeper = ibcwasmkeeper.NewKeeperWithVM(
+	app.Keepers.IBCWasmKeeper = ibcwasmkeeper.NewKeeperWithVM(
 		appCodec,
 		runtime.NewKVStoreService(keys[ibcwasmtypes.StoreKey]),
 		app.Keepers.IBCKeeper.ClientKeeper,
@@ -724,7 +709,7 @@ func NewStargazeApp(
 		app.BankKeeper,
 		app.StakingKeeper,
 		distrkeeper.NewQuerier(app.DistrKeeper),
-		app.HooksICS4Wrapper,
+		app.Keepers.HooksICS4Wrapper,
 		app.Keepers.IBCKeeper.ChannelKeeper,
 		app.Keepers.IBCKeeper.PortKeeper,
 		scopedWasmKeeper,
@@ -740,7 +725,7 @@ func NewStargazeApp(
 
 	// set the contract keeper for the Ics20WasmHooks
 	app.ContractKeeper = wasmkeeper.NewDefaultPermissionKeeper(app.WasmKeeper)
-	app.Ics20WasmHooks.ContractKeeper = &app.WasmKeeper
+	app.Keepers.Ics20WasmHooks.ContractKeeper = &app.WasmKeeper
 
 	app.CronKeeper = cronmodulekeeper.NewKeeper(
 		appCodec,
@@ -829,7 +814,7 @@ func NewStargazeApp(
 		upgrade.NewAppModule(app.UpgradeKeeper, app.AccountKeeper.AddressCodec()),
 		evidence.NewAppModule(app.EvidenceKeeper),
 		ibc.NewAppModule(app.Keepers.IBCKeeper),
-		ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper),
+		ica.NewAppModule(&app.Keepers.ICAControllerKeeper, &app.Keepers.ICAHostKeeper),
 		params.NewAppModule(app.ParamsKeeper),
 		transfer.NewAppModule(app.TransferKeeper),
 		allocModule,
@@ -838,9 +823,9 @@ func NewStargazeApp(
 		globalfeeModule,
 		ibchooks.NewAppModule(app.AccountKeeper),
 		tokenfactory.NewAppModule(app.TokenFactoryKeeper, app.AccountKeeper, app.BankKeeper),
-		packetforward.NewAppModule(app.PacketForwardKeeper, app.GetSubspace(packetforwardtypes.ModuleName)),
+		packetforward.NewAppModule(app.Keepers.PacketForwardKeeper, app.GetSubspace(packetforwardtypes.ModuleName)),
 		consensus.NewAppModule(appCodec, app.ConsensusParamsKeeper),
-		ibcwasm.NewAppModule(app.IBCWasmKeeper),
+		ibcwasm.NewAppModule(app.Keepers.IBCWasmKeeper),
 		// always be last to make sure that it checks for all invariants and not only part of them
 		crisis.NewAppModule(app.CrisisKeeper, skipGenesisInvariants, app.GetSubspace(crisistypes.ModuleName)),
 		ibctm.NewAppModule(),
@@ -1002,7 +987,7 @@ func NewStargazeApp(
 		err := manager.RegisterExtensions(
 			wasmkeeper.NewWasmSnapshotter(app.CommitMultiStore(), &app.WasmKeeper),
 			sgstatesync.NewVersionSnapshotter(app.CommitMultiStore(), app, app),
-			ibcwasmkeeper.NewWasmSnapshotter(app.CommitMultiStore(), &app.IBCWasmKeeper),
+			ibcwasmkeeper.NewWasmSnapshotter(app.CommitMultiStore(), &app.Keepers.IBCWasmKeeper),
 		)
 		if err != nil {
 			panic(fmt.Errorf("failed to register snapshot extension: %s", err))
