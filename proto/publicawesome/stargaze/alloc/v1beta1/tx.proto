@@ -1,9 +1,11 @@
 syntax = "proto3";
 package publicawesome.stargaze.alloc.v1beta1;
 
+import "amino/amino.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "cosmos/msg/v1/msg.proto";
 import "gogoproto/gogo.proto";
+import "publicawesome/stargaze/alloc/v1beta1/params.proto";
 
 // this line is used by starport scaffolding # proto/tx/import
 
@@ -20,10 +22,12 @@ service Msg {
   // FundFairburnPool defines a method to allow an account to directly
   // fund the fee collector module account.
   rpc FundFairburnPool(MsgFundFairburnPool) returns (MsgFundFairburnPoolResponse);
+
+  // UpdateParams updates the alloc module's parameters.
+  rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
 }
 
-// MsgCreateVestingAccount defines a message that enables creating a vesting
-// account.
+// Deprecated: Cosmos SDK's CreateVestingAccount now supports start time.
 message MsgCreateVestingAccount {
   option (cosmos.msg.v1.signer) = "from_address";
   option (gogoproto.equal) = true;
@@ -47,6 +51,7 @@ message MsgCreateVestingAccountResponse {}
 // MsgFundFairburnPool allows an account to directly
 // fund the fee collector pool.
 message MsgFundFairburnPool {
+  option (amino.name) = "alloc/MsgFundFairburnPool";
   option (cosmos.msg.v1.signer) = "sender";
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
@@ -62,3 +67,24 @@ message MsgFundFairburnPool {
 // MsgFundFairburnPoolResponse defines the Msg/MsgFundFairburnPool response
 // type.
 message MsgFundFairburnPoolResponse {}
+
+// MsgUpdateParams is the request type for updating module's params.
+//
+// Since: v14
+message MsgUpdateParams {
+  option (amino.name) = "alloc/MsgUpdateParams";
+  option (cosmos.msg.v1.signer) = "authority";
+  // Authority is the address of the governance account.
+  string authority = 1;
+  // NOTE: All parameters must be supplied.
+  Params params = 2 [
+    (gogoproto.jsontag) = "params",
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
+
+// MsgUpdateParamsResponse is the response type for executing
+// an update.
+// Since: v14
+message MsgUpdateParamsResponse {}

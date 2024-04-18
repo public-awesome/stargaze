@@ -96,6 +96,8 @@ import (
 	ibctransferkeeper "github.com/cosmos/ibc-go/v8/modules/apps/transfer/keeper"
 	ibctransfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	ibc "github.com/cosmos/ibc-go/v8/modules/core"
+	ibcclienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types" //nolint:staticcheck
+	ibcconnectiontypes "github.com/cosmos/ibc-go/v8/modules/core/03-connection/types"
 	ibcporttypes "github.com/cosmos/ibc-go/v8/modules/core/05-port/types"
 	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
@@ -153,6 +155,8 @@ import (
 	stargazerest "github.com/public-awesome/stargaze/v14/internal/rest"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	keepers "github.com/public-awesome/stargaze/v14/app/keepers"
 	sgstatesync "github.com/public-awesome/stargaze/v14/internal/statesync"
 )
 
@@ -277,6 +281,7 @@ type App struct {
 	memKeys map[string]*storetypes.MemoryStoreKey
 
 	// keepers
+	Keepers          keepers.StargazeKeepers
 	AccountKeeper    authkeeper.AccountKeeper
 	BankKeeper       bankkeeper.Keeper
 	CapabilityKeeper *capabilitykeeper.Keeper
@@ -299,7 +304,6 @@ type App struct {
 	ContractKeeper *wasmkeeper.PermissionedKeeper
 
 	// IBC
-	IBCKeeper           *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
 	ICAHostKeeper       icahostkeeper.Keeper
 	ICAControllerKeeper icacontrollerkeeper.Keeper
 
@@ -475,7 +479,7 @@ func NewStargazeApp(
 
 	app.MintKeeper = mintkeeper.NewKeeper(
 		appCodec, keys[minttypes.StoreKey], app.GetSubspace(minttypes.ModuleName),
-		app.AccountKeeper, app.BankKeeper, authtypes.FeeCollectorName,
+		app.AccountKeeper, app.BankKeeper, authtypes.FeeCollectorName, authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 	app.DistrKeeper = distrkeeper.NewKeeper(
 		appCodec,
@@ -538,7 +542,7 @@ func NewStargazeApp(
 	// ... other modules keepers
 
 	// Create IBC Keeper
-	app.IBCKeeper = ibckeeper.NewKeeper(
+	app.Keepers.IBCKeeper = ibckeeper.NewKeeper(
 		appCodec,
 		keys[ibcexported.StoreKey],
 		app.GetSubspace(ibcexported.ModuleName),
@@ -557,7 +561,7 @@ func NewStargazeApp(
 	wasmHooks := ibchooks.NewWasmHooks(&app.IBCHooksKeeper, nil, stargazePrefix) // The contract keeper needs to be set later
 	app.Ics20WasmHooks = &wasmHooks
 	app.HooksICS4Wrapper = ibchooks.NewICS4Middleware(
-		app.IBCKeeper.ChannelKeeper,
+		app.Keepers.IBCKeeper.ChannelKeeper,
 		app.Ics20WasmHooks,
 	)
 
@@ -571,8 +575,8 @@ func NewStargazeApp(
 		keys[ibctransfertypes.StoreKey],
 		app.GetSubspace(ibctransfertypes.ModuleName),
 		app.HooksICS4Wrapper,
-		app.IBCKeeper.ChannelKeeper,
-		app.IBCKeeper.PortKeeper,
+		app.Keepers.IBCKeeper.ChannelKeeper,
+		app.Keepers.IBCKeeper.PortKeeper,
 		app.AccountKeeper,
 		app.BankKeeper,
 		scopedTransferKeeper,
@@ -584,7 +588,7 @@ func NewStargazeApp(
 		appCodec,
 		app.keys[packetforwardtypes.StoreKey],
 		app.TransferKeeper,
-		app.IBCKeeper.ChannelKeeper,
+		app.Keepers.IBCKeeper.ChannelKeeper,
 		app.DistrKeeper,
 		app.BankKeeper,
 		// The ICS4Wrapper is replaced by the HooksICS4Wrapper instead of the channel so that sending can be overridden by the middleware
@@ -622,8 +626,8 @@ func NewStargazeApp(
 		app.keys[icahosttypes.StoreKey],
 		app.GetSubspace(icahosttypes.SubModuleName),
 		app.HooksICS4Wrapper,
-		app.IBCKeeper.ChannelKeeper,
-		app.IBCKeeper.PortKeeper,
+		app.Keepers.IBCKeeper.ChannelKeeper,
+		app.Keepers.IBCKeeper.PortKeeper,
 		app.AccountKeeper,
 		scopedICAHostKeeper,
 		bApp.MsgServiceRouter(),
@@ -636,9 +640,9 @@ func NewStargazeApp(
 		appCodec,
 		app.keys[icacontrollertypes.StoreKey],
 		app.GetSubspace(icacontrollertypes.SubModuleName),
-		app.IBCKeeper.ChannelKeeper,
-		app.IBCKeeper.ChannelKeeper,
-		app.IBCKeeper.PortKeeper,
+		app.Keepers.IBCKeeper.ChannelKeeper,
+		app.Keepers.IBCKeeper.ChannelKeeper,
+		app.Keepers.IBCKeeper.PortKeeper,
 		scopedICAControllerKeeper,
 		app.MsgServiceRouter(),
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
@@ -675,15 +679,11 @@ func NewStargazeApp(
 	if err != nil {
 		panic(fmt.Sprintf("error while reading wasm config: %s", err))
 	}
-	wasmdVM, err := wasmvm.NewVM(wasmDir, GetWasmCapabilities(), 32, wasmConfig.ContractDebugMode, wasmConfig.MemoryCacheSize)
+	wasmdVM, err := wasmvm.NewVM(filepath.Join(wasmDir, "wasm"), GetWasmCapabilities(), 32, wasmConfig.ContractDebugMode, wasmConfig.MemoryCacheSize)
 	if err != nil {
-		panic(fmt.Sprintf("error creating wasmvm for x/wasmd: %s", err))
+		panic(fmt.Sprintf("error creating wasmvm: %s", err))
 	}
-	lcWasmDir := filepath.Join(homePath, "light-client-wasm")
-	ibcWasmVM, err := wasmvm.NewVM(lcWasmDir, GetWasmCapabilities(), 32, wasmConfig.ContractDebugMode, wasmConfig.MemoryCacheSize)
-	if err != nil {
-		panic(fmt.Sprintf("error creating wasmvm for ibc wasm client: %s", err))
-	}
+
 	acceptedStargateQueries := make([]string, 0)
 	for k := range AcceptedStargateQueries() {
 		acceptedStargateQueries = append(acceptedStargateQueries, k)
@@ -695,9 +695,9 @@ func NewStargazeApp(
 	app.IBCWasmKeeper = ibcwasmkeeper.NewKeeperWithVM(
 		appCodec,
 		runtime.NewKVStoreService(keys[ibcwasmtypes.StoreKey]),
-		app.IBCKeeper.ClientKeeper,
+		app.Keepers.IBCKeeper.ClientKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
-		ibcWasmVM,
+		wasmdVM,
 		app.GRPCQueryRouter(),
 		ibcwasmkeeper.WithQueryPlugins(&ibcWasmClientQueries),
 	)
@@ -725,8 +725,8 @@ func NewStargazeApp(
 		app.StakingKeeper,
 		distrkeeper.NewQuerier(app.DistrKeeper),
 		app.HooksICS4Wrapper,
-		app.IBCKeeper.ChannelKeeper,
-		app.IBCKeeper.PortKeeper,
+		app.Keepers.IBCKeeper.ChannelKeeper,
+		app.Keepers.IBCKeeper.PortKeeper,
 		scopedWasmKeeper,
 		app.TransferKeeper,
 		app.MsgServiceRouter(),
@@ -760,8 +760,8 @@ func NewStargazeApp(
 	)
 	globalfeeModule := globalfeemodule.NewAppModule(appCodec, app.GlobalFeeKeeper)
 
-	ibcRouter.AddRoute(wasmtypes.ModuleName, wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper, app.IBCKeeper.ChannelKeeper))
-	app.IBCKeeper.SetRouter(ibcRouter)
+	ibcRouter.AddRoute(wasmtypes.ModuleName, wasm.NewIBCHandler(app.WasmKeeper, app.Keepers.IBCKeeper.ChannelKeeper, app.Keepers.IBCKeeper.ChannelKeeper))
+	app.Keepers.IBCKeeper.SetRouter(ibcRouter)
 
 	govConfig := govtypes.DefaultConfig()
 	govKeeper := govkeeper.NewKeeper(
@@ -788,6 +788,7 @@ func NewStargazeApp(
 		app.StakingKeeper,
 		app.DistrKeeper,
 		app.GetSubspace(allocmoduletypes.ModuleName),
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 	allocModule := allocmodule.NewAppModule(appCodec, app.AllocKeeper)
 
@@ -827,7 +828,7 @@ func NewStargazeApp(
 		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(stakingtypes.ModuleName)),
 		upgrade.NewAppModule(app.UpgradeKeeper, app.AccountKeeper.AddressCodec()),
 		evidence.NewAppModule(app.EvidenceKeeper),
-		ibc.NewAppModule(app.IBCKeeper),
+		ibc.NewAppModule(app.Keepers.IBCKeeper),
 		ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper),
 		params.NewAppModule(app.ParamsKeeper),
 		transfer.NewAppModule(app.TransferKeeper),
@@ -842,6 +843,7 @@ func NewStargazeApp(
 		ibcwasm.NewAppModule(app.IBCWasmKeeper),
 		// always be last to make sure that it checks for all invariants and not only part of them
 		crisis.NewAppModule(app.CrisisKeeper, skipGenesisInvariants, app.GetSubspace(crisistypes.ModuleName)),
+		ibctm.NewAppModule(),
 	)
 
 	// BasicModuleManager defines the module BasicManager is in charge of setting up basic,
@@ -964,7 +966,7 @@ func NewStargazeApp(
 				FeegrantKeeper:  app.FeeGrantKeeper,
 				SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
 			},
-			keeper:                app.IBCKeeper,
+			keeper:                app.Keepers.IBCKeeper,
 			govKeeper:             app.GovKeeper,
 			globalfeeKeeper:       app.GlobalFeeKeeper,
 			stakingKeeper:         app.StakingKeeper,
@@ -986,8 +988,7 @@ func NewStargazeApp(
 
 	app.SetAnteHandler(anteHandler)
 	app.SetPostHandler(postHandler)
-	// TODO: enable upgrades
-	// app.RegisterUpgradeHandlers(configurator)
+	app.RegisterUpgradeHandlers(configurator)
 
 	autocliv1.RegisterQueryServer(app.GRPCQueryRouter(), runtimeservices.NewAutoCLIQueryService(app.ModuleManager.Modules))
 
@@ -1083,6 +1084,9 @@ func (app *App) BlockedAddrs() map[string]bool {
 	}
 	// allow supplement pool amount to receive tokens
 	delete(modAccAddrs, authtypes.NewModuleAddress(allocmoduletypes.SupplementPoolName).String())
+	delete(modAccAddrs, authtypes.NewModuleAddress(govtypes.ModuleName).String())
+	delete(modAccAddrs, authtypes.NewModuleAddress(ibcexported.ModuleName).String())
+
 	return modAccAddrs
 }
 
@@ -1217,6 +1221,8 @@ func initParamsKeeper(
 	key, tkey storetypes.StoreKey,
 ) paramskeeper.Keeper {
 	paramsKeeper := paramskeeper.NewKeeper(appCodec, legacyAmino, key, tkey)
+	keyTable := ibcclienttypes.ParamKeyTable()
+	keyTable.RegisterParamSet(&ibcconnectiontypes.Params{})
 
 	paramsKeeper.Subspace(authtypes.ModuleName)
 	paramsKeeper.Subspace(banktypes.ModuleName)
@@ -1226,13 +1232,13 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(slashingtypes.ModuleName)
 	paramsKeeper.Subspace(govtypes.ModuleName)
 	paramsKeeper.Subspace(crisistypes.ModuleName)
-	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
-	paramsKeeper.Subspace(ibcexported.ModuleName)
+	paramsKeeper.Subspace(ibctransfertypes.ModuleName).WithKeyTable(ibctransfertypes.ParamKeyTable())
+	paramsKeeper.Subspace(ibcexported.ModuleName).WithKeyTable(keyTable)
 	paramsKeeper.Subspace(allocmoduletypes.ModuleName)
 	paramsKeeper.Subspace(tokenfactorytypes.ModuleName)
 	paramsKeeper.Subspace(wasmtypes.ModuleName)
 	paramsKeeper.Subspace(cronmoduletypes.ModuleName)
-	paramsKeeper.Subspace(icahosttypes.SubModuleName)
+	paramsKeeper.Subspace(icahosttypes.SubModuleName).WithKeyTable(icahosttypes.ParamKeyTable())
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName).WithKeyTable(icacontrollertypes.ParamKeyTable())
 	paramsKeeper.Subspace(globalfeemoduletypes.ModuleName)
 	paramsKeeper.Subspace(packetforwardtypes.ModuleName).WithKeyTable(packetforwardtypes.ParamKeyTable())
