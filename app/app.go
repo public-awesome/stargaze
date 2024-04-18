@@ -287,7 +287,6 @@ type App struct {
 	CapabilityKeeper *capabilitykeeper.Keeper
 	StakingKeeper    *stakingkeeper.Keeper
 	SlashingKeeper   slashingkeeper.Keeper
-	MintKeeper       mintkeeper.Keeper
 	DistrKeeper      distrkeeper.Keeper
 	GovKeeper        govkeeper.Keeper
 
@@ -309,13 +308,6 @@ type App struct {
 	ScopedICAControllerKeeper capabilitykeeper.ScopedKeeper
 	ScopedTransferKeeper      capabilitykeeper.ScopedKeeper
 	ScopedWasmKeeper          capabilitykeeper.ScopedKeeper
-
-	// stargaze modules
-	AllocKeeper     allocmodulekeeper.Keeper
-	CronKeeper      cronmodulekeeper.Keeper
-	GlobalFeeKeeper globalfeemodulekeeper.Keeper
-
-	TokenFactoryKeeper tokenfactorykeeper.Keeper
 }
 
 // NewStargazeApp returns a reference to an initialized Gaia.
@@ -462,7 +454,7 @@ func NewStargazeApp(
 		authcodec.NewBech32Codec(sdk.GetConfig().GetBech32ConsensusAddrPrefix()),
 	)
 
-	app.MintKeeper = mintkeeper.NewKeeper(
+	app.Keepers.MintKeeper = mintkeeper.NewKeeper(
 		appCodec, keys[minttypes.StoreKey], app.GetSubspace(minttypes.ModuleName),
 		app.AccountKeeper, app.BankKeeper, authtypes.FeeCollectorName, authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
@@ -727,23 +719,23 @@ func NewStargazeApp(
 	app.ContractKeeper = wasmkeeper.NewDefaultPermissionKeeper(app.WasmKeeper)
 	app.Keepers.Ics20WasmHooks.ContractKeeper = &app.WasmKeeper
 
-	app.CronKeeper = cronmodulekeeper.NewKeeper(
+	app.Keepers.CronKeeper = cronmodulekeeper.NewKeeper(
 		appCodec,
 		keys[cronmoduletypes.StoreKey],
 		keys[cronmoduletypes.MemStoreKey],
 		app.GetSubspace(cronmoduletypes.ModuleName),
 		app.WasmKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String())
-	cronModule := cronmodule.NewAppModule(appCodec, app.CronKeeper, app.WasmKeeper)
+	cronModule := cronmodule.NewAppModule(appCodec, app.Keepers.CronKeeper, app.WasmKeeper)
 
-	app.GlobalFeeKeeper = globalfeemodulekeeper.NewKeeper(
+	app.Keepers.GlobalFeeKeeper = globalfeemodulekeeper.NewKeeper(
 		appCodec,
 		keys[globalfeemoduletypes.StoreKey],
 		app.GetSubspace(globalfeemoduletypes.ModuleName),
 		app.WasmKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
-	globalfeeModule := globalfeemodule.NewAppModule(appCodec, app.GlobalFeeKeeper)
+	globalfeeModule := globalfeemodule.NewAppModule(appCodec, app.Keepers.GlobalFeeKeeper)
 
 	ibcRouter.AddRoute(wasmtypes.ModuleName, wasm.NewIBCHandler(app.WasmKeeper, app.Keepers.IBCKeeper.ChannelKeeper, app.Keepers.IBCKeeper.ChannelKeeper))
 	app.Keepers.IBCKeeper.SetRouter(ibcRouter)
@@ -763,7 +755,7 @@ func NewStargazeApp(
 
 	app.GovKeeper = *govKeeper.SetHooks(govtypes.NewMultiGovHooks())
 
-	app.AllocKeeper = *allocmodulekeeper.NewKeeper(
+	app.Keepers.AllocKeeper = *allocmodulekeeper.NewKeeper(
 		appCodec,
 		keys[allocmoduletypes.StoreKey],
 		keys[allocmoduletypes.MemStoreKey],
@@ -775,11 +767,11 @@ func NewStargazeApp(
 		app.GetSubspace(allocmoduletypes.ModuleName),
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
-	allocModule := allocmodule.NewAppModule(appCodec, app.AllocKeeper)
+	allocModule := allocmodule.NewAppModule(appCodec, app.Keepers.AllocKeeper)
 
 	tokenfactoryKeeper := tokenfactorykeeper.NewKeeper(appCodec, keys[tokenfactorytypes.StoreKey], app.GetSubspace(tokenfactorytypes.ModuleName),
 		app.AccountKeeper, app.BankKeeper, app.DistrKeeper)
-	app.TokenFactoryKeeper = tokenfactoryKeeper
+	app.Keepers.TokenFactoryKeeper = tokenfactoryKeeper
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
@@ -807,7 +799,7 @@ func NewStargazeApp(
 		authzmodule.NewAppModule(appCodec, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 		crisis.NewAppModule(app.CrisisKeeper, skipGenesisInvariants, app.GetSubspace(crisistypes.ModuleName)),
 		gov.NewAppModule(appCodec, &app.GovKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(govtypes.ModuleName)),
-		mint.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper),
+		mint.NewAppModule(appCodec, app.Keepers.MintKeeper, app.AccountKeeper),
 		slashing.NewAppModule(appCodec, app.SlashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper, app.GetSubspace(slashingtypes.ModuleName), app.interfaceRegistry),
 		distr.NewAppModule(appCodec, app.DistrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper, app.GetSubspace(distrtypes.ModuleName)),
 		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(stakingtypes.ModuleName)),
@@ -822,7 +814,7 @@ func NewStargazeApp(
 		cronModule,
 		globalfeeModule,
 		ibchooks.NewAppModule(app.AccountKeeper),
-		tokenfactory.NewAppModule(app.TokenFactoryKeeper, app.AccountKeeper, app.BankKeeper),
+		tokenfactory.NewAppModule(app.Keepers.TokenFactoryKeeper, app.AccountKeeper, app.BankKeeper),
 		packetforward.NewAppModule(app.Keepers.PacketForwardKeeper, app.GetSubspace(packetforwardtypes.ModuleName)),
 		consensus.NewAppModule(appCodec, app.ConsensusParamsKeeper),
 		ibcwasm.NewAppModule(app.Keepers.IBCWasmKeeper),
@@ -953,7 +945,7 @@ func NewStargazeApp(
 			},
 			keeper:                app.Keepers.IBCKeeper,
 			govKeeper:             app.GovKeeper,
-			globalfeeKeeper:       app.GlobalFeeKeeper,
+			globalfeeKeeper:       app.Keepers.GlobalFeeKeeper,
 			stakingKeeper:         app.StakingKeeper,
 			WasmConfig:            &wasmConfig,
 			TXCounterStoreService: runtime.NewKVStoreService(keys[wasmtypes.StoreKey]),

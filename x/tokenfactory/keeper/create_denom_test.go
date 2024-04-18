@@ -10,7 +10,7 @@ import (
 
 func (suite *KeeperTestSuite) TestMsgCreateDenom() {
 	var (
-		tokenFactoryKeeper = suite.App.TokenFactoryKeeper
+		tokenFactoryKeeper = suite.App.Keepers.TokenFactoryKeeper
 		bankKeeper         = suite.App.BankKeeper
 		denomCreationFee   = tokenFactoryKeeper.GetParams(suite.Ctx).DenomCreationFee
 	)
@@ -128,7 +128,7 @@ func (suite *KeeperTestSuite) TestCreateDenom() {
 			if tc.setup != nil {
 				tc.setup()
 			}
-			tokenFactoryKeeper := suite.App.TokenFactoryKeeper
+			tokenFactoryKeeper := suite.App.Keepers.TokenFactoryKeeper
 			bankKeeper := suite.App.BankKeeper
 			// Set denom creation fee in params
 			err := tokenFactoryKeeper.SetParams(suite.Ctx, tc.denomCreationFee)
@@ -206,7 +206,7 @@ func (suite *KeeperTestSuite) TestGasConsume() {
 		suite.SetupTest()
 		suite.Run(fmt.Sprintf("Case %s", tc.desc), func() {
 			// set params with the gas consume amount
-			err := suite.App.TokenFactoryKeeper.SetParams(suite.Ctx, types.NewParams(nil, tc.gasConsume))
+			err := suite.App.Keepers.TokenFactoryKeeper.SetParams(suite.Ctx, types.NewParams(nil, tc.gasConsume))
 			suite.Require().NoError(err)
 
 			// amount of gas consumed prior to the denom creation

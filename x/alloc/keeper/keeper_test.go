@@ -31,7 +31,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 		Time:    time.Now().UTC(),
 		ChainID: "stargaze-1",
 	})
-	err := suite.app.AllocKeeper.SetParams(suite.ctx, types.DefaultParams())
+	err := suite.app.Keepers.AllocKeeper.SetParams(suite.ctx, types.DefaultParams())
 	suite.Require().NoError(err)
 }
 
@@ -56,13 +56,13 @@ func FundModuleAccount(bankKeeper bankkeeper.Keeper, ctx sdk.Context, recipientM
 func (suite *KeeperTestSuite) TestZeroAllocation() {
 	suite.SetupTest()
 
-	allocKeeper := suite.app.AllocKeeper
+	allocKeeper := suite.app.Keepers.AllocKeeper
 
-	params := suite.app.AllocKeeper.GetParams(suite.ctx)
+	params := suite.app.Keepers.AllocKeeper.GetParams(suite.ctx)
 
 	params.DistributionProportions.NftIncentives = math.LegacyZeroDec()
 
-	err := suite.app.AllocKeeper.SetParams(suite.ctx, params)
+	err := suite.app.Keepers.AllocKeeper.SetParams(suite.ctx, params)
 	suite.Require().NoError(err)
 
 	err = allocKeeper.DistributeInflation(suite.ctx)
@@ -80,8 +80,8 @@ func (suite *KeeperTestSuite) TestDistribution() {
 
 	denom, err := suite.app.StakingKeeper.BondDenom(suite.ctx)
 	suite.Require().NoError(err)
-	allocKeeper := suite.app.AllocKeeper
-	params := suite.app.AllocKeeper.GetParams(suite.ctx)
+	allocKeeper := suite.app.Keepers.AllocKeeper
+	params := suite.app.Keepers.AllocKeeper.GetParams(suite.ctx)
 	devRewardsReceiver := sdk.AccAddress([]byte("addr1---------------"))
 	nftIncentives := sdk.AccAddress([]byte("addr2---------------"))
 	params.SupplementAmount = sdk.NewCoins(sdk.NewInt64Coin(denom, 10_000_000))
@@ -100,7 +100,7 @@ func (suite *KeeperTestSuite) TestDistribution() {
 		},
 	}
 
-	err = suite.app.AllocKeeper.SetParams(suite.ctx, params)
+	err = suite.app.Keepers.AllocKeeper.SetParams(suite.ctx, params)
 	suite.Require().NoError(err)
 
 	feePool, err := suite.app.DistrKeeper.FeePool.Get(suite.ctx)
@@ -170,8 +170,8 @@ func (suite *KeeperTestSuite) TestFairburnPool() {
 	// set params
 	denom, err := suite.app.StakingKeeper.BondDenom(suite.ctx)
 	suite.Require().NoError(err)
-	allocKeeper := suite.app.AllocKeeper
-	params := suite.app.AllocKeeper.GetParams(suite.ctx)
+	allocKeeper := suite.app.Keepers.AllocKeeper
+	params := suite.app.Keepers.AllocKeeper.GetParams(suite.ctx)
 	devRewardsReceiver := sdk.AccAddress([]byte("addr1---------------"))
 	params.DistributionProportions.NftIncentives = math.LegacyNewDecWithPrec(45, 2)
 	params.DistributionProportions.DeveloperRewards = math.LegacyNewDecWithPrec(15, 2)
@@ -226,8 +226,8 @@ func (suite *KeeperTestSuite) TestDistributionWithSupplement() {
 
 	denom, err := suite.app.StakingKeeper.BondDenom(suite.ctx)
 	suite.Require().NoError(err)
-	allocKeeper := suite.app.AllocKeeper
-	params := suite.app.AllocKeeper.GetParams(suite.ctx)
+	allocKeeper := suite.app.Keepers.AllocKeeper
+	params := suite.app.Keepers.AllocKeeper.GetParams(suite.ctx)
 	devRewardsReceiver := sdk.AccAddress([]byte("addr1---------------"))
 	nftIncentives := sdk.AccAddress([]byte("addr2---------------"))
 
@@ -247,9 +247,9 @@ func (suite *KeeperTestSuite) TestDistributionWithSupplement() {
 			Weight:  math.LegacyNewDec(1),
 		},
 	}
-	err = suite.app.AllocKeeper.SetParams(suite.ctx, params)
+	err = suite.app.Keepers.AllocKeeper.SetParams(suite.ctx, params)
 	suite.Require().NoError(err)
-	suite.Require().False(suite.app.AllocKeeper.GetParams(suite.ctx).SupplementAmount.IsZero())
+	suite.Require().False(suite.app.Keepers.AllocKeeper.GetParams(suite.ctx).SupplementAmount.IsZero())
 
 	feePool, err := suite.app.DistrKeeper.FeePool.Get(suite.ctx)
 	suite.Require().NoError(err)
