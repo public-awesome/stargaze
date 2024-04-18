@@ -196,6 +196,9 @@ func TestInterchainAccounts(t *testing.T) {
 	err = hostChain.SendFunds(ctx, hostUser.KeyName(), transfer)
 	require.NoError(t, err)
 
+	err = testutil.WaitForBlocks(ctx, 1, hostChain)
+	require.NoError(t, err)
+
 	// Ensuring the balances are correct
 	hostBal, err := hostChain.GetBalance(ctx, hostUser.FormattedAddress(), hostChain.Config().Denom)
 	require.NoError(t, err)
