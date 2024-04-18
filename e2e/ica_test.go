@@ -131,33 +131,44 @@ func TestInterchainAccounts(t *testing.T) {
 		},
 	)
 
-	// Register a new interchain account on controllerChain, on behalf of the user acc on hostChain
+	// Register a new interchain account on hostChain, on behalf of the user acc on controllerChain
+	icaMetadata := icatypes.Metadata{
+		Version:                icatypes.Version,
+		ControllerConnectionId: connection.ID,
+		HostConnectionId:       connection.Counterparty.ConnectionId,
+		Encoding:               icatypes.EncodingProtobuf,
+		TxType:                 icatypes.TxTypeSDKMultiMsg,
+	}
+	icaMetadataBytes, err := icatypes.ModuleCdc.MarshalJSON(&icaMetadata)
+	require.NoError(t, err)
+	version := string(icaMetadataBytes)
 	registerICA := []string{
 		controllerChain.Config().Bin, "tx", "interchain-accounts", "controller", "register", connection.ID,
+		"--version", version,
 		"--from", controllerUser.FormattedAddress(),
 		"--chain-id", controllerChain.Config().ChainID,
 		"--home", controllerChain.HomeDir(),
 		"--node", controllerChain.GetRPCAddress(),
 		"--keyring-backend", keyring.BackendTest,
+		"--output", "json",
 		"-y",
 	}
 	_, _, err = controllerChain.Exec(ctx, registerICA, nil)
 	require.NoError(t, err)
 
-	c2h, err := hostChain.Height(ctx)
+	controllerHeight, err := controllerChain.Height(ctx)
 	require.NoError(t, err)
 
 	// Wait for channel open confirm
-	_, err = cosmos.PollForMessage(ctx, hostChain, ir,
-		c2h, c2h+10, func(found *chantypes.MsgChannelOpenConfirm) bool {
-			return found.PortId == "icahost"
+	_, err = cosmos.PollForMessage(ctx, controllerChain, ir,
+		controllerHeight, controllerHeight+10, func(found *chantypes.MsgChannelOpenAck) bool {
+			return found.PortId == "icacontroller-"+controllerUser.FormattedAddress()
 		})
 	require.NoError(t, err)
 
 	// Query for the newly registered interchain account address
 	queryICA := []string{
 		controllerChain.Config().Bin, "query", "interchain-accounts", "controller", "interchain-account", controllerUser.FormattedAddress(), connection.ID,
-		"--chain-id", controllerChain.Config().ChainID,
 		"--home", controllerChain.HomeDir(),
 		"--node", controllerChain.GetRPCAddress(),
 	}
@@ -234,9 +245,9 @@ func TestInterchainAccounts(t *testing.T) {
 	require.NoError(t, err)
 
 	// Wait for tx to be relayed and acknowledged
-	c1h, err := controllerChain.Height(ctx)
+	controllerHeight, err = controllerChain.Height(ctx)
 	require.NoError(t, err)
-	_, err = cosmos.PollForMessage(ctx, controllerChain, ir, c1h, c1h+10, func(found *chantypes.MsgAcknowledgement) bool {
+	_, err = cosmos.PollForMessage(ctx, controllerChain, ir, controllerHeight, controllerHeight+10, func(found *chantypes.MsgAcknowledgement) bool {
 		return found.Packet.Sequence == 1 &&
 			found.Packet.SourcePort == "icacontroller-"+controllerUser.FormattedAddress() &&
 			found.Packet.DestinationPort == "icahost"
