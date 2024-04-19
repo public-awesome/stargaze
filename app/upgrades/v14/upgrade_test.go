@@ -53,7 +53,7 @@ func (suite *UpgradeTestSuite) TestUpgrade() {
 
 			ctx := suite.App.BaseApp.NewContext(false).WithBlockHeight(dummyUpgradeHeight - 1)
 			plan := upgradetypes.Plan{Name: "v14", Height: dummyUpgradeHeight}
-			upgradekeeper := suite.App.UpgradeKeeper
+			upgradekeeper := suite.App.Keepers.UpgradeKeeper
 			err := upgradekeeper.ScheduleUpgrade(ctx, plan)
 			suite.Require().NoError(err)
 			_, err = upgradekeeper.GetUpgradePlan(ctx)
