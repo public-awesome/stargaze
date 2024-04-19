@@ -644,7 +644,7 @@ func NewStargazeApp(
 		bApp.MsgServiceRouter(),
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
-	authoritymodule := authoritymodule.NewAppModule(appCodec, app.AuthorityKeeper)
+	authoritymodule := authoritymodule.NewAppModule(appCodec, app.Keepers.AuthorityKeeper)
 
 	// IBC Wasm Client
 	wasmDir := filepath.Join(homePath, "wasm")

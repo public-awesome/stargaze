@@ -8,9 +8,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	wasmlctypes "github.com/cosmos/ibc-go/modules/light-clients/08-wasm/types"
-	authoritytypes "github.com/public-awesome/stargaze/v13/x/authority/types"
 	"github.com/public-awesome/stargaze/v14/app/keepers"
 	"github.com/public-awesome/stargaze/v14/app/upgrades"
+	authoritytypes "github.com/public-awesome/stargaze/v14/x/authority/types"
 )
 
 // next upgrade name
@@ -31,7 +31,7 @@ var Upgrade = upgrades.Upgrade{
 			params.AllowedClients = append(params.AllowedClients, wasmlctypes.Wasm)
 			keepers.IBCKeeper.ClientKeeper.SetParams(wctx, params)
 
-			app.AuthorityKeeper.SetParams(sdk.UnwrapSDKContext(ctx), authoritytypes.DefaultParams())
+			keepers.AuthorityKeeper.SetParams(sdk.UnwrapSDKContext(ctx), authoritytypes.DefaultParams())
 			return migrations, nil
 		}
 	},

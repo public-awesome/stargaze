@@ -2,7 +2,7 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v13/x/authority/types"
+	"github.com/public-awesome/stargaze/v14/x/authority/types"
 )
 
 // SetParams sets the total set of authority parameters.

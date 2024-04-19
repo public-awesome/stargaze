@@ -6,7 +6,7 @@ import "cosmos/msg/v1/msg.proto";
 import "google/protobuf/any.proto";
 import "publicawesome/stargaze/authority/v1/authority.proto";
 
-option go_package = "github.com/public-awesome/stargaze/v13/x/authority/types";
+option go_package = "github.com/public-awesome/stargaze/v14/x/authority/types";
 
 // Msg defines the authority Msg service.
 service Msg {

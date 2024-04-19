@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 
-	"github.com/public-awesome/stargaze/v13/x/authority/types"
+	"github.com/public-awesome/stargaze/v14/x/authority/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module
