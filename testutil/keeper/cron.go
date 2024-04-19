@@ -16,8 +16,8 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	"github.com/public-awesome/stargaze/v13/x/cron/keeper"
-	"github.com/public-awesome/stargaze/v13/x/cron/types"
+	"github.com/public-awesome/stargaze/v14/x/cron/keeper"
+	"github.com/public-awesome/stargaze/v14/x/cron/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -43,7 +43,7 @@ func CronKeeper(tb testing.TB) (keeper.Keeper, sdk.Context) {
 	subspace, _ := paramsKeeper.GetSubspace(types.ModuleName)
 
 	wk := MockWasmKeeper{
-		HasContractInfoFn: func(ctx context.Context, contractAddr sdk.AccAddress) bool {
+		HasContractInfoFn: func(_ context.Context, contractAddr sdk.AccAddress) bool {
 			switch contractAddr.String() {
 			case "cosmos1qyqszqgpqyqszqgpqyqszqgpqyqszqgpjnp7du":
 				return true
@@ -54,7 +54,7 @@ func CronKeeper(tb testing.TB) (keeper.Keeper, sdk.Context) {
 			}
 			return false
 		},
-		SudoFn: func(ctx context.Context, contractAddress sdk.AccAddress, msg []byte) ([]byte, error) {
+		SudoFn: func(_ context.Context, _ sdk.AccAddress, _ []byte) ([]byte, error) {
 			return nil, nil
 		},
 	}

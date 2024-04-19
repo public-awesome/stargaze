@@ -8,9 +8,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v13/app"
-	"github.com/public-awesome/stargaze/v13/testutil/simapp"
-	"github.com/public-awesome/stargaze/v13/x/mint/types"
+	"github.com/public-awesome/stargaze/v14/app"
+	"github.com/public-awesome/stargaze/v14/testutil/simapp"
+	"github.com/public-awesome/stargaze/v14/x/mint/types"
 )
 
 type MintTestSuite struct {
@@ -26,7 +26,7 @@ func (suite *MintTestSuite) SetupTest() {
 	ctx := app.BaseApp.NewContext(false)
 
 	queryHelper := baseapp.NewQueryServerTestHelper(ctx, app.InterfaceRegistry())
-	types.RegisterQueryServer(queryHelper, app.MintKeeper)
+	types.RegisterQueryServer(queryHelper, app.Keepers.MintKeeper)
 	queryClient := types.NewQueryClient(queryHelper)
 
 	suite.app = app
@@ -40,11 +40,11 @@ func (suite *MintTestSuite) TestGRPCParams() {
 
 	params, err := queryClient.Params(gocontext.Background(), &types.QueryParamsRequest{})
 	suite.Require().NoError(err)
-	suite.Require().Equal(params.Params, app.MintKeeper.GetParams(ctx))
+	suite.Require().Equal(params.Params, app.Keepers.MintKeeper.GetParams(ctx))
 
 	annualProvisions, err := queryClient.AnnualProvisions(gocontext.Background(), &types.QueryAnnualProvisionsRequest{})
 	suite.Require().NoError(err)
-	suite.Require().Equal(annualProvisions.AnnualProvisions, app.MintKeeper.GetMinter(ctx).AnnualProvisions)
+	suite.Require().Equal(annualProvisions.AnnualProvisions, app.Keepers.MintKeeper.GetMinter(ctx).AnnualProvisions)
 }
 
 func TestMintTestSuite(t *testing.T) {

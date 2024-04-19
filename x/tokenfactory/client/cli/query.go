@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 
-	"github.com/public-awesome/stargaze/v13/x/tokenfactory/types"
+	"github.com/public-awesome/stargaze/v14/x/tokenfactory/types"
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -90,8 +90,8 @@ func GetParams() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "params [flags]",
 		Short: "Get the params for the x/tokenfactory module",
-		Args:  cobra.ExactArgs(0),
-		RunE: func(cmd *cobra.Command, args []string) error {
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, _ []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
 				return err

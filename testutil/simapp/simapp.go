@@ -24,7 +24,7 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
 	sdkmath "cosmossdk.io/math"
-	stargazeapp "github.com/public-awesome/stargaze/v13/app"
+	stargazeapp "github.com/public-awesome/stargaze/v14/app"
 )
 
 // New creates application instance with in-memory database and disabled logging.
@@ -62,13 +62,14 @@ func New(t *testing.T) *stargazeapp.App {
 	stateBytes, err := tmjson.MarshalIndent(genesisState, "", " ")
 	require.NoError(t, err)
 
-	app.InitChain(
+	_, err = app.InitChain(
 		&abci.RequestInitChain{
 			Validators:      []abci.ValidatorUpdate{},
 			ConsensusParams: simtestutil.DefaultConsensusParams,
 			AppStateBytes:   stateBytes,
 		},
 	)
+	require.NoError(t, err)
 
 	return app
 }

@@ -13,7 +13,7 @@ import (
 	// "github.com/cosmos/cosmos-sdk/client/flags"
 	// sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/public-awesome/stargaze/v13/x/alloc/types"
+	"github.com/public-awesome/stargaze/v14/x/alloc/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module
@@ -41,7 +41,7 @@ func GetCmdQueryParams() *cobra.Command {
 		Use:   "params",
 		Short: "Query the current alloc parameters",
 		Args:  cobra.NoArgs,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *cobra.Command, _ []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
 				return err

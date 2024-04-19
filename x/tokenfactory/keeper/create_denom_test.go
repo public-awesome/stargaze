@@ -5,13 +5,13 @@ import (
 
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v13/x/tokenfactory/types"
+	"github.com/public-awesome/stargaze/v14/x/tokenfactory/types"
 )
 
 func (suite *KeeperTestSuite) TestMsgCreateDenom() {
 	var (
-		tokenFactoryKeeper = suite.App.TokenFactoryKeeper
-		bankKeeper         = suite.App.BankKeeper
+		tokenFactoryKeeper = suite.App.Keepers.TokenFactoryKeeper
+		bankKeeper         = suite.App.Keepers.BankKeeper
 		denomCreationFee   = tokenFactoryKeeper.GetParams(suite.Ctx).DenomCreationFee
 	)
 
@@ -128,8 +128,8 @@ func (suite *KeeperTestSuite) TestCreateDenom() {
 			if tc.setup != nil {
 				tc.setup()
 			}
-			tokenFactoryKeeper := suite.App.TokenFactoryKeeper
-			bankKeeper := suite.App.BankKeeper
+			tokenFactoryKeeper := suite.App.Keepers.TokenFactoryKeeper
+			bankKeeper := suite.App.Keepers.BankKeeper
 			// Set denom creation fee in params
 			err := tokenFactoryKeeper.SetParams(suite.Ctx, tc.denomCreationFee)
 			suite.Require().NoError(err)
@@ -206,7 +206,7 @@ func (suite *KeeperTestSuite) TestGasConsume() {
 		suite.SetupTest()
 		suite.Run(fmt.Sprintf("Case %s", tc.desc), func() {
 			// set params with the gas consume amount
-			err := suite.App.TokenFactoryKeeper.SetParams(suite.Ctx, types.NewParams(nil, tc.gasConsume))
+			err := suite.App.Keepers.TokenFactoryKeeper.SetParams(suite.Ctx, types.NewParams(nil, tc.gasConsume))
 			suite.Require().NoError(err)
 
 			// amount of gas consumed prior to the denom creation

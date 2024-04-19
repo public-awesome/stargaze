@@ -1,10 +1,10 @@
 syntax = "proto3";
 package publicawesome.stargaze.globalfee.v1;
 
-import "publicawesome/stargaze/globalfee/v1/globalfee.proto";
 import "gogoproto/gogo.proto";
+import "publicawesome/stargaze/globalfee/v1/globalfee.proto";
 
-option go_package = "github.com/public-awesome/stargaze/v13/x/globalfee/types";
+option go_package = "github.com/public-awesome/stargaze/v14/x/globalfee/types";
 
 // GenesisState defines the globalfee module's genesis state.
 message GenesisState {

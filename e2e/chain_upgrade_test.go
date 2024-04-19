@@ -2,27 +2,31 @@ package e2e
 
 import (
 	"context"
+	"strconv"
 	"testing"
 	"time"
 
+	"cosmossdk.io/math"
+	upgradetypes "cosmossdk.io/x/upgrade/types"
+	govv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	"github.com/docker/docker/client"
-	interchaintest "github.com/strangelove-ventures/interchaintest/v7"
-	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
-	"github.com/strangelove-ventures/interchaintest/v7/ibc"
-	"github.com/strangelove-ventures/interchaintest/v7/testutil"
+	interchaintest "github.com/strangelove-ventures/interchaintest/v8"
+	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
+	"github.com/strangelove-ventures/interchaintest/v8/ibc"
+	"github.com/strangelove-ventures/interchaintest/v8/testutil"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap/zaptest"
 )
 
 const (
-	initialVersion = "v12.0.0" // The last released git tag version of the stargaze binary. This version of the image is fetched from Heigliner backage repository.
-	upgradeName    = "v13"     // The upcoming version name - Should match with upgrade handler name. This version needs to be built locally for tests. Using `make build-docker`
+	initialVersion = "v13.0.0" // The last released git tag version of the stargaze binary. This version of the image is fetched from Heigliner backage repository.
+	upgradeName    = "v14"     // The upcoming version name - Should match with upgrade handler name. This version needs to be built locally for tests. Using `make build-docker`
 )
 
 const (
-	haltHeightDelta    = uint64(10) // The number of blocks after which to apply upgrade after creation of proposal.
+	haltHeightDelta    = uint64(20) // The number of blocks after which to apply upgrade after creation of proposal.
 	blocksAfterUpgrade = uint64(10) // The number of blocks to wait for after the upgrade has been applied.
-	votingPeriod       = "10s"      // Reducing voting period for testing
+	votingPeriod       = "30s"      // Reducing voting period for testing
 	maxDepositPeriod   = "10s"      // Reducing max deposit period for testing
 	depositDenom       = "ustars"   // The bond denom to be used to deposit for propsals
 )
@@ -33,7 +37,19 @@ func TestChainUpgrade(t *testing.T) {
 	}
 
 	stargazeChain, client, ctx := startChain(t)
-	chainUser := fundChainUser(t, ctx, stargazeChain)
+	chainUser := fundChainUser(t, ctx, t.Name(), stargazeChain)
+
+	// Creating a contract before upgrade and ensuring expected state
+	codeId, err := stargazeChain.StoreContract(ctx, chainUser.KeyName(), "artifacts/cron_counter.wasm")
+	require.NoError(t, err)
+	initMsg := `{}`
+	contractAddress, err := InstantiateContract(stargazeChain, chainUser, ctx, codeId, initMsg)
+	require.NoError(t, err)
+	var queryRes QueryContractResponse
+	err = stargazeChain.QueryContract(ctx, contractAddress, QueryMsg{GetCount: &struct{}{}}, &queryRes)
+	require.NoError(t, err)
+	require.Equal(t, int64(0), queryRes.Data.UpCount)
+
 	haltHeight := submitUpgradeProposalAndVote(t, ctx, stargazeChain, chainUser)
 
 	height, err := stargazeChain.Height(ctx)
@@ -69,6 +85,14 @@ func TestChainUpgrade(t *testing.T) {
 
 	err = testutil.WaitForBlocks(timeoutCtx, int(blocksAfterUpgrade), stargazeChain)
 	require.NoError(t, err, "chain did not produce blocks after upgrade")
+
+	// Ensure contract behavior is as expected after upgrade
+	execMsg := `{"increment":{}}`
+	err = ExecuteContract(stargazeChain, chainUser, ctx, contractAddress, execMsg)
+	require.NoError(t, err)
+	err = stargazeChain.QueryContract(ctx, contractAddress, QueryMsg{GetCount: &struct{}{}}, &queryRes)
+	require.NoError(t, err)
+	require.Equal(t, int64(1), queryRes.Data.UpCount)
 }
 
 func submitUpgradeProposalAndVote(t *testing.T, ctx context.Context, stargazeChain *cosmos.CosmosChain, chainUser ibc.Wallet) uint64 {
@@ -77,28 +101,51 @@ func submitUpgradeProposalAndVote(t *testing.T, ctx context.Context, stargazeCha
 
 	haltHeight := height + haltHeightDelta // The height at which upgrade should be applied
 
-	proposal := cosmos.SoftwareUpgradeProposal{
-		Deposit:     "10000000000" + stargazeChain.Config().Denom,
-		Title:       "Chain Upgrade 1",
-		Name:        upgradeName,
-		Description: "First chain software upgrade",
-		Height:      haltHeight,
+	govAuthorityAddr, err := stargazeChain.GetGovernanceAddress(ctx)
+	require.NoError(t, err, "error fetching governance address")
+	proposalMsg := upgradetypes.MsgSoftwareUpgrade{
+		Authority: govAuthorityAddr,
+		Plan: upgradetypes.Plan{
+			Name:   upgradeName,
+			Height: int64(haltHeight),
+		},
 	}
+	proposal, err := stargazeChain.BuildProposal([]cosmos.ProtoMessage{&proposalMsg},
+		"Test Upgrade",
+		"Every PR we preform an upgrade check to ensure nothing breaks",
+		"metadata",
+		"10000000000"+stargazeChain.Config().Denom,
+		chainUser.KeyName(),
+		false,
+	)
+	require.NoError(t, err, "error building proposal tx")
 
-	upgradeTx, err := stargazeChain.UpgradeProposal(ctx, chainUser.KeyName(), proposal) // Submitting the software upgrade proposal
+	upgradeTx, err := stargazeChain.SubmitProposal(ctx, chainUser.KeyName(), proposal) // Submitting the software upgrade proposal
 	require.NoError(t, err, "error submitting software upgrade proposal tx")
 
-	err = stargazeChain.VoteOnProposalAllValidators(ctx, upgradeTx.ProposalID, cosmos.ProposalVoteYes)
-	require.NoError(t, err, "failed to submit votes")
+	proposalID, err := strconv.ParseUint(upgradeTx.ProposalID, 10, 64)
+	require.NoError(t, err, "error parsing proposal ID")
 
-	_, err = cosmos.PollForProposalStatus(ctx, stargazeChain, height, height+haltHeightDelta, upgradeTx.ProposalID, cosmos.ProposalStatusPassed)
+	// Vote on the proposal
+	for _, n := range stargazeChain.Nodes() {
+		if n.Validator {
+			n := n
+			_, err = n.ExecTx(ctx, "validator",
+				"gov", "vote", upgradeTx.ProposalID, cosmos.ProposalVoteYes,
+				"--gas", "auto", "--gas-adjustment", "2.0",
+			)
+			require.NoError(t, err, "failed to submit votes")
+		}
+	}
+
+	_, err = cosmos.PollForProposalStatusV1(ctx, stargazeChain, height, height+haltHeightDelta, proposalID, govv1.ProposalStatus_PROPOSAL_STATUS_PASSED)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 	return haltHeight
 }
 
-func fundChainUser(t *testing.T, ctx context.Context, stargazeChain *cosmos.CosmosChain) ibc.Wallet {
-	const userFunds = int64(10_000_000_000_000)
-	users := interchaintest.GetAndFundTestUsers(t, ctx, t.Name(), userFunds, stargazeChain)
+func fundChainUser(t *testing.T, ctx context.Context, userName string, stargazeChain *cosmos.CosmosChain) ibc.Wallet {
+	userFunds := math.NewInt(10_000_000_000_000)
+	users := interchaintest.GetAndFundTestUsers(t, ctx, userName, userFunds, stargazeChain)
 	return users[0]
 }
 
@@ -138,16 +185,8 @@ func startChain(t *testing.T) (*cosmos.CosmosChain, *client.Client, context.Cont
 func getTestGenesis() []cosmos.GenesisKV {
 	return []cosmos.GenesisKV{
 		{
-			Key:   "app_state.gov.voting_params.voting_period",
+			Key:   "app_state.gov.params.voting_period",
 			Value: votingPeriod,
-		},
-		{
-			Key:   "app_state.gov.deposit_params.max_deposit_period",
-			Value: maxDepositPeriod,
-		},
-		{
-			Key:   "app_state.gov.deposit_params.min_deposit.0.denom",
-			Value: depositDenom,
 		},
 	}
 }

@@ -2,15 +2,15 @@ syntax = "proto3";
 
 package publicawesome.stargaze.alloc.v1beta1;
 
-option go_package = "github.com/public-awesome/stargaze/v13/x/alloc/types";
-
-import "gogoproto/gogo.proto";
-import "cosmos_proto/cosmos.proto";
 import "cosmos/base/v1beta1/coin.proto";
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/public-awesome/stargaze/v14/x/alloc/types";
 
 // WeightedAddress defines an address with a weight.
 message WeightedAddress {
-  string address = 1 [ (gogoproto.moretags) = "yaml:\"address\"" ];
+  string address = 1 [(gogoproto.moretags) = "yaml:\"address\""];
   string weight = 2 [
     (gogoproto.moretags) = "yaml:\"weight\"",
     (cosmos_proto.scalar) = "cosmos.Dec",
@@ -40,11 +40,11 @@ message DistributionProportions {
     (gogoproto.nullable) = false
   ];
 }
+
 // Params defines the parameters for the alloc module.
 message Params {
   // distribution_proportions defines the proportion of the minted denom
-  DistributionProportions distribution_proportions = 1
-      [ (gogoproto.nullable) = false ];
+  DistributionProportions distribution_proportions = 1 [(gogoproto.nullable) = false];
 
   // addresses to receive developer rewards
   repeated WeightedAddress weighted_developer_rewards_receivers = 2 [

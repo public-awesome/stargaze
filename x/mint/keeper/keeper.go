@@ -7,7 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/public-awesome/stargaze/v13/x/mint/types"
+	"github.com/public-awesome/stargaze/v14/x/mint/types"
 )
 
 // Keeper of the mint store
@@ -17,13 +17,14 @@ type Keeper struct {
 	paramSpace       paramtypes.Subspace
 	bankKeeper       types.BankKeeper
 	feeCollectorName string
+	authority        string
 }
 
 // NewKeeper creates a new mint Keeper instance
 func NewKeeper(
 	cdc codec.BinaryCodec, key storetypes.StoreKey, paramSpace paramtypes.Subspace,
 	ak types.AccountKeeper, bk types.BankKeeper,
-	feeCollectorName string,
+	feeCollectorName string, authority string,
 ) Keeper {
 	// ensure mint module account is set
 	if addr := ak.GetModuleAddress(types.ModuleName); addr == nil {
@@ -41,6 +42,7 @@ func NewKeeper(
 		paramSpace:       paramSpace,
 		bankKeeper:       bk,
 		feeCollectorName: feeCollectorName,
+		authority:        authority,
 	}
 }
 
@@ -106,4 +108,9 @@ func (k Keeper) MintCoins(ctx sdk.Context, newCoins sdk.Coins) error {
 // AddCollectedFees to be used in BeginBlocker.
 func (k Keeper) AddCollectedFees(ctx sdk.Context, fees sdk.Coins) error {
 	return k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.ModuleName, k.feeCollectorName, fees)
+}
+
+// GetAuthority returns the x/wasm module's authority.
+func (k Keeper) GetAuthority() string {
+	return k.authority
 }

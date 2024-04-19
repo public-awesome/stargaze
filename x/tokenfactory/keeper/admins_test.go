@@ -5,14 +5,14 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	"github.com/public-awesome/stargaze/v13/x/tokenfactory/types"
+	"github.com/public-awesome/stargaze/v14/x/tokenfactory/types"
 )
 
 func (suite *KeeperTestSuite) TestAdminMsgs() {
 	addr0bal := int64(0)
 	addr1bal := int64(0)
 
-	bankKeeper := suite.App.BankKeeper
+	bankKeeper := suite.App.Keepers.BankKeeper
 
 	suite.CreateDefaultDenom()
 	// Make sure that the admin is set correctly
@@ -104,7 +104,7 @@ func (suite *KeeperTestSuite) TestMintDenom() {
 	} {
 		suite.Run(fmt.Sprintf("Case %s", tc.desc), func() {
 			// Test minting to admins own account
-			bankKeeper := suite.App.BankKeeper
+			bankKeeper := suite.App.Keepers.BankKeeper
 			_, err := suite.msgServer.Mint(suite.Ctx, types.NewMsgMint(tc.admin, sdk.NewInt64Coin(tc.mintDenom, 10)))
 			if tc.valid {
 				addr0bal += 10
@@ -166,7 +166,7 @@ func (suite *KeeperTestSuite) TestBurnDenom() {
 	} {
 		suite.Run(fmt.Sprintf("Case %s", tc.desc), func() {
 			// Test minting to admins own account
-			bankKeeper := suite.App.BankKeeper
+			bankKeeper := suite.App.Keepers.BankKeeper
 			_, err := suite.msgServer.Burn(suite.Ctx, types.NewMsgBurn(tc.admin, sdk.NewInt64Coin(tc.burnDenom, 10)))
 			if tc.valid {
 				addr0bal -= 10
@@ -382,7 +382,7 @@ func (suite *KeeperTestSuite) TestSetDenomMetaData() {
 	} {
 		suite.Run(fmt.Sprintf("Case %s", tc.desc), func() {
 			tc := tc
-			bankKeeper := suite.App.BankKeeper
+			bankKeeper := suite.App.Keepers.BankKeeper
 			res, err := suite.msgServer.SetDenomMetadata(suite.Ctx, &tc.msgSetDenomMetadata)
 			if tc.expectedPass {
 				suite.Require().NoError(err)

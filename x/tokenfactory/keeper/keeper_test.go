@@ -9,10 +9,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-	stargazeapp "github.com/public-awesome/stargaze/v13/app"
-	"github.com/public-awesome/stargaze/v13/testutil/simapp"
-	"github.com/public-awesome/stargaze/v13/x/tokenfactory/keeper"
-	"github.com/public-awesome/stargaze/v13/x/tokenfactory/types"
+	stargazeapp "github.com/public-awesome/stargaze/v14/app"
+	"github.com/public-awesome/stargaze/v14/testutil/simapp"
+	"github.com/public-awesome/stargaze/v14/x/tokenfactory/keeper"
+	"github.com/public-awesome/stargaze/v14/x/tokenfactory/types"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -38,19 +38,19 @@ func (suite *KeeperTestSuite) TestCreateModuleAccount() {
 	app := suite.App
 
 	// remove module account
-	tokenfactoryModuleAccount := app.AccountKeeper.GetAccount(suite.Ctx, app.AccountKeeper.GetModuleAddress(types.ModuleName))
-	app.AccountKeeper.RemoveAccount(suite.Ctx, tokenfactoryModuleAccount)
+	tokenfactoryModuleAccount := app.Keepers.AccountKeeper.GetAccount(suite.Ctx, app.Keepers.AccountKeeper.GetModuleAddress(types.ModuleName))
+	app.Keepers.AccountKeeper.RemoveAccount(suite.Ctx, tokenfactoryModuleAccount)
 
 	// ensure module account was removed
 	suite.Ctx = app.BaseApp.NewContext(false)
-	tokenfactoryModuleAccount = app.AccountKeeper.GetAccount(suite.Ctx, app.AccountKeeper.GetModuleAddress(types.ModuleName))
+	tokenfactoryModuleAccount = app.Keepers.AccountKeeper.GetAccount(suite.Ctx, app.Keepers.AccountKeeper.GetModuleAddress(types.ModuleName))
 	suite.Require().Nil(tokenfactoryModuleAccount)
 
 	// create module account
-	app.TokenFactoryKeeper.CreateModuleAccount(suite.Ctx)
+	app.Keepers.TokenFactoryKeeper.CreateModuleAccount(suite.Ctx)
 
 	// check that the module account is now initialized
-	tokenfactoryModuleAccount = app.AccountKeeper.GetAccount(suite.Ctx, app.AccountKeeper.GetModuleAddress(types.ModuleName))
+	tokenfactoryModuleAccount = app.Keepers.AccountKeeper.GetAccount(suite.Ctx, app.Keepers.AccountKeeper.GetModuleAddress(types.ModuleName))
 	suite.Require().NotNil(tokenfactoryModuleAccount)
 }
 
@@ -66,7 +66,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	}
 
 	suite.queryClient = types.NewQueryClient(suite.QueryHelper)
-	suite.msgServer = keeper.NewMsgServerImpl(suite.App.TokenFactoryKeeper)
+	suite.msgServer = keeper.NewMsgServerImpl(suite.App.Keepers.TokenFactoryKeeper)
 }
 
 func (suite *KeeperTestSuite) CreateDefaultDenom() {
@@ -106,7 +106,7 @@ func (suite *KeeperTestSuite) AssertEventEmitted(ctx sdk.Context, eventTypeExpec
 
 // FundAcc funds target address with specified amount.
 func (suite *KeeperTestSuite) FundAcc(acc sdk.AccAddress, amounts sdk.Coins) {
-	err := FundAccount(suite.App.BankKeeper, suite.Ctx, acc, amounts)
+	err := FundAccount(suite.App.Keepers.BankKeeper, suite.Ctx, acc, amounts)
 	suite.Require().NoError(err)
 }
 

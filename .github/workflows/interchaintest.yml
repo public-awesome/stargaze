@@ -2,6 +2,9 @@ name: Run InterchainTest
 
 on:  
   pull_request:
+    branches:
+      - main
+      - feature/*
   
   release:
     types: published
@@ -99,10 +102,17 @@ jobs:
     with:
       test-cmd: 'test-chain-upgrade'
 
+  run_chain_conformance:
+    name: conformance 🤝
+    needs: [build_sg_image]
+    uses: ./.github/workflows/interchaintest_custom_runner.yml
+    with:
+      test-cmd: 'test-chain-conformance'
+
 
   cleanup:
     name: Delete artifacts 🗑️
-    needs: [run_gaia_interchaintest,run_osmosis_interchaintest,run_pfm_interchaintest,run_chain_upgrade_interchaintest,run_ica_interchaintest]
+    needs: [run_gaia_interchaintest,run_osmosis_interchaintest,run_pfm_interchaintest,run_chain_upgrade_interchaintest,run_ica_interchaintest,run_chain_conformance]
     runs-on: ubuntu-latest
 
     steps:

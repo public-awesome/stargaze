@@ -33,7 +33,7 @@ steps:
       branch: no-cache
 
   - name: test
-    image: publicawesome/golang:1.21.3-devtooling
+    image: publicawesome/golang:1.22.1-devtooling
     volumes:
       - name: cache
         path: /go
@@ -42,7 +42,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: build
-    image: golang:1.21.3-alpine3.17
+    image: golang:1.22.1-alpine3.19
     volumes:
       - name: cache
         path: /go
@@ -77,12 +77,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 13.0.0-beta.5
+        - 13.0.0-beta.9
     when:
       event:
         - push
       branch:
-        - jhernandezb/fix-wiring
+        - spoorthi/ica-controller
   - name: docker_release
     image: plugins/docker
     settings:
@@ -193,7 +193,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/golang:1.21.3-devtooling
+    image: publicawesome/golang:1.22.1-devtooling
     volumes:
       - name: cache
         path: /go
@@ -281,7 +281,7 @@ steps:
     when:
       branch: no-cache
   - name: build-wrapper
-    image: publicawesome/golang:1.21.3-devtooling
+    image: publicawesome/golang:1.22.1-devtooling
     volumes:
       - name: cache
         path: /go
@@ -351,7 +351,7 @@ steps:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:13.0.0-beta.5
+    image: publicawesome/stargaze:13.0.0-beta.9
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -370,7 +370,7 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:13.0.0-beta.5
+    image: publicawesome/stargaze:13.0.0-beta.9
     commands:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
@@ -420,6 +420,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 1df2eedf650be74b415384f333e2e20ffe23210b9908ee9bc89df0ccb5906fba
+hmac: 8d837bf88cfaf3a378dbf814c7d279a1a4bc7070ecd42ecd77c061369c1c9b04
 
 ...

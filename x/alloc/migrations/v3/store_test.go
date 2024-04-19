@@ -6,9 +6,9 @@ import (
 	"cosmossdk.io/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	stargazeapp "github.com/public-awesome/stargaze/v13/app"
-	v3 "github.com/public-awesome/stargaze/v13/x/alloc/migrations/v3"
-	"github.com/public-awesome/stargaze/v13/x/alloc/types"
+	stargazeapp "github.com/public-awesome/stargaze/v14/app"
+	v3 "github.com/public-awesome/stargaze/v14/x/alloc/migrations/v3"
+	"github.com/public-awesome/stargaze/v14/x/alloc/types"
 	"github.com/stretchr/testify/require"
 
 	"cosmossdk.io/log"
@@ -41,6 +41,7 @@ func TestStoreMigration(t *testing.T) {
 
 // DefaultContext creates a sdk.Context with a fresh MemDB that can be used in tests.
 func DefaultContext(t *testing.T, key storetypes.StoreKey, tkey storetypes.StoreKey) sdk.Context {
+	t.Helper()
 	db := dbm.NewMemDB()
 	cms := store.NewCommitMultiStore(db, log.NewTestLogger(t), storemetrics.NewNoOpMetrics())
 	cms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, db)

@@ -15,9 +15,9 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/public-awesome/stargaze/v13/x/mint/client/cli"
-	"github.com/public-awesome/stargaze/v13/x/mint/keeper"
-	"github.com/public-awesome/stargaze/v13/x/mint/types"
+	"github.com/public-awesome/stargaze/v14/x/mint/client/cli"
+	"github.com/public-awesome/stargaze/v14/x/mint/keeper"
+	"github.com/public-awesome/stargaze/v14/x/mint/types"
 )
 
 var (
@@ -38,7 +38,9 @@ func (AppModuleBasic) Name() string {
 }
 
 // RegisterLegacyAminoCodec registers the mint module's types on the given LegacyAmino codec.
-func (AppModuleBasic) RegisterLegacyAminoCodec(_ *codec.LegacyAmino) {}
+func (AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
+	types.RegisterLegacyAminoCodec(cdc)
+}
 
 // RegisterInterfaces registers the module's interface types
 func (b AppModuleBasic) RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
@@ -114,6 +116,7 @@ func (AppModule) QuerierRoute() string {
 // module-specific gRPC queries.
 func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
+	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 
 	m := keeper.NewMigrator(am.keeper)
 	if err := cfg.RegisterMigration(types.ModuleName, 1, m.Migrate1to2); err != nil {
