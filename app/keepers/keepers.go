@@ -9,6 +9,7 @@ import (
 	icahostkeeper "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/host/keeper"
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
 	allocmodulekeeper "github.com/public-awesome/stargaze/v14/x/alloc/keeper"
+	authoritykeeper "github.com/public-awesome/stargaze/v14/x/authority/keeper"
 	cronmodulekeeper "github.com/public-awesome/stargaze/v14/x/cron/keeper"
 	globalfeemodulekeeper "github.com/public-awesome/stargaze/v14/x/globalfee/keeper"
 	mintkeeper "github.com/public-awesome/stargaze/v14/x/mint/keeper"
@@ -75,4 +76,5 @@ type StargazeKeepers struct {
 	GlobalFeeKeeper    globalfeemodulekeeper.Keeper
 	MintKeeper         mintkeeper.Keeper
 	TokenFactoryKeeper tokenfactorykeeper.Keeper
+	AuthorityKeeper    authoritykeeper.Keeper
 }
