@@ -31,7 +31,10 @@ var Upgrade = upgrades.Upgrade{
 			params.AllowedClients = append(params.AllowedClients, wasmlctypes.Wasm)
 			keepers.IBCKeeper.ClientKeeper.SetParams(wctx, params)
 
-			keepers.AuthorityKeeper.SetParams(sdk.UnwrapSDKContext(ctx), authoritytypes.DefaultParams())
+			err = keepers.AuthorityKeeper.SetParams(sdk.UnwrapSDKContext(ctx), authoritytypes.DefaultParams())
+			if err != nil {
+				return nil, err
+			}
 			return migrations, nil
 		}
 	},

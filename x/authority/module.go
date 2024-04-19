@@ -146,7 +146,7 @@ func (am AppModule) EndBlock(_ sdk.Context) []abci.ValidatorUpdate {
 }
 
 // IsOnePerModuleType implements the depinject.OnePerModuleType interface.
-func (a AppModule) IsOnePerModuleType() {}
+func (am AppModule) IsOnePerModuleType() {}
 
 // IsAppModule implements the appmodule.AppModule interface.
-func (a AppModule) IsAppModule() {}
+func (am AppModule) IsAppModule() {}
