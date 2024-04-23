@@ -751,7 +751,7 @@ func NewStargazeApp(
 	allocModule := allocmodule.NewAppModule(appCodec, app.Keepers.AllocKeeper)
 
 	tokenfactoryKeeper := tokenfactorykeeper.NewKeeper(appCodec, keys[tokenfactorytypes.StoreKey], app.GetSubspace(tokenfactorytypes.ModuleName),
-		app.Keepers.AccountKeeper, app.Keepers.BankKeeper, app.Keepers.DistrKeeper)
+		app.Keepers.AccountKeeper, app.Keepers.BankKeeper, app.Keepers.DistrKeeper, authtypes.NewModuleAddress(govtypes.ModuleName).String())
 	app.Keepers.TokenFactoryKeeper = tokenfactoryKeeper
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition

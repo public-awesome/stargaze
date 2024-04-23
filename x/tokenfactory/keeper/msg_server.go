@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 
+	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/public-awesome/stargaze/v14/x/tokenfactory/types"
 )
@@ -162,4 +163,29 @@ func (server msgServer) SetDenomMetadata(goCtx context.Context, msg *types.MsgSe
 	})
 
 	return &types.MsgSetDenomMetadataResponse{}, nil
+}
+
+// UpdateParams updates the tokenfactory module's parameters
+func (server msgServer) UpdateParams(goCtx context.Context, msg *types.MsgUpdateParams) (*types.MsgUpdateParamsResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	_, err := sdk.AccAddressFromBech32(msg.GetAuthority())
+	if err != nil {
+		return nil, err
+	}
+
+	if msg.GetAuthority() != server.Keeper.GetAuthority() {
+		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender address is not authorized address to update module params")
+	}
+
+	err = msg.GetParams().Validate() // need to explicitly validate as x/gov invokes this msg and it does not validate
+	if err != nil {
+		return nil, err
+	}
+
+	err = server.Keeper.SetParams(ctx, msg.GetParams())
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.MsgUpdateParamsResponse{}, nil
 }
