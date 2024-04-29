@@ -401,7 +401,7 @@ a token.  For now, we only support burning from the sender account.
 <a name="osmosis.tokenfactory.v1beta1.MsgBurnResponse"></a>
 
 ### MsgBurnResponse
-
+MsgBurnResponse response from executing MsgBurn.
 
 
 
@@ -498,7 +498,7 @@ more of a token.  For now, we only support minting to the sender account
 <a name="osmosis.tokenfactory.v1beta1.MsgMintResponse"></a>
 
 ### MsgMintResponse
-
+MsgMintResponse response from executing MsgMint.
 
 
 
