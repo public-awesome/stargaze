@@ -314,7 +314,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:12.0.0
+    image: publicawesome/stargaze:13.0.0
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
@@ -346,7 +346,7 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: proposal
-    image: publicawesome/stargaze:12.1.0
+    image: publicawesome/stargaze:13.0.0
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
@@ -420,6 +420,6 @@ volumes:
 
 ---
 kind: signature
-hmac: e082768b560cd853cb19e667951f15d1aa10cf2443a894d1b7bdac90a9785493
+hmac: 0405a5556630458928167701bb935babfdb4a8b58de8f1a2c58f47baec3c9c6a
 
 ...
