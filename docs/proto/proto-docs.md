@@ -33,6 +33,8 @@
     - [MsgMintResponse](#osmosis.tokenfactory.v1beta1.MsgMintResponse)
     - [MsgSetDenomMetadata](#osmosis.tokenfactory.v1beta1.MsgSetDenomMetadata)
     - [MsgSetDenomMetadataResponse](#osmosis.tokenfactory.v1beta1.MsgSetDenomMetadataResponse)
+    - [MsgUpdateParams](#osmosis.tokenfactory.v1beta1.MsgUpdateParams)
+    - [MsgUpdateParamsResponse](#osmosis.tokenfactory.v1beta1.MsgUpdateParamsResponse)
   
     - [Msg](#osmosis.tokenfactory.v1beta1.Msg)
   
@@ -530,6 +532,36 @@ MsgSetDenomMetadata message.
 
 
 
+
+<a name="osmosis.tokenfactory.v1beta1.MsgUpdateParams"></a>
+
+### MsgUpdateParams
+MsgUpdateParams is the request type for updating module's params.
+
+Since: v14
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `authority` | [string](#string) |  | Authority is the address of the governance account. |
+| `params` | [Params](#osmosis.tokenfactory.v1beta1.Params) |  | NOTE: All parameters must be supplied. |
+
+
+
+
+
+
+<a name="osmosis.tokenfactory.v1beta1.MsgUpdateParamsResponse"></a>
+
+### MsgUpdateParamsResponse
+MsgUpdateParamsResponse is the response type for executing
+an update.
+Since: v14
+
+
+
+
+
  <!-- end messages -->
 
  <!-- end enums -->
@@ -549,6 +581,7 @@ Msg defines the tokefactory module's gRPC message service.
 | `Burn` | [MsgBurn](#osmosis.tokenfactory.v1beta1.MsgBurn) | [MsgBurnResponse](#osmosis.tokenfactory.v1beta1.MsgBurnResponse) | Burn | |
 | `ChangeAdmin` | [MsgChangeAdmin](#osmosis.tokenfactory.v1beta1.MsgChangeAdmin) | [MsgChangeAdminResponse](#osmosis.tokenfactory.v1beta1.MsgChangeAdminResponse) | ChangeAdmin | |
 | `SetDenomMetadata` | [MsgSetDenomMetadata](#osmosis.tokenfactory.v1beta1.MsgSetDenomMetadata) | [MsgSetDenomMetadataResponse](#osmosis.tokenfactory.v1beta1.MsgSetDenomMetadataResponse) | SetDenomMetadata | |
+| `UpdateParams` | [MsgUpdateParams](#osmosis.tokenfactory.v1beta1.MsgUpdateParams) | [MsgUpdateParamsResponse](#osmosis.tokenfactory.v1beta1.MsgUpdateParamsResponse) | UpdateParams updates the tokenfactory module's parameters. | |
 
  <!-- end services -->
 

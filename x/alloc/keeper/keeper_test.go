@@ -31,7 +31,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 		Time:    time.Now().UTC(),
 		ChainID: "stargaze-1",
 	})
-	err := suite.app.AllocKeeper.SetParams(suite.ctx, types.DefaultParams())
+	err := suite.app.Keepers.AllocKeeper.SetParams(suite.ctx, types.DefaultParams())
 	suite.Require().NoError(err)
 }
 
@@ -56,13 +56,13 @@ func FundModuleAccount(bankKeeper bankkeeper.Keeper, ctx sdk.Context, recipientM
 func (suite *KeeperTestSuite) TestZeroAllocation() {
 	suite.SetupTest()
 
-	allocKeeper := suite.app.AllocKeeper
+	allocKeeper := suite.app.Keepers.AllocKeeper
 
-	params := suite.app.AllocKeeper.GetParams(suite.ctx)
+	params := suite.app.Keepers.AllocKeeper.GetParams(suite.ctx)
 
 	params.DistributionProportions.NftIncentives = math.LegacyZeroDec()
 
-	err := suite.app.AllocKeeper.SetParams(suite.ctx, params)
+	err := suite.app.Keepers.AllocKeeper.SetParams(suite.ctx, params)
 	suite.Require().NoError(err)
 
 	err = allocKeeper.DistributeInflation(suite.ctx)
@@ -78,10 +78,10 @@ func (suite *KeeperTestSuite) TestModuleAccountAddress() {
 func (suite *KeeperTestSuite) TestDistribution() {
 	suite.SetupTest()
 
-	denom, err := suite.app.StakingKeeper.BondDenom(suite.ctx)
+	denom, err := suite.app.Keepers.StakingKeeper.BondDenom(suite.ctx)
 	suite.Require().NoError(err)
-	allocKeeper := suite.app.AllocKeeper
-	params := suite.app.AllocKeeper.GetParams(suite.ctx)
+	allocKeeper := suite.app.Keepers.AllocKeeper
+	params := suite.app.Keepers.AllocKeeper.GetParams(suite.ctx)
 	devRewardsReceiver := sdk.AccAddress([]byte("addr1---------------"))
 	nftIncentives := sdk.AccAddress([]byte("addr2---------------"))
 	params.SupplementAmount = sdk.NewCoins(sdk.NewInt64Coin(denom, 10_000_000))
@@ -100,30 +100,30 @@ func (suite *KeeperTestSuite) TestDistribution() {
 		},
 	}
 
-	err = suite.app.AllocKeeper.SetParams(suite.ctx, params)
+	err = suite.app.Keepers.AllocKeeper.SetParams(suite.ctx, params)
 	suite.Require().NoError(err)
 
-	feePool, err := suite.app.DistrKeeper.FeePool.Get(suite.ctx)
+	feePool, err := suite.app.Keepers.DistrKeeper.FeePool.Get(suite.ctx)
 	suite.Require().NoError(err)
-	feeCollector := suite.app.AccountKeeper.GetModuleAddress(authtypes.FeeCollectorName)
+	feeCollector := suite.app.Keepers.AccountKeeper.GetModuleAddress(authtypes.FeeCollectorName)
 	suite.Equal(
 		"0",
-		suite.app.BankKeeper.GetAllBalances(suite.ctx, feeCollector).AmountOf(denom).String())
+		suite.app.Keepers.BankKeeper.GetAllBalances(suite.ctx, feeCollector).AmountOf(denom).String())
 	suite.Equal(
 		math.LegacyNewDec(0),
 		feePool.CommunityPool.AmountOf(denom))
 
 	mintCoin := sdk.NewCoin(denom, math.NewInt(100_000))
 	mintCoins := sdk.Coins{mintCoin}
-	feeCollectorAccount := suite.app.AccountKeeper.GetModuleAccount(suite.ctx, authtypes.FeeCollectorName)
+	feeCollectorAccount := suite.app.Keepers.AccountKeeper.GetModuleAccount(suite.ctx, authtypes.FeeCollectorName)
 	suite.Require().NotNil(feeCollectorAccount)
 
-	suite.Require().NoError(FundModuleAccount(suite.app.BankKeeper, suite.ctx, feeCollectorAccount.GetName(), mintCoins))
+	suite.Require().NoError(FundModuleAccount(suite.app.Keepers.BankKeeper, suite.ctx, feeCollectorAccount.GetName(), mintCoins))
 
-	feeCollector = suite.app.AccountKeeper.GetModuleAddress(authtypes.FeeCollectorName)
+	feeCollector = suite.app.Keepers.AccountKeeper.GetModuleAddress(authtypes.FeeCollectorName)
 	suite.Equal(
 		mintCoin.Amount.String(),
-		suite.app.BankKeeper.GetAllBalances(suite.ctx, feeCollector).AmountOf(denom).String())
+		suite.app.Keepers.BankKeeper.GetAllBalances(suite.ctx, feeCollector).AmountOf(denom).String())
 
 	suite.Equal(
 		math.LegacyNewDec(0),
@@ -132,7 +132,7 @@ func (suite *KeeperTestSuite) TestDistribution() {
 	err = allocKeeper.DistributeInflation(suite.ctx)
 	suite.Require().NoError(err)
 
-	feeCollector = suite.app.AccountKeeper.GetModuleAddress(authtypes.FeeCollectorName)
+	feeCollector = suite.app.Keepers.AccountKeeper.GetModuleAddress(authtypes.FeeCollectorName)
 	modulePortion := params.DistributionProportions.NftIncentives.
 		Add(params.DistributionProportions.DeveloperRewards).
 		Add(params.DistributionProportions.CommunityPool)
@@ -140,20 +140,20 @@ func (suite *KeeperTestSuite) TestDistribution() {
 	// remaining going to next module should be 100% - 60%  - 5% community pooll = 35%
 	suite.Equal(
 		math.LegacyNewDecFromInt(mintCoin.Amount).Mul(math.LegacyNewDecWithPrec(100, 2).Sub(modulePortion)).RoundInt().String(),
-		suite.app.BankKeeper.GetAllBalances(suite.ctx, feeCollector).AmountOf(denom).String())
+		suite.app.Keepers.BankKeeper.GetAllBalances(suite.ctx, feeCollector).AmountOf(denom).String())
 
 	// assigned dev reward receiver should get the allocation
 	suite.Equal(
 		math.LegacyNewDecFromInt(mintCoin.Amount).Mul(params.DistributionProportions.DeveloperRewards).TruncateInt(),
-		suite.app.BankKeeper.GetBalance(suite.ctx, devRewardsReceiver, denom).Amount)
+		suite.app.Keepers.BankKeeper.GetBalance(suite.ctx, devRewardsReceiver, denom).Amount)
 
 	// assigned incentive address should receive the allocation
 	suite.Equal(
 		math.LegacyNewDecFromInt(mintCoin.Amount).Mul(params.DistributionProportions.NftIncentives).TruncateInt(),
-		suite.app.BankKeeper.GetBalance(suite.ctx, nftIncentives, denom).Amount)
+		suite.app.Keepers.BankKeeper.GetBalance(suite.ctx, nftIncentives, denom).Amount)
 
 	// community pool should get 5%
-	feePool, err = suite.app.DistrKeeper.FeePool.Get(suite.ctx)
+	feePool, err = suite.app.Keepers.DistrKeeper.FeePool.Get(suite.ctx)
 	suite.Require().NoError(err)
 	suite.Equal(
 		math.LegacyNewDecFromInt(math.NewInt(5_000)).String(),
@@ -168,10 +168,10 @@ func (suite *KeeperTestSuite) TestFairburnPool() {
 	addr1 := sdk.AccAddress(pub1.Address())
 
 	// set params
-	denom, err := suite.app.StakingKeeper.BondDenom(suite.ctx)
+	denom, err := suite.app.Keepers.StakingKeeper.BondDenom(suite.ctx)
 	suite.Require().NoError(err)
-	allocKeeper := suite.app.AllocKeeper
-	params := suite.app.AllocKeeper.GetParams(suite.ctx)
+	allocKeeper := suite.app.Keepers.AllocKeeper
+	params := suite.app.Keepers.AllocKeeper.GetParams(suite.ctx)
 	devRewardsReceiver := sdk.AccAddress([]byte("addr1---------------"))
 	params.DistributionProportions.NftIncentives = math.LegacyNewDecWithPrec(45, 2)
 	params.DistributionProportions.DeveloperRewards = math.LegacyNewDecWithPrec(15, 2)
@@ -185,49 +185,49 @@ func (suite *KeeperTestSuite) TestFairburnPool() {
 	suite.Require().NoError(err)
 	fundAmount := sdk.NewCoins(sdk.NewCoin(denom, math.NewInt(100_000_000)))
 
-	fairBurnPool := suite.app.AccountKeeper.GetModuleAddress(types.FairburnPoolName)
-	feeCollector := suite.app.AccountKeeper.GetModuleAddress(authtypes.FeeCollectorName)
+	fairBurnPool := suite.app.Keepers.AccountKeeper.GetModuleAddress(types.FairburnPoolName)
+	feeCollector := suite.app.Keepers.AccountKeeper.GetModuleAddress(authtypes.FeeCollectorName)
 
 	// should be 0
-	suite.Require().True(suite.app.BankKeeper.GetBalance(suite.ctx, fairBurnPool, denom).IsZero())
-	suite.Require().True(suite.app.BankKeeper.GetBalance(suite.ctx, feeCollector, denom).IsZero())
+	suite.Require().True(suite.app.Keepers.BankKeeper.GetBalance(suite.ctx, fairBurnPool, denom).IsZero())
+	suite.Require().True(suite.app.Keepers.BankKeeper.GetBalance(suite.ctx, feeCollector, denom).IsZero())
 	err = allocKeeper.DistributeInflation(suite.ctx)
 	suite.Require().NoError(err)
 
 	// should be 0
-	suite.Require().True(suite.app.BankKeeper.GetBalance(suite.ctx, fairBurnPool, denom).IsZero())
-	suite.Require().True(suite.app.BankKeeper.GetBalance(suite.ctx, feeCollector, denom).IsZero())
+	suite.Require().True(suite.app.Keepers.BankKeeper.GetBalance(suite.ctx, fairBurnPool, denom).IsZero())
+	suite.Require().True(suite.app.Keepers.BankKeeper.GetBalance(suite.ctx, feeCollector, denom).IsZero())
 
 	msgServer := keeper.NewMsgServerImpl(allocKeeper)
 
 	// fundAccount
-	err = FundAccount(suite.app.BankKeeper, suite.ctx, addr1, fundAmount)
+	err = FundAccount(suite.app.Keepers.BankKeeper, suite.ctx, addr1, fundAmount)
 	suite.NoError(err)
-	suite.Require().True(suite.app.BankKeeper.GetBalance(suite.ctx, fairBurnPool, denom).IsZero())
+	suite.Require().True(suite.app.Keepers.BankKeeper.GetBalance(suite.ctx, fairBurnPool, denom).IsZero())
 	_, err = msgServer.FundFairburnPool(suite.ctx, types.NewMsgFundFairburnPool(addr1, fundAmount))
 	suite.NoError(err)
 
 	// should have funds now
-	suite.Require().Equal(fundAmount.String(), suite.app.BankKeeper.GetBalance(suite.ctx, fairBurnPool, denom).String())
+	suite.Require().Equal(fundAmount.String(), suite.app.Keepers.BankKeeper.GetBalance(suite.ctx, fairBurnPool, denom).String())
 	// still 0
-	suite.Require().True(suite.app.BankKeeper.GetBalance(suite.ctx, feeCollector, denom).IsZero())
+	suite.Require().True(suite.app.Keepers.BankKeeper.GetBalance(suite.ctx, feeCollector, denom).IsZero())
 
 	err = allocKeeper.DistributeInflation(suite.ctx)
 	suite.Require().NoError(err)
 
 	// fee collector should have funds now
-	suite.Require().Equal(fundAmount.String(), suite.app.BankKeeper.GetBalance(suite.ctx, feeCollector, denom).String())
+	suite.Require().Equal(fundAmount.String(), suite.app.Keepers.BankKeeper.GetBalance(suite.ctx, feeCollector, denom).String())
 	// fairburn pool should be 0
-	suite.Require().True(suite.app.BankKeeper.GetBalance(suite.ctx, fairBurnPool, denom).IsZero())
+	suite.Require().True(suite.app.Keepers.BankKeeper.GetBalance(suite.ctx, fairBurnPool, denom).IsZero())
 }
 
 func (suite *KeeperTestSuite) TestDistributionWithSupplement() {
 	suite.SetupTest()
 
-	denom, err := suite.app.StakingKeeper.BondDenom(suite.ctx)
+	denom, err := suite.app.Keepers.StakingKeeper.BondDenom(suite.ctx)
 	suite.Require().NoError(err)
-	allocKeeper := suite.app.AllocKeeper
-	params := suite.app.AllocKeeper.GetParams(suite.ctx)
+	allocKeeper := suite.app.Keepers.AllocKeeper
+	params := suite.app.Keepers.AllocKeeper.GetParams(suite.ctx)
 	devRewardsReceiver := sdk.AccAddress([]byte("addr1---------------"))
 	nftIncentives := sdk.AccAddress([]byte("addr2---------------"))
 
@@ -247,39 +247,39 @@ func (suite *KeeperTestSuite) TestDistributionWithSupplement() {
 			Weight:  math.LegacyNewDec(1),
 		},
 	}
-	err = suite.app.AllocKeeper.SetParams(suite.ctx, params)
+	err = suite.app.Keepers.AllocKeeper.SetParams(suite.ctx, params)
 	suite.Require().NoError(err)
-	suite.Require().False(suite.app.AllocKeeper.GetParams(suite.ctx).SupplementAmount.IsZero())
+	suite.Require().False(suite.app.Keepers.AllocKeeper.GetParams(suite.ctx).SupplementAmount.IsZero())
 
-	feePool, err := suite.app.DistrKeeper.FeePool.Get(suite.ctx)
+	feePool, err := suite.app.Keepers.DistrKeeper.FeePool.Get(suite.ctx)
 	suite.Require().NoError(err)
-	feeCollector := suite.app.AccountKeeper.GetModuleAddress(authtypes.FeeCollectorName)
+	feeCollector := suite.app.Keepers.AccountKeeper.GetModuleAddress(authtypes.FeeCollectorName)
 	suite.Equal(
 		"0",
-		suite.app.BankKeeper.GetAllBalances(suite.ctx, feeCollector).AmountOf(denom).String())
+		suite.app.Keepers.BankKeeper.GetAllBalances(suite.ctx, feeCollector).AmountOf(denom).String())
 	suite.Equal(
 		math.LegacyNewDec(0),
 		feePool.CommunityPool.AmountOf(denom))
 
 	mintCoin := sdk.NewCoin(denom, math.NewInt(100_000))
 	mintCoins := sdk.Coins{mintCoin}
-	feeCollectorAccount := suite.app.AccountKeeper.GetModuleAccount(suite.ctx, authtypes.FeeCollectorName)
+	feeCollectorAccount := suite.app.Keepers.AccountKeeper.GetModuleAccount(suite.ctx, authtypes.FeeCollectorName)
 	suite.Require().NotNil(feeCollectorAccount)
 
-	supplementAccount := suite.app.AccountKeeper.GetModuleAccount(suite.ctx, types.SupplementPoolName)
+	supplementAccount := suite.app.Keepers.AccountKeeper.GetModuleAccount(suite.ctx, types.SupplementPoolName)
 	suite.Require().NotNil(supplementAccount)
 
-	suite.Require().NoError(FundModuleAccount(suite.app.BankKeeper, suite.ctx, feeCollectorAccount.GetName(), mintCoins))
-	suite.Require().NoError(FundModuleAccount(suite.app.BankKeeper, suite.ctx, supplementAccount.GetName(), mintCoins))
+	suite.Require().NoError(FundModuleAccount(suite.app.Keepers.BankKeeper, suite.ctx, feeCollectorAccount.GetName(), mintCoins))
+	suite.Require().NoError(FundModuleAccount(suite.app.Keepers.BankKeeper, suite.ctx, supplementAccount.GetName(), mintCoins))
 
-	feeCollector = suite.app.AccountKeeper.GetModuleAddress(authtypes.FeeCollectorName)
+	feeCollector = suite.app.Keepers.AccountKeeper.GetModuleAddress(authtypes.FeeCollectorName)
 	suite.Equal(
 		mintCoin.Amount.String(),
-		suite.app.BankKeeper.GetAllBalances(suite.ctx, feeCollector).AmountOf(denom).String())
+		suite.app.Keepers.BankKeeper.GetAllBalances(suite.ctx, feeCollector).AmountOf(denom).String())
 	supplementAddress := supplementAccount.GetAddress()
 	suite.Equal(
 		mintCoin.Amount.String(),
-		suite.app.BankKeeper.GetAllBalances(suite.ctx, supplementAddress).AmountOf(denom).String())
+		suite.app.Keepers.BankKeeper.GetAllBalances(suite.ctx, supplementAddress).AmountOf(denom).String())
 
 	suite.Equal(
 		math.LegacyNewDec(0),
@@ -288,7 +288,7 @@ func (suite *KeeperTestSuite) TestDistributionWithSupplement() {
 	err = allocKeeper.DistributeInflation(suite.ctx)
 	suite.Require().NoError(err)
 
-	feeCollector = suite.app.AccountKeeper.GetModuleAddress(authtypes.FeeCollectorName)
+	feeCollector = suite.app.Keepers.AccountKeeper.GetModuleAddress(authtypes.FeeCollectorName)
 	modulePortion := params.DistributionProportions.NftIncentives.
 		Add(params.DistributionProportions.DeveloperRewards).
 		Add(params.DistributionProportions.CommunityPool)
@@ -298,21 +298,21 @@ func (suite *KeeperTestSuite) TestDistributionWithSupplement() {
 	// remaining going to next module should be (100_000 + 10_000)  - 40% = 66
 	suite.Equal(
 		math.LegacyNewDecFromInt(totalAmount.Amount).Mul(math.LegacyNewDecWithPrec(100, 2).Sub(modulePortion)).TruncateInt().String(),
-		suite.app.BankKeeper.GetAllBalances(suite.ctx, feeCollector).AmountOf(denom).String(),
+		suite.app.Keepers.BankKeeper.GetAllBalances(suite.ctx, feeCollector).AmountOf(denom).String(),
 	)
 
 	// assigned dev reward receiver should get the allocation
 	suite.Equal(
 		math.LegacyNewDecFromInt(totalAmount.Amount).Mul(params.DistributionProportions.DeveloperRewards).TruncateInt(),
-		suite.app.BankKeeper.GetBalance(suite.ctx, devRewardsReceiver, denom).Amount)
+		suite.app.Keepers.BankKeeper.GetBalance(suite.ctx, devRewardsReceiver, denom).Amount)
 
 	// assigned incentive address should receive the allocation
 	suite.Equal(
 		math.LegacyNewDecFromInt(totalAmount.Amount).Mul(params.DistributionProportions.NftIncentives).TruncateInt(),
-		suite.app.BankKeeper.GetBalance(suite.ctx, nftIncentives, denom).Amount)
+		suite.app.Keepers.BankKeeper.GetBalance(suite.ctx, nftIncentives, denom).Amount)
 
 	// community pool should get 5%
-	feePool, err = suite.app.DistrKeeper.FeePool.Get(suite.ctx)
+	feePool, err = suite.app.Keepers.DistrKeeper.FeePool.Get(suite.ctx)
 	suite.Require().NoError(err)
 	suite.Equal(
 		math.LegacyNewDecFromInt(totalAmount.Amount).Mul(params.DistributionProportions.CommunityPool).TruncateInt().String(),
@@ -322,5 +322,5 @@ func (suite *KeeperTestSuite) TestDistributionWithSupplement() {
 	// should have been decresead by supplement amount
 	suite.Equal(
 		"90000",
-		suite.app.BankKeeper.GetAllBalances(suite.ctx, supplementAddress).AmountOf(denom).String())
+		suite.app.Keepers.BankKeeper.GetAllBalances(suite.ctx, supplementAddress).AmountOf(denom).String())
 }

@@ -646,7 +646,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		chainABalance, err = chainA.GetBalance(ctx, userA.FormattedAddress(), baIBCDenom)
 		require.NoError(t, err)
 
-		require.Equal(t, transferAmount, chainABalance.Int64())
+		require.Equal(t, transferAmount, chainABalance)
 		require.Equal(t, userFunds.Sub(transferAmount), chainBBalance)
 		require.True(t, chainCBalance.IsZero())
 		require.True(t, chainDBalance.IsZero())

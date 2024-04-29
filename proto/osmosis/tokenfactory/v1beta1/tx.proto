@@ -1,10 +1,12 @@
 syntax = "proto3";
 package osmosis.tokenfactory.v1beta1;
 
+import "amino/amino.proto";
 import "cosmos/bank/v1beta1/bank.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "cosmos/msg/v1/msg.proto";
 import "gogoproto/gogo.proto";
+import "osmosis/tokenfactory/v1beta1/tokenfactory.proto";
 
 option go_package = "github.com/public-awesome/stargaze/v14/x/tokenfactory/types";
 
@@ -21,6 +23,8 @@ service Msg {
   rpc ChangeAdmin(MsgChangeAdmin) returns (MsgChangeAdminResponse);
   // SetDenomMetadata
   rpc SetDenomMetadata(MsgSetDenomMetadata) returns (MsgSetDenomMetadataResponse);
+  // UpdateParams updates the tokenfactory module's parameters.
+  rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
 }
 
 // MsgCreateDenom defines the message structure for the CreateDenom gRPC service
@@ -100,3 +104,24 @@ message MsgSetDenomMetadata {
 // MsgSetDenomMetadataResponse defines the response structure for an executed
 // MsgSetDenomMetadata message.
 message MsgSetDenomMetadataResponse {}
+
+// MsgUpdateParams is the request type for updating module's params.
+//
+// Since: v14
+message MsgUpdateParams {
+  option (amino.name) = "tokenfactory/MsgUpdateParams";
+  option (cosmos.msg.v1.signer) = "authority";
+  // Authority is the address of the governance account.
+  string authority = 1;
+  // NOTE: All parameters must be supplied.
+  Params params = 2 [
+    (gogoproto.jsontag) = "params",
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
+
+// MsgUpdateParamsResponse is the response type for executing
+// an update.
+// Since: v14
+message MsgUpdateParamsResponse {}
