@@ -36,7 +36,7 @@ require (
 	cosmossdk.io/x/evidence v0.1.1
 	cosmossdk.io/x/feegrant v0.1.1
 	cosmossdk.io/x/tx v0.13.3
-	cosmossdk.io/x/upgrade v0.1.1
+	cosmossdk.io/x/upgrade v0.1.2
 	github.com/cosmos/cosmos-db v1.0.2
 	github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v8 v8.0.2
 	github.com/cosmos/ibc-apps/modules/ibc-hooks/v8 v8.0.0-00010101000000-000000000000
