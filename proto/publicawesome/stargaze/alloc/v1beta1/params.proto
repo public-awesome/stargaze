@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package publicawesome.stargaze.alloc.v1beta1;
 
+import "amino/amino.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
@@ -15,7 +16,8 @@ message WeightedAddress {
     (gogoproto.moretags) = "yaml:\"weight\"",
     (cosmos_proto.scalar) = "cosmos.Dec",
     (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
-    (gogoproto.nullable) = false
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
   ];
 }
 
@@ -25,43 +27,53 @@ message DistributionProportions {
     (cosmos_proto.scalar) = "cosmos.Dec",
     (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
     (gogoproto.moretags) = "yaml:\"nft_incentives\"",
-    (gogoproto.nullable) = false
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
   ];
   string developer_rewards = 2 [
     (cosmos_proto.scalar) = "cosmos.Dec",
     (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
     (gogoproto.moretags) = "yaml:\"developer_rewards\"",
-    (gogoproto.nullable) = false
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
   ];
   string community_pool = 3 [
     (cosmos_proto.scalar) = "cosmos.Dec",
     (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
     (gogoproto.moretags) = "yaml:\"community_pool\"",
-    (gogoproto.nullable) = false
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
   ];
 }
 
 // Params defines the parameters for the alloc module.
 message Params {
   // distribution_proportions defines the proportion of the minted denom
-  DistributionProportions distribution_proportions = 1 [(gogoproto.nullable) = false];
+  DistributionProportions distribution_proportions = 1 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
 
   // addresses to receive developer rewards
   repeated WeightedAddress weighted_developer_rewards_receivers = 2 [
     (gogoproto.moretags) = "yaml:\"developer_rewards_receiver\"",
-    (gogoproto.nullable) = false
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
   ];
 
   // addresses to receive incentive rewards
   repeated WeightedAddress weighted_incentives_rewards_receivers = 3 [
     (gogoproto.moretags) = "yaml:\"incentives_rewards_receiver\"",
-    (gogoproto.nullable) = false
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
   ];
 
   // SupplementAmount is the amount to be supplemented from the pool on top of
   // newly minted coins.
   repeated cosmos.base.v1beta1.Coin supplement_amount = 4 [
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (amino.dont_omitempty) = true,
+    (amino.encoding) = "legacy_coins",
     (gogoproto.moretags) = "yaml:\"supplement_amount\"",
     (gogoproto.nullable) = false
   ];

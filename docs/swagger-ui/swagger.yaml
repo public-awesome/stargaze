@@ -72,7 +72,11 @@ paths:
                         custom method
 
                         signatures required by gogoproto.
-                    description: "SupplementAmount is the amount to be supplemented from the pool on top of\r\nnewly minted coins."
+                    description: >-
+                      SupplementAmount is the amount to be supplemented from the
+                      pool on top of
+
+                      newly minted coins.
             description: >-
               QueryParamsResponse is the response type for the Query/Params RPC
               method.
@@ -114,8 +118,16 @@ paths:
                 type: array
                 items:
                   type: string
-                description: "contract_addresses holds all the smart contract addresses which have\r\nprivilege status."
-            description: "QueryListPrivilegedResponse is response type for the Query/ListPrivileged RPC\r\nmethod."
+                description: >-
+                  contract_addresses holds all the smart contract addresses
+                  which have
+
+                  privilege status.
+            description: >-
+              QueryListPrivilegedResponse is response type for the
+              Query/ListPrivileged RPC
+
+              method.
         default:
           description: An unexpected error response.
           schema:
@@ -156,9 +168,15 @@ paths:
                     type: array
                     items:
                       type: string
-                    description: "Addresses which act as admins of the module. They can promote and demote\r\ncontracts without having to go via governance."
+                    description: >-
+                      Addresses which act as admins of the module. They can
+                      promote and demote
+
+                      contracts without having to go via governance.
                 description: Params holds parameters for the cron module.
-            description: "QueryParamsResponse is response type for the Query/Params RPC\r\nmethod."
+            description: |-
+              QueryParamsResponse is response type for the Query/Params RPC
+              method.
         default:
           description: An unexpected error response.
           schema:
@@ -415,7 +433,9 @@ paths:
                 description: >-
                   annual_provisions is the current minting annual provisions
                   value.
-            description: "QueryAnnualProvisionsResponse is the response type for the\r\nQuery/AnnualProvisions RPC method."
+            description: |-
+              QueryAnnualProvisionsResponse is the response type for the
+              Query/AnnualProvisions RPC method.
         default:
           description: An unexpected error response.
           schema:
@@ -500,7 +520,9 @@ paths:
         - Query
   /stargaze/tokenfactory/v1/denoms/{denom}/authority_metadata:
     get:
-      summary: "DenomAuthorityMetadata defines a gRPC query method for fetching\r\nDenomAuthorityMetadata for a particular denom."
+      summary: |-
+        DenomAuthorityMetadata defines a gRPC query method for fetching
+        DenomAuthorityMetadata for a particular denom.
       operationId: DenomAuthorityMetadata
       responses:
         '200':
@@ -514,8 +536,19 @@ paths:
                   admin:
                     type: string
                     title: Can be empty for no admin, or a valid stargaze address
-                description: "DenomAuthorityMetadata specifies metadata for addresses that have specific\r\ncapabilities over a token factory denom. Right now there is only one Admin\r\npermission, but is planned to be extended to the future."
-            description: "QueryDenomAuthorityMetadataResponse defines the response structure for the\r\nDenomAuthorityMetadata gRPC query."
+                description: >-
+                  DenomAuthorityMetadata specifies metadata for addresses that
+                  have specific
+
+                  capabilities over a token factory denom. Right now there is
+                  only one Admin
+
+                  permission, but is planned to be extended to the future.
+            description: >-
+              QueryDenomAuthorityMetadataResponse defines the response structure
+              for the
+
+              DenomAuthorityMetadata gRPC query.
         default:
           description: An unexpected error response.
           schema:
@@ -547,7 +580,9 @@ paths:
         - Query
   /stargaze/tokenfactory/v1/denoms_from_creator/{creator}:
     get:
-      summary: "DenomsFromCreator defines a gRPC query method for fetching all\r\ndenominations created by a specific admin/creator."
+      summary: |-
+        DenomsFromCreator defines a gRPC query method for fetching all
+        denominations created by a specific admin/creator.
       operationId: DenomsFromCreator
       responses:
         '200':
@@ -559,7 +594,11 @@ paths:
                 type: array
                 items:
                   type: string
-            description: "QueryDenomsFromCreatorRequest defines the response structure for the\r\nDenomsFromCreator gRPC query."
+            description: >-
+              QueryDenomsFromCreatorRequest defines the response structure for
+              the
+
+              DenomsFromCreator gRPC query.
         default:
           description: An unexpected error response.
           schema:
@@ -591,7 +630,11 @@ paths:
         - Query
   /stargaze/tokenfactory/v1/params:
     get:
-      summary: "Params defines a gRPC query method that returns the tokenfactory module's\r\nparameters."
+      summary: >-
+        Params defines a gRPC query method that returns the tokenfactory
+        module's
+
+        parameters.
       operationId: TokenFactoryParams
       responses:
         '200':
@@ -620,11 +663,25 @@ paths:
                         custom method
 
                         signatures required by gogoproto.
-                    description: "DenomCreationFee defines the fee to be charged on the creation of a new\r\ndenom. The fee is drawn from the MsgCreateDenom's sender account, and\r\ntransferred to the community pool."
+                    description: >-
+                      DenomCreationFee defines the fee to be charged on the
+                      creation of a new
+
+                      denom. The fee is drawn from the MsgCreateDenom's sender
+                      account, and
+
+                      transferred to the community pool.
                   denom_creation_gas_consume:
                     type: string
                     format: uint64
-                    title: "DenomCreationGasConsume defines the gas cost for creating a new denom.\r\nThis is intended as a spam deterrence mechanism.\r\n\r\nSee: https://github.com/CosmWasm/token-factory/issues/11"
+                    description: >-
+                      DenomCreationGasConsume defines the gas cost for creating
+                      a new denom.
+
+                      This is intended as a spam deterrence mechanism.
+
+
+                      See: https://github.com/CosmWasm/token-factory/issues/11
             description: >-
               QueryParamsResponse is the response type for the Query/Params RPC
               method.
@@ -48116,7 +48173,11 @@ definitions:
 
             NOTE: The amount field is an Int which implements the custom method
             signatures required by gogoproto.
-        description: "SupplementAmount is the amount to be supplemented from the pool on top of\r\nnewly minted coins."
+        description: >-
+          SupplementAmount is the amount to be supplemented from the pool on top
+          of
+
+          newly minted coins.
     description: Params defines the parameters for the alloc module.
   publicawesome.stargaze.alloc.v1beta1.QueryParamsResponse:
     type: object
@@ -48179,7 +48240,11 @@ definitions:
                 method
 
                 signatures required by gogoproto.
-            description: "SupplementAmount is the amount to be supplemented from the pool on top of\r\nnewly minted coins."
+            description: >-
+              SupplementAmount is the amount to be supplemented from the pool on
+              top of
+
+              newly minted coins.
     description: QueryParamsResponse is the response type for the Query/Params RPC method.
   publicawesome.stargaze.alloc.v1beta1.WeightedAddress:
     type: object
@@ -48196,7 +48261,11 @@ definitions:
         type: array
         items:
           type: string
-        description: "Addresses which act as admins of the module. They can promote and demote\r\ncontracts without having to go via governance."
+        description: >-
+          Addresses which act as admins of the module. They can promote and
+          demote
+
+          contracts without having to go via governance.
     description: Params holds parameters for the cron module.
   publicawesome.stargaze.cron.v1.QueryListPrivilegedResponse:
     type: object
@@ -48205,8 +48274,14 @@ definitions:
         type: array
         items:
           type: string
-        description: "contract_addresses holds all the smart contract addresses which have\r\nprivilege status."
-    description: "QueryListPrivilegedResponse is response type for the Query/ListPrivileged RPC\r\nmethod."
+        description: |-
+          contract_addresses holds all the smart contract addresses which have
+          privilege status.
+    description: >-
+      QueryListPrivilegedResponse is response type for the Query/ListPrivileged
+      RPC
+
+      method.
   publicawesome.stargaze.cron.v1.QueryParamsResponse:
     type: object
     properties:
@@ -48217,9 +48292,15 @@ definitions:
             type: array
             items:
               type: string
-            description: "Addresses which act as admins of the module. They can promote and demote\r\ncontracts without having to go via governance."
+            description: >-
+              Addresses which act as admins of the module. They can promote and
+              demote
+
+              contracts without having to go via governance.
         description: Params holds parameters for the cron module.
-    description: "QueryParamsResponse is response type for the Query/Params RPC\r\nmethod."
+    description: |-
+      QueryParamsResponse is response type for the Query/Params RPC
+      method.
   cosmos.base.v1beta1.DecCoin:
     type: object
     properties:
@@ -48388,7 +48469,9 @@ definitions:
         type: string
         format: byte
         description: annual_provisions is the current minting annual provisions value.
-    description: "QueryAnnualProvisionsResponse is the response type for the\r\nQuery/AnnualProvisions RPC method."
+    description: |-
+      QueryAnnualProvisionsResponse is the response type for the
+      Query/AnnualProvisions RPC method.
   publicawesome.stargaze.mint.v1beta1.QueryParamsResponse:
     type: object
     properties:
@@ -48420,7 +48503,10 @@ definitions:
       admin:
         type: string
         title: Can be empty for no admin, or a valid stargaze address
-    description: "DenomAuthorityMetadata specifies metadata for addresses that have specific\r\ncapabilities over a token factory denom. Right now there is only one Admin\r\npermission, but is planned to be extended to the future."
+    description: |-
+      DenomAuthorityMetadata specifies metadata for addresses that have specific
+      capabilities over a token factory denom. Right now there is only one Admin
+      permission, but is planned to be extended to the future.
   osmosis.tokenfactory.v1beta1.Params:
     type: object
     properties:
@@ -48438,11 +48524,21 @@ definitions:
 
             NOTE: The amount field is an Int which implements the custom method
             signatures required by gogoproto.
-        description: "DenomCreationFee defines the fee to be charged on the creation of a new\r\ndenom. The fee is drawn from the MsgCreateDenom's sender account, and\r\ntransferred to the community pool."
+        description: >-
+          DenomCreationFee defines the fee to be charged on the creation of a
+          new
+
+          denom. The fee is drawn from the MsgCreateDenom's sender account, and
+
+          transferred to the community pool.
       denom_creation_gas_consume:
         type: string
         format: uint64
-        title: "DenomCreationGasConsume defines the gas cost for creating a new denom.\r\nThis is intended as a spam deterrence mechanism.\r\n\r\nSee: https://github.com/CosmWasm/token-factory/issues/11"
+        description: |-
+          DenomCreationGasConsume defines the gas cost for creating a new denom.
+          This is intended as a spam deterrence mechanism.
+
+          See: https://github.com/CosmWasm/token-factory/issues/11
     description: Params defines the parameters for the tokenfactory module.
   osmosis.tokenfactory.v1beta1.QueryDenomAuthorityMetadataResponse:
     type: object
@@ -48453,8 +48549,17 @@ definitions:
           admin:
             type: string
             title: Can be empty for no admin, or a valid stargaze address
-        description: "DenomAuthorityMetadata specifies metadata for addresses that have specific\r\ncapabilities over a token factory denom. Right now there is only one Admin\r\npermission, but is planned to be extended to the future."
-    description: "QueryDenomAuthorityMetadataResponse defines the response structure for the\r\nDenomAuthorityMetadata gRPC query."
+        description: >-
+          DenomAuthorityMetadata specifies metadata for addresses that have
+          specific
+
+          capabilities over a token factory denom. Right now there is only one
+          Admin
+
+          permission, but is planned to be extended to the future.
+    description: |-
+      QueryDenomAuthorityMetadataResponse defines the response structure for the
+      DenomAuthorityMetadata gRPC query.
   osmosis.tokenfactory.v1beta1.QueryDenomsFromCreatorResponse:
     type: object
     properties:
@@ -48462,7 +48567,9 @@ definitions:
         type: array
         items:
           type: string
-    description: "QueryDenomsFromCreatorRequest defines the response structure for the\r\nDenomsFromCreator gRPC query."
+    description: |-
+      QueryDenomsFromCreatorRequest defines the response structure for the
+      DenomsFromCreator gRPC query.
   osmosis.tokenfactory.v1beta1.QueryParamsResponse:
     type: object
     properties:
@@ -48487,11 +48594,25 @@ definitions:
                 method
 
                 signatures required by gogoproto.
-            description: "DenomCreationFee defines the fee to be charged on the creation of a new\r\ndenom. The fee is drawn from the MsgCreateDenom's sender account, and\r\ntransferred to the community pool."
+            description: >-
+              DenomCreationFee defines the fee to be charged on the creation of
+              a new
+
+              denom. The fee is drawn from the MsgCreateDenom's sender account,
+              and
+
+              transferred to the community pool.
           denom_creation_gas_consume:
             type: string
             format: uint64
-            title: "DenomCreationGasConsume defines the gas cost for creating a new denom.\r\nThis is intended as a spam deterrence mechanism.\r\n\r\nSee: https://github.com/CosmWasm/token-factory/issues/11"
+            description: >-
+              DenomCreationGasConsume defines the gas cost for creating a new
+              denom.
+
+              This is intended as a spam deterrence mechanism.
+
+
+              See: https://github.com/CosmWasm/token-factory/issues/11
     description: QueryParamsResponse is the response type for the Query/Params RPC method.
   cosmos.base.query.v1beta1.PageRequest:
     type: object

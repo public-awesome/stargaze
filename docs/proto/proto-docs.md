@@ -401,7 +401,7 @@ a token.  For now, we only support burning from the sender account.
 <a name="osmosis.tokenfactory.v1beta1.MsgBurnResponse"></a>
 
 ### MsgBurnResponse
-
+MsgBurnResponse response from executing MsgBurn.
 
 
 
@@ -498,7 +498,7 @@ more of a token.  For now, we only support minting to the sender account
 <a name="osmosis.tokenfactory.v1beta1.MsgMintResponse"></a>
 
 ### MsgMintResponse
-
+MsgMintResponse response from executing MsgMint.
 
 
 
@@ -1113,7 +1113,7 @@ MsgPromoteToPrivilegedContract defines the Msg/PromoteToPrivilegedContract
 <a name="publicawesome.stargaze.cron.v1.MsgUpdateParams"></a>
 
 ### MsgUpdateParams
-
+MsgUpdateParams updates module's params through governance proposal
 
 
 | Field | Type | Label | Description |
@@ -1488,7 +1488,7 @@ Query defines the gRPC querier service.
 <a name="publicawesome.stargaze.globalfee.v1.MsgRemoveCodeAuthorization"></a>
 
 ### MsgRemoveCodeAuthorization
-
+MsgRemoveCodeAuthorization is the request for removing code authorization.
 
 
 | Field | Type | Label | Description |
@@ -1504,7 +1504,7 @@ Query defines the gRPC querier service.
 <a name="publicawesome.stargaze.globalfee.v1.MsgRemoveCodeAuthorizationResponse"></a>
 
 ### MsgRemoveCodeAuthorizationResponse
-
+MsgRemoveCodeAuthorizationResponse is the response for executing remove authorization.
 
 
 
@@ -1514,7 +1514,7 @@ Query defines the gRPC querier service.
 <a name="publicawesome.stargaze.globalfee.v1.MsgRemoveContractAuthorization"></a>
 
 ### MsgRemoveContractAuthorization
-
+MsgRemoveContractAuthorization is the request for removing contract authorization.
 
 
 | Field | Type | Label | Description |
@@ -1530,7 +1530,7 @@ Query defines the gRPC querier service.
 <a name="publicawesome.stargaze.globalfee.v1.MsgRemoveContractAuthorizationResponse"></a>
 
 ### MsgRemoveContractAuthorizationResponse
-
+MsgRemoveContractAuthorizationResponse is the repsonse for executing a contract authorization removal.
 
 
 
@@ -1540,7 +1540,7 @@ Query defines the gRPC querier service.
 <a name="publicawesome.stargaze.globalfee.v1.MsgSetCodeAuthorization"></a>
 
 ### MsgSetCodeAuthorization
-
+MsgSetCodeAuthorization is the request for setting code fee.
 
 
 | Field | Type | Label | Description |
@@ -1556,7 +1556,7 @@ Query defines the gRPC querier service.
 <a name="publicawesome.stargaze.globalfee.v1.MsgSetCodeAuthorizationResponse"></a>
 
 ### MsgSetCodeAuthorizationResponse
-
+MsgSetCodeAuthorizationResponse is the response for executing a set code authorization.
 
 
 
@@ -1566,7 +1566,7 @@ Query defines the gRPC querier service.
 <a name="publicawesome.stargaze.globalfee.v1.MsgSetContractAuthorization"></a>
 
 ### MsgSetContractAuthorization
-
+MsgSetContractAuthorization is the request for executing set contract authorization.
 
 
 | Field | Type | Label | Description |
@@ -1582,7 +1582,7 @@ Query defines the gRPC querier service.
 <a name="publicawesome.stargaze.globalfee.v1.MsgSetContractAuthorizationResponse"></a>
 
 ### MsgSetContractAuthorizationResponse
-
+MsgSetContractAuthorizationResponse is the response for executing contract authorization.
 
 
 
@@ -1592,7 +1592,7 @@ Query defines the gRPC querier service.
 <a name="publicawesome.stargaze.globalfee.v1.MsgUpdateParams"></a>
 
 ### MsgUpdateParams
-
+MsgUpdateParams is the request for updating module's params.
 
 
 | Field | Type | Label | Description |
@@ -1608,7 +1608,7 @@ Query defines the gRPC querier service.
 <a name="publicawesome.stargaze.globalfee.v1.MsgUpdateParamsResponse"></a>
 
 ### MsgUpdateParamsResponse
-
+MsgUpdateParamsResponse is the response for executiong a module's params update.
 
 
 
@@ -1628,11 +1628,11 @@ Msg defines the alloc Msg service.
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `SetCodeAuthorization` | [MsgSetCodeAuthorization](#publicawesome.stargaze.globalfee.v1.MsgSetCodeAuthorization) | [MsgSetCodeAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.MsgSetCodeAuthorizationResponse) |  | |
-| `RemoveCodeAuthorization` | [MsgRemoveCodeAuthorization](#publicawesome.stargaze.globalfee.v1.MsgRemoveCodeAuthorization) | [MsgRemoveCodeAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.MsgRemoveCodeAuthorizationResponse) |  | |
-| `SetContractAuthorization` | [MsgSetContractAuthorization](#publicawesome.stargaze.globalfee.v1.MsgSetContractAuthorization) | [MsgSetContractAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.MsgSetContractAuthorizationResponse) |  | |
-| `RemoveContractAuthorization` | [MsgRemoveContractAuthorization](#publicawesome.stargaze.globalfee.v1.MsgRemoveContractAuthorization) | [MsgRemoveContractAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.MsgRemoveContractAuthorizationResponse) |  | |
-| `UpdateParams` | [MsgUpdateParams](#publicawesome.stargaze.globalfee.v1.MsgUpdateParams) | [MsgUpdateParamsResponse](#publicawesome.stargaze.globalfee.v1.MsgUpdateParamsResponse) |  | |
+| `SetCodeAuthorization` | [MsgSetCodeAuthorization](#publicawesome.stargaze.globalfee.v1.MsgSetCodeAuthorization) | [MsgSetCodeAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.MsgSetCodeAuthorizationResponse) | SetCodeAuthorization will set a specific code id fee settings. | |
+| `RemoveCodeAuthorization` | [MsgRemoveCodeAuthorization](#publicawesome.stargaze.globalfee.v1.MsgRemoveCodeAuthorization) | [MsgRemoveCodeAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.MsgRemoveCodeAuthorizationResponse) | RemoveCodeAuthorization will remove code id configuration. | |
+| `SetContractAuthorization` | [MsgSetContractAuthorization](#publicawesome.stargaze.globalfee.v1.MsgSetContractAuthorization) | [MsgSetContractAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.MsgSetContractAuthorizationResponse) | SetContractAuthorization will set a specific contract fee settings. | |
+| `RemoveContractAuthorization` | [MsgRemoveContractAuthorization](#publicawesome.stargaze.globalfee.v1.MsgRemoveContractAuthorization) | [MsgRemoveContractAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.MsgRemoveContractAuthorizationResponse) | RemoveContractAuthorization removes specific contract fee settings. | |
+| `UpdateParams` | [MsgUpdateParams](#publicawesome.stargaze.globalfee.v1.MsgUpdateParams) | [MsgUpdateParamsResponse](#publicawesome.stargaze.globalfee.v1.MsgUpdateParamsResponse) | UpdateParams will update module params, callable by governance only. | |
 
  <!-- end services -->
 
