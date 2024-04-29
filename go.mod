@@ -42,7 +42,7 @@ require (
 	github.com/cosmos/ibc-apps/modules/ibc-hooks/v8 v8.0.0-00010101000000-000000000000
 	github.com/cosmos/ibc-go/modules/capability v1.0.0
 	github.com/cosmos/ibc-go/modules/light-clients/08-wasm v0.0.0-20240208183954-71fa5c9fd708
-	github.com/cosmos/ibc-go/v8 v8.2.0
+	github.com/cosmos/ibc-go/v8 v8.2.1
 	github.com/prometheus/client_golang v1.19.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20240227224415-6ceb2ff114de
 )
