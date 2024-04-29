@@ -331,7 +331,7 @@ steps:
         - http://gaia:26657
         - http://osmosis:26657
         - http://icad:26657
- - name: relayer
+  - name: relayer
     image: publicawesome/hermes:1.7.3
     commands:
       - sleep 10
@@ -421,6 +421,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 0405a5556630458928167701bb935babfdb4a8b58de8f1a2c58f47baec3c9c6a
+hmac: 0e0c7fcfdbb1269dbc8595903d663c53bf327aabfca1298150e2e13638b2c3c2
 
 ...
