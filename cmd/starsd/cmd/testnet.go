@@ -47,7 +47,6 @@ var (
 )
 
 func NewTestnetCmd(mbm module.BasicManager) *cobra.Command {
-
 	cmd := &cobra.Command{
 		Use:   "testnet",
 		Short: "Initialize files for stargaze testnet",
@@ -55,7 +54,6 @@ func NewTestnetCmd(mbm module.BasicManager) *cobra.Command {
 This configuration is strictly for docker compose bootstrapping.
 		`,
 		RunE: func(cmd *cobra.Command, _ []string) error {
-
 			args := testnetArguments{}
 			var err error
 			args.outputDir, _ = cmd.Flags().GetString(testnetFlagOutputDir)
@@ -354,7 +352,6 @@ func initTestnet(cmd *cobra.Command, args testnetArguments, mbm module.BasicMana
 	}
 
 	err = writeFile("docker-compose.yml", args.outputDir, []byte(def))
-
 	if err != nil {
 		return err
 	}
@@ -416,6 +413,7 @@ func collectGenFiles(
 
 	return nil
 }
+
 func writeFile(name, dir string, contents []byte) error {
 	file := filepath.Join(dir, name)
 
