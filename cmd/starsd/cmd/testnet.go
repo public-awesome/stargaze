@@ -379,9 +379,6 @@ func collectGenFiles(
 		nodeConfig.RPC.ListenAddress = "tcp://0.0.0.0:26657"
 		nodeConfig.RPC.CORSAllowedOrigins = []string{"*"}
 
-		// nodeConfig.RPC.ListenAddress = fmt.Sprintf("tcp://0.0.0.0:%d", rpcPortStart+portOffset)
-		// nodeConfig.P2P.ListenAddress = fmt.Sprintf("tcp://0.0.0.0:%d", p2pPortStart+portOffset)
-
 		nodeConfig.SetRoot(nodeDir)
 
 		nodeID, valPubKey := nodeIDs[i], valPubKeys[i]
@@ -456,6 +453,8 @@ func initGenFiles(
 		bankGenState.Supply = bankGenState.Supply.Add(bal.Coins...)
 	}
 	appGenState[banktypes.ModuleName] = clientCtx.Codec.MustMarshalJSON(&bankGenState)
+
+	appGenState = PrepareGenesis(clientCtx, appGenState, TestnetGenesisParams())
 
 	appGenStateJSON, err := json.MarshalIndent(appGenState, "", "  ")
 	if err != nil {
