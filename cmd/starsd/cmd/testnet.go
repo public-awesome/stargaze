@@ -198,7 +198,7 @@ func initTestnet(cmd *cobra.Command, args testnetArguments, mbm module.BasicMana
 
 	for i := 0; i < args.numValidators; i++ {
 		nodeDirName := fmt.Sprintf("%s%d", "node", i)
-		nodeDir := filepath.Join(args.outputDir, nodeDirName, ".starsd")
+		nodeDir := filepath.Join(args.outputDir, nodeDirName, "starsd")
 		gentxsDir := filepath.Join(args.outputDir, "gentxs")
 
 		// for docker
@@ -337,7 +337,7 @@ func initTestnet(cmd *cobra.Command, args testnetArguments, mbm module.BasicMana
 
 	err = collectGenFiles(
 		clientCtx, args.chainID, nodeIDs, valPubKeys, args.numValidators,
-		args.outputDir, "node", ".starsd",
+		args.outputDir, "node", "starsd",
 	)
 	if err != nil {
 		return err
@@ -421,11 +421,7 @@ func writeFile(name, dir string, contents []byte) error {
 		return fmt.Errorf("could not create directory %q: %w", dir, err)
 	}
 
-	if err := os.WriteFile(file, contents, 0o600); err != nil {
-		return err
-	}
-
-	return nil
+	return os.WriteFile(file, contents, 0o600)
 }
 
 func initGenFiles(
