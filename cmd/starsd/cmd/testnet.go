@@ -14,6 +14,7 @@ import (
 	"cosmossdk.io/math"
 	"cosmossdk.io/math/unsafe"
 	cmtcfg "github.com/cometbft/cometbft/config"
+	cmttypes "github.com/cometbft/cometbft/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -366,7 +367,6 @@ func collectGenFiles(
 	outputDir, nodeDirPrefix, nodeDaemonHome string,
 ) error {
 	genBalIterator := banktypes.GenesisBalancesIterator{}
-	var appState json.RawMessage
 	genTime := time.Now()
 
 	for i := 0; i < numValidators; i++ {
@@ -389,21 +389,16 @@ func collectGenFiles(
 			return err
 		}
 
-		nodeAppState, err := genutil.GenAppStateFromConfig(clientCtx.Codec, clientCtx.TxConfig, nodeConfig, initCfg, appGenesis, genBalIterator, genutiltypes.DefaultMessageValidator,
+		_, err = genutil.GenAppStateFromConfig(clientCtx.Codec, clientCtx.TxConfig, nodeConfig, initCfg, appGenesis, genBalIterator, genutiltypes.DefaultMessageValidator,
 			clientCtx.TxConfig.SigningContext().ValidatorAddressCodec())
 		if err != nil {
 			return err
 		}
 
-		if appState == nil {
-			// set the canonical application state (they should not differ)
-			appState = nodeAppState
-		}
-
+		appGenesis.GenesisTime = genTime
 		genFile := nodeConfig.GenesisFile()
 
-		// overwrite each validator's genesis file to have a canonical genesis time
-		if err := genutil.ExportGenesisFileWithTime(genFile, chainID, nil, appState, genTime); err != nil {
+		if err := appGenesis.SaveAs(genFile); err != nil {
 			return err
 		}
 	}
@@ -458,6 +453,14 @@ func initGenFiles(
 	}
 
 	appGenesis := genutiltypes.NewAppGenesisWithVersion(chainID, appGenStateJSON)
+	consensusParams := cmttypes.DefaultConsensusParams()
+	consensusParams.Block.MaxBytes = 25 * 1024 * 1024
+	consensusParams.Block.MaxGas = 150_000_000
+	appGenesis.Consensus = &genutiltypes.ConsensusGenesis{
+		Validators: nil,
+		Params:     consensusParams,
+	}
+
 	// generate empty genesis files for each validator and save
 	for i := 0; i < numValidators; i++ {
 		if err := appGenesis.SaveAs(genFiles[i]); err != nil {

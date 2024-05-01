@@ -14,13 +14,13 @@ import (
 	ibctransfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	minttypes "github.com/public-awesome/stargaze/v14/x/mint/types"
 
-	// appParams "github.com/public-awesome/stargaze/app/params"
-
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	alloctypes "github.com/public-awesome/stargaze/v14/x/alloc/types"
 
+	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	globalfeetypes "github.com/public-awesome/stargaze/v14/x/globalfee/types"
+	tokenfactorytypes "github.com/public-awesome/stargaze/v14/x/tokenfactory/types"
 )
 
 const (
@@ -46,6 +46,10 @@ type GenesisParams struct {
 	WasmParams      wasmtypes.Params
 
 	GovParams govtypes.Params
+
+	TokenFactoryParams tokenfactorytypes.Params
+
+	ConsensusParams *cmtproto.ConsensusParams
 }
 
 func PrepareGenesis(
@@ -65,6 +69,12 @@ func PrepareGenesis(
 	mintGenState.Params = genesisParams.MintParams
 	mintGenStateBz := clientCtx.Codec.MustMarshalJSON(mintGenState)
 	appState[minttypes.ModuleName] = mintGenStateBz
+
+	// staking module
+	stakingGenState := stakingtypes.DefaultGenesisState()
+	stakingGenState.Params = genesisParams.StakingParams
+	stakingGenStateBz := clientCtx.Codec.MustMarshalJSON(stakingGenState)
+	appState[stakingtypes.ModuleName] = stakingGenStateBz
 
 	return appState
 }
@@ -155,6 +165,8 @@ func DefaultGenesisParams() GenesisParams {
 	genParams.WasmParams = wasmtypes.DefaultParams()
 
 	genParams.GlobalFeeParams = globalfeetypes.DefaultParams()
+	genParams.TokenFactoryParams = tokenfactorytypes.DefaultParams()
+	genParams.TokenFactoryParams.DenomCreationFee = sdk.NewCoins(sdk.NewInt64Coin(genParams.NativeCoinMetadatas[0].Base, 100_000_000))
 
 	return genParams
 }
