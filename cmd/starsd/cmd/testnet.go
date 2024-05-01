@@ -43,8 +43,6 @@ var (
 	tesnetFlagStakeDenom            = "stake-denom"
 	testnetDefaultDenom             = "ustars"
 	testnetFlagUnbondingPeriod      = "unbonding-period"
-
-	testnetDefaultVotingPeriod = time.Minute * 5
 )
 
 func NewTestnetCmd(mbm module.BasicManager) *cobra.Command {
