@@ -90,6 +90,7 @@ This configuration is strictly for docker compose bootstrapping.
 		"Flag initial staking amount: 100000000")
 	cmd.Flags().String(testnetFlagInitialCoins, fmt.Sprintf("1000000000%s", testnetDefaultDenom),
 		"Validator genesis coins: 100000ustars")
+	cmd.Flags().String(flags.FlagChainID, "", "genesis file chain-id, if left blank will be randomly created")
 
 	return cmd
 }

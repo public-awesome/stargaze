@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"cosmossdk.io/math"
@@ -18,6 +19,7 @@ import (
 	alloctypes "github.com/public-awesome/stargaze/v14/x/alloc/types"
 
 	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	globalfeetypes "github.com/public-awesome/stargaze/v14/x/globalfee/types"
 	tokenfactorytypes "github.com/public-awesome/stargaze/v14/x/tokenfactory/types"
@@ -50,6 +52,8 @@ type GenesisParams struct {
 	TokenFactoryParams tokenfactorytypes.Params
 
 	ConsensusParams *cmtproto.ConsensusParams
+
+	CrisisConstantFee sdk.Coin
 }
 
 func PrepareGenesis(
@@ -75,6 +79,38 @@ func PrepareGenesis(
 	stakingGenState.Params = genesisParams.StakingParams
 	stakingGenStateBz := clientCtx.Codec.MustMarshalJSON(stakingGenState)
 	appState[stakingtypes.ModuleName] = stakingGenStateBz
+
+	// global fee
+	minGasPrices, err := sdk.ParseDecCoins("1ustars")
+	if err != nil {
+		panic(fmt.Errorf("failed to parse dec coins: %w", err))
+	}
+	globalFeeGenState := &globalfeetypes.GenesisState{
+		Params: globalfeetypes.Params{
+			MinimumGasPrices: minGasPrices,
+		},
+	}
+	globalFeeGenStateBz := clientCtx.Codec.MustMarshalJSON(globalFeeGenState)
+	appState[globalfeetypes.ModuleName] = globalFeeGenStateBz
+
+	// tokenfactory
+
+	tokenFactoryGenState := tokenfactorytypes.DefaultGenesis()
+	tokenFactoryGenState.Params = genesisParams.TokenFactoryParams
+
+	tokenFactoryGenStateBz := clientCtx.Codec.MustMarshalJSON(tokenFactoryGenState)
+	appState[tokenfactorytypes.ModuleName] = tokenFactoryGenStateBz
+
+	// governance
+
+	governanceGenState := govtypes.NewGenesisState(1, genesisParams.GovParams)
+	governanceGenStateBz := clientCtx.Codec.MustMarshalJSON(governanceGenState)
+	appState["gov"] = governanceGenStateBz
+
+	crisisGenState := crisistypes.DefaultGenesisState()
+	crisisGenState.ConstantFee = genesisParams.CrisisConstantFee
+	crisisGenStateBz := clientCtx.Codec.MustMarshalJSON(crisisGenState)
+	appState[crisistypes.ModuleName] = crisisGenStateBz
 
 	return appState
 }
@@ -138,15 +174,19 @@ func DefaultGenesisParams() GenesisParams {
 	genParams.GovParams.MaxDepositPeriod = &votingPeriod
 	genParams.GovParams.MinDeposit = sdk.NewCoins(sdk.NewCoin(
 		genParams.NativeCoinMetadatas[0].Base,
-		math.NewInt(1_000_000_000),
+		math.NewInt(10_000_000_000),
+	))
+	genParams.GovParams.ExpeditedMinDeposit = sdk.NewCoins(sdk.NewCoin(
+		genParams.NativeCoinMetadatas[0].Base,
+		math.NewInt(20_000_000_000),
 	))
 	genParams.GovParams.Quorum = math.LegacyMustNewDecFromStr("0.2").String()
 	genParams.GovParams.VotingPeriod = &votingPeriod
 
-	// genParams.CrisisConstantFee = sdk.NewCoin(
-	// 	genParams.NativeCoinMetadatas[0].Base,
-	// 	sdk.NewInt(100_000_000_000),
-	// )
+	genParams.CrisisConstantFee = sdk.NewCoin(
+		genParams.NativeCoinMetadatas[0].Base,
+		math.NewInt(100_000_000_000),
+	)
 
 	genParams.SlashingParams = slashingtypes.DefaultParams()
 	genParams.SlashingParams.SignedBlocksWindow = int64(25000)                              // ~41 hr at 6 second blocks
@@ -154,13 +194,6 @@ func DefaultGenesisParams() GenesisParams {
 	genParams.SlashingParams.DowntimeJailDuration = time.Minute                             // 1 minute jail period
 	genParams.SlashingParams.SlashFractionDoubleSign = math.LegacyMustNewDecFromStr("0.05") // 5% double sign slashing
 	genParams.SlashingParams.SlashFractionDowntime = math.LegacyMustNewDecFromStr("0.0001") // 0.01% liveness slashing
-
-	// genParams.ConsensusParams = tmtypes.DefaultConsensusParams()
-	// genParams.ConsensusParams.Block.MaxBytes = 25 * 1024 * 1024 // 26,214,400 for cosmwasm
-	// genParams.ConsensusParams.Block.MaxGas = 100_000_000
-	// genParams.ConsensusParams.Evidence.MaxAgeDuration = genParams.StakingParams.UnbondingTime
-	// genParams.ConsensusParams.Evidence.MaxAgeNumBlocks = int64(genParams.StakingParams.UnbondingTime.Seconds()) / 3
-	// genParams.ConsensusParams.Version.AppVersion = 1
 
 	genParams.WasmParams = wasmtypes.DefaultParams()
 
