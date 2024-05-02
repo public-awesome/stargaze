@@ -21,6 +21,7 @@ type (
 		paramstore          paramtypes.Subspace
 		wasmKeeper          types.WasmKeeper
 		Schema              collections.Schema
+		Params              collections.Item[types.Params]
 		PrivilegedContracts collections.Map[[]byte, []byte]
 		authority           string // this should be the x/gov module account
 	}
@@ -46,6 +47,12 @@ func NewKeeper(
 		paramstore: ps,
 		wasmKeeper: wk,
 		authority:  authority,
+		Params: collections.NewItem(
+			sb,
+			types.ParamsKey,
+			"params",
+			collcompat.ProtoValue[types.Params](cdc),
+		),
 		PrivilegedContracts: collections.NewMap(
 			sb,
 			types.PrivilegedContractsPrefix,
