@@ -2,7 +2,6 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	v2 "github.com/public-awesome/stargaze/v14/x/mint/migrations/v2"
 )
 
 // Migrator is a struct for handling in-place store migrations.
@@ -22,5 +21,5 @@ func NewMigrator(keeper Keeper) Migrator {
 // and managed by the x/params module and stores them directly into the x/mint
 // module state.
 func (m Migrator) Migrate1to2(ctx sdk.Context) error {
-	return v2.MigrateStore(ctx, m.keeper.storeKey, m.keeper.paramSpace, m.keeper.cdc)
+	return nil //v2.MigrateStore(ctx, m.keeper.storeKey, m.keeper.paramSpace, m.keeper.cdc)
 }
