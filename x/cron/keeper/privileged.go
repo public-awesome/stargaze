@@ -1,7 +1,6 @@
 package keeper
 
 import (
-	"cosmossdk.io/store/prefix"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -59,13 +58,19 @@ func (k Keeper) IsPrivileged(ctx sdk.Context, contractAddr sdk.AccAddress) bool 
 }
 
 // IteratePrivileged executes the given func on all the privilege contracts
-func (k Keeper) IteratePrivileged(ctx sdk.Context, cb func(sdk.AccAddress) bool) {
-	prefixStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.PrivilegedContractsPrefix)
-	iter := prefixStore.Iterator(nil, nil)
-	defer iter.Close()
-	for ; iter.Valid(); iter.Next() {
-		// cb returns true to stop early
-		if cb(iter.Key()) {
+func (k Keeper) IteratePrivileged(ctx sdk.Context, doSomething func(sdk.AccAddress) bool) {
+	iterator, err := k.PrivilegedContracts.Iterate(ctx, nil)
+	if err != nil {
+		panic(err)
+	}
+	defer iterator.Close()
+	for ; iterator.Valid(); iterator.Next() {
+		key, err := iterator.Key()
+		if err != nil {
+			panic(err)
+		}
+		contractAddr := sdk.AccAddress(key)
+		if doSomething(contractAddr) {
 			return
 		}
 	}
