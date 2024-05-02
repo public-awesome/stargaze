@@ -702,9 +702,7 @@ func NewStargazeApp(
 
 	app.Keepers.CronKeeper = cronmodulekeeper.NewKeeper(
 		appCodec,
-		keys[cronmoduletypes.StoreKey],
-		keys[cronmoduletypes.MemStoreKey],
-		app.GetSubspace(cronmoduletypes.ModuleName),
+		runtime.NewKVStoreService(keys[cronmoduletypes.StoreKey]),
 		app.Keepers.WasmKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String())
 	cronModule := cronmodule.NewAppModule(appCodec, app.Keepers.CronKeeper, app.Keepers.WasmKeeper)
@@ -1195,7 +1193,6 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(allocmoduletypes.ModuleName)
 	paramsKeeper.Subspace(tokenfactorytypes.ModuleName)
 	paramsKeeper.Subspace(wasmtypes.ModuleName)
-	paramsKeeper.Subspace(cronmoduletypes.ModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName).WithKeyTable(icahosttypes.ParamKeyTable())
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName).WithKeyTable(icacontrollertypes.ParamKeyTable())
 	paramsKeeper.Subspace(globalfeemoduletypes.ModuleName)

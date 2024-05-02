@@ -4,11 +4,10 @@ import (
 	"fmt"
 
 	"cosmossdk.io/collections"
+	corestoretypes "cosmossdk.io/core/store"
 	"cosmossdk.io/log"
-	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/public-awesome/stargaze/v14/internal/collcompat"
 	"github.com/public-awesome/stargaze/v14/x/cron/types"
 )
@@ -16,9 +15,7 @@ import (
 type (
 	Keeper struct {
 		cdc                 codec.BinaryCodec
-		storeKey            storetypes.StoreKey
-		memKey              storetypes.StoreKey
-		paramstore          paramtypes.Subspace
+		storeService        corestoretypes.KVStoreService
 		wasmKeeper          types.WasmKeeper
 		Schema              collections.Schema
 		Params              collections.Item[types.Params]
@@ -29,24 +26,16 @@ type (
 
 func NewKeeper(
 	cdc codec.BinaryCodec,
-	storeKey,
-	memKey storetypes.StoreKey,
-	ps paramtypes.Subspace,
+	storeService corestoretypes.KVStoreService,
 	wk types.WasmKeeper,
 	authority string,
 ) Keeper {
-	sb := collections.NewSchemaBuilder(collcompat.NewKVStoreService(storeKey))
-	// set KeyTable if it has not already been set
-	if !ps.HasKeyTable() {
-		ps = ps.WithKeyTable(types.ParamKeyTable())
-	}
+	sb := collections.NewSchemaBuilder(storeService)
 	keeper := Keeper{
-		cdc:        cdc,
-		storeKey:   storeKey,
-		memKey:     memKey,
-		paramstore: ps,
-		wasmKeeper: wk,
-		authority:  authority,
+		cdc:          cdc,
+		storeService: storeService,
+		wasmKeeper:   wk,
+		authority:    authority,
 		Params: collections.NewItem(
 			sb,
 			types.ParamsKey,
