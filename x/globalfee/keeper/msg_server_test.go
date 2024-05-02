@@ -98,7 +98,7 @@ func TestSetCodeAuthorization(t *testing.T) {
 				require.Error(t, err, tc)
 			} else {
 				require.NoError(t, err, tc)
-				_, found := k.GetCodeAuthorization(c, msg.GetCodeAuthorization().GetCodeID())
+				found := k.HasCodeAuthorization(ctx, msg.CodeAuthorization.CodeID)
 				require.True(t, found)
 			}
 		})
@@ -169,11 +169,11 @@ func TestRemoveCodeAuthorization(t *testing.T) {
 
 			if tc.expectError {
 				require.Error(t, err, tc)
-				_, found := k.GetCodeAuthorization(c, msg.GetCodeID())
+				found := k.HasCodeAuthorization(ctx, msg.GetCodeID())
 				require.True(t, found)
 			} else {
 				require.NoError(t, err, tc)
-				_, found := k.GetCodeAuthorization(c, msg.GetCodeID())
+				found := k.HasCodeAuthorization(ctx, msg.GetCodeID())
 				require.False(t, found)
 			}
 		})
@@ -306,7 +306,7 @@ func TestSetContractAuthorization(t *testing.T) {
 				require.Error(t, err, tc)
 			} else {
 				require.NoError(t, err, tc)
-				_, found := k.GetContractAuthorization(c, sdk.MustAccAddressFromBech32(msg.GetContractAuthorization().GetContractAddress()))
+				found := k.HasContractAuthorization(c, sdk.MustAccAddressFromBech32(msg.GetContractAuthorization().GetContractAddress()))
 				require.True(t, found)
 			}
 		})
@@ -394,11 +394,11 @@ func TestRemoveContractAuthorization(t *testing.T) {
 
 			if tc.expectError {
 				require.Error(t, err, tc)
-				_, found := k.GetContractAuthorization(c, contractAddr)
+				found := k.HasContractAuthorization(c, contractAddr)
 				require.True(t, found)
 			} else {
 				require.NoError(t, err, tc)
-				_, found := k.GetContractAuthorization(c, contractAddr)
+				found := k.HasContractAuthorization(c, contractAddr)
 				require.False(t, found)
 			}
 		})

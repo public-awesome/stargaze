@@ -32,7 +32,7 @@ func Test_CodeAuthorization(t *testing.T) {
 	})
 
 	t.Run("authorization doesnt exist", func(t *testing.T) {
-		_, found := k.GetCodeAuthorization(ctx, ca.CodeID)
+		found := k.HasCodeAuthorization(ctx, ca.CodeID)
 		require.False(t, found)
 	})
 
@@ -40,21 +40,28 @@ func Test_CodeAuthorization(t *testing.T) {
 		err := k.SetCodeAuthorization(ctx, ca)
 		require.NoError(t, err)
 
-		_, found := k.GetCodeAuthorization(ctx, ca.CodeID)
+		found := k.HasCodeAuthorization(ctx, ca.CodeID)
 		require.True(t, found)
 	})
 
 	t.Run("delete authorization", func(t *testing.T) {
-		_, found := k.GetCodeAuthorization(ctx, ca.CodeID)
+		found := k.HasCodeAuthorization(ctx, ca.CodeID)
 		require.True(t, found)
 
 		k.DeleteCodeAuthorization(ctx, ca.CodeID)
 
-		_, found = k.GetCodeAuthorization(ctx, ca.CodeID)
+		found = k.HasCodeAuthorization(ctx, ca.CodeID)
 		require.False(t, found)
 	})
 
 	t.Run("iterate code authorization", func(t *testing.T) {
+		count := 0
+		k.IterateCodeAuthorizations(ctx, func(ca types.CodeAuthorization) bool {
+			count++
+			return false
+		})
+		require.Equal(t, 0, count)
+
 		err := k.SetCodeAuthorization(ctx, ca)
 		require.NoError(t, err)
 		err = k.SetCodeAuthorization(ctx, types.CodeAuthorization{
@@ -68,7 +75,7 @@ func Test_CodeAuthorization(t *testing.T) {
 		})
 		require.NoError(t, err)
 
-		count := 0
+		count = 0
 		k.IterateCodeAuthorizations(ctx, func(ca types.CodeAuthorization) bool {
 			count++
 			return false

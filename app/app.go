@@ -714,8 +714,7 @@ func NewStargazeApp(
 
 	app.Keepers.GlobalFeeKeeper = globalfeemodulekeeper.NewKeeper(
 		appCodec,
-		keys[globalfeemoduletypes.StoreKey],
-		app.GetSubspace(globalfeemoduletypes.ModuleName),
+		runtime.NewKVStoreService(keys[globalfeemoduletypes.StoreKey]),
 		app.Keepers.WasmKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
@@ -1195,7 +1194,6 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(wasmtypes.ModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName).WithKeyTable(icahosttypes.ParamKeyTable())
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName).WithKeyTable(icacontrollertypes.ParamKeyTable())
-	paramsKeeper.Subspace(globalfeemoduletypes.ModuleName)
 	paramsKeeper.Subspace(packetforwardtypes.ModuleName).WithKeyTable(packetforwardtypes.ParamKeyTable())
 
 	return paramsKeeper
