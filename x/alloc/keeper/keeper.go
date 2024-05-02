@@ -3,55 +3,63 @@ package keeper
 import (
 	"fmt"
 
+	"cosmossdk.io/collections"
+	corestoretypes "cosmossdk.io/core/store"
 	log "cosmossdk.io/log"
 	sdkmath "cosmossdk.io/math"
-	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/public-awesome/stargaze/v14/internal/collcompat"
 	"github.com/public-awesome/stargaze/v14/x/alloc/types"
 )
 
 type (
 	Keeper struct {
-		cdc      codec.BinaryCodec
-		storeKey storetypes.StoreKey
-		memKey   storetypes.StoreKey
+		cdc          codec.BinaryCodec
+		storeService corestoretypes.KVStoreService
+		Schema       collections.Schema
 
 		accountKeeper types.AccountKeeper
 		bankKeeper    types.BankKeeper
 		stakingKeeper types.StakingKeeper
 		distrKeeper   types.DistrKeeper
 
-		paramstore paramtypes.Subspace
-		authority  string
+		Params    collections.Item[types.Params]
+		authority string
 	}
 )
 
 func NewKeeper(
 	cdc codec.BinaryCodec,
-	storeKey,
-	memKey storetypes.StoreKey,
-
-	accountKeeper types.AccountKeeper, bankKeeper types.BankKeeper, stakingKeeper types.StakingKeeper, distrKeeper types.DistrKeeper,
-	ps paramtypes.Subspace,
+	storeService corestoretypes.KVStoreService,
+	accountKeeper types.AccountKeeper,
+	bankKeeper types.BankKeeper,
+	stakingKeeper types.StakingKeeper,
+	distrKeeper types.DistrKeeper,
 	authority string,
-) *Keeper {
-	// set KeyTable if it has not already been set
-	if !ps.HasKeyTable() {
-		ps = ps.WithKeyTable(types.ParamKeyTable())
+) Keeper {
+	sb := collections.NewSchemaBuilder(storeService)
+	keeper := Keeper{
+		cdc:           cdc,
+		accountKeeper: accountKeeper,
+		bankKeeper:    bankKeeper,
+		stakingKeeper: stakingKeeper,
+		distrKeeper:   distrKeeper,
+		authority:     authority,
+		Params: collections.NewItem(
+			sb,
+			types.ParamsKey,
+			"params",
+			collcompat.ProtoValue[types.Params](cdc),
+		),
 	}
-
-	return &Keeper{
-		cdc:      cdc,
-		storeKey: storeKey,
-		memKey:   memKey,
-
-		accountKeeper: accountKeeper, bankKeeper: bankKeeper, stakingKeeper: stakingKeeper, distrKeeper: distrKeeper,
-		paramstore: ps,
-		authority:  authority,
+	schema, err := sb.Build()
+	if err != nil {
+		panic(err)
 	}
+	keeper.Schema = schema
+	return keeper
 }
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
@@ -81,7 +89,10 @@ func (k Keeper) DistributeInflation(ctx sdk.Context) error {
 	}
 
 	// get allocation params to retrieve distribution proportions
-	params := k.GetParams(ctx)
+	params, err := k.GetParams(ctx)
+	if err != nil {
+		return err
+	}
 
 	supplementPoolAddress := k.accountKeeper.GetModuleAccount(ctx, types.SupplementPoolName).GetAddress()
 	supplementPoolBalance := k.bankKeeper.GetBalance(ctx, supplementPoolAddress, denom)
