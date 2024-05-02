@@ -3,22 +3,26 @@ package keeper
 import (
 	"fmt"
 
+	"cosmossdk.io/collections"
 	"cosmossdk.io/log"
 	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/public-awesome/stargaze/v14/internal/collcompat"
 	"github.com/public-awesome/stargaze/v14/x/cron/types"
 )
 
 type (
 	Keeper struct {
-		cdc        codec.BinaryCodec
-		storeKey   storetypes.StoreKey
-		memKey     storetypes.StoreKey
-		paramstore paramtypes.Subspace
-		wasmKeeper types.WasmKeeper
-		authority  string // this should be the x/gov module account
+		cdc                 codec.BinaryCodec
+		storeKey            storetypes.StoreKey
+		memKey              storetypes.StoreKey
+		paramstore          paramtypes.Subspace
+		wasmKeeper          types.WasmKeeper
+		Schema              collections.Schema
+		PrivilegedContracts collections.Map[[]byte, []byte]
+		authority           string // this should be the x/gov module account
 	}
 )
 
@@ -30,18 +34,32 @@ func NewKeeper(
 	wk types.WasmKeeper,
 	authority string,
 ) Keeper {
+	sb := collections.NewSchemaBuilder(collcompat.NewKVStoreService(storeKey))
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
 		ps = ps.WithKeyTable(types.ParamKeyTable())
 	}
-	return Keeper{
+	keeper := Keeper{
 		cdc:        cdc,
 		storeKey:   storeKey,
 		memKey:     memKey,
 		paramstore: ps,
 		wasmKeeper: wk,
 		authority:  authority,
+		PrivilegedContracts: collections.NewMap(
+			sb,
+			types.PrivilegedContractsPrefix,
+			"privilegedContracts",
+			collections.BytesKey,
+			collections.BytesValue,
+		),
 	}
+	schema, err := sb.Build()
+	if err != nil {
+		panic(err)
+	}
+	keeper.Schema = schema
+	return keeper
 }
 
 // GetAuthority returns the x/wasm module's authority.

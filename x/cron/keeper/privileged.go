@@ -12,8 +12,9 @@ import (
 func (k Keeper) SetPrivileged(ctx sdk.Context, contractAddr sdk.AccAddress) error {
 	if k.wasmKeeper.HasContractInfo(ctx, contractAddr) {
 		if !k.IsPrivileged(ctx, contractAddr) {
-			store := ctx.KVStore(k.storeKey)
-			store.Set(types.PrivilegedContractsKey(contractAddr), []byte{1})
+			if err := k.PrivilegedContracts.Set(ctx, contractAddr.Bytes(), []byte{1}); err != nil {
+				return err
+			}
 		}
 		event := sdk.NewEvent(
 			types.EventTypeSetContractPriviledge,
@@ -30,8 +31,9 @@ func (k Keeper) SetPrivileged(ctx sdk.Context, contractAddr sdk.AccAddress) erro
 func (k Keeper) UnsetPrivileged(ctx sdk.Context, contractAddr sdk.AccAddress) error {
 	if k.wasmKeeper.HasContractInfo(ctx, contractAddr) {
 		if k.IsPrivileged(ctx, contractAddr) {
-			store := ctx.KVStore(k.storeKey)
-			store.Delete(types.PrivilegedContractsKey(contractAddr))
+			if err := k.PrivilegedContracts.Remove(ctx, contractAddr.Bytes()); err != nil {
+				return err
+			}
 
 			event := sdk.NewEvent(
 				types.EventTypeUnsetContractPriviledge,
@@ -49,8 +51,11 @@ func (k Keeper) UnsetPrivileged(ctx sdk.Context, contractAddr sdk.AccAddress) er
 
 // IsPrivileged returns if the given contract is part of the privilege contract list
 func (k Keeper) IsPrivileged(ctx sdk.Context, contractAddr sdk.AccAddress) bool {
-	store := ctx.KVStore(k.storeKey)
-	return store.Has(types.PrivilegedContractsKey(contractAddr))
+	has, err := k.PrivilegedContracts.Has(ctx, contractAddr.Bytes())
+	if err != nil {
+		return false
+	}
+	return has
 }
 
 // IteratePrivileged executes the given func on all the privilege contracts
