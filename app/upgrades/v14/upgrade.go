@@ -10,6 +10,8 @@ import (
 	wasmlctypes "github.com/cosmos/ibc-go/modules/light-clients/08-wasm/types"
 	"github.com/public-awesome/stargaze/v14/app/keepers"
 	"github.com/public-awesome/stargaze/v14/app/upgrades"
+	marketmaptypes "github.com/skip-mev/slinky/x/marketmap/types"
+	oracletypes "github.com/skip-mev/slinky/x/oracle/types"
 )
 
 // next upgrade name
@@ -35,6 +37,8 @@ var Upgrade = upgrades.Upgrade{
 	StoreUpgrades: storetypes.StoreUpgrades{
 		Added: []string{
 			wasmlctypes.ModuleName,
+			marketmaptypes.ModuleName,
+			oracletypes.ModuleName,
 		},
 	},
 }

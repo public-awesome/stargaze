@@ -158,6 +158,15 @@ import (
 
 	keepers "github.com/public-awesome/stargaze/v14/app/keepers"
 	sgstatesync "github.com/public-awesome/stargaze/v14/internal/statesync"
+
+	// slinky
+	"github.com/skip-mev/slinky/x/oracle"
+	oraclekeeper "github.com/skip-mev/slinky/x/oracle/keeper"
+	oracletypes "github.com/skip-mev/slinky/x/oracle/types"
+
+	"github.com/skip-mev/slinky/x/marketmap"
+	marketmapkeeper "github.com/skip-mev/slinky/x/marketmap/keeper"
+	marketmaptypes "github.com/skip-mev/slinky/x/marketmap/types"
 )
 
 const (
@@ -228,6 +237,9 @@ var (
 		ibchooks.AppModuleBasic{},
 		packetforward.AppModuleBasic{},
 		ibcwasm.AppModuleBasic{},
+		// slinky
+		marketmap.AppModuleBasic{},
+		oracle.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -754,6 +766,10 @@ func NewStargazeApp(
 		app.Keepers.AccountKeeper, app.Keepers.BankKeeper, app.Keepers.DistrKeeper, authtypes.NewModuleAddress(govtypes.ModuleName).String())
 	app.Keepers.TokenFactoryKeeper = tokenfactoryKeeper
 
+	app.Keepers.MarketMapKeeper = marketmapkeeper.NewKeeper(runtime.NewKVStoreService(keys[marketmaptypes.StoreKey]), appCodec, authtypes.NewModuleAddress(govtypes.ModuleName))
+	oralceKeeper := oraclekeeper.NewKeeper(runtime.NewKVStoreService(keys[oracletypes.StoreKey]), appCodec, app.Keepers.MarketMapKeeper, authtypes.NewModuleAddress(govtypes.ModuleName))
+	app.Keepers.OracleKeeper = &oralceKeeper
+
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	/****  Module Options ****/
@@ -802,6 +818,8 @@ func NewStargazeApp(
 		// always be last to make sure that it checks for all invariants and not only part of them
 		crisis.NewAppModule(app.Keepers.CrisisKeeper, skipGenesisInvariants, app.GetSubspace(crisistypes.ModuleName)),
 		ibctm.NewAppModule(),
+		marketmap.NewAppModule(appCodec, app.Keepers.MarketMapKeeper),
+		oracle.NewAppModule(appCodec, *app.Keepers.OracleKeeper),
 	)
 
 	// BasicModuleManager defines the module BasicManager is in charge of setting up basic,
@@ -842,6 +860,8 @@ func NewStargazeApp(
 		tokenfactorytypes.ModuleName,
 		packetforwardtypes.ModuleName,
 		ibcwasmtypes.ModuleName,
+		marketmaptypes.ModuleName,
+		oracletypes.ModuleName,
 	)
 
 	app.ModuleManager.SetOrderEndBlockers(
@@ -861,6 +881,8 @@ func NewStargazeApp(
 		tokenfactorytypes.ModuleName,
 		packetforwardtypes.ModuleName,
 		ibcwasmtypes.ModuleName,
+		marketmaptypes.ModuleName,
+		oracletypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -896,6 +918,8 @@ func NewStargazeApp(
 		ibchookstypes.ModuleName,
 		packetforwardtypes.ModuleName,
 		ibcwasmtypes.ModuleName,
+		marketmaptypes.ModuleName,
+		oracletypes.ModuleName,
 	)
 
 	app.ModuleManager.RegisterInvariants(app.Keepers.CrisisKeeper)
