@@ -771,6 +771,8 @@ func NewStargazeApp(
 	app.Keepers.MarketMapKeeper = marketmapkeeper.NewKeeper(runtime.NewKVStoreService(keys[marketmaptypes.StoreKey]), appCodec, authtypes.NewModuleAddress(govtypes.ModuleName))
 	oralceKeeper := oraclekeeper.NewKeeper(runtime.NewKVStoreService(keys[oracletypes.StoreKey]), appCodec, app.Keepers.MarketMapKeeper, authtypes.NewModuleAddress(govtypes.ModuleName))
 	app.Keepers.OracleKeeper = &oralceKeeper
+	// set hooks
+	app.Keepers.MarketMapKeeper.SetHooks(app.Keepers.OracleKeeper.Hooks())
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
