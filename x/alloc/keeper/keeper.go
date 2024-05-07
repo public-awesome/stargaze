@@ -42,6 +42,7 @@ func NewKeeper(
 	sb := collections.NewSchemaBuilder(storeService)
 	keeper := Keeper{
 		cdc:           cdc,
+		storeService:  storeService,
 		accountKeeper: accountKeeper,
 		bankKeeper:    bankKeeper,
 		stakingKeeper: stakingKeeper,
