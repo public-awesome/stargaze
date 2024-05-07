@@ -357,6 +357,8 @@ func NewStargazeApp(
 		packetforwardtypes.StoreKey,
 		crisistypes.StoreKey,
 		ibcwasmtypes.StoreKey,
+		marketmaptypes.StoreKey,
+		oracletypes.StoreKey,
 	)
 	tkeys := storetypes.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := storetypes.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
