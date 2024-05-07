@@ -257,7 +257,7 @@ func TestInterchainAccounts(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	//Assert that the funds have been received by the user account on host
+	// Assert that the funds have been received by the user account on host
 	hostBal, err = hostChain.GetBalance(ctx, hostUser.FormattedAddress(), hostChain.Config().Denom)
 	require.NoError(t, err)
 	require.Equal(t, hostBal.Int64(), hostOrigBal.Int64())
