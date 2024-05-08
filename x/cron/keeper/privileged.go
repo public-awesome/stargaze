@@ -1,7 +1,6 @@
 package keeper
 
 import (
-	"cosmossdk.io/store/prefix"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -12,8 +11,9 @@ import (
 func (k Keeper) SetPrivileged(ctx sdk.Context, contractAddr sdk.AccAddress) error {
 	if k.wasmKeeper.HasContractInfo(ctx, contractAddr) {
 		if !k.IsPrivileged(ctx, contractAddr) {
-			store := ctx.KVStore(k.storeKey)
-			store.Set(types.PrivilegedContractsKey(contractAddr), []byte{1})
+			if err := k.PrivilegedContracts.Set(ctx, contractAddr.Bytes(), []byte{1}); err != nil {
+				return err
+			}
 		}
 		event := sdk.NewEvent(
 			types.EventTypeSetContractPriviledge,
@@ -30,8 +30,9 @@ func (k Keeper) SetPrivileged(ctx sdk.Context, contractAddr sdk.AccAddress) erro
 func (k Keeper) UnsetPrivileged(ctx sdk.Context, contractAddr sdk.AccAddress) error {
 	if k.wasmKeeper.HasContractInfo(ctx, contractAddr) {
 		if k.IsPrivileged(ctx, contractAddr) {
-			store := ctx.KVStore(k.storeKey)
-			store.Delete(types.PrivilegedContractsKey(contractAddr))
+			if err := k.PrivilegedContracts.Remove(ctx, contractAddr.Bytes()); err != nil {
+				return err
+			}
 
 			event := sdk.NewEvent(
 				types.EventTypeUnsetContractPriviledge,
@@ -49,18 +50,27 @@ func (k Keeper) UnsetPrivileged(ctx sdk.Context, contractAddr sdk.AccAddress) er
 
 // IsPrivileged returns if the given contract is part of the privilege contract list
 func (k Keeper) IsPrivileged(ctx sdk.Context, contractAddr sdk.AccAddress) bool {
-	store := ctx.KVStore(k.storeKey)
-	return store.Has(types.PrivilegedContractsKey(contractAddr))
+	has, err := k.PrivilegedContracts.Has(ctx, contractAddr.Bytes())
+	if err != nil {
+		return false
+	}
+	return has
 }
 
 // IteratePrivileged executes the given func on all the privilege contracts
-func (k Keeper) IteratePrivileged(ctx sdk.Context, cb func(sdk.AccAddress) bool) {
-	prefixStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.PrivilegedContractsPrefix)
-	iter := prefixStore.Iterator(nil, nil)
-	defer iter.Close()
-	for ; iter.Valid(); iter.Next() {
-		// cb returns true to stop early
-		if cb(iter.Key()) {
+func (k Keeper) IteratePrivileged(ctx sdk.Context, doSomething func(sdk.AccAddress) bool) {
+	iterator, err := k.PrivilegedContracts.Iterate(ctx, nil)
+	if err != nil {
+		panic(err)
+	}
+	defer iterator.Close()
+	for ; iterator.Valid(); iterator.Next() {
+		key, err := iterator.Key()
+		if err != nil {
+			panic(err)
+		}
+		contractAddr := sdk.AccAddress(key)
+		if doSomething(contractAddr) {
 			return
 		}
 	}

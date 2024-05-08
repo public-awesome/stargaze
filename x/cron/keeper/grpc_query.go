@@ -11,17 +11,29 @@ import (
 	"github.com/public-awesome/stargaze/v14/x/cron/types"
 )
 
-var _ types.QueryServer = Keeper{}
+var _ types.QueryServer = &QueryServer{}
+
+// QueryServer implements the module gRPC query service.
+type QueryServer struct {
+	keeper Keeper
+}
+
+// NewQueryServer creates a new gRPC query server.
+func NewQueryServer(keeper Keeper) *QueryServer {
+	return &QueryServer{
+		keeper: keeper,
+	}
+}
 
 // ListPrivileged lists the addresses of all the contracts which have been promoted to privilege status
-func (k Keeper) ListPrivileged(c context.Context, req *types.QueryListPrivilegedRequest) (*types.QueryListPrivilegedResponse, error) {
+func (q QueryServer) ListPrivileged(c context.Context, req *types.QueryListPrivilegedRequest) (*types.QueryListPrivilegedResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 	ctx := sdk.UnwrapSDKContext(c)
 	var result types.QueryListPrivilegedResponse
 
-	k.IteratePrivileged(ctx, func(addr sdk.AccAddress) bool {
+	q.keeper.IteratePrivileged(ctx, func(addr sdk.AccAddress) bool {
 		result.ContractAddresses = append(result.ContractAddresses, addr.String())
 		return false
 	})
@@ -30,14 +42,14 @@ func (k Keeper) ListPrivileged(c context.Context, req *types.QueryListPrivileged
 }
 
 // Params fetches all the params of x/cron module
-func (k Keeper) Params(c context.Context, req *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {
+func (q QueryServer) Params(c context.Context, req *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 	ctx := sdk.UnwrapSDKContext(c)
-	params := k.GetParams(ctx)
+	params, err := q.keeper.GetParams(ctx)
 
 	return &types.QueryParamsResponse{
 		Params: params,
-	}, nil
+	}, err
 }

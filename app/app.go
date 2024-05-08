@@ -716,9 +716,7 @@ func NewStargazeApp(
 
 	app.Keepers.CronKeeper = cronmodulekeeper.NewKeeper(
 		appCodec,
-		keys[cronmoduletypes.StoreKey],
-		keys[cronmoduletypes.MemStoreKey],
-		app.GetSubspace(cronmoduletypes.ModuleName),
+		runtime.NewKVStoreService(keys[cronmoduletypes.StoreKey]),
 		app.Keepers.WasmKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String())
 	cronModule := cronmodule.NewAppModule(appCodec, app.Keepers.CronKeeper, app.Keepers.WasmKeeper)
@@ -750,16 +748,13 @@ func NewStargazeApp(
 
 	app.Keepers.GovKeeper = *govKeeper.SetHooks(govtypes.NewMultiGovHooks())
 
-	app.Keepers.AllocKeeper = *allocmodulekeeper.NewKeeper(
+	app.Keepers.AllocKeeper = allocmodulekeeper.NewKeeper(
 		appCodec,
-		keys[allocmoduletypes.StoreKey],
-		keys[allocmoduletypes.MemStoreKey],
-
+		runtime.NewKVStoreService(keys[allocmoduletypes.StoreKey]),
 		app.Keepers.AccountKeeper,
 		app.Keepers.BankKeeper,
 		app.Keepers.StakingKeeper,
 		app.Keepers.DistrKeeper,
-		app.GetSubspace(allocmoduletypes.ModuleName),
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 	allocModule := allocmodule.NewAppModule(appCodec, app.Keepers.AllocKeeper)
@@ -1220,10 +1215,8 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(crisistypes.ModuleName)
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName).WithKeyTable(ibctransfertypes.ParamKeyTable())
 	paramsKeeper.Subspace(ibcexported.ModuleName).WithKeyTable(keyTable)
-	paramsKeeper.Subspace(allocmoduletypes.ModuleName)
 	paramsKeeper.Subspace(tokenfactorytypes.ModuleName)
 	paramsKeeper.Subspace(wasmtypes.ModuleName)
-	paramsKeeper.Subspace(cronmoduletypes.ModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName).WithKeyTable(icahosttypes.ParamKeyTable())
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName).WithKeyTable(icacontrollertypes.ParamKeyTable())
 	paramsKeeper.Subspace(globalfeemoduletypes.ModuleName)
