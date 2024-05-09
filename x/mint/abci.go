@@ -25,7 +25,10 @@ func BeginBlocker(ctx sdk.Context, k keeper.Keeper) {
 
 	// recalculate annual provision
 	minter.AnnualProvisions = minter.NextAnnualProvisions(ctx.BlockTime(), params)
-	k.SetMinter(ctx, minter)
+	err = k.SetMinter(ctx, minter)
+	if err != nil {
+		panic(err)
+	}
 
 	// mint coins, update supply
 	mintedCoin := minter.BlockProvision(params)

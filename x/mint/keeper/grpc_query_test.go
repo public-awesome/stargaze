@@ -48,6 +48,7 @@ func (suite *MintTestSuite) TestGRPCParams() {
 	annualProvisions, err := queryClient.AnnualProvisions(gocontext.Background(), &types.QueryAnnualProvisionsRequest{})
 	suite.Require().NoError(err)
 	minter, err := app.Keepers.MintKeeper.GetMinter(ctx)
+	suite.Require().NoError(err)
 	suite.Require().Equal(annualProvisions.AnnualProvisions, minter.AnnualProvisions)
 }
 

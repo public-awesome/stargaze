@@ -48,7 +48,8 @@ func Test_CodeAuthorization(t *testing.T) {
 		found := k.HasCodeAuthorization(ctx, ca.CodeID)
 		require.True(t, found)
 
-		k.DeleteCodeAuthorization(ctx, ca.CodeID)
+		err := k.DeleteCodeAuthorization(ctx, ca.CodeID)
+		require.NoError(t, err)
 
 		found = k.HasCodeAuthorization(ctx, ca.CodeID)
 		require.False(t, found)

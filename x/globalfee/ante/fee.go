@@ -197,6 +197,9 @@ func (mfd FeeDecorator) getGlobalFee(ctx sdk.Context, feeTx sdk.FeeTx) (sdk.Coin
 	)
 
 	params, err := mfd.feeKeeper.GetParams(ctx)
+	if err != nil {
+		return sdk.Coins{}, err
+	}
 	globalMinGasPrices = params.MinimumGasPrices
 
 	// global fee is empty set, set global fee to 0uatom

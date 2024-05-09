@@ -50,7 +50,8 @@ func Test_ContractAuthorization(t *testing.T) {
 		found := k.HasContractAuthorization(ctx, sdk.MustAccAddressFromBech32(ca.ContractAddress))
 		require.True(t, found)
 
-		k.DeleteContractAuthorization(ctx, sdk.MustAccAddressFromBech32(ca.ContractAddress))
+		err := k.DeleteContractAuthorization(ctx, sdk.MustAccAddressFromBech32(ca.ContractAddress))
+		require.NoError(t, err)
 
 		found = k.HasContractAuthorization(ctx, sdk.MustAccAddressFromBech32(ca.ContractAddress))
 		require.False(t, found)

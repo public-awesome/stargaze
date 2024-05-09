@@ -20,6 +20,6 @@ func NewMigrator(keeper Keeper) Migrator {
 // version 1 to version 2. Specifically, it takes the parameters that are currently stored
 // and managed by the x/params module and stores them directly into the x/globalfee
 // module state.
-func (m Migrator) Migrate1to2(ctx sdk.Context) error {
-	return nil //v2.MigrateStore(ctx, m.keeper.storeKey, m.keeper.paramStore, m.keeper.cdc)
+func (m Migrator) Migrate1to2(_ sdk.Context) error {
+	return nil // v2.MigrateStore(ctx, m.keeper.storeKey, m.keeper.paramStore, m.keeper.cdc)
 }
