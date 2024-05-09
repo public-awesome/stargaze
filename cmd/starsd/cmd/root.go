@@ -164,6 +164,7 @@ func initRootCmd(
 		debug.Cmd(),
 		confixcmd.ConfigCommand(),
 		Bech32Cmd(),
+		NewTestnetCmd(basicManager),
 		// pruning.Cmd(newApp, app.DefaultNodeHome),
 	//	snapshot.Cmd(newApp),
 	)
