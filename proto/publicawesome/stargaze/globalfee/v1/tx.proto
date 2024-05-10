@@ -10,50 +10,63 @@ option go_package = "github.com/public-awesome/stargaze/v14/x/globalfee/types";
 // Msg defines the alloc Msg service.
 service Msg {
   option (cosmos.msg.v1.service) = true;
-
+  // SetCodeAuthorization will set a specific code id  fee settings.
   rpc SetCodeAuthorization(MsgSetCodeAuthorization) returns (MsgSetCodeAuthorizationResponse);
 
+  // RemoveCodeAuthorization will remove code id configuration.
   rpc RemoveCodeAuthorization(MsgRemoveCodeAuthorization) returns (MsgRemoveCodeAuthorizationResponse);
 
+  // SetContractAuthorization will set a specific contract fee settings.
   rpc SetContractAuthorization(MsgSetContractAuthorization) returns (MsgSetContractAuthorizationResponse);
 
+  // RemoveContractAuthorization removes specific contract fee settings.
   rpc RemoveContractAuthorization(MsgRemoveContractAuthorization) returns (MsgRemoveContractAuthorizationResponse);
 
+  // UpdateParams will update module params, callable by governance only.
   rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
 }
 
+// MsgSetCodeAuthorization is the request for setting code fee.
 message MsgSetCodeAuthorization {
   option (cosmos.msg.v1.signer) = "sender";
   string sender = 1;
   CodeAuthorization code_authorization = 2;
 }
 
+// MsgSetCodeAuthorizationResponse is the response for executing a set code authorization.
 message MsgSetCodeAuthorizationResponse {}
 
+// MsgRemoveCodeAuthorization is the request for removing code authorization.
 message MsgRemoveCodeAuthorization {
   option (cosmos.msg.v1.signer) = "sender";
   string sender = 1;
   uint64 code_id = 2 [(gogoproto.customname) = "CodeID"];
 }
 
+// MsgRemoveCodeAuthorizationResponse is the response for executing remove authorization.
 message MsgRemoveCodeAuthorizationResponse {}
 
+// MsgSetContractAuthorization is the request for executing set contract authorization.
 message MsgSetContractAuthorization {
   option (cosmos.msg.v1.signer) = "sender";
   string sender = 1;
   ContractAuthorization contract_authorization = 2;
 }
 
+// MsgSetContractAuthorizationResponse is the response for executing contract authorization.
 message MsgSetContractAuthorizationResponse {}
 
+// MsgRemoveContractAuthorization is the request for removing contract authorization.
 message MsgRemoveContractAuthorization {
   option (cosmos.msg.v1.signer) = "sender";
   string sender = 1;
   string contract_address = 2;
 }
 
+// MsgRemoveContractAuthorizationResponse is the repsonse for executing a contract authorization removal.
 message MsgRemoveContractAuthorizationResponse {}
 
+// MsgUpdateParams is the request for updating module's params.
 message MsgUpdateParams {
   option (cosmos.msg.v1.signer) = "sender";
   string sender = 1;
@@ -64,4 +77,5 @@ message MsgUpdateParams {
   ];
 }
 
+// MsgUpdateParamsResponse is the response for executiong a module's params update.
 message MsgUpdateParamsResponse {}

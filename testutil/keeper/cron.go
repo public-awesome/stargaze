@@ -14,8 +14,8 @@ import (
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/runtime"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/public-awesome/stargaze/v14/x/cron/keeper"
 	"github.com/public-awesome/stargaze/v14/x/cron/types"
 	"github.com/stretchr/testify/require"
@@ -38,10 +38,6 @@ func CronKeeper(tb testing.TB) (keeper.Keeper, sdk.Context) {
 	registry := codectypes.NewInterfaceRegistry()
 	cdc := codec.NewProtoCodec(registry)
 
-	paramsKeeper := paramskeeper.NewKeeper(cdc, types.Amino, storeKey, tStoreKey)
-	paramsKeeper.Subspace(types.ModuleName).WithKeyTable(types.ParamKeyTable())
-	subspace, _ := paramsKeeper.GetSubspace(types.ModuleName)
-
 	wk := MockWasmKeeper{
 		HasContractInfoFn: func(_ context.Context, contractAddr sdk.AccAddress) bool {
 			switch contractAddr.String() {
@@ -61,9 +57,7 @@ func CronKeeper(tb testing.TB) (keeper.Keeper, sdk.Context) {
 
 	k := keeper.NewKeeper(
 		cdc,
-		storeKey,
-		memStoreKey,
-		subspace,
+		runtime.NewKVStoreService(storeKey),
 		wk,
 		"cosmos1a48wdtjn3egw7swhfkeshwdtjvs6hq9nlyrwut", // random addr for gov module
 	)

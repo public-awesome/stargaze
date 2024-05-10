@@ -1,10 +1,12 @@
 syntax = "proto3";
 package osmosis.tokenfactory.v1beta1;
 
+import "amino/amino.proto";
 import "cosmos/bank/v1beta1/bank.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "cosmos/msg/v1/msg.proto";
 import "gogoproto/gogo.proto";
+import "osmosis/tokenfactory/v1beta1/tokenfactory.proto";
 
 option go_package = "github.com/public-awesome/stargaze/v14/x/tokenfactory/types";
 
@@ -21,6 +23,8 @@ service Msg {
   rpc ChangeAdmin(MsgChangeAdmin) returns (MsgChangeAdminResponse);
   // SetDenomMetadata
   rpc SetDenomMetadata(MsgSetDenomMetadata) returns (MsgSetDenomMetadataResponse);
+  // UpdateParams updates the tokenfactory module's parameters.
+  rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
 }
 
 // MsgCreateDenom defines the message structure for the CreateDenom gRPC service
@@ -33,6 +37,7 @@ service Msg {
 // originally set to be the creator, but this can be changed later. The token
 // denom does not indicate the current admin.
 message MsgCreateDenom {
+  option (amino.name) = "tokenfactory/create-denom";
   option (cosmos.msg.v1.signer) = "sender";
   string sender = 1 [(gogoproto.moretags) = "yaml:\"sender\""];
   // subdenom can be up to 44 "alphanumeric" characters long.
@@ -48,34 +53,43 @@ message MsgCreateDenomResponse {
 // MsgMint is the sdk.Msg type for allowing an admin account to mint
 // more of a token.  For now, we only support minting to the sender account
 message MsgMint {
+  option (amino.name) = "tokenfactory/mint";
   option (cosmos.msg.v1.signer) = "sender";
   string sender = 1 [(gogoproto.moretags) = "yaml:\"sender\""];
   cosmos.base.v1beta1.Coin amount = 2 [
     (gogoproto.moretags) = "yaml:\"amount\"",
-    (gogoproto.nullable) = false
+    (gogoproto.nullable) = false,
+    (amino.encoding) = "legacy_coins",
+    (amino.dont_omitempty) = true
   ];
   string mintToAddress = 3 [(gogoproto.moretags) = "yaml:\"mint_to_address\""];
 }
 
+// MsgMintResponse response from executing MsgMint.
 message MsgMintResponse {}
 
 // MsgBurn is the sdk.Msg type for allowing an admin account to burn
 // a token.  For now, we only support burning from the sender account.
 message MsgBurn {
+  option (amino.name) = "tokenfactory/burn";
   option (cosmos.msg.v1.signer) = "sender";
   string sender = 1 [(gogoproto.moretags) = "yaml:\"sender\""];
   cosmos.base.v1beta1.Coin amount = 2 [
     (gogoproto.moretags) = "yaml:\"amount\"",
-    (gogoproto.nullable) = false
+    (gogoproto.nullable) = false,
+    (amino.encoding) = "legacy_coins",
+    (amino.dont_omitempty) = true
   ];
   string burnFromAddress = 3 [(gogoproto.moretags) = "yaml:\"burn_from_address\""];
 }
 
+// MsgBurnResponse response from executing MsgBurn.
 message MsgBurnResponse {}
 
 // MsgChangeAdmin is the sdk.Msg type for allowing an admin account to reassign
 // adminship of a denom to a new account
 message MsgChangeAdmin {
+  option (amino.name) = "tokenfactory/change-admin";
   option (cosmos.msg.v1.signer) = "sender";
   string sender = 1 [(gogoproto.moretags) = "yaml:\"sender\""];
   string denom = 2 [(gogoproto.moretags) = "yaml:\"denom\""];
@@ -89,6 +103,7 @@ message MsgChangeAdminResponse {}
 // MsgSetDenomMetadata is the sdk.Msg type for allowing an admin account to set
 // the denom's bank metadata
 message MsgSetDenomMetadata {
+  option (amino.name) = "tokenfactory/set-denom-metadata";
   option (cosmos.msg.v1.signer) = "sender";
   string sender = 1 [(gogoproto.moretags) = "yaml:\"sender\""];
   cosmos.bank.v1beta1.Metadata metadata = 2 [
@@ -100,3 +115,24 @@ message MsgSetDenomMetadata {
 // MsgSetDenomMetadataResponse defines the response structure for an executed
 // MsgSetDenomMetadata message.
 message MsgSetDenomMetadataResponse {}
+
+// MsgUpdateParams is the request type for updating module's params.
+//
+// Since: v14
+message MsgUpdateParams {
+  option (amino.name) = "tokenfactory/update-params";
+  option (cosmos.msg.v1.signer) = "authority";
+  // Authority is the address of the governance account.
+  string authority = 1;
+  // NOTE: All parameters must be supplied.
+  Params params = 2 [
+    (gogoproto.jsontag) = "params",
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
+
+// MsgUpdateParamsResponse is the response type for executing
+// an update.
+// Since: v14
+message MsgUpdateParamsResponse {}

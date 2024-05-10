@@ -29,6 +29,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+// MsgSetCodeAuthorization is the request for setting code fee.
 type MsgSetCodeAuthorization struct {
 	Sender            string             `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
 	CodeAuthorization *CodeAuthorization `protobuf:"bytes,2,opt,name=code_authorization,json=codeAuthorization,proto3" json:"code_authorization,omitempty"`
@@ -81,6 +82,7 @@ func (m *MsgSetCodeAuthorization) GetCodeAuthorization() *CodeAuthorization {
 	return nil
 }
 
+// MsgSetCodeAuthorizationResponse is the response for executing a set code authorization.
 type MsgSetCodeAuthorizationResponse struct {
 }
 
@@ -117,6 +119,7 @@ func (m *MsgSetCodeAuthorizationResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgSetCodeAuthorizationResponse proto.InternalMessageInfo
 
+// MsgRemoveCodeAuthorization is the request for removing code authorization.
 type MsgRemoveCodeAuthorization struct {
 	Sender string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
 	CodeID uint64 `protobuf:"varint,2,opt,name=code_id,json=codeId,proto3" json:"code_id,omitempty"`
@@ -169,6 +172,7 @@ func (m *MsgRemoveCodeAuthorization) GetCodeID() uint64 {
 	return 0
 }
 
+// MsgRemoveCodeAuthorizationResponse is the response for executing remove authorization.
 type MsgRemoveCodeAuthorizationResponse struct {
 }
 
@@ -205,6 +209,7 @@ func (m *MsgRemoveCodeAuthorizationResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgRemoveCodeAuthorizationResponse proto.InternalMessageInfo
 
+// MsgSetContractAuthorization is the request for executing set contract authorization.
 type MsgSetContractAuthorization struct {
 	Sender                string                 `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
 	ContractAuthorization *ContractAuthorization `protobuf:"bytes,2,opt,name=contract_authorization,json=contractAuthorization,proto3" json:"contract_authorization,omitempty"`
@@ -257,6 +262,7 @@ func (m *MsgSetContractAuthorization) GetContractAuthorization() *ContractAuthor
 	return nil
 }
 
+// MsgSetContractAuthorizationResponse is the response for executing contract authorization.
 type MsgSetContractAuthorizationResponse struct {
 }
 
@@ -293,6 +299,7 @@ func (m *MsgSetContractAuthorizationResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgSetContractAuthorizationResponse proto.InternalMessageInfo
 
+// MsgRemoveContractAuthorization is the request for removing contract authorization.
 type MsgRemoveContractAuthorization struct {
 	Sender          string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
 	ContractAddress string `protobuf:"bytes,2,opt,name=contract_address,json=contractAddress,proto3" json:"contract_address,omitempty"`
@@ -345,6 +352,7 @@ func (m *MsgRemoveContractAuthorization) GetContractAddress() string {
 	return ""
 }
 
+// MsgRemoveContractAuthorizationResponse is the repsonse for executing a contract authorization removal.
 type MsgRemoveContractAuthorizationResponse struct {
 }
 
@@ -383,6 +391,7 @@ func (m *MsgRemoveContractAuthorizationResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgRemoveContractAuthorizationResponse proto.InternalMessageInfo
 
+// MsgUpdateParams is the request for updating module's params.
 type MsgUpdateParams struct {
 	Sender string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
 	// NOTE: All parameters must be supplied.
@@ -436,6 +445,7 @@ func (m *MsgUpdateParams) GetParams() Params {
 	return Params{}
 }
 
+// MsgUpdateParamsResponse is the response for executiong a module's params update.
 type MsgUpdateParamsResponse struct {
 }
 
@@ -543,10 +553,15 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
+	// SetCodeAuthorization will set a specific code id  fee settings.
 	SetCodeAuthorization(ctx context.Context, in *MsgSetCodeAuthorization, opts ...grpc.CallOption) (*MsgSetCodeAuthorizationResponse, error)
+	// RemoveCodeAuthorization will remove code id configuration.
 	RemoveCodeAuthorization(ctx context.Context, in *MsgRemoveCodeAuthorization, opts ...grpc.CallOption) (*MsgRemoveCodeAuthorizationResponse, error)
+	// SetContractAuthorization will set a specific contract fee settings.
 	SetContractAuthorization(ctx context.Context, in *MsgSetContractAuthorization, opts ...grpc.CallOption) (*MsgSetContractAuthorizationResponse, error)
+	// RemoveContractAuthorization removes specific contract fee settings.
 	RemoveContractAuthorization(ctx context.Context, in *MsgRemoveContractAuthorization, opts ...grpc.CallOption) (*MsgRemoveContractAuthorizationResponse, error)
+	// UpdateParams will update module params, callable by governance only.
 	UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error)
 }
 
@@ -605,10 +620,15 @@ func (c *msgClient) UpdateParams(ctx context.Context, in *MsgUpdateParams, opts 
 
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
+	// SetCodeAuthorization will set a specific code id  fee settings.
 	SetCodeAuthorization(context.Context, *MsgSetCodeAuthorization) (*MsgSetCodeAuthorizationResponse, error)
+	// RemoveCodeAuthorization will remove code id configuration.
 	RemoveCodeAuthorization(context.Context, *MsgRemoveCodeAuthorization) (*MsgRemoveCodeAuthorizationResponse, error)
+	// SetContractAuthorization will set a specific contract fee settings.
 	SetContractAuthorization(context.Context, *MsgSetContractAuthorization) (*MsgSetContractAuthorizationResponse, error)
+	// RemoveContractAuthorization removes specific contract fee settings.
 	RemoveContractAuthorization(context.Context, *MsgRemoveContractAuthorization) (*MsgRemoveContractAuthorizationResponse, error)
+	// UpdateParams will update module params, callable by governance only.
 	UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error)
 }
 

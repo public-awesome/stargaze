@@ -24,6 +24,8 @@ type (
 		accountKeeper       types.AccountKeeper
 		bankKeeper          types.BankKeeper
 		communityPoolKeeper types.CommunityPoolKeeper
+
+		authority string
 	}
 )
 
@@ -35,6 +37,7 @@ func NewKeeper(
 	accountKeeper types.AccountKeeper,
 	bankKeeper types.BankKeeper,
 	communityPoolKeeper types.CommunityPoolKeeper,
+	authority string,
 ) Keeper {
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
@@ -48,6 +51,7 @@ func NewKeeper(
 		accountKeeper:       accountKeeper,
 		bankKeeper:          bankKeeper,
 		communityPoolKeeper: communityPoolKeeper,
+		authority:           authority,
 	}
 }
 
@@ -80,4 +84,9 @@ func (k Keeper) GetCreatorsPrefixStore(ctx sdk.Context) prefix.Store {
 // and sends to the relevant address.
 func (k Keeper) CreateModuleAccount(ctx sdk.Context) {
 	k.accountKeeper.GetModuleAccount(ctx, types.ModuleName)
+}
+
+// GetAuthority returns the x/tokenfactory module's authority.
+func (k Keeper) GetAuthority() string {
+	return k.authority
 }

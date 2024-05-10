@@ -77,12 +77,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 13.0.0-beta.9
+        - 14.0.0-alpha.2
     when:
       event:
         - push
       branch:
-        - spoorthi/ica-controller
+        - jhernandezb/upgrade-test
   - name: docker_release
     image: plugins/docker
     settings:
@@ -314,7 +314,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:12.0.0
+    image: publicawesome/stargaze:13.0.0
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
@@ -332,26 +332,27 @@ steps:
         - http://osmosis:26657
         - http://icad:26657
   - name: relayer
-    image: publicawesome/hermes:0.15.0
+    image: publicawesome/hermes:1.7.3
     commands:
-      - /bin/bash ./scripts/ci/setup-relayer.sh
+      - sleep 10
+      - /bin/bash ./scripts/ci/setup-hermes-1.7.sh
 
   - name: relayer-start
-    image: publicawesome/hermes:0.15.0
+    image: publicawesome/hermes:1.7.3
     commands:
-      - /bin/bash ./scripts/ci/start-relayer.sh
+      - /bin/bash ./scripts/ci/start-relayer-v1.7.sh
     detach: true
   - name: relayer-sender
-    image: publicawesome/hermes:0.15.0
+    image: publicawesome/hermes:1.7.3
     commands:
-      - /bin/bash ./scripts/ci/transfer-relayer.sh
+      - /bin/bash ./scripts/ci/transfer-relayer-v1.7.sh
   - name: proposal
-    image: publicawesome/stargaze:12.1.0
+    image: publicawesome/stargaze:13.0.0
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:13.0.0-beta.9
+    image: publicawesome/stargaze:14.0.0-alpha.2
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -370,7 +371,7 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:13.0.0-beta.9
+    image: publicawesome/stargaze:14.0.0-alpha.2
     commands:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
@@ -420,6 +421,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 8d837bf88cfaf3a378dbf814c7d279a1a4bc7070ecd42ecd77c061369c1c9b04
+hmac: 0e0c7fcfdbb1269dbc8595903d663c53bf327aabfca1298150e2e13638b2c3c2
 
 ...
