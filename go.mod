@@ -30,7 +30,7 @@ require (
 	github.com/cometbft/cometbft-db v0.8.0
 	github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7 v7.1.2
 	github.com/cosmos/ibc-apps/modules/ibc-hooks/v7 v7.0.0-20230803181732-7c8f814d3b79
-	github.com/cosmos/ibc-go/v7 v7.3.2
+	github.com/cosmos/ibc-go/v7 v7.4.0
 	github.com/prometheus/client_golang v1.17.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20231212172506-995d672761c0
 )
