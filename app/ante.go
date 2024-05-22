@@ -13,6 +13,8 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	ibcante "github.com/cosmos/ibc-go/v7/modules/core/ante"
 	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
+	feeabsante "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/ante"
+	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
 	globalfeeante "github.com/public-awesome/stargaze/v13/x/globalfee/ante"
 	globalfeekeeper "github.com/public-awesome/stargaze/v13/x/globalfee/keeper"
 )
@@ -28,6 +30,7 @@ type HandlerOptions struct {
 	WasmConfig        *wasmTypes.WasmConfig
 	TXCounterStoreKey storetypes.StoreKey
 	Codec             codec.BinaryCodec
+	feeabsKeeper      feeabskeeper.Keeper
 }
 
 // NewAnteHandler returns an AnteHandler that checks and increments sequence
@@ -64,12 +67,14 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		// limit simulation gas
 		wasmkeeper.NewLimitSimulationGasDecorator(options.WasmConfig.SimulationGasLimit),
 		globalfeeante.NewFeeDecorator(options.Codec, options.globalfeeKeeper, options.stakingKeeper),
+		feeabsante.NewFeeAbstrationMempoolFeeDecorator(options.feeabsKeeper),
 		wasmkeeper.NewCountTXDecorator(options.TXCounterStoreKey),
 		ante.NewExtensionOptionsDecorator(options.ExtensionOptionChecker),
 		ante.NewValidateBasicDecorator(),
 		ante.NewTxTimeoutHeightDecorator(),
 		ante.NewValidateMemoDecorator(options.AccountKeeper),
 		ante.NewConsumeGasForTxSizeDecorator(options.AccountKeeper),
+		feeabsante.NewFeeAbstractionDeductFeeDecorate(options.AccountKeeper, options.BankKeeper, options.feeabsKeeper, options.FeegrantKeeper),
 		ante.NewDeductFeeDecorator(options.AccountKeeper, options.BankKeeper, options.FeegrantKeeper, options.TxFeeChecker),
 		// SetPubKeyDecorator must be called before all signature verification decorators
 		ante.NewSetPubKeyDecorator(options.AccountKeeper),
