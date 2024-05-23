@@ -12,6 +12,7 @@ import (
 	wasmlctypes "github.com/cosmos/ibc-go/modules/light-clients/08-wasm/types"
 	"github.com/public-awesome/stargaze/v14/app/keepers"
 	"github.com/public-awesome/stargaze/v14/app/upgrades"
+	"github.com/public-awesome/stargaze/v14/internal/oracle/markets"
 	marketmaptypes "github.com/skip-mev/slinky/x/marketmap/types"
 	oracletypes "github.com/skip-mev/slinky/x/oracle/types"
 )
@@ -53,6 +54,27 @@ var Upgrade = upgrades.Upgrade{
 			})
 			if err != nil {
 				return nil, err
+			}
+
+			// add markets
+			m, err := markets.Slice()
+			if err != nil {
+				return nil, err
+			}
+
+			// iterates over slice and not map
+			for _, market := range m {
+				// create market
+				err = keepers.MarketMapKeeper.CreateMarket(wctx, market)
+				if err != nil {
+					return nil, err
+				}
+
+				// invoke hooks
+				err = keepers.MarketMapKeeper.Hooks().AfterMarketCreated(wctx, market)
+				if err != nil {
+					return nil, err
+				}
 			}
 
 			return migrations, nil
