@@ -4,29 +4,27 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"io/fs"
 	"os"
 	"path/filepath"
-	"strings"
-	"time"
 
+	"cosmossdk.io/math/unsafe"
 	cfg "github.com/cometbft/cometbft/config"
 	"github.com/cometbft/cometbft/libs/cli"
-	tmos "github.com/cometbft/cometbft/libs/os"
-	tmrand "github.com/cometbft/cometbft/libs/rand"
 	cmttypes "github.com/cometbft/cometbft/types"
 	"github.com/cosmos/go-bip39"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
+	errorsmod "cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/input"
 	"github.com/cosmos/cosmos-sdk/server"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
-	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
+	"github.com/cosmos/cosmos-sdk/x/genutil/types"
 )
 
 const (
@@ -35,6 +33,9 @@ const (
 
 	// FlagSeed defines a flag to initialize the private validator key from a specific seed.
 	FlagRecover = "recover"
+
+	// FlagDefaultBondDenom defines the default denom to use in the genesis file.
+	FlagDefaultBondDenom = "default-denom"
 )
 
 type printInfo struct {
@@ -61,7 +62,7 @@ func displayInfo(info printInfo) error {
 		return err
 	}
 
-	_, err = fmt.Fprintf(os.Stderr, "%s\n", string(sdk.MustSortJSON(out)))
+	_, err = fmt.Fprintf(os.Stderr, "%s\n", out)
 
 	return err
 }
@@ -82,38 +83,19 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 			config := serverCtx.Config
 			config.SetRoot(clientCtx.HomeDir)
 
-			chainID, err := cmd.Flags().GetString(flags.FlagChainID)
-			if err != nil {
-				return err
+			chainID, _ := cmd.Flags().GetString(flags.FlagChainID)
+			switch {
+			case chainID != "":
+			case clientCtx.ChainID != "":
+				chainID = clientCtx.ChainID
+			default:
+				chainID = fmt.Sprintf("test-chain-%v", unsafe.Str(6))
 			}
-			if chainID == "" {
-				chainID = fmt.Sprintf("test-chain-%v", tmrand.Str(6))
-			}
-			seeds := []string{}
-
-			// pre-fill seeds for mainnet
-			if chainID == "stargaze-1" {
-				seeds = []string{
-					"ade4d8bc8cbe014af6ebdf3cb7b1e9ad36f412c0@seeds.polkachu.com:13756",
-					"d5fc4f479c4e212c96dff5704bb2468ea03b8ae3@sg-seed.blockpane.com:26656",
-					"babc3f3f7804933265ec9c40ad94f4da8e9e0017@stargaze.seed.rhinostake.com:16656",
-				}
-			}
-
-			// Override default settings in config.toml
-			config.P2P.Seeds = strings.Join(seeds, ",")
-			config.P2P.MaxNumInboundPeers = 120
-			config.P2P.MaxNumOutboundPeers = 60
-			config.Mempool.Size = 10000
-			config.StateSync.TrustPeriod = 112 * time.Hour
 
 			// Get bip39 mnemonic
 			var mnemonic string
-			recovery, err := cmd.Flags().GetBool(FlagRecover)
-			if err != nil {
-				return err
-			}
-			if recovery {
+			recover, _ := cmd.Flags().GetBool(FlagRecover)
+			if recover {
 				inBuf := bufio.NewReader(cmd.InOrStdin())
 				value, err := input.GetString("Enter your bip39 mnemonic", inBuf)
 				if err != nil {
@@ -126,6 +108,12 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 				}
 			}
 
+			// Get initial height
+			initHeight, _ := cmd.Flags().GetInt64(flags.FlagInitHeight)
+			if initHeight < 1 {
+				initHeight = 1
+			}
+
 			nodeID, _, err := genutil.InitializeNodeValidatorFilesFromMnemonic(config, mnemonic)
 			if err != nil {
 				return err
@@ -134,43 +122,54 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 			config.Moniker = args[0]
 
 			genFile := config.GenesisFile()
-			overwrite, err := cmd.Flags().GetBool(FlagOverwrite)
-			if err != nil {
-				return err
-			}
+			overwrite, _ := cmd.Flags().GetBool(FlagOverwrite)
+			defaultDenom, _ := cmd.Flags().GetString(FlagDefaultBondDenom)
 
-			if !overwrite && tmos.FileExists(genFile) {
+			// use os.Stat to check if the file exists
+			_, err = os.Stat(genFile)
+			if !overwrite && !os.IsNotExist(err) {
 				return fmt.Errorf("genesis.json file already exists: %v", genFile)
 			}
 
-			appState, err := json.MarshalIndent(mbm.DefaultGenesis(cdc), "", " ")
+			// Overwrites the SDK default denom for side-effects
+			if defaultDenom != "" {
+				sdk.DefaultBondDenom = defaultDenom
+			}
+			appGenState := mbm.DefaultGenesis(cdc)
+
+			appState, err := json.MarshalIndent(appGenState, "", " ")
 			if err != nil {
-				return errors.Wrap(err, "Failed to marshall default genesis state")
+				return errorsmod.Wrap(err, "Failed to marshal default genesis state")
 			}
 
-			appGenesis := &genutiltypes.AppGenesis{}
+			appGenesis := &types.AppGenesis{}
 			if _, err := os.Stat(genFile); err != nil {
-				if !errors.Is(err, fs.ErrNotExist) {
+				if !os.IsNotExist(err) {
 					return err
 				}
 			} else {
-				appGenesis, err = genutiltypes.AppGenesisFromFile(genFile)
+				appGenesis, err = types.AppGenesisFromFile(genFile)
 				if err != nil {
-					return errors.Wrap(err, "Failed to read genesis doc from file")
+					return errorsmod.Wrap(err, "Failed to read genesis doc from file")
 				}
 			}
 
+			appGenesis.AppName = version.AppName
+			appGenesis.AppVersion = version.Version
 			appGenesis.ChainID = chainID
 			appGenesis.AppState = appState
+			appGenesis.InitialHeight = initHeight
 			defaultConsensusParams := cmttypes.DefaultConsensusParams()
-			defaultConsensusParams.ABCI = cmttypes.DefaultABCIParams()
+			defaultConsensusParams.Block.MaxBytes = 10_485_760 // 10MB
+			defaultConsensusParams.Block.MaxGas = 300_000_000  // 300M gas
 			defaultConsensusParams.ABCI.VoteExtensionsEnableHeight = 1
-			appGenesis.Consensus = &genutiltypes.ConsensusGenesis{
-				Params: defaultConsensusParams,
+			appGenesis.Consensus = &types.ConsensusGenesis{
+				Params:     defaultConsensusParams,
+				Validators: nil,
 			}
 
 			if err = genutil.ExportGenesisFile(appGenesis, genFile); err != nil {
-				return errors.Wrap(err, "Failed to export gensis file")
+				return errorsmod.Wrap(err, "Failed to export genesis file")
 			}
 
 			toPrint := newPrintInfo(config.Moniker, chainID, nodeID, "", appState)
