@@ -14,6 +14,7 @@ import (
 	"github.com/cometbft/cometbft/libs/cli"
 	tmos "github.com/cometbft/cometbft/libs/os"
 	tmrand "github.com/cometbft/cometbft/libs/rand"
+	cmttypes "github.com/cometbft/cometbft/types"
 	"github.com/cosmos/go-bip39"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -161,8 +162,11 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 
 			appGenesis.ChainID = chainID
 			appGenesis.AppState = appState
+			defaultConsensusParams := cmttypes.DefaultConsensusParams()
+			defaultConsensusParams.ABCI = cmttypes.DefaultABCIParams()
+			defaultConsensusParams.ABCI.VoteExtensionsEnableHeight = 1
 			appGenesis.Consensus = &genutiltypes.ConsensusGenesis{
-				Validators: nil,
+				Params: defaultConsensusParams,
 			}
 
 			if err = genutil.ExportGenesisFile(appGenesis, genFile); err != nil {

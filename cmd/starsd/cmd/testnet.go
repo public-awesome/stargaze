@@ -453,6 +453,7 @@ func initGenFiles(
 
 	appGenesis := genutiltypes.NewAppGenesisWithVersion(chainID, appGenStateJSON)
 	consensusParams := cmttypes.DefaultConsensusParams()
+	consensusParams.ABCI.VoteExtensionsEnableHeight = 1
 	consensusParams.Block.MaxBytes = 25 * 1024 * 1024
 	consensusParams.Block.MaxGas = 150_000_000
 	appGenesis.Consensus = &genutiltypes.ConsensusGenesis{
