@@ -18,7 +18,6 @@ type CustomAppConfig struct {
 
 // ConfigTemplate toml snippet for app.toml
 func OracleConfigTemplate(c oracleconfig.AppConfig) string {
-
 	return fmt.Sprintf(`
 ###############################################################################
 ###                                  Oracle                                 ###
@@ -44,6 +43,7 @@ client_timeout = "%s"
 metrics_enabled = %t
 `, c.Enabled, c.OracleAddress, c.ClientTimeout.String(), c.MetricsEnabled)
 }
+
 func CustomconfigTemplate(config wasmtypes.WasmConfig, oracleConfig oracleconfig.AppConfig) string {
 	return serverconfig.DefaultConfigTemplate + wasmtypes.ConfigTemplate(config) + OracleConfigTemplate(oracleConfig)
 }

@@ -43,7 +43,6 @@ var Upgrade = upgrades.Upgrade{
 				Validator: consensusParams.Params.Validator,
 				Abci:      consensusParams.Params.Abci,
 			})
-
 			if err != nil {
 				return nil, err
 			}
