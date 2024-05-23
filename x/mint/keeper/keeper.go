@@ -1,49 +1,60 @@
 package keeper
 
 import (
+	"cosmossdk.io/collections"
+	corestoretypes "cosmossdk.io/core/store"
 	"cosmossdk.io/log"
-
-	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/public-awesome/stargaze/v14/internal/collcompat"
 	"github.com/public-awesome/stargaze/v14/x/mint/types"
 )
 
 // Keeper of the mint store
 type Keeper struct {
 	cdc              codec.BinaryCodec
-	storeKey         storetypes.StoreKey
-	paramSpace       paramtypes.Subspace
+	storeService     corestoretypes.KVStoreService
 	bankKeeper       types.BankKeeper
 	feeCollectorName string
+	Params           collections.Item[types.Params]
+	Minter           collections.Item[types.Minter]
 	authority        string
 }
 
 // NewKeeper creates a new mint Keeper instance
 func NewKeeper(
-	cdc codec.BinaryCodec, key storetypes.StoreKey, paramSpace paramtypes.Subspace,
-	ak types.AccountKeeper, bk types.BankKeeper,
-	feeCollectorName string, authority string,
+	cdc codec.BinaryCodec,
+	storeService corestoretypes.KVStoreService,
+	ak types.AccountKeeper,
+	bk types.BankKeeper,
+	feeCollectorName string,
+	authority string,
 ) Keeper {
 	// ensure mint module account is set
 	if addr := ak.GetModuleAddress(types.ModuleName); addr == nil {
 		panic("the mint module account has not been set")
 	}
-
-	// set KeyTable if it has not already been set
-	if !paramSpace.HasKeyTable() {
-		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
-	}
-
-	return Keeper{
+	sb := collections.NewSchemaBuilder(storeService)
+	keeper := Keeper{
 		cdc:              cdc,
-		storeKey:         key,
-		paramSpace:       paramSpace,
+		storeService:     storeService,
 		bankKeeper:       bk,
 		feeCollectorName: feeCollectorName,
 		authority:        authority,
+		Params: collections.NewItem(
+			sb,
+			types.ParamsKey,
+			"params",
+			collcompat.ProtoValue[types.Params](cdc),
+		),
+		Minter: collections.NewItem(
+			sb,
+			types.MinterKey,
+			"minter",
+			collcompat.ProtoValue[types.Minter](cdc),
+		),
 	}
+	return keeper
 }
 
 // Logger returns a module-specific logger.
@@ -52,45 +63,23 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 }
 
 // get the minter
-func (k Keeper) GetMinter(ctx sdk.Context) (minter types.Minter) {
-	store := ctx.KVStore(k.storeKey)
-	b := store.Get(types.MinterKey)
-	if b == nil {
-		panic("stored minter should not have been nil")
-	}
-
-	k.cdc.MustUnmarshal(b, &minter)
-	return
+func (k Keeper) GetMinter(ctx sdk.Context) (minter types.Minter, err error) {
+	return k.Minter.Get(ctx)
 }
 
 // set the minter
-func (k Keeper) SetMinter(ctx sdk.Context, minter types.Minter) {
-	store := ctx.KVStore(k.storeKey)
-	b := k.cdc.MustMarshal(&minter)
-	store.Set(types.MinterKey, b)
+func (k Keeper) SetMinter(ctx sdk.Context, minter types.Minter) error {
+	return k.Minter.Set(ctx, minter)
 }
 
 // GetParams returns the total set of minting parameters.
-func (k Keeper) GetParams(ctx sdk.Context) (params types.Params) {
-	store := ctx.KVStore(k.storeKey)
-	bz := store.Get(types.ParamsKey)
-	if bz == nil {
-		return params
-	}
-
-	k.cdc.MustUnmarshal(bz, &params)
-	return params
+func (k Keeper) GetParams(ctx sdk.Context) (params types.Params, err error) {
+	return k.Params.Get(ctx)
 }
 
 // SetParams sets the total set of minting parameters.
 func (k Keeper) SetParams(ctx sdk.Context, params types.Params) error {
-	store := ctx.KVStore(k.storeKey)
-	bz, err := k.cdc.Marshal(&params)
-	if err != nil {
-		return err
-	}
-	store.Set(types.ParamsKey, bz)
-	return nil
+	return k.Params.Set(ctx, params)
 }
 
 // MintCoins implements an alias call to the underlying supply keeper's

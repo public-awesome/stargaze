@@ -46,8 +46,8 @@ func (k msgServer) RemoveCodeAuthorization(goCtx context.Context, msg *types.Msg
 	if !k.isAuthorized(ctx, msg.Sender) {
 		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender address is not authorized address to remove code authorization")
 	}
-	k.Keeper.DeleteCodeAuthorization(ctx, msg.GetCodeID())
-	return &types.MsgRemoveCodeAuthorizationResponse{}, nil
+	err = k.Keeper.DeleteCodeAuthorization(ctx, msg.GetCodeID())
+	return &types.MsgRemoveCodeAuthorizationResponse{}, err
 }
 
 func (k msgServer) SetContractAuthorization(goCtx context.Context, msg *types.MsgSetContractAuthorization) (*types.MsgSetContractAuthorizationResponse, error) {
@@ -79,8 +79,8 @@ func (k msgServer) RemoveContractAuthorization(goCtx context.Context, msg *types
 	if err != nil {
 		return nil, err
 	}
-	k.Keeper.DeleteContractAuthorization(ctx, contractAddr)
-	return &types.MsgRemoveContractAuthorizationResponse{}, nil
+	err = k.Keeper.DeleteContractAuthorization(ctx, contractAddr)
+	return &types.MsgRemoveContractAuthorizationResponse{}, err
 }
 
 func (k msgServer) UpdateParams(goCtx context.Context, msg *types.MsgUpdateParams) (*types.MsgUpdateParamsResponse, error) {

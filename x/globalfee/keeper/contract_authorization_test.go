@@ -34,7 +34,7 @@ func Test_ContractAuthorization(t *testing.T) {
 	})
 
 	t.Run("authorization doesnt exist", func(t *testing.T) {
-		_, found := k.GetContractAuthorization(ctx, sdk.MustAccAddressFromBech32(ca.ContractAddress))
+		found := k.HasContractAuthorization(ctx, sdk.MustAccAddressFromBech32(ca.ContractAddress))
 		require.False(t, found)
 	})
 
@@ -42,21 +42,29 @@ func Test_ContractAuthorization(t *testing.T) {
 		err := k.SetContractAuthorization(ctx, ca)
 		require.NoError(t, err)
 
-		_, found := k.GetContractAuthorization(ctx, sdk.MustAccAddressFromBech32(ca.ContractAddress))
+		found := k.HasContractAuthorization(ctx, sdk.MustAccAddressFromBech32(ca.ContractAddress))
 		require.True(t, found)
 	})
 
 	t.Run("delete authorization", func(t *testing.T) {
-		_, found := k.GetContractAuthorization(ctx, sdk.MustAccAddressFromBech32(ca.ContractAddress))
+		found := k.HasContractAuthorization(ctx, sdk.MustAccAddressFromBech32(ca.ContractAddress))
 		require.True(t, found)
 
-		k.DeleteContractAuthorization(ctx, sdk.MustAccAddressFromBech32(ca.ContractAddress))
+		err := k.DeleteContractAuthorization(ctx, sdk.MustAccAddressFromBech32(ca.ContractAddress))
+		require.NoError(t, err)
 
-		_, found = k.GetContractAuthorization(ctx, sdk.MustAccAddressFromBech32(ca.ContractAddress))
+		found = k.HasContractAuthorization(ctx, sdk.MustAccAddressFromBech32(ca.ContractAddress))
 		require.False(t, found)
 	})
 
 	t.Run("iterate contract authorization", func(t *testing.T) {
+		count := 0
+		k.IterateContractAuthorizations(ctx, func(ca types.ContractAuthorization) bool {
+			count++
+			return false
+		})
+		require.Equal(t, 0, count)
+
 		err := k.SetContractAuthorization(ctx, ca)
 		require.NoError(t, err)
 		err = k.SetContractAuthorization(ctx, types.ContractAuthorization{
@@ -70,7 +78,7 @@ func Test_ContractAuthorization(t *testing.T) {
 		})
 		require.NoError(t, err)
 
-		count := 0
+		count = 0
 		k.IterateContractAuthorizations(ctx, func(ca types.ContractAuthorization) bool {
 			count++
 			return false

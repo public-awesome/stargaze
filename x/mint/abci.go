@@ -14,18 +14,27 @@ func BeginBlocker(ctx sdk.Context, k keeper.Keeper) {
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyBeginBlocker)
 
 	// fetch stored minter & params
-	minter := k.GetMinter(ctx)
-	params := k.GetParams(ctx)
+	minter, err := k.GetMinter(ctx)
+	if err != nil {
+		panic(err)
+	}
+	params, err := k.GetParams(ctx)
+	if err != nil {
+		panic(err)
+	}
 
 	// recalculate annual provision
 	minter.AnnualProvisions = minter.NextAnnualProvisions(ctx.BlockTime(), params)
-	k.SetMinter(ctx, minter)
+	err = k.SetMinter(ctx, minter)
+	if err != nil {
+		panic(err)
+	}
 
 	// mint coins, update supply
 	mintedCoin := minter.BlockProvision(params)
 	mintedCoins := sdk.NewCoins(mintedCoin)
 
-	err := k.MintCoins(ctx, mintedCoins)
+	err = k.MintCoins(ctx, mintedCoins)
 	if err != nil {
 		panic(err)
 	}

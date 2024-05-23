@@ -17,10 +17,10 @@ import (
 var _ sdk.AnteDecorator = FeeDecorator{}
 
 type GlobalFeeReaderExpected interface {
-	GetContractAuthorization(ctx sdk.Context, contractAddr sdk.AccAddress) (types.ContractAuthorization, bool)
-	GetCodeAuthorization(ctx sdk.Context, codeID uint64) (types.CodeAuthorization, bool)
+	GetContractAuthorization(ctx sdk.Context, contractAddr sdk.AccAddress) (types.ContractAuthorization, error)
+	GetCodeAuthorization(ctx sdk.Context, codeID uint64) (types.CodeAuthorization, error)
 	GetContractInfo(ctx sdk.Context, contractAddress sdk.AccAddress) *wasmtypes.ContractInfo
-	GetParams(ctx sdk.Context) types.Params
+	GetParams(ctx sdk.Context) (types.Params, error)
 }
 
 type StakingReaderExpected interface {
@@ -80,13 +80,13 @@ func (mfd FeeDecorator) containsOnlyZeroFeeMsgs(ctx sdk.Context, msgs []sdk.Msg)
 
 func (mfd FeeDecorator) isZeroFeeMsg(ctx sdk.Context, msg *wasmtypes.MsgExecuteContract) bool {
 	contactAddr := sdk.MustAccAddressFromBech32(msg.Contract)
-	contractAuth, found := mfd.feeKeeper.GetContractAuthorization(ctx, contactAddr)
-	if found {
+	contractAuth, err := mfd.feeKeeper.GetContractAuthorization(ctx, contactAddr)
+	if err == nil {
 		return isAuthorizedMethod(msg.GetMsg(), contractAuth.GetMethods())
 	}
 	codeID := mfd.feeKeeper.GetContractInfo(ctx, contactAddr).CodeID
-	codeAuth, found := mfd.feeKeeper.GetCodeAuthorization(ctx, codeID)
-	if found {
+	codeAuth, err := mfd.feeKeeper.GetCodeAuthorization(ctx, codeID)
+	if err == nil {
 		return isAuthorizedMethod(msg.GetMsg(), codeAuth.GetMethods())
 	}
 
@@ -196,7 +196,11 @@ func (mfd FeeDecorator) getGlobalFee(ctx sdk.Context, feeTx sdk.FeeTx) (sdk.Coin
 		err                error
 	)
 
-	globalMinGasPrices = mfd.feeKeeper.GetParams(ctx).MinimumGasPrices
+	params, err := mfd.feeKeeper.GetParams(ctx)
+	if err != nil {
+		return sdk.Coins{}, err
+	}
+	globalMinGasPrices = params.MinimumGasPrices
 
 	// global fee is empty set, set global fee to 0uatom
 	if len(globalMinGasPrices) == 0 {

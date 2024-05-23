@@ -436,8 +436,13 @@ func NewStargazeApp(
 	)
 
 	app.Keepers.MintKeeper = mintkeeper.NewKeeper(
-		appCodec, keys[minttypes.StoreKey], app.GetSubspace(minttypes.ModuleName),
-		app.Keepers.AccountKeeper, app.Keepers.BankKeeper, authtypes.FeeCollectorName, authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		appCodec,
+		runtime.NewKVStoreService(keys[minttypes.StoreKey]),
+
+		app.Keepers.AccountKeeper,
+		app.Keepers.BankKeeper,
+		authtypes.FeeCollectorName,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 	app.Keepers.DistrKeeper = distrkeeper.NewKeeper(
 		appCodec,
@@ -709,8 +714,7 @@ func NewStargazeApp(
 
 	app.Keepers.GlobalFeeKeeper = globalfeemodulekeeper.NewKeeper(
 		appCodec,
-		keys[globalfeemoduletypes.StoreKey],
-		app.GetSubspace(globalfeemoduletypes.ModuleName),
+		runtime.NewKVStoreService(keys[globalfeemoduletypes.StoreKey]),
 		app.Keepers.WasmKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
@@ -1180,7 +1184,6 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(authtypes.ModuleName)
 	paramsKeeper.Subspace(banktypes.ModuleName)
 	paramsKeeper.Subspace(stakingtypes.ModuleName)
-	paramsKeeper.Subspace(minttypes.ModuleName)
 	paramsKeeper.Subspace(distrtypes.ModuleName)
 	paramsKeeper.Subspace(slashingtypes.ModuleName)
 	paramsKeeper.Subspace(govtypes.ModuleName)
@@ -1191,7 +1194,6 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(wasmtypes.ModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName).WithKeyTable(icahosttypes.ParamKeyTable())
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName).WithKeyTable(icacontrollertypes.ParamKeyTable())
-	paramsKeeper.Subspace(globalfeemoduletypes.ModuleName)
 	paramsKeeper.Subspace(packetforwardtypes.ModuleName).WithKeyTable(packetforwardtypes.ParamKeyTable())
 
 	return paramsKeeper
