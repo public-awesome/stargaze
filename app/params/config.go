@@ -1,14 +1,18 @@
 package params
 
 import (
+	"time"
+
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
+	oracleconfig "github.com/skip-mev/slinky/oracle/config"
 )
 
 // CustomAppConfig defines the configuration for the Nois app.
 type CustomAppConfig struct {
 	serverconfig.Config
-	Wasm wasmtypes.WasmConfig `mapstructure:"wasm"`
+	Wasm   wasmtypes.WasmConfig   `mapstructure:"wasm"`
+	Oracle oracleconfig.AppConfig `mapstructure:"oracle"`
 }
 
 func CustomconfigTemplate(config wasmtypes.WasmConfig) string {
@@ -29,6 +33,12 @@ func DefaultConfig() (string, interface{}) {
 	customConfig := CustomAppConfig{
 		Config: *serverConfig,
 		Wasm:   wasmConfig,
+		Oracle: oracleconfig.AppConfig{
+			Enabled:        false,
+			OracleAddress:  "localhost:8080",
+			ClientTimeout:  time.Second * 1,
+			MetricsEnabled: false,
+		},
 	}
 
 	return CustomconfigTemplate(wasmConfig), customConfig
