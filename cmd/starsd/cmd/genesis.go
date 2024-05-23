@@ -13,6 +13,7 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	ibctransfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
+	"github.com/public-awesome/stargaze/v14/internal/oracle/markets"
 	minttypes "github.com/public-awesome/stargaze/v14/x/mint/types"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
@@ -23,6 +24,7 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	globalfeetypes "github.com/public-awesome/stargaze/v14/x/globalfee/types"
 	tokenfactorytypes "github.com/public-awesome/stargaze/v14/x/tokenfactory/types"
+	marketmaptypes "github.com/skip-mev/slinky/x/marketmap/types"
 )
 
 const (
@@ -111,6 +113,15 @@ func PrepareGenesis(
 	crisisGenState.ConstantFee = genesisParams.CrisisConstantFee
 	crisisGenStateBz := clientCtx.Codec.MustMarshalJSON(crisisGenState)
 	appState[crisistypes.ModuleName] = crisisGenStateBz
+
+	marketmapGenState := marketmaptypes.DefaultGenesisState()
+	marketsMap, err := markets.Map()
+	if err != nil {
+		panic(fmt.Errorf("failed to parse markets: %w", err))
+	}
+	marketmapGenState.MarketMap = marketsMap
+	marketmapGenStateBz := clientCtx.Codec.MustMarshalJSON(marketmapGenState)
+	appState[crisistypes.ModuleName] = marketmapGenStateBz
 
 	return appState
 }
