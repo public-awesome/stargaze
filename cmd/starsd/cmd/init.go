@@ -162,7 +162,7 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 			defaultConsensusParams := cmttypes.DefaultConsensusParams()
 			defaultConsensusParams.Block.MaxBytes = 10_485_760 // 10MB
 			defaultConsensusParams.Block.MaxGas = 300_000_000  // 300M gas
-			defaultConsensusParams.ABCI.VoteExtensionsEnableHeight = 1
+			defaultConsensusParams.ABCI.VoteExtensionsEnableHeight = 2
 			appGenesis.Consensus = &types.ConsensusGenesis{
 				Params:     defaultConsensusParams,
 				Validators: nil,
