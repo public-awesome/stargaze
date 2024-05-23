@@ -77,12 +77,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 14.0.0-alpha.2
+        - 14.0.0-alpha.4
     when:
       event:
         - push
       branch:
-        - jhernandezb/upgrade-test
+        - jhernandezb/add-slinky
   - name: docker_release
     image: plugins/docker
     settings:
@@ -98,7 +98,7 @@ steps:
         - tag
 
   - name: release
-    image: golang:1.21.3
+    image: golang:1.22.3
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -352,7 +352,7 @@ steps:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:14.0.0-alpha.2
+    image: publicawesome/stargaze:14.0.0-alpha.4
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -371,7 +371,7 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:14.0.0-alpha.2
+    image: publicawesome/stargaze:14.0.0-alpha.4
     commands:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
@@ -421,6 +421,6 @@ volumes:
 
 ---
 kind: signature
-hmac: b0cd58d1c0903360f055590ce0b8b3caf31db7a78fcc8fb60290e23537bbff80
+hmac: 65603a40e43948cf97b2fe57d5b56cdf232001dff7451ec0b7d9d5c5f64af387
 
 ...
