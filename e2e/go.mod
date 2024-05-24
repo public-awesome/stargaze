@@ -10,7 +10,7 @@ replace (
 	github.com/cosmos/ibc-apps/modules/ibc-hooks/v8 => github.com/public-awesome/ibc-apps/modules/ibc-hooks/v8 v8.0.0-20240112154558-ac156266345d
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	github.com/public-awesome/stargaze/v14 => ../
-	github.com/strangelove-ventures/interchaintest/v8 => github.com/public-awesome/interchaintest/v8 v8.0.0-20240524031705-f8efd4bea934
+	github.com/strangelove-ventures/interchaintest/v8 => github.com/public-awesome/interchaintest/v8 v8.0.0-20240524041115-85cfeb2b4828
 	github.com/vedhavyas/go-subkey => github.com/strangelove-ventures/go-subkey v1.0.7
 )
 
