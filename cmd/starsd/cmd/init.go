@@ -36,6 +36,8 @@ const (
 
 	// FlagDefaultBondDenom defines the default denom to use in the genesis file.
 	FlagDefaultBondDenom = "default-denom"
+
+	FlagVoteExtensionsEnableHeight = "vote-extensions-height"
 )
 
 type printInfo struct {
@@ -162,7 +164,9 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 			defaultConsensusParams := cmttypes.DefaultConsensusParams()
 			defaultConsensusParams.Block.MaxBytes = 10_485_760 // 10MB
 			defaultConsensusParams.Block.MaxGas = 300_000_000  // 300M gas
-			defaultConsensusParams.ABCI.VoteExtensionsEnableHeight = 2
+
+			voteExtensionsHeight, _ := cmd.Flags().GetInt64(FlagVoteExtensionsEnableHeight)
+			defaultConsensusParams.ABCI.VoteExtensionsEnableHeight = voteExtensionsHeight
 			appGenesis.Consensus = &types.ConsensusGenesis{
 				Params:     defaultConsensusParams,
 				Validators: nil,
@@ -183,6 +187,7 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 	cmd.Flags().BoolP(FlagOverwrite, "o", false, "overwrite the genesis.json file")
 	cmd.Flags().Bool(FlagRecover, false, "provide seed phrase to recover existing key instead of creating")
 	cmd.Flags().String(flags.FlagChainID, "", "genesis file chain-id, if left blank will be randomly created")
+	cmd.Flags().Int64(FlagVoteExtensionsEnableHeight, 0, "enable vote extensions height")
 
 	return cmd
 }
