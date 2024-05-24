@@ -187,7 +187,7 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 	cmd.Flags().BoolP(FlagOverwrite, "o", false, "overwrite the genesis.json file")
 	cmd.Flags().Bool(FlagRecover, false, "provide seed phrase to recover existing key instead of creating")
 	cmd.Flags().String(flags.FlagChainID, "", "genesis file chain-id, if left blank will be randomly created")
-	cmd.Flags().Int64(FlagVoteExtensionsEnableHeight, 0, "enable vote extensions height")
+	cmd.Flags().Int64(FlagVoteExtensionsEnableHeight, 2, "enable vote extensions height")
 
 	return cmd
 }

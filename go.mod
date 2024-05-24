@@ -217,6 +217,7 @@ require (
 
 replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
+	github.com/cosmos/cosmos-sdk => github.com/public-awesome/cosmos-sdk v0.50.0-beta.0.0.20240524044418-cc469e470f74
 	github.com/cosmos/ibc-apps/modules/ibc-hooks/v8 => github.com/public-awesome/ibc-apps/modules/ibc-hooks/v8 v8.0.0-20240112154558-ac156266345d
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.8.1
 	// TODO: remove after https://github.com/spf13/viper/issues/1706 gets fixed
