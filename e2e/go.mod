@@ -8,6 +8,7 @@ replace (
 	github.com/ChainSafe/go-schnorrkel => github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d
 	github.com/ChainSafe/go-schnorrkel/1 => github.com/ChainSafe/go-schnorrkel v1.0.0
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
+	github.com/strangelove-ventures/interchaintest/v8 => github.com/public-awesome/interchaintest/v8 v8.0.0-20240524024843-81b2a007101c
 	github.com/vedhavyas/go-subkey => github.com/strangelove-ventures/go-subkey v1.0.7
 )
 
@@ -16,7 +17,7 @@ require (
 	cosmossdk.io/x/upgrade v0.1.1
 	github.com/cosmos/cosmos-sdk v0.50.6
 	github.com/cosmos/gogoproto v1.4.12
-	github.com/cosmos/ibc-go/v8 v8.2.0
+	github.com/cosmos/ibc-go/v8 v8.3.1
 	github.com/docker/docker v24.0.9+incompatible
 	github.com/strangelove-ventures/interchaintest/v8 v8.3.0
 	github.com/stretchr/testify v1.9.0
@@ -69,7 +70,7 @@ require (
 	github.com/cockroachdb/pebble v1.1.0 // indirect
 	github.com/cockroachdb/redact v1.1.5 // indirect
 	github.com/cockroachdb/tokenbucket v0.0.0-20230807174530-cc333fc44b06 // indirect
-	github.com/cometbft/cometbft v0.38.6 // indirect
+	github.com/cometbft/cometbft v0.38.7 // indirect
 	github.com/cometbft/cometbft-db v0.10.0 // indirect
 	github.com/cosmos/btcutil v1.0.5 // indirect
 	github.com/cosmos/cosmos-db v1.0.2 // indirect
