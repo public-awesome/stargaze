@@ -24,7 +24,7 @@ const (
 )
 
 const (
-	haltHeightDelta    = uint64(20) // The number of blocks after which to apply upgrade after creation of proposal.
+	haltHeightDelta    = int64(20)  // The number of blocks after which to apply upgrade after creation of proposal.
 	blocksAfterUpgrade = uint64(10) // The number of blocks to wait for after the upgrade has been applied.
 	votingPeriod       = "30s"      // Reducing voting period for testing
 	maxDepositPeriod   = "10s"      // Reducing max deposit period for testing
@@ -59,7 +59,7 @@ func TestChainUpgrade(t *testing.T) {
 	defer timeoutCtxCancel()
 
 	// This should timeout due to chain halt at upgrade height.
-	_ = testutil.WaitForBlocks(timeoutCtx, int(haltHeight-height)+1, stargazeChain)
+	_ = testutil.WaitForBlocks(timeoutCtx, int(haltHeight)-int(height)+1, stargazeChain)
 
 	height, err = stargazeChain.Height(ctx)
 	require.NoError(t, err, "error fetching height after chain should have halted")
@@ -140,7 +140,7 @@ func submitUpgradeProposalAndVote(t *testing.T, ctx context.Context, stargazeCha
 
 	_, err = cosmos.PollForProposalStatusV1(ctx, stargazeChain, height, height+haltHeightDelta, proposalID, govv1.ProposalStatus_PROPOSAL_STATUS_PASSED)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
-	return haltHeight
+	return uint64(haltHeight)
 }
 
 func fundChainUser(t *testing.T, ctx context.Context, userName string, stargazeChain *cosmos.CosmosChain) ibc.Wallet {
