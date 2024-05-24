@@ -1037,19 +1037,19 @@ func NewStargazeApp(
 	oraclePreblocker := oraclePreBlockHandler.PreBlocker()
 	preBlocker := func(ctx sdk.Context, req *abci.RequestFinalizeBlock) (*sdk.ResponsePreBlock, error) {
 		// call app's preblocker first in case there is changes made on upgrades
-		// that can modify state and lead do serialization issues
+		// that can modify state and lead to serialization/deserialization issues
 		resp, err := app.PreBlocker(ctx, req)
 		if err != nil {
 			return resp, err
 		}
 
-		// oracle preblocker sends empty response block
+		// oracle preblocker sends empty response pre block so it can ignored
 		_, err = oraclePreblocker(ctx, req)
 		if err != nil {
 			return &sdk.ResponsePreBlock{}, err
 		}
 
-		// return resp from app's preblocker
+		// return resp from app's preblocker which can return consensus param changed flag
 		return resp, nil
 	}
 
