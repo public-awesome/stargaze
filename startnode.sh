@@ -18,15 +18,17 @@ FUNDER=$($STARSD_FILE keys show funder -a)
 DENOM=ustars
 # setup chain
 $STARSD_FILE init stargaze --chain-id localnet-1
-sed -i "s/\"stake\"/\"$DENOM\"/g" ~/.starsd/config/genesis.json
+
 # modify config for development
 config="$HOME/.starsd/config/config.toml"
 if [ "$(uname)" = "Linux" ]; then
   sed -i "s/cors_allowed_origins = \[\]/cors_allowed_origins = [\"*\"]/g" $config
+  sed -i "s/\"stake\"/\"$DENOM\"/g" ~/.starsd/config/genesis.json
 else
   sed -i '' "s/cors_allowed_origins = \[\]/cors_allowed_origins = [\"*\"]/g" $config
+  sed -i '' "s/\"stake\"/\"$DENOM\"/g" ~/.starsd/config/genesis.json
 fi
-sed -i "s/\"stake\"/\"$DENOM\"/g" ~/.starsd/config/genesis.json
+
 # modify genesis params for localnet ease of use
 # x/gov params change
 # reduce voting period to 2 minutes
