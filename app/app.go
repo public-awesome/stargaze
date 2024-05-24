@@ -1034,8 +1034,26 @@ func NewStargazeApp(
 			compression.NewZStdCompressor(),
 		),
 	)
+	oraclePreblocker := oraclePreBlockHandler.PreBlocker()
+	preBlocker := func(ctx sdk.Context, req *abci.RequestFinalizeBlock) (*sdk.ResponsePreBlock, error) {
+		// call app's preblocker first in case there is changes made on upgrades
+		// that can modify state and lead do serialization issues
+		resp, err := app.PreBlocker(ctx, req)
+		if err != nil {
+			return resp, err
+		}
 
-	app.SetPreBlocker(oraclePreBlockHandler.PreBlocker())
+		// oracle preblocker sends empty response block
+		_, err = oraclePreblocker(ctx, req)
+		if err != nil {
+			return &sdk.ResponsePreBlock{}, err
+		}
+
+		// return resp from app's preblocker
+		return resp, nil
+	}
+
+	app.SetPreBlocker(preBlocker)
 
 	// Create the vote extensions handler that will be used to extend and verify
 	// vote extensions (i.e. oracle data).
