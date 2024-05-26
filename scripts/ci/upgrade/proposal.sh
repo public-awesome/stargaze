@@ -23,10 +23,27 @@ HEIGHT=$(starsd status --node http://stargaze:26657 --home $STARGAZE_HOME | jq .
 echo "current height $HEIGHT"
 HEIGHT=$(expr $HEIGHT + 100) 
 echo "submit with height $HEIGHT"
-starsd tx gov submit-proposal software-upgrade v14 --upgrade-height $HEIGHT  \
---deposit 1000000000ustars \
---description "v14 Upgrade" \
---title "v14 Upgrade" \
+cat <<EOT >> proposal.json
+{
+  "messages": [
+    {
+      "@type": "/cosmos.upgrade.v1beta1.MsgSoftwareUpgrade",
+      "authority": "stars10d07y265gmmuvt4z0w9aw880jnsr700jw7ycaz",
+      "plan": {
+        "name": "v14",
+        "height": "$HEIGHT",
+        "info": ""
+      }
+    }
+  ],
+
+  "deposit": "1000000000ustars",
+  "title": "Upgrade",
+  "summary": "Upgrade"
+}
+EOT
+cat proposal.json
+starsd tx gov submit-proposal proposal.json  \
 --gas-prices 1ustars --gas auto --gas-adjustment 1.5 --from validator  \
 --chain-id stargaze -b sync --yes --node http://stargaze:26657 --home $STARGAZE_HOME --keyring-backend test
 
