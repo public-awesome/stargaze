@@ -138,7 +138,7 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 				sdk.DefaultBondDenom = defaultDenom
 			}
 			appGenState := mbm.DefaultGenesis(cdc)
-
+			appGenState = PrepareGenesis(clientCtx, appGenState, LocalnetGenesisParams())
 			appState, err := json.MarshalIndent(appGenState, "", " ")
 			if err != nil {
 				return errorsmod.Wrap(err, "Failed to marshal default genesis state")

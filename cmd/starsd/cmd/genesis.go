@@ -255,3 +255,14 @@ func TestnetGenesisParams() GenesisParams {
 
 	return genParams
 }
+
+func LocalnetGenesisParams() GenesisParams {
+	params := TestnetGenesisParams()
+	votingPeriod := time.Second * 60
+	params.GovParams.VotingPeriod = &votingPeriod
+	params.GovParams.MinDeposit = sdk.NewCoins(sdk.NewCoin(
+		params.NativeCoinMetadatas[0].Base,
+		math.NewInt(1_000_000_000),
+	))
+	return params
+}
