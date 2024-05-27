@@ -51,5 +51,6 @@ starsd q gov proposals --node http://stargaze:26657 --home $STARGAZE_HOME
 starsd tx gov vote 1 "yes" --gas-prices 1ustars --gas auto --gas-adjustment 1.5 --from validator  \
 --chain-id stargaze -b sync --yes --node http://stargaze:26657 --home $STARGAZE_HOME --keyring-backend test
 sleep 120
+starsd q gov proposal 1 --node http://stargaze:26657 --home $STARGAZE_HOME -o json | jq 
 starsd q gov proposals --node http://stargaze:26657 --home $STARGAZE_HOME
 sleep 30
