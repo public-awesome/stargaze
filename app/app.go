@@ -878,8 +878,8 @@ func NewStargazeApp(
 		tokenfactorytypes.ModuleName,
 		packetforwardtypes.ModuleName,
 		ibcwasmtypes.ModuleName,
-		marketmaptypes.ModuleName,
 		oracletypes.ModuleName,
+		marketmaptypes.ModuleName,
 	)
 
 	app.ModuleManager.SetOrderEndBlockers(
@@ -899,8 +899,8 @@ func NewStargazeApp(
 		tokenfactorytypes.ModuleName,
 		packetforwardtypes.ModuleName,
 		ibcwasmtypes.ModuleName,
-		marketmaptypes.ModuleName,
 		oracletypes.ModuleName,
+		marketmaptypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -936,8 +936,8 @@ func NewStargazeApp(
 		ibchookstypes.ModuleName,
 		packetforwardtypes.ModuleName,
 		ibcwasmtypes.ModuleName,
-		marketmaptypes.ModuleName,
 		oracletypes.ModuleName,
+		marketmaptypes.ModuleName,
 	)
 
 	app.ModuleManager.RegisterInvariants(app.Keepers.CrisisKeeper)

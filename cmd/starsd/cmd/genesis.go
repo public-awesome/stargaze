@@ -25,6 +25,7 @@ import (
 	globalfeetypes "github.com/public-awesome/stargaze/v14/x/globalfee/types"
 	tokenfactorytypes "github.com/public-awesome/stargaze/v14/x/tokenfactory/types"
 	marketmaptypes "github.com/skip-mev/slinky/x/marketmap/types"
+	oracletypes "github.com/skip-mev/slinky/x/oracle/types"
 )
 
 const (
@@ -119,9 +120,24 @@ func PrepareGenesis(
 	if err != nil {
 		panic(fmt.Errorf("failed to parse markets: %w", err))
 	}
+	marketsSlice, err := markets.Slice()
+	if err != nil {
+		panic(fmt.Errorf("failed to parse markets: %w", err))
+	}
 	marketmapGenState.MarketMap = marketsMap
 	marketmapGenStateBz := clientCtx.Codec.MustMarshalJSON(marketmapGenState)
 	appState[marketmaptypes.ModuleName] = marketmapGenStateBz
+
+	genesisCurrencyPairs := make([]oracletypes.CurrencyPairGenesis, len(marketsSlice))
+	for id, market := range marketsSlice {
+		genesisCurrencyPairs[id] = oracletypes.CurrencyPairGenesis{
+			CurrencyPair: market.Ticker.CurrencyPair,
+			Id:           uint64(id),
+		}
+	}
+	oracleGenState := oracletypes.NewGenesisState(genesisCurrencyPairs, uint64(len(marketsSlice)))
+	oracleGenStateBz := clientCtx.Codec.MustMarshalJSON(oracleGenState)
+	appState[oracletypes.ModuleName] = oracleGenStateBz
 
 	return appState
 }
@@ -259,7 +275,9 @@ func TestnetGenesisParams() GenesisParams {
 func LocalnetGenesisParams() GenesisParams {
 	params := TestnetGenesisParams()
 	votingPeriod := time.Second * 60
+	eVotingPeriod := time.Second * 30
 	params.GovParams.VotingPeriod = &votingPeriod
+	params.GovParams.ExpeditedVotingPeriod = &eVotingPeriod
 	params.GovParams.MinDeposit = sdk.NewCoins(sdk.NewCoin(
 		params.NativeCoinMetadatas[0].Base,
 		math.NewInt(1_000_000_000),
