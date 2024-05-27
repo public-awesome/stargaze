@@ -121,7 +121,7 @@ func PrepareGenesis(
 	}
 	marketmapGenState.MarketMap = marketsMap
 	marketmapGenStateBz := clientCtx.Codec.MustMarshalJSON(marketmapGenState)
-	appState[crisistypes.ModuleName] = marketmapGenStateBz
+	appState[marketmaptypes.ModuleName] = marketmapGenStateBz
 
 	return appState
 }
