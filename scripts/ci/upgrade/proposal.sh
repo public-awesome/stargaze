@@ -21,7 +21,7 @@ starsd q distribution community-pool --node http://stargaze:26657
 HEIGHT=$(starsd status --node http://stargaze:26657 --home $STARGAZE_HOME | jq .SyncInfo.latest_block_height -r)
 
 echo "current height $HEIGHT"
-HEIGHT=$(expr $HEIGHT + 700) 
+HEIGHT=$(expr $HEIGHT + 300) 
 echo "submit with height $HEIGHT"
 cat <<EOT >> proposal.json
 {
@@ -50,6 +50,6 @@ sleep 10
 starsd q gov proposals --node http://stargaze:26657 --home $STARGAZE_HOME
 starsd tx gov vote 1 "yes" --gas-prices 1ustars --gas auto --gas-adjustment 1.5 --from validator  \
 --chain-id stargaze -b sync --yes --node http://stargaze:26657 --home $STARGAZE_HOME --keyring-backend test
-sleep 30
+sleep 120
 starsd q gov proposals --node http://stargaze:26657 --home $STARGAZE_HOME
 sleep 30
