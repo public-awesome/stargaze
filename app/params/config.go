@@ -11,12 +11,12 @@ import (
 // CustomAppConfig defines the configuration for the Nois app.
 type CustomAppConfig struct {
 	serverconfig.Config
-	Oracle oracleconfig.AppConfig
-	Wasm   wasmtypes.WasmConfig `mapstructure:"wasm"`
+	Oracle oracleconfig.AppConfig `mapstructure:"oracle" json:"oracle"`
+	Wasm   wasmtypes.WasmConfig   `mapstructure:"wasm"`
 }
 
 func CustomconfigTemplate(config wasmtypes.WasmConfig) string {
-	return serverconfig.DefaultConfigTemplate + wasmtypes.ConfigTemplate(config)
+	return serverconfig.DefaultConfigTemplate + wasmtypes.ConfigTemplate(config) + oracleconfig.DefaultConfigTemplate
 }
 
 func DefaultConfig() (string, interface{}) {
