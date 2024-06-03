@@ -1,6 +1,8 @@
 package params
 
 import (
+
+	"fmt"
 	"time"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
@@ -42,7 +44,13 @@ func DefaultConfig() (string, interface{}) {
 		Config: *serverConfig,
 		Oracle: oracleConfig,
 		Wasm:   wasmConfig,
+		Oracle: oracleconfig.AppConfig{
+			Enabled:        false,
+			OracleAddress:  "localhost:8080",
+			ClientTimeout:  time.Second * 1,
+			MetricsEnabled: false,
+		},
 	}
 
-	return CustomconfigTemplate(wasmConfig), customConfig
+	return CustomconfigTemplate(wasmConfig, customConfig.Oracle), customConfig
 }

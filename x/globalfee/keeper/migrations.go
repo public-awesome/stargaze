@@ -2,7 +2,6 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	v2 "github.com/public-awesome/stargaze/v14/x/globalfee/migrations/v2"
 )
 
 // Migrator is a struct for handling in-place store migrations.
@@ -21,6 +20,6 @@ func NewMigrator(keeper Keeper) Migrator {
 // version 1 to version 2. Specifically, it takes the parameters that are currently stored
 // and managed by the x/params module and stores them directly into the x/globalfee
 // module state.
-func (m Migrator) Migrate1to2(ctx sdk.Context) error {
-	return v2.MigrateStore(ctx, m.keeper.storeKey, m.keeper.paramStore, m.keeper.cdc)
+func (m Migrator) Migrate1to2(_ sdk.Context) error {
+	return nil // v2.MigrateStore(ctx, m.keeper.storeKey, m.keeper.paramStore, m.keeper.cdc)
 }

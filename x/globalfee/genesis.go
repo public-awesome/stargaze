@@ -31,7 +31,10 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 // ExportGenesis exports the module genesis for the current block.
 func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis := types.DefaultGenesis()
-	params := k.GetParams(ctx)
+	params, err := k.GetParams(ctx)
+	if err != nil {
+		panic(err)
+	}
 	genesis.Params = params
 	k.IterateCodeAuthorizations(ctx, func(ca types.CodeAuthorization) bool {
 		genesis.CodeAuthorizations = append(genesis.CodeAuthorizations, ca)

@@ -9,9 +9,8 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/runtime"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	"github.com/public-awesome/stargaze/v14/app"
 	"github.com/public-awesome/stargaze/v14/x/globalfee/keeper"
 	"github.com/public-awesome/stargaze/v14/x/globalfee/types"
 	"github.com/stretchr/testify/require"
@@ -37,12 +36,6 @@ func GlobalFeeKeeper(tb testing.TB) (keeper.Keeper, sdk.Context) {
 	require.NoError(tb, stateStore.LoadLatestVersion())
 
 	registry := codectypes.NewInterfaceRegistry()
-	encoding := app.MakeEncodingConfig()
-	appCodec := encoding.Codec
-
-	paramsKeeper := paramskeeper.NewKeeper(appCodec, encoding.Amino, storeKey, tStoreKey)
-	paramsKeeper.Subspace(types.ModuleName).WithKeyTable(types.ParamKeyTable())
-	subspace, _ := paramsKeeper.GetSubspace(types.ModuleName)
 
 	wk := MockWasmKeeper{
 		HasContractInfoFn: func(_ context.Context, contractAddr sdk.AccAddress) bool {
@@ -78,8 +71,7 @@ func GlobalFeeKeeper(tb testing.TB) (keeper.Keeper, sdk.Context) {
 
 	k := keeper.NewKeeper(
 		codec.NewProtoCodec(registry),
-		storeKey,
-		subspace,
+		runtime.NewKVStoreService(storeKey),
 		wk,
 		"cosmos1a48wdtjn3egw7swhfkeshwdtjvs6hq9nlyrwut", // random addr for gov module
 	)

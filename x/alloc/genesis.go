@@ -22,7 +22,11 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 
 // ExportGenesis returns the alloc module's exported genesis.
 func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
+	params, err := k.GetParams(ctx)
+	if err != nil {
+		panic(err)
+	}
 	return &types.GenesisState{
-		Params: k.GetParams(ctx),
+		Params: params,
 	}
 }

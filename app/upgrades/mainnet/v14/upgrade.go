@@ -5,11 +5,14 @@ import (
 
 	storetypes "cosmossdk.io/store/types"
 	upgradetypes "cosmossdk.io/x/upgrade/types"
+	cmttypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	consensustypes "github.com/cosmos/cosmos-sdk/x/consensus/types"
 	wasmlctypes "github.com/cosmos/ibc-go/modules/light-clients/08-wasm/types"
 	"github.com/public-awesome/stargaze/v14/app/keepers"
 	"github.com/public-awesome/stargaze/v14/app/upgrades"
+	"github.com/public-awesome/stargaze/v14/internal/oracle/markets"
 	marketmaptypes "github.com/skip-mev/slinky/x/marketmap/types"
 	oracletypes "github.com/skip-mev/slinky/x/oracle/types"
 )
@@ -31,6 +34,49 @@ var Upgrade = upgrades.Upgrade{
 			params := keepers.IBCKeeper.ClientKeeper.GetParams(wctx)
 			params.AllowedClients = append(params.AllowedClients, wasmlctypes.Wasm)
 			keepers.IBCKeeper.ClientKeeper.SetParams(wctx, params)
+
+			// upgrade consensus params to enable vote extensions
+			consensusParams, err := keepers.ConsensusParamsKeeper.Params(ctx, nil)
+			if err != nil {
+				return nil, err
+			}
+
+			consensusParams.Params.Abci = &cmttypes.ABCIParams{
+				VoteExtensionsEnableHeight: wctx.BlockHeight() + int64(10),
+			}
+
+			_, err = keepers.ConsensusParamsKeeper.UpdateParams(ctx, &consensustypes.MsgUpdateParams{
+				Authority: keepers.ConsensusParamsKeeper.GetAuthority(),
+				Block:     consensusParams.Params.Block,
+				Evidence:  consensusParams.Params.Evidence,
+				Validator: consensusParams.Params.Validator,
+				Abci:      consensusParams.Params.Abci,
+			})
+			if err != nil {
+				return nil, err
+			}
+
+			// add markets
+			m, err := markets.Slice()
+			if err != nil {
+				return nil, err
+			}
+
+			// iterates over slice and not map
+			for _, market := range m {
+				// create market
+				err = keepers.MarketMapKeeper.CreateMarket(wctx, market)
+				if err != nil {
+					return nil, err
+				}
+
+				// invoke hooks
+				err = keepers.MarketMapKeeper.Hooks().AfterMarketCreated(wctx, market)
+				if err != nil {
+					return nil, err
+				}
+			}
+
 			return migrations, nil
 		}
 	},

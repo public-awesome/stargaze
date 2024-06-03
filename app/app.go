@@ -171,10 +171,19 @@ import (
 	sgstatesync "github.com/public-awesome/stargaze/v14/internal/statesync"
 
 	// slinky
+	"github.com/skip-mev/slinky/abci/proposals"
+	compression "github.com/skip-mev/slinky/abci/strategies/codec"
+	"github.com/skip-mev/slinky/abci/strategies/currencypair"
+	"github.com/skip-mev/slinky/abci/ve"
+	"github.com/skip-mev/slinky/pkg/math/voteweighted"
+	oracleclient "github.com/skip-mev/slinky/service/clients/oracle"
+	servicemetrics "github.com/skip-mev/slinky/service/metrics"
 	"github.com/skip-mev/slinky/x/oracle"
 	oraclekeeper "github.com/skip-mev/slinky/x/oracle/keeper"
 	oracletypes "github.com/skip-mev/slinky/x/oracle/types"
 
+	oraclepreblock "github.com/skip-mev/slinky/abci/preblock/oracle"
+	oracleconfig "github.com/skip-mev/slinky/oracle/config"
 	"github.com/skip-mev/slinky/x/marketmap"
 	marketmapkeeper "github.com/skip-mev/slinky/x/marketmap/keeper"
 	marketmaptypes "github.com/skip-mev/slinky/x/marketmap/types"
@@ -313,8 +322,8 @@ type App struct {
 	ScopedTransferKeeper      capabilitykeeper.ScopedKeeper
 	ScopedWasmKeeper          capabilitykeeper.ScopedKeeper
 
-	// processes
-	oracleClient oracleclient.OracleClient
+	// oracle
+  oracleClient oracleclient.OracleClient
 }
 
 // NewStargazeApp returns a reference to an initialized Gaia.
@@ -464,8 +473,13 @@ func NewStargazeApp(
 	)
 
 	app.Keepers.MintKeeper = mintkeeper.NewKeeper(
-		appCodec, keys[minttypes.StoreKey], app.GetSubspace(minttypes.ModuleName),
-		app.Keepers.AccountKeeper, app.Keepers.BankKeeper, authtypes.FeeCollectorName, authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		appCodec,
+		runtime.NewKVStoreService(keys[minttypes.StoreKey]),
+
+		app.Keepers.AccountKeeper,
+		app.Keepers.BankKeeper,
+		authtypes.FeeCollectorName,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 	app.Keepers.DistrKeeper = distrkeeper.NewKeeper(
 		appCodec,
@@ -619,7 +633,7 @@ func NewStargazeApp(
 		bApp.MsgServiceRouter(),
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
-
+	app.Keepers.ICAHostKeeper.WithQueryRouter(app.GRPCQueryRouter())
 	icaHostIBCModule := icahost.NewIBCModule(app.Keepers.ICAHostKeeper)
 
 	app.Keepers.ICAControllerKeeper = icacontrollerkeeper.NewKeeper(
@@ -730,17 +744,14 @@ func NewStargazeApp(
 
 	app.Keepers.CronKeeper = cronmodulekeeper.NewKeeper(
 		appCodec,
-		keys[cronmoduletypes.StoreKey],
-		keys[cronmoduletypes.MemStoreKey],
-		app.GetSubspace(cronmoduletypes.ModuleName),
+		runtime.NewKVStoreService(keys[cronmoduletypes.StoreKey]),
 		app.Keepers.WasmKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String())
 	cronModule := cronmodule.NewAppModule(appCodec, app.Keepers.CronKeeper, app.Keepers.WasmKeeper)
 
 	app.Keepers.GlobalFeeKeeper = globalfeemodulekeeper.NewKeeper(
 		appCodec,
-		keys[globalfeemoduletypes.StoreKey],
-		app.GetSubspace(globalfeemoduletypes.ModuleName),
+		runtime.NewKVStoreService(keys[globalfeemoduletypes.StoreKey]),
 		app.Keepers.WasmKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
@@ -764,16 +775,13 @@ func NewStargazeApp(
 
 	app.Keepers.GovKeeper = *govKeeper.SetHooks(govtypes.NewMultiGovHooks())
 
-	app.Keepers.AllocKeeper = *allocmodulekeeper.NewKeeper(
+	app.Keepers.AllocKeeper = allocmodulekeeper.NewKeeper(
 		appCodec,
-		keys[allocmoduletypes.StoreKey],
-		keys[allocmoduletypes.MemStoreKey],
-
+		runtime.NewKVStoreService(keys[allocmoduletypes.StoreKey]),
 		app.Keepers.AccountKeeper,
 		app.Keepers.BankKeeper,
 		app.Keepers.StakingKeeper,
 		app.Keepers.DistrKeeper,
-		app.GetSubspace(allocmoduletypes.ModuleName),
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 	allocModule := allocmodule.NewAppModule(appCodec, app.Keepers.AllocKeeper)
@@ -916,8 +924,8 @@ func NewStargazeApp(
 		tokenfactorytypes.ModuleName,
 		packetforwardtypes.ModuleName,
 		ibcwasmtypes.ModuleName,
-		marketmaptypes.ModuleName,
 		oracletypes.ModuleName,
+		marketmaptypes.ModuleName,
 	)
 
 	app.ModuleManager.SetOrderEndBlockers(
@@ -937,8 +945,8 @@ func NewStargazeApp(
 		tokenfactorytypes.ModuleName,
 		packetforwardtypes.ModuleName,
 		ibcwasmtypes.ModuleName,
-		marketmaptypes.ModuleName,
 		oracletypes.ModuleName,
+		marketmaptypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -974,8 +982,8 @@ func NewStargazeApp(
 		ibchookstypes.ModuleName,
 		packetforwardtypes.ModuleName,
 		ibcwasmtypes.ModuleName,
-		marketmaptypes.ModuleName,
 		oracletypes.ModuleName,
+		marketmaptypes.ModuleName,
 	)
 
 	app.ModuleManager.RegisterInvariants(app.Keepers.CrisisKeeper)
@@ -989,11 +997,126 @@ func NewStargazeApp(
 	app.MountTransientStores(tkeys)
 	app.MountMemoryStores(memKeys)
 
+	// Read general config from app-opts, and construct oracle service.
+	cfg, err := oracleconfig.ReadConfigFromAppOpts(appOpts)
+	if err != nil {
+		panic(err)
+	}
+
+	// If app level instrumentation is enabled, then wrap the oracle service with a metrics client
+	// to get metrics on the oracle service (for ABCI++). This will allow the instrumentation to track
+	// latency in VerifyVoteExtension requests and more.
+	oracleMetrics, err := servicemetrics.NewMetricsFromConfig(cfg, app.ChainID())
+	if err != nil {
+		panic(err)
+	}
+
+	// Create the oracle service.
+	app.oracleClient, err = oracleclient.NewClientFromConfig(
+		cfg,
+		app.Logger().With("client", "oracle"),
+		oracleMetrics,
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	// Connect to the oracle service (default timeout of 5 seconds).
+	go func() {
+		if err := app.oracleClient.Start(context.Background()); err != nil {
+			app.Logger().Error("failed to start oracle client", "err", err)
+			panic(err)
+		}
+
+		app.Logger().Info("started oracle client", "address", cfg.OracleAddress)
+	}()
+
 	// initialize BaseApp
+	proposalHandler := proposals.NewProposalHandler(
+		app.Logger(),
+		baseapp.NoOpPrepareProposal(),
+		baseapp.NoOpProcessProposal(),
+		ve.NewDefaultValidateVoteExtensionsFn(app.Keepers.StakingKeeper),
+		compression.NewCompressionVoteExtensionCodec(
+			compression.NewDefaultVoteExtensionCodec(),
+			compression.NewZLibCompressor(),
+		),
+		compression.NewCompressionExtendedCommitCodec(
+			compression.NewDefaultExtendedCommitCodec(),
+			compression.NewZStdCompressor(),
+		),
+		currencypair.NewDeltaCurrencyPairStrategy(app.Keepers.OracleKeeper),
+		oracleMetrics,
+	)
+	app.SetPrepareProposal(proposalHandler.PrepareProposalHandler())
+	app.SetProcessProposal(proposalHandler.ProcessProposalHandler())
+
 	app.SetInitChainer(app.InitChainer)
-	app.SetPreBlocker(app.PreBlocker)
 	app.SetBeginBlocker(app.BeginBlocker)
 	app.SetEndBlocker(app.EndBlocker)
+
+	// Create the aggregation function that will be used to aggregate oracle data
+	// from each validator.
+	aggregatorFn := voteweighted.MedianFromContext(
+		app.Logger(),
+		app.Keepers.StakingKeeper,
+		voteweighted.DefaultPowerThreshold,
+	)
+
+	// Create the pre-finalize block hook that will be used to apply oracle data
+	// to the state before any transactions are executed (in finalize block).
+	oraclePreBlockHandler := oraclepreblock.NewOraclePreBlockHandler(
+		app.Logger(),
+		aggregatorFn,
+		app.Keepers.OracleKeeper,
+		oracleMetrics,
+		currencypair.NewDeltaCurrencyPairStrategy(app.Keepers.OracleKeeper),
+		compression.NewCompressionVoteExtensionCodec(
+			compression.NewDefaultVoteExtensionCodec(),
+			compression.NewZLibCompressor(),
+		),
+		compression.NewCompressionExtendedCommitCodec(
+			compression.NewDefaultExtendedCommitCodec(),
+			compression.NewZStdCompressor(),
+		),
+	)
+	oraclePreblocker := oraclePreBlockHandler.PreBlocker()
+	preBlocker := func(ctx sdk.Context, req *abci.RequestFinalizeBlock) (*sdk.ResponsePreBlock, error) {
+		// call app's preblocker first in case there is changes made on upgrades
+		// that can modify state and lead to serialization/deserialization issues
+		resp, err := app.PreBlocker(ctx, req)
+		if err != nil {
+			return resp, err
+		}
+
+		// oracle preblocker sends empty response pre block so it can ignored
+		_, err = oraclePreblocker(ctx, req)
+		if err != nil {
+			return &sdk.ResponsePreBlock{}, err
+		}
+
+		// return resp from app's preblocker which can return consensus param changed flag
+		return resp, nil
+	}
+
+	app.SetPreBlocker(preBlocker)
+
+	// Create the vote extensions handler that will be used to extend and verify
+	// vote extensions (i.e. oracle data).
+	voteExtensionsHandler := ve.NewVoteExtensionHandler(
+		app.Logger(),
+		app.oracleClient,
+		time.Second,
+		currencypair.NewDeltaCurrencyPairStrategy(app.Keepers.OracleKeeper),
+		compression.NewCompressionVoteExtensionCodec(
+			compression.NewDefaultVoteExtensionCodec(),
+			compression.NewZLibCompressor(),
+		),
+		oraclePreBlockHandler.PreBlocker(),
+		oracleMetrics,
+	)
+	app.SetExtendVoteHandler(voteExtensionsHandler.ExtendVoteHandler())
+	app.SetVerifyVoteExtensionHandler(voteExtensionsHandler.VerifyVoteExtensionHandler())
 
 	anteHandler, err := NewAnteHandler(
 		HandlerOptions{
@@ -1335,20 +1458,16 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(authtypes.ModuleName)
 	paramsKeeper.Subspace(banktypes.ModuleName)
 	paramsKeeper.Subspace(stakingtypes.ModuleName)
-	paramsKeeper.Subspace(minttypes.ModuleName)
 	paramsKeeper.Subspace(distrtypes.ModuleName)
 	paramsKeeper.Subspace(slashingtypes.ModuleName)
 	paramsKeeper.Subspace(govtypes.ModuleName)
 	paramsKeeper.Subspace(crisistypes.ModuleName)
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName).WithKeyTable(ibctransfertypes.ParamKeyTable())
 	paramsKeeper.Subspace(ibcexported.ModuleName).WithKeyTable(keyTable)
-	paramsKeeper.Subspace(allocmoduletypes.ModuleName)
 	paramsKeeper.Subspace(tokenfactorytypes.ModuleName)
 	paramsKeeper.Subspace(wasmtypes.ModuleName)
-	paramsKeeper.Subspace(cronmoduletypes.ModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName).WithKeyTable(icahosttypes.ParamKeyTable())
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName).WithKeyTable(icacontrollertypes.ParamKeyTable())
-	paramsKeeper.Subspace(globalfeemoduletypes.ModuleName)
 	paramsKeeper.Subspace(packetforwardtypes.ModuleName).WithKeyTable(packetforwardtypes.ParamKeyTable())
 
 	return paramsKeeper

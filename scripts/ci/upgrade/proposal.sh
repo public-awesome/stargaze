@@ -21,20 +21,36 @@ starsd q distribution community-pool --node http://stargaze:26657
 HEIGHT=$(starsd status --node http://stargaze:26657 --home $STARGAZE_HOME | jq .SyncInfo.latest_block_height -r)
 
 echo "current height $HEIGHT"
-HEIGHT=$(expr $HEIGHT + 100) 
+HEIGHT=$(expr $HEIGHT + 450) 
 echo "submit with height $HEIGHT"
-starsd tx gov submit-proposal software-upgrade v14 --upgrade-height $HEIGHT  \
---deposit 1000000000ustars \
---description "v14 Upgrade" \
---title "v14 Upgrade" \
+cat <<EOT >> proposal.json
+{
+  "messages": [
+    {
+      "@type": "/cosmos.upgrade.v1beta1.MsgSoftwareUpgrade",
+      "authority": "stars10d07y265gmmuvt4z0w9aw880jnsr700jw7ycaz",
+      "plan": {
+        "name": "v14",
+        "height": "$HEIGHT",
+        "info": ""
+      }
+    }
+  ],
+
+  "deposit": "1000000000ustars",
+  "title": "Upgrade",
+  "summary": "Upgrade"
+}
+EOT
+cat proposal.json
+starsd tx gov submit-proposal proposal.json  \
 --gas-prices 1ustars --gas auto --gas-adjustment 1.5 --from validator  \
 --chain-id stargaze -b sync --yes --node http://stargaze:26657 --home $STARGAZE_HOME --keyring-backend test
-
+sleep 10
 starsd q gov proposals --node http://stargaze:26657 --home $STARGAZE_HOME
-
-
 starsd tx gov vote 1 "yes" --gas-prices 1ustars --gas auto --gas-adjustment 1.5 --from validator  \
 --chain-id stargaze -b sync --yes --node http://stargaze:26657 --home $STARGAZE_HOME --keyring-backend test
-sleep 30
+sleep 120
+starsd q gov proposal 1 --node http://stargaze:26657 --home $STARGAZE_HOME -o json | jq 
 starsd q gov proposals --node http://stargaze:26657 --home $STARGAZE_HOME
 sleep 30
