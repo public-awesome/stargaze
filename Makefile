@@ -125,6 +125,8 @@ build-docker:
 docker-test: build-linux
 	docker build -f docker/Dockerfile.test -t rocketprotocol/stargaze-relayer-test:latest .
 
+build-docker-slinky:
+	docker buildx build -t publicawesome/stargaze:latest --platform linux/amd64 --load .
 
 test:
 	go test -v -race github.com/public-awesome/stargaze/v14/x/...
@@ -141,14 +143,17 @@ test-ica:
 test-chain-conformance:
 	cd e2e && go test -v -race -run TestStargazeConformance .
 
+test-slinky: build-docker-slinky
+	@cd e2e/slinky && go test -v -race .
+
 .PHONY: test test-e2e build-linux docker-test lint build install format
 
 format:
 	gofumpt -l -w .
+
 ###############################################################################
 ###                                Protobuf                                 ###
 ###############################################################################
-
 
 ci-sign: 
 	drone sign public-awesome/stargaze --save
@@ -161,7 +166,6 @@ build-readiness-checker:
 
 BUF_IMAGE=bufbuild/buf@sha256:3cb1f8a4b48bd5ad8f09168f10f607ddc318af202f5c057d52a45216793d85e5 #v1.4.0
 DOCKER_BUF := $(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace $(BUF_IMAGE)
-
 
 ###############################################################################
 ###                                Protobuf                                 ###
