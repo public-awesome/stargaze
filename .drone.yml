@@ -42,14 +42,14 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: build
-    image: golang:1.22.3-alpine3.19
+    image: golang:1.22.3-alpine3.18
     volumes:
       - name: cache
         path: /go
     commands:
       - apk add --no-cache ca-certificates build-base git
-      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.5.2/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.a
-      - echo "e660a38efb2930b34ee6f6b0bb12730adccb040b6ab701b8f82f34453a426ae7  /lib/libwasmvm_muslc.a" | sha256sum -c
+      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.5.2/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.x86_64.a
+      - echo "e660a38efb2930b34ee6f6b0bb12730adccb040b6ab701b8f82f34453a426ae7  /lib/libwasmvm_muslc.x86_64.a" | sha256sum -c
       - LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true  make build
       - echo "Ensuring binary is statically linked ..." && (file $PWD/bin/starsd | grep "statically linked")
     environment:
@@ -421,6 +421,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 444fe8320f8a7abbd65fcbe5c9f047f7f56662c1d64bf9a30151253c21387c95
+hmac: 35cb5408abe4c1b6d6a84f7c53dbf7ec2df33b66c5ba8296e3cc5327f50b07a4
 
 ...
