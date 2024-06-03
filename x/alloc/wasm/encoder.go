@@ -6,7 +6,7 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
+	wasmvmtypes "github.com/CosmWasm/wasmvm/v2/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	sgwasm "github.com/public-awesome/stargaze/v14/internal/wasm"
@@ -20,7 +20,7 @@ type AllocMsg struct {
 }
 
 type FundFairburnPool struct {
-	Amount wasmvmtypes.Coins `json:"amount"`
+	Amount []wasmvmtypes.Coin `json:"amount"`
 }
 
 func (fcp FundFairburnPool) Encode(contract sdk.AccAddress) ([]sdk.Msg, error) {
