@@ -1,0 +1,29 @@
+name: Slinky E2E tests
+on:
+  pull_request:
+    branches:
+      - main
+      - feature/*
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 1.22.3
+          cache: true
+          cache-dependency-path: go.sum
+      - uses: technote-space/get-diff-action@v6.1.2
+        id: git_diff
+        with:
+          PATTERNS: |
+            **/*.go
+            go.mod
+            go.sum
+      - name: tests
+        if: env.GIT_DIFF
+        run: |
+          make build && make test-slinky
