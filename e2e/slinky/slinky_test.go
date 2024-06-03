@@ -36,7 +36,7 @@ var (
 	gasPrice    = minGasPrice
 
 	image = ibc.DockerImage{
-		Repository: "publicawesome/stargaze",
+		Repository: "stargaze",
 		Version:    "latest",
 		UidGid:     "1025:1025",
 	}

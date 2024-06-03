@@ -21,7 +21,7 @@ require (
 	github.com/public-awesome/stargaze/v14 v14.0.0-alpha.3
 	github.com/skip-mev/slinky v0.4.6
 	github.com/skip-mev/slinky/tests/integration v1.0.0
-	github.com/strangelove-ventures/interchaintest/v8 v8.3.1-0.20240510203915-0559b76de4fa
+	github.com/strangelove-ventures/interchaintest/v8 v8.4.0
 	github.com/stretchr/testify v1.9.0
 )
 

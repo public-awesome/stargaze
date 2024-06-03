@@ -126,7 +126,7 @@ docker-test: build-linux
 	docker build -f docker/Dockerfile.test -t rocketprotocol/stargaze-relayer-test:latest .
 
 build-docker-slinky:
-	docker buildx build -t publicawesome/stargaze:latest --platform linux/amd64 --load .
+	docker build . -t stargaze:latest --platform linux/amd64
 
 test:
 	go test -v -race github.com/public-awesome/stargaze/v14/x/...
