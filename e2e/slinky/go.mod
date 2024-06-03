@@ -18,7 +18,7 @@ require (
 	cosmossdk.io/math v1.3.0
 	github.com/CosmWasm/wasmd v0.50.0
 	github.com/cosmos/cosmos-sdk v0.50.6
-	github.com/public-awesome/stargaze/v14 v14.0.0-00010101000000-000000000000
+	github.com/public-awesome/stargaze/v14 v14.0.0-alpha.3
 	github.com/skip-mev/slinky v0.4.6
 	github.com/skip-mev/slinky/tests/integration v1.0.0
 	github.com/strangelove-ventures/interchaintest/v8 v8.3.1-0.20240510203915-0559b76de4fa
