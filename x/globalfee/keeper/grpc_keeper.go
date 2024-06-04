@@ -28,14 +28,11 @@ func (q QueryServer) CodeAuthorization(c context.Context, req *types.QueryCodeAu
 		return nil, status.Error(codes.InvalidArgument, "empty request")
 	}
 	ctx := sdk.UnwrapSDKContext(c)
-	ca, found := q.keeper.GetCodeAuthorization(ctx, req.GetCodeId())
-	if !found {
-		return nil, status.Errorf(codes.NotFound, "code authorization: not found")
-	}
+	ca, err := q.keeper.GetCodeAuthorization(ctx, req.GetCodeId())
 
 	return &types.QueryCodeAuthorizationResponse{
 		Methods: ca.GetMethods(),
-	}, nil
+	}, err
 }
 
 func (q QueryServer) ContractAuthorization(c context.Context, req *types.QueryContractAuthorizationRequest) (*types.QueryContractAuthorizationResponse, error) {
@@ -48,20 +45,17 @@ func (q QueryServer) ContractAuthorization(c context.Context, req *types.QueryCo
 	}
 
 	ctx := sdk.UnwrapSDKContext(c)
-	ca, found := q.keeper.GetContractAuthorization(ctx, contractAddr)
-	if !found {
-		return nil, status.Errorf(codes.NotFound, "contract authorization: not found")
-	}
+	ca, err := q.keeper.GetContractAuthorization(ctx, contractAddr)
 
 	return &types.QueryContractAuthorizationResponse{
 		Methods: ca.GetMethods(),
-	}, nil
+	}, err
 }
 
 func (q QueryServer) Params(c context.Context, _ *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
-	params := q.keeper.GetParams(ctx)
-	return &types.QueryParamsResponse{Params: &params}, nil
+	params, err := q.keeper.GetParams(ctx)
+	return &types.QueryParamsResponse{Params: &params}, err
 }
 
 func (q QueryServer) Authorizations(c context.Context, _ *types.QueryAuthorizationsRequest) (*types.QueryAuthorizationsResponse, error) {
