@@ -235,6 +235,7 @@ github.com/ComposableFi/go-subkey/v2 v2.0.0-tm03420 h1:oknQF/iIhf5lVjbwjsVDzDByu
 github.com/ComposableFi/go-subkey/v2 v2.0.0-tm03420/go.mod h1:KYkiMX5AbOlXXYfxkrYPrRPV6EbVUALTQh5ptUOJzu8=
 github.com/CosmWasm/wasmd v0.50.0 h1:NVaGqCSTRfb9UTDHJwT6nQIWcb6VjlQl88iI+u1+qjE=
 github.com/CosmWasm/wasmd v0.50.0/go.mod h1:UjmShW4l9YxaMytwJZ7IB7MWzHiynSZP3DdWrG0FRtk=
+github.com/CosmWasm/wasmd v0.51.0/go.mod h1:7TSaj5HoolghujuVWeExqmcUKgpcYWEySGLSODbnnwY=
 github.com/CosmWasm/wasmvm v1.5.2 h1:+pKB1Mz9GZVt1vadxB+EDdD1FOz3dMNjIKq/58/lrag=
 github.com/CosmWasm/wasmvm v1.5.2/go.mod h1:Q0bSEtlktzh7W2hhEaifrFp1Erx11ckQZmjq8FLCyys=
 github.com/DataDog/datadog-go v3.2.0+incompatible h1:qSG2N4FghB1He/r2mFrWKCaL7dXCilEuNEeAn20fdD4=
@@ -363,6 +364,7 @@ github.com/cometbft/cometbft v0.38.7 h1:ULhIOJ9+LgSy6nLekhq9ae3juX3NnQUMMPyVdhZV
 github.com/cometbft/cometbft v0.38.7/go.mod h1:HIyf811dFMI73IE0F7RrnY/Fr+d1+HuJAgtkEpQjCMY=
 github.com/cometbft/cometbft-db v0.10.0 h1:VMBQh88zXn64jXVvj39tlu/IgsGR84T7ImjS523DCiU=
 github.com/cometbft/cometbft-db v0.10.0/go.mod h1:7RR7NRv99j7keWJ5IkE9iZibUTKYdtepXTp7Ra0FxKk=
+github.com/cometbft/cometbft-db v0.11.0/go.mod h1:GDPJAC/iFHNjmZZPN8V8C1yr/eyityhi2W1hz2MGKSc=
 github.com/containerd/continuity v0.3.0 h1:nisirsYROK15TAMVukJOUyGJjz4BNQJBVsNvAXZJ/eg=
 github.com/containerd/continuity v0.3.0/go.mod h1:wJEAIwKOm/pBZuBd0JmeTvnLquTB1Ag8espWhkykbPM=
 github.com/coreos/etcd v3.3.10+incompatible/go.mod h1:uF7uidLiAD3TWHmW31ZFd/JWoc32PjwdhPthX9715RE=
@@ -395,6 +397,7 @@ github.com/cosmos/ibc-go/modules/capability v1.0.0 h1:r/l++byFtn7jHYa09zlAdSeevo
 github.com/cosmos/ibc-go/modules/capability v1.0.0/go.mod h1:D81ZxzjZAe0ZO5ambnvn1qedsFQ8lOwtqicG6liLBco=
 github.com/cosmos/ibc-go/modules/light-clients/08-wasm v0.0.0-20240208183954-71fa5c9fd708 h1:KOdpcf8gEAMrKQCkNyyxPNVG2fcQiO0GHKmPjD4U8CA=
 github.com/cosmos/ibc-go/modules/light-clients/08-wasm v0.0.0-20240208183954-71fa5c9fd708/go.mod h1:Jn7QCHDIa4DknrRUwJvwpGPU5Htgka0k5W6tuEckwUk=
+github.com/cosmos/ibc-go/modules/light-clients/08-wasm v0.2.1-0.20240523101951-4b45d1822fb6/go.mod h1:ab73pB/hwAFSa98oUwtMiNF6T1NyRwo6sjLjaYrkHHI=
 github.com/cosmos/ibc-go/v8 v8.3.1 h1:cUNWvTCftKQIcpbf2y/jVzo2OY3g4GVFw6tTC/pQ+tA=
 github.com/cosmos/ibc-go/v8 v8.3.1/go.mod h1:izwHZvn9lKrBn8xWj0aXWut6HKcwHMPD3uyuvOJoPSA=
 github.com/cosmos/ics23/go v0.10.0 h1:iXqLLgp2Lp+EdpIuwXTYIQU+AiHj9mOC2X9ab++bZDM=

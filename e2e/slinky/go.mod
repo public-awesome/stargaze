@@ -16,7 +16,7 @@ replace (
 
 require (
 	cosmossdk.io/math v1.3.0
-	github.com/CosmWasm/wasmd v0.50.0
+	github.com/CosmWasm/wasmd v0.51.0
 	github.com/cosmos/cosmos-sdk v0.50.6
 	github.com/public-awesome/stargaze/v14 v14.0.0-alpha.3
 	github.com/skip-mev/slinky v0.4.6
@@ -51,7 +51,7 @@ require (
 	github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d // indirect
 	github.com/ChainSafe/go-schnorrkel/1 v0.0.0-00010101000000-000000000000 // indirect
 	github.com/ComposableFi/go-subkey/v2 v2.0.0-tm03420 // indirect
-	github.com/CosmWasm/wasmvm v1.5.2 // indirect
+	github.com/CosmWasm/wasmvm/v2 v2.0.1 // indirect
 	github.com/DataDog/datadog-go v4.8.3+incompatible // indirect
 	github.com/DataDog/zstd v1.5.5 // indirect
 	github.com/FactomProject/basen v0.0.0-20150613233007-fe3947df716e // indirect
@@ -86,7 +86,7 @@ require (
 	github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v8 v8.0.2 // indirect
 	github.com/cosmos/ibc-apps/modules/ibc-hooks/v8 v8.0.0-00010101000000-000000000000 // indirect
 	github.com/cosmos/ibc-go/modules/capability v1.0.0 // indirect
-	github.com/cosmos/ibc-go/modules/light-clients/08-wasm v0.0.0-20240208183954-71fa5c9fd708 // indirect
+	github.com/cosmos/ibc-go/modules/light-clients/08-wasm v0.2.1-0.20240523101951-4b45d1822fb6 // indirect
 	github.com/cosmos/ibc-go/v8 v8.3.1 // indirect
 	github.com/cosmos/ics23/go v0.10.0 // indirect
 	github.com/cosmos/interchain-security/v5 v5.0.0 // indirect

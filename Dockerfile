@@ -34,7 +34,7 @@ RUN case "${TARGETPLATFORM}" in \
     echo "${WASMVM_CHECKSUM}  /lib/libwasmvm_muslc.a" | sha256sum -c
 
 # force it to use static lib (from above) not standard libgo_cosmwasm.so file
-RUN  LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true  make build
+RUN LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true make build
 
 
 # --------------------------------------------------------
