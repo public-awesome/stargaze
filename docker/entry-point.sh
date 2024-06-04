@@ -41,6 +41,5 @@ sed -i "s/memory_cache_size = 512/memory_cache_size = $MEMORY_CACHE_SIZE/g" ~/.s
 sed -i "s/enable = false/enable = true/g" ~/.starsd/config/app.toml
 sed -i "s/localhost:9090/0.0.0.0:9090/g" ~/.starsd/config/app.toml
 
-
 # Start the stake
 starsd start --pruning=nothing

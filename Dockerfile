@@ -18,8 +18,8 @@ COPY . /code/
 # Download the correct version of libwasmvm for the given platform and verify checksum
 RUN case "${TARGETPLATFORM}" in \
       "linux/amd64") \
-        WASMVM_URL="https://github.com/CosmWasm/wasmvm/releases/download/v1.5.2/libwasmvm_muslc.x86_64.a" && \
-        WASMVM_CHECKSUM="e660a38efb2930b34ee6f6b0bb12730adccb040b6ab701b8f82f34453a426ae7" \
+        WASMVM_URL="https://github.com/CosmWasm/wasmvm/releases/download/v2.0.1/libwasmvm_muslc.x86_64.a" && \
+        WASMVM_CHECKSUM="85de2ab3c40236935dbd023c9211130d49c5464494c4b9b09ea33e27a2d6bf87" \
         ;; \
       "linux/arm64") \
         WASMVM_URL="https://github.com/CosmWasm/wasmvm/releases/download/v1.5.2/libwasmvm_muslc.aarch64.a" && \
@@ -30,8 +30,8 @@ RUN case "${TARGETPLATFORM}" in \
         exit 1 \
         ;; \
     esac && \
-    wget "${WASMVM_URL}" -O /lib/libwasmvm_muslc.a && \
-    echo "${WASMVM_CHECKSUM}  /lib/libwasmvm_muslc.a" | sha256sum -c
+    wget "${WASMVM_URL}" -O /lib/libwasmvm_muslc.x86_64.a && \
+    echo "${WASMVM_CHECKSUM}  /lib/libwasmvm_muslc.x86_64.a" | sha256sum -c
 
 # force it to use static lib (from above) not standard libgo_cosmwasm.so file
 RUN LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true make build
@@ -51,6 +51,5 @@ EXPOSE 1317
 EXPOSE 26656
 # tendermint rpc
 EXPOSE 26657
-
 
 CMD ["starsd", "start", "--pruning", "nothing", "--log_format", "json"]

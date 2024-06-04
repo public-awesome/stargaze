@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	sdkmath "cosmossdk.io/math"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module/testutil"
@@ -32,12 +31,9 @@ func init() {
 }
 
 var (
-	minGasPrice = sdkmath.LegacyMustNewDecFromStr("0.01")
-	gasPrice    = minGasPrice
-
-	image = ibc.DockerImage{
-		Repository: "stargaze",
-		Version:    "latest",
+	dockerImage = ibc.DockerImage{
+		Repository: "publicawesome/stargaze",
+		Version:    "local-dev",
 		UidGid:     "1025:1025",
 	}
 
@@ -76,12 +72,11 @@ var (
 		Name:          "slinky",
 		NumValidators: &numValidators,
 		NumFullNodes:  &numFullNodes,
-		Version:       "latest",
 		NoHostMount:   &noHostMount,
 		ChainConfig: ibc.ChainConfig{
 			EncodingConfig: &encodingConfig,
 			Images: []ibc.DockerImage{
-				image,
+				dockerImage,
 			},
 			Type:           "cosmos",
 			Name:           "slinky",
@@ -92,7 +87,7 @@ var (
 			CoinType:       "118",
 			GasAdjustment:  gasAdjustment,
 			GasPrices:      fmt.Sprintf("0%s", denom),
-			TrustingPeriod: "48h",
+			TrustingPeriod: "112h",
 			NoHostMount:    noHostMount,
 			ModifyGenesis:  cosmos.ModifyGenesis(defaultGenesisKV),
 			SkipGenTx:      false,

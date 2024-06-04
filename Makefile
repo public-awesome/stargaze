@@ -117,16 +117,13 @@ build-linux:
 	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build $(BUILD_FLAGS) -o bin/starsd github.com/public-awesome/stargaze/cmd/starsd
 
 build-docker-arm:
-	docker buildx build --platform linux/arm64 --load . 
+	$(DOCKER) buildx build --platform linux/arm64 --load .
 
 build-docker:
-	docker buildx build -t publicawesome/stargaze:local --platform linux/amd64 --load .
+	$(DOCKER) buildx build -t publicawesome/stargaze:local --platform linux/amd64 --load .
 
 docker-test: build-linux
-	docker build -f docker/Dockerfile.test -t rocketprotocol/stargaze-relayer-test:latest .
-
-build-docker-slinky:
-	docker build . -t stargaze:latest --platform linux/amd64
+	$(DOCKER) build -f docker/Dockerfile.test -t rocketprotocol/stargaze-relayer-test:latest .
 
 test:
 	go test -v -race github.com/public-awesome/stargaze/v14/x/...
@@ -143,7 +140,7 @@ test-ica:
 test-chain-conformance:
 	cd e2e && go test -v -race -run TestStargazeConformance .
 
-test-slinky: build-docker-slinky
+test-slinky:
 	@cd e2e/slinky && go test -v -race .
 
 .PHONY: test test-e2e build-linux docker-test lint build install format
