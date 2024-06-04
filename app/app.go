@@ -11,6 +11,9 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/x/auth/ante"
+	"github.com/cosmos/cosmos-sdk/x/auth/posthandler"
+
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 	reflectionv1 "cosmossdk.io/api/cosmos/reflection/v1"
 	"cosmossdk.io/client/v2/autocli"
@@ -46,10 +49,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	authcodec "github.com/cosmos/cosmos-sdk/x/auth/codec"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
-	"github.com/cosmos/cosmos-sdk/x/auth/posthandler"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
@@ -170,20 +171,10 @@ import (
 	keepers "github.com/public-awesome/stargaze/v14/app/keepers"
 	sgstatesync "github.com/public-awesome/stargaze/v14/internal/statesync"
 
-	// slinky
-	"github.com/skip-mev/slinky/abci/proposals"
-	compression "github.com/skip-mev/slinky/abci/strategies/codec"
-	"github.com/skip-mev/slinky/abci/strategies/currencypair"
-	"github.com/skip-mev/slinky/abci/ve"
-	"github.com/skip-mev/slinky/pkg/math/voteweighted"
-	oracleclient "github.com/skip-mev/slinky/service/clients/oracle"
-	servicemetrics "github.com/skip-mev/slinky/service/metrics"
 	"github.com/skip-mev/slinky/x/oracle"
 	oraclekeeper "github.com/skip-mev/slinky/x/oracle/keeper"
 	oracletypes "github.com/skip-mev/slinky/x/oracle/types"
 
-	oraclepreblock "github.com/skip-mev/slinky/abci/preblock/oracle"
-	oracleconfig "github.com/skip-mev/slinky/oracle/config"
 	"github.com/skip-mev/slinky/x/marketmap"
 	marketmapkeeper "github.com/skip-mev/slinky/x/marketmap/keeper"
 	marketmaptypes "github.com/skip-mev/slinky/x/marketmap/types"
@@ -997,156 +988,6 @@ func NewStargazeApp(
 	app.MountTransientStores(tkeys)
 	app.MountMemoryStores(memKeys)
 
-	// Read general config from app-opts, and construct oracle service.
-	cfg, err := oracleconfig.ReadConfigFromAppOpts(appOpts)
-	if err != nil {
-		panic(err)
-	}
-
-	// If app level instrumentation is enabled, then wrap the oracle service with a metrics client
-	// to get metrics on the oracle service (for ABCI++). This will allow the instrumentation to track
-	// latency in VerifyVoteExtension requests and more.
-	oracleMetrics, err := servicemetrics.NewMetricsFromConfig(cfg, app.ChainID())
-	if err != nil {
-		panic(err)
-	}
-
-	// Create the oracle service.
-	app.oracleClient, err = oracleclient.NewClientFromConfig(
-		cfg,
-		app.Logger().With("client", "oracle"),
-		oracleMetrics,
-	)
-	if err != nil {
-		panic(err)
-	}
-
-	// Connect to the oracle service (default timeout of 5 seconds).
-	go func() {
-		if err := app.oracleClient.Start(context.Background()); err != nil {
-			app.Logger().Error("failed to start oracle client", "err", err)
-			panic(err)
-		}
-
-		app.Logger().Info("started oracle client", "address", cfg.OracleAddress)
-	}()
-
-	// initialize BaseApp
-	proposalHandler := proposals.NewProposalHandler(
-		app.Logger(),
-		baseapp.NoOpPrepareProposal(),
-		baseapp.NoOpProcessProposal(),
-		ve.NewDefaultValidateVoteExtensionsFn(app.Keepers.StakingKeeper),
-		compression.NewCompressionVoteExtensionCodec(
-			compression.NewDefaultVoteExtensionCodec(),
-			compression.NewZLibCompressor(),
-		),
-		compression.NewCompressionExtendedCommitCodec(
-			compression.NewDefaultExtendedCommitCodec(),
-			compression.NewZStdCompressor(),
-		),
-		currencypair.NewDeltaCurrencyPairStrategy(app.Keepers.OracleKeeper),
-		oracleMetrics,
-	)
-	app.SetPrepareProposal(proposalHandler.PrepareProposalHandler())
-	app.SetProcessProposal(proposalHandler.ProcessProposalHandler())
-
-	app.SetInitChainer(app.InitChainer)
-	app.SetBeginBlocker(app.BeginBlocker)
-	app.SetEndBlocker(app.EndBlocker)
-
-	// Create the aggregation function that will be used to aggregate oracle data
-	// from each validator.
-	aggregatorFn := voteweighted.MedianFromContext(
-		app.Logger(),
-		app.Keepers.StakingKeeper,
-		voteweighted.DefaultPowerThreshold,
-	)
-
-	// Create the pre-finalize block hook that will be used to apply oracle data
-	// to the state before any transactions are executed (in finalize block).
-	oraclePreBlockHandler := oraclepreblock.NewOraclePreBlockHandler(
-		app.Logger(),
-		aggregatorFn,
-		app.Keepers.OracleKeeper,
-		oracleMetrics,
-		currencypair.NewDeltaCurrencyPairStrategy(app.Keepers.OracleKeeper),
-		compression.NewCompressionVoteExtensionCodec(
-			compression.NewDefaultVoteExtensionCodec(),
-			compression.NewZLibCompressor(),
-		),
-		compression.NewCompressionExtendedCommitCodec(
-			compression.NewDefaultExtendedCommitCodec(),
-			compression.NewZStdCompressor(),
-		),
-	)
-	oraclePreblocker := oraclePreBlockHandler.PreBlocker()
-	preBlocker := func(ctx sdk.Context, req *abci.RequestFinalizeBlock) (*sdk.ResponsePreBlock, error) {
-		// call app's preblocker first in case there is changes made on upgrades
-		// that can modify state and lead to serialization/deserialization issues
-		resp, err := app.PreBlocker(ctx, req)
-		if err != nil {
-			return resp, err
-		}
-
-		// oracle preblocker sends empty response pre block so it can ignored
-		_, err = oraclePreblocker(ctx, req)
-		if err != nil {
-			return &sdk.ResponsePreBlock{}, err
-		}
-
-		// return resp from app's preblocker which can return consensus param changed flag
-		return resp, nil
-	}
-
-	app.SetPreBlocker(preBlocker)
-
-	// Create the vote extensions handler that will be used to extend and verify
-	// vote extensions (i.e. oracle data).
-	voteExtensionsHandler := ve.NewVoteExtensionHandler(
-		app.Logger(),
-		app.oracleClient,
-		time.Second,
-		currencypair.NewDeltaCurrencyPairStrategy(app.Keepers.OracleKeeper),
-		compression.NewCompressionVoteExtensionCodec(
-			compression.NewDefaultVoteExtensionCodec(),
-			compression.NewZLibCompressor(),
-		),
-		oraclePreBlockHandler.PreBlocker(),
-		oracleMetrics,
-	)
-	app.SetExtendVoteHandler(voteExtensionsHandler.ExtendVoteHandler())
-	app.SetVerifyVoteExtensionHandler(voteExtensionsHandler.VerifyVoteExtensionHandler())
-
-	anteHandler, err := NewAnteHandler(
-		HandlerOptions{
-			HandlerOptions: ante.HandlerOptions{
-				AccountKeeper:   app.Keepers.AccountKeeper,
-				BankKeeper:      app.Keepers.BankKeeper,
-				SignModeHandler: txConfig.SignModeHandler(),
-				FeegrantKeeper:  app.Keepers.FeeGrantKeeper,
-				SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
-			},
-			keeper:                app.Keepers.IBCKeeper,
-			govKeeper:             app.Keepers.GovKeeper,
-			globalfeeKeeper:       app.Keepers.GlobalFeeKeeper,
-			stakingKeeper:         app.Keepers.StakingKeeper,
-			WasmConfig:            &wasmConfig,
-			TXCounterStoreService: runtime.NewKVStoreService(keys[wasmtypes.StoreKey]),
-			Codec:                 app.appCodec,
-		},
-	)
-	if err != nil {
-		panic(err)
-	}
-
-	postHandler, err := posthandler.NewPostHandler(
-		posthandler.HandlerOptions{},
-	)
-	if err != nil {
-		panic(err)
-	}
-
 	// -------------------------------------------------------------------- //
 	// 						  APP INITIALIZATION   	   					    //
 	// -------------------------------------------------------------------- //
@@ -1216,6 +1057,35 @@ func NewStargazeApp(
 	)
 	app.SetExtendVoteHandler(voteExtensionsHandler.ExtendVoteHandler())
 	app.SetVerifyVoteExtensionHandler(voteExtensionsHandler.VerifyVoteExtensionHandler())
+
+	anteHandler, err := NewAnteHandler(
+		HandlerOptions{
+			HandlerOptions: ante.HandlerOptions{
+				AccountKeeper:   app.Keepers.AccountKeeper,
+				BankKeeper:      app.Keepers.BankKeeper,
+				SignModeHandler: txConfig.SignModeHandler(),
+				FeegrantKeeper:  app.Keepers.FeeGrantKeeper,
+				SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
+			},
+			keeper:                app.Keepers.IBCKeeper,
+			govKeeper:             app.Keepers.GovKeeper,
+			globalfeeKeeper:       app.Keepers.GlobalFeeKeeper,
+			stakingKeeper:         app.Keepers.StakingKeeper,
+			WasmConfig:            &wasmConfig,
+			TXCounterStoreService: runtime.NewKVStoreService(keys[wasmtypes.StoreKey]),
+			Codec:                 app.appCodec,
+		},
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	postHandler, err := posthandler.NewPostHandler(
+		posthandler.HandlerOptions{},
+	)
+	if err != nil {
+		panic(err)
+	}
 
 	app.SetAnteHandler(anteHandler)
 	app.SetPostHandler(postHandler)
