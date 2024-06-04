@@ -3,11 +3,11 @@ package cmd
 import (
 	"fmt"
 
-	wasmvmapi "github.com/CosmWasm/wasmvm"
+	wasmvmapi "github.com/CosmWasm/wasmvm/v2"
 	"github.com/spf13/cobra"
 )
 
-var LibwasmVersion = "1.5.2"
+var LibwasmVersion = "2.0.1"
 
 func CheckLibwasmVersion(_ *cobra.Command, _ []string) error {
 	version, err := wasmvmapi.LibwasmvmVersion()
