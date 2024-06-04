@@ -323,7 +323,7 @@ type App struct {
 	ScopedWasmKeeper          capabilitykeeper.ScopedKeeper
 
 	// oracle
-  oracleClient oracleclient.OracleClient
+	oracleClient oracleclient.OracleClient
 }
 
 // NewStargazeApp returns a reference to an initialized Gaia.
