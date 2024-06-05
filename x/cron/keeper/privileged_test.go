@@ -11,7 +11,7 @@ import (
 func Test_SetPrivileged(t *testing.T) {
 	k, ctx := keeper.CronKeeper(t)
 
-	// contract doesnt exist
+	// contract doesn't exist
 	acc1 := sample.AccAddress()
 	err := k.SetPrivileged(ctx, acc1)
 	if err == nil {
@@ -29,14 +29,14 @@ func Test_SetPrivileged(t *testing.T) {
 func Test_UnsetPrivileged(t *testing.T) {
 	k, ctx := keeper.CronKeeper(t)
 
-	// contract doesnt exist
+	// contract doesn't exist
 	acc1 := sample.AccAddress()
 	err := k.UnsetPrivileged(ctx, acc1)
 	if err == nil {
 		t.Errorf("expected %s to not exist, and fail to set privilege", acc1)
 	}
 
-	// contract exists but doesnt have privilege
+	// contract exists but doesn't have privilege
 	acc2 := sdk.MustAccAddressFromBech32("cosmos1qyqszqgpqyqszqgpqyqszqgpqyqszqgpjnp7du")
 	err = k.UnsetPrivileged(ctx, acc2)
 	if err == nil {
