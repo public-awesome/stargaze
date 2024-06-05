@@ -15,7 +15,7 @@ type CustomAppConfig struct {
 	Oracle oracleconfig.AppConfig `mapstructure:"oracle" json:"oracle"`
 }
 
-func CustomconfigTemplate(config wasmtypes.WasmConfig, oracleConfig oracleconfig.AppConfig) string {
+func CustomconfigTemplate(config wasmtypes.WasmConfig) string {
 	return serverconfig.DefaultConfigTemplate + wasmtypes.ConfigTemplate(config) + oracleconfig.DefaultConfigTemplate
 }
 
@@ -43,5 +43,5 @@ func DefaultConfig() (string, interface{}) {
 		Oracle: oracleCfg,
 	}
 
-	return CustomconfigTemplate(wasmConfig, customConfig.Oracle), customConfig
+	return CustomconfigTemplate(wasmConfig), customConfig
 }
