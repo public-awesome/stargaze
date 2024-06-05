@@ -10,6 +10,7 @@ import (
 	wasmlctypes "github.com/cosmos/ibc-go/modules/light-clients/08-wasm/types"
 	"github.com/public-awesome/stargaze/v14/app/keepers"
 	"github.com/public-awesome/stargaze/v14/app/upgrades"
+	authoritytypes "github.com/public-awesome/stargaze/v14/x/authority/types"
 )
 
 // next upgrade name
@@ -29,12 +30,18 @@ var Upgrade = upgrades.Upgrade{
 			params := keepers.IBCKeeper.ClientKeeper.GetParams(wctx)
 			params.AllowedClients = append(params.AllowedClients, wasmlctypes.Wasm)
 			keepers.IBCKeeper.ClientKeeper.SetParams(wctx, params)
+
+			err = keepers.AuthorityKeeper.SetParams(sdk.UnwrapSDKContext(ctx), authoritytypes.DefaultParams())
+			if err != nil {
+				return nil, err
+			}
 			return migrations, nil
 		}
 	},
 	StoreUpgrades: storetypes.StoreUpgrades{
 		Added: []string{
 			wasmlctypes.ModuleName,
+			authoritytypes.ModuleName,
 		},
 	},
 }

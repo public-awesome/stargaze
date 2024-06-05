@@ -1,0 +1,16 @@
+syntax = "proto3";
+package publicawesome.stargaze.authority.v1;
+
+import "gogoproto/gogo.proto";
+import "publicawesome/stargaze/authority/v1/authority.proto";
+
+option go_package = "github.com/public-awesome/stargaze/v14/x/authority/types";
+
+// GenesisState defines the authority module's genesis state.
+message GenesisState {
+  // params defines all the parameters of the module.
+  Params params = 1 [
+    (gogoproto.jsontag) = "params,omitempty",
+    (gogoproto.nullable) = false
+  ];
+}
