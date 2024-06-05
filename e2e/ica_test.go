@@ -13,7 +13,6 @@ import (
 	"github.com/cosmos/gogoproto/proto"
 	icatypes "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/types"
 	chantypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
-	"github.com/public-awesome/stargaze/v14/app"
 	"github.com/strangelove-ventures/interchaintest/v8"
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v8/ibc"
@@ -121,7 +120,7 @@ func TestInterchainAccounts(t *testing.T) {
 	// Start the relayer and set the cleanup function.
 	err = r.StartRelayer(ctx, eRep, pathName)
 	require.NoError(t, err)
-	ir := app.MakeEncodingConfig().InterfaceRegistry
+	ir := cosmos.DefaultEncoding().InterfaceRegistry
 
 	t.Cleanup(
 		func() {
