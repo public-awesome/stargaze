@@ -1006,6 +1006,10 @@ func NewStargazeApp(
 	app.SetPrepareProposal(proposalHandler.PrepareProposalHandler())
 	app.SetProcessProposal(proposalHandler.ProcessProposalHandler())
 
+	app.SetInitChainer(app.InitChainer)
+	app.SetBeginBlocker(app.BeginBlocker)
+	app.SetEndBlocker(app.EndBlocker)
+
 	// Create the aggregation function that will be used to aggregate oracle data
 	// from each validator.
 	aggregatorFn := voteweighted.MedianFromContext(
