@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/skip-mev/slinky/abci/strategies/aggregator"
 	"io"
 	"io/fs"
 	"net/http"
@@ -985,7 +986,8 @@ func NewStargazeApp(
 		app.Logger().Info("started oracle client", "address", cfg.OracleAddress)
 	}()
 
-	// initialize BaseApp
+	// Create the proposal handler that will be used to fill proposals with
+	// transactions and oracle data.
 	proposalHandler := proposals.NewProposalHandler(
 		app.Logger(),
 		baseapp.NoOpPrepareProposal(),
@@ -1004,10 +1006,6 @@ func NewStargazeApp(
 	)
 	app.SetPrepareProposal(proposalHandler.PrepareProposalHandler())
 	app.SetProcessProposal(proposalHandler.ProcessProposalHandler())
-
-	app.SetInitChainer(app.InitChainer)
-	app.SetBeginBlocker(app.BeginBlocker)
-	app.SetEndBlocker(app.EndBlocker)
 
 	// Create the aggregation function that will be used to aggregate oracle data
 	// from each validator.
@@ -1034,39 +1032,39 @@ func NewStargazeApp(
 			compression.NewZStdCompressor(),
 		),
 	)
-	oraclePreblocker := oraclePreBlockHandler.PreBlocker()
-	preBlocker := func(ctx sdk.Context, req *abci.RequestFinalizeBlock) (*sdk.ResponsePreBlock, error) {
-		// call app's preblocker first in case there is changes made on upgrades
-		// that can modify state and lead to serialization/deserialization issues
-		resp, err := app.PreBlocker(ctx, req)
-		if err != nil {
-			return resp, err
-		}
 
-		// oracle preblocker sends empty response pre block so it can ignored
-		_, err = oraclePreblocker(ctx, req)
-		if err != nil {
-			return &sdk.ResponsePreBlock{}, err
-		}
-
-		// return resp from app's preblocker which can return consensus param changed flag
-		return resp, nil
-	}
-
-	app.SetPreBlocker(preBlocker)
+	app.SetPreBlocker(oraclePreBlockHandler.PreBlocker())
 
 	// Create the vote extensions handler that will be used to extend and verify
 	// vote extensions (i.e. oracle data).
+	cps := currencypair.NewDeltaCurrencyPairStrategy(app.Keepers.OracleKeeper)
+	veCodec := compression.NewCompressionVoteExtensionCodec(
+		compression.NewDefaultVoteExtensionCodec(),
+		compression.NewZLibCompressor(),
+	)
+	extCommitCodec := compression.NewCompressionExtendedCommitCodec(
+		compression.NewDefaultExtendedCommitCodec(),
+		compression.NewZStdCompressor(),
+	)
 	voteExtensionsHandler := ve.NewVoteExtensionHandler(
 		app.Logger(),
 		app.oracleClient,
 		time.Second,
-		currencypair.NewDeltaCurrencyPairStrategy(app.Keepers.OracleKeeper),
-		compression.NewCompressionVoteExtensionCodec(
-			compression.NewDefaultVoteExtensionCodec(),
-			compression.NewZLibCompressor(),
+		cps,
+		veCodec,
+		aggregator.NewOraclePriceApplier(
+			aggregator.NewDefaultVoteAggregator(
+				app.Logger(),
+				aggregatorFn,
+				// we need a separate price strategy here, so that we can optimistically apply the latest prices
+				// and extend our vote based on these prices
+				currencypair.NewDeltaCurrencyPairStrategy(app.Keepers.OracleKeeper),
+			),
+			app.Keepers.OracleKeeper,
+			veCodec,
+			extCommitCodec,
+			app.Logger(),
 		),
-		oraclePreBlockHandler.PreBlocker(),
 		oracleMetrics,
 	)
 	app.SetExtendVoteHandler(voteExtensionsHandler.ExtendVoteHandler())
