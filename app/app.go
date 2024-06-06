@@ -1032,8 +1032,26 @@ func NewStargazeApp(
 		),
 	)
 
-	app.SetPreBlocker(oraclePreBlockHandler.PreBlocker())
+	oraclePreblocker := oraclePreBlockHandler.PreBlocker()
+	preBlocker := func(ctx sdk.Context, req *abci.RequestFinalizeBlock) (*sdk.ResponsePreBlock, error) {
+		// call app's preblocker first in case there is changes made on upgrades
+		// that can modify state and lead to serialization/deserialization issues
+		resp, err := app.PreBlocker(ctx, req)
+		if err != nil {
+			return resp, err
+		}
 
+		// oracle preblocker sends empty response pre block so it can ignored
+		_, err = oraclePreblocker(ctx, req)
+		if err != nil {
+			return &sdk.ResponsePreBlock{}, err
+		}
+
+		// return resp from app's preblocker which can return consensus param changed flag
+		return resp, nil
+	}
+
+	app.SetPreBlocker(preBlocker)
 	// Create the vote extensions handler that will be used to extend and verify
 	// vote extensions (i.e. oracle data).
 	cps := currencypair.NewDeltaCurrencyPairStrategy(app.Keepers.OracleKeeper)
