@@ -4,13 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/skip-mev/slinky/abci/strategies/aggregator"
 	"io"
 	"io/fs"
 	"net/http"
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/skip-mev/slinky/abci/strategies/aggregator"
 
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 	reflectionv1 "cosmossdk.io/api/cosmos/reflection/v1"
