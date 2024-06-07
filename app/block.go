@@ -6,8 +6,22 @@ import (
 )
 
 // PreBlocker application updates every pre block
-func (a *App) PreBlocker(ctx sdk.Context, _ *abci.RequestFinalizeBlock) (*sdk.ResponsePreBlock, error) {
-	return a.ModuleManager.PreBlock(ctx)
+func (a *App) PreBlocker(ctx sdk.Context, req *abci.RequestFinalizeBlock) (*sdk.ResponsePreBlock, error) {
+	// call app's preblocker first in case there is changes made on upgrades
+	// that can modify state and lead to serialization/deserialization issues
+	resp, err := a.ModuleManager.PreBlock(ctx)
+	if err != nil {
+		return resp, err
+	}
+
+	// oracle preblocker sends empty response pre block so it can ignored
+	_, err = a.oraclePreBlocker(ctx, req)
+	if err != nil {
+		return &sdk.ResponsePreBlock{}, err
+	}
+
+	// return resp from app's preblocker which can return consensus param changed flag
+	return resp, nil
 }
 
 // Precommiter application updates every commit

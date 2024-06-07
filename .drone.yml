@@ -33,7 +33,7 @@ steps:
       branch: no-cache
 
   - name: test
-    image: publicawesome/golang:1.22.1-devtooling
+    image: publicawesome/golang:1.22.3-devtooling
     volumes:
       - name: cache
         path: /go
@@ -42,14 +42,14 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: build
-    image: golang:1.22.1-alpine3.19
+    image: golang:1.22.3-alpine3.18
     volumes:
       - name: cache
         path: /go
     commands:
       - apk add --no-cache ca-certificates build-base git
-      - wget https://github.com/CosmWasm/wasmvm/releases/download/v1.5.2/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.a
-      - echo "e660a38efb2930b34ee6f6b0bb12730adccb040b6ab701b8f82f34453a426ae7  /lib/libwasmvm_muslc.a" | sha256sum -c
+      - wget https://github.com/CosmWasm/wasmvm/releases/download/v2.0.1/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.x86_64.a
+      - echo "85de2ab3c40236935dbd023c9211130d49c5464494c4b9b09ea33e27a2d6bf87  /lib/libwasmvm_muslc.x86_64.a" | sha256sum -c
       - LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true  make build
       - echo "Ensuring binary is statically linked ..." && (file $PWD/bin/starsd | grep "statically linked")
     environment:
@@ -77,12 +77,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 14.0.0-alpha.2
+        - 14.0.0-alpha.4
     when:
       event:
         - push
       branch:
-        - jhernandezb/upgrade-test
+        - jhernandezb/add-slinky
   - name: docker_release
     image: plugins/docker
     settings:
@@ -98,7 +98,7 @@ steps:
         - tag
 
   - name: release
-    image: golang:1.21.3
+    image: golang:1.22.3
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -193,7 +193,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/golang:1.22.1-devtooling
+    image: publicawesome/golang:1.22.3-devtooling
     volumes:
       - name: cache
         path: /go
@@ -281,7 +281,7 @@ steps:
     when:
       branch: no-cache
   - name: build-wrapper
-    image: publicawesome/golang:1.22.1-devtooling
+    image: publicawesome/golang:1.22.3-devtooling
     volumes:
       - name: cache
         path: /go
@@ -347,12 +347,12 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer-v1.7.sh
   - name: proposal
-    image: publicawesome/stargaze:13.0.0
+    image: publicawesome/stargaze:14.0.0-alpha.4
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:14.0.0-alpha.2
+    image: publicawesome/stargaze:14.0.0-alpha.4
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -371,7 +371,7 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:14.0.0-alpha.2
+    image: publicawesome/stargaze:14.0.0-alpha.4
     commands:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
@@ -421,6 +421,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 0e0c7fcfdbb1269dbc8595903d663c53bf327aabfca1298150e2e13638b2c3c2
+hmac: 86967519e5c477f67754ed2c569761a7fb76086b83b6582a12987e3fab2413df
 
 ...

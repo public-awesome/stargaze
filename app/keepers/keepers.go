@@ -33,6 +33,9 @@ import (
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+
+	marketmapkeeper "github.com/skip-mev/slinky/x/marketmap/keeper"
+	oraclekeeper "github.com/skip-mev/slinky/x/oracle/keeper"
 )
 
 type StargazeKeepers struct {
@@ -75,4 +78,8 @@ type StargazeKeepers struct {
 	GlobalFeeKeeper    globalfeemodulekeeper.Keeper
 	MintKeeper         mintkeeper.Keeper
 	TokenFactoryKeeper tokenfactorykeeper.Keeper
+
+	// Slinky
+	OracleKeeper    *oraclekeeper.Keeper
+	MarketMapKeeper *marketmapkeeper.Keeper
 }
