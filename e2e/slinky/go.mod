@@ -19,7 +19,7 @@ require (
 	github.com/cosmos/cosmos-sdk v0.50.7
 	github.com/public-awesome/stargaze/v14 v14.0.0-alpha.3
 	github.com/skip-mev/slinky v1.0.0
-	github.com/skip-mev/slinky/tests/integration v1.0.0
+	github.com/skip-mev/slinky/tests/integration v1.1.0
 	github.com/strangelove-ventures/interchaintest/v8 v8.4.0
 	github.com/stretchr/testify v1.9.0
 )
