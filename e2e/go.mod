@@ -21,7 +21,7 @@ require (
 	github.com/cosmos/gogoproto v1.4.12
 	github.com/cosmos/ibc-go/v8 v8.3.1
 	github.com/docker/docker v24.0.9+incompatible
-	github.com/strangelove-ventures/interchaintest/v8 v8.3.0
+	github.com/strangelove-ventures/interchaintest/v8 v8.4.0
 	github.com/stretchr/testify v1.9.0
 	go.uber.org/zap v1.27.0
 	gopkg.in/yaml.v2 v2.4.0
