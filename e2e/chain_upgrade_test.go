@@ -24,11 +24,11 @@ const (
 )
 
 const (
-	haltHeightDelta    = uint64(20) // The number of blocks after which to apply upgrade after creation of proposal.
-	blocksAfterUpgrade = uint64(10) // The number of blocks to wait for after the upgrade has been applied.
-	votingPeriod       = "30s"      // Reducing voting period for testing
-	maxDepositPeriod   = "10s"      // Reducing max deposit period for testing
-	depositDenom       = "ustars"   // The bond denom to be used to deposit for propsals
+	haltHeightDelta    = int64(20) // The number of blocks after which to apply upgrade after creation of proposal.
+	blocksAfterUpgrade = int64(10) // The number of blocks to wait for after the upgrade has been applied.
+	votingPeriod       = "30s"     // Reducing voting period for testing
+	maxDepositPeriod   = "10s"     // Reducing max deposit period for testing
+	depositDenom       = "ustars"  // The bond denom to be used to deposit for propsals
 )
 
 func TestChainUpgrade(t *testing.T) {
@@ -59,7 +59,7 @@ func TestChainUpgrade(t *testing.T) {
 	defer timeoutCtxCancel()
 
 	// This should timeout due to chain halt at upgrade height.
-	_ = testutil.WaitForBlocks(timeoutCtx, int(haltHeight-height)+1, stargazeChain)
+	_ = testutil.WaitForBlocks(timeoutCtx, int(haltHeight)-int(height)+1, stargazeChain)
 
 	height, err = stargazeChain.Height(ctx)
 	require.NoError(t, err, "error fetching height after chain should have halted")
@@ -95,7 +95,7 @@ func TestChainUpgrade(t *testing.T) {
 	require.Equal(t, int64(1), queryRes.Data.UpCount)
 }
 
-func submitUpgradeProposalAndVote(t *testing.T, ctx context.Context, stargazeChain *cosmos.CosmosChain, chainUser ibc.Wallet) uint64 {
+func submitUpgradeProposalAndVote(t *testing.T, ctx context.Context, stargazeChain *cosmos.CosmosChain, chainUser ibc.Wallet) int64 {
 	height, err := stargazeChain.Height(ctx) // The current chain height
 	require.NoError(t, err, "error fetching height before submit upgrade proposal")
 
@@ -125,6 +125,9 @@ func submitUpgradeProposalAndVote(t *testing.T, ctx context.Context, stargazeCha
 
 	proposalID, err := strconv.ParseUint(upgradeTx.ProposalID, 10, 64)
 	require.NoError(t, err, "error parsing proposal ID")
+
+	err = testutil.WaitForBlocks(ctx, 2, stargazeChain)
+	require.NoError(t, err, "error waiting for blocks after proposal submission")
 
 	// Vote on the proposal
 	for _, n := range stargazeChain.Nodes() {

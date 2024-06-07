@@ -6,11 +6,11 @@ import (
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	upgrades "github.com/public-awesome/stargaze/v14/app/upgrades"
-	upgradesv14 "github.com/public-awesome/stargaze/v14/app/upgrades/v14"
+	mainnetupgradesv14 "github.com/public-awesome/stargaze/v14/app/upgrades/mainnet/v14"
 )
 
 var Upgrades = []upgrades.Upgrade{
-	upgradesv14.Upgrade,
+	mainnetupgradesv14.Upgrade,
 }
 
 func (app App) RegisterUpgradeHandlers(configurator module.Configurator) {
