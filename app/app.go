@@ -171,13 +171,23 @@ import (
 	keepers "github.com/public-awesome/stargaze/v14/app/keepers"
 	sgstatesync "github.com/public-awesome/stargaze/v14/internal/statesync"
 
-	"github.com/skip-mev/slinky/x/oracle"
-	oraclekeeper "github.com/skip-mev/slinky/x/oracle/keeper"
-	oracletypes "github.com/skip-mev/slinky/x/oracle/types"
-
+	// slinky
+	oraclepreblock "github.com/skip-mev/slinky/abci/preblock/oracle"
+	"github.com/skip-mev/slinky/abci/proposals"
+	"github.com/skip-mev/slinky/abci/strategies/aggregator"
+	compression "github.com/skip-mev/slinky/abci/strategies/codec"
+	"github.com/skip-mev/slinky/abci/strategies/currencypair"
+	"github.com/skip-mev/slinky/abci/ve"
+	oracleconfig "github.com/skip-mev/slinky/oracle/config"
+	"github.com/skip-mev/slinky/pkg/math/voteweighted"
+	oracleclient "github.com/skip-mev/slinky/service/clients/oracle"
+	servicemetrics "github.com/skip-mev/slinky/service/metrics"
 	"github.com/skip-mev/slinky/x/marketmap"
 	marketmapkeeper "github.com/skip-mev/slinky/x/marketmap/keeper"
 	marketmaptypes "github.com/skip-mev/slinky/x/marketmap/types"
+	"github.com/skip-mev/slinky/x/oracle"
+	oraclekeeper "github.com/skip-mev/slinky/x/oracle/keeper"
+	oracletypes "github.com/skip-mev/slinky/x/oracle/types"
 )
 
 const (
@@ -314,7 +324,8 @@ type App struct {
 	ScopedWasmKeeper          capabilitykeeper.ScopedKeeper
 
 	// oracle
-	oracleClient oracleclient.OracleClient
+	oracleClient     oracleclient.OracleClient
+	oraclePreBlocker sdk.PreBlocker
 }
 
 // NewStargazeApp returns a reference to an initialized Gaia.
@@ -1041,18 +1052,38 @@ func NewStargazeApp(
 
 	app.SetPreBlocker(oraclePreBlockHandler.PreBlocker())
 
+	app.oraclePreBlocker = oraclePreBlockHandler.PreBlocker()
+	app.SetPreBlocker(app.PreBlocker)
 	// Create the vote extensions handler that will be used to extend and verify
 	// vote extensions (i.e. oracle data).
+	cps := currencypair.NewDeltaCurrencyPairStrategy(app.Keepers.OracleKeeper)
+	veCodec := compression.NewCompressionVoteExtensionCodec(
+		compression.NewDefaultVoteExtensionCodec(),
+		compression.NewZLibCompressor(),
+	)
+	extCommitCodec := compression.NewCompressionExtendedCommitCodec(
+		compression.NewDefaultExtendedCommitCodec(),
+		compression.NewZStdCompressor(),
+	)
 	voteExtensionsHandler := ve.NewVoteExtensionHandler(
 		app.Logger(),
 		app.oracleClient,
 		time.Second,
-		currencypair.NewDeltaCurrencyPairStrategy(app.Keepers.OracleKeeper),
-		compression.NewCompressionVoteExtensionCodec(
-			compression.NewDefaultVoteExtensionCodec(),
-			compression.NewZLibCompressor(),
+		cps,
+		veCodec,
+		aggregator.NewOraclePriceApplier(
+			aggregator.NewDefaultVoteAggregator(
+				app.Logger(),
+				aggregatorFn,
+				// we need a separate price strategy here, so that we can optimistically apply the latest prices
+				// and extend our vote based on these prices
+				currencypair.NewDeltaCurrencyPairStrategy(app.Keepers.OracleKeeper),
+			),
+			app.Keepers.OracleKeeper,
+			veCodec,
+			extCommitCodec,
+			app.Logger(),
 		),
-		oraclePreBlockHandler.PreBlocker(),
 		oracleMetrics,
 	)
 	app.SetExtendVoteHandler(voteExtensionsHandler.ExtendVoteHandler())

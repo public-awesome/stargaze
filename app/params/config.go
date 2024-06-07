@@ -11,8 +11,8 @@ import (
 // CustomAppConfig defines the configuration for the Nois app.
 type CustomAppConfig struct {
 	serverconfig.Config
+	Wasm   wasmtypes.WasmConfig   `mapstructure:"wasm" json:"wasm"`
 	Oracle oracleconfig.AppConfig `mapstructure:"oracle" json:"oracle"`
-	Wasm   wasmtypes.WasmConfig   `mapstructure:"wasm"`
 }
 
 func CustomconfigTemplate(config wasmtypes.WasmConfig) string {
@@ -31,17 +31,16 @@ func DefaultConfig() (string, interface{}) {
 	wasmConfig.MemoryCacheSize = 512
 	wasmConfig.ContractDebugMode = false
 
-	oracleConfig := oracleconfig.AppConfig{
-		Enabled:        true,
+	oracleCfg := oracleconfig.AppConfig{
+		Enabled:        false,
 		OracleAddress:  "localhost:8080",
 		ClientTimeout:  time.Second * 2,
-		MetricsEnabled: true,
+		MetricsEnabled: false,
 	}
-
 	customConfig := CustomAppConfig{
 		Config: *serverConfig,
-		Oracle: oracleConfig,
 		Wasm:   wasmConfig,
+		Oracle: oracleCfg,
 	}
 
 	return CustomconfigTemplate(wasmConfig), customConfig

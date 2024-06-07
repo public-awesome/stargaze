@@ -33,7 +33,7 @@ func Test_ContractAuthorization(t *testing.T) {
 		require.Error(t, err)
 	})
 
-	t.Run("authorization doesnt exist", func(t *testing.T) {
+	t.Run("authorization doesn't exist", func(t *testing.T) {
 		found := k.HasContractAuthorization(ctx, sdk.MustAccAddressFromBech32(ca.ContractAddress))
 		require.False(t, found)
 	})

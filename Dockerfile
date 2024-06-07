@@ -16,22 +16,10 @@ COPY . /code/
 
 # See https://github.com/CosmWasm/wasmvm/releases
 # Download the correct version of libwasmvm for the given platform and verify checksum
-RUN case "${TARGETPLATFORM}" in \
-      "linux/amd64") \
-        WASMVM_URL="https://github.com/CosmWasm/wasmvm/releases/download/v2.0.1/libwasmvm_muslc.x86_64.a" && \
-        WASMVM_CHECKSUM="85de2ab3c40236935dbd023c9211130d49c5464494c4b9b09ea33e27a2d6bf87" \
-        ;; \
-      "linux/arm64") \
-        WASMVM_URL="https://github.com/CosmWasm/wasmvm/releases/download/v1.5.2/libwasmvm_muslc.aarch64.a" && \
-        WASMVM_CHECKSUM="e78b224c15964817a3b75a40e59882b4d0e06fd055b39514d61646689cef8c6e" \
-        ;; \
-      *) \
-        echo "Unsupported platform: ${TARGETPLATFORM}" ; \
-        exit 1 \
-        ;; \
-    esac && \
-    wget "${WASMVM_URL}" -O /lib/libwasmvm_muslc.x86_64.a && \
-    echo "${WASMVM_CHECKSUM}  /lib/libwasmvm_muslc.x86_64.a" | sha256sum -c
+ADD https://github.com/CosmWasm/wasmvm/releases/download/v2.0.1/libwasmvm_muslc.x86_64.a /lib/libwasmvm_muslc.x86_64.a
+ADD https://github.com/CosmWasm/wasmvm/releases/download/v2.0.1/libwasmvm_muslc.aarch64.a /lib/libwasmvm_muslc.aarch64.a
+RUN echo "85de2ab3c40236935dbd023c9211130d49c5464494c4b9b09ea33e27a2d6bf87 /lib/libwasmvm_muslc.x86_64.a" | sha256sum -c
+RUN echo "860ba8d7ee4c89c1b0dc3abd4b3658d07ddf5531d2de970cada0699689cc1e33 /lib/libwasmvm_muslc.aarch64.a" | sha256sum -c
 
 # force it to use static lib (from above) not standard libgo_cosmwasm.so file
 RUN LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true make build
