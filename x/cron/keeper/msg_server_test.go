@@ -149,7 +149,7 @@ func TestDemoteFromPrivilegedContract(t *testing.T) {
 			true,
 		},
 		{
-			"contract curretly does not have privilege to demote it",
+			"contract currently does not have privilege to demote it",
 			func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgDemoteFromPrivilegedContract {
 				govModuleAddr := keeper.GetAuthority()
 				msg := types.MsgDemoteFromPrivilegedContract{

@@ -235,7 +235,7 @@ func TestSetContractAuthorization(t *testing.T) {
 			true,
 		},
 		{
-			"contract doesnt exist",
+			"contract doesn't exist",
 			func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgSetContractAuthorization {
 				sender := sample.AccAddress()
 				params := types.NewParams([]string{sender.String()})
