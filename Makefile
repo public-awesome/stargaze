@@ -141,6 +141,9 @@ test-ica:
 test-chain-conformance:
 	cd e2e && go test -v -race -run TestStargazeConformance .
 
+test-slinky:
+	@cd e2e/slinky && go test -v -race .
+
 .PHONY: test test-e2e build-linux docker-test lint build install format
 
 format:
