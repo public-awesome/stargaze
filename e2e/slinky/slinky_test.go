@@ -3,10 +3,11 @@ package slinky_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/icza/dyno"
 	"strconv"
 	"strings"
 	"testing"
+
+	"github.com/icza/dyno"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -39,7 +40,7 @@ func init() {
 var (
 	dockerImage = ibc.DockerImage{
 		Repository: "publicawesome/stargaze",
-		Version:    "local",
+		Version:    "local-dev",
 		UidGid:     "1025:1025",
 	}
 

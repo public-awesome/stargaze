@@ -120,7 +120,7 @@ build-docker-arm:
 	docker buildx build --platform linux/arm64 --load . 
 
 build-docker:
-	docker buildx build -t publicawesome/stargaze:local --platform linux/amd64 --load .
+	docker buildx build -t publicawesome/stargaze:local -t publicawesome/stargaze:local-dev --platform linux/amd64 --load .
 
 docker-test: build-linux
 	docker build -f docker/Dockerfile.test -t rocketprotocol/stargaze-relayer-test:latest .
@@ -137,6 +137,8 @@ test-chain-upgrade:
 
 test-ica:
 	cd e2e && go test -v -race -run TestInterchainAccounts .
+test-slinky:
+	cd e2e/slinky && go test -v -race -run TestSlinkyOracleIntegration .
 
 test-chain-conformance:
 	cd e2e && go test -v -race -run TestStargazeConformance .
