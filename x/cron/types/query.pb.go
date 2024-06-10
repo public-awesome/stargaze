@@ -255,6 +255,7 @@ const _ = grpc.SupportPackageIsVersion4
 type QueryClient interface {
 	// ListPrivileged queries the contracts which have the priviledge status
 	ListPrivileged(ctx context.Context, in *QueryListPrivilegedRequest, opts ...grpc.CallOption) (*QueryListPrivilegedResponse, error)
+	// Params returns cron's module params.
 	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
 }
 
@@ -288,6 +289,7 @@ func (c *queryClient) Params(ctx context.Context, in *QueryParamsRequest, opts .
 type QueryServer interface {
 	// ListPrivileged queries the contracts which have the priviledge status
 	ListPrivileged(context.Context, *QueryListPrivilegedRequest) (*QueryListPrivilegedResponse, error)
+	// Params returns cron's module params.
 	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
 }
 

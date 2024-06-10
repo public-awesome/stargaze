@@ -14,6 +14,7 @@ service Query {
     option (google.api.http).get = "/stargaze/cron/v1/list-privileged";
   }
 
+  // Params returns cron's module params.
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/stargaze/cron/v1/params";
   }

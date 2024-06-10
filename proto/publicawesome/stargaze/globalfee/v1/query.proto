@@ -8,44 +8,56 @@ option go_package = "github.com/public-awesome/stargaze/v14/x/globalfee/types";
 
 // Query defines the gRPC querier service.
 service Query {
+  // CodeAuthorization returns authrozation by specific code id.
   rpc CodeAuthorization(QueryCodeAuthorizationRequest) returns (QueryCodeAuthorizationResponse) {
     option (google.api.http).get = "/stargaze/globalfee/v1/code_authorization/{code_id}";
   }
+  // ContractAuthorization returns authrozation for specific contract address.
   rpc ContractAuthorization(QueryContractAuthorizationRequest) returns (QueryContractAuthorizationResponse) {
     option (google.api.http).get = "/stargaze/globalfee/v1/contract_authorization/{contract_address}";
   }
+  // Params returns globalfee's module params.
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/stargaze/globalfee/v1/params";
   }
+  // Authorizations returns all authorizations.
   rpc Authorizations(QueryAuthorizationsRequest) returns (QueryAuthorizationsResponse) {
     option (google.api.http).get = "/stargaze/globalfee/v1/authorizations";
   }
 }
 
+// QueryCodeAuthorizationRequest is the request for getting a code authorization.
 message QueryCodeAuthorizationRequest {
   uint64 code_id = 1;
 }
 
+// QueryCodeAuthorizationResponse is the response of QueryCodeAuthorizationRequest.
 message QueryCodeAuthorizationResponse {
   repeated string methods = 1;
 }
 
+// QueryContractAuthorizationRequest is the request for getting a contract authorization.
 message QueryContractAuthorizationRequest {
   string contract_address = 1;
 }
 
+// QueryContractAuthorizationResponse is the response of QueryContractAuthorizationRequest.
 message QueryContractAuthorizationResponse {
   repeated string methods = 1;
 }
 
+// QueryParamsRequest request to get module's params.
 message QueryParamsRequest {}
 
+// QueryParamsResponse is the resposne for getting module's params.
 message QueryParamsResponse {
   Params params = 1;
 }
 
+// QueryAuthorizationsRequest is the request to get all authorizations.
 message QueryAuthorizationsRequest {}
 
+// QueryAuthorizationsResponse is the response for getting all authorizations.
 message QueryAuthorizationsResponse {
   repeated CodeAuthorization code_authorizations = 1;
   repeated ContractAuthorization contract_authorizations = 2;

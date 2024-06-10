@@ -24,3 +24,4 @@ lint:
     - RPC_RESPONSE_STANDARD_NAME
   ignore:
     - tendermint
+  allow_comment_ignores: true

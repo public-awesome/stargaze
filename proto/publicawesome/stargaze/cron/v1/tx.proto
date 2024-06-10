@@ -32,8 +32,10 @@ message MsgPromoteToPrivilegedContract {
   string contract = 2;
 }
 
+// MsgPromoteToPrivilegedContractResponse is the response for promoting a contract.
 message MsgPromoteToPrivilegedContractResponse {}
 
+// MsgDemoteFromPrivilegedContract defines a message for demoting a contract.
 message MsgDemoteFromPrivilegedContract {
   option (cosmos.msg.v1.signer) = "authority";
   // Authority is the address of the governance account or any whitelisted
@@ -43,6 +45,7 @@ message MsgDemoteFromPrivilegedContract {
   string contract = 2;
 }
 
+//MsgDemoteFromPrivilegedContractResponse is the response for demoting a contract.
 message MsgDemoteFromPrivilegedContractResponse {}
 
 // MsgUpdateParams updates module's params through governance proposal
@@ -58,4 +61,5 @@ message MsgUpdateParams {
   ];
 }
 
+// MsgUpdateParamsResponse is the response of executing MsgUpdateParams.
 message MsgUpdateParamsResponse {}

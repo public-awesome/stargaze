@@ -391,7 +391,7 @@ a token.  For now, we only support burning from the sender account.
 | ----- | ---- | ----- | ----------- |
 | `sender` | [string](#string) |  |  |
 | `amount` | [cosmos.base.v1beta1.Coin](#cosmos.base.v1beta1.Coin) |  |  |
-| `burnFromAddress` | [string](#string) |  |  |
+| `burnFromAddress` | [string](#string) |  | burn from address buf:lint:ignore FIELD_LOWER_SNAKE_CASE |
 
 
 
@@ -488,7 +488,7 @@ more of a token.  For now, we only support minting to the sender account
 | ----- | ---- | ----- | ----------- |
 | `sender` | [string](#string) |  |  |
 | `amount` | [cosmos.base.v1beta1.Coin](#cosmos.base.v1beta1.Coin) |  |  |
-| `mintToAddress` | [string](#string) |  |  |
+| `mintToAddress` | [string](#string) |  | buf:lint:ignore FIELD_LOWER_SNAKE_CASE |
 
 
 
@@ -1045,7 +1045,7 @@ Query defines the gRPC querier service.
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
 | `ListPrivileged` | [QueryListPrivilegedRequest](#publicawesome.stargaze.cron.v1.QueryListPrivilegedRequest) | [QueryListPrivilegedResponse](#publicawesome.stargaze.cron.v1.QueryListPrivilegedResponse) | ListPrivileged queries the contracts which have the priviledge status | GET|/stargaze/cron/v1/list-privileged|
-| `Params` | [QueryParamsRequest](#publicawesome.stargaze.cron.v1.QueryParamsRequest) | [QueryParamsResponse](#publicawesome.stargaze.cron.v1.QueryParamsResponse) |  | GET|/stargaze/cron/v1/params|
+| `Params` | [QueryParamsRequest](#publicawesome.stargaze.cron.v1.QueryParamsRequest) | [QueryParamsResponse](#publicawesome.stargaze.cron.v1.QueryParamsResponse) | Params returns cron's module params. | GET|/stargaze/cron/v1/params|
 
  <!-- end services -->
 
@@ -1061,7 +1061,7 @@ Query defines the gRPC querier service.
 <a name="publicawesome.stargaze.cron.v1.MsgDemoteFromPrivilegedContract"></a>
 
 ### MsgDemoteFromPrivilegedContract
-
+MsgDemoteFromPrivilegedContract defines a message for demoting a contract.
 
 
 | Field | Type | Label | Description |
@@ -1077,7 +1077,7 @@ Query defines the gRPC querier service.
 <a name="publicawesome.stargaze.cron.v1.MsgDemoteFromPrivilegedContractResponse"></a>
 
 ### MsgDemoteFromPrivilegedContractResponse
-
+MsgDemoteFromPrivilegedContractResponse is the response for demoting a contract.
 
 
 
@@ -1103,7 +1103,7 @@ MsgPromoteToPrivilegedContract defines the Msg/PromoteToPrivilegedContract
 <a name="publicawesome.stargaze.cron.v1.MsgPromoteToPrivilegedContractResponse"></a>
 
 ### MsgPromoteToPrivilegedContractResponse
-
+MsgPromoteToPrivilegedContractResponse is the response for promoting a contract.
 
 
 
@@ -1129,7 +1129,7 @@ MsgUpdateParams updates module's params through governance proposal
 <a name="publicawesome.stargaze.cron.v1.MsgUpdateParamsResponse"></a>
 
 ### MsgUpdateParamsResponse
-
+MsgUpdateParamsResponse is the response of executing MsgUpdateParams.
 
 
 
@@ -1348,7 +1348,7 @@ RemoveCodeAuthorizationProposal ...
 <a name="publicawesome.stargaze.globalfee.v1.QueryAuthorizationsRequest"></a>
 
 ### QueryAuthorizationsRequest
-
+QueryAuthorizationsRequest is the request to get all authorizations.
 
 
 
@@ -1358,7 +1358,7 @@ RemoveCodeAuthorizationProposal ...
 <a name="publicawesome.stargaze.globalfee.v1.QueryAuthorizationsResponse"></a>
 
 ### QueryAuthorizationsResponse
-
+QueryAuthorizationsResponse is the response for getting all authorizations.
 
 
 | Field | Type | Label | Description |
@@ -1374,7 +1374,7 @@ RemoveCodeAuthorizationProposal ...
 <a name="publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationRequest"></a>
 
 ### QueryCodeAuthorizationRequest
-
+QueryCodeAuthorizationRequest is the request for getting a code authorization.
 
 
 | Field | Type | Label | Description |
@@ -1389,7 +1389,7 @@ RemoveCodeAuthorizationProposal ...
 <a name="publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationResponse"></a>
 
 ### QueryCodeAuthorizationResponse
-
+QueryCodeAuthorizationResponse is the response of QueryCodeAuthorizationRequest.
 
 
 | Field | Type | Label | Description |
@@ -1404,7 +1404,7 @@ RemoveCodeAuthorizationProposal ...
 <a name="publicawesome.stargaze.globalfee.v1.QueryContractAuthorizationRequest"></a>
 
 ### QueryContractAuthorizationRequest
-
+QueryContractAuthorizationRequest is the request for getting a contract authorization.
 
 
 | Field | Type | Label | Description |
@@ -1419,7 +1419,7 @@ RemoveCodeAuthorizationProposal ...
 <a name="publicawesome.stargaze.globalfee.v1.QueryContractAuthorizationResponse"></a>
 
 ### QueryContractAuthorizationResponse
-
+QueryContractAuthorizationResponse is the response of QueryContractAuthorizationRequest.
 
 
 | Field | Type | Label | Description |
@@ -1434,7 +1434,7 @@ RemoveCodeAuthorizationProposal ...
 <a name="publicawesome.stargaze.globalfee.v1.QueryParamsRequest"></a>
 
 ### QueryParamsRequest
-
+QueryParamsRequest request to get module's params.
 
 
 
@@ -1444,7 +1444,7 @@ RemoveCodeAuthorizationProposal ...
 <a name="publicawesome.stargaze.globalfee.v1.QueryParamsResponse"></a>
 
 ### QueryParamsResponse
-
+QueryParamsResponse is the resposne for getting module's params.
 
 
 | Field | Type | Label | Description |
@@ -1469,10 +1469,10 @@ Query defines the gRPC querier service.
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `CodeAuthorization` | [QueryCodeAuthorizationRequest](#publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationRequest) | [QueryCodeAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationResponse) |  | GET|/stargaze/globalfee/v1/code_authorization/{code_id}|
-| `ContractAuthorization` | [QueryContractAuthorizationRequest](#publicawesome.stargaze.globalfee.v1.QueryContractAuthorizationRequest) | [QueryContractAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.QueryContractAuthorizationResponse) |  | GET|/stargaze/globalfee/v1/contract_authorization/{contract_address}|
-| `Params` | [QueryParamsRequest](#publicawesome.stargaze.globalfee.v1.QueryParamsRequest) | [QueryParamsResponse](#publicawesome.stargaze.globalfee.v1.QueryParamsResponse) |  | GET|/stargaze/globalfee/v1/params|
-| `Authorizations` | [QueryAuthorizationsRequest](#publicawesome.stargaze.globalfee.v1.QueryAuthorizationsRequest) | [QueryAuthorizationsResponse](#publicawesome.stargaze.globalfee.v1.QueryAuthorizationsResponse) |  | GET|/stargaze/globalfee/v1/authorizations|
+| `CodeAuthorization` | [QueryCodeAuthorizationRequest](#publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationRequest) | [QueryCodeAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.QueryCodeAuthorizationResponse) | CodeAuthorization returns authrozation by specific code id. | GET|/stargaze/globalfee/v1/code_authorization/{code_id}|
+| `ContractAuthorization` | [QueryContractAuthorizationRequest](#publicawesome.stargaze.globalfee.v1.QueryContractAuthorizationRequest) | [QueryContractAuthorizationResponse](#publicawesome.stargaze.globalfee.v1.QueryContractAuthorizationResponse) | ContractAuthorization returns authrozation for specific contract address. | GET|/stargaze/globalfee/v1/contract_authorization/{contract_address}|
+| `Params` | [QueryParamsRequest](#publicawesome.stargaze.globalfee.v1.QueryParamsRequest) | [QueryParamsResponse](#publicawesome.stargaze.globalfee.v1.QueryParamsResponse) | Params returns globalfee's module params. | GET|/stargaze/globalfee/v1/params|
+| `Authorizations` | [QueryAuthorizationsRequest](#publicawesome.stargaze.globalfee.v1.QueryAuthorizationsRequest) | [QueryAuthorizationsResponse](#publicawesome.stargaze.globalfee.v1.QueryAuthorizationsResponse) | Authorizations returns all authorizations. | GET|/stargaze/globalfee/v1/authorizations|
 
  <!-- end services -->
 
