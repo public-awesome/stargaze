@@ -137,8 +137,6 @@ test-chain-upgrade:
 
 test-ica:
 	cd e2e && go test -v -race -run TestInterchainAccounts .
-test-slinky:
-	cd e2e/slinky && go test -v -race -run TestSlinkyOracleIntegration .
 
 test-chain-conformance:
 	cd e2e && go test -v -race -run TestStargazeConformance .
@@ -146,7 +144,7 @@ test-chain-conformance:
 test-slinky:
 	@cd e2e/slinky && go test -v -race .
 
-.PHONY: test test-e2e build-linux docker-test lint build install format
+.PHONY: test test-e2e build-linux docker-test lint build install format test-slinky
 
 format:
 	gofumpt -l -w .
