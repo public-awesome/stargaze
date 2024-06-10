@@ -39,7 +39,7 @@ func init() {
 var (
 	dockerImage = ibc.DockerImage{
 		Repository: "publicawesome/stargaze",
-		Version:    "local-dev",
+		Version:    "local",
 		UidGid:     "1025:1025",
 	}
 
