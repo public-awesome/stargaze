@@ -11,7 +11,7 @@ require (
 	github.com/cosmos/cosmos-proto v1.0.0-beta.5
 	github.com/cosmos/cosmos-sdk v0.50.7
 	github.com/cosmos/go-bip39 v1.0.0
-	github.com/cosmos/gogoproto v1.4.12
+	github.com/cosmos/gogoproto v1.5.0
 	github.com/cosmos/iavl v1.1.4 // indirect
 	github.com/golang/protobuf v1.5.4
 	github.com/gorilla/mux v1.8.1
