@@ -228,6 +228,15 @@
           "Params": "ChannelParams"
         }
       }
+    },
+    {
+      "url": "./tmp-swagger-gen/ibc/lightclients/wasm/v1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "LightClientWasmParams",
+          "Code": "LightClientCode"
+        }
+      }
     }
   ]
 }

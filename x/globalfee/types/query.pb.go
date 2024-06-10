@@ -28,6 +28,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+// QueryCodeAuthorizationRequest is the request for getting a code authorization.
 type QueryCodeAuthorizationRequest struct {
 	CodeId uint64 `protobuf:"varint,1,opt,name=code_id,json=codeId,proto3" json:"code_id,omitempty"`
 }
@@ -72,6 +73,7 @@ func (m *QueryCodeAuthorizationRequest) GetCodeId() uint64 {
 	return 0
 }
 
+// QueryCodeAuthorizationResponse is the response of QueryCodeAuthorizationRequest.
 type QueryCodeAuthorizationResponse struct {
 	Methods []string `protobuf:"bytes,1,rep,name=methods,proto3" json:"methods,omitempty"`
 }
@@ -116,6 +118,7 @@ func (m *QueryCodeAuthorizationResponse) GetMethods() []string {
 	return nil
 }
 
+// QueryContractAuthorizationRequest is the request for getting a contract authorization.
 type QueryContractAuthorizationRequest struct {
 	ContractAddress string `protobuf:"bytes,1,opt,name=contract_address,json=contractAddress,proto3" json:"contract_address,omitempty"`
 }
@@ -160,6 +163,7 @@ func (m *QueryContractAuthorizationRequest) GetContractAddress() string {
 	return ""
 }
 
+// QueryContractAuthorizationResponse is the response of QueryContractAuthorizationRequest.
 type QueryContractAuthorizationResponse struct {
 	Methods []string `protobuf:"bytes,1,rep,name=methods,proto3" json:"methods,omitempty"`
 }
@@ -204,6 +208,7 @@ func (m *QueryContractAuthorizationResponse) GetMethods() []string {
 	return nil
 }
 
+// QueryParamsRequest request to get module's params.
 type QueryParamsRequest struct {
 }
 
@@ -240,6 +245,7 @@ func (m *QueryParamsRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryParamsRequest proto.InternalMessageInfo
 
+// QueryParamsResponse is the resposne for getting module's params.
 type QueryParamsResponse struct {
 	Params *Params `protobuf:"bytes,1,opt,name=params,proto3" json:"params,omitempty"`
 }
@@ -284,6 +290,7 @@ func (m *QueryParamsResponse) GetParams() *Params {
 	return nil
 }
 
+// QueryAuthorizationsRequest is the request to get all authorizations.
 type QueryAuthorizationsRequest struct {
 }
 
@@ -320,6 +327,7 @@ func (m *QueryAuthorizationsRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryAuthorizationsRequest proto.InternalMessageInfo
 
+// QueryAuthorizationsResponse is the response for getting all authorizations.
 type QueryAuthorizationsResponse struct {
 	CodeAuthorizations     []*CodeAuthorization     `protobuf:"bytes,1,rep,name=code_authorizations,json=codeAuthorizations,proto3" json:"code_authorizations,omitempty"`
 	ContractAuthorizations []*ContractAuthorization `protobuf:"bytes,2,rep,name=contract_authorizations,json=contractAuthorizations,proto3" json:"contract_authorizations,omitempty"`
@@ -439,9 +447,13 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type QueryClient interface {
+	// CodeAuthorization returns authrozation by specific code id.
 	CodeAuthorization(ctx context.Context, in *QueryCodeAuthorizationRequest, opts ...grpc.CallOption) (*QueryCodeAuthorizationResponse, error)
+	// ContractAuthorization returns authrozation for specific contract address.
 	ContractAuthorization(ctx context.Context, in *QueryContractAuthorizationRequest, opts ...grpc.CallOption) (*QueryContractAuthorizationResponse, error)
+	// Params returns globalfee's module params.
 	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
+	// Authorizations returns all authorizations.
 	Authorizations(ctx context.Context, in *QueryAuthorizationsRequest, opts ...grpc.CallOption) (*QueryAuthorizationsResponse, error)
 }
 
@@ -491,9 +503,13 @@ func (c *queryClient) Authorizations(ctx context.Context, in *QueryAuthorization
 
 // QueryServer is the server API for Query service.
 type QueryServer interface {
+	// CodeAuthorization returns authrozation by specific code id.
 	CodeAuthorization(context.Context, *QueryCodeAuthorizationRequest) (*QueryCodeAuthorizationResponse, error)
+	// ContractAuthorization returns authrozation for specific contract address.
 	ContractAuthorization(context.Context, *QueryContractAuthorizationRequest) (*QueryContractAuthorizationResponse, error)
+	// Params returns globalfee's module params.
 	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
+	// Authorizations returns all authorizations.
 	Authorizations(context.Context, *QueryAuthorizationsRequest) (*QueryAuthorizationsResponse, error)
 }
 

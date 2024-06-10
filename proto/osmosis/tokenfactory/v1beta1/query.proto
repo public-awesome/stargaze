@@ -1,7 +1,6 @@
 syntax = "proto3";
 package osmosis.tokenfactory.v1beta1;
 
-import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "osmosis/tokenfactory/v1beta1/tokenfactory.proto";

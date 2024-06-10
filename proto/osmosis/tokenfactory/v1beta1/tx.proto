@@ -62,6 +62,7 @@ message MsgMint {
     (amino.encoding) = "legacy_coins",
     (amino.dont_omitempty) = true
   ];
+  // buf:lint:ignore FIELD_LOWER_SNAKE_CASE
   string mintToAddress = 3 [(gogoproto.moretags) = "yaml:\"mint_to_address\""];
 }
 
@@ -80,6 +81,7 @@ message MsgBurn {
     (amino.encoding) = "legacy_coins",
     (amino.dont_omitempty) = true
   ];
+  // buf:lint:ignore FIELD_LOWER_SNAKE_CASE
   string burnFromAddress = 3 [(gogoproto.moretags) = "yaml:\"burn_from_address\""];
 }
 

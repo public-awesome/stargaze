@@ -143,9 +143,10 @@ func (m *MsgCreateDenomResponse) GetNewTokenDenom() string {
 // MsgMint is the sdk.Msg type for allowing an admin account to mint
 // more of a token.  For now, we only support minting to the sender account
 type MsgMint struct {
-	Sender        string     `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty" yaml:"sender"`
-	Amount        types.Coin `protobuf:"bytes,2,opt,name=amount,proto3" json:"amount" yaml:"amount"`
-	MintToAddress string     `protobuf:"bytes,3,opt,name=mintToAddress,proto3" json:"mintToAddress,omitempty" yaml:"mint_to_address"`
+	Sender string     `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty" yaml:"sender"`
+	Amount types.Coin `protobuf:"bytes,2,opt,name=amount,proto3" json:"amount" yaml:"amount"`
+	// buf:lint:ignore FIELD_LOWER_SNAKE_CASE
+	MintToAddress string `protobuf:"bytes,3,opt,name=mintToAddress,proto3" json:"mintToAddress,omitempty" yaml:"mint_to_address"`
 }
 
 func (m *MsgMint) Reset()         { *m = MsgMint{} }
@@ -242,9 +243,11 @@ var xxx_messageInfo_MsgMintResponse proto.InternalMessageInfo
 // MsgBurn is the sdk.Msg type for allowing an admin account to burn
 // a token.  For now, we only support burning from the sender account.
 type MsgBurn struct {
-	Sender          string     `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty" yaml:"sender"`
-	Amount          types.Coin `protobuf:"bytes,2,opt,name=amount,proto3" json:"amount" yaml:"amount"`
-	BurnFromAddress string     `protobuf:"bytes,3,opt,name=burnFromAddress,proto3" json:"burnFromAddress,omitempty" yaml:"burn_from_address"`
+	Sender string     `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty" yaml:"sender"`
+	Amount types.Coin `protobuf:"bytes,2,opt,name=amount,proto3" json:"amount" yaml:"amount"`
+	// burn from address
+	// buf:lint:ignore FIELD_LOWER_SNAKE_CASE
+	BurnFromAddress string `protobuf:"bytes,3,opt,name=burnFromAddress,proto3" json:"burnFromAddress,omitempty" yaml:"burn_from_address"`
 }
 
 func (m *MsgBurn) Reset()         { *m = MsgBurn{} }

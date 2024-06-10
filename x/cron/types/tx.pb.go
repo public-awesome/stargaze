@@ -86,6 +86,7 @@ func (m *MsgPromoteToPrivilegedContract) GetContract() string {
 	return ""
 }
 
+// MsgPromoteToPrivilegedContractResponse is the response for promoting a contract.
 type MsgPromoteToPrivilegedContractResponse struct {
 }
 
@@ -124,6 +125,7 @@ func (m *MsgPromoteToPrivilegedContractResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgPromoteToPrivilegedContractResponse proto.InternalMessageInfo
 
+// MsgDemoteFromPrivilegedContract defines a message for demoting a contract.
 type MsgDemoteFromPrivilegedContract struct {
 	// Authority is the address of the governance account or any whitelisted
 	// address
@@ -179,6 +181,7 @@ func (m *MsgDemoteFromPrivilegedContract) GetContract() string {
 	return ""
 }
 
+// MsgDemoteFromPrivilegedContractResponse is the response for demoting a contract.
 type MsgDemoteFromPrivilegedContractResponse struct {
 }
 
@@ -272,6 +275,7 @@ func (m *MsgUpdateParams) GetParams() Params {
 	return Params{}
 }
 
+// MsgUpdateParamsResponse is the response of executing MsgUpdateParams.
 type MsgUpdateParamsResponse struct {
 }
 
