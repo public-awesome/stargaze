@@ -25,7 +25,7 @@ var (
 		Bech32Prefix:        "stars",
 		Denom:               denom,
 		CoinType:            coinType,
-		GasPrices:           fmt.Sprintf("0%s", denom),
+		GasPrices:           fmt.Sprintf("1%s", denom),
 		GasAdjustment:       2.0,
 		TrustingPeriod:      "112h",
 		NoHostMount:         false,
