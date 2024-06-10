@@ -60,6 +60,12 @@ var (
 		marketmapmodule.AppModuleBasic{},
 	)
 
+	defaultGenesis = marketmaptypes.DefaultGenesisState()
+	params         = marketmaptypes.Params{
+		MarketAuthorities: []string{"stars1salrqasc4de7qzdf0zkr9cpxg7gld4q28qrj7f"},
+		Admin:             "stars1salrqasc4de7qzdf0zkr9cpxg7gld4q28qrj7f",
+	}
+
 	defaultGenesisKV = []cosmos.GenesisKV{
 		{
 			Key:   "consensus.params.abci.vote_extensions_enable_height",
@@ -70,12 +76,16 @@ var (
 			Value: "1000000000",
 		},
 		{
-			Key:   "oracle",
-			Value: oracletypes.GenesisState{},
+			Key:   "app_state.oracle",
+			Value: oracletypes.DefaultGenesisState(),
 		},
 		{
-			Key:   "marketmap",
-			Value: marketmaptypes.GenesisState{},
+			Key: "app_state.marketmap",
+			Value: marketmaptypes.GenesisState{
+				MarketMap:   defaultGenesis.MarketMap,
+				LastUpdated: 0,
+				Params:      params,
+			},
 		},
 	}
 
@@ -127,8 +137,6 @@ func ModifyGenesis(genesisKV []cosmos.GenesisKV) func(ibc.ChainConfig, []byte) (
 			return nil, fmt.Errorf("failed to unmarshal genesis file: %w", err)
 		}
 
-		panic(fmt.Sprintf("%s", g))
-
 		for idx, values := range genesisKV {
 			splitPath := strings.Split(values.Key, ".")
 
@@ -150,6 +158,9 @@ func ModifyGenesis(genesisKV []cosmos.GenesisKV) func(ibc.ChainConfig, []byte) (
 		if err != nil {
 			return nil, fmt.Errorf("failed to marshal genesis bytes to json: %w", err)
 		}
+
+		// panic(string(out))
+
 		return out, nil
 	}
 }
