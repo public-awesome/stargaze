@@ -120,7 +120,7 @@ build-docker-arm:
 	docker buildx build --platform linux/arm64 --load . 
 
 build-docker:
-	docker buildx build -t publicawesome/stargaze:local --platform linux/amd64 --load .
+	docker buildx build -t publicawesome/stargaze:local -t publicawesome/stargaze:local-dev --platform linux/amd64 --load .
 
 docker-test: build-linux
 	docker build -f docker/Dockerfile.test -t rocketprotocol/stargaze-relayer-test:latest .
@@ -144,7 +144,7 @@ test-chain-conformance:
 test-slinky:
 	@cd e2e/slinky && go test -v -race .
 
-.PHONY: test test-e2e build-linux docker-test lint build install format
+.PHONY: test test-e2e build-linux docker-test lint build install format test-slinky
 
 format:
 	gofumpt -l -w .
