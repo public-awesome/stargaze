@@ -12,7 +12,7 @@ var (
 
 	dockerImage = ibc.DockerImage{
 		Repository: "publicawesome/stargaze",
-		Version:    "local",
+		Version:    "local-dev",
 		UidGid:     "1025:1025",
 	}
 

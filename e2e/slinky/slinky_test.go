@@ -1,7 +1,11 @@
 package slinky_test
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/icza/dyno"
+	"strconv"
+	"strings"
 	"testing"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
@@ -12,7 +16,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/skip-mev/slinky/tests/integration"
 	marketmapmodule "github.com/skip-mev/slinky/x/marketmap"
+	marketmaptypes "github.com/skip-mev/slinky/x/marketmap/types"
 	"github.com/skip-mev/slinky/x/oracle"
+	oracletypes "github.com/skip-mev/slinky/x/oracle/types"
 	interchaintest "github.com/strangelove-ventures/interchaintest/v8"
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v8/ibc"
@@ -33,14 +39,13 @@ func init() {
 var (
 	dockerImage = ibc.DockerImage{
 		Repository: "publicawesome/stargaze",
-		Version:    "local-dev",
+		Version:    "local",
 		UidGid:     "1025:1025",
 	}
 
 	numValidators = 4
 	numFullNodes  = 0
 	noHostMount   = false
-	gasAdjustment = 1.5
 
 	oracleImage = ibc.DockerImage{
 		Repository: "ghcr.io/skip-mev/slinky-sidecar",
@@ -64,6 +69,14 @@ var (
 			Key:   "consensus.params.block.max_gas",
 			Value: "1000000000",
 		},
+		{
+			Key:   "oracle",
+			Value: oracletypes.GenesisState{},
+		},
+		{
+			Key:   "marketmap",
+			Value: marketmaptypes.GenesisState{},
+		},
 	}
 
 	denom = "ustars"
@@ -78,19 +91,21 @@ var (
 			Images: []ibc.DockerImage{
 				dockerImage,
 			},
-			Type:           "cosmos",
-			Name:           "slinky",
-			Denom:          denom,
-			ChainID:        "chain-id-0",
-			Bin:            "starsd",
-			Bech32Prefix:   "stars",
-			CoinType:       "118",
-			GasAdjustment:  gasAdjustment,
-			GasPrices:      fmt.Sprintf("0%s", denom),
-			TrustingPeriod: "112h",
-			NoHostMount:    noHostMount,
-			ModifyGenesis:  cosmos.ModifyGenesis(defaultGenesisKV),
-			SkipGenTx:      false,
+			Type:                "cosmos",
+			Name:                "slinky",
+			Denom:               denom,
+			ChainID:             "chain-id-0",
+			Bin:                 "starsd",
+			Bech32Prefix:        "stars",
+			CoinType:            "118",
+			GasPrices:           fmt.Sprintf("1%s", denom),
+			GasAdjustment:       2.0,
+			TrustingPeriod:      "112h",
+			NoHostMount:         false,
+			SkipGenTx:           false,
+			PreGenesis:          nil,
+			ModifyGenesis:       ModifyGenesis(defaultGenesisKV),
+			ConfigFileOverrides: nil,
 		},
 	}
 )
@@ -103,4 +118,38 @@ func TestSlinkyOracleIntegration(t *testing.T) {
 	)
 
 	suite.Run(t, integration.NewSlinkyOracleIntegrationSuite(baseSuite))
+}
+
+func ModifyGenesis(genesisKV []cosmos.GenesisKV) func(ibc.ChainConfig, []byte) ([]byte, error) {
+	return func(chainConfig ibc.ChainConfig, genbz []byte) ([]byte, error) {
+		g := make(map[string]interface{})
+		if err := json.Unmarshal(genbz, &g); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal genesis file: %w", err)
+		}
+
+		panic(fmt.Sprintf("%s", g))
+
+		for idx, values := range genesisKV {
+			splitPath := strings.Split(values.Key, ".")
+
+			path := make([]interface{}, len(splitPath))
+			for i, component := range splitPath {
+				if v, err := strconv.Atoi(component); err == nil {
+					path[i] = v
+				} else {
+					path[i] = component
+				}
+			}
+
+			if err := dyno.Set(g, values.Value, path...); err != nil {
+				return nil, fmt.Errorf("failed to set key '%s' as '%+v' (index:%d) in genesis json: %w", values.Key, values.Value, idx, err)
+			}
+		}
+
+		out, err := json.Marshal(g)
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal genesis bytes to json: %w", err)
+		}
+		return out, nil
+	}
 }
