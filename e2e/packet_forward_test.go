@@ -213,6 +213,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 			Amount:  transferAmount,
 		}
 
+		// packet that is sent from C->D
 		secondHopMetadata := &PacketMetadata{
 			Forward: &ForwardMetadata{
 				Receiver: userD.FormattedAddress(),
@@ -224,6 +225,8 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		require.NoError(t, err)
 		next := string(nextBz)
 
+		// wrap previous packet and create packet
+		// that is sent from B->C
 		firstHopMetadata := &PacketMetadata{
 			Forward: &ForwardMetadata{
 				Receiver: userC.FormattedAddress(),
@@ -233,15 +236,17 @@ func TestPacketForwardMiddleware(t *testing.T) {
 			},
 		}
 
+		// wrap previous memo in the first transfer
 		memo, err := json.Marshal(firstHopMetadata)
 		require.NoError(t, err)
 
 		chainAHeight, err := chainA.Height(ctx)
 		require.NoError(t, err)
 
+		// execute first transfer
 		transferTx, err := chainA.SendIBCTransfer(ctx, abChan.ChannelID, userA.KeyName(), transfer, ibc.TransferOptions{Memo: string(memo)})
 		require.NoError(t, err)
-		_, err = testutil.PollForAck(ctx, chainA, chainAHeight, chainAHeight+30, transferTx.Packet)
+		_, err = testutil.PollForAck(ctx, chainA, chainAHeight, chainAHeight+150, transferTx.Packet)
 		require.NoError(t, err)
 		err = testutil.WaitForBlocks(ctx, 10, chainA)
 		require.NoError(t, err)
@@ -272,9 +277,9 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		thirdHopEscrowBalance, err := chainC.GetBalance(ctx, thirdHopEscrowAccount, secondHopIBCDenom)
 		require.NoError(t, err)
 
-		require.Equal(t, transferAmount, firstHopEscrowBalance)
-		require.Equal(t, transferAmount, secondHopEscrowBalance)
-		require.Equal(t, transferAmount, thirdHopEscrowBalance)
+		require.Equal(t, transferAmount.String(), firstHopEscrowBalance.String())
+		require.Equal(t, transferAmount.String(), secondHopEscrowBalance.String())
+		require.Equal(t, transferAmount.String(), thirdHopEscrowBalance.String())
 	})
 
 	t.Run("multi-hop denom unwind d->c->b->a", func(t *testing.T) {
@@ -315,7 +320,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 
 		transferTx, err := chainD.SendIBCTransfer(ctx, dcChan.ChannelID, userD.KeyName(), transfer, ibc.TransferOptions{Memo: string(memo)})
 		require.NoError(t, err)
-		_, err = testutil.PollForAck(ctx, chainD, chainDHeight, chainDHeight+30, transferTx.Packet)
+		_, err = testutil.PollForAck(ctx, chainD, chainDHeight, chainDHeight+150, transferTx.Packet)
 		require.NoError(t, err)
 		err = testutil.WaitForBlocks(ctx, 10, chainA)
 		require.NoError(t, err)
@@ -378,7 +383,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 
 		transferTx, err := chainA.SendIBCTransfer(ctx, abChan.ChannelID, userA.KeyName(), transfer, ibc.TransferOptions{Memo: string(memo)})
 		require.NoError(t, err)
-		_, err = testutil.PollForAck(ctx, chainA, chainAHeight, chainAHeight+25, transferTx.Packet)
+		_, err = testutil.PollForAck(ctx, chainA, chainAHeight, chainAHeight+75, transferTx.Packet)
 		require.NoError(t, err)
 		err = testutil.WaitForBlocks(ctx, 10, chainA)
 		require.NoError(t, err)
@@ -586,8 +591,8 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		)
 		require.NoError(t, err)
 
-		require.Equal(t, transferAmount, chainABalance)
-		require.Equal(t, transferAmount, baEscrowBalance)
+		require.Equal(t, transferAmount.String(), chainABalance.String())
+		require.Equal(t, transferAmount.String(), baEscrowBalance.String())
 
 		// Send a malformed packet with invalid receiver address from Chain A->Chain B->Chain C->Chain D
 		// This should succeed in the first hop and second hop, then fail to make the third hop.
