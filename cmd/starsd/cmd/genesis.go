@@ -84,7 +84,7 @@ func PrepareGenesis(
 	appState[stakingtypes.ModuleName] = stakingGenStateBz
 
 	// global fee
-	minGasPrices, err := sdk.ParseDecCoins("0.01ustars")
+	minGasPrices, err := sdk.ParseDecCoins("0ustars")
 	if err != nil {
 		panic(fmt.Errorf("failed to parse dec coins: %w", err))
 	}
