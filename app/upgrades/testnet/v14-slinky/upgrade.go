@@ -2,6 +2,8 @@ package v14
 
 import (
 	"context"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 
 	storetypes "cosmossdk.io/store/types"
 	upgradetypes "cosmossdk.io/x/upgrade/types"
@@ -47,6 +49,20 @@ var Upgrade = upgrades.Upgrade{
 			if err != nil {
 				return nil, err
 			}
+
+			// set marketmap params
+			mmParams := marketmaptypes.DefaultParams()
+			// TODO: stargaze foundation or another address?
+			mmParams.Admin = authtypes.NewModuleAddress(govtypes.ModuleName).String()
+			mmParams.MarketAuthorities = []string{"stars172z0kn8qjqgu0nddf0ec3sddgmnwtfkfgayvsj"}
+			if err := mmParams.ValidateBasic(); err != nil {
+				return nil, err
+			}
+
+			if err := keepers.MarketMapKeeper.SetParams(wctx, mmParams); err != nil {
+				return nil, err
+			}
+
 			// add markets
 			m, err := markets.Slice()
 			if err != nil {
