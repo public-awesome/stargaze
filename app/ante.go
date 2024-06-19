@@ -13,6 +13,7 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	ibcante "github.com/cosmos/ibc-go/v7/modules/core/ante"
 	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
+	sgante "github.com/public-awesome/stargaze/v13/internal/ante"
 	globalfeeante "github.com/public-awesome/stargaze/v13/x/globalfee/ante"
 	globalfeekeeper "github.com/public-awesome/stargaze/v13/x/globalfee/keeper"
 )
@@ -78,6 +79,7 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		ante.NewSigVerificationDecorator(options.AccountKeeper, options.SignModeHandler),
 		ante.NewIncrementSequenceDecorator(options.AccountKeeper),
 		ibcante.NewRedundantRelayDecorator(options.keeper),
+		sgante.NewCheckDecorator(options.Codec),
 	}
 
 	return sdk.ChainAnteDecorators(anteDecorators...), nil
