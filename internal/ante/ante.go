@@ -27,7 +27,7 @@ func NewCheckDecorator(cdc codec.BinaryCodec) CheckDecorator {
 	}
 }
 
-func (cdc CheckDecorator) CheckMessage(m sdk.Msg) error {
+func (cd CheckDecorator) CheckMessage(m sdk.Msg) error {
 	switch msg := m.(type) {
 	case *ibctransfertypes.MsgTransfer:
 		if len(msg.Receiver) > MaximumReceiverLength {
