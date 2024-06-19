@@ -79,7 +79,7 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		ante.NewSigVerificationDecorator(options.AccountKeeper, options.SignModeHandler),
 		ante.NewIncrementSequenceDecorator(options.AccountKeeper),
 		ibcante.NewRedundantRelayDecorator(options.keeper),
-		sgante.NewCheckDecorator(),
+		sgante.NewCheckDecorator(options.Codec),
 	}
 
 	return sdk.ChainAnteDecorators(anteDecorators...), nil
