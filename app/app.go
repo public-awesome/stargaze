@@ -66,6 +66,7 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	legacygovtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
+	tracing "github.com/alpe/cosmos-tracing"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	paramsclient "github.com/cosmos/cosmos-sdk/x/params/client"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
@@ -316,7 +317,7 @@ type App struct {
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// the module manager
-	mm *module.Manager
+	mm tracing.ModuleManager
 }
 
 // NewStargazeApp returns a reference to an initialized Gaia.
@@ -341,6 +342,11 @@ func NewStargazeApp(
 	bApp.SetVersion(version.Version)
 	bApp.SetInterfaceRegistry(interfaceRegistry)
 	bApp.SetTxEncoder(encodingConfig.TxConfig.TxEncoder())
+
+	// read config early, before used anywhere
+	if err := tracing.ReadTracerConfig(appOpts); err != nil {
+		panic("error while reading tracer config: " + err.Error())
+	}
 
 	keys := sdk.NewKVStoreKeys(
 		authtypes.StoreKey, banktypes.StoreKey, stakingtypes.StoreKey,
@@ -586,9 +592,9 @@ func NewStargazeApp(
 
 	ibcRouter := ibcporttypes.NewRouter()
 	ibcRouter.
-		AddRoute(icahosttypes.SubModuleName, icaHostIBCModule).
-		AddRoute(icacontrollertypes.SubModuleName, icaControllerStack).
-		AddRoute(ibctransfertypes.ModuleName, transferStack)
+		AddRoute(icahosttypes.SubModuleName, tracing.NewTraceIBCHandler(icaHostIBCModule, icahosttypes.SubModuleName)).
+		AddRoute(icacontrollertypes.SubModuleName, tracing.NewTraceIBCHandler(icaControllerStack, icacontrollertypes.SubModuleName)).
+		AddRoute(ibctransfertypes.ModuleName, tracing.NewTraceIBCHandler(transferStack, ibctransfertypes.ModuleName))
 
 	// this line is used by starport scaffolding # ibc/app/router
 
@@ -615,8 +621,13 @@ func NewStargazeApp(
 	wasmOpts = append(
 		wasmOpts,
 		wasmkeeper.WithMessageEncoders(sgwasm.MessageEncoders(registry)),
+		wasmkeeper.WithMessageHandlerDecorator(tracing.TraceMessageHandlerDecorator(appCodec)),
+		wasmkeeper.WithQueryHandlerDecorator(tracing.TraceQueryDecorator),
 		wasmkeeper.WithQueryPlugins(&wasmkeeper.QueryPlugins{
 			Stargate: wasmkeeper.AcceptListStargateQuerier(AcceptedStargateQueries(), app.GRPCQueryRouter(), appCodec),
+		}),
+		wasmkeeper.WithWasmEngineDecorator(func(old wasmtypes.WasmEngine) wasmtypes.WasmEngine {
+			return tracing.NewTraceWasmVm(old)
 		}),
 	)
 	app.WasmKeeper = wasmkeeper.NewKeeper(
@@ -662,7 +673,7 @@ func NewStargazeApp(
 	)
 	globalfeeModule := globalfeemodule.NewAppModule(appCodec, app.GlobalFeeKeeper)
 
-	ibcRouter.AddRoute(wasmtypes.ModuleName, wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper, app.IBCKeeper.ChannelKeeper))
+	ibcRouter.AddRoute(wasmtypes.ModuleName, tracing.NewTraceIBCHandler(wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper, app.IBCKeeper.ChannelKeeper), wasmtypes.ModuleName))
 	app.IBCKeeper.SetRouter(ibcRouter)
 
 	govKeeper := govkeeper.NewKeeper(
@@ -677,7 +688,7 @@ func NewStargazeApp(
 	)
 
 	app.GovKeeper = *govKeeper.SetHooks(govtypes.NewMultiGovHooks())
-	app.GovKeeper.SetLegacyRouter(govRouter)
+	app.GovKeeper.SetLegacyRouter(tracing.NewTraceGovRouter(govRouter))
 	app.AllocKeeper = *allocmodulekeeper.NewKeeper(
 		appCodec,
 		keys[allocmoduletypes.StoreKey],
@@ -706,7 +717,7 @@ func NewStargazeApp(
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
 
-	app.mm = module.NewManager(
+	mm := module.NewManager(
 		genutil.NewAppModule(
 			app.AccountKeeper, app.StakingKeeper, app.BaseApp.DeliverTx,
 			encodingConfig.TxConfig,
@@ -741,6 +752,7 @@ func NewStargazeApp(
 
 		crisis.NewAppModule(&app.CrisisKeeper, skipGenesisInvariants, app.GetSubspace(crisistypes.ModuleName)), // always be last to make sure that it checks for all invariants and not only part of them
 	)
+	app.mm = tracing.NewTraceModuleManager(mm, encodingConfig.Codec)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
 	// there is nothing left over in the validator fee pool, so as to keep the
@@ -858,12 +870,12 @@ func NewStargazeApp(
 		panic(err)
 	}
 
-	app.SetAnteHandler(anteHandler)
+	app.SetAnteHandler(tracing.NewTraceAnteHandler(anteHandler, app.appCodec))
 	app.SetPostHandler(postHandler)
 	app.SetEndBlocker(app.EndBlocker)
 	app.RegisterUpgradeHandlers(configurator)
 
-	autocliv1.RegisterQueryServer(app.GRPCQueryRouter(), runtimeservices.NewAutoCLIQueryService(app.mm.Modules))
+	autocliv1.RegisterQueryServer(app.GRPCQueryRouter(), runtimeservices.NewAutoCLIQueryService(app.mm.GetModules()))
 
 	reflectionSvc, err := runtimeservices.NewReflectionService()
 	if err != nil {

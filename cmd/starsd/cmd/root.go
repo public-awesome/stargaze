@@ -36,6 +36,7 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+	tracing "github.com/alpe/cosmos-tracing"
 	tmtypes "github.com/cometbft/cometbft/types"
 	"github.com/public-awesome/stargaze/v13/app"
 	"github.com/public-awesome/stargaze/v13/app/params"
@@ -125,6 +126,7 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 func addModuleInitFlags(startCmd *cobra.Command) {
 	crisis.AddModuleInitFlags(startCmd)
 	wasm.AddModuleInitFlags(startCmd)
+	tracing.RunWithTracer(startCmd, "wasmd")
 	startCmd.PreRunE = chainPreRuns(CheckLibwasmVersion, startCmd.PreRunE)
 }
 
