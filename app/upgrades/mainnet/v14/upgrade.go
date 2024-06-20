@@ -63,7 +63,7 @@ var Upgrade = upgrades.Upgrade{
 			mmParams := marketmaptypes.DefaultParams()
 			// TODO: stargaze foundation or another address?
 			mmParams.Admin = authtypes.NewModuleAddress(govtypes.ModuleName).String()
-			mmParams.MarketAuthorities = []string{"stars172z0kn8qjqgu0nddf0ec3sddgmnwtfkfgayvsj"}
+			mmParams.MarketAuthorities = []string{"stars1ua63s43u2p4v38pxhcxmps0tj2gudyw2828x65"}
 			if err := mmParams.ValidateBasic(); err != nil {
 				return nil, err
 			}
