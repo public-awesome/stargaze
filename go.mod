@@ -48,7 +48,7 @@ require (
 	github.com/cosmos/ibc-go/v8 v8.3.2
 	github.com/gogo/protobuf v1.3.2
 	github.com/prometheus/client_golang v1.19.1
-	github.com/skip-mev/slinky v1.0.1
+	github.com/skip-mev/slinky v1.0.2
 	google.golang.org/genproto/googleapis/api v0.0.0-20240509183442-62759503f434
 )
 
