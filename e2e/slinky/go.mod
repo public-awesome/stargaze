@@ -19,7 +19,7 @@ require (
 	github.com/cosmos/cosmos-sdk v0.50.7
 	github.com/icza/dyno v0.0.0-20230330125955-09f820a8d9c0
 	github.com/public-awesome/stargaze/v14 v14.0.0-alpha.3
-	github.com/skip-mev/slinky v1.0.1
+	github.com/skip-mev/slinky v1.0.2
 	github.com/skip-mev/slinky/tests/integration v1.1.0
 	github.com/strangelove-ventures/interchaintest/v8 v8.4.0
 	github.com/stretchr/testify v1.9.0
@@ -89,7 +89,7 @@ require (
 	github.com/cosmos/ibc-apps/modules/ibc-hooks/v8 v8.0.0-00010101000000-000000000000 // indirect
 	github.com/cosmos/ibc-go/modules/capability v1.0.0 // indirect
 	github.com/cosmos/ibc-go/modules/light-clients/08-wasm v0.2.1-0.20240523101951-4b45d1822fb6 // indirect
-	github.com/cosmos/ibc-go/v8 v8.3.1 // indirect
+	github.com/cosmos/ibc-go/v8 v8.3.2 // indirect
 	github.com/cosmos/ics23/go v0.10.0 // indirect
 	github.com/cosmos/interchain-security/v5 v5.0.0 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.13.3 // indirect
