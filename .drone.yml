@@ -77,12 +77,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 13.0.0-beta.9
+        - 14.0.0-upgrade
     when:
       event:
         - push
       branch:
-        - spoorthi/ica-controller
+        - jhernandezb/v14-update
   - name: docker_release
     image: plugins/docker
     settings:
@@ -314,7 +314,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:12.0.0
+    image: publicawesome/stargaze:13.2.1
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
@@ -346,12 +346,12 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer.sh
   - name: proposal
-    image: publicawesome/stargaze:12.1.0
+    image: publicawesome/stargaze:13.2.1
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:13.0.0-beta.9
+    image: publicawesome/stargaze:14.0.0-upgrade
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -407,7 +407,8 @@ steps:
 
 trigger:
   branch:
-    - main
+    - release/v14.x
+    - jhernandezb/v14-update
   event:
     - pull_request
     - push
@@ -420,6 +421,6 @@ volumes:
 
 ---
 kind: signature
-hmac: f47f2d2610e3d3699260f14a7ce60a36ab279482176a776d5d7312462107d09b
+hmac: 41f001cdaf2745a4352be314c4ec38c093b5d9778fc9420c98eed5a4aa27cfff
 
 ...
