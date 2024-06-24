@@ -2,7 +2,6 @@ package ante
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/authz"
 
 	errorsmod "cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -13,8 +12,9 @@ import (
 
 const (
 	MaximumReceiverLength = 2048
-	MaximumMemoLength     = 32768
+	MaximumMemoLength     = 32_768
 	MaximumOwnerLength    = 2048
+	MaxSize               = 500_000
 )
 
 type CheckDecorator struct {
@@ -30,19 +30,16 @@ func NewCheckDecorator(cdc codec.BinaryCodec) CheckDecorator {
 func (cd CheckDecorator) CheckMessage(m sdk.Msg) error {
 	switch msg := m.(type) {
 	case *ibctransfertypes.MsgTransfer:
-		if len(msg.Receiver) > MaximumReceiverLength {
-			return errorsmod.Wrap(sdkerrors.ErrInvalidAddress, "invalid receiver")
-		}
-		if len(msg.Memo) > MaximumMemoLength {
-			return errorsmod.Wrap(sdkerrors.ErrInvalidType, "invalid memo")
+		if msg.Size() > MaxSize {
+			return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "msg size is too large")
 		}
 	case *icacontrollertypes.MsgSendTx:
-		if len(msg.Owner) > MaximumOwnerLength {
-			return errorsmod.Wrap(sdkerrors.ErrInvalidAddress, "invalid owner")
+		if msg.Size() > MaxSize {
+			return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "msg size is too large")
 		}
 	case *icacontrollertypes.MsgRegisterInterchainAccount:
-		if len(msg.Owner) > MaximumOwnerLength {
-			return errorsmod.Wrap(sdkerrors.ErrInvalidAddress, "invalid owner")
+		if msg.Size() > MaxSize {
+			return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "msg size is too large")
 		}
 	}
 	return nil
@@ -54,19 +51,6 @@ func (cd CheckDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, n
 			err := cd.CheckMessage(m)
 			if err != nil {
 				return ctx, err
-			}
-			if msg, ok := m.(*authz.MsgExec); ok {
-				for _, v := range msg.Msgs {
-					var wrappedMsg sdk.Msg
-					err := cd.cdc.UnpackAny(v, &wrappedMsg)
-					if err != nil {
-						return ctx, errorsmod.Wrapf(sdkerrors.ErrUnauthorized, "error decoding authz messages")
-					}
-					err = cd.CheckMessage(wrappedMsg)
-					if err != nil {
-						return ctx, err
-					}
-				}
 			}
 		}
 	}

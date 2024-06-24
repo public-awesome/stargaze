@@ -14,7 +14,6 @@ const upgradeName = "v14"
 
 // RegisterUpgradeHandlers returns upgrade handlers
 func (app *App) RegisterUpgradeHandlers(cfg module.Configurator) {
-
 	app.UpgradeKeeper.SetUpgradeHandler(upgradeName, func(ctx sdk.Context, _ upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
 		// run migrations before modifying state
 		migrations, err := app.mm.RunMigrations(ctx, cfg, fromVM)
