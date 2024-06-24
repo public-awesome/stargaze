@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 import "cosmos/msg/v1/msg.proto";
 import "publicawesome/stargaze/cron/v1/cron.proto";
 
-option go_package = "github.com/public-awesome/stargaze/v13/x/cron/types";
+option go_package = "github.com/public-awesome/stargaze/v14/x/cron/types";
 
 // Msg defines the alloc Msg service.
 service Msg {

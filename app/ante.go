@@ -13,9 +13,9 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	ibcante "github.com/cosmos/ibc-go/v7/modules/core/ante"
 	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
-	sgante "github.com/public-awesome/stargaze/v13/internal/ante"
-	globalfeeante "github.com/public-awesome/stargaze/v13/x/globalfee/ante"
-	globalfeekeeper "github.com/public-awesome/stargaze/v13/x/globalfee/keeper"
+	sgante "github.com/public-awesome/stargaze/v14/internal/ante"
+	globalfeeante "github.com/public-awesome/stargaze/v14/x/globalfee/ante"
+	globalfeekeeper "github.com/public-awesome/stargaze/v14/x/globalfee/keeper"
 )
 
 // HandlerOptions extend the SDK's AnteHandler options by requiring the IBC

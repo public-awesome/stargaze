@@ -37,8 +37,8 @@ import (
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	tmtypes "github.com/cometbft/cometbft/types"
-	"github.com/public-awesome/stargaze/v13/app"
-	"github.com/public-awesome/stargaze/v13/app/params"
+	"github.com/public-awesome/stargaze/v14/app"
+	"github.com/public-awesome/stargaze/v14/app/params"
 )
 
 const EnvironmentPrefix = "STARGAZE"

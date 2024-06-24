@@ -5,8 +5,8 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/public-awesome/stargaze/v13/x/tokenfactory/exported"
-	"github.com/public-awesome/stargaze/v13/x/tokenfactory/types"
+	"github.com/public-awesome/stargaze/v14/x/tokenfactory/exported"
+	"github.com/public-awesome/stargaze/v14/x/tokenfactory/types"
 )
 
 // MigrateStore migrates the x/tokenfactory module state from the consensus version 1 to
