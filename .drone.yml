@@ -332,19 +332,20 @@ steps:
         - http://osmosis:26657
         - http://icad:26657
   - name: relayer
-    image: publicawesome/hermes:0.15.0
+    image: publicawesome/hermes:1.7.3
     commands:
-      - /bin/bash ./scripts/ci/setup-relayer.sh
+      - sleep 10
+      - /bin/bash ./scripts/ci/setup-hermes-1.7.sh
 
   - name: relayer-start
-    image: publicawesome/hermes:0.15.0
+    image: publicawesome/hermes:1.7.3
     commands:
-      - /bin/bash ./scripts/ci/start-relayer.sh
+      - /bin/bash ./scripts/ci/start-relayer-v1.7.sh
     detach: true
   - name: relayer-sender
-    image: publicawesome/hermes:0.15.0
+    image: publicawesome/hermes:1.7.3
     commands:
-      - /bin/bash ./scripts/ci/transfer-relayer.sh
+      - /bin/bash ./scripts/ci/transfer-relayer-v1.7.sh
   - name: proposal
     image: publicawesome/stargaze:13.2.1
     commands:
@@ -421,6 +422,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 41f001cdaf2745a4352be314c4ec38c093b5d9778fc9420c98eed5a4aa27cfff
+hmac: 9033462f3c971ac52fdfa4ddf6f376af074b303c151e2f0813a2cce31d6a0a09
 
 ...
