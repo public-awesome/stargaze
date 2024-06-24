@@ -2,7 +2,7 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v13/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v14/x/globalfee/types"
 )
 
 // SetParams sets the total set of minting parameters.

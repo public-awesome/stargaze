@@ -3,7 +3,7 @@ package publicawesome.stargaze.mint.v1beta1;
 
 import "cosmos/msg/v1/msg.proto";
 
-option go_package = "github.com/public-awesome/stargaze/v13/x/mint/types";
+option go_package = "github.com/public-awesome/stargaze/v14/x/mint/types";
 
 // Msg defines the mint Msg service.
 service Msg {

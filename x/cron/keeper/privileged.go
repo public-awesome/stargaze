@@ -5,7 +5,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/public-awesome/stargaze/v13/x/cron/types"
+	"github.com/public-awesome/stargaze/v14/x/cron/types"
 )
 
 // SetPrivileged checks if the given contract exists and adds it to the list of privilege contracts

@@ -9,10 +9,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	moduletestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
 
-	"github.com/public-awesome/stargaze/v13/x/globalfee"
-	"github.com/public-awesome/stargaze/v13/x/globalfee/exported"
-	v2 "github.com/public-awesome/stargaze/v13/x/globalfee/migrations/v2"
-	"github.com/public-awesome/stargaze/v13/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v14/x/globalfee"
+	"github.com/public-awesome/stargaze/v14/x/globalfee/exported"
+	v2 "github.com/public-awesome/stargaze/v14/x/globalfee/migrations/v2"
+	"github.com/public-awesome/stargaze/v14/x/globalfee/types"
 )
 
 type mockSubspace struct {
