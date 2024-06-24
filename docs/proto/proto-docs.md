@@ -391,7 +391,7 @@ a token.  For now, we only support burning from the sender account.
 | ----- | ---- | ----- | ----------- |
 | `sender` | [string](#string) |  |  |
 | `amount` | [cosmos.base.v1beta1.Coin](#cosmos.base.v1beta1.Coin) |  |  |
-| `burnFromAddress` | [string](#string) |  | burn from address buf:lint:ignore FIELD_LOWER_SNAKE_CASE |
+| `burnFromAddress` | [string](#string) |  | buf:lint:ignore FIELD_LOWER_SNAKE_CASE |
 
 
 
