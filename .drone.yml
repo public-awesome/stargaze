@@ -371,15 +371,19 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:13.0.0-beta.9
+    image: publicawesome/stargaze:14.0.0-upgrade
     commands:
-      - starsd q mint params --node http://stargaze-upgraded:26657
-      - starsd q alloc params --node http://stargaze-upgraded:26657
-      - starsd q tokenfactory params --node http://stargaze-upgraded:26657
-      - starsd q bank balances stars1mnyrspq208uv5m2krdctan2dkyht0szje9s43h --node http://stargaze-upgraded:26657
-      - starsd q bank balances stars103y4f6h80lc45nr8chuzr3fyzqywm9n0gnr394 --node http://stargaze-upgraded:26657
-      - starsd q distribution community-pool --node http://stargaze-upgraded:26657
-      - starsd q interchain-accounts host params --node http://stargaze-upgraded:26657
+      - starsd config output json
+      - starsd config node http://stargaze-upgraded:26657
+      - starsd q staking params 
+      - starsd q gov params 
+      - starsd q mint params 
+      - starsd q alloc params 
+      - starsd q tokenfactory params 
+      - starsd q bank balances stars1mnyrspq208uv5m2krdctan2dkyht0szje9s43h 
+      - starsd q bank balances stars103y4f6h80lc45nr8chuzr3fyzqywm9n0gnr394 
+      - starsd q distribution community-pool 
+      - starsd q interchain-accounts host params 
     environment:
       GOPROXY: http://goproxy
   - name: relayer-upgrade-start
@@ -422,6 +426,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 9033462f3c971ac52fdfa4ddf6f376af074b303c151e2f0813a2cce31d6a0a09
+hmac: 95e56a942e5f4ba18e9e0088f6683db90726651fd42e9d9b4c3e30388822d8cd
 
 ...
