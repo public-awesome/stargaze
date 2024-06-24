@@ -82,7 +82,7 @@ steps:
       event:
         - push
       branch:
-        - jhernandezb/v14-mod-update
+        - jhernandezb/update-go-releaser
   - name: docker_release
     image: plugins/docker
     settings:
@@ -98,12 +98,12 @@ steps:
         - tag
 
   - name: release
-    image: golang:1.22.3
+    image: goreleaser/goreleaser:v1.26.2
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
     commands:
-      - curl -sL https://git.io/goreleaser | bash
+      - goreleaser release
     environment:
       GOPROXY: http://goproxy
     when:
@@ -426,6 +426,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 86ccf1968c57309964302ff5d811624478d6b1a0a4d940e3d6e2446f1f00a6d8
+hmac: 1fc54bb7c4880fc9fee81cfeb2b8edffe24d8d001e5a91eec5b6c32b5cf12658
 
 ...
