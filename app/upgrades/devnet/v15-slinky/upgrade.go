@@ -19,7 +19,7 @@ import (
 	oracletypes "github.com/skip-mev/slinky/x/oracle/types"
 )
 
-const UpgradeName = "v14-slinky"
+const UpgradeName = "v15-slinky"
 
 var Upgrade = upgrades.Upgrade{
 	UpgradeName: UpgradeName,
