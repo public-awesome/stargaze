@@ -3,7 +3,7 @@ package markets_test
 import (
 	"testing"
 
-	"github.com/public-awesome/stargaze/v14/internal/oracle/markets"
+	"github.com/public-awesome/stargaze/v15/internal/oracle/markets"
 	"github.com/stretchr/testify/require"
 )
 

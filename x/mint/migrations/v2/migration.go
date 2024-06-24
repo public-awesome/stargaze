@@ -5,8 +5,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/public-awesome/stargaze/v14/x/mint/exported"
-	"github.com/public-awesome/stargaze/v14/x/mint/types"
+	"github.com/public-awesome/stargaze/v15/x/mint/exported"
+	"github.com/public-awesome/stargaze/v15/x/mint/types"
 )
 
 // MigrateStore migrates the x/mint module state from the consensus version 1 to

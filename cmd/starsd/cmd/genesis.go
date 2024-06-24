@@ -13,17 +13,17 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	ibctransfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
-	"github.com/public-awesome/stargaze/v14/internal/oracle/markets"
-	minttypes "github.com/public-awesome/stargaze/v14/x/mint/types"
+	"github.com/public-awesome/stargaze/v15/internal/oracle/markets"
+	minttypes "github.com/public-awesome/stargaze/v15/x/mint/types"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-	alloctypes "github.com/public-awesome/stargaze/v14/x/alloc/types"
+	alloctypes "github.com/public-awesome/stargaze/v15/x/alloc/types"
 
 	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
-	globalfeetypes "github.com/public-awesome/stargaze/v14/x/globalfee/types"
-	tokenfactorytypes "github.com/public-awesome/stargaze/v14/x/tokenfactory/types"
+	globalfeetypes "github.com/public-awesome/stargaze/v15/x/globalfee/types"
+	tokenfactorytypes "github.com/public-awesome/stargaze/v15/x/tokenfactory/types"
 	marketmaptypes "github.com/skip-mev/slinky/x/marketmap/types"
 	oracletypes "github.com/skip-mev/slinky/x/oracle/types"
 )

@@ -25,7 +25,7 @@ import (
 	"github.com/strangelove-ventures/interchaintest/v8/ibc"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/public-awesome/stargaze/v14/app"
+	"github.com/public-awesome/stargaze/v15/app"
 )
 
 func init() {

@@ -5,8 +5,8 @@ import (
 
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	upgrades "github.com/public-awesome/stargaze/v14/app/upgrades"
-	mainnetupgradesv15 "github.com/public-awesome/stargaze/v14/app/upgrades/mainnet/v15"
+	upgrades "github.com/public-awesome/stargaze/v15/app/upgrades"
+	mainnetupgradesv15 "github.com/public-awesome/stargaze/v15/app/upgrades/mainnet/v15"
 )
 
 var Upgrades = []upgrades.Upgrade{

@@ -4,7 +4,7 @@ import (
 	storetypes "cosmossdk.io/store/types"
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/public-awesome/stargaze/v14/app/keepers"
+	"github.com/public-awesome/stargaze/v15/app/keepers"
 )
 
 type Upgrade struct {

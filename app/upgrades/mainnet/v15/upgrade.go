@@ -13,9 +13,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	consensustypes "github.com/cosmos/cosmos-sdk/x/consensus/types"
 	wasmlctypes "github.com/cosmos/ibc-go/modules/light-clients/08-wasm/types"
-	"github.com/public-awesome/stargaze/v14/app/keepers"
-	"github.com/public-awesome/stargaze/v14/app/upgrades"
-	"github.com/public-awesome/stargaze/v14/internal/oracle/markets"
+	"github.com/public-awesome/stargaze/v15/app/keepers"
+	"github.com/public-awesome/stargaze/v15/app/upgrades"
+	"github.com/public-awesome/stargaze/v15/internal/oracle/markets"
 	marketmaptypes "github.com/skip-mev/slinky/x/marketmap/types"
 	oracletypes "github.com/skip-mev/slinky/x/oracle/types"
 )
