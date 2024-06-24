@@ -6,7 +6,7 @@ require (
 	github.com/CosmWasm/wasmd v0.45.0
 	github.com/CosmWasm/wasmvm v1.5.2
 	github.com/armon/go-metrics v0.4.1
-	github.com/cometbft/cometbft v0.37.5
+	github.com/cometbft/cometbft v0.37.6
 	github.com/cosmos/cosmos-proto v1.0.0-beta.5
 	github.com/cosmos/cosmos-sdk v0.47.12
 	github.com/cosmos/go-bip39 v1.0.0
