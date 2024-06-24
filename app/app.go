@@ -565,6 +565,8 @@ func NewStargazeApp(
 		scopedICAHostKeeper,
 		bApp.MsgServiceRouter(),
 	)
+	// set grpc router for ica host
+	app.ICAHostKeeper.WithQueryRouter(app.GRPCQueryRouter())
 
 	icaHostIBCModule := icahost.NewIBCModule(app.ICAHostKeeper)
 

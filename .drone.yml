@@ -33,7 +33,7 @@ steps:
       branch: no-cache
 
   - name: test
-    image: publicawesome/golang:1.21.3-devtooling
+    image: publicawesome/golang:1.22.3-devtooling
     volumes:
       - name: cache
         path: /go
@@ -42,7 +42,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: build
-    image: golang:1.21.3-alpine3.17
+    image: golang:1.22.3-alpine3.18
     volumes:
       - name: cache
         path: /go
@@ -77,12 +77,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 13.0.0-beta.9
+        - 14.0.0-upgrade
     when:
       event:
         - push
       branch:
-        - spoorthi/ica-controller
+        - jhernandezb/v14-update
   - name: docker_release
     image: plugins/docker
     settings:
@@ -98,7 +98,7 @@ steps:
         - tag
 
   - name: release
-    image: golang:1.21.3
+    image: golang:1.22.3
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -193,7 +193,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/golang:1.21.3-devtooling
+    image: publicawesome/golang:1.22.3-devtooling
     volumes:
       - name: cache
         path: /go
@@ -281,7 +281,7 @@ steps:
     when:
       branch: no-cache
   - name: build-wrapper
-    image: publicawesome/golang:1.21.3-devtooling
+    image: publicawesome/golang:1.22.3-devtooling
     volumes:
       - name: cache
         path: /go
@@ -314,7 +314,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:12.0.0
+    image: publicawesome/stargaze:13.2.1
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
@@ -332,26 +332,27 @@ steps:
         - http://osmosis:26657
         - http://icad:26657
   - name: relayer
-    image: publicawesome/hermes:0.15.0
+    image: publicawesome/hermes:1.7.3
     commands:
-      - /bin/bash ./scripts/ci/setup-relayer.sh
+      - sleep 10
+      - /bin/bash ./scripts/ci/setup-hermes-1.7.sh
 
   - name: relayer-start
-    image: publicawesome/hermes:0.15.0
+    image: publicawesome/hermes:1.7.3
     commands:
-      - /bin/bash ./scripts/ci/start-relayer.sh
+      - /bin/bash ./scripts/ci/start-relayer-v1.7.sh
     detach: true
   - name: relayer-sender
-    image: publicawesome/hermes:0.15.0
+    image: publicawesome/hermes:1.7.3
     commands:
-      - /bin/bash ./scripts/ci/transfer-relayer.sh
+      - /bin/bash ./scripts/ci/transfer-relayer-v1.7.sh
   - name: proposal
-    image: publicawesome/stargaze:12.1.0
+    image: publicawesome/stargaze:13.2.1
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:13.0.0-beta.9
+    image: publicawesome/stargaze:14.0.0-upgrade
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -370,15 +371,19 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:13.0.0-beta.9
+    image: publicawesome/stargaze:14.0.0-upgrade
     commands:
-      - starsd q mint params --node http://stargaze-upgraded:26657
-      - starsd q alloc params --node http://stargaze-upgraded:26657
-      - starsd q tokenfactory params --node http://stargaze-upgraded:26657
-      - starsd q bank balances stars1mnyrspq208uv5m2krdctan2dkyht0szje9s43h --node http://stargaze-upgraded:26657
-      - starsd q bank balances stars103y4f6h80lc45nr8chuzr3fyzqywm9n0gnr394 --node http://stargaze-upgraded:26657
-      - starsd q distribution community-pool --node http://stargaze-upgraded:26657
-      - starsd q interchain-accounts host params --node http://stargaze-upgraded:26657
+      - starsd config output json
+      - starsd config node http://stargaze-upgraded:26657
+      - starsd q staking params 
+      - starsd q gov params 
+      - starsd q mint params 
+      - starsd q alloc params 
+      - starsd q tokenfactory params 
+      - starsd q bank balances stars1mnyrspq208uv5m2krdctan2dkyht0szje9s43h 
+      - starsd q bank balances stars103y4f6h80lc45nr8chuzr3fyzqywm9n0gnr394 
+      - starsd q distribution community-pool 
+      - starsd q interchain-accounts host params 
     environment:
       GOPROXY: http://goproxy
   - name: relayer-upgrade-start
@@ -407,7 +412,8 @@ steps:
 
 trigger:
   branch:
-    - main
+    - release/v14.x
+    - jhernandezb/v14-update
   event:
     - pull_request
     - push
@@ -420,6 +426,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 5731053a92a730984ac3a569c36c712eb78d3c917641f67cf733ddbf9db91a35
+hmac: 95e56a942e5f4ba18e9e0088f6683db90726651fd42e9d9b4c3e30388822d8cd
 
 ...
