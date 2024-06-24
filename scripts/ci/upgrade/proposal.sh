@@ -11,7 +11,7 @@ starsd config keyring-backend test --home $STARGAZE_HOME
 
 echo "fund community pool"
 starsd tx distribution fund-community-pool 20000000000000ustars  \
---gas-prices 1ustars --gas auto --gas-adjustment 1.5 --from funder  \
+--gas-prices 1ustars --gas auto --gas-adjustment 1.9 --from funder  \
 --chain-id stargaze -b sync --yes --node http://stargaze:26657 --home $STARGAZE_HOME --keyring-backend test
 
 sleep 5
@@ -44,11 +44,11 @@ cat <<EOT >> proposal.json
 EOT
 cat proposal.json
 starsd tx gov submit-proposal proposal.json  \
---gas-prices 1ustars --gas auto --gas-adjustment 1.5 --from validator  \
+--gas-prices 1ustars --gas auto --gas-adjustment 1.9 --from validator  \
 --chain-id stargaze -b sync --yes --node http://stargaze:26657 --home $STARGAZE_HOME --keyring-backend test
 sleep 10
 starsd q gov proposals --node http://stargaze:26657 --home $STARGAZE_HOME
-starsd tx gov vote 1 "yes" --gas-prices 1ustars --gas auto --gas-adjustment 1.5 --from validator  \
+starsd tx gov vote 1 "yes" --gas-prices 1ustars --gas auto --gas-adjustment 1.9 --from validator  \
 --chain-id stargaze -b sync --yes --node http://stargaze:26657 --home $STARGAZE_HOME --keyring-backend test
 sleep 120
 starsd q gov proposal 1 --node http://stargaze:26657 --home $STARGAZE_HOME -o json | jq 
