@@ -12,14 +12,14 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	consensustypes "github.com/cosmos/cosmos-sdk/x/consensus/types"
-	"github.com/public-awesome/stargaze/v14/app/keepers"
-	"github.com/public-awesome/stargaze/v14/app/upgrades"
-	"github.com/public-awesome/stargaze/v14/internal/oracle/markets"
+	"github.com/public-awesome/stargaze/v15/app/keepers"
+	"github.com/public-awesome/stargaze/v15/app/upgrades"
+	"github.com/public-awesome/stargaze/v15/internal/oracle/markets"
 	marketmaptypes "github.com/skip-mev/slinky/x/marketmap/types"
 	oracletypes "github.com/skip-mev/slinky/x/oracle/types"
 )
 
-const UpgradeName = "v14-slinky"
+const UpgradeName = "v15-slinky"
 
 var Upgrade = upgrades.Upgrade{
 	UpgradeName: UpgradeName,

@@ -6,7 +6,7 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/public-awesome/stargaze/v14/x/alloc/types"
+	"github.com/public-awesome/stargaze/v15/x/alloc/types"
 )
 
 type msgServer struct {

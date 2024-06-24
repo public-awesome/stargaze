@@ -20,10 +20,10 @@ import (
 	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	stargazeapp "github.com/public-awesome/stargaze/v14/app"
-	"github.com/public-awesome/stargaze/v14/testutil/simapp"
-	"github.com/public-awesome/stargaze/v14/x/globalfee/ante"
-	"github.com/public-awesome/stargaze/v14/x/globalfee/types"
+	stargazeapp "github.com/public-awesome/stargaze/v15/app"
+	"github.com/public-awesome/stargaze/v15/testutil/simapp"
+	"github.com/public-awesome/stargaze/v15/x/globalfee/ante"
+	"github.com/public-awesome/stargaze/v15/x/globalfee/types"
 	"github.com/stretchr/testify/suite"
 )
 

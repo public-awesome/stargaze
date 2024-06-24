@@ -10,7 +10,7 @@ replace (
 	github.com/docker/distribution => github.com/docker/distribution v2.8.2+incompatible
 	github.com/docker/docker => github.com/docker/docker v24.0.9+incompatible
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-	github.com/public-awesome/stargaze/v14 => ../..
+	github.com/public-awesome/stargaze/v15 => ../..
 	github.com/vedhavyas/go-subkey => github.com/strangelove-ventures/go-subkey v1.0.7
 )
 
@@ -18,7 +18,7 @@ require (
 	github.com/CosmWasm/wasmd v0.51.0
 	github.com/cosmos/cosmos-sdk v0.50.7
 	github.com/icza/dyno v0.0.0-20230330125955-09f820a8d9c0
-	github.com/public-awesome/stargaze/v14 v14.0.0-alpha.3
+	github.com/public-awesome/stargaze/v15 v15.0.0-alpha.1
 	github.com/skip-mev/slinky v1.0.3
 	github.com/skip-mev/slinky/tests/integration v1.1.0
 	github.com/strangelove-ventures/interchaintest/v8 v8.4.0

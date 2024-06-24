@@ -2,7 +2,7 @@ package app
 
 import (
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	tokenfactorytypes "github.com/public-awesome/stargaze/v14/x/tokenfactory/types"
+	tokenfactorytypes "github.com/public-awesome/stargaze/v15/x/tokenfactory/types"
 	marketmaptypes "github.com/skip-mev/slinky/x/marketmap/types"
 	oracletypes "github.com/skip-mev/slinky/x/oracle/types"
 )

@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	log "cosmossdk.io/log"
-	"github.com/public-awesome/stargaze/v14/x/tokenfactory/types"
+	"github.com/public-awesome/stargaze/v15/x/tokenfactory/types"
 
 	"cosmossdk.io/store/prefix"
 	storetypes "cosmossdk.io/store/types"

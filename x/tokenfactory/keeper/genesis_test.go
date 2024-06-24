@@ -3,7 +3,7 @@ package keeper_test
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	"github.com/public-awesome/stargaze/v14/x/tokenfactory/types"
+	"github.com/public-awesome/stargaze/v15/x/tokenfactory/types"
 )
 
 func (suite *KeeperTestSuite) TestGenesis() {

@@ -1,12 +1,12 @@
-package v14_test
+package v15_test
 
 import (
 	"fmt"
 	"testing"
 
 	upgradetypes "cosmossdk.io/x/upgrade/types"
-	stargazeapp "github.com/public-awesome/stargaze/v14/app"
-	"github.com/public-awesome/stargaze/v14/testutil/simapp"
+	stargazeapp "github.com/public-awesome/stargaze/v15/app"
+	"github.com/public-awesome/stargaze/v15/testutil/simapp"
 	"github.com/stretchr/testify/suite"
 )
 

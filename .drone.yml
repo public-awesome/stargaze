@@ -77,12 +77,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 14.0.0-alpha.4
+        - 15.0.0-alpha.1
     when:
       event:
         - push
       branch:
-        - jhernandezb/add-slinky
+        - jhernandezb/go-mod-v15
   - name: docker_release
     image: plugins/docker
     settings:
@@ -314,7 +314,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:13.0.0
+    image: publicawesome/stargaze:14.0.0-rc.2
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
@@ -347,12 +347,12 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer-v1.7.sh
   - name: proposal
-    image: publicawesome/stargaze:14.0.0-alpha.4
+    image: publicawesome/stargaze:14.0.0-rc.2
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:14.0.0-alpha.4
+    image: publicawesome/stargaze:15.0.0-alpha.1
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -371,7 +371,7 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:14.0.0-alpha.4
+    image: publicawesome/stargaze:15.0.0-alpha.1
     commands:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
@@ -421,6 +421,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 86967519e5c477f67754ed2c569761a7fb76086b83b6582a12987e3fab2413df
+hmac: 064882020f7557f963262db07af4a2249444ffc3be2612ee0ce93cd0b56d8c87
 
 ...

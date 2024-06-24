@@ -24,7 +24,7 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
 	sdkmath "cosmossdk.io/math"
-	stargazeapp "github.com/public-awesome/stargaze/v14/app"
+	stargazeapp "github.com/public-awesome/stargaze/v15/app"
 )
 
 // New creates application instance with in-memory database and disabled logging.
