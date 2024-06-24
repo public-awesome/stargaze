@@ -347,7 +347,7 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer-v1.7.sh
   - name: proposal
-    image: publicawesome/stargaze:15.0.0-alpha.1
+    image: publicawesome/stargaze:14.0.0-rc.2
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
@@ -421,6 +421,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 4fd41c01577603909f344c888dcdf093e88ffaedd2ebb8744427ca881001635e
+hmac: 064882020f7557f963262db07af4a2249444ffc3be2612ee0ce93cd0b56d8c87
 
 ...
