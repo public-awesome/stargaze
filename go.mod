@@ -7,7 +7,7 @@ toolchain go1.22.3
 require (
 	github.com/CosmWasm/wasmd v0.51.0
 	github.com/CosmWasm/wasmvm/v2 v2.0.1
-	github.com/cometbft/cometbft v0.38.7
+	github.com/cometbft/cometbft v0.38.9
 	github.com/cosmos/cosmos-proto v1.0.0-beta.5
 	github.com/cosmos/cosmos-sdk v0.50.7
 	github.com/cosmos/go-bip39 v1.0.0
@@ -39,7 +39,7 @@ require (
 	cosmossdk.io/x/evidence v0.1.1
 	cosmossdk.io/x/feegrant v0.1.1
 	cosmossdk.io/x/tx v0.13.3
-	cosmossdk.io/x/upgrade v0.1.3
+	cosmossdk.io/x/upgrade v0.1.4
 	github.com/cosmos/cosmos-db v1.0.2
 	github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v8 v8.0.2
 	github.com/cosmos/ibc-apps/modules/ibc-hooks/v8 v8.0.0-00010101000000-000000000000
@@ -135,6 +135,7 @@ require (
 	github.com/hashicorp/go-safetemp v1.0.0 // indirect
 	github.com/hashicorp/go-version v1.7.0 // indirect
 	github.com/hashicorp/golang-lru v1.0.2 // indirect
+	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/yamux v0.1.1 // indirect
 	github.com/hdevalence/ed25519consensus v0.1.0 // indirect
