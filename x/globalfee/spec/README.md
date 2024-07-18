@@ -23,7 +23,7 @@ Between the minimum-gas-prices set by the validator and the MinimumGasPrices con
 
 x/globalfee module implements a way for the network to set a few operations on specific cosmwasm contracts which can use zero gas fees (irrespective of validator configuration or MinimumGasPrices value).
 
-The transaction benefits from zero gas fee operations only when all the msgs in the tranaction have been authorized. Else, typical fee has to be paid for the transaction. 
+The transaction benefits from zero gas fee operations only when all the msgs in the transaction have been authorized. Else, typical fee has to be paid for the transaction. 
 
 This configuration of code/contract authorizations can be updated either via on-chain governance or via whitelisted addresses. 
 
