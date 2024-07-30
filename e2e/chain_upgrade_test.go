@@ -112,7 +112,7 @@ func submitUpgradeProposalAndVote(t *testing.T, ctx context.Context, stargazeCha
 	}
 	proposal, err := stargazeChain.BuildProposal([]cosmos.ProtoMessage{&proposalMsg},
 		"Test Upgrade",
-		"Every PR we preform an upgrade check to ensure nothing breaks",
+		"Every PR we perform an upgrade check to ensure nothing breaks",
 		"metadata",
 		"10000000000"+stargazeChain.Config().Denom,
 		chainUser.KeyName(),
