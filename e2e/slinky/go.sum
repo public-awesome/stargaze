@@ -237,8 +237,8 @@ github.com/ComposableFi/go-subkey/v2 v2.0.0-tm03420 h1:oknQF/iIhf5lVjbwjsVDzDByu
 github.com/ComposableFi/go-subkey/v2 v2.0.0-tm03420/go.mod h1:KYkiMX5AbOlXXYfxkrYPrRPV6EbVUALTQh5ptUOJzu8=
 github.com/CosmWasm/wasmd v0.51.0 h1:3A2o20RrdF7P1D3Xb+R7A/pHbbHWsYCDXrHLa7S0SC8=
 github.com/CosmWasm/wasmd v0.51.0/go.mod h1:7TSaj5HoolghujuVWeExqmcUKgpcYWEySGLSODbnnwY=
-github.com/CosmWasm/wasmvm/v2 v2.0.1 h1:0YCQ7MKGNri7NFeRp75erPJXrqyCtH4gdc9jMstyMzk=
-github.com/CosmWasm/wasmvm/v2 v2.0.1/go.mod h1:su9lg5qLr7adV95eOfzjZWkGiky8WNaNIHDr7Fpu7Ck=
+github.com/CosmWasm/wasmvm/v2 v2.0.2 h1:UuIqCfpFEyh1UWFzCwKzS5m1fQj7EstGeRCwb8NqMyA=
+github.com/CosmWasm/wasmvm/v2 v2.0.2/go.mod h1:su9lg5qLr7adV95eOfzjZWkGiky8WNaNIHDr7Fpu7Ck=
 github.com/DataDog/datadog-go v3.2.0+incompatible/go.mod h1:LButxg5PwREeZtORoXG3tL4fMGNddJ+vMq1mwgfaqoQ=
 github.com/DataDog/datadog-go v4.8.3+incompatible h1:fNGaYSuObuQb5nzeTQqowRAd9bpDIRRV4/gUtIBjh8Q=
 github.com/DataDog/datadog-go v4.8.3+incompatible/go.mod h1:LButxg5PwREeZtORoXG3tL4fMGNddJ+vMq1mwgfaqoQ=
@@ -1070,8 +1070,8 @@ github.com/sirupsen/logrus v1.9.3 h1:dueUQJ1C2q9oE3F7wvmSGAaVtTmUizReu6fjN8uqzbQ
 github.com/sirupsen/logrus v1.9.3/go.mod h1:naHLuLoDiP4jHNo9R0sCBMtWGeIprob74mVsIT4qYEQ=
 github.com/skip-mev/chaintestutil v0.0.0-20240116134208-3e49bf514803 h1:VRRVYN3wsOIOqVT3e3nDh3vyUl6RvF9QwdK4BvgPP9c=
 github.com/skip-mev/chaintestutil v0.0.0-20240116134208-3e49bf514803/go.mod h1:LF2koCTmygQnz11yjSfHvNP8axdyZ2lTEw0EwI+dnno=
-github.com/skip-mev/slinky v1.0.2 h1:sC2zYkNYe7yc7hmTcWx1OZtzuiywWupa7GFUsj2RJgY=
-github.com/skip-mev/slinky v1.0.2/go.mod h1:EE3O71wIJ74OciYh62Fc5EysF07KArBEYb6lDmTIKVM=
+github.com/skip-mev/slinky v1.0.3 h1:+7Yw+HHjYqJ7gb5nrG1k2bplNG+qEmn5wws+OesdY2M=
+github.com/skip-mev/slinky v1.0.3/go.mod h1:EE3O71wIJ74OciYh62Fc5EysF07KArBEYb6lDmTIKVM=
 github.com/skip-mev/slinky/tests/integration v1.1.0 h1:QQo0E0WqE6G3ejwogkVnWJGWebtkbC3Ry1m6KyMSQ2A=
 github.com/skip-mev/slinky/tests/integration v1.1.0/go.mod h1:MQtr5sHRG9O8Ytl7Anlqs01Cm+DtgP13p+TOn7KPjGo=
 github.com/smartystreets/assertions v0.0.0-20180927180507-b2de0cb4f26d/go.mod h1:OnSkiWE9lh6wB0YB77sQom3nweQdgAjqCqsofrRNTgc=
