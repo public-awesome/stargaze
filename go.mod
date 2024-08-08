@@ -5,14 +5,14 @@ go 1.22
 toolchain go1.22.3
 
 require (
-	github.com/CosmWasm/wasmd v0.51.0
-	github.com/CosmWasm/wasmvm/v2 v2.0.1
-	github.com/cometbft/cometbft v0.38.7
+	github.com/CosmWasm/wasmd v0.52.0
+	github.com/CosmWasm/wasmvm/v2 v2.1.0
+	github.com/cometbft/cometbft v0.38.9
 	github.com/cosmos/cosmos-proto v1.0.0-beta.5
 	github.com/cosmos/cosmos-sdk v0.50.7
 	github.com/cosmos/go-bip39 v1.0.0
 	github.com/cosmos/gogoproto v1.5.0
-	github.com/cosmos/iavl v1.1.4 // indirect
+	github.com/cosmos/iavl v1.2.0 // indirect
 	github.com/golang/protobuf v1.5.4
 	github.com/gorilla/mux v1.8.1
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
@@ -127,7 +127,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0 // indirect
 	github.com/gsterjov/go-libsecret v0.0.0-20161001094733-a6f4afe4910c // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
-	github.com/hashicorp/go-getter v1.7.4 // indirect
+	github.com/hashicorp/go-getter v1.7.5 // indirect
 	github.com/hashicorp/go-hclog v1.5.0 // indirect
 	github.com/hashicorp/go-immutable-radix v1.3.1 // indirect
 	github.com/hashicorp/go-metrics v0.5.3 // indirect
@@ -135,6 +135,7 @@ require (
 	github.com/hashicorp/go-safetemp v1.0.0 // indirect
 	github.com/hashicorp/go-version v1.7.0 // indirect
 	github.com/hashicorp/golang-lru v1.0.2 // indirect
+	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/yamux v0.1.1 // indirect
 	github.com/hdevalence/ed25519consensus v0.1.0 // indirect
@@ -172,10 +173,11 @@ require (
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
 	github.com/rs/cors v1.8.3 // indirect
-	github.com/rs/zerolog v1.32.0 // indirect
+	github.com/rs/zerolog v1.33.0 // indirect
 	github.com/sagikazarmark/locafero v0.4.0 // indirect
 	github.com/sagikazarmark/slog-shim v0.1.0 // indirect
 	github.com/sasha-s/go-deadlock v0.3.1 // indirect
+	github.com/shamaton/msgpack/v2 v2.2.0 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.11.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
