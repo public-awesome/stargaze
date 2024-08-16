@@ -45,7 +45,7 @@ require (
 	github.com/cosmos/ibc-apps/modules/ibc-hooks/v8 v8.0.0-00010101000000-000000000000
 	github.com/cosmos/ibc-go/modules/capability v1.0.0
 	github.com/cosmos/ibc-go/modules/light-clients/08-wasm v0.2.1-0.20240523101951-4b45d1822fb6 // modules/light-clients/08-wasm/v0.2.0+ibc-go-v8.3-wasmvm-v2.0
-	github.com/cosmos/ibc-go/v8 v8.3.2
+	github.com/cosmos/ibc-go/v8 v8.4.0
 	github.com/gogo/protobuf v1.3.2
 	github.com/prometheus/client_golang v1.19.1
 	github.com/skip-mev/slinky v1.0.6
