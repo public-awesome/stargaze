@@ -260,6 +260,63 @@
                     }
                 }
             ]
+        },
+        "OSMO/USD": {
+            "ticker": {
+                "currency_pair": {
+                    "Base": "OSMO",
+                    "Quote": "USD"
+                },
+                "decimals": 8,
+                "min_provider_count": 1,
+                "enabled": true,
+                "metadata_JSON": "{\"reference_price\":1,\"liquidity\":0,\"aggregate_ids\":[]}"
+            },
+            "provider_configs": [
+                {
+                    "name": "coinbase_ws",
+                    "off_chain_ticker": "OSMO-USD"
+                },
+                {
+                    "name": "huobi_ws",
+                    "off_chain_ticker": "osmousdt",
+                    "normalize_by_pair": {
+                        "Base": "USDT",
+                        "Quote": "USD"
+                    }
+                },
+                {
+                    "name": "binance_api",
+                    "off_chain_ticker": "OSMOUSDT",
+                    "normalize_by_pair": {
+                        "Base": "USDT",
+                        "Quote": "USD"
+                    }
+                }
+            ]
+        },
+        "STARS/USD": {
+            "ticker": {
+                "currency_pair": {
+                    "Base": "STARS",
+                    "Quote": "USD"
+                },
+                "decimals": 18,
+                "min_provider_count": 1,
+                "enabled": true,
+                "metadata_JSON": "{\"reference_price\":1,\"liquidity\":0,\"aggregate_ids\":[]}"
+            },
+            "provider_configs": [
+                {
+                    "name": "osmosis_api",
+                    "off_chain_ticker": "STARS/OSMO",
+                    "metadata_JSON": "{\"pool_id\":1096,\"base_token_denom\":\"ibc/987C17B11ABC2B20019178ACE62929FE9840202CE79498E29FE8E5CB02B7C0A4\",\"quote_token_denom\":\"uosmo\"}",
+                    "normalize_by_pair": {
+                        "Base": "OSMO",
+                        "Quote": "USD"
+                    }
+                }
+            ]
         }
     }
 }
