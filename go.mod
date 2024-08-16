@@ -9,7 +9,7 @@ require (
 	github.com/CosmWasm/wasmvm/v2 v2.0.1
 	github.com/cometbft/cometbft v0.38.10
 	github.com/cosmos/cosmos-proto v1.0.0-beta.5
-	github.com/cosmos/cosmos-sdk v0.50.8
+	github.com/cosmos/cosmos-sdk v0.50.9
 	github.com/cosmos/go-bip39 v1.0.0
 	github.com/cosmos/gogoproto v1.5.0
 	github.com/cosmos/iavl v1.1.4 // indirect
@@ -30,7 +30,7 @@ require (
 	cosmossdk.io/api v0.7.5
 	cosmossdk.io/client/v2 v2.0.0-beta.4
 	cosmossdk.io/collections v0.4.0
-	cosmossdk.io/core v0.11.0
+	cosmossdk.io/core v0.11.1
 	cosmossdk.io/errors v1.0.1
 	cosmossdk.io/log v1.3.1
 	cosmossdk.io/math v1.3.0
@@ -38,7 +38,7 @@ require (
 	cosmossdk.io/tools/confix v0.1.1
 	cosmossdk.io/x/evidence v0.1.1
 	cosmossdk.io/x/feegrant v0.1.1
-	cosmossdk.io/x/tx v0.13.3
+	cosmossdk.io/x/tx v0.13.4
 	cosmossdk.io/x/upgrade v0.1.4
 	github.com/cosmos/cosmos-db v1.0.2
 	github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v8 v8.0.2
