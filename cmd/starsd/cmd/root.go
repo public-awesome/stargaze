@@ -55,7 +55,7 @@ func NewRootCmd() *cobra.Command {
 	cfg.SetAddressVerifier(wasmtypes.VerifyAddressLen())
 	cfg.Seal()
 
-	tempApp := app.NewStargazeApp(log.NewNopLogger(), dbm.NewMemDB(), nil, true, simtestutil.NewAppOptionsWithFlagHome(app.DefaultNodeHome), []wasmkeeper.Option{})
+	tempApp := app.NewStargazeApp(log.NewNopLogger(), dbm.NewMemDB(), nil, true, simtestutil.NewAppOptionsWithFlagHome(tempDir()), []wasmkeeper.Option{})
 	encodingConfig := params.EncodingConfig{
 		InterfaceRegistry: tempApp.InterfaceRegistry(),
 		Codec:             tempApp.AppCodec(),
@@ -286,4 +286,14 @@ func appExport(
 	}
 
 	return stargazeApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs, modulesToExport)
+}
+
+var tempDir = func() string {
+	dir, err := os.MkdirTemp("", "starsd")
+	if err != nil {
+		panic("failed to create temp dir: " + err.Error())
+	}
+	defer os.RemoveAll(dir)
+
+	return dir
 }
