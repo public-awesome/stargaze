@@ -318,8 +318,8 @@ type App struct {
 
 	// oracle
 
-	oracleClient     oracleclient.OracleClient
-	oraclePreBlocker sdk.PreBlocker
+	oracleClient oracleclient.OracleClient
+	// oraclePreBlocker sdk.PreBlocker
 }
 
 // NewStargazeApp returns a reference to an initialized Gaia.
@@ -1038,8 +1038,9 @@ func NewStargazeApp(
 		),
 	)
 
-	app.oraclePreBlocker = oraclePreBlockHandler.PreBlocker()
-	app.SetPreBlocker(app.PreBlocker)
+	// TODO: remove this after refactor
+	// app.oraclePreBlocker = oraclePreBlockHandler.PreBlocker()
+	app.SetPreBlocker(oraclePreBlockHandler.WrappedPreBlocker(app.ModuleManager))
 	// Create the vote extensions handler that will be used to extend and verify
 	// vote extensions (i.e. oracle data).
 	cps := currencypair.NewDeltaCurrencyPairStrategy(app.Keepers.OracleKeeper)
