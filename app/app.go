@@ -7,7 +7,6 @@ import (
 	"io"
 	"io/fs"
 	"net/http"
-	"os"
 	"path/filepath"
 	"time"
 
@@ -178,6 +177,8 @@ import (
 	"github.com/skip-mev/slinky/x/oracle"
 	oraclekeeper "github.com/skip-mev/slinky/x/oracle/keeper"
 	oracletypes "github.com/skip-mev/slinky/x/oracle/types"
+
+	clienthelpers "cosmossdk.io/client/v2/helpers"
 )
 
 const (
@@ -275,13 +276,15 @@ var (
 
 var _ servertypes.Application = (*App)(nil)
 
+const EnvironmentPrefix = "STARGAZE"
+
 func init() {
-	userHomeDir, err := os.UserHomeDir()
+	clienthelpers.EnvPrefix = EnvironmentPrefix
+	var err error
+	DefaultNodeHome, err = clienthelpers.GetNodeHomeDirectory(".starsd")
 	if err != nil {
 		panic(err)
 	}
-
-	DefaultNodeHome = filepath.Join(userHomeDir, ".starsd")
 }
 
 // App extends an ABCI application, but with most of its parameters exported.
@@ -315,8 +318,8 @@ type App struct {
 
 	// oracle
 
-	oracleClient     oracleclient.OracleClient
-	oraclePreBlocker sdk.PreBlocker
+	oracleClient oracleclient.OracleClient
+	// oraclePreBlocker sdk.PreBlocker
 }
 
 // NewStargazeApp returns a reference to an initialized Gaia.
@@ -789,8 +792,6 @@ func NewStargazeApp(
 	// set hooks
 	app.Keepers.MarketMapKeeper.SetHooks(app.Keepers.OracleKeeper.Hooks())
 
-	// this line is used by starport scaffolding # stargate/app/keeperDefinition
-
 	/****  Module Options ****/
 
 	// NOTE: we may consider parsing `appOpts` inside module constructors. For the moment
@@ -1037,8 +1038,9 @@ func NewStargazeApp(
 		),
 	)
 
-	app.oraclePreBlocker = oraclePreBlockHandler.PreBlocker()
-	app.SetPreBlocker(app.PreBlocker)
+	// TODO: remove this after refactor
+	// app.oraclePreBlocker = oraclePreBlockHandler.PreBlocker()
+	app.SetPreBlocker(oraclePreBlockHandler.WrappedPreBlocker(app.ModuleManager))
 	// Create the vote extensions handler that will be used to extend and verify
 	// vote extensions (i.e. oracle data).
 	cps := currencypair.NewDeltaCurrencyPairStrategy(app.Keepers.OracleKeeper)
