@@ -7,7 +7,6 @@ import (
 	"io"
 	"io/fs"
 	"net/http"
-	"os"
 	"path/filepath"
 	"time"
 
@@ -178,6 +177,8 @@ import (
 	"github.com/skip-mev/slinky/x/oracle"
 	oraclekeeper "github.com/skip-mev/slinky/x/oracle/keeper"
 	oracletypes "github.com/skip-mev/slinky/x/oracle/types"
+
+	clienthelpers "cosmossdk.io/client/v2/helpers"
 )
 
 const (
@@ -275,13 +276,15 @@ var (
 
 var _ servertypes.Application = (*App)(nil)
 
+const EnvironmentPrefix = "STARGAZE"
+
 func init() {
-	userHomeDir, err := os.UserHomeDir()
+	clienthelpers.EnvPrefix = EnvironmentPrefix
+	var err error
+	DefaultNodeHome, err = clienthelpers.GetNodeHomeDirectory(".starsd")
 	if err != nil {
 		panic(err)
 	}
-
-	DefaultNodeHome = filepath.Join(userHomeDir, ".starsd")
 }
 
 // App extends an ABCI application, but with most of its parameters exported.
@@ -788,8 +791,6 @@ func NewStargazeApp(
 	app.Keepers.OracleKeeper = &oralceKeeper
 	// set hooks
 	app.Keepers.MarketMapKeeper.SetHooks(app.Keepers.OracleKeeper.Hooks())
-
-	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	/****  Module Options ****/
 
