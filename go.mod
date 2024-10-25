@@ -1,6 +1,7 @@
 module github.com/public-awesome/stargaze/v15
 
-go 1.22.2
+go 1.22.7
+
 toolchain go1.22.8
 
 require (
