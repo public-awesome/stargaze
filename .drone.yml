@@ -33,7 +33,7 @@ steps:
       branch: no-cache
 
   - name: test
-    image: publicawesome/golang:1.22.3-devtooling
+    image: publicawesome/golang:1.22.7-devtooling
     volumes:
       - name: cache
         path: /go
@@ -42,7 +42,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: build
-    image: golang:1.22.3-alpine3.18
+    image: golang:1.22.7-alpine3.18
     volumes:
       - name: cache
         path: /go
@@ -193,7 +193,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/golang:1.22.3-devtooling
+    image: publicawesome/golang:1.22.7-devtooling
     volumes:
       - name: cache
         path: /go
@@ -281,7 +281,7 @@ steps:
     when:
       branch: no-cache
   - name: build-wrapper
-    image: publicawesome/golang:1.22.3-devtooling
+    image: publicawesome/golang:1.22.7-devtooling
     volumes:
       - name: cache
         path: /go
@@ -421,6 +421,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 29201adc369bab2aa15141bf37df69998c0ed53349623b2f5f9dd33ef053cf28
+hmac: d0b806354103b0ebebeedf20dcd73192a2c798571d82a78e3c1775406792854b
 
 ...
