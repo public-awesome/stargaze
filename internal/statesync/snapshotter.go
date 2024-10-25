@@ -1,7 +1,9 @@
 package statesync
 
 import (
+	"fmt"
 	"io"
+	"math"
 
 	errorsmod "cosmossdk.io/errors"
 	log "cosmossdk.io/log"
@@ -47,6 +49,9 @@ func (vs *VersionSnapshotter) SnapshotName() string {
 
 // Snapshot writes snapshot items into the protobuf writer.
 func (vs *VersionSnapshotter) SnapshotExtension(height uint64, payloadWriter snapshot.ExtensionPayloadWriter) error {
+	if height > math.MaxInt64 {
+		return fmt.Errorf("height %d is bigger than max int64", height)
+	}
 	cms, err := vs.ms.CacheMultiStoreWithVersion(int64(height))
 	if err != nil {
 		return err
