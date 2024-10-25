@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"math"
 
 	errorsmod "cosmossdk.io/errors"
@@ -138,8 +137,11 @@ func (mfd FeeDecorator) checkFees(ctx sdk.Context, feeTx sdk.FeeTx, tx sdk.Tx, o
 		return ctx, err
 	}
 
+	if gas > math.MaxInt64 {
+		return ctx, errorsmod.Wrapf(sdkerrors.ErrInvalidGasLimit, "invalid gas value")
+	}
 	// Get local minimum-gas-prices set by the validator node
-	localFees := getMinGasPrice(ctx, int64(gas)) // #nosec G115
+	localFees := getMinGasPrice(ctx, int64(gas))
 
 	// CombinedFeeRequirement should never be empty since
 	// global fee is set to its default value, i.e. 0ustars, if empty
@@ -214,7 +216,7 @@ func (mfd FeeDecorator) getGlobalFee(ctx sdk.Context, feeTx sdk.FeeTx) (sdk.Coin
 	requiredGlobalFees := make(sdk.Coins, len(globalMinGasPrices))
 	gas := feeTx.GetGas()
 	if gas > math.MaxInt64 {
-		return sdk.Coins{}, fmt.Errorf("gas %d is bigger than max int64", gas)
+		return sdk.Coins{}, errorsmod.Wrapf(sdkerrors.ErrInvalidGasLimit, "invalid gas value")
 	}
 
 	// Determine the required fees by multiplying each required minimum gas
