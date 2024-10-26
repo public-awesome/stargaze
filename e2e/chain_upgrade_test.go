@@ -19,8 +19,8 @@ import (
 )
 
 const (
-	initialVersion = "v14.0.0-rc2" // The last released git tag version of the stargaze binary. This version of the image is fetched from Heigliner backage repository.
-	upgradeName    = "v15"         // The upcoming version name - Should match with upgrade handler name. This version needs to be built locally for tests. Using `make build-docker`
+	initialVersion = "v14.0.0" // The last released git tag version of the stargaze binary. This version of the image is fetched from Heigliner backage repository.
+	upgradeName    = "v15"     // The upcoming version name - Should match with upgrade handler name. This version needs to be built locally for tests. Using `make build-docker`
 )
 
 const (
