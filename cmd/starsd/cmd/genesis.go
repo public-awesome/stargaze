@@ -129,11 +129,13 @@ func PrepareGenesis(
 	appState[marketmaptypes.ModuleName] = marketmapGenStateBz
 
 	genesisCurrencyPairs := make([]oracletypes.CurrencyPairGenesis, len(marketsSlice))
+	pairID := uint64(0)
 	for id, market := range marketsSlice {
 		genesisCurrencyPairs[id] = oracletypes.CurrencyPairGenesis{
 			CurrencyPair: market.Ticker.CurrencyPair,
-			Id:           uint64(id),
+			Id:           pairID,
 		}
+		pairID++
 	}
 	oracleGenState := oracletypes.NewGenesisState(genesisCurrencyPairs, uint64(len(marketsSlice)))
 	oracleGenStateBz := clientCtx.Codec.MustMarshalJSON(oracleGenState)

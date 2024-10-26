@@ -106,7 +106,7 @@ go.sum: go.mod
 # look into .golangci.yml for enabling / disabling linters
 lint:
 	@echo "--> Running linter"
-	@golangci-lint run --tests=false --skip-dirs="simapp" --timeout 5m0s
+	@golangci-lint run --tests=false --timeout 5m0s
 	@go mod verify
 
 

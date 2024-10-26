@@ -32,6 +32,8 @@ linters:
     - nolintlint
 
 issues:
+  exclude-dirs:
+    - simapp
   exclude-rules:
     - text: "Use of weak random number generator"
       linters:
