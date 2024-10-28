@@ -1,34 +1,38 @@
+version: 2
+
 before:
   hooks:
     - go mod download
 
 builds:
-  - main: ./cmd/starsd/
-    id: 'starsd'
+  - id: starsd
+    main: ./cmd/starsd/
     binary: starsd
     goos:
       - linux
     goarch:
       - amd64
     flags:
-      - -tags=netgo,faucet
+      - -tags=netgo
     ldflags:
       - -X "github.com/cosmos/cosmos-sdk/version.Name=Stargaze"
-      - -X github.com/cosmos/cosmos-sdk/version.AppName=starsd
-      - -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}}
-      - -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}
-      - -X github.com/cosmos/cosmos-sdk/version.BuildTags=netgo,faucet
+      - -X "github.com/cosmos/cosmos-sdk/version.AppName=starsd"
+      - -X "github.com/cosmos/cosmos-sdk/version.Version={{.Version}}"
+      - -X "github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}"
+      - -X "github.com/cosmos/cosmos-sdk/version.BuildTags=netgo"
 
+checksum:
+  name_template: "sha256sum.txt"
+  algorithm: sha256
 release:
+  draft: true
+  replace_existing_draft: true
+  name_template: "Stargaze v{{.Version}}"
+  mode: replace
+  prerelease: auto
   github:
     owner: public-awesome
     name: stargaze
-  draft: true
-  prerelease: auto
 
-checksum:
-  name_template: 'checksums.txt'
-snapshot:
-  name_template: '{{ .Tag }}-next'
 changelog:
-  skip: true
+  disable: true
