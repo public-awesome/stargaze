@@ -83,6 +83,7 @@ steps:
         - push
       branch:
         - jhernandezb/remove-slinky
+        - main
   - name: docker_release
     image: plugins/docker
     settings:
@@ -421,6 +422,6 @@ volumes:
 
 ---
 kind: signature
-hmac: ebc2be6fcb8e5b5f2fd9ba22cc36732dbc0849a41b5d8c148a5a093bfab1fc7e
+hmac: b345e44a53c7ba87745a398210e7cd86e68ef954f970206c5c065a088e72b9a4
 
 ...
