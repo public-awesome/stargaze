@@ -3,9 +3,6 @@ package v15
 import (
 	"context"
 
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-
 	storetypes "cosmossdk.io/store/types"
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	cmttypes "github.com/cometbft/cometbft/proto/tendermint/types"
@@ -15,9 +12,6 @@ import (
 	wasmlctypes "github.com/cosmos/ibc-go/modules/light-clients/08-wasm/types"
 	"github.com/public-awesome/stargaze/v15/app/keepers"
 	"github.com/public-awesome/stargaze/v15/app/upgrades"
-	"github.com/public-awesome/stargaze/v15/internal/oracle/markets"
-	marketmaptypes "github.com/skip-mev/slinky/x/marketmap/types"
-	oracletypes "github.com/skip-mev/slinky/x/oracle/types"
 )
 
 // next upgrade name
@@ -44,9 +38,7 @@ var Upgrade = upgrades.Upgrade{
 				return nil, err
 			}
 
-			consensusParams.Params.Abci = &cmttypes.ABCIParams{
-				VoteExtensionsEnableHeight: wctx.BlockHeight() + int64(10),
-			}
+			consensusParams.Params.Abci = &cmttypes.ABCIParams{}
 
 			_, err = keepers.ConsensusParamsKeeper.UpdateParams(ctx, &consensustypes.MsgUpdateParams{
 				Authority: keepers.ConsensusParamsKeeper.GetAuthority(),
@@ -59,48 +51,12 @@ var Upgrade = upgrades.Upgrade{
 				return nil, err
 			}
 
-			// set marketmap params
-			mmParams := marketmaptypes.DefaultParams()
-			// TODO: stargaze foundation or another address?
-			mmParams.Admin = authtypes.NewModuleAddress(govtypes.ModuleName).String()
-			mmParams.MarketAuthorities = []string{"stars1ua63s43u2p4v38pxhcxmps0tj2gudyw2828x65"}
-			if err := mmParams.ValidateBasic(); err != nil {
-				return nil, err
-			}
-
-			if err := keepers.MarketMapKeeper.SetParams(wctx, mmParams); err != nil {
-				return nil, err
-			}
-
-			// add markets
-			m, err := markets.Slice()
-			if err != nil {
-				return nil, err
-			}
-
-			// iterates over slice and not map
-			for _, market := range m {
-				// create market
-				err = keepers.MarketMapKeeper.CreateMarket(wctx, market)
-				if err != nil {
-					return nil, err
-				}
-
-				// invoke hooks
-				err = keepers.MarketMapKeeper.Hooks().AfterMarketCreated(wctx, market)
-				if err != nil {
-					return nil, err
-				}
-			}
-
 			return migrations, nil
 		}
 	},
 	StoreUpgrades: storetypes.StoreUpgrades{
 		Added: []string{
 			wasmlctypes.ModuleName,
-			marketmaptypes.ModuleName,
-			oracletypes.ModuleName,
 		},
 	},
 }
