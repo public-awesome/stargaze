@@ -20,7 +20,7 @@ linters:
     - nakedret
     - prealloc
     - revive
-    - exportloopref
+    # - copyloopvar enable after bumping to go 1.23
     - staticcheck
     - stylecheck
     - typecheck
