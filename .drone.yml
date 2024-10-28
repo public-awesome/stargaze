@@ -77,12 +77,13 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 15.0.0-alpha.1
+        - 15.0.0-alpha.5
     when:
       event:
         - push
       branch:
-        - jhernandezb/go-mod-v15
+        - jhernandezb/remove-slinky
+        - main
   - name: docker_release
     image: plugins/docker
     settings:
@@ -352,7 +353,7 @@ steps:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:15.0.0-alpha.1
+    image: publicawesome/stargaze:15.0.0-alpha.5
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -371,7 +372,7 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:15.0.0-alpha.1
+    image: publicawesome/stargaze:15.0.0-alpha.5
     commands:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
@@ -421,6 +422,6 @@ volumes:
 
 ---
 kind: signature
-hmac: d5b57f5687573eb844e4367314a29b0884a451a603f1d582e421f20cc394c621
+hmac: b345e44a53c7ba87745a398210e7cd86e68ef954f970206c5c065a088e72b9a4
 
 ...
