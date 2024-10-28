@@ -47,7 +47,7 @@ require (
 	github.com/cosmos/ibc-go/modules/light-clients/08-wasm v0.2.1-0.20240523101951-4b45d1822fb6 // modules/light-clients/08-wasm/v0.2.0+ibc-go-v8.3-wasmvm-v2.0
 	github.com/cosmos/ibc-go/v8 v8.5.1
 	github.com/gogo/protobuf v1.3.2
-	github.com/prometheus/client_golang v1.20.4
+	github.com/prometheus/client_golang v1.20.5
 	github.com/skip-mev/slinky v1.0.12
 	google.golang.org/genproto/googleapis/api v0.0.0-20240814211410-ddb44dafa142
 )
