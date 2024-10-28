@@ -98,7 +98,7 @@ steps:
         - tag
 
   - name: release
-    image: golang:1.22.3
+    image: golang:1.22.7
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -421,6 +421,6 @@ volumes:
 
 ---
 kind: signature
-hmac: aa04dd8ec4d5c704cc6a65433f60837524309a0dc7c94a8f720369227984783c
+hmac: d5b57f5687573eb844e4367314a29b0884a451a603f1d582e421f20cc394c621
 
 ...
