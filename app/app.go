@@ -555,7 +555,6 @@ func NewStargazeApp(
 		app.keys[packetforwardtypes.StoreKey],
 		app.Keepers.TransferKeeper,
 		app.Keepers.IBCKeeper.ChannelKeeper,
-		app.Keepers.DistrKeeper,
 		app.Keepers.BankKeeper,
 		// The ICS4Wrapper is replaced by the HooksICS4Wrapper instead of the channel so that sending can be overridden by the middleware
 		app.Keepers.HooksICS4Wrapper,
@@ -583,7 +582,6 @@ func NewStargazeApp(
 		app.Keepers.PacketForwardKeeper,
 		0, // retries on timeout
 		packetforwardkeeper.DefaultForwardTransferPacketTimeoutTimestamp, // forward timeout
-		packetforwardkeeper.DefaultRefundTransferPacketTimeoutTimestamp,  // refund timeout
 	)
 	transferStack = ibchooks.NewIBCMiddleware(transferStack, &app.Keepers.HooksICS4Wrapper)
 
@@ -1186,7 +1184,6 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(wasmtypes.ModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName).WithKeyTable(icahosttypes.ParamKeyTable())
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName).WithKeyTable(icacontrollertypes.ParamKeyTable())
-	paramsKeeper.Subspace(packetforwardtypes.ModuleName).WithKeyTable(packetforwardtypes.ParamKeyTable())
 
 	return paramsKeeper
 }
