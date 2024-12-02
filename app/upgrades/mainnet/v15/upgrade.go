@@ -40,6 +40,9 @@ var Upgrade = upgrades.Upgrade{
 
 			consensusParams.Params.Abci = &cmttypes.ABCIParams{}
 
+			blockParams := consensusParams.Params.Block
+			blockParams.MaxBytes = 4_190_208 // 4MB
+			blockParams.MaxGas = 200_000_000 // 200M
 			_, err = keepers.ConsensusParamsKeeper.UpdateParams(ctx, &consensustypes.MsgUpdateParams{
 				Authority: keepers.ConsensusParamsKeeper.GetAuthority(),
 				Block:     consensusParams.Params.Block,
