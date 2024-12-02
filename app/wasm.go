@@ -2,6 +2,7 @@ package app
 
 import (
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	tokenfactorytypes "github.com/public-awesome/stargaze/v15/x/tokenfactory/types"
 )
 
@@ -21,4 +22,10 @@ func AcceptedStargateQueries() wasmkeeper.AcceptedQueries {
 
 func GetWasmCapabilities() []string {
 	return append(wasmkeeper.BuiltInCapabilities(), wasmCapabilities...)
+}
+
+// initialize wasm overrides default 800kb max size for contract uploads
+func initializeWasm() {
+	wasmtypes.MaxWasmSize = 2_621_440 // 2.5 * 1024 * 1024
+	wasmtypes.MaxProposalWasmSize = wasmtypes.MaxWasmSize
 }
