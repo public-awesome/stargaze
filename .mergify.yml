@@ -1,21 +1,17 @@
 queue_rules:
   - name: default
-    conditions:
-      - "#approved-reviews-by>1"
-
-pull_request_rules:
-  - name: automerge to main if approved and labeled
-    conditions:
+    queue_conditions:
       - "#approved-reviews-by>1"
       - base=main
       - label=automerge
-    actions:
-      queue:
-        name: default
-        method: squash
-        commit_message_template: |
-          {{ title }} (#{{ number }})
-          {{ body }}
+    merge_conditions:
+      - "#approved-reviews-by>1"
+    commit_message_template: |
+      {{ title }} (#{{ number }})
+      {{ body }}
+    merge_method: squash
+
+pull_request_rules:
   - name: backport to v13
     conditions:
       - base=main
@@ -120,3 +116,7 @@ pull_request_rules:
       backport:
         branches:
           - release/v1.x
+  - name: automerge to main if approved and labeled
+    conditions: []
+    actions:
+      queue:
