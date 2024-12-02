@@ -13,7 +13,7 @@ replace (
 )
 
 require (
-	cosmossdk.io/math v1.3.0
+	cosmossdk.io/math v1.4.0
 	cosmossdk.io/x/upgrade v0.1.3
 	github.com/cosmos/cosmos-sdk v0.50.9
 	github.com/cosmos/gogoproto v1.7.0
