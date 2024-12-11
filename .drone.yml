@@ -411,6 +411,7 @@ steps:
 trigger:
   branch:
     - main
+    - jhernandezb/fix-migration
   event:
     - pull_request
     - push
@@ -423,6 +424,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 718a7f65d7004e2ba6ae96ddf48dd64cd35d362492b122210ceea8aac3a8b1e7
+hmac: 96ed0e338ac7808aa42bdaae8e19f2fc75693763951efa5f8d9c9cca3afb3d9e
 
 ...
