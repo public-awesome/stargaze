@@ -82,7 +82,7 @@ steps:
       event:
         - push
       branch:
-        - jhernandezb/remove-slinky
+        - jhernandezb/fix-migration
         - main
   - name: docker_release
     image: plugins/docker
@@ -381,6 +381,7 @@ steps:
       - starsd q bank balances stars103y4f6h80lc45nr8chuzr3fyzqywm9n0gnr394 --node http://stargaze-upgraded:26657
       - starsd q distribution community-pool --node http://stargaze-upgraded:26657
       - starsd q interchain-accounts host params --node http://stargaze-upgraded:26657
+      - starsd q consensus params --node http://stargaze-upgraded:26657
     environment:
       GOPROXY: http://goproxy
   - name: relayer-upgrade-start
@@ -422,6 +423,6 @@ volumes:
 
 ---
 kind: signature
-hmac: b345e44a53c7ba87745a398210e7cd86e68ef954f970206c5c065a088e72b9a4
+hmac: 8c071a0e70598d1db428179aaf005bbf72cea0a4f41d84dfa16bfe34348c3a94
 
 ...
