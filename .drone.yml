@@ -48,8 +48,8 @@ steps:
         path: /go
     commands:
       - apk add --no-cache ca-certificates build-base git
-      - wget https://github.com/CosmWasm/wasmvm/releases/download/v2.1.3/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.x86_64.a
-      - echo "8dab08434a5fe57a6fbbcb8041794bc3c31846d31f8ff5fb353ee74e0fcd3093  /lib/libwasmvm_muslc.x86_64.a" | sha256sum -c
+      - wget https://github.com/CosmWasm/wasmvm/releases/download/v2.1.4/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.x86_64.a
+      - echo "a4a3d09b36fabb65b119d5ba23442c23694401fcbee4451fe6b7e22e325a4bac  /lib/libwasmvm_muslc.x86_64.a" | sha256sum -c
       - LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true  make build
       - echo "Ensuring binary is statically linked ..." && (file $PWD/bin/starsd | grep "statically linked")
     environment:
@@ -82,7 +82,7 @@ steps:
       event:
         - push
       branch:
-        - jhernandezb/remove-slinky
+        - jhernandezb/fix-migration
         - main
   - name: docker_release
     image: plugins/docker
@@ -381,6 +381,7 @@ steps:
       - starsd q bank balances stars103y4f6h80lc45nr8chuzr3fyzqywm9n0gnr394 --node http://stargaze-upgraded:26657
       - starsd q distribution community-pool --node http://stargaze-upgraded:26657
       - starsd q interchain-accounts host params --node http://stargaze-upgraded:26657
+      - starsd q consensus params --node http://stargaze-upgraded:26657
     environment:
       GOPROXY: http://goproxy
   - name: relayer-upgrade-start
@@ -410,6 +411,7 @@ steps:
 trigger:
   branch:
     - main
+    - jhernandezb/fix-migration
   event:
     - pull_request
     - push
@@ -422,6 +424,6 @@ volumes:
 
 ---
 kind: signature
-hmac: b345e44a53c7ba87745a398210e7cd86e68ef954f970206c5c065a088e72b9a4
+hmac: 96ed0e338ac7808aa42bdaae8e19f2fc75693763951efa5f8d9c9cca3afb3d9e
 
 ...

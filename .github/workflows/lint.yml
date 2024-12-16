@@ -6,7 +6,7 @@ jobs:
   golangci:
     name: golangci-lint
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v2
       - uses: golangci/golangci-lint-action@v2

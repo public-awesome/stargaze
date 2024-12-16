@@ -45,7 +45,7 @@ var Upgrade = upgrades.Upgrade{
 			blockParams.MaxGas = 200_000_000 // 200M
 			_, err = keepers.ConsensusParamsKeeper.UpdateParams(ctx, &consensustypes.MsgUpdateParams{
 				Authority: keepers.ConsensusParamsKeeper.GetAuthority(),
-				Block:     consensusParams.Params.Block,
+				Block:     blockParams,
 				Evidence:  consensusParams.Params.Evidence,
 				Validator: consensusParams.Params.Validator,
 				Abci:      consensusParams.Params.Abci,
