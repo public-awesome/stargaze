@@ -28,7 +28,7 @@ const (
 	blocksAfterUpgrade = int64(10) // The number of blocks to wait for after the upgrade has been applied.
 	votingPeriod       = "30s"     // Reducing voting period for testing
 	maxDepositPeriod   = "10s"     // Reducing max deposit period for testing
-	depositDenom       = "ustars"  // The bond denom to be used to deposit for propsals
+	depositDenom       = "ustars"  // The bond denom to be used to deposit for proposals
 )
 
 func TestChainUpgrade(t *testing.T) {
