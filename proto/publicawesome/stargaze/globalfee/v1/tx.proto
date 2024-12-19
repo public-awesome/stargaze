@@ -63,7 +63,7 @@ message MsgRemoveContractAuthorization {
   string contract_address = 2;
 }
 
-// MsgRemoveContractAuthorizationResponse is the repsonse for executing a contract authorization removal.
+// MsgRemoveContractAuthorizationResponse is the response for executing a contract authorization removal.
 message MsgRemoveContractAuthorizationResponse {}
 
 // MsgUpdateParams is the request for updating module's params.
@@ -77,5 +77,5 @@ message MsgUpdateParams {
   ];
 }
 
-// MsgUpdateParamsResponse is the response for executiong a module's params update.
+// MsgUpdateParamsResponse is the response for executing a module's params update.
 message MsgUpdateParamsResponse {}
