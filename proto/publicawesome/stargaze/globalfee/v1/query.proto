@@ -8,11 +8,11 @@ option go_package = "github.com/public-awesome/stargaze/v15/x/globalfee/types";
 
 // Query defines the gRPC querier service.
 service Query {
-  // CodeAuthorization returns authrozation by specific code id.
+  // CodeAuthorization returns authorization by specific code id.
   rpc CodeAuthorization(QueryCodeAuthorizationRequest) returns (QueryCodeAuthorizationResponse) {
     option (google.api.http).get = "/stargaze/globalfee/v1/code_authorization/{code_id}";
   }
-  // ContractAuthorization returns authrozation for specific contract address.
+  // ContractAuthorization returns authorization for specific contract address.
   rpc ContractAuthorization(QueryContractAuthorizationRequest) returns (QueryContractAuthorizationResponse) {
     option (google.api.http).get = "/stargaze/globalfee/v1/contract_authorization/{contract_address}";
   }
