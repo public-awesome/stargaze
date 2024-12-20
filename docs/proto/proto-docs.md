@@ -1608,7 +1608,7 @@ MsgUpdateParams is the request for updating module's params.
 <a name="publicawesome.stargaze.globalfee.v1.MsgUpdateParamsResponse"></a>
 
 ### MsgUpdateParamsResponse
-MsgUpdateParamsResponse is the response for executiong a module's params update.
+MsgUpdateParamsResponse is the response for executing a module's params update.
 
 
 
