@@ -15,6 +15,7 @@ def pipeline_test_and_build(ctx):
     "steps": [
       step_fetch(ctx),
       step_test(ctx),
+      step_build(ctx),
     ]
   }
 
