@@ -16,8 +16,8 @@ COPY . /code/
 
 # See https://github.com/CosmWasm/wasmvm/releases
 # Download the correct version of libwasmvm for the given platform and verify checksum
-ADD https://github.com/CosmWasm/wasmvm/releases/download/v2.1.4/libwasmvm_muslc.x86_64.a /lib/libwasmvm_muslc.x86_64.a
-ADD https://github.com/CosmWasm/wasmvm/releases/download/v2.1.4/libwasmvm_muslc.aarch64.a /lib/libwasmvm_muslc.aarch64.a
+ADD https://github.com/CosmWasm/wasmvm/releases/download/v2.2.1/libwasmvm_muslc.x86_64.a /lib/libwasmvm_muslc.x86_64.a
+ADD https://github.com/CosmWasm/wasmvm/releases/download/v2.2.1/libwasmvm_muslc.aarch64.a /lib/libwasmvm_muslc.aarch64.a
 RUN echo "a4a3d09b36fabb65b119d5ba23442c23694401fcbee4451fe6b7e22e325a4bac /lib/libwasmvm_muslc.x86_64.a" | sha256sum -c
 RUN echo "faea4e15390e046d2ca8441c21a88dba56f9a0363f92c5d94015df0ac6da1f2d /lib/libwasmvm_muslc.aarch64.a" | sha256sum -c
 
