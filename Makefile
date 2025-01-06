@@ -188,3 +188,7 @@ proto-format:
 
 proto-lint:
 	@$(protoImage) buf lint --error-format=json
+
+
+drone-generate:
+	drone starlark --format --target .drone.star.yml
