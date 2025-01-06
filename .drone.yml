@@ -82,7 +82,7 @@ steps:
       event:
         - push
       branch:
-        - jhernandezb/fix-migration
+        - jhernandezb/upgrade-params
         - main
   - name: docker_release
     image: plugins/docker
@@ -411,7 +411,7 @@ steps:
 trigger:
   branch:
     - main
-    - jhernandezb/fix-migration
+    - jhernandezb/upgrade-params
   event:
     - pull_request
     - push
@@ -424,6 +424,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 96ed0e338ac7808aa42bdaae8e19f2fc75693763951efa5f8d9c9cca3afb3d9e
+hmac: 6fa113240c7eeed870eef11e63633911cae346e1b0286c8a4afc0c3677050b2b
 
 ...

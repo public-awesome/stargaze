@@ -2,6 +2,7 @@ package v15
 
 import (
 	"context"
+	"time"
 
 	storetypes "cosmossdk.io/store/types"
 	upgradetypes "cosmossdk.io/x/upgrade/types"
@@ -21,12 +22,15 @@ var Upgrade = upgrades.Upgrade{
 	UpgradeName: UpgradeName,
 	CreateUpgradeHandler: func(mm *module.Manager, cfg module.Configurator, keepers keepers.StargazeKeepers) upgradetypes.UpgradeHandler {
 		return func(ctx context.Context, _ upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+			startTime := time.Now()
+			wctx := sdk.UnwrapSDKContext(ctx)
+			wctx.Logger().Info("upgrade started", "upgrade_name", UpgradeName)
 			migrations, err := mm.RunMigrations(ctx, cfg, fromVM)
+
 			if err != nil {
 				return nil, err
 			}
 
-			wctx := sdk.UnwrapSDKContext(ctx)
 			// Adding the wasm light client to allowed clients
 			params := keepers.IBCKeeper.ClientKeeper.GetParams(wctx)
 			params.AllowedClients = append(params.AllowedClients, wasmlctypes.Wasm)
@@ -42,7 +46,7 @@ var Upgrade = upgrades.Upgrade{
 
 			blockParams := consensusParams.Params.Block
 			blockParams.MaxBytes = 4_190_208 // 4MB
-			blockParams.MaxGas = 200_000_000 // 200M
+			blockParams.MaxGas = 225_000_000 // 225M
 			_, err = keepers.ConsensusParamsKeeper.UpdateParams(ctx, &consensustypes.MsgUpdateParams{
 				Authority: keepers.ConsensusParamsKeeper.GetAuthority(),
 				Block:     blockParams,
@@ -54,6 +58,15 @@ var Upgrade = upgrades.Upgrade{
 				return nil, err
 			}
 
+			// Increase the tx size cost per byte to 15
+			accountParams := keepers.AccountKeeper.GetParams(ctx)
+			accountParams.TxSizeCostPerByte = 15
+			err = keepers.AccountKeeper.Params.Set(ctx, accountParams)
+			if err != nil {
+				return nil, err
+			}
+
+			wctx.Logger().Info("upgrade completed", "duration_ms", time.Since(startTime).Milliseconds())
 			return migrations, nil
 		}
 	},
