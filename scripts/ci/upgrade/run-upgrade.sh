@@ -10,4 +10,5 @@ curl -s -v http://stargaze:8090/kill || echo "done"
 sleep 10
 
 cat $STARGAZE_HOME/config/app.toml | grep -A 10  grpc
+cat $STARGAZE_HOME/config/app.toml | grep -A 10  api
 starsd start --pruning nothing --home $STARGAZE_HOME --grpc.address 0.0.0.0:9090 --rpc.laddr tcp://0.0.0.0:26657
