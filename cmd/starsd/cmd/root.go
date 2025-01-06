@@ -252,7 +252,7 @@ func newApp(
 		baseapp.SetIndexEvents(cast.ToStringSlice(appOpts.Get(server.FlagIndexEvents))),
 		baseapp.SetSnapshot(snapshotStore, snapshottypes.SnapshotOptions{Interval: cast.ToUint64(appOpts.Get(server.FlagStateSyncSnapshotInterval)), KeepRecent: cast.ToUint32(appOpts.Get(server.FlagStateSyncSnapshotKeepRecent))}),
 		baseapp.SetIAVLCacheSize(iavlCacheSize),
-		baseapp.SetIAVLDisableFastNode(true),
+		baseapp.SetIAVLDisableFastNode(false),
 		baseapp.SetChainID(chainID),
 		// TODO: enable streaming service
 		// baseapp.SetStreamingService(app.NewStreamingService()),
