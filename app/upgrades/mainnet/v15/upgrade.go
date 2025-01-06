@@ -26,7 +26,6 @@ var Upgrade = upgrades.Upgrade{
 			wctx := sdk.UnwrapSDKContext(ctx)
 			wctx.Logger().Info("upgrade started", "upgrade_name", UpgradeName)
 			migrations, err := mm.RunMigrations(ctx, cfg, fromVM)
-
 			if err != nil {
 				return nil, err
 			}
