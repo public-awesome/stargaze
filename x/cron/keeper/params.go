@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"slices"
+	
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/public-awesome/stargaze/v15/x/cron/types"
 )
@@ -21,10 +23,5 @@ func (k Keeper) IsAdminAddress(ctx sdk.Context, address string) bool {
 		return false
 	}
 	privilegedAddresses := params.AdminAddresses
-	for _, paddr := range privilegedAddresses {
-		if address == paddr {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(privilegedAddresses, address)
 }
