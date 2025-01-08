@@ -30,7 +30,6 @@ func EndBlocker(goCtx context.Context, k keeper.Keeper, w types.WasmKeeper) {
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyEndBlocker)
 	sudoMsg := contract.SudoMsg{EndBlock: &struct{}{}}
 	k.IteratePrivileged(ctx, abciContractCallback(ctx, w, sudoMsg))
-
 }
 
 // returns safe method to send the message via sudo to the privileged contract

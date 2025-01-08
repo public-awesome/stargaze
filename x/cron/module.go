@@ -153,7 +153,6 @@ func (am AppModule) BeginBlock(ctx context.Context) error {
 }
 
 // EndBlock contains the logic that is automatically triggered at the end of each block
-// EndBlock contains the logic that is automatically triggered at the end of each block
 func (am AppModule) EndBlock(ctx context.Context) error {
 	EndBlocker(ctx, am.keeper, am.wasmKeeper)
 	return nil
