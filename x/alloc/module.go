@@ -158,8 +158,9 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 func (AppModule) ConsensusVersion() uint64 { return 4 }
 
 // BeginBlock executes all ABCI BeginBlock logic respective to the alloc module.
-func (am AppModule) BeginBlock(ctx sdk.Context) {
+func (am AppModule) BeginBlock(ctx context.Context) error {
 	BeginBlocker(ctx, am.keeper)
+	return nil
 }
 
 // EndBlock executes all ABCI EndBlock logic respective to the alloc module. It
