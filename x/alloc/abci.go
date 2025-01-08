@@ -1,6 +1,7 @@
 package alloc
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -11,7 +12,8 @@ import (
 )
 
 // BeginBlocker to distribute specific rewards on every begin block
-func BeginBlocker(ctx sdk.Context, k keeper.Keeper) {
+func BeginBlocker(goCtx context.Context, k keeper.Keeper) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyBeginBlocker)
 	if err := k.DistributeInflation(ctx); err != nil {
 		panic(fmt.Sprintf("Error distribute inflation: %s", err.Error()))
