@@ -82,7 +82,7 @@ steps:
       event:
         - push
       branch:
-        - jhernandezb/upgrade-params
+        - jhernandezb/fix-cron
         - main
   - name: docker_release
     image: plugins/docker
@@ -411,7 +411,7 @@ steps:
 trigger:
   branch:
     - main
-    - jhernandezb/upgrade-params
+    - jhernandezb/fix-cron
   event:
     - pull_request
     - push
@@ -424,6 +424,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 6fa113240c7eeed870eef11e63633911cae346e1b0286c8a4afc0c3677050b2b
+hmac: 7f6a696633927ee7fcac8511be795df0f17c229369d245c4c7cb4ca83c09ac96
 
 ...
