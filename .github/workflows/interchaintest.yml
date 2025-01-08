@@ -121,7 +121,6 @@ jobs:
         run_chain_upgrade_interchaintest,
         run_ica_interchaintest,
         run_chain_conformance,
-        run_slinky_interchaintest,
       ]
     runs-on: ubuntu-latest
 

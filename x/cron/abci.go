@@ -1,6 +1,7 @@
 package cron
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"runtime/debug"
@@ -8,7 +9,6 @@ import (
 
 	"cosmossdk.io/log"
 	storetypes "cosmossdk.io/store/types"
-	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/public-awesome/stargaze/v15/x/cron/contract"
@@ -17,18 +17,20 @@ import (
 )
 
 // BeginBlocker sends a BeginBlock SudoMsg to all privileged contracts
-func BeginBlocker(ctx sdk.Context, k keeper.Keeper, w types.WasmKeeper) {
+func BeginBlocker(goCtx context.Context, k keeper.Keeper, w types.WasmKeeper) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyBeginBlocker)
 	sudoMsg := contract.SudoMsg{BeginBlock: &struct{}{}}
 	k.IteratePrivileged(ctx, abciContractCallback(ctx, w, sudoMsg))
 }
 
 // EndBlocker sends a EndBlock SudoMsg to all privileged contracts
-func EndBlocker(ctx sdk.Context, k keeper.Keeper, w types.WasmKeeper) []abci.ValidatorUpdate {
+func EndBlocker(goCtx context.Context, k keeper.Keeper, w types.WasmKeeper) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyEndBlocker)
 	sudoMsg := contract.SudoMsg{EndBlock: &struct{}{}}
 	k.IteratePrivileged(ctx, abciContractCallback(ctx, w, sudoMsg))
-	return nil
+
 }
 
 // returns safe method to send the message via sudo to the privileged contract
