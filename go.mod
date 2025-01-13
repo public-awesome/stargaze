@@ -224,6 +224,7 @@ require (
 
 replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
+	github.com/CosmWasm/wasmd => github.com/public-awesome/wasmd v0.24.1-0.20250113175057-43e8998a8fe6
 
 	// TODO: update afer official release
 	github.com/cosmos/ibc-apps/modules/ibc-hooks/v8 => github.com/public-awesome/ibc-apps/modules/ibc-hooks/v8 v8.0.0-20241211032059-0cbb0ab1dd93
