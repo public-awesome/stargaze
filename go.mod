@@ -203,7 +203,7 @@ require (
 
 replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
-	github.com/cosmos/cosmos-sdk => github.com/public-awesome/cosmos-sdk v0.47.12-stargaze-jhernandezb.rc0
+	github.com/cosmos/cosmos-sdk => github.com/public-awesome/cosmos-sdk v0.47.12-stargaze-jhernandezb.rc0.0.20250127211913-de2dda827164
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.8.1
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 	golang.org/x/exp => golang.org/x/exp v0.0.0-20230711153332-06a737ee72cb
