@@ -6,7 +6,7 @@ This module enables smart contracts on chain to receive callbacks at the beginni
 
 ## Concepts
 
-### Priviledged contracts
+### Privileged contracts
 
 An existing contract instantiated on chain which has been elevated to the status of priviledged contract via on-chain governance proposal or via whitelisted admin addresses.
 Privileged contracts receive some extra superpowers where they can receive callbacks from the [`BeginBlocker & EndBlocker`](https://docs.cosmos.network/main/building-modules/beginblock-endblock.html) into their [`sudo`](https://book.cosmwasm.com/basics/entry-points.html?highlight=sudo#entry-points) entrypoint. More details on how to use this in [here](#how-to-use-in-cw-contract)
