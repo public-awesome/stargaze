@@ -10,6 +10,6 @@ import (
 type WasmKeeper interface {
 	// HasContractInfo checks if a contract with given address exists
 	HasContractInfo(ctx context.Context, contractAddr sdk.AccAddress) bool
-	// Sudo allows priviledged access to a contract
+	// Sudo allows privileged access to a contract
 	Sudo(ctx context.Context, contractAddress sdk.AccAddress, msg []byte) ([]byte, error)
 }
