@@ -90,7 +90,7 @@ func (k msgServer) UpdateParams(goCtx context.Context, msg *types.MsgUpdateParam
 		return nil, err
 	}
 
-	if msg.Sender != k.Keeper.GetAuthority() {
+	if !k.isAuthorized(ctx, msg.Sender) {
 		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender address is not authorized address to update module params")
 	}
 
