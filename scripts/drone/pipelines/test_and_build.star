@@ -1,7 +1,8 @@
 
-go_dev_image = "publicawesome/golang:1.22.7-devtooling"
-go_image = "golang:1.22.7-alpine3.19"
-
+go_dev_image = "publicawesome/golang:1.23.5-devtooling"
+go_image = "golang:1.23.5-alpine3.19"
+wasmvm_version = "v2.1.4"
+wasmvm_x86_84_hash = "a4a3d09b36fabb65b119d5ba23442c23694401fcbee4451fe6b7e22e325a4bac"
 
 def pipeline_test_and_build(ctx):
     return {
@@ -43,8 +44,8 @@ def step_build(ctx):
         "image": go_image,
         "commands": [
             "apk add --no-cache ca-certificates build-base git",
-            "wget https://github.com/CosmWasm/wasmvm/releases/download/v2.2.1/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.x86_64.a",
-            "echo 'b3bd755efac0ff39c01b59b8110f961c48aa3eb93588071d7a628270cc1f2326  /lib/libwasmvm_muslc.x86_64.a' | sha256sum -c",
+            "wget https://github.com/CosmWasm/wasmvm/releases/download/{}/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.x86_64.a".format(wasmvm_version),
+            "echo '{}'  /lib/libwasmvm_muslc.x86_64.a' | sha256sum -c".format(wasmvm_x86_84_hash),
             "LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true  make build",
             "echo 'Ensuring binary is statically linked ...' && (file $PWD/bin/starsd | grep 'statically linked')"
         ],
