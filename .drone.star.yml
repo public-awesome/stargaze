@@ -14,6 +14,13 @@ steps:
   image: alpine/git
   name: fetch
 - commands:
+  - ls -ltrah /var/run
+  image: alpine
+  name: debug_dind
+  volumes:
+  - name: dockersock
+    path: /var/run
+- commands:
   - ./scripts/go-test.sh
   environment:
     GOPROXY: http://goproxy

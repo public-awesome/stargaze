@@ -3,6 +3,8 @@ go_dev_image = "publicawesome/golang:1.23.5-devtooling"
 go_image = "golang:1.23.5-alpine3.20"
 wasmvm_version = "v2.1.4"
 wasmvm_x86_84_hash = "a4a3d09b36fabb65b119d5ba23442c23694401fcbee4451fe6b7e22e325a4bac"
+docker_image = "docker:24"  
+docker_dind_image = "docker:dind"
 
 def pipeline_test_and_build(ctx):
     return {
@@ -11,9 +13,11 @@ def pipeline_test_and_build(ctx):
     "name": "test_and_build",
     "steps": [
       step_fetch(ctx),
+      step_debug_dind(ctx),
       step_test(ctx),
       step_build(ctx),
-      step_build_docker(ctx)
+      step_build_docker(ctx),
+
     ],
     "volumes": [
       volume_dockersock(ctx)
@@ -65,9 +69,21 @@ def step_build(ctx):
 def step_build_docker(ctx):
     return {
         "name": "build_docker",
-        "image": "docker:24",
+        "image": docker_image,
         "commands": [
             "docker build -t publicawesome/stargaze:latest ."
+        ],
+        "volumes": [
+            volume_dockersock(ctx)
+        ]
+    }
+
+def step_debug_dind(ctx):
+    return {
+        "name": "debug_dind",
+        "image": "alpine",
+        "commands": [
+            "ls -ltrah /var/run"
         ],
         "volumes": [
             volume_dockersock(ctx)
@@ -77,7 +93,7 @@ def step_build_docker(ctx):
 def service_dind(ctx):
     return {
         "name": "dind",
-        "image": "docker:dind",
+        "image": docker_dind_image,
         "privileged": True,
         "volumes": [
             {
