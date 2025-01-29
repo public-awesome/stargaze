@@ -20,7 +20,7 @@ def pipeline_test_and_build(ctx):
 
     ],
     "volumes": [
-      volume_dockersock(ctx)
+      create_volume_dockersock(ctx)
     ],
     "services": [
       service_dind(ctx)
@@ -74,7 +74,7 @@ def step_build_docker(ctx):
             "docker build -t publicawesome/stargaze:latest ."
         ],
         "volumes": [
-            volume_dockersock(ctx)
+            mount_volume(ctx, "dockersock", "/var/run")
         ]
     }
 
@@ -88,7 +88,7 @@ def step_debug_dind(ctx):
             "test -S /var/run/docker.sock && echo 'Docker socket found' || echo 'Docker socket missing'"
         ],
         "volumes": [
-            volume_dockersock(ctx)
+            mount_volume(ctx, "dockersock", "/var/run")
         ]
     }
 
@@ -98,17 +98,20 @@ def service_dind(ctx):
         "image": docker_dind_image,
         "privileged": True,
         "volumes": [
-            {
-                "name": "dockersock",
-                "path": "/var/run/docker.sock"
-            }
+          mount_volume(ctx, "dockersock", "/var/run")
         ]
     }
 
-def volume_dockersock(ctx):
+def mount_volume(ctx, name, path):
+    return {
+        "name": name,
+        "path": path
+    }
+
+def create_volume_dockersock(ctx):
     return {
         "name": "dockersock",
-        "path": "/var/run/docker.sock"
+        "temp": dict()
     }
 
 def volume_docker_export(ctx):
