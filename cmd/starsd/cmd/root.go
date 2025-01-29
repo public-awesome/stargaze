@@ -135,6 +135,8 @@ func NewRootCmd() *cobra.Command {
 		panic(err)
 	}
 
+	rootCmd.PersistentPreRunE = chainPreRuns(rootCmd.PersistentPreRunE, SetPreferredSettings, LogPreferredSettings)
+
 	return rootCmd
 }
 
@@ -176,11 +178,13 @@ func initRootCmd(
 		txCommand(),
 		keys.Commands(),
 	)
+
 }
 
 func addModuleInitFlags(startCmd *cobra.Command) {
 	crisis.AddModuleInitFlags(startCmd)
 	wasm.AddModuleInitFlags(startCmd)
+	startCmd.Flags().Bool(flagSkipPreferredSettings, false, "Skip preferred settings")
 	startCmd.PreRunE = chainPreRuns(CheckLibwasmVersion, startCmd.PreRunE)
 }
 
