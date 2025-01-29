@@ -14,6 +14,7 @@ steps:
   image: alpine/git
   name: fetch
 - commands:
+  - sleep 10
   - ls -l /var/run/docker.sock
   - test -S /var/run/docker.sock && echo 'Docker socket found' || echo 'Docker socket
     missing'

@@ -83,6 +83,7 @@ def step_debug_dind(ctx):
         "name": "debug_dind",
         "image": "alpine",
         "commands": [
+            "sleep 10",
             "ls -l /var/run/docker.sock",
             "test -S /var/run/docker.sock && echo 'Docker socket found' || echo 'Docker socket missing'"
         ],
