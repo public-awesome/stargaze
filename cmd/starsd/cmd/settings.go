@@ -44,6 +44,9 @@ var preferredSettings = []PreferredSetting{
 }
 
 func SetPreferredSettings(cmd *cobra.Command, _ []string) error {
+	if cmd.Name() != "start" {
+		return nil
+	}
 
 	skip, err := cmd.Flags().GetBool(flagSkipPreferredSettings)
 	if err != nil {
@@ -66,6 +69,9 @@ func SetPreferredSettings(cmd *cobra.Command, _ []string) error {
 }
 
 func LogPreferredSettings(cmd *cobra.Command, _ []string) error {
+	if cmd.Name() != "start" {
+		return nil
+	}
 	serverCtx := server.GetServerContextFromCmd(cmd)
 
 	skip, err := cmd.Flags().GetBool(flagSkipPreferredSettings)
