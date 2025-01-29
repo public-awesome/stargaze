@@ -26,6 +26,7 @@ def step_fetch(ctx):
             "git fetch --tags"
         ]
     }
+
 def step_test(ctx):
     return {
         "name": "test",
@@ -45,7 +46,7 @@ def step_build(ctx):
         "commands": [
             "apk add --no-cache ca-certificates build-base git",
             "wget https://github.com/CosmWasm/wasmvm/releases/download/{}/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.x86_64.a".format(wasmvm_version),
-            "echo '{}'  /lib/libwasmvm_muslc.x86_64.a' | sha256sum -c".format(wasmvm_x86_84_hash),
+            "echo '{} /lib/libwasmvm_muslc.x86_64.a' | sha256sum -c".format(wasmvm_x86_84_hash),
             "LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true  make build",
             "echo 'Ensuring binary is statically linked ...' && (file $PWD/bin/starsd | grep 'statically linked')"
         ],
