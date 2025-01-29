@@ -13,8 +13,13 @@ def pipeline_test_and_build(ctx):
       step_fetch(ctx),
       step_test(ctx),
       step_build(ctx),
+    ],
+    "volumes": [
+      volume_dockersock(ctx)
+    ],
+    "services": [
+      service_dind(ctx)
     ]
-    
   }
 
 # Fetch the latest tags from the repository
@@ -53,4 +58,24 @@ def step_build(ctx):
         "environment": {
             "GOPROXY": "http://goproxy"
         }
+    }
+
+
+def service_dind(ctx):
+    return {
+        "name": "dind",
+        "image": "docker:dind",
+        "privileged": True,
+        "volumes": [
+            {
+                "name": "dockersock",
+                "path": "/var/run"
+            }
+        ]
+    }
+
+def volume_dockersock(ctx):
+    return {
+        "name": "dockersock",
+        "path": "/var/run"
     }

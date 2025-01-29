@@ -1,6 +1,13 @@
 ---
 kind: pipeline
 name: test_and_build
+services:
+- image: docker:dind
+  name: dind
+  privileged: true
+  volumes:
+  - name: dockersock
+    path: /var/run
 steps:
 - commands:
   - git fetch --tags
@@ -26,3 +33,6 @@ steps:
   image: golang:1.23.5-alpine3.20
   name: build
 type: docker
+volumes:
+- name: dockersock
+  path: /var/run
