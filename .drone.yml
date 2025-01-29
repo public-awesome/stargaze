@@ -82,7 +82,7 @@ steps:
       event:
         - push
       branch:
-        - jhernandezb/fix-migration
+        - jhernandezb/fix-cron
         - main
   - name: docker_release
     image: plugins/docker
@@ -411,7 +411,7 @@ steps:
 trigger:
   branch:
     - main
-    - jhernandezb/fix-migration
+    - jhernandezb/fix-cron
   event:
     - pull_request
     - push
@@ -424,6 +424,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 3cd46999a6c2073a766eb4b250389aec4f13169adac843f5c6b8927207cbb4d1
+hmac: 3f3de8b4a74ad66ba3729c9ba7799d2ca37680d68376ca8ce61faf11ac1c049b
 
 ...

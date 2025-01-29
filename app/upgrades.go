@@ -7,10 +7,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	upgrades "github.com/public-awesome/stargaze/v15/app/upgrades"
 	mainnetupgradesv15 "github.com/public-awesome/stargaze/v15/app/upgrades/mainnet/v15"
+	testnetupgradesv15b2 "github.com/public-awesome/stargaze/v15/app/upgrades/testnet/v15b2"
 )
 
 var Upgrades = []upgrades.Upgrade{
 	mainnetupgradesv15.Upgrade,
+	testnetupgradesv15b2.Upgrade,
 }
 
 func (app App) RegisterUpgradeHandlers(configurator module.Configurator) {
