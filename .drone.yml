@@ -42,7 +42,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: build
-    image: golang:1.23.5-alpine3.19
+    image: golang:1.23.5-alpine3.20
     volumes:
       - name: cache
         path: /go
@@ -424,6 +424,6 @@ volumes:
 
 ---
 kind: signature
-hmac: af1d0bc62183b8e4e5701a0ad3eefa0d6eab0719a8d3805152dfdd6cdd0d4578
+hmac: a80942702a28b4cedf791179e12807c3ddbafdbc39653b4fce9554517b508f5a
 
 ...
