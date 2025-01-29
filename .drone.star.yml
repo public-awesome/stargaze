@@ -23,6 +23,6 @@ steps:
     'statically linked')
   environment:
     GOPROXY: http://goproxy
-  image: golang:1.23.5-alpine3.19
+  image: golang:1.23.5-alpine3.20
   name: build
 type: docker

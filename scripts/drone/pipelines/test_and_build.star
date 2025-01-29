@@ -1,6 +1,6 @@
 
 go_dev_image = "publicawesome/golang:1.23.5-devtooling"
-go_image = "golang:1.23.5-alpine3.19"
+go_image = "golang:1.23.5-alpine3.20"
 wasmvm_version = "v2.1.4"
 wasmvm_x86_84_hash = "a4a3d09b36fabb65b119d5ba23442c23694401fcbee4451fe6b7e22e325a4bac"
 
