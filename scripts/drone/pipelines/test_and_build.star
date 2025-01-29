@@ -13,6 +13,7 @@ def pipeline_test_and_build(ctx):
       step_fetch(ctx),
       step_test(ctx),
       step_build(ctx),
+      step_build_docker(ctx)
     ],
     "volumes": [
       volume_dockersock(ctx)
@@ -60,6 +61,18 @@ def step_build(ctx):
         }
     }
 
+
+def step_build_docker(ctx):
+    return {
+        "name": "build_docker",
+        "image": "docker:24.0.7-alpine3.20",
+        "commands": [
+            "docker build -t publicawesome/stargaze:latest ."
+        ],
+        "volumes": [
+            volume_dockersock(ctx)
+        ]
+    }
 
 def service_dind(ctx):
     return {

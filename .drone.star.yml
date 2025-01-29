@@ -32,6 +32,13 @@ steps:
     GOPROXY: http://goproxy
   image: golang:1.23.5-alpine3.20
   name: build
+- commands:
+  - docker build -t publicawesome/stargaze:latest .
+  image: docker:24.0.7-alpine3.20
+  name: build_docker
+  volumes:
+  - name: dockersock
+    path: /var/run
 type: docker
 volumes:
 - name: dockersock
