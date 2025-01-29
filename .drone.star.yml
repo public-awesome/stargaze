@@ -14,7 +14,9 @@ steps:
   image: alpine/git
   name: fetch
 - commands:
-  - ls -ltrah /var/run
+  - ls -l /var/run/docker.sock
+  - test -S /var/run/docker.sock && echo 'Docker socket found' || echo 'Docker socket
+    missing'
   image: alpine
   name: debug_dind
   volumes:
