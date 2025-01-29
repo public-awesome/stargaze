@@ -65,7 +65,7 @@ def step_build(ctx):
 def step_build_docker(ctx):
     return {
         "name": "build_docker",
-        "image": "docker:24.0.7-alpine3.20",
+        "image": "docker:24",
         "commands": [
             "docker build -t publicawesome/stargaze:latest ."
         ],
@@ -91,4 +91,10 @@ def volume_dockersock(ctx):
     return {
         "name": "dockersock",
         "path": "/var/run"
+    }
+
+def volume_docker_export(ctx):
+    return {
+        "name": "docker_export",
+        "path": "/containers/export"
     }

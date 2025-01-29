@@ -34,7 +34,7 @@ steps:
   name: build
 - commands:
   - docker build -t publicawesome/stargaze:latest .
-  image: docker:24.0.7-alpine3.20
+  image: docker:24
   name: build_docker
   volumes:
   - name: dockersock
