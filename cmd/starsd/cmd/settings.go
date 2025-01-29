@@ -12,31 +12,32 @@ const flagSkipPreferredSettings = "skip-preferred-settings"
 type PreferredSetting struct {
 	ViperKey string
 	Value    string
-	Set      func(cmd *cobra.Command, serverCtx *server.Context, key, value string) error
+	Set      func(serverCtx *server.Context, key, value string) error
 }
 
 var preferredSettings = []PreferredSetting{
 	{
 		ViperKey: "consensus.timeout_commit",
 		Value:    "3s",
-		Set: func(cmd *cobra.Command, serverCtx *server.Context, key, value string) error {
+		Set: func(serverCtx *server.Context, key, value string) error {
 			serverCtx.Viper.Set(key, value)
-			serverCtx.Config.Consensus.TimeoutCommit = time.Duration(3 * time.Second)
+			serverCtx.Config.Consensus.TimeoutCommit = 3 * time.Second
 			return nil
 		},
 	},
 	{
 		ViperKey: "consensus.timeout_propose",
 		Value:    "2s",
-		Set: func(cmd *cobra.Command, serverCtx *server.Context, key, value string) error {
+		Set: func(serverCtx *server.Context, key, value string) error {
 			serverCtx.Viper.Set(key, value)
-			serverCtx.Config.Consensus.TimeoutPropose = time.Duration(2 * time.Second)
+			serverCtx.Config.Consensus.TimeoutPropose = 2 * time.Second
 			return nil
-		}},
+		},
+	},
 	{
 		ViperKey: "wasm.memory_cache_size",
 		Value:    "1024",
-		Set: func(cmd *cobra.Command, serverCtx *server.Context, key, value string) error {
+		Set: func(serverCtx *server.Context, key, value string) error {
 			serverCtx.Viper.Set(key, value)
 			return nil
 		},
@@ -59,7 +60,7 @@ func SetPreferredSettings(cmd *cobra.Command, _ []string) error {
 	serverCtx := server.GetServerContextFromCmd(cmd)
 
 	for _, setting := range preferredSettings {
-		err := setting.Set(cmd, serverCtx, setting.ViperKey, setting.Value)
+		err := setting.Set(serverCtx, setting.ViperKey, setting.Value)
 		if err != nil {
 			return err
 		}

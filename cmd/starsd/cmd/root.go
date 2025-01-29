@@ -178,7 +178,6 @@ func initRootCmd(
 		txCommand(),
 		keys.Commands(),
 	)
-
 }
 
 func addModuleInitFlags(startCmd *cobra.Command) {
