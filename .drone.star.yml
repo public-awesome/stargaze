@@ -14,8 +14,17 @@ steps:
       - git fetch --tags
     image: alpine/git
     name: fetch
+  - name: debug_file
+    image: alpine
+    commands:
+      - echo "test" > /var/run/test.txt
+    volumes:
+      - name: dockersock
+        path: /var/run
   - commands:
       - sleep 10
+      - ls -l /var/run
+      - cat /var/run/test.txt
       - ls -l /var/run/docker.sock
       - test -S /var/run/docker.sock && echo 'Docker socket found' || echo 'Docker socket
         missing'
@@ -49,8 +58,8 @@ steps:
     name: build_docker
     volumes:
       - name: dockersock
-        path: /var/run/docker.sock
+        path: /var/run
 type: docker
 volumes:
   - name: dockersock
-    path: /var/run/docker.sock
+    temp: {}
