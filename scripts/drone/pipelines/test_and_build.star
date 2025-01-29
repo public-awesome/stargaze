@@ -99,7 +99,7 @@ def service_dind(ctx):
         "volumes": [
             {
                 "name": "dockersock",
-                "path": "/var/run"
+                "path": "/var/run/docker.sock"
             }
         ]
     }
@@ -107,7 +107,7 @@ def service_dind(ctx):
 def volume_dockersock(ctx):
     return {
         "name": "dockersock",
-        "path": "/var/run"
+        "path": "/var/run/docker.sock"
     }
 
 def volume_docker_export(ctx):

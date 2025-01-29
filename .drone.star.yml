@@ -7,7 +7,7 @@ services:
   privileged: true
   volumes:
   - name: dockersock
-    path: /var/run
+    path: /var/run/docker.sock
 steps:
 - commands:
   - git fetch --tags
@@ -21,7 +21,7 @@ steps:
   name: debug_dind
   volumes:
   - name: dockersock
-    path: /var/run
+    path: /var/run/docker.sock
 - commands:
   - ./scripts/go-test.sh
   environment:
@@ -47,8 +47,8 @@ steps:
   name: build_docker
   volumes:
   - name: dockersock
-    path: /var/run
+    path: /var/run/docker.sock
 type: docker
 volumes:
 - name: dockersock
-  path: /var/run
+  path: /var/run/docker.sock
