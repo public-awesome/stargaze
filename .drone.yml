@@ -33,7 +33,7 @@ steps:
       branch: no-cache
 
   - name: test
-    image: publicawesome/golang:1.22.7-devtooling
+    image: publicawesome/golang:1.23.5-devtooling
     volumes:
       - name: cache
         path: /go
@@ -42,7 +42,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: build
-    image: golang:1.22.7-alpine3.19
+    image: golang:1.23.5-alpine3.20
     volumes:
       - name: cache
         path: /go
@@ -77,12 +77,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 15.0.0-alpha.5
+        - 15.0.0-alpha.6
     when:
       event:
         - push
       branch:
-        - jhernandezb/fix-cron
+        - jhernandezb/ci-starlark
         - main
   - name: docker_release
     image: plugins/docker
@@ -99,7 +99,7 @@ steps:
         - tag
 
   - name: release
-    image: golang:1.22.7
+    image: golang:1.23.5
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -194,7 +194,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/golang:1.22.7-devtooling
+    image: publicawesome/golang:1.23.5-devtooling
     volumes:
       - name: cache
         path: /go
@@ -282,7 +282,7 @@ steps:
     when:
       branch: no-cache
   - name: build-wrapper
-    image: publicawesome/golang:1.22.7-devtooling
+    image: publicawesome/golang:1.23.5-devtooling
     volumes:
       - name: cache
         path: /go
@@ -353,7 +353,7 @@ steps:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:15.0.0-alpha.5
+    image: publicawesome/stargaze:15.0.0-alpha.6
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -372,7 +372,7 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:15.0.0-alpha.5
+    image: publicawesome/stargaze:15.0.0-alpha.6
     commands:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
@@ -411,7 +411,7 @@ steps:
 trigger:
   branch:
     - main
-    - jhernandezb/fix-cron
+    - jhernandezb/ci-starlark
   event:
     - pull_request
     - push
@@ -424,6 +424,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 7f6a696633927ee7fcac8511be795df0f17c229369d245c4c7cb4ca83c09ac96
+hmac: b4fff1025b0382cb7da82819a4193894007fe959061dbfe709ab9e142b4933da
 
 ...
