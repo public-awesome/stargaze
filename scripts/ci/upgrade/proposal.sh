@@ -21,7 +21,7 @@ starsd q distribution community-pool --node http://stargaze:26657
 HEIGHT=$(starsd status --node http://stargaze:26657 --home $STARGAZE_HOME | jq .SyncInfo.latest_block_height -r)
 
 echo "current height $HEIGHT"
-HEIGHT=$(expr $HEIGHT + 450) 
+HEIGHT=$(expr $HEIGHT + 700) 
 echo "submit with height $HEIGHT"
 cat <<EOT >> proposal.json
 {
