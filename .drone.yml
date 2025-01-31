@@ -77,12 +77,12 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 15.0.0-alpha.6
+        - 15.0.0-alpha.7
     when:
       event:
         - push
       branch:
-        - jhernandezb/ci-starlark
+        - jhernandezb/prepare-main
         - main
   - name: docker_release
     image: plugins/docker
@@ -353,7 +353,7 @@ steps:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:15.0.0-alpha.6
+    image: publicawesome/stargaze:15.0.0-alpha.7
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -372,7 +372,7 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:15.0.0-alpha.6
+    image: publicawesome/stargaze:15.0.0-alpha.7
     commands:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
@@ -411,7 +411,7 @@ steps:
 trigger:
   branch:
     - main
-    - jhernandezb/ci-starlark
+    - jhernandezb/prepare-main
   event:
     - pull_request
     - push
@@ -424,6 +424,6 @@ volumes:
 
 ---
 kind: signature
-hmac: b4fff1025b0382cb7da82819a4193894007fe959061dbfe709ab9e142b4933da
+hmac: 556584e395ad80e6ba22597ba36bbd28b6fbfe44a2e9fe5f2510ee875ff74ec6
 
 ...
