@@ -77,7 +77,7 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 15.0.0-alpha.7
+        - 15.0.0-alpha.8
     when:
       event:
         - push
@@ -315,7 +315,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:14.0.0-rc.2
+    image: publicawesome/stargaze:14.0.0
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
@@ -348,12 +348,12 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer-v1.7.sh
   - name: proposal
-    image: publicawesome/stargaze:14.0.0-rc.2
+    image: publicawesome/stargaze:14.0.0
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:15.0.0-alpha.7
+    image: publicawesome/stargaze:15.0.0-alpha.8
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -372,7 +372,7 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:15.0.0-alpha.7
+    image: publicawesome/stargaze:15.0.0-alpha.8
     commands:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
@@ -424,6 +424,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 556584e395ad80e6ba22597ba36bbd28b6fbfe44a2e9fe5f2510ee875ff74ec6
+hmac: 1fa82bda77a029c13e98d30cc649d792cca23ee1eeb77f7297722b087330db85
 
 ...

@@ -24,7 +24,7 @@ func DefaultConfig() (string, interface{}) {
 
 	wasmConfig.SimulationGasLimit = &simulationLimit
 	wasmConfig.SmartQueryGasLimit = 25_000_000
-	wasmConfig.MemoryCacheSize = 512
+	wasmConfig.MemoryCacheSize = 1024
 	wasmConfig.ContractDebugMode = false
 
 	customConfig := CustomAppConfig{

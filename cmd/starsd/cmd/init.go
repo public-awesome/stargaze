@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 
 	"cosmossdk.io/math/unsafe"
 	cfg "github.com/cometbft/cometbft/config"
@@ -178,6 +179,8 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 
 			toPrint := newPrintInfo(config.Moniker, chainID, nodeID, "", appState)
 
+			config.Consensus.TimeoutCommit = 2750 * time.Millisecond
+			config.Consensus.TimeoutPropose = 1750 * time.Millisecond
 			cfg.WriteConfigFile(filepath.Join(config.RootDir, "config", "config.toml"), config)
 			return displayInfo(toPrint)
 		},
