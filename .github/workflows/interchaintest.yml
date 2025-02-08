@@ -37,7 +37,7 @@ jobs:
           outputs: type=docker,dest=/tmp/sg.tar
 
       - name: Upload the Docker image # Uploading as artifact so that all the tests which run as different jobs can use this image
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sg
           path: /tmp/sg.tar
@@ -63,7 +63,7 @@ jobs:
         run: make interchaintest
 
       - name: Upload binary as artifact # Uploading as artifact so that all the tests which run as different jobs can use this binary
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: interchaintest
           path: ./bin/interchaintest

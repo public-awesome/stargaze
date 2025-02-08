@@ -6,7 +6,7 @@ on:
       test-cmd:
         type: string
         required: true
-        description: 'The make cmd to run to test the custom interchain tests'
+        description: "The make cmd to run to test the custom interchain tests"
 
 jobs:
   run_interchaintest_custom:
@@ -20,10 +20,10 @@ jobs:
       - name: Set up Golang
         uses: actions/setup-go@v3
         with:
-          go-version-file: 'go.mod'
+          go-version-file: "go.mod"
 
       - name: Download Stargaze Docker image
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: sg
           path: /tmp
@@ -35,4 +35,4 @@ jobs:
         run: docker load --input /tmp/sg.tar && docker images
 
       - name: Run test
-        run: make ${{ inputs.test-cmd }} 
+        run: make ${{ inputs.test-cmd }}
