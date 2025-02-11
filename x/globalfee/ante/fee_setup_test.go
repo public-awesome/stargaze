@@ -63,7 +63,11 @@ func (s *AnteHandlerTestSuite) SetupTest() {
 	}
 	app := simapp.SetupWithGenesisAccounts(s.T(), s.T().TempDir(), genAccounts, genBalances...)
 	h := cmtproto.Header{Height: app.LastBlockHeight() + 1}
-	ctx := sdk.NewContext(app.CommitMultiStore(), h, false, app.Logger()).WithBlockTime(time.Now())
+	ctx := sdk.NewContext(app.CommitMultiStore(), h, false, app.Logger()).WithBlockTime(time.Now()).WithConsensusParams(cmtproto.ConsensusParams{
+		Block: &cmtproto.BlockParams{
+			MaxGas: 225_000_000, // 225M
+		},
+	})
 
 	encodingConfig := stargazeapp.MakeEncodingConfig()
 
@@ -76,7 +80,11 @@ func (s *AnteHandlerTestSuite) SetupTestGlobalFeeStoreAndMinGasPrice(minGasPrice
 	err := s.app.Keepers.GlobalFeeKeeper.SetParams(s.ctx, types.Params{MinimumGasPrices: globalFees})
 	s.Require().NoError(err)
 
-	s.ctx = s.ctx.WithMinGasPrices(minGasPrice).WithIsCheckTx(true)
+	s.ctx = s.ctx.WithMinGasPrices(minGasPrice).WithIsCheckTx(true).WithConsensusParams(cmtproto.ConsensusParams{
+		Block: &cmtproto.BlockParams{
+			MaxGas: 225_000_000, // 225M
+		},
+	})
 
 	// build fee decorator
 	feeDecorator := ante.NewFeeDecorator(s.app.AppCodec(), s.app.Keepers.GlobalFeeKeeper, s.app.Keepers.StakingKeeper)
