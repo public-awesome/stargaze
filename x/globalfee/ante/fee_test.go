@@ -34,6 +34,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 		feeSent     sdk.Coins    // the amount of fee sent by the user in the tx
 		msg         []sdk.Msg
 		expectErr   bool
+		gasWanted   int64
 	}{
 		{
 			"fail: min_gas_price: empty, globalfee: 5stake, feeSent: 1stake, not authorized contract exec",
@@ -48,6 +49,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 				},
 			},
 			true,
+			1,
 		},
 		{
 			"ok: min_gas_price: empty, globalfee: 5stake, feeSent: 7stake, not authorized contract exec",
@@ -62,6 +64,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 				},
 			},
 			false,
+			1,
 		},
 		{
 			"fail: min_gas_price: 0stake, globalfee: 5stake, feeSent: 0stake, not authorized contract exec",
@@ -76,6 +79,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 				},
 			},
 			true,
+			1,
 		},
 		{
 			"ok: min_gas_price: 0stake, globalfee: 5stake, feeSent: 5stake, not authorized contract exec",
@@ -90,6 +94,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 				},
 			},
 			false,
+			1,
 		},
 		{
 			"fail: min_gas_price: 2stake, globalfee: 5stake, feeSent: 1stake, not authorized contract exec",
@@ -104,6 +109,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 				},
 			},
 			true,
+			1,
 		},
 		{
 			"fail: min_gas_price: 2stake, globalfee: 5stake, feeSent: 3stake, not authorized contract exec",
@@ -118,6 +124,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 				},
 			},
 			true,
+			1,
 		},
 		{
 			"ok: min_gas_price: 2stake, globalfee: 5stake, feeSent: 5stake, not authorized contract exec",
@@ -132,6 +139,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 				},
 			},
 			false,
+			1,
 		},
 		{
 			"ok: min_gas_price: 2stake, globalfee: 5stake, feeSent: 0stake, authorized code id",
@@ -146,6 +154,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 				},
 			},
 			false,
+			1,
 		},
 		{
 			"fail: min_gas_price: 2stake, globalfee: 5stake, feeSent: 0stake, authorized contract address but not auth msg",
@@ -160,6 +169,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 				},
 			},
 			true,
+			1,
 		},
 		{
 			"ok: min_gas_price: 2stake, globalfee: 5stake, feeSent: 0stake, authorized contract address with auth msg",
@@ -174,6 +184,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 				},
 			},
 			false,
+			1,
 		},
 		{
 			"ok: min_gas_price: 2stake, globalfee: 5stake, feeSent: 0stake, authorized contract address with auth all (*)",
@@ -188,6 +199,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 				},
 			},
 			false,
+			1,
 		},
 		{
 			"ok: min_gas_price: 2stake, globalfee: 5stake, feeSent: 0stake, authorized contract address with auth all (*)",
@@ -202,6 +214,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 				},
 			},
 			false,
+			1,
 		},
 		{
 			"ok: min_gas_price: 2stake, globalfee: 5stake, feeSent: 0stake, multiple authorized contract calls",
@@ -226,6 +239,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 				},
 			},
 			false,
+			1,
 		},
 		{
 			"fail: min_gas_price: 2stake, globalfee: 5stake, feeSent: 0stake, one authorized contract + unauthorized msgs",
@@ -250,6 +264,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 				},
 			},
 			true,
+			1,
 		},
 		{
 			"ok: min_gas_price: 2stake, globalfee: 5stake, feeSent: 0stake, one authorized contract + unauthorized msgs",
@@ -269,6 +284,22 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 				},
 			},
 			false,
+			1,
+		},
+		{
+			"fail: min_gas_price: 2stake, globalfee: 5stake, feeSent: 0stake, authorized code id but overallocated gas",
+			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 2)),
+			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 5)),
+			sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 0)),
+			[]sdk.Msg{
+				&wasmtypes.MsgExecuteContract{
+					Sender:   addr1.String(),
+					Contract: contractWithCodeAuth,
+					Msg:      counterIncrementMsg,
+				},
+			},
+			true,
+			50_000_000,
 		},
 	}
 
@@ -277,7 +308,7 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			_, antehandler := s.SetupTestGlobalFeeStoreAndMinGasPrice(tc.minGasPrice, tc.globalFees)
 			s.Require().NoError(s.txBuilder.SetMsgs(tc.msg...))
 			s.txBuilder.SetFeeAmount(tc.feeSent)
-			s.txBuilder.SetGasLimit(1)
+			s.txBuilder.SetGasLimit(uint64(tc.gasWanted))
 			tx, err := s.CreateTestTx(s.ctx, privs, accNums, accSeqs, s.ctx.ChainID(), signing.SignMode_SIGN_MODE_DIRECT)
 			s.Require().NoError(err)
 
