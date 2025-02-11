@@ -16,6 +16,7 @@ import (
 )
 
 var _ sdk.AnteDecorator = FeeDecorator{}
+var maxGasPercent = sdkmath.LegacyNewDecWithPrec(10, 2) // 10%
 
 type GlobalFeeReaderExpected interface {
 	GetContractAuthorization(ctx sdk.Context, contractAddr sdk.AccAddress) (types.ContractAuthorization, error)
@@ -57,26 +58,45 @@ func (mfd FeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, ne
 	msgs := feeTx.GetMsgs()
 
 	// currently accepting zero fee transactions only when the tx contains only the authorized operations that can bypass the minimum fee
-	onlyZeroFeeMsgs := mfd.containsOnlyZeroFeeMsgs(ctx, msgs)
-
-	return mfd.checkFees(ctx, feeTx, tx, onlyZeroFeeMsgs, simulate, next) // https://github.com/cosmos/gaia/blob/6fe097e3280baa360a28b59a29b8cca964a5ae97/x/globalfee/ante/fee.go
+	onlyFreeMsgs, atLeastOneFreeMsg := mfd.freeMsgsCheck(ctx, msgs)
+	if atLeastOneFreeMsg {
+		maxGas := sdkmath.LegacyNewDec(ctx.ConsensusParams().Block.MaxGas).Mul(maxGasPercent)
+		if feeTx.GetGas() > uint64(maxGas.RoundInt64()) {
+			return ctx, errorsmod.Wrapf(sdkerrors.ErrInvalidGasLimit, "overallocated gas value")
+		}
+	}
+	return mfd.checkFees(ctx, feeTx, tx, onlyFreeMsgs, simulate, next) // https://github.com/cosmos/gaia/blob/6fe097e3280baa360a28b59a29b8cca964a5ae97/x/globalfee/ante/fee.go
 }
 
-func (mfd FeeDecorator) containsOnlyZeroFeeMsgs(ctx sdk.Context, msgs []sdk.Msg) bool {
+func (mfd FeeDecorator) freeMsgsCheck(ctx sdk.Context, msgs []sdk.Msg) (onlyFreeMsgs, atLeastOneFreeMsg bool) {
+	totalMsgs := len(msgs)
+	freeMsgs := 0
+
 	for _, m := range msgs {
 		switch msg := m.(type) {
 		case *wasmtypes.MsgExecuteContract:
 			{
-				if !mfd.isZeroFeeMsg(ctx, msg) {
-					return false
+				if mfd.isZeroFeeMsg(ctx, msg) {
+					freeMsgs++
+					atLeastOneFreeMsg = true
+				} else {
+					onlyFreeMsgs = false
+					// exit early if there is at least one free msg
+					if atLeastOneFreeMsg {
+						return onlyFreeMsgs, atLeastOneFreeMsg
+					}
 				}
+
 			}
 		default:
-			return false
+			return false, atLeastOneFreeMsg
 		}
 	}
+	if freeMsgs == totalMsgs {
+		return true, true
+	}
 
-	return true
+	return false, atLeastOneFreeMsg
 }
 
 func (mfd FeeDecorator) isZeroFeeMsg(ctx sdk.Context, msg *wasmtypes.MsgExecuteContract) bool {
