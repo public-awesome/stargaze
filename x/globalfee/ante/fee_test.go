@@ -406,6 +406,22 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			50_000_000,
 			strPtr("overallocated gas value"),
 		},
+		{
+			"ok: min_gas_price: 2stake, globalfee: 5stake, feeSent: 500STAKE, unauthorized contract exec",
+			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 2)),
+			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 5)),
+			sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 500_000_000)),
+			[]sdk.Msg{
+				&wasmtypes.MsgExecuteContract{
+					Sender:   addr1.String(),
+					Contract: contractWithCodeAuth,
+					Msg:      counterResetMsg,
+				},
+			},
+			false,
+			50_000_000,
+			nil,
+		},
 	}
 
 	for _, tc := range testCases {
