@@ -59,7 +59,6 @@ func (mfd FeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, ne
 
 	// currently accepting zero fee transactions only when the tx contains only the authorized operations that can bypass the minimum fee
 	onlyFreeMsgs, atLeastOneFreeMsg := mfd.freeMsgsCheck(ctx, msgs)
-
 	if atLeastOneFreeMsg {
 		maxGas := sdkmath.LegacyNewDec(ctx.ConsensusParams().Block.MaxGas).Mul(maxGasPercent)
 		if feeTx.GetGas() > uint64(maxGas.RoundInt64()) {
@@ -82,7 +81,10 @@ func (mfd FeeDecorator) freeMsgsCheck(ctx sdk.Context, msgs []sdk.Msg) (onlyFree
 					atLeastOneFreeMsg = true
 				} else {
 					onlyFreeMsgs = false
-					return onlyFreeMsgs, atLeastOneFreeMsg
+					// exit early if there is at least one free msg
+					if atLeastOneFreeMsg {
+						return onlyFreeMsgs, atLeastOneFreeMsg
+					}
 				}
 
 			}
