@@ -8,10 +8,10 @@ import (
 // CustomAppConfig defines the configuration for the Nois app.
 type CustomAppConfig struct {
 	serverconfig.Config
-	Wasm wasmtypes.WasmConfig `mapstructure:"wasm" json:"wasm"`
+	Wasm wasmtypes.NodeConfig `mapstructure:"wasm" json:"wasm"`
 }
 
-func CustomconfigTemplate(config wasmtypes.WasmConfig) string {
+func CustomconfigTemplate(config wasmtypes.NodeConfig) string {
 	return serverconfig.DefaultConfigTemplate + wasmtypes.ConfigTemplate(config)
 }
 
@@ -19,7 +19,7 @@ func DefaultConfig() (string, interface{}) {
 	serverConfig := serverconfig.DefaultConfig()
 	serverConfig.MinGasPrices = "0ustars"
 
-	wasmConfig := wasmtypes.DefaultWasmConfig()
+	wasmConfig := wasmtypes.DefaultNodeConfig()
 	simulationLimit := uint64(50_000_000)
 
 	wasmConfig.SimulationGasLimit = &simulationLimit

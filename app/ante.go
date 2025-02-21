@@ -28,7 +28,7 @@ type HandlerOptions struct {
 	govKeeper             govkeeper.Keeper
 	globalfeeKeeper       globalfeekeeper.Keeper
 	stakingKeeper         *stakingkeeper.Keeper
-	WasmConfig            *wasmTypes.WasmConfig
+	WasmConfig            *wasmTypes.NodeConfig
 	TXCounterStoreService corestoretypes.KVStoreService
 	Codec                 codec.BinaryCodec
 }
