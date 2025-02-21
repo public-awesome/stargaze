@@ -2,54 +2,54 @@
 kind: pipeline
 name: test_and_build
 services:
-  - image: docker:dind
-    name: dind
-    privileged: true
-    volumes:
-      - name: dockersock
-        path: /var/run
+- image: docker:dind
+  name: dind
+  privileged: true
+  volumes:
+  - name: dockersock
+    path: /var/run
 steps:
-  - commands:
-      - git fetch --tags
-    image: alpine/git
-    name: fetch
-  - commands:
-      - sleep 10
-      - ls -l /var/run/docker.sock
-      - test -S /var/run/docker.sock && echo 'Docker socket found' || echo 'Docker socket
-        missing'
-    image: alpine
-    name: debug_dind
-    volumes:
-      - name: dockersock
-        path: /var/run
-  - commands:
-      - ./scripts/go-test.sh
-    environment:
-      GOPROXY: http://goproxy
-    image: publicawesome/golang:1.23.5-devtooling
-    name: test
-  - commands:
-      - apk add --no-cache ca-certificates build-base git
-      - wget https://github.com/CosmWasm/wasmvm/releases/download/v2.1.5/libwasmvm_muslc.x86_64.a
-        -O /lib/libwasmvm_muslc.x86_64.a
-      - echo 'c6612d17d82b0997696f1076f6d894e339241482570b9142f29b0d8f21b280bf /lib/libwasmvm_muslc.x86_64.a'
-        | sha256sum -c
-      - LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true  make build
-      - echo 'Ensuring binary is statically linked ...' && (file $PWD/bin/starsd | grep
-        'statically linked')
-    environment:
-      GOPROXY: http://goproxy
-    image: golang:1.23.5-alpine3.20
-    name: build
-  - commands:
-      - docker build -t publicawesome/stargaze:latest .
-    image: docker:24
-    name: build_docker
-    volumes:
-      - name: dockersock
-        path: /var/run
+- commands:
+  - git fetch --tags
+  image: alpine/git
+  name: fetch
+- commands:
+  - sleep 10
+  - ls -l /var/run/docker.sock
+  - test -S /var/run/docker.sock && echo 'Docker socket found' || echo 'Docker socket
+    missing'
+  image: alpine
+  name: debug_dind
+  volumes:
+  - name: dockersock
+    path: /var/run
+- commands:
+  - ./scripts/go-test.sh
+  environment:
+    GOPROXY: http://goproxy
+  image: publicawesome/golang:1.23.5-devtooling
+  name: test
+- commands:
+  - apk add --no-cache ca-certificates build-base git
+  - wget https://github.com/CosmWasm/wasmvm/releases/download/v2.2.2/libwasmvm_muslc.x86_64.a
+    -O /lib/libwasmvm_muslc.x86_64.a
+  - echo '6dbc82935f204d671392e6dbef0783f48433d3647b76d538430e0888daf048a4 /lib/libwasmvm_muslc.x86_64.a'
+    | sha256sum -c
+  - LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true  make build
+  - echo 'Ensuring binary is statically linked ...' && (file $PWD/bin/starsd | grep
+    'statically linked')
+  environment:
+    GOPROXY: http://goproxy
+  image: golang:1.23.5-alpine3.20
+  name: build
+- commands:
+  - docker build -t publicawesome/stargaze:latest .
+  image: docker:24
+  name: build_docker
+  volumes:
+  - name: dockersock
+    path: /var/run
 type: docker
 volumes:
-  - name: dockersock
-    temp: {}
+- name: dockersock
+  temp: {}

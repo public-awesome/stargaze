@@ -18,19 +18,19 @@ type PreferredSetting struct {
 var preferredSettings = []PreferredSetting{
 	{
 		ViperKey: "consensus.timeout_commit",
-		Value:    "2500ms",
+		Value:    "2000ms",
 		Set: func(serverCtx *server.Context, key, value string) error {
 			serverCtx.Viper.Set(key, value)
-			serverCtx.Config.Consensus.TimeoutCommit = 2500 * time.Millisecond
+			serverCtx.Config.Consensus.TimeoutCommit = 2000 * time.Millisecond
 			return nil
 		},
 	},
 	{
 		ViperKey: "consensus.timeout_propose",
-		Value:    "1700ms",
+		Value:    "1200ms",
 		Set: func(serverCtx *server.Context, key, value string) error {
 			serverCtx.Viper.Set(key, value)
-			serverCtx.Config.Consensus.TimeoutPropose = 1500 * time.Millisecond
+			serverCtx.Config.Consensus.TimeoutPropose = 1200 * time.Millisecond
 			return nil
 		},
 	},
