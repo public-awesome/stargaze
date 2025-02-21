@@ -369,7 +369,6 @@ func (s *AnteHandlerTestSuite) TestFeeDecoratorAntehandler() {
 			sdk.NewDecCoins(sdk.NewInt64DecCoin(sdk.DefaultBondDenom, 5)),
 			sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 0)),
 			[]sdk.Msg{
-
 				&wasmtypes.MsgExecuteContract{
 					Sender:   addr1.String(),
 					Contract: contractWithCodeAuth,

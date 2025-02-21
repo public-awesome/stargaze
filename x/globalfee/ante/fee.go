@@ -15,8 +15,10 @@ import (
 	"github.com/public-awesome/stargaze/v15/x/globalfee/types"
 )
 
-var _ sdk.AnteDecorator = FeeDecorator{}
-var maxGasPercent = sdkmath.LegacyNewDecWithPrec(10, 2) // 10%
+var (
+	_             sdk.AnteDecorator = FeeDecorator{}
+	maxGasPercent                   = sdkmath.LegacyNewDecWithPrec(10, 2) // 10%
+)
 
 type GlobalFeeReaderExpected interface {
 	GetContractAuthorization(ctx sdk.Context, contractAddr sdk.AccAddress) (types.ContractAuthorization, error)
@@ -86,7 +88,6 @@ func (mfd FeeDecorator) freeMsgsCheck(ctx sdk.Context, msgs []sdk.Msg) (onlyFree
 						return onlyFreeMsgs, atLeastOneFreeMsg
 					}
 				}
-
 			}
 		default:
 			return false, atLeastOneFreeMsg
