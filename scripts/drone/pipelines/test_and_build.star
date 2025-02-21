@@ -1,9 +1,9 @@
 
 go_dev_image = "publicawesome/golang:1.23.5-devtooling"
 go_image = "golang:1.23.5-alpine3.20"
-wasmvm_version = "v2.1.5"
-wasmvm_x86_84_hash = "c6612d17d82b0997696f1076f6d894e339241482570b9142f29b0d8f21b280bf"
-docker_image = "docker:24"  
+wasmvm_version = "v2.2.2"
+wasmvm_x86_84_hash = "6dbc82935f204d671392e6dbef0783f48433d3647b76d538430e0888daf048a4"
+docker_image = "docker:24"
 docker_dind_image = "docker:dind"
 
 def pipeline_test_and_build(ctx):
