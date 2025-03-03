@@ -82,7 +82,7 @@ steps:
       event:
         - push
       branch:
-        - jhernandezb/prepare-main
+        - jhernandezb/v16-upgrade
         - main
   - name: docker_release
     image: plugins/docker
@@ -424,6 +424,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 3514f8c428d4000d3dff1c0426d346d1ec0bf6f763f27793b314c9595e959387
+hmac: 53192bb9b30b0153f5792a92fb491ddb579bdc7b853029cee58b2125af392f72
 
 ...
