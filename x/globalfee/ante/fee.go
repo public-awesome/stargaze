@@ -63,7 +63,7 @@ func (mfd FeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, ne
 	onlyFreeMsgs, atLeastOneFreeMsg := mfd.freeMsgsCheck(ctx, msgs)
 	if atLeastOneFreeMsg {
 		maxGas := sdkmath.LegacyNewDec(ctx.ConsensusParams().Block.MaxGas).Mul(maxGasPercent)
-		if feeTx.GetGas() > uint64(maxGas.RoundInt64()) {
+		if feeTx.GetGas() > maxGas.TruncateInt().Uint64() {
 			return ctx, errorsmod.Wrapf(sdkerrors.ErrInvalidGasLimit, "overallocated gas value")
 		}
 	}
