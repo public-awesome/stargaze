@@ -45,7 +45,7 @@ require (
 	github.com/cosmos/ibc-go/modules/light-clients/08-wasm v0.4.2-0.20240730185033-ccd4dc278e72 // modules/light-clients/08-wasm/v0.4.1+ibc-go-v8.4-wasmvm-v2.0
 	github.com/cosmos/ibc-go/v8 v8.6.1
 	github.com/gogo/protobuf v1.3.2
-	github.com/prometheus/client_golang v1.20.5
+	github.com/prometheus/client_golang v1.21.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20241202173237-19429a94021a
 )
 
@@ -148,7 +148,7 @@ require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/jmhodges/levigo v1.0.0 // indirect
-	github.com/klauspost/compress v1.17.9 // indirect
+	github.com/klauspost/compress v1.17.11 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.4 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
