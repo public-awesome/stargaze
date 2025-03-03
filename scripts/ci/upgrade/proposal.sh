@@ -30,7 +30,7 @@ cat <<EOT >> proposal.json
       "@type": "/cosmos.upgrade.v1beta1.MsgSoftwareUpgrade",
       "authority": "stars10d07y265gmmuvt4z0w9aw880jnsr700jw7ycaz",
       "plan": {
-        "name": "v15",
+        "name": "v16",
         "height": "$HEIGHT",
         "info": ""
       }
