@@ -3,6 +3,7 @@ package app
 import (
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+	"github.com/cosmos/gogoproto/proto"
 	tokenfactorytypes "github.com/public-awesome/stargaze/v15/x/tokenfactory/types"
 )
 
@@ -14,9 +15,9 @@ var wasmCapabilities = []string{
 func AcceptedStargateQueries() wasmkeeper.AcceptedQueries {
 	return wasmkeeper.AcceptedQueries{
 		// tokenfactory
-		"/osmosis.tokenfactory.v1beta1.Query/Params":                 &tokenfactorytypes.QueryParamsResponse{},
-		"/osmosis.tokenfactory.v1beta1.Query/DenomAuthorityMetadata": &tokenfactorytypes.QueryDenomAuthorityMetadataResponse{},
-		"/osmosis.tokenfactory.v1beta1.Query/DenomsFromCreator":      &tokenfactorytypes.QueryDenomsFromCreatorResponse{},
+		"/osmosis.tokenfactory.v1beta1.Query/Params":                 func() proto.Message { return &tokenfactorytypes.QueryParamsResponse{} },
+		"/osmosis.tokenfactory.v1beta1.Query/DenomAuthorityMetadata": func() proto.Message { return &tokenfactorytypes.QueryDenomAuthorityMetadataResponse{} },
+		"/osmosis.tokenfactory.v1beta1.Query/DenomsFromCreator":      func() proto.Message { return &tokenfactorytypes.QueryDenomsFromCreatorResponse{} },
 	}
 }
 

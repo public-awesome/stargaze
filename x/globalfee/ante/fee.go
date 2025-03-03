@@ -15,8 +15,10 @@ import (
 	"github.com/public-awesome/stargaze/v15/x/globalfee/types"
 )
 
-var _ sdk.AnteDecorator = FeeDecorator{}
-var maxGasPercent = sdkmath.LegacyNewDecWithPrec(10, 2) // 10%
+var (
+	_             sdk.AnteDecorator = FeeDecorator{}
+	maxGasPercent                   = sdkmath.LegacyNewDecWithPrec(10, 2) // 10%
+)
 
 type GlobalFeeReaderExpected interface {
 	GetContractAuthorization(ctx sdk.Context, contractAddr sdk.AccAddress) (types.ContractAuthorization, error)
@@ -61,7 +63,7 @@ func (mfd FeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, ne
 	onlyFreeMsgs, atLeastOneFreeMsg := mfd.freeMsgsCheck(ctx, msgs)
 	if atLeastOneFreeMsg {
 		maxGas := sdkmath.LegacyNewDec(ctx.ConsensusParams().Block.MaxGas).Mul(maxGasPercent)
-		if feeTx.GetGas() > uint64(maxGas.RoundInt64()) {
+		if feeTx.GetGas() > maxGas.TruncateInt().Uint64() {
 			return ctx, errorsmod.Wrapf(sdkerrors.ErrInvalidGasLimit, "overallocated gas value")
 		}
 	}
@@ -86,7 +88,6 @@ func (mfd FeeDecorator) freeMsgsCheck(ctx sdk.Context, msgs []sdk.Msg) (onlyFree
 						return onlyFreeMsgs, atLeastOneFreeMsg
 					}
 				}
-
 			}
 		default:
 			return false, atLeastOneFreeMsg
