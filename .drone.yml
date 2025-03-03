@@ -33,7 +33,7 @@ steps:
       branch: no-cache
 
   - name: test
-    image: publicawesome/golang:1.23.5-devtooling
+    image: publicawesome/golang:1.23.6-devtooling
     volumes:
       - name: cache
         path: /go
@@ -77,7 +77,7 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 15.0.0-alpha.8
+        - 16.0.0-alpha.1
     when:
       event:
         - push
@@ -194,7 +194,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/golang:1.23.5-devtooling
+    image: publicawesome/golang:1.23.6-devtooling
     volumes:
       - name: cache
         path: /go
@@ -282,7 +282,7 @@ steps:
     when:
       branch: no-cache
   - name: build-wrapper
-    image: publicawesome/golang:1.23.5-devtooling
+    image: publicawesome/golang:1.23.6-devtooling
     volumes:
       - name: cache
         path: /go
@@ -315,7 +315,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:14.0.0
+    image: publicawesome/stargaze:15.2.0
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
@@ -348,12 +348,12 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer-v1.7.sh
   - name: proposal
-    image: publicawesome/stargaze:14.0.0
+    image: publicawesome/stargaze:15.2.0
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:15.0.0-alpha.8
+    image: publicawesome/stargaze:16.0.0-alpha.1
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -372,7 +372,7 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:15.0.0-alpha.8
+    image: publicawesome/stargaze:16.0.0-alpha.1
     commands:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
@@ -424,6 +424,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 0d62297be8c112a53642d8e44492059dade4ba753a6e9391494a6ce4f8697740
+hmac: 3514f8c428d4000d3dff1c0426d346d1ec0bf6f763f27793b314c9595e959387
 
 ...
