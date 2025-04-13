@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var LibwasmVersion = "2.2.2"
+var LibwasmVersion = "2.2.3"
 
 func CheckLibwasmVersion(_ *cobra.Command, _ []string) error {
 	version, err := wasmvmapi.LibwasmvmVersion()
