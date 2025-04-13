@@ -2,8 +2,8 @@
 log_level = "info"
 
 [mode.clients]
-enabled = true
-refresh = true
+enabled      = true
+refresh      = true
 misbehaviour = true
 
 [mode.connections]
@@ -13,63 +13,63 @@ enabled = true
 enabled = true
 
 [mode.packets]
-enabled = true
-clear_interval = 100
-clear_on_start = true
-tx_confirmation = false
+enabled                          = true
+clear_interval                   = 100
+clear_on_start                   = true
+tx_confirmation                  = false
 auto_register_counterparty_payee = false
 
 [rest]
 enabled = false
-host = "127.0.0.1"
-port = 3000
+host    = "127.0.0.1"
+port    = 3000
 
 [telemetry]
 enabled = false
-host = "127.0.0.1"
-port = 3001
+host    = "127.0.0.1"
+port    = 3001
 
 [telemetry.buckets.latency_submitted]
-start = 500
-end = 20000
+start   = 500
+end     = 20000
 buckets = 10
 
 [telemetry.buckets.latency_confirmed]
-start = 1000
-end = 30000
+start   = 1000
+end     = 30000
 buckets = 10
 
 [[chains]]
-id = "stargaze"
-type = "CosmosSdk"
-rpc_addr = "http://stargaze:26657"
-grpc_addr = "http://stargaze:9090"
-rpc_timeout = "10s"
-trusted_node = false
-account_prefix = "stars"
-key_name = "relayer"
-key_store_type = "Test"
-store_prefix = "ibc"
-default_gas = 100000
-max_gas = 400000
-gas_multiplier = 1.1
-max_msg_num = 30
-max_tx_size = 180000
+id                     = "stargaze"
+type                   = "CosmosSdk"
+rpc_addr               = "http://stargaze:26657"
+grpc_addr              = "http://stargaze:9090"
+rpc_timeout            = "10s"
+trusted_node           = false
+account_prefix         = "stars"
+key_name               = "relayer"
+key_store_type         = "Test"
+store_prefix           = "ibc"
+default_gas            = 100000
+max_gas                = 400000
+gas_multiplier         = 1.1
+max_msg_num            = 30
+max_tx_size            = 180000
 max_grpc_decoding_size = 33554432
-clock_drift = "900s"
-max_block_time = "5s"
-ccv_consumer_chain = false
-memo_prefix = ""
-sequential_batch_tx = false
+clock_drift            = "3600s"
+max_block_time         = "5s"
+ccv_consumer_chain     = false
+memo_prefix            = ""
+sequential_batch_tx    = false
 
 
 [chains.event_source]
-mode = "push"
-url = "ws://stargaze:26657/websocket"
+mode        = "push"
+url         = "ws://stargaze:26657/websocket"
 batch_delay = "100ms"
 
 [chains.trust_threshold]
-numerator = "1"
+numerator   = "1"
 denominator = "3"
 
 [chains.gas_price]
@@ -78,7 +78,7 @@ denom = "ustars"
 
 [chains.packet_filter]
 policy = "allow"
-list = [["ica*", "*"], ["transfer", "*"]]
+list   = [["ica*", "*"], ["transfer", "*"]]
 
 
 [chains.address_type]
@@ -87,36 +87,36 @@ derivation = "cosmos"
 
 # Gaia
 [[chains]]
-id = "gaia"
-type = "CosmosSdk"
-rpc_addr = "http://gaia:26657"
-grpc_addr = "http://gaia:9090"
-rpc_timeout = "10s"
-trusted_node = false
-account_prefix = "cosmos"
-key_name = "relayer"
-key_store_type = "Test"
-store_prefix = "ibc"
-default_gas = 100000
-max_gas = 400000
-gas_multiplier = 1.1
-max_msg_num = 30
-max_tx_size = 180000
+id                     = "gaia"
+type                   = "CosmosSdk"
+rpc_addr               = "http://gaia:26657"
+grpc_addr              = "http://gaia:9090"
+rpc_timeout            = "10s"
+trusted_node           = false
+account_prefix         = "cosmos"
+key_name               = "relayer"
+key_store_type         = "Test"
+store_prefix           = "ibc"
+default_gas            = 100000
+max_gas                = 400000
+gas_multiplier         = 1.1
+max_msg_num            = 30
+max_tx_size            = 180000
 max_grpc_decoding_size = 33554432
-clock_drift = "900s"
-max_block_time = "5s"
-ccv_consumer_chain = false
-memo_prefix = ""
-sequential_batch_tx = false
+clock_drift            = "900s"
+max_block_time         = "5s"
+ccv_consumer_chain     = false
+memo_prefix            = ""
+sequential_batch_tx    = false
 
 
 [chains.event_source]
-mode = "push"
-url = "ws://gaia:26657/websocket"
+mode        = "push"
+url         = "ws://gaia:26657/websocket"
 batch_delay = "100ms"
 
 [chains.trust_threshold]
-numerator = "1"
+numerator   = "1"
 denominator = "3"
 
 [chains.gas_price]
@@ -132,36 +132,36 @@ derivation = "cosmos"
 
 # Osmosis
 [[chains]]
-id = "osmosis"
-type = "CosmosSdk"
-rpc_addr = "http://osmosis:26657"
-grpc_addr = "http://osmosis:9090"
-rpc_timeout = "10s"
-trusted_node = false
-account_prefix = "osmo"
-key_name = "relayer"
-key_store_type = "Test"
-store_prefix = "ibc"
-default_gas = 100000
-max_gas = 400000
-gas_multiplier = 1.1
-max_msg_num = 30
-max_tx_size = 180000
+id                     = "osmosis"
+type                   = "CosmosSdk"
+rpc_addr               = "http://osmosis:26657"
+grpc_addr              = "http://osmosis:9090"
+rpc_timeout            = "10s"
+trusted_node           = false
+account_prefix         = "osmo"
+key_name               = "relayer"
+key_store_type         = "Test"
+store_prefix           = "ibc"
+default_gas            = 100000
+max_gas                = 400000
+gas_multiplier         = 1.1
+max_msg_num            = 30
+max_tx_size            = 180000
 max_grpc_decoding_size = 33554432
-clock_drift = "900s"
-max_block_time = "5s"
-ccv_consumer_chain = false
-memo_prefix = ""
-sequential_batch_tx = false
+clock_drift            = "900s"
+max_block_time         = "5s"
+ccv_consumer_chain     = false
+memo_prefix            = ""
+sequential_batch_tx    = false
 
 
 [chains.event_source]
-mode = "push"
-url = "ws://osmosis:26657/websocket"
+mode        = "push"
+url         = "ws://osmosis:26657/websocket"
 batch_delay = "100ms"
 
 [chains.trust_threshold]
-numerator = "1"
+numerator   = "1"
 denominator = "3"
 
 [chains.gas_price]
@@ -177,35 +177,35 @@ derivation = "cosmos"
 
 # ICAD
 [[chains]]
-id = "icad"
-type = "CosmosSdk"
-rpc_addr = "http://icad:26657"
-grpc_addr = "http://icad:9090"
-rpc_timeout = "10s"
-trusted_node = false
-account_prefix = "cosmos"
-key_name = "relayer"
-key_store_type = "Test"
-store_prefix = "ibc"
-default_gas = 100000
-max_gas = 400000
-gas_multiplier = 1.1
-max_msg_num = 30
-max_tx_size = 180000
+id                     = "icad"
+type                   = "CosmosSdk"
+rpc_addr               = "http://icad:26657"
+grpc_addr              = "http://icad:9090"
+rpc_timeout            = "10s"
+trusted_node           = false
+account_prefix         = "cosmos"
+key_name               = "relayer"
+key_store_type         = "Test"
+store_prefix           = "ibc"
+default_gas            = 100000
+max_gas                = 400000
+gas_multiplier         = 1.1
+max_msg_num            = 30
+max_tx_size            = 180000
 max_grpc_decoding_size = 33554432
-clock_drift = "900s"
-max_block_time = "5s"
-ccv_consumer_chain = false
-memo_prefix = ""
-sequential_batch_tx = false
+clock_drift            = "900s"
+max_block_time         = "5s"
+ccv_consumer_chain     = false
+memo_prefix            = ""
+sequential_batch_tx    = false
 
 [chains.event_source]
-mode = "push"
-url = "ws://icad:26657/websocket"
+mode        = "push"
+url         = "ws://icad:26657/websocket"
 batch_delay = "100ms"
 
 [chains.trust_threshold]
-numerator = "1"
+numerator   = "1"
 denominator = "3"
 
 [chains.gas_price]
@@ -214,7 +214,7 @@ denom = "stake"
 
 [chains.packet_filter]
 policy = "allow"
-list = [["ica*", "*"], ["transfer", "*"]]
+list   = [["ica*", "*"], ["transfer", "*"]]
 
 [chains.address_type]
 derivation = "cosmos"
@@ -222,4 +222,4 @@ derivation = "cosmos"
 
 [tracing_server]
 enabled = false
-port = 5555
+port    = 5555
