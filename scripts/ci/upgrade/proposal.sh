@@ -17,9 +17,10 @@ starsd tx distribution fund-community-pool 20000000000000ustars  \
 sleep 5
 starsd q distribution community-pool --node http://stargaze:26657
 
-# HEIGHT=$(starsd status -o json --node http://stargaze:26657 --home $STARGAZE_HOME | jq .sync_info.latest_block_height -r)
+
 starsd status --node http://stargaze:26657 --home $STARGAZE_HOME
-HEIGHT=$(starsd status --node http://stargaze:26657 --home $STARGAZE_HOME | jq .SyncInfo.latest_block_height -r)
+starsd status --node http://stargaze:26657 --home $STARGAZE_HOME | jq
+HEIGHT=$(starsd status --node http://stargaze:26657 --home $STARGAZE_HOME | jq .sync_info.latest_block_height -r)
 
 echo "current height $HEIGHT"
 HEIGHT=$(expr $HEIGHT + 700) 
