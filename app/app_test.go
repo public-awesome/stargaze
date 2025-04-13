@@ -3,7 +3,7 @@ package app_test
 import (
 	"testing"
 
-	"github.com/public-awesome/stargaze/v15/testutil/simapp"
+	"github.com/public-awesome/stargaze/v16/testutil/simapp"
 )
 
 func TestAnteHandler(t *testing.T) {

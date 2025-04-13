@@ -15,8 +15,8 @@ sed -i 's/pruning = "syncable"/pruning = "nothing"/g' $STARGAZE_HOME/config/app.
 sed -i 's/enable = false/enable = true/g' $STARGAZE_HOME/config/app.toml
 sed -i 's/localhost:9090/0.0.0.0:9090/g' $STARGAZE_HOME/config/app.toml
 sed -i 's/localhost:1317/0.0.0.0:1317/g' $STARGAZE_HOME/config/app.toml
-sed -i -e 's/timeout_commit = "5s"/timeout_commit = "100ms"/g' $STARGAZE_HOME/config/config.toml
-sed -i -e 's/timeout_propose = "3s"/timeout_propose = "100ms"/g' $STARGAZE_HOME/config/config.toml
+sed -i -e 's/timeout_commit = "2.75s"/timeout_commit = "100ms"/g' $STARGAZE_HOME/config/config.toml
+sed -i -e 's/timeout_propose = "1.75s"/timeout_propose = "100ms"/g' $STARGAZE_HOME/config/config.toml
 # sed -i -e 's/\"allow_messages\":.*/\"allow_messages\": [\"\/cosmos.bank.v1beta1.MsgSend\", \"\/cosmos.staking.v1beta1.MsgDelegate\"]/g' ~/.starsd/config/genesis.json
 starsd keys --keyring-backend test add validator --home $STARGAZE_HOME
 cat $STARGAZE_HOME/config/app.toml
@@ -27,4 +27,4 @@ starsd genesis add-genesis-account stars103y4f6h80lc45nr8chuzr3fyzqywm9n0gnr394 
 starsd genesis gentx validator 900000000$DENOM --keyring-backend test --chain-id $CHAINID --home $STARGAZE_HOME
 starsd genesis collect-gentxs --home $STARGAZE_HOME
 
-starsd start --pruning nothing --home $STARGAZE_HOME --grpc.address 0.0.0.0:9090 --rpc.laddr tcp://0.0.0.0:26657
+starsd start --pruning nothing --home $STARGAZE_HOME --grpc.address 0.0.0.0:9090 --rpc.laddr tcp://0.0.0.0:26657 --skip-preferred-settings

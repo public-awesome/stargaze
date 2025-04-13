@@ -102,12 +102,12 @@ import (
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
 	ibctm "github.com/cosmos/ibc-go/v8/modules/light-clients/07-tendermint"
 
-	"github.com/public-awesome/stargaze/v15/x/mint"
-	mintkeeper "github.com/public-awesome/stargaze/v15/x/mint/keeper"
-	minttypes "github.com/public-awesome/stargaze/v15/x/mint/types"
-	"github.com/public-awesome/stargaze/v15/x/tokenfactory"
-	tokenfactorykeeper "github.com/public-awesome/stargaze/v15/x/tokenfactory/keeper"
-	tokenfactorytypes "github.com/public-awesome/stargaze/v15/x/tokenfactory/types"
+	"github.com/public-awesome/stargaze/v16/x/mint"
+	mintkeeper "github.com/public-awesome/stargaze/v16/x/mint/keeper"
+	minttypes "github.com/public-awesome/stargaze/v16/x/mint/types"
+	"github.com/public-awesome/stargaze/v16/x/tokenfactory"
+	tokenfactorykeeper "github.com/public-awesome/stargaze/v16/x/tokenfactory/keeper"
+	tokenfactorytypes "github.com/public-awesome/stargaze/v16/x/tokenfactory/types"
 	"github.com/spf13/cast"
 
 	"github.com/cosmos/cosmos-sdk/x/authz"
@@ -119,20 +119,20 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	wasmvm "github.com/CosmWasm/wasmvm/v2"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
-	"github.com/public-awesome/stargaze/v15/docs"
-	sgwasm "github.com/public-awesome/stargaze/v15/internal/wasm"
-	allocmodule "github.com/public-awesome/stargaze/v15/x/alloc"
-	allocmodulekeeper "github.com/public-awesome/stargaze/v15/x/alloc/keeper"
-	allocmoduletypes "github.com/public-awesome/stargaze/v15/x/alloc/types"
-	allocwasm "github.com/public-awesome/stargaze/v15/x/alloc/wasm"
+	"github.com/public-awesome/stargaze/v16/docs"
+	sgwasm "github.com/public-awesome/stargaze/v16/internal/wasm"
+	allocmodule "github.com/public-awesome/stargaze/v16/x/alloc"
+	allocmodulekeeper "github.com/public-awesome/stargaze/v16/x/alloc/keeper"
+	allocmoduletypes "github.com/public-awesome/stargaze/v16/x/alloc/types"
+	allocwasm "github.com/public-awesome/stargaze/v16/x/alloc/wasm"
 
-	cronmodule "github.com/public-awesome/stargaze/v15/x/cron"
-	cronmodulekeeper "github.com/public-awesome/stargaze/v15/x/cron/keeper"
-	cronmoduletypes "github.com/public-awesome/stargaze/v15/x/cron/types"
+	cronmodule "github.com/public-awesome/stargaze/v16/x/cron"
+	cronmodulekeeper "github.com/public-awesome/stargaze/v16/x/cron/keeper"
+	cronmoduletypes "github.com/public-awesome/stargaze/v16/x/cron/types"
 
-	globalfeemodule "github.com/public-awesome/stargaze/v15/x/globalfee"
-	globalfeemodulekeeper "github.com/public-awesome/stargaze/v15/x/globalfee/keeper"
-	globalfeemoduletypes "github.com/public-awesome/stargaze/v15/x/globalfee/types"
+	globalfeemodule "github.com/public-awesome/stargaze/v16/x/globalfee"
+	globalfeemodulekeeper "github.com/public-awesome/stargaze/v16/x/globalfee/keeper"
+	globalfeemoduletypes "github.com/public-awesome/stargaze/v16/x/globalfee/types"
 
 	ibchooks "github.com/cosmos/ibc-apps/modules/ibc-hooks/v8"
 	ibchookskeeper "github.com/cosmos/ibc-apps/modules/ibc-hooks/v8/keeper"
@@ -151,12 +151,12 @@ import (
 	icahostkeeper "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/host/keeper"
 	icahosttypes "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/host/types"
 	icatypes "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/types"
-	stargazerest "github.com/public-awesome/stargaze/v15/internal/rest"
+	stargazerest "github.com/public-awesome/stargaze/v16/internal/rest"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	keepers "github.com/public-awesome/stargaze/v15/app/keepers"
-	sgstatesync "github.com/public-awesome/stargaze/v15/internal/statesync"
+	keepers "github.com/public-awesome/stargaze/v16/app/keepers"
+	sgstatesync "github.com/public-awesome/stargaze/v16/internal/statesync"
 
 	clienthelpers "cosmossdk.io/client/v2/helpers"
 )
@@ -779,7 +779,6 @@ func NewStargazeApp(
 		capability.NewAppModule(appCodec, *app.Keepers.CapabilityKeeper, false),
 		feegrantmodule.NewAppModule(appCodec, app.Keepers.AccountKeeper, app.Keepers.BankKeeper, app.Keepers.FeeGrantKeeper, app.interfaceRegistry),
 		authzmodule.NewAppModule(appCodec, app.Keepers.AuthzKeeper, app.Keepers.AccountKeeper, app.Keepers.BankKeeper, app.interfaceRegistry),
-		crisis.NewAppModule(app.Keepers.CrisisKeeper, skipGenesisInvariants, app.GetSubspace(crisistypes.ModuleName)),
 		gov.NewAppModule(appCodec, &app.Keepers.GovKeeper, app.Keepers.AccountKeeper, app.Keepers.BankKeeper, app.GetSubspace(govtypes.ModuleName)),
 		mint.NewAppModule(appCodec, app.Keepers.MintKeeper, app.Keepers.AccountKeeper),
 		slashing.NewAppModule(appCodec, app.Keepers.SlashingKeeper, app.Keepers.AccountKeeper, app.Keepers.BankKeeper, app.Keepers.StakingKeeper, app.GetSubspace(slashingtypes.ModuleName), app.interfaceRegistry),

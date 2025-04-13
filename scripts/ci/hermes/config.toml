@@ -91,90 +91,90 @@ port = 3001
 
 
 [[chains]]
-id = 'stargaze'
-rpc_addr = 'http://stargaze:26657'
-grpc_addr = 'http://stargaze:9090'
-websocket_addr = 'ws://stargaze:26657/websocket'
-rpc_timeout = '10s'
-account_prefix = 'stars'
-key_name = 'relayer'
-store_prefix = 'ibc'
-default_gas = 100000
-max_gas = 3000000
-gas_price = { price = 1, denom = 'ustars' }
-gas_adjustment = 0.1
-max_msg_num = 30
-max_tx_size = 2097152
-clock_drift = '900s'
+id              = 'stargaze'
+rpc_addr        = 'http://stargaze:26657'
+grpc_addr       = 'http://stargaze:9090'
+websocket_addr  = 'ws://stargaze:26657/websocket'
+rpc_timeout     = '10s'
+account_prefix  = 'stars'
+key_name        = 'relayer'
+store_prefix    = 'ibc'
+default_gas     = 100000
+max_gas         = 3000000
+gas_price       = { price = 1, denom = 'ustars' }
+gas_adjustment  = 0.1
+max_msg_num     = 30
+max_tx_size     = 2097152
+clock_drift     = '3600s'
 trusting_period = '2days'
 trust_threshold = { numerator = '1', denominator = '3' }
-address_type = { derivation = 'cosmos' }
+address_type    = { derivation = 'cosmos' }
 
 [[chains]]
-id = 'gaia'
-rpc_addr = 'http://gaia:26657'
-grpc_addr = 'http://gaia:9090'
-websocket_addr = 'ws://gaia:26657/websocket'
-rpc_timeout = '10s'
-account_prefix = 'cosmos'
-key_name = 'cosmos'
-store_prefix = 'ibc'
-default_gas = 100000
-max_gas = 3000000
-gas_price = { price = 0.025, denom = 'stake' }
-gas_adjustment = 0.1
-max_msg_num = 30
-max_tx_size = 2097152
-clock_drift = '900s'
+id              = 'gaia'
+rpc_addr        = 'http://gaia:26657'
+grpc_addr       = 'http://gaia:9090'
+websocket_addr  = 'ws://gaia:26657/websocket'
+rpc_timeout     = '10s'
+account_prefix  = 'cosmos'
+key_name        = 'cosmos'
+store_prefix    = 'ibc'
+default_gas     = 100000
+max_gas         = 3000000
+gas_price       = { price = 0.025, denom = 'stake' }
+gas_adjustment  = 0.1
+max_msg_num     = 30
+max_tx_size     = 2097152
+clock_drift     = '3600s'
 trusting_period = '2days'
 trust_threshold = { numerator = '1', denominator = '3' }
-address_type = { derivation = 'cosmos' }
+address_type    = { derivation = 'cosmos' }
 
 [[chains]]
-id = 'osmosis'
-rpc_addr = 'http://osmosis:26657'
-grpc_addr = 'http://osmosis:9090'
-websocket_addr = 'ws://osmosis:26657/websocket'
-rpc_timeout = '10s'
-account_prefix = 'osmo'
-key_name = 'osmosis'
-store_prefix = 'ibc'
-default_gas = 100000
-max_gas = 3000000
-gas_price = { price = 0.025, denom = 'uosmo' }
-gas_adjustment = 0.1
-max_msg_num = 30
-max_tx_size = 2097152
-clock_drift = '900s'
+id              = 'osmosis'
+rpc_addr        = 'http://osmosis:26657'
+grpc_addr       = 'http://osmosis:9090'
+websocket_addr  = 'ws://osmosis:26657/websocket'
+rpc_timeout     = '10s'
+account_prefix  = 'osmo'
+key_name        = 'osmosis'
+store_prefix    = 'ibc'
+default_gas     = 100000
+max_gas         = 3000000
+gas_price       = { price = 0.025, denom = 'uosmo' }
+gas_adjustment  = 0.1
+max_msg_num     = 30
+max_tx_size     = 2097152
+clock_drift     = '3600s'
 trusting_period = '2days'
 trust_threshold = { numerator = '1', denominator = '3' }
-address_type = { derivation = 'cosmos' }
+address_type    = { derivation = 'cosmos' }
 
 [[chains]]
-id = 'icad'
-rpc_addr = 'http://icad:26657'
-grpc_addr = 'http://icad:9090'
-websocket_addr = 'ws://icad:26657/websocket'
-rpc_timeout = '10s'
-account_prefix = 'cosmos'
-key_name = 'cosmos'
-store_prefix = 'ibc'
-default_gas = 100000
-max_gas = 3000000
-gas_price = { price = 0.025, denom = 'stake' }
-gas_adjustment = 0.1
-max_msg_num = 30
-max_tx_size = 2097152
-clock_drift = '900s'
+id              = 'icad'
+rpc_addr        = 'http://icad:26657'
+grpc_addr       = 'http://icad:9090'
+websocket_addr  = 'ws://icad:26657/websocket'
+rpc_timeout     = '10s'
+account_prefix  = 'cosmos'
+key_name        = 'cosmos'
+store_prefix    = 'ibc'
+default_gas     = 100000
+max_gas         = 3000000
+gas_price       = { price = 0.025, denom = 'stake' }
+gas_adjustment  = 0.1
+max_msg_num     = 30
+max_tx_size     = 2097152
+clock_drift     = '3600s'
 trusting_period = '2days'
 trust_threshold = { numerator = '1', denominator = '3' }
-address_type = { derivation = 'cosmos' }
+address_type    = { derivation = 'cosmos' }
 
 
 [chains.packet_filter]
 policy = 'allow'
 list = [
-  ['ica*', '*'], # allow relaying on all channels whose port starts with `ica`
+  ['ica*', '*'],     # allow relaying on all channels whose port starts with `ica`
   ['transfer', '*'],
   # Add any other port/channel pairs you wish to relay on
 ]

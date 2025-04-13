@@ -2,8 +2,8 @@ package cron
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v15/x/cron/keeper"
-	"github.com/public-awesome/stargaze/v15/x/cron/types"
+	"github.com/public-awesome/stargaze/v16/x/cron/keeper"
+	"github.com/public-awesome/stargaze/v16/x/cron/types"
 )
 
 // InitGenesis initializes the module's state from a provided genesis state.

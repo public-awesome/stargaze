@@ -127,7 +127,7 @@ docker-test: build-linux
 
 
 test:
-	go test -v -race github.com/public-awesome/stargaze/v15/x/...
+	go test -v -race github.com/public-awesome/stargaze/v16/x/...
 
 test-pfm:
 	cd e2e && go test -v -race -run TestPacketForwardMiddleware .
@@ -192,3 +192,7 @@ proto-lint:
 
 drone-generate:
 	drone starlark --format --target .drone.star.yml
+
+install-mod:
+	go install github.com/marwan-at-work/mod/cmd/mod@latest
+
