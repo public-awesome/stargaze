@@ -43,7 +43,7 @@ require (
 	github.com/cosmos/ibc-apps/modules/ibc-hooks/v8 v8.0.0-00010101000000-000000000000
 	github.com/cosmos/ibc-go/modules/capability v1.0.1
 	github.com/cosmos/ibc-go/modules/light-clients/08-wasm v0.4.2-0.20240730185033-ccd4dc278e72 // modules/light-clients/08-wasm/v0.4.1+ibc-go-v8.4-wasmvm-v2.0
-	github.com/cosmos/ibc-go/v8 v8.6.1
+	github.com/cosmos/ibc-go/v8 v8.7.0
 	github.com/gogo/protobuf v1.3.2
 	github.com/prometheus/client_golang v1.20.5
 	google.golang.org/genproto/googleapis/api v0.0.0-20241202173237-19429a94021a
@@ -225,7 +225,7 @@ replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
 
 	// TODO: update afer official release
-	github.com/cosmos/ibc-apps/modules/ibc-hooks/v8 => github.com/public-awesome/ibc-apps/modules/ibc-hooks/v8 v8.0.0-stargaze
+	github.com/cosmos/ibc-apps/modules/ibc-hooks/v8 => github.com/public-awesome/ibc-apps/modules/ibc-hooks/v8 v8.0.0-stargaze.1
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.9.1
 	// TODO: remove after https://github.com/spf13/viper/issues/1706 gets fixed
 	github.com/spf13/viper => github.com/spf13/viper v1.17.0
