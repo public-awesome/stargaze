@@ -30,8 +30,8 @@ sed -i 's/"leveldb"/"goleveldb"/g' ~/.starsd/config/config.toml
 sed -i 's#"tcp://127.0.0.1:26657"#"tcp://0.0.0.0:26657"#g' ~/.starsd/config/config.toml
 sed -i "s/\"stake\"/\"$DENOM\"/g" ~/.starsd/config/genesis.json
 sed -i "s/\"max_gas\": \"-1\"/\"max_gas\": \"$BLOCK_GAS_LIMIT\"/" ~/.starsd/config/genesis.json
-sed -i 's/timeout_commit = "5s"/timeout_commit = "1s"/g' ~/.starsd/config/config.toml
-sed -i 's/timeout_propose = "3s"/timeout_propose = "1s"/g' ~/.starsd/config/config.toml
+sed -i 's/timeout_commit = "2.75s"/timeout_commit = "1s"/g' ~/.starsd/config/config.toml
+sed -i 's/timeout_propose = "1.75s"/timeout_propose = "1s"/g' ~/.starsd/config/config.toml
 sed -i 's/index_all_keys = false/index_all_keys = true/g' ~/.starsd/config/config.toml
 
 sed -i "s/iavl-cache-size = 781250/iavl-cache-size = $IAVL_CACHE_SIZE/g" ~/.starsd/config/app.toml
