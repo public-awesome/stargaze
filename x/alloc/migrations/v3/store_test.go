@@ -6,9 +6,9 @@ import (
 	"cosmossdk.io/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	stargazeapp "github.com/public-awesome/stargaze/v15/app"
-	v3 "github.com/public-awesome/stargaze/v15/x/alloc/migrations/v3"
-	"github.com/public-awesome/stargaze/v15/x/alloc/types"
+	stargazeapp "github.com/public-awesome/stargaze/v16/app"
+	v3 "github.com/public-awesome/stargaze/v16/x/alloc/migrations/v3"
+	"github.com/public-awesome/stargaze/v16/x/alloc/types"
 	"github.com/stretchr/testify/require"
 
 	"cosmossdk.io/log"

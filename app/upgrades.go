@@ -5,11 +5,11 @@ import (
 
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	upgrades "github.com/public-awesome/stargaze/v15/app/upgrades"
-	mainnetupgradesv15 "github.com/public-awesome/stargaze/v15/app/upgrades/mainnet/v15"
-	mainnetupgradesv16 "github.com/public-awesome/stargaze/v15/app/upgrades/mainnet/v16"
-	testnetupgradesv15b2 "github.com/public-awesome/stargaze/v15/app/upgrades/testnet/v15b2"
-	testnetupgradesv15b3 "github.com/public-awesome/stargaze/v15/app/upgrades/testnet/v15b3"
+	upgrades "github.com/public-awesome/stargaze/v16/app/upgrades"
+	mainnetupgradesv15 "github.com/public-awesome/stargaze/v16/app/upgrades/mainnet/v15"
+	mainnetupgradesv16 "github.com/public-awesome/stargaze/v16/app/upgrades/mainnet/v16"
+	testnetupgradesv15b2 "github.com/public-awesome/stargaze/v16/app/upgrades/testnet/v15b2"
+	testnetupgradesv15b3 "github.com/public-awesome/stargaze/v16/app/upgrades/testnet/v15b3"
 )
 
 var Upgrades = []upgrades.Upgrade{

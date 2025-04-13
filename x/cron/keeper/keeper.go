@@ -8,8 +8,8 @@ import (
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v15/internal/collcompat"
-	"github.com/public-awesome/stargaze/v15/x/cron/types"
+	"github.com/public-awesome/stargaze/v16/internal/collcompat"
+	"github.com/public-awesome/stargaze/v16/x/cron/types"
 )
 
 type (

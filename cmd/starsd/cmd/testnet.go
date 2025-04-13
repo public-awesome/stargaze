@@ -30,7 +30,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/public-awesome/stargaze/v15/app/params"
+	"github.com/public-awesome/stargaze/v16/app/params"
 	"github.com/spf13/cobra"
 )
 

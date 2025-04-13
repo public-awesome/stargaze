@@ -4,10 +4,10 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	keepertest "github.com/public-awesome/stargaze/v15/testutil/keeper"
-	"github.com/public-awesome/stargaze/v15/testutil/sample"
-	"github.com/public-awesome/stargaze/v15/x/cron/keeper"
-	"github.com/public-awesome/stargaze/v15/x/cron/types"
+	keepertest "github.com/public-awesome/stargaze/v16/testutil/keeper"
+	"github.com/public-awesome/stargaze/v16/testutil/sample"
+	"github.com/public-awesome/stargaze/v16/x/cron/keeper"
+	"github.com/public-awesome/stargaze/v16/x/cron/types"
 	"github.com/stretchr/testify/require"
 )
 
