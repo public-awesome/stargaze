@@ -41,8 +41,8 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
-	"github.com/public-awesome/stargaze/v15/app"
-	"github.com/public-awesome/stargaze/v15/app/params"
+	"github.com/public-awesome/stargaze/v16/app"
+	"github.com/public-awesome/stargaze/v16/app/params"
 )
 
 // NewRootCmd creates a new root command for wasmd. It is called once in the

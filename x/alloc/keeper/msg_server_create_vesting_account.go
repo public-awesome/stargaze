@@ -3,7 +3,7 @@ package keeper
 import (
 	"context"
 
-	"github.com/public-awesome/stargaze/v15/x/alloc/types"
+	"github.com/public-awesome/stargaze/v16/x/alloc/types"
 
 	errorsmod "cosmossdk.io/errors"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
