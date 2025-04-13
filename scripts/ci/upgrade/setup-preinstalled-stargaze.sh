@@ -10,7 +10,7 @@ STARGAZE_HOME=/stargaze/starsd
 # Setup stargaze
 starsd init --chain-id $CHAINID $CHAINID --home $STARGAZE_HOME
 cat $STARGAZE_HOME/config/genesis.json | jq '.app_state["interchainaccounts"]["host_genesis_state"]["params"]["allow_messages"]=["*"]' > $STARGAZE_HOME/config/tmp.json && mv $STARGAZE_HOME/config/tmp.json $STARGAZE_HOME/config/genesis.json
-starsd config keyring-backend test --home $STARGAZE_HOME
+starsd config set client keyring-backend test --home $STARGAZE_HOME
 sed -i 's#tcp://127.0.0.1:26657#tcp://0.0.0.0:26657#g' $STARGAZE_HOME/config/config.toml
 sed -i "s/\"stake\"/\"$DENOM\"/g" $STARGAZE_HOME/config/genesis.json
 sed -i 's/pruning = "syncable"/pruning = "nothing"/g' $STARGAZE_HOME/config/app.toml
