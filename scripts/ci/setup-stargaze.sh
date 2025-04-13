@@ -27,4 +27,4 @@ starsd genesis add-genesis-account stars103y4f6h80lc45nr8chuzr3fyzqywm9n0gnr394 
 starsd genesis gentx validator 900000000$DENOM --keyring-backend test --chain-id $CHAINID --home $STARGAZE_HOME
 starsd genesis collect-gentxs --home $STARGAZE_HOME
 
-starsd start --pruning nothing --home $STARGAZE_HOME --grpc.address 0.0.0.0:9090 --rpc.laddr tcp://0.0.0.0:26657
+starsd start --pruning nothing --home $STARGAZE_HOME --grpc.address 0.0.0.0:9090 --rpc.laddr tcp://0.0.0.0:26657 --skip-preferred-settings
