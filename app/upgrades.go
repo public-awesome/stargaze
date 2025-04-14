@@ -10,6 +10,7 @@ import (
 	mainnetupgradesv16 "github.com/public-awesome/stargaze/v16/app/upgrades/mainnet/v16"
 	testnetupgradesv15b2 "github.com/public-awesome/stargaze/v16/app/upgrades/testnet/v15b2"
 	testnetupgradesv15b3 "github.com/public-awesome/stargaze/v16/app/upgrades/testnet/v15b3"
+	testnetupgradesv16 "github.com/public-awesome/stargaze/v16/app/upgrades/testnet/v16"
 )
 
 var Upgrades = []upgrades.Upgrade{
@@ -19,6 +20,7 @@ var Upgrades = []upgrades.Upgrade{
 	// testnet upgrades
 	testnetupgradesv15b2.Upgrade,
 	testnetupgradesv15b3.Upgrade,
+	testnetupgradesv16.Upgrade,
 }
 
 func (app App) RegisterUpgradeHandlers(configurator module.Configurator) {
