@@ -13,16 +13,16 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	ibctransfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
-	minttypes "github.com/public-awesome/stargaze/v16/x/mint/types"
+	minttypes "github.com/public-awesome/stargaze/v17/x/mint/types"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-	alloctypes "github.com/public-awesome/stargaze/v16/x/alloc/types"
+	alloctypes "github.com/public-awesome/stargaze/v17/x/alloc/types"
 
 	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
-	globalfeetypes "github.com/public-awesome/stargaze/v16/x/globalfee/types"
-	tokenfactorytypes "github.com/public-awesome/stargaze/v16/x/tokenfactory/types"
+	globalfeetypes "github.com/public-awesome/stargaze/v17/x/globalfee/types"
+	tokenfactorytypes "github.com/public-awesome/stargaze/v17/x/tokenfactory/types"
 )
 
 const (

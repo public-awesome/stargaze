@@ -2,7 +2,7 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v16/x/alloc/types"
+	"github.com/public-awesome/stargaze/v17/x/alloc/types"
 )
 
 // GetParams returns the total set of alloc module parameters.

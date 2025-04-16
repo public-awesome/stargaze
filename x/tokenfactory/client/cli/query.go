@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 
-	"github.com/public-awesome/stargaze/v16/x/tokenfactory/types"
+	"github.com/public-awesome/stargaze/v17/x/tokenfactory/types"
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"

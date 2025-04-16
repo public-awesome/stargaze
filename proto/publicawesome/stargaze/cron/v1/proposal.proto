@@ -5,7 +5,7 @@ import "amino/amino.proto";
 import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/public-awesome/stargaze/v16/x/cron/types";
+option go_package = "github.com/public-awesome/stargaze/v17/x/cron/types";
 
 // Deprecated: Do not use. To promote a contract, a
 // MsgPromoteToPrivilegedContract can be invoked from the x/gov module via a v1

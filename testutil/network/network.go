@@ -19,7 +19,7 @@ package network
 // 	sdk "github.com/cosmos/cosmos-sdk/types"
 // 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-// 	"github.com/public-awesome/stargaze/v16/app"
+// 	"github.com/public-awesome/stargaze/v17/app"
 // )
 
 // type (

@@ -9,8 +9,8 @@ import (
 	wasmvmtypes "github.com/CosmWasm/wasmvm/v2/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	sgwasm "github.com/public-awesome/stargaze/v16/internal/wasm"
-	"github.com/public-awesome/stargaze/v16/x/alloc/types"
+	sgwasm "github.com/public-awesome/stargaze/v17/internal/wasm"
+	"github.com/public-awesome/stargaze/v17/x/alloc/types"
 )
 
 var _ sgwasm.Encoder = Encoder

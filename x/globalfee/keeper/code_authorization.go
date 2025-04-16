@@ -2,7 +2,7 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v16/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v17/x/globalfee/types"
 )
 
 // IterateCodeAuthorizations executes the given func on all the code authorizations

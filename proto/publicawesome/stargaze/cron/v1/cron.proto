@@ -3,7 +3,7 @@ package publicawesome.stargaze.cron.v1;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/public-awesome/stargaze/v16/x/cron/types";
+option go_package = "github.com/public-awesome/stargaze/v17/x/cron/types";
 
 // Params holds parameters for the cron module.
 message Params {
