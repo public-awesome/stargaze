@@ -5,7 +5,7 @@ import "amino/amino.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/public-awesome/stargaze/v16/x/tokenfactory/types";
+option go_package = "github.com/public-awesome/stargaze/v17/x/tokenfactory/types";
 
 // DenomAuthorityMetadata specifies metadata for addresses that have specific
 // capabilities over a token factory denom. Right now there is only one Admin

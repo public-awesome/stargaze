@@ -4,7 +4,7 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/public-awesome/stargaze/v16/x/cron/types"
+	"github.com/public-awesome/stargaze/v17/x/cron/types"
 )
 
 // SetPrivileged checks if the given contract exists and adds it to the list of privilege contracts

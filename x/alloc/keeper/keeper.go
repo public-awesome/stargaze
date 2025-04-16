@@ -10,8 +10,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/public-awesome/stargaze/v16/internal/collcompat"
-	"github.com/public-awesome/stargaze/v16/x/alloc/types"
+	"github.com/public-awesome/stargaze/v17/internal/collcompat"
+	"github.com/public-awesome/stargaze/v17/x/alloc/types"
 )
 
 type (

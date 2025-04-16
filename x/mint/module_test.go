@@ -9,7 +9,7 @@ package mint_test
 
 // 	"github.com/cosmos/cosmos-sdk/simapp"
 // 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-// 	"github.com/public-awesome/stargaze/v16/x/mint/types"
+// 	"github.com/public-awesome/stargaze/v17/x/mint/types"
 // )
 
 // func TestItCreatesModuleAccountOnInitBlock(t *testing.T) {

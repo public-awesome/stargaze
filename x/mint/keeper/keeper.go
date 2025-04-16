@@ -6,8 +6,8 @@ import (
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v16/internal/collcompat"
-	"github.com/public-awesome/stargaze/v16/x/mint/types"
+	"github.com/public-awesome/stargaze/v17/internal/collcompat"
+	"github.com/public-awesome/stargaze/v17/x/mint/types"
 )
 
 // Keeper of the mint store

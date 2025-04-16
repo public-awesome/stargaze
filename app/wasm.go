@@ -4,7 +4,7 @@ import (
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/gogoproto/proto"
-	tokenfactorytypes "github.com/public-awesome/stargaze/v16/x/tokenfactory/types"
+	tokenfactorytypes "github.com/public-awesome/stargaze/v17/x/tokenfactory/types"
 )
 
 var wasmCapabilities = []string{
