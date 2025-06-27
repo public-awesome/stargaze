@@ -352,7 +352,7 @@ func (m *MsgRemoveContractAuthorization) GetContractAddress() string {
 	return ""
 }
 
-// MsgRemoveContractAuthorizationResponse is the repsonse for executing a contract authorization removal.
+// MsgRemoveContractAuthorizationResponse is the response for executing a contract authorization removal.
 type MsgRemoveContractAuthorizationResponse struct {
 }
 
@@ -445,7 +445,7 @@ func (m *MsgUpdateParams) GetParams() Params {
 	return Params{}
 }
 
-// MsgUpdateParamsResponse is the response for executiong a module's params update.
+// MsgUpdateParamsResponse is the response for execution a module's params update.
 type MsgUpdateParamsResponse struct {
 }
 
