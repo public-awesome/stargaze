@@ -83,6 +83,7 @@ steps:
         - push
       branch:
         - main
+        - jhernadnezb/start-v17
   - name: docker_release
     image: plugins/docker
     settings:
@@ -423,6 +424,6 @@ volumes:
 
 ---
 kind: signature
-hmac: e6f12fcbf76b0a18c45b10171529feee72bb753532d36b0567a23180ef858831
+hmac: f807336366fa3e5a04068c1d910a3b26d64a9a698a7171b53ef3f1712b8d4e77
 
 ...
