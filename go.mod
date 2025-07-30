@@ -30,7 +30,7 @@ require (
 	cosmossdk.io/collections v0.4.0
 	cosmossdk.io/core v0.11.1
 	cosmossdk.io/errors v1.0.2
-	cosmossdk.io/log v1.5.1
+	cosmossdk.io/log v1.6.0
 	cosmossdk.io/math v1.5.3
 	cosmossdk.io/store v1.1.1
 	cosmossdk.io/tools/confix v0.1.2
