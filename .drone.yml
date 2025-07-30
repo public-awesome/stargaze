@@ -33,7 +33,7 @@ steps:
       branch: no-cache
 
   - name: test
-    image: publicawesome/golang:1.23.8-devtooling
+    image: publicawesome/golang:1.24.5-devtooling
     volumes:
       - name: cache
         path: /go
@@ -42,7 +42,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: build
-    image: golang:1.23.8-alpine3.20
+    image: golang:1.24.5-alpine3.21
     volumes:
       - name: cache
         path: /go
@@ -77,7 +77,7 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 16.0.0-alpha.2
+        - 17.0.0-alpha.1
     when:
       event:
         - push
@@ -98,7 +98,7 @@ steps:
         - tag
 
   - name: release
-    image: golang:1.23.8
+    image: golang:1.24.5
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -193,7 +193,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/golang:1.23.8-devtooling
+    image: publicawesome/golang:1.24.5-devtooling
     volumes:
       - name: cache
         path: /go
@@ -281,7 +281,7 @@ steps:
     when:
       branch: no-cache
   - name: build-wrapper
-    image: publicawesome/golang:1.23.8-devtooling
+    image: publicawesome/golang:1.24.5-devtooling
     volumes:
       - name: cache
         path: /go
@@ -314,7 +314,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:15.2.0
+    image: publicawesome/stargaze:16.0.0
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
@@ -347,12 +347,12 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer-v1.7.sh
   - name: proposal
-    image: publicawesome/stargaze:15.2.0
+    image: publicawesome/stargaze:16.0.0
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:16.0.0-beta.1
+    image: publicawesome/stargaze:17.0.0-alpha.1
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -371,7 +371,7 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:16.0.0-beta.1
+    image: publicawesome/stargaze:17.0.0-alpha.1
     commands:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
@@ -410,7 +410,7 @@ steps:
 trigger:
   branch:
     - main
-    - jhernandezb/prepare-main
+    - jhernadnezb/start-v17
   event:
     - pull_request
     - push
@@ -423,6 +423,6 @@ volumes:
 
 ---
 kind: signature
-hmac: d99e08fc236ff3cd86ae6b6e0663e4662bf243a203ab5a15c3fadebb360e1f42
+hmac: e6f12fcbf76b0a18c45b10171529feee72bb753532d36b0567a23180ef858831
 
 ...
