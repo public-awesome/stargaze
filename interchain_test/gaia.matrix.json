@@ -1,12 +1,15 @@
 {
-  "Relayers": ["hermes", "rly"],
+  "Relayers": [
+    "hermes",
+    "rly"
+  ],
   "ChainSets": [
     [
       {
         "Name": "gaia",
         "GasPrices": "0.1uatom",
         "GasAdjustment": 1.7,
-        "Version": "v14.1.0"
+        "Version": "v19.1.0"
       },
       {
         "NumValidators": 2,
