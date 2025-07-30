@@ -54,19 +54,19 @@ steps:
       - echo "Ensuring binary is statically linked ..." && (file $PWD/bin/starsd | grep "statically linked")
     environment:
       GOPROXY: http://goproxy
-  - name: coverage
-    image: plugins/codecov
-    volumes:
-      - name: cache
-        path: /go
-    settings:
-      required: true
-      token:
-        from_secret: codecov-token
-    when:
-      event:
-        - push
-        - pull_request
+  # - name: coverage
+  #   image: plugins/codecov
+  #   volumes:
+  #     - name: cache
+  #       path: /go
+  #   settings:
+  #     required: true
+  #     token:
+  #       from_secret: codecov-token
+  #   when:
+  #     event:
+  #       - push
+  #       - pull_request
   - name: publish-alpha
     image: plugins/docker
     settings:
@@ -130,15 +130,15 @@ steps:
         - '/go/pkg/mod'
     when:
       branch: no-cache
-  - name: discord
-    image: appleboy/drone-discord
-    settings:
-      webhook_id:
-        from_secret: discord_webhook_id
-      webhook_token:
-        from_secret: discord_webhook_token
-    when:
-      status: [success, failure]
+  # - name: discord
+  #   image: appleboy/drone-discord
+  #   settings:
+  #     webhook_id:
+  #       from_secret: discord_webhook_id
+  #     webhook_token:
+  #       from_secret: discord_webhook_token
+  #   when:
+  #     status: [success, failure]
 
 volumes:
 - name: cache
@@ -234,15 +234,15 @@ steps:
     pull: always
     commands:
       - /bin/sh ./scripts/ci/test-ica.sh
-  - name: discord
-    image: appleboy/drone-discord
-    settings:
-      webhook_id:
-        from_secret: discord_webhook_id
-      webhook_token:
-        from_secret: discord_webhook_token
-    when:
-      status: [success, failure]
+  # - name: discord
+  #   image: appleboy/drone-discord
+  #   settings:
+  #     webhook_id:
+  #       from_secret: discord_webhook_id
+  #     webhook_token:
+  #       from_secret: discord_webhook_token
+  #   when:
+  #     status: [success, failure]
 
 trigger:
   branch:
@@ -398,15 +398,15 @@ steps:
     pull: always
     commands:
       - /bin/sh ./scripts/ci/upgrade/test-ica.sh
-  - name: discord
-    image: appleboy/drone-discord
-    settings:
-      webhook_id:
-        from_secret: discord_webhook_id
-      webhook_token:
-        from_secret: discord_webhook_token
-    when:
-      status: [success, failure]
+  # - name: discord
+  #   image: appleboy/drone-discord
+  #   settings:
+  #     webhook_id:
+  #       from_secret: discord_webhook_id
+  #     webhook_token:
+  #       from_secret: discord_webhook_token
+  #   when:
+  #     status: [success, failure]
 
 trigger:
   branch:
