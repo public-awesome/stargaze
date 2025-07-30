@@ -17,7 +17,7 @@ const UpgradeName = "v17"
 
 var Upgrade = upgrades.Upgrade{
 	UpgradeName: UpgradeName,
-	CreateUpgradeHandler: func(mm *module.Manager, cfg module.Configurator, keepers keepers.StargazeKeepers) upgradetypes.UpgradeHandler {
+	CreateUpgradeHandler: func(mm *module.Manager, cfg module.Configurator, _ keepers.StargazeKeepers) upgradetypes.UpgradeHandler {
 		return func(ctx context.Context, _ upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
 			startTime := time.Now()
 			wctx := sdk.UnwrapSDKContext(ctx)
