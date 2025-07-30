@@ -19,16 +19,14 @@ import (
 )
 
 const (
-	initialVersion = "v15.0.0" // The last released git tag version of the stargaze binary. This version of the image is fetched from Heigliner backage repository.
-	upgradeName    = "v16"     // The upcoming version name - Should match with upgrade handler name. This version needs to be built locally for tests. Using `make build-docker`
+	initialVersion = "v16.0.0" // The last released git tag version of the stargaze binary. This version of the image is fetched from Heigliner backage repository.
+	upgradeName    = "v17"     // The upcoming version name - Should match with upgrade handler name. This version needs to be built locally for tests. Using `make build-docker`
 )
 
 const (
 	haltHeightDelta    = int64(20) // The number of blocks after which to apply upgrade after creation of proposal.
 	blocksAfterUpgrade = int64(10) // The number of blocks to wait for after the upgrade has been applied.
 	votingPeriod       = "30s"     // Reducing voting period for testing
-	maxDepositPeriod   = "10s"     // Reducing max deposit period for testing
-	depositDenom       = "ustars"  // The bond denom to be used to deposit for propsals
 )
 
 func TestChainUpgrade(t *testing.T) {

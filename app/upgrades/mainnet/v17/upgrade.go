@@ -1,4 +1,4 @@
-package v16
+package v17
 
 import (
 	"context"
@@ -13,20 +13,16 @@ import (
 )
 
 // next upgrade name
-const UpgradeName = "v16"
+const UpgradeName = "v17"
 
 var Upgrade = upgrades.Upgrade{
 	UpgradeName: UpgradeName,
-	CreateUpgradeHandler: func(mm *module.Manager, cfg module.Configurator, keepers keepers.StargazeKeepers) upgradetypes.UpgradeHandler {
+	CreateUpgradeHandler: func(mm *module.Manager, cfg module.Configurator, _ keepers.StargazeKeepers) upgradetypes.UpgradeHandler {
 		return func(ctx context.Context, _ upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
 			startTime := time.Now()
 			wctx := sdk.UnwrapSDKContext(ctx)
 			wctx.Logger().Info("upgrade started", "upgrade_name", UpgradeName)
 			migrations, err := mm.RunMigrations(ctx, cfg, fromVM)
-			if err != nil {
-				return nil, err
-			}
-			err = keepers.CrisisKeeper.ConstantFee.Set(ctx, sdk.NewInt64Coin("ustars", 100_000_000_000_000))
 			if err != nil {
 				return nil, err
 			}

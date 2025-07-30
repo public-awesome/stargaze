@@ -1,10 +1,13 @@
 {
-  "Relayers": ["hermes", "rly"],
+  "Relayers": [
+    "hermes",
+    "rly"
+  ],
   "ChainSets": [
     [
       {
         "Name": "osmosis",
-        "Version": "v14.0.0",
+        "Version": "v26.0.0",
         "GasAdjustment": 1.7
       },
       {

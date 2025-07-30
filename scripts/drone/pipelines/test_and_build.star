@@ -1,8 +1,8 @@
 
 go_dev_image = "publicawesome/golang:1.23.8-devtooling"
 go_image = "golang:1.23.8-alpine3.20"
-wasmvm_version = "v2.2.3"
-wasmvm_x86_84_hash = "32503fe35a7be202c5f7c3051497d6e4b3cd83079a61f5a0bf72a2a455b6d820"
+wasmvm_version = "v2.2.4"
+wasmvm_x86_84_hash = "70c989684d2b48ca17bbd55bb694bbb136d75c393c067ef3bdbca31d2b23b578"
 docker_image = "docker:24"
 docker_dind_image = "docker:dind"
 
