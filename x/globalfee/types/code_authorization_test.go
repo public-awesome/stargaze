@@ -64,7 +64,6 @@ func TestCodeAuthorizationValidate(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		tc := tc
 		t.Run(tc.testCase, func(t *testing.T) {
 			err := tc.ca.Validate()
 			if tc.expectError {

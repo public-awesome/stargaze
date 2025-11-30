@@ -85,7 +85,6 @@ func TestSetCodeAuthorization(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		tc := tc
 		t.Run(tc.testCase, func(t *testing.T) {
 			k, c := keepertest.GlobalFeeKeeper(t)
 			msgSrvr, ctx := keeper.NewMsgServerImpl(k), c
@@ -153,7 +152,6 @@ func TestRemoveCodeAuthorization(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		tc := tc
 		t.Run(tc.testCase, func(t *testing.T) {
 			k, c := keepertest.GlobalFeeKeeper(t)
 			msgSrvr, ctx := keeper.NewMsgServerImpl(k), c
@@ -293,7 +291,6 @@ func TestSetContractAuthorization(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		tc := tc
 		t.Run(tc.testCase, func(t *testing.T) {
 			k, c := keepertest.GlobalFeeKeeper(t)
 			msgSrvr, ctx := keeper.NewMsgServerImpl(k), c
@@ -377,7 +374,6 @@ func TestRemoveContractAuthorization(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		tc := tc
 		t.Run(tc.testCase, func(t *testing.T) {
 			k, c := keepertest.GlobalFeeKeeper(t)
 			msgSrvr, ctx := keeper.NewMsgServerImpl(k), c

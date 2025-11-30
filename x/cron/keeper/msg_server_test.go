@@ -85,7 +85,6 @@ func TestPromoteToPrivilegedContract(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		tc := tc
 		t.Run(tc.testCase, func(t *testing.T) {
 			k, c := keepertest.CronKeeper(t)
 			msgSrvr, ctx := keeper.NewMsgServerImpl(k), c
@@ -201,7 +200,6 @@ func TestDemoteFromPrivilegedContract(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		tc := tc
 		t.Run(tc.testCase, func(t *testing.T) {
 			k, c := keepertest.CronKeeper(t)
 			msgSrvr, ctx := keeper.NewMsgServerImpl(k), c
@@ -283,7 +281,6 @@ func TestUpdateParams(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		tc := tc
 		t.Run(tc.testCase, func(t *testing.T) {
 			k, c := keepertest.CronKeeper(t)
 			msgSrvr, ctx := keeper.NewMsgServerImpl(k), c
