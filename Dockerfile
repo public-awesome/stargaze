@@ -1,6 +1,6 @@
 # docker build . -t publicawesome/stargaze:latest
 # docker run --rm -it publicawesome/stargaze:latest /bin/sh
-FROM golang:1.23.8-alpine3.20 AS go-builder
+FROM golang:1.25.6-alpine3.23 AS go-builder
 
 
 RUN set -eux; apk add --no-cache ca-certificates build-base git;
@@ -26,7 +26,7 @@ RUN  LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true  make build
 
 
 # --------------------------------------------------------
-FROM alpine:3.20
+FROM alpine:3.23
 
 COPY --from=go-builder /code/bin/starsd /usr/bin/starsd
 RUN apk add -U --no-cache ca-certificates
