@@ -1,0 +1,78 @@
+syntax = "proto3";
+package publicawesome.stargaze.pauser.v1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "publicawesome/stargaze/pauser/v1/pauser.proto";
+
+option go_package = "github.com/public-awesome/stargaze/v17/x/pauser/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // IsContractPaused returns whether a contract is paused.
+  rpc IsContractPaused(QueryIsContractPausedRequest) returns (QueryIsContractPausedResponse) {
+    option (google.api.http).get = "/stargaze/pauser/v1/contract/{contract_address}";
+  }
+  // IsCodeIDPaused returns whether a code ID is paused.
+  rpc IsCodeIDPaused(QueryIsCodeIDPausedRequest) returns (QueryIsCodeIDPausedResponse) {
+    option (google.api.http).get = "/stargaze/pauser/v1/code/{code_id}";
+  }
+  // PausedContracts returns all paused contracts.
+  rpc PausedContracts(QueryPausedContractsRequest) returns (QueryPausedContractsResponse) {
+    option (google.api.http).get = "/stargaze/pauser/v1/contracts";
+  }
+  // PausedCodeIDs returns all paused code IDs.
+  rpc PausedCodeIDs(QueryPausedCodeIDsRequest) returns (QueryPausedCodeIDsResponse) {
+    option (google.api.http).get = "/stargaze/pauser/v1/codes";
+  }
+  // Params returns pauser module's params.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/stargaze/pauser/v1/params";
+  }
+}
+
+// QueryIsContractPausedRequest is the request to check if a contract is paused.
+message QueryIsContractPausedRequest {
+  string contract_address = 1;
+}
+
+// QueryIsContractPausedResponse is the response for checking if a contract is paused.
+message QueryIsContractPausedResponse {
+  bool paused = 1;
+  PausedContract paused_contract = 2;
+}
+
+// QueryIsCodeIDPausedRequest is the request to check if a code ID is paused.
+message QueryIsCodeIDPausedRequest {
+  uint64 code_id = 1;
+}
+
+// QueryIsCodeIDPausedResponse is the response for checking if a code ID is paused.
+message QueryIsCodeIDPausedResponse {
+  bool paused = 1;
+  PausedCodeID paused_code_id = 2;
+}
+
+// QueryPausedContractsRequest is the request to get all paused contracts.
+message QueryPausedContractsRequest {}
+
+// QueryPausedContractsResponse is the response for getting all paused contracts.
+message QueryPausedContractsResponse {
+  repeated PausedContract paused_contracts = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryPausedCodeIDsRequest is the request to get all paused code IDs.
+message QueryPausedCodeIDsRequest {}
+
+// QueryPausedCodeIDsResponse is the response for getting all paused code IDs.
+message QueryPausedCodeIDsResponse {
+  repeated PausedCodeID paused_code_ids = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryParamsRequest request to get module's params.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is the response for getting module's params.
+message QueryParamsResponse {
+  Params params = 1;
+}

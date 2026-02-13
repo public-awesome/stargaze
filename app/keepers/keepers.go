@@ -12,6 +12,7 @@ import (
 	cronmodulekeeper "github.com/public-awesome/stargaze/v17/x/cron/keeper"
 	globalfeemodulekeeper "github.com/public-awesome/stargaze/v17/x/globalfee/keeper"
 	mintkeeper "github.com/public-awesome/stargaze/v17/x/mint/keeper"
+	pausermodulekeeper "github.com/public-awesome/stargaze/v17/x/pauser/keeper"
 	tokenfactorykeeper "github.com/public-awesome/stargaze/v17/x/tokenfactory/keeper"
 
 	evidencekeeper "cosmossdk.io/x/evidence/keeper"
@@ -74,5 +75,6 @@ type StargazeKeepers struct {
 	CronKeeper         cronmodulekeeper.Keeper
 	GlobalFeeKeeper    globalfeemodulekeeper.Keeper
 	MintKeeper         mintkeeper.Keeper
+	PauserKeeper       pausermodulekeeper.Keeper
 	TokenFactoryKeeper tokenfactorykeeper.Keeper
 }

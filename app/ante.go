@@ -18,6 +18,8 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	globalfeeante "github.com/public-awesome/stargaze/v17/x/globalfee/ante"
 	globalfeekeeper "github.com/public-awesome/stargaze/v17/x/globalfee/keeper"
+	pauserante "github.com/public-awesome/stargaze/v17/x/pauser/ante"
+	pauserkeeper "github.com/public-awesome/stargaze/v17/x/pauser/keeper"
 )
 
 // HandlerOptions extend the SDK's AnteHandler options by requiring the IBC
@@ -27,6 +29,7 @@ type HandlerOptions struct {
 	keeper                *ibcore.Keeper
 	govKeeper             govkeeper.Keeper
 	globalfeeKeeper       globalfeekeeper.Keeper
+	pauserKeeper          pauserkeeper.Keeper
 	stakingKeeper         *stakingkeeper.Keeper
 	WasmConfig            *wasmTypes.NodeConfig
 	TXCounterStoreService corestoretypes.KVStoreService
@@ -67,6 +70,7 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		// limit simulation gas
 		wasmkeeper.NewLimitSimulationGasDecorator(options.WasmConfig.SimulationGasLimit),
 		globalfeeante.NewFeeDecorator(options.Codec, options.globalfeeKeeper, options.stakingKeeper),
+		pauserante.NewPauseDecorator(options.pauserKeeper),
 		wasmkeeper.NewCountTXDecorator(options.TXCounterStoreService),
 		ante.NewExtensionOptionsDecorator(options.ExtensionOptionChecker),
 		ante.NewValidateBasicDecorator(),
