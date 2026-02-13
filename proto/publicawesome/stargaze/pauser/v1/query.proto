@@ -1,6 +1,7 @@
 syntax = "proto3";
 package publicawesome.stargaze.pauser.v1;
 
+import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "publicawesome/stargaze/pauser/v1/pauser.proto";
@@ -54,19 +55,25 @@ message QueryIsCodeIDPausedResponse {
 }
 
 // QueryPausedContractsRequest is the request to get all paused contracts.
-message QueryPausedContractsRequest {}
+message QueryPausedContractsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
 
 // QueryPausedContractsResponse is the response for getting all paused contracts.
 message QueryPausedContractsResponse {
   repeated PausedContract paused_contracts = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // QueryPausedCodeIDsRequest is the request to get all paused code IDs.
-message QueryPausedCodeIDsRequest {}
+message QueryPausedCodeIDsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
 
 // QueryPausedCodeIDsResponse is the response for getting all paused code IDs.
 message QueryPausedCodeIDsResponse {
   repeated PausedCodeID paused_code_ids = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // QueryParamsRequest request to get module's params.

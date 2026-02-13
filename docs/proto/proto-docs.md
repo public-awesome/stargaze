@@ -2097,6 +2097,11 @@ QueryParamsResponse is the response for getting module's params.
 QueryPausedCodeIDsRequest is the request to get all paused code IDs.
 
 
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [cosmos.base.query.v1beta1.PageRequest](#cosmos.base.query.v1beta1.PageRequest) |  |  |
+
+
 
 
 
@@ -2110,6 +2115,7 @@ QueryPausedCodeIDsResponse is the response for getting all paused code IDs.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `paused_code_ids` | [PausedCodeID](#publicawesome.stargaze.pauser.v1.PausedCodeID) | repeated |  |
+| `pagination` | [cosmos.base.query.v1beta1.PageResponse](#cosmos.base.query.v1beta1.PageResponse) |  |  |
 
 
 
@@ -2120,6 +2126,11 @@ QueryPausedCodeIDsResponse is the response for getting all paused code IDs.
 
 ### QueryPausedContractsRequest
 QueryPausedContractsRequest is the request to get all paused contracts.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [cosmos.base.query.v1beta1.PageRequest](#cosmos.base.query.v1beta1.PageRequest) |  |  |
 
 
 
@@ -2135,6 +2146,7 @@ QueryPausedContractsResponse is the response for getting all paused contracts.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `paused_contracts` | [PausedContract](#publicawesome.stargaze.pauser.v1.PausedContract) | repeated |  |
+| `pagination` | [cosmos.base.query.v1beta1.PageResponse](#cosmos.base.query.v1beta1.PageResponse) |  |  |
 
 
 

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/public-awesome/stargaze/v17/x/pauser/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -62,31 +63,41 @@ func (q QueryServer) IsCodeIDPaused(c context.Context, req *types.QueryIsCodeIDP
 	}, nil
 }
 
-func (q QueryServer) PausedContracts(c context.Context, _ *types.QueryPausedContractsRequest) (*types.QueryPausedContractsResponse, error) {
-	ctx := sdk.UnwrapSDKContext(c)
-
-	var pausedContracts []types.PausedContract
-	q.keeper.IteratePausedContracts(ctx, func(pc types.PausedContract) bool {
-		pausedContracts = append(pausedContracts, pc)
-		return false
-	})
+func (q QueryServer) PausedContracts(c context.Context, req *types.QueryPausedContractsRequest) (*types.QueryPausedContractsResponse, error) {
+	results, pageRes, err := query.CollectionPaginate(
+		c,
+		q.keeper.PausedContracts,
+		req.GetPagination(),
+		func(_ []byte, value types.PausedContract) (types.PausedContract, error) {
+			return value, nil
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
 
 	return &types.QueryPausedContractsResponse{
-		PausedContracts: pausedContracts,
+		PausedContracts: results,
+		Pagination:      pageRes,
 	}, nil
 }
 
-func (q QueryServer) PausedCodeIDs(c context.Context, _ *types.QueryPausedCodeIDsRequest) (*types.QueryPausedCodeIDsResponse, error) {
-	ctx := sdk.UnwrapSDKContext(c)
-
-	var pausedCodeIDs []types.PausedCodeID
-	q.keeper.IteratePausedCodeIDs(ctx, func(pc types.PausedCodeID) bool {
-		pausedCodeIDs = append(pausedCodeIDs, pc)
-		return false
-	})
+func (q QueryServer) PausedCodeIDs(c context.Context, req *types.QueryPausedCodeIDsRequest) (*types.QueryPausedCodeIDsResponse, error) {
+	results, pageRes, err := query.CollectionPaginate(
+		c,
+		q.keeper.PausedCodeIDs,
+		req.GetPagination(),
+		func(_ uint64, value types.PausedCodeID) (types.PausedCodeID, error) {
+			return value, nil
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
 
 	return &types.QueryPausedCodeIDsResponse{
-		PausedCodeIds: pausedCodeIDs,
+		PausedCodeIds: results,
+		Pagination:    pageRes,
 	}, nil
 }
 
