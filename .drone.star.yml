@@ -31,9 +31,9 @@ steps:
     name: test
   - commands:
       - apk add --no-cache ca-certificates build-base git
-      - wget https://github.com/CosmWasm/wasmvm/releases/download/v2.2.4/libwasmvm_muslc.x86_64.a
+      - wget https://github.com/CosmWasm/wasmvm/releases/download/v2.2.6/libwasmvm_muslc.x86_64.a
         -O /lib/libwasmvm_muslc.x86_64.a
-      - echo '70c989684d2b48ca17bbd55bb694bbb136d75c393c067ef3bdbca31d2b23b578 /lib/libwasmvm_muslc.x86_64.a'
+      - echo 'afc9a6b907667838057b0d8ef03a1ebb9e7d6eac628194d162185ea844816983 /lib/libwasmvm_muslc.x86_64.a'
         | sha256sum -c
       - LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true  make build
       - echo 'Ensuring binary is statically linked ...' && (file $PWD/bin/starsd | grep
