@@ -389,6 +389,366 @@ func (m *MsgUnpauseCodeIDResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgUnpauseCodeIDResponse proto.InternalMessageInfo
 
+// MsgPauseContracts is the request to pause multiple contracts at once.
+type MsgPauseContracts struct {
+	Sender            string   `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
+	ContractAddresses []string `protobuf:"bytes,2,rep,name=contract_addresses,json=contractAddresses,proto3" json:"contract_addresses,omitempty"`
+}
+
+func (m *MsgPauseContracts) Reset()         { *m = MsgPauseContracts{} }
+func (m *MsgPauseContracts) String() string { return proto.CompactTextString(m) }
+func (*MsgPauseContracts) ProtoMessage()    {}
+func (*MsgPauseContracts) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2c81fae4d6ea337e, []int{8}
+}
+func (m *MsgPauseContracts) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgPauseContracts) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgPauseContracts.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgPauseContracts) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgPauseContracts.Merge(m, src)
+}
+func (m *MsgPauseContracts) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgPauseContracts) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgPauseContracts.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgPauseContracts proto.InternalMessageInfo
+
+func (m *MsgPauseContracts) GetSender() string {
+	if m != nil {
+		return m.Sender
+	}
+	return ""
+}
+
+func (m *MsgPauseContracts) GetContractAddresses() []string {
+	if m != nil {
+		return m.ContractAddresses
+	}
+	return nil
+}
+
+// MsgPauseContractsResponse is the response for pausing multiple contracts.
+type MsgPauseContractsResponse struct {
+}
+
+func (m *MsgPauseContractsResponse) Reset()         { *m = MsgPauseContractsResponse{} }
+func (m *MsgPauseContractsResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgPauseContractsResponse) ProtoMessage()    {}
+func (*MsgPauseContractsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2c81fae4d6ea337e, []int{9}
+}
+func (m *MsgPauseContractsResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgPauseContractsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgPauseContractsResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgPauseContractsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgPauseContractsResponse.Merge(m, src)
+}
+func (m *MsgPauseContractsResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgPauseContractsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgPauseContractsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgPauseContractsResponse proto.InternalMessageInfo
+
+// MsgUnpauseContracts is the request to unpause multiple contracts at once.
+type MsgUnpauseContracts struct {
+	Sender            string   `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
+	ContractAddresses []string `protobuf:"bytes,2,rep,name=contract_addresses,json=contractAddresses,proto3" json:"contract_addresses,omitempty"`
+}
+
+func (m *MsgUnpauseContracts) Reset()         { *m = MsgUnpauseContracts{} }
+func (m *MsgUnpauseContracts) String() string { return proto.CompactTextString(m) }
+func (*MsgUnpauseContracts) ProtoMessage()    {}
+func (*MsgUnpauseContracts) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2c81fae4d6ea337e, []int{10}
+}
+func (m *MsgUnpauseContracts) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUnpauseContracts) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUnpauseContracts.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUnpauseContracts) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUnpauseContracts.Merge(m, src)
+}
+func (m *MsgUnpauseContracts) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUnpauseContracts) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUnpauseContracts.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUnpauseContracts proto.InternalMessageInfo
+
+func (m *MsgUnpauseContracts) GetSender() string {
+	if m != nil {
+		return m.Sender
+	}
+	return ""
+}
+
+func (m *MsgUnpauseContracts) GetContractAddresses() []string {
+	if m != nil {
+		return m.ContractAddresses
+	}
+	return nil
+}
+
+// MsgUnpauseContractsResponse is the response for unpausing multiple contracts.
+type MsgUnpauseContractsResponse struct {
+}
+
+func (m *MsgUnpauseContractsResponse) Reset()         { *m = MsgUnpauseContractsResponse{} }
+func (m *MsgUnpauseContractsResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgUnpauseContractsResponse) ProtoMessage()    {}
+func (*MsgUnpauseContractsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2c81fae4d6ea337e, []int{11}
+}
+func (m *MsgUnpauseContractsResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUnpauseContractsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUnpauseContractsResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUnpauseContractsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUnpauseContractsResponse.Merge(m, src)
+}
+func (m *MsgUnpauseContractsResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUnpauseContractsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUnpauseContractsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUnpauseContractsResponse proto.InternalMessageInfo
+
+// MsgPauseCodeIDs is the request to pause multiple code IDs at once.
+type MsgPauseCodeIDs struct {
+	Sender  string   `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
+	CodeIDs []uint64 `protobuf:"varint,2,rep,packed,name=code_ids,json=codeIds,proto3" json:"code_ids,omitempty"`
+}
+
+func (m *MsgPauseCodeIDs) Reset()         { *m = MsgPauseCodeIDs{} }
+func (m *MsgPauseCodeIDs) String() string { return proto.CompactTextString(m) }
+func (*MsgPauseCodeIDs) ProtoMessage()    {}
+func (*MsgPauseCodeIDs) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2c81fae4d6ea337e, []int{12}
+}
+func (m *MsgPauseCodeIDs) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgPauseCodeIDs) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgPauseCodeIDs.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgPauseCodeIDs) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgPauseCodeIDs.Merge(m, src)
+}
+func (m *MsgPauseCodeIDs) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgPauseCodeIDs) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgPauseCodeIDs.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgPauseCodeIDs proto.InternalMessageInfo
+
+func (m *MsgPauseCodeIDs) GetSender() string {
+	if m != nil {
+		return m.Sender
+	}
+	return ""
+}
+
+func (m *MsgPauseCodeIDs) GetCodeIDs() []uint64 {
+	if m != nil {
+		return m.CodeIDs
+	}
+	return nil
+}
+
+// MsgPauseCodeIDsResponse is the response for pausing multiple code IDs.
+type MsgPauseCodeIDsResponse struct {
+}
+
+func (m *MsgPauseCodeIDsResponse) Reset()         { *m = MsgPauseCodeIDsResponse{} }
+func (m *MsgPauseCodeIDsResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgPauseCodeIDsResponse) ProtoMessage()    {}
+func (*MsgPauseCodeIDsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2c81fae4d6ea337e, []int{13}
+}
+func (m *MsgPauseCodeIDsResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgPauseCodeIDsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgPauseCodeIDsResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgPauseCodeIDsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgPauseCodeIDsResponse.Merge(m, src)
+}
+func (m *MsgPauseCodeIDsResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgPauseCodeIDsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgPauseCodeIDsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgPauseCodeIDsResponse proto.InternalMessageInfo
+
+// MsgUnpauseCodeIDs is the request to unpause multiple code IDs at once.
+type MsgUnpauseCodeIDs struct {
+	Sender  string   `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
+	CodeIDs []uint64 `protobuf:"varint,2,rep,packed,name=code_ids,json=codeIds,proto3" json:"code_ids,omitempty"`
+}
+
+func (m *MsgUnpauseCodeIDs) Reset()         { *m = MsgUnpauseCodeIDs{} }
+func (m *MsgUnpauseCodeIDs) String() string { return proto.CompactTextString(m) }
+func (*MsgUnpauseCodeIDs) ProtoMessage()    {}
+func (*MsgUnpauseCodeIDs) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2c81fae4d6ea337e, []int{14}
+}
+func (m *MsgUnpauseCodeIDs) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUnpauseCodeIDs) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUnpauseCodeIDs.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUnpauseCodeIDs) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUnpauseCodeIDs.Merge(m, src)
+}
+func (m *MsgUnpauseCodeIDs) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUnpauseCodeIDs) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUnpauseCodeIDs.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUnpauseCodeIDs proto.InternalMessageInfo
+
+func (m *MsgUnpauseCodeIDs) GetSender() string {
+	if m != nil {
+		return m.Sender
+	}
+	return ""
+}
+
+func (m *MsgUnpauseCodeIDs) GetCodeIDs() []uint64 {
+	if m != nil {
+		return m.CodeIDs
+	}
+	return nil
+}
+
+// MsgUnpauseCodeIDsResponse is the response for unpausing multiple code IDs.
+type MsgUnpauseCodeIDsResponse struct {
+}
+
+func (m *MsgUnpauseCodeIDsResponse) Reset()         { *m = MsgUnpauseCodeIDsResponse{} }
+func (m *MsgUnpauseCodeIDsResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgUnpauseCodeIDsResponse) ProtoMessage()    {}
+func (*MsgUnpauseCodeIDsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2c81fae4d6ea337e, []int{15}
+}
+func (m *MsgUnpauseCodeIDsResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUnpauseCodeIDsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUnpauseCodeIDsResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUnpauseCodeIDsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUnpauseCodeIDsResponse.Merge(m, src)
+}
+func (m *MsgUnpauseCodeIDsResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUnpauseCodeIDsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUnpauseCodeIDsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUnpauseCodeIDsResponse proto.InternalMessageInfo
+
 // MsgUpdateParams is the request for updating module's params.
 type MsgUpdateParams struct {
 	Sender string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
@@ -400,7 +760,7 @@ func (m *MsgUpdateParams) Reset()         { *m = MsgUpdateParams{} }
 func (m *MsgUpdateParams) String() string { return proto.CompactTextString(m) }
 func (*MsgUpdateParams) ProtoMessage()    {}
 func (*MsgUpdateParams) Descriptor() ([]byte, []int) {
-	return fileDescriptor_2c81fae4d6ea337e, []int{8}
+	return fileDescriptor_2c81fae4d6ea337e, []int{16}
 }
 func (m *MsgUpdateParams) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -451,7 +811,7 @@ func (m *MsgUpdateParamsResponse) Reset()         { *m = MsgUpdateParamsResponse
 func (m *MsgUpdateParamsResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgUpdateParamsResponse) ProtoMessage()    {}
 func (*MsgUpdateParamsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_2c81fae4d6ea337e, []int{9}
+	return fileDescriptor_2c81fae4d6ea337e, []int{17}
 }
 func (m *MsgUpdateParamsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -489,6 +849,14 @@ func init() {
 	proto.RegisterType((*MsgPauseCodeIDResponse)(nil), "publicawesome.stargaze.pauser.v1.MsgPauseCodeIDResponse")
 	proto.RegisterType((*MsgUnpauseCodeID)(nil), "publicawesome.stargaze.pauser.v1.MsgUnpauseCodeID")
 	proto.RegisterType((*MsgUnpauseCodeIDResponse)(nil), "publicawesome.stargaze.pauser.v1.MsgUnpauseCodeIDResponse")
+	proto.RegisterType((*MsgPauseContracts)(nil), "publicawesome.stargaze.pauser.v1.MsgPauseContracts")
+	proto.RegisterType((*MsgPauseContractsResponse)(nil), "publicawesome.stargaze.pauser.v1.MsgPauseContractsResponse")
+	proto.RegisterType((*MsgUnpauseContracts)(nil), "publicawesome.stargaze.pauser.v1.MsgUnpauseContracts")
+	proto.RegisterType((*MsgUnpauseContractsResponse)(nil), "publicawesome.stargaze.pauser.v1.MsgUnpauseContractsResponse")
+	proto.RegisterType((*MsgPauseCodeIDs)(nil), "publicawesome.stargaze.pauser.v1.MsgPauseCodeIDs")
+	proto.RegisterType((*MsgPauseCodeIDsResponse)(nil), "publicawesome.stargaze.pauser.v1.MsgPauseCodeIDsResponse")
+	proto.RegisterType((*MsgUnpauseCodeIDs)(nil), "publicawesome.stargaze.pauser.v1.MsgUnpauseCodeIDs")
+	proto.RegisterType((*MsgUnpauseCodeIDsResponse)(nil), "publicawesome.stargaze.pauser.v1.MsgUnpauseCodeIDsResponse")
 	proto.RegisterType((*MsgUpdateParams)(nil), "publicawesome.stargaze.pauser.v1.MsgUpdateParams")
 	proto.RegisterType((*MsgUpdateParamsResponse)(nil), "publicawesome.stargaze.pauser.v1.MsgUpdateParamsResponse")
 }
@@ -498,40 +866,50 @@ func init() {
 }
 
 var fileDescriptor_2c81fae4d6ea337e = []byte{
-	// 523 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x94, 0x4f, 0x6b, 0x13, 0x41,
-	0x18, 0xc6, 0xb3, 0x6a, 0x57, 0x7c, 0x63, 0x4d, 0x58, 0xa4, 0x5d, 0x17, 0xd9, 0x94, 0x78, 0x69,
-	0x8b, 0xdd, 0x35, 0x51, 0x51, 0x83, 0x17, 0xa3, 0x97, 0x1e, 0x82, 0x25, 0xe0, 0x25, 0x08, 0x65,
-	0xb2, 0x33, 0x8c, 0x01, 0x37, 0x33, 0xec, 0x4c, 0x62, 0x23, 0x42, 0x45, 0xf0, 0xac, 0xf8, 0x49,
-	0xfa, 0x31, 0x7a, 0xec, 0xd1, 0x53, 0x90, 0xe4, 0x50, 0xf0, 0x53, 0xc8, 0xce, 0xfe, 0xb1, 0xbb,
-	0xa5, 0x24, 0x2b, 0xf6, 0xb6, 0xfb, 0xee, 0xfb, 0x3c, 0xbf, 0x67, 0x87, 0x87, 0x81, 0x2d, 0x3e,
-	0xea, 0xbf, 0x1f, 0x78, 0xe8, 0x03, 0x11, 0xcc, 0x27, 0xae, 0x90, 0x28, 0xa0, 0xe8, 0x23, 0x71,
-	0x39, 0x1a, 0x09, 0x12, 0xb8, 0xe3, 0x86, 0x2b, 0x0f, 0x1c, 0x1e, 0x30, 0xc9, 0x8c, 0x8d, 0xcc,
-	0xaa, 0x93, 0xac, 0x3a, 0xd1, 0xaa, 0x33, 0x6e, 0x58, 0xeb, 0x1e, 0x13, 0x3e, 0x13, 0xae, 0x2f,
-	0x68, 0xa8, 0xf4, 0x05, 0x8d, 0xa4, 0xd6, 0x6d, 0xca, 0x28, 0x53, 0x8f, 0x6e, 0xf8, 0x14, 0x4f,
-	0x77, 0x16, 0xb2, 0x63, 0x6b, 0xb5, 0x5e, 0xef, 0x43, 0xb5, 0x23, 0xe8, 0x5e, 0x38, 0x7a, 0xc9,
-	0x86, 0x32, 0x40, 0x9e, 0x34, 0xd6, 0x40, 0x17, 0x64, 0x88, 0x49, 0x60, 0x6a, 0x1b, 0xda, 0xe6,
-	0x8d, 0x6e, 0xfc, 0x66, 0x6c, 0x41, 0xd5, 0x8b, 0x77, 0xf6, 0x11, 0xc6, 0x01, 0x11, 0xc2, 0xbc,
-	0xa2, 0x36, 0x2a, 0xc9, 0xfc, 0x45, 0x34, 0x6e, 0x95, 0xbf, 0x9c, 0x1e, 0x6d, 0xc7, 0xba, 0xba,
-	0x05, 0x66, 0x9e, 0xd1, 0x25, 0x82, 0xb3, 0xa1, 0x20, 0x75, 0x0c, 0x46, 0x47, 0xd0, 0x37, 0x43,
-	0x7e, 0xa9, 0x09, 0xee, 0x82, 0x75, 0x9e, 0x92, 0x66, 0xe8, 0xc1, 0xad, 0xbf, 0xf9, 0x30, 0xd9,
-	0x7d, 0x75, 0x21, 0xff, 0x1e, 0x5c, 0xf7, 0x18, 0x26, 0xfb, 0x03, 0xac, 0xb0, 0xd7, 0xda, 0x30,
-	0x9b, 0xd6, 0xf4, 0x48, 0xd4, 0xd5, 0xc3, 0x4f, 0xbb, 0x38, 0x4b, 0x36, 0x61, 0x2d, 0xeb, 0x9d,
-	0x52, 0xdf, 0xaa, 0x93, 0x4f, 0x33, 0xfd, 0x67, 0x6e, 0x74, 0xe6, 0x19, 0xf7, 0x94, 0xfc, 0x43,
-	0x83, 0x4a, 0xf8, 0x91, 0x63, 0x24, 0xc9, 0x1e, 0x0a, 0x90, 0x2f, 0x2e, 0x24, 0xf7, 0x40, 0xe7,
-	0x6a, 0x43, 0x81, 0xcb, 0xcd, 0x4d, 0x67, 0x51, 0x61, 0x9d, 0xc8, 0xb1, 0x6d, 0x1e, 0x4f, 0x6b,
-	0xa5, 0xdf, 0xd3, 0x5a, 0x35, 0xd2, 0xdf, 0x67, 0xfe, 0x40, 0x12, 0x9f, 0xcb, 0x49, 0x37, 0x76,
-	0xcc, 0x06, 0xbe, 0x03, 0xeb, 0xb9, 0x4c, 0x49, 0xde, 0xe6, 0xb7, 0x15, 0xb8, 0xda, 0x11, 0xd4,
-	0x38, 0x84, 0xd5, 0x6c, 0x51, 0x9b, 0x8b, 0xc3, 0xe4, 0x8b, 0x67, 0xb5, 0x8a, 0x6b, 0x92, 0x20,
-	0xc6, 0x57, 0x0d, 0x2a, 0xf9, 0xaa, 0x3e, 0x5a, 0xca, 0x2f, 0xa7, 0xb2, 0x9e, 0xff, 0x8b, 0x2a,
-	0xcd, 0x31, 0x81, 0xf2, 0xd9, 0xb6, 0x3e, 0x28, 0xf2, 0x4b, 0xa1, 0xc2, 0x7a, 0x5a, 0x54, 0x91,
-	0xa2, 0x0f, 0x61, 0x35, 0x5b, 0xd9, 0x66, 0xb1, 0x3f, 0x51, 0xf8, 0x56, 0x71, 0x4d, 0x1a, 0xe0,
-	0x13, 0xdc, 0xcc, 0x14, 0xb7, 0xb1, 0x9c, 0xd7, 0x19, 0x89, 0xf5, 0xac, 0xb0, 0x24, 0xa1, 0x5b,
-	0x2b, 0x9f, 0x4f, 0x8f, 0xb6, 0xb5, 0xf6, 0xeb, 0xe3, 0x99, 0xad, 0x9d, 0xcc, 0x6c, 0xed, 0xd7,
-	0xcc, 0xd6, 0xbe, 0xcf, 0xed, 0xd2, 0xc9, 0xdc, 0x2e, 0xfd, 0x9c, 0xdb, 0xa5, 0xde, 0x63, 0x3a,
-	0x90, 0xef, 0x46, 0x7d, 0xc7, 0x63, 0xbe, 0x1b, 0x51, 0x76, 0xce, 0x5d, 0xc5, 0xe3, 0xc6, 0x13,
-	0xf7, 0x20, 0xb9, 0x90, 0xe5, 0x84, 0x13, 0xd1, 0xd7, 0xd5, 0x6d, 0xfc, 0xf0, 0x4f, 0x00, 0x00,
-	0x00, 0xff, 0xff, 0x59, 0x76, 0xa9, 0x98, 0x3a, 0x06, 0x00, 0x00,
+	// 678 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x96, 0x5f, 0x6b, 0xd3, 0x50,
+	0x18, 0xc6, 0x1b, 0x37, 0x3b, 0xf7, 0xd6, 0x6d, 0x5d, 0x94, 0xad, 0xcb, 0x34, 0x1d, 0x13, 0x64,
+	0x1b, 0x2e, 0xb1, 0x9d, 0x43, 0xad, 0x7a, 0x61, 0xf5, 0x66, 0x17, 0xc5, 0x11, 0xd8, 0x4d, 0x11,
+	0x67, 0x9a, 0x1c, 0x62, 0xc1, 0xf4, 0x84, 0x9c, 0xb4, 0xae, 0x22, 0x4c, 0x06, 0x82, 0x97, 0xe2,
+	0x47, 0xf0, 0x13, 0xec, 0x63, 0xec, 0x72, 0x97, 0x5e, 0x15, 0x69, 0x2f, 0x06, 0x7e, 0x0a, 0xc9,
+	0x9f, 0x1e, 0x7b, 0x4e, 0x5b, 0xda, 0x94, 0xed, 0x2e, 0x3d, 0x7d, 0x9f, 0xf7, 0xf7, 0xe4, 0x7d,
+	0xc2, 0xcb, 0x81, 0x4d, 0xa7, 0x5e, 0xf9, 0x58, 0x35, 0xf4, 0x4f, 0x88, 0x60, 0x1b, 0xa9, 0xc4,
+	0xd3, 0x5d, 0x4b, 0xff, 0x8c, 0x54, 0x47, 0xaf, 0x13, 0xe4, 0xaa, 0x8d, 0x9c, 0xea, 0x1d, 0x29,
+	0x8e, 0x8b, 0x3d, 0x2c, 0xae, 0x31, 0xa5, 0x4a, 0xb7, 0x54, 0x09, 0x4b, 0x95, 0x46, 0x4e, 0x5a,
+	0x36, 0x30, 0xb1, 0x31, 0x51, 0x6d, 0x62, 0xf9, 0x4a, 0x9b, 0x58, 0xa1, 0x54, 0xba, 0x6d, 0x61,
+	0x0b, 0x07, 0x8f, 0xaa, 0xff, 0x14, 0x9d, 0x6e, 0x8f, 0x64, 0x47, 0xad, 0x83, 0xf2, 0xf5, 0x0a,
+	0xa4, 0x4b, 0xc4, 0xda, 0xf7, 0x8f, 0x5e, 0xe1, 0x9a, 0xe7, 0xea, 0x86, 0x27, 0x2e, 0x41, 0x92,
+	0xa0, 0x9a, 0x89, 0xdc, 0x8c, 0xb0, 0x26, 0x6c, 0xcc, 0x6a, 0xd1, 0x2f, 0x71, 0x13, 0xd2, 0x46,
+	0x54, 0x73, 0xa8, 0x9b, 0xa6, 0x8b, 0x08, 0xc9, 0x5c, 0x0b, 0x2a, 0x16, 0xba, 0xe7, 0x2f, 0xc3,
+	0xe3, 0x42, 0xea, 0xe4, 0xe2, 0x74, 0x2b, 0xd2, 0xad, 0x4b, 0x90, 0xe1, 0x19, 0x1a, 0x22, 0x0e,
+	0xae, 0x11, 0xb4, 0x6e, 0x82, 0x58, 0x22, 0xd6, 0x41, 0xcd, 0xb9, 0x52, 0x07, 0x77, 0x40, 0xea,
+	0xa7, 0x50, 0x0f, 0x65, 0x98, 0xff, 0xef, 0xcf, 0x44, 0x7b, 0xaf, 0x87, 0xf2, 0xef, 0xc1, 0x8c,
+	0x81, 0x4d, 0x74, 0x58, 0x35, 0x03, 0xec, 0x74, 0x11, 0xda, 0xad, 0x6c, 0x32, 0x14, 0x69, 0x49,
+	0xff, 0xaf, 0x3d, 0x93, 0x25, 0x67, 0x60, 0x89, 0xed, 0x4d, 0xa9, 0x6f, 0x83, 0xc9, 0x53, 0x4f,
+	0x97, 0xcc, 0x0d, 0x67, 0xce, 0x74, 0xa7, 0x64, 0x0b, 0x16, 0xf9, 0x3c, 0xc8, 0x50, 0xf4, 0x36,
+	0x88, 0xfc, 0xc8, 0x91, 0x3f, 0xf4, 0xa9, 0x8d, 0x59, 0x6d, 0x91, 0x1b, 0x3a, 0xe2, 0xc6, 0xbe,
+	0x0a, 0x2b, 0x7d, 0x20, 0xea, 0xa2, 0x0a, 0xb7, 0xfa, 0x33, 0xb9, 0x1a, 0x1f, 0x77, 0x61, 0x75,
+	0x00, 0x8a, 0x3a, 0x79, 0x07, 0x0b, 0x6c, 0x46, 0xc3, 0x5d, 0xdc, 0x87, 0x1b, 0x51, 0x10, 0x21,
+	0x7b, 0xba, 0x98, 0x6a, 0xb7, 0xb2, 0x33, 0x91, 0x4c, 0x9b, 0x09, 0xa3, 0xe0, 0xf0, 0x2b, 0xb0,
+	0xcc, 0xf5, 0xa7, 0xe8, 0xf7, 0x41, 0x14, 0x4c, 0x4c, 0x97, 0x0c, 0x0f, 0x33, 0x60, 0x09, 0x14,
+	0xff, 0x53, 0x08, 0x5e, 0xfd, 0xc0, 0x31, 0x75, 0x0f, 0xed, 0xeb, 0xae, 0x6e, 0x0f, 0xa7, 0x97,
+	0x21, 0xe9, 0x04, 0x15, 0xc1, 0x27, 0x98, 0xca, 0x6f, 0x28, 0xa3, 0x56, 0x97, 0x12, 0x76, 0x2c,
+	0x66, 0xce, 0x5a, 0xd9, 0xc4, 0xdf, 0x56, 0x36, 0x1d, 0xea, 0x1f, 0x60, 0xbb, 0xea, 0x21, 0xdb,
+	0xf1, 0x9a, 0x5a, 0xd4, 0x71, 0xd0, 0xb8, 0x7a, 0x3d, 0x75, 0xfd, 0xe6, 0x7f, 0xcd, 0xc2, 0x54,
+	0x89, 0x58, 0xe2, 0x31, 0xcc, 0xb1, 0x2b, 0x2b, 0x3f, 0xda, 0x0c, 0xff, 0x25, 0x4a, 0x85, 0xf8,
+	0x9a, 0xae, 0x11, 0xf1, 0x9b, 0x00, 0x0b, 0xfc, 0xd2, 0x7a, 0x34, 0x56, 0x3f, 0x4e, 0x25, 0x3d,
+	0x9f, 0x44, 0x45, 0x7d, 0x34, 0x21, 0xd5, 0xbb, 0xb7, 0x1e, 0xc6, 0x79, 0x25, 0x5f, 0x21, 0x3d,
+	0x89, 0xab, 0xa0, 0xe8, 0x63, 0x98, 0x63, 0x97, 0x57, 0x3e, 0xde, 0x9b, 0x04, 0xf8, 0x42, 0x7c,
+	0x0d, 0x35, 0x70, 0x22, 0xc0, 0x3c, 0xb7, 0xc4, 0x76, 0xe2, 0x47, 0x4a, 0xa4, 0x67, 0x13, 0x88,
+	0xa8, 0x89, 0xef, 0x02, 0xa4, 0xfb, 0x76, 0xd8, 0xee, 0x24, 0x99, 0x12, 0xe9, 0xc5, 0x44, 0x32,
+	0x6a, 0xe5, 0x0b, 0xdc, 0x64, 0x76, 0x58, 0x2e, 0x6e, 0xb4, 0x44, 0x7a, 0x1a, 0x5b, 0xc2, 0xa4,
+	0xc1, 0xed, 0xb1, 0x9d, 0xf8, 0xe1, 0x8e, 0x9b, 0xc6, 0xe0, 0x7d, 0xe6, 0x8f, 0x80, 0xd9, 0x65,
+	0xe3, 0x8d, 0xa0, 0x57, 0x32, 0xe6, 0x08, 0x06, 0x6d, 0x27, 0xe9, 0xfa, 0xd7, 0x8b, 0xd3, 0x2d,
+	0xa1, 0xf8, 0xe6, 0xac, 0x2d, 0x0b, 0xe7, 0x6d, 0x59, 0xf8, 0xd3, 0x96, 0x85, 0x1f, 0x1d, 0x39,
+	0x71, 0xde, 0x91, 0x13, 0xbf, 0x3b, 0x72, 0xa2, 0xbc, 0x6b, 0x55, 0xbd, 0x0f, 0xf5, 0x8a, 0x62,
+	0x60, 0x5b, 0x0d, 0x29, 0xdb, 0x7d, 0xf7, 0xb4, 0x46, 0xee, 0xb1, 0x7a, 0xd4, 0xbd, 0xad, 0x79,
+	0x4d, 0x07, 0x91, 0x4a, 0x32, 0xb8, 0xaa, 0xed, 0xfc, 0x0b, 0x00, 0x00, 0xff, 0xff, 0xec, 0xd2,
+	0x18, 0xb8, 0x57, 0x0a, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -554,6 +932,14 @@ type MsgClient interface {
 	PauseCodeID(ctx context.Context, in *MsgPauseCodeID, opts ...grpc.CallOption) (*MsgPauseCodeIDResponse, error)
 	// UnpauseCodeID unpauses execution of all contracts with a specific code ID.
 	UnpauseCodeID(ctx context.Context, in *MsgUnpauseCodeID, opts ...grpc.CallOption) (*MsgUnpauseCodeIDResponse, error)
+	// PauseContracts pauses execution of multiple contracts at once.
+	PauseContracts(ctx context.Context, in *MsgPauseContracts, opts ...grpc.CallOption) (*MsgPauseContractsResponse, error)
+	// UnpauseContracts unpauses execution of multiple contracts at once.
+	UnpauseContracts(ctx context.Context, in *MsgUnpauseContracts, opts ...grpc.CallOption) (*MsgUnpauseContractsResponse, error)
+	// PauseCodeIDs pauses execution of all contracts with the given code IDs.
+	PauseCodeIDs(ctx context.Context, in *MsgPauseCodeIDs, opts ...grpc.CallOption) (*MsgPauseCodeIDsResponse, error)
+	// UnpauseCodeIDs unpauses execution of all contracts with the given code IDs.
+	UnpauseCodeIDs(ctx context.Context, in *MsgUnpauseCodeIDs, opts ...grpc.CallOption) (*MsgUnpauseCodeIDsResponse, error)
 	// UpdateParams will update module params, callable by governance only.
 	UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error)
 }
@@ -602,6 +988,42 @@ func (c *msgClient) UnpauseCodeID(ctx context.Context, in *MsgUnpauseCodeID, opt
 	return out, nil
 }
 
+func (c *msgClient) PauseContracts(ctx context.Context, in *MsgPauseContracts, opts ...grpc.CallOption) (*MsgPauseContractsResponse, error) {
+	out := new(MsgPauseContractsResponse)
+	err := c.cc.Invoke(ctx, "/publicawesome.stargaze.pauser.v1.Msg/PauseContracts", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) UnpauseContracts(ctx context.Context, in *MsgUnpauseContracts, opts ...grpc.CallOption) (*MsgUnpauseContractsResponse, error) {
+	out := new(MsgUnpauseContractsResponse)
+	err := c.cc.Invoke(ctx, "/publicawesome.stargaze.pauser.v1.Msg/UnpauseContracts", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) PauseCodeIDs(ctx context.Context, in *MsgPauseCodeIDs, opts ...grpc.CallOption) (*MsgPauseCodeIDsResponse, error) {
+	out := new(MsgPauseCodeIDsResponse)
+	err := c.cc.Invoke(ctx, "/publicawesome.stargaze.pauser.v1.Msg/PauseCodeIDs", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) UnpauseCodeIDs(ctx context.Context, in *MsgUnpauseCodeIDs, opts ...grpc.CallOption) (*MsgUnpauseCodeIDsResponse, error) {
+	out := new(MsgUnpauseCodeIDsResponse)
+	err := c.cc.Invoke(ctx, "/publicawesome.stargaze.pauser.v1.Msg/UnpauseCodeIDs", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *msgClient) UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error) {
 	out := new(MsgUpdateParamsResponse)
 	err := c.cc.Invoke(ctx, "/publicawesome.stargaze.pauser.v1.Msg/UpdateParams", in, out, opts...)
@@ -621,6 +1043,14 @@ type MsgServer interface {
 	PauseCodeID(context.Context, *MsgPauseCodeID) (*MsgPauseCodeIDResponse, error)
 	// UnpauseCodeID unpauses execution of all contracts with a specific code ID.
 	UnpauseCodeID(context.Context, *MsgUnpauseCodeID) (*MsgUnpauseCodeIDResponse, error)
+	// PauseContracts pauses execution of multiple contracts at once.
+	PauseContracts(context.Context, *MsgPauseContracts) (*MsgPauseContractsResponse, error)
+	// UnpauseContracts unpauses execution of multiple contracts at once.
+	UnpauseContracts(context.Context, *MsgUnpauseContracts) (*MsgUnpauseContractsResponse, error)
+	// PauseCodeIDs pauses execution of all contracts with the given code IDs.
+	PauseCodeIDs(context.Context, *MsgPauseCodeIDs) (*MsgPauseCodeIDsResponse, error)
+	// UnpauseCodeIDs unpauses execution of all contracts with the given code IDs.
+	UnpauseCodeIDs(context.Context, *MsgUnpauseCodeIDs) (*MsgUnpauseCodeIDsResponse, error)
 	// UpdateParams will update module params, callable by governance only.
 	UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error)
 }
@@ -640,6 +1070,18 @@ func (*UnimplementedMsgServer) PauseCodeID(ctx context.Context, req *MsgPauseCod
 }
 func (*UnimplementedMsgServer) UnpauseCodeID(ctx context.Context, req *MsgUnpauseCodeID) (*MsgUnpauseCodeIDResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UnpauseCodeID not implemented")
+}
+func (*UnimplementedMsgServer) PauseContracts(ctx context.Context, req *MsgPauseContracts) (*MsgPauseContractsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PauseContracts not implemented")
+}
+func (*UnimplementedMsgServer) UnpauseContracts(ctx context.Context, req *MsgUnpauseContracts) (*MsgUnpauseContractsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnpauseContracts not implemented")
+}
+func (*UnimplementedMsgServer) PauseCodeIDs(ctx context.Context, req *MsgPauseCodeIDs) (*MsgPauseCodeIDsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PauseCodeIDs not implemented")
+}
+func (*UnimplementedMsgServer) UnpauseCodeIDs(ctx context.Context, req *MsgUnpauseCodeIDs) (*MsgUnpauseCodeIDsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnpauseCodeIDs not implemented")
 }
 func (*UnimplementedMsgServer) UpdateParams(ctx context.Context, req *MsgUpdateParams) (*MsgUpdateParamsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateParams not implemented")
@@ -721,6 +1163,78 @@ func _Msg_UnpauseCodeID_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_PauseContracts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgPauseContracts)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).PauseContracts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/publicawesome.stargaze.pauser.v1.Msg/PauseContracts",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).PauseContracts(ctx, req.(*MsgPauseContracts))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_UnpauseContracts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgUnpauseContracts)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).UnpauseContracts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/publicawesome.stargaze.pauser.v1.Msg/UnpauseContracts",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).UnpauseContracts(ctx, req.(*MsgUnpauseContracts))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_PauseCodeIDs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgPauseCodeIDs)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).PauseCodeIDs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/publicawesome.stargaze.pauser.v1.Msg/PauseCodeIDs",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).PauseCodeIDs(ctx, req.(*MsgPauseCodeIDs))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_UnpauseCodeIDs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgUnpauseCodeIDs)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).UnpauseCodeIDs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/publicawesome.stargaze.pauser.v1.Msg/UnpauseCodeIDs",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).UnpauseCodeIDs(ctx, req.(*MsgUnpauseCodeIDs))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Msg_UpdateParams_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MsgUpdateParams)
 	if err := dec(in); err != nil {
@@ -758,6 +1272,22 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UnpauseCodeID",
 			Handler:    _Msg_UnpauseCodeID_Handler,
+		},
+		{
+			MethodName: "PauseContracts",
+			Handler:    _Msg_PauseContracts_Handler,
+		},
+		{
+			MethodName: "UnpauseContracts",
+			Handler:    _Msg_UnpauseContracts_Handler,
+		},
+		{
+			MethodName: "PauseCodeIDs",
+			Handler:    _Msg_PauseCodeIDs_Handler,
+		},
+		{
+			MethodName: "UnpauseCodeIDs",
+			Handler:    _Msg_UnpauseCodeIDs_Handler,
 		},
 		{
 			MethodName: "UpdateParams",
@@ -1004,6 +1534,272 @@ func (m *MsgUnpauseCodeIDResponse) MarshalToSizedBuffer(dAtA []byte) (int, error
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgPauseContracts) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgPauseContracts) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgPauseContracts) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.ContractAddresses) > 0 {
+		for iNdEx := len(m.ContractAddresses) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.ContractAddresses[iNdEx])
+			copy(dAtA[i:], m.ContractAddresses[iNdEx])
+			i = encodeVarintTx(dAtA, i, uint64(len(m.ContractAddresses[iNdEx])))
+			i--
+			dAtA[i] = 0x12
+		}
+	}
+	if len(m.Sender) > 0 {
+		i -= len(m.Sender)
+		copy(dAtA[i:], m.Sender)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Sender)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgPauseContractsResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgPauseContractsResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgPauseContractsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgUnpauseContracts) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUnpauseContracts) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUnpauseContracts) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.ContractAddresses) > 0 {
+		for iNdEx := len(m.ContractAddresses) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.ContractAddresses[iNdEx])
+			copy(dAtA[i:], m.ContractAddresses[iNdEx])
+			i = encodeVarintTx(dAtA, i, uint64(len(m.ContractAddresses[iNdEx])))
+			i--
+			dAtA[i] = 0x12
+		}
+	}
+	if len(m.Sender) > 0 {
+		i -= len(m.Sender)
+		copy(dAtA[i:], m.Sender)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Sender)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgUnpauseContractsResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUnpauseContractsResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUnpauseContractsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgPauseCodeIDs) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgPauseCodeIDs) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgPauseCodeIDs) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.CodeIDs) > 0 {
+		dAtA2 := make([]byte, len(m.CodeIDs)*10)
+		var j1 int
+		for _, num := range m.CodeIDs {
+			for num >= 1<<7 {
+				dAtA2[j1] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j1++
+			}
+			dAtA2[j1] = uint8(num)
+			j1++
+		}
+		i -= j1
+		copy(dAtA[i:], dAtA2[:j1])
+		i = encodeVarintTx(dAtA, i, uint64(j1))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Sender) > 0 {
+		i -= len(m.Sender)
+		copy(dAtA[i:], m.Sender)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Sender)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgPauseCodeIDsResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgPauseCodeIDsResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgPauseCodeIDsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgUnpauseCodeIDs) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUnpauseCodeIDs) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUnpauseCodeIDs) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.CodeIDs) > 0 {
+		dAtA4 := make([]byte, len(m.CodeIDs)*10)
+		var j3 int
+		for _, num := range m.CodeIDs {
+			for num >= 1<<7 {
+				dAtA4[j3] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j3++
+			}
+			dAtA4[j3] = uint8(num)
+			j3++
+		}
+		i -= j3
+		copy(dAtA[i:], dAtA4[:j3])
+		i = encodeVarintTx(dAtA, i, uint64(j3))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Sender) > 0 {
+		i -= len(m.Sender)
+		copy(dAtA[i:], m.Sender)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Sender)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgUnpauseCodeIDsResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUnpauseCodeIDsResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUnpauseCodeIDsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func (m *MsgUpdateParams) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -1172,6 +1968,120 @@ func (m *MsgUnpauseCodeID) Size() (n int) {
 }
 
 func (m *MsgUnpauseCodeIDResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgPauseContracts) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Sender)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if len(m.ContractAddresses) > 0 {
+		for _, s := range m.ContractAddresses {
+			l = len(s)
+			n += 1 + l + sovTx(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *MsgPauseContractsResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgUnpauseContracts) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Sender)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if len(m.ContractAddresses) > 0 {
+		for _, s := range m.ContractAddresses {
+			l = len(s)
+			n += 1 + l + sovTx(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *MsgUnpauseContractsResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgPauseCodeIDs) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Sender)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if len(m.CodeIDs) > 0 {
+		l = 0
+		for _, e := range m.CodeIDs {
+			l += sovTx(uint64(e))
+		}
+		n += 1 + sovTx(uint64(l)) + l
+	}
+	return n
+}
+
+func (m *MsgPauseCodeIDsResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgUnpauseCodeIDs) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Sender)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if len(m.CodeIDs) > 0 {
+		l = 0
+		for _, e := range m.CodeIDs {
+			l += sovTx(uint64(e))
+		}
+		n += 1 + sovTx(uint64(l)) + l
+	}
+	return n
+}
+
+func (m *MsgUnpauseCodeIDsResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1817,6 +2727,750 @@ func (m *MsgUnpauseCodeIDResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgUnpauseCodeIDResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgPauseContracts) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgPauseContracts: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgPauseContracts: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sender", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Sender = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ContractAddresses", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ContractAddresses = append(m.ContractAddresses, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgPauseContractsResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgPauseContractsResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgPauseContractsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUnpauseContracts) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUnpauseContracts: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUnpauseContracts: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sender", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Sender = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ContractAddresses", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ContractAddresses = append(m.ContractAddresses, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUnpauseContractsResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUnpauseContractsResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUnpauseContractsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgPauseCodeIDs) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgPauseCodeIDs: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgPauseCodeIDs: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sender", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Sender = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType == 0 {
+				var v uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowTx
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				m.CodeIDs = append(m.CodeIDs, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowTx
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthTx
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthTx
+				}
+				if postIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA[iNdEx:postIndex] {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.CodeIDs) == 0 {
+					m.CodeIDs = make([]uint64, 0, elementCount)
+				}
+				for iNdEx < postIndex {
+					var v uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowTx
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.CodeIDs = append(m.CodeIDs, v)
+				}
+			} else {
+				return fmt.Errorf("proto: wrong wireType = %d for field CodeIDs", wireType)
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgPauseCodeIDsResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgPauseCodeIDsResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgPauseCodeIDsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUnpauseCodeIDs) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUnpauseCodeIDs: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUnpauseCodeIDs: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sender", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Sender = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType == 0 {
+				var v uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowTx
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				m.CodeIDs = append(m.CodeIDs, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowTx
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthTx
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthTx
+				}
+				if postIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA[iNdEx:postIndex] {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.CodeIDs) == 0 {
+					m.CodeIDs = make([]uint64, 0, elementCount)
+				}
+				for iNdEx < postIndex {
+					var v uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowTx
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.CodeIDs = append(m.CodeIDs, v)
+				}
+			} else {
+				return fmt.Errorf("proto: wrong wireType = %d for field CodeIDs", wireType)
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUnpauseCodeIDsResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUnpauseCodeIDsResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUnpauseCodeIDsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

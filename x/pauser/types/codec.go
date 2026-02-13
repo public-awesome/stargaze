@@ -14,6 +14,10 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgUnpauseContract{}, "pauser/MsgUnpauseContract", nil)
 	cdc.RegisterConcrete(&MsgPauseCodeID{}, "pauser/MsgPauseCodeID", nil)
 	cdc.RegisterConcrete(&MsgUnpauseCodeID{}, "pauser/MsgUnpauseCodeID", nil)
+	cdc.RegisterConcrete(&MsgPauseContracts{}, "pauser/MsgPauseContracts", nil)
+	cdc.RegisterConcrete(&MsgUnpauseContracts{}, "pauser/MsgUnpauseContracts", nil)
+	cdc.RegisterConcrete(&MsgPauseCodeIDs{}, "pauser/MsgPauseCodeIDs", nil)
+	cdc.RegisterConcrete(&MsgUnpauseCodeIDs{}, "pauser/MsgUnpauseCodeIDs", nil)
 	cdc.RegisterConcrete(&MsgUpdateParams{}, "pauser/MsgUpdateParams", nil)
 }
 
@@ -24,6 +28,10 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgUnpauseContract{},
 		&MsgPauseCodeID{},
 		&MsgUnpauseCodeID{},
+		&MsgPauseContracts{},
+		&MsgUnpauseContracts{},
+		&MsgPauseCodeIDs{},
+		&MsgUnpauseCodeIDs{},
 		&MsgUpdateParams{},
 	)
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

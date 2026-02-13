@@ -428,6 +428,394 @@ func TestUpdateParams(t *testing.T) {
 	}
 }
 
+func TestPauseContracts(t *testing.T) {
+	testCases := []struct {
+		testCase    string
+		prepare     func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgPauseContracts
+		expectError bool
+	}{
+		{
+			"invalid sender address",
+			func(_ sdk.Context, _ keeper.Keeper) *types.MsgPauseContracts {
+				return &types.MsgPauseContracts{
+					Sender:            "invalid",
+					ContractAddresses: []string{keepertest.TestContract1},
+				}
+			},
+			true,
+		},
+		{
+			"unauthorized sender",
+			func(_ sdk.Context, _ keeper.Keeper) *types.MsgPauseContracts {
+				sender := sample.AccAddress()
+				return &types.MsgPauseContracts{
+					Sender:            sender.String(),
+					ContractAddresses: []string{keepertest.TestContract1},
+				}
+			},
+			true,
+		},
+		{
+			"one non-existent contract in batch",
+			func(ctx sdk.Context, k keeper.Keeper) *types.MsgPauseContracts {
+				sender := sample.AccAddress()
+				params := types.Params{PrivilegedAddresses: []string{sender.String()}}
+				err := k.SetParams(ctx, params)
+				require.NoError(t, err)
+				return &types.MsgPauseContracts{
+					Sender:            sender.String(),
+					ContractAddresses: []string{keepertest.TestContract1, sample.AccAddress().String()},
+				}
+			},
+			true,
+		},
+		{
+			"one already paused contract in batch",
+			func(ctx sdk.Context, k keeper.Keeper) *types.MsgPauseContracts {
+				sender := sample.AccAddress()
+				params := types.Params{PrivilegedAddresses: []string{sender.String()}}
+				err := k.SetParams(ctx, params)
+				require.NoError(t, err)
+
+				err = k.SetPausedContract(ctx, types.PausedContract{
+					ContractAddress: keepertest.TestContract1,
+					PausedBy:        sender.String(),
+				})
+				require.NoError(t, err)
+
+				return &types.MsgPauseContracts{
+					Sender:            sender.String(),
+					ContractAddresses: []string{keepertest.TestContract1, keepertest.TestContract2},
+				}
+			},
+			true,
+		},
+		{
+			"valid batch pause",
+			func(ctx sdk.Context, k keeper.Keeper) *types.MsgPauseContracts {
+				sender := sample.AccAddress()
+				params := types.Params{PrivilegedAddresses: []string{sender.String()}}
+				err := k.SetParams(ctx, params)
+				require.NoError(t, err)
+				return &types.MsgPauseContracts{
+					Sender:            sender.String(),
+					ContractAddresses: []string{keepertest.TestContract1, keepertest.TestContract2},
+				}
+			},
+			false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.testCase, func(t *testing.T) {
+			k, c := keepertest.PauserKeeper(t)
+			msgSrvr := keeper.NewMsgServerImpl(k)
+
+			msg := tc.prepare(c, k)
+			_, err := msgSrvr.PauseContracts(c, msg)
+
+			if tc.expectError {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				for _, addr := range msg.ContractAddresses {
+					contractAddr := sdk.MustAccAddressFromBech32(addr)
+					require.True(t, k.IsContractPaused(c, contractAddr))
+				}
+			}
+		})
+	}
+}
+
+func TestUnpauseContracts(t *testing.T) {
+	testCases := []struct {
+		testCase    string
+		prepare     func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgUnpauseContracts
+		expectError bool
+	}{
+		{
+			"invalid sender address",
+			func(_ sdk.Context, _ keeper.Keeper) *types.MsgUnpauseContracts {
+				return &types.MsgUnpauseContracts{
+					Sender:            "invalid",
+					ContractAddresses: []string{keepertest.TestContract1},
+				}
+			},
+			true,
+		},
+		{
+			"unauthorized sender",
+			func(_ sdk.Context, _ keeper.Keeper) *types.MsgUnpauseContracts {
+				sender := sample.AccAddress()
+				return &types.MsgUnpauseContracts{
+					Sender:            sender.String(),
+					ContractAddresses: []string{keepertest.TestContract1},
+				}
+			},
+			true,
+		},
+		{
+			"one not paused contract in batch",
+			func(ctx sdk.Context, k keeper.Keeper) *types.MsgUnpauseContracts {
+				sender := sample.AccAddress()
+				params := types.Params{PrivilegedAddresses: []string{sender.String()}}
+				err := k.SetParams(ctx, params)
+				require.NoError(t, err)
+
+				err = k.SetPausedContract(ctx, types.PausedContract{
+					ContractAddress: keepertest.TestContract1,
+					PausedBy:        sender.String(),
+				})
+				require.NoError(t, err)
+
+				return &types.MsgUnpauseContracts{
+					Sender:            sender.String(),
+					ContractAddresses: []string{keepertest.TestContract1, keepertest.TestContract2},
+				}
+			},
+			true,
+		},
+		{
+			"valid batch unpause",
+			func(ctx sdk.Context, k keeper.Keeper) *types.MsgUnpauseContracts {
+				sender := sample.AccAddress()
+				params := types.Params{PrivilegedAddresses: []string{sender.String()}}
+				err := k.SetParams(ctx, params)
+				require.NoError(t, err)
+
+				for _, addr := range []string{keepertest.TestContract1, keepertest.TestContract2} {
+					err = k.SetPausedContract(ctx, types.PausedContract{
+						ContractAddress: addr,
+						PausedBy:        sender.String(),
+					})
+					require.NoError(t, err)
+				}
+
+				return &types.MsgUnpauseContracts{
+					Sender:            sender.String(),
+					ContractAddresses: []string{keepertest.TestContract1, keepertest.TestContract2},
+				}
+			},
+			false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.testCase, func(t *testing.T) {
+			k, c := keepertest.PauserKeeper(t)
+			msgSrvr := keeper.NewMsgServerImpl(k)
+
+			msg := tc.prepare(c, k)
+			_, err := msgSrvr.UnpauseContracts(c, msg)
+
+			if tc.expectError {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				for _, addr := range msg.ContractAddresses {
+					contractAddr := sdk.MustAccAddressFromBech32(addr)
+					require.False(t, k.IsContractPaused(c, contractAddr))
+				}
+			}
+		})
+	}
+}
+
+func TestPauseCodeIDs(t *testing.T) {
+	testCases := []struct {
+		testCase    string
+		prepare     func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgPauseCodeIDs
+		expectError bool
+	}{
+		{
+			"invalid sender address",
+			func(_ sdk.Context, _ keeper.Keeper) *types.MsgPauseCodeIDs {
+				return &types.MsgPauseCodeIDs{
+					Sender:  "invalid",
+					CodeIDs: []uint64{1},
+				}
+			},
+			true,
+		},
+		{
+			"unauthorized sender",
+			func(_ sdk.Context, _ keeper.Keeper) *types.MsgPauseCodeIDs {
+				sender := sample.AccAddress()
+				return &types.MsgPauseCodeIDs{
+					Sender:  sender.String(),
+					CodeIDs: []uint64{1},
+				}
+			},
+			true,
+		},
+		{
+			"one non-existent code ID in batch",
+			func(ctx sdk.Context, k keeper.Keeper) *types.MsgPauseCodeIDs {
+				sender := sample.AccAddress()
+				params := types.Params{PrivilegedAddresses: []string{sender.String()}}
+				err := k.SetParams(ctx, params)
+				require.NoError(t, err)
+				return &types.MsgPauseCodeIDs{
+					Sender:  sender.String(),
+					CodeIDs: []uint64{1, 999},
+				}
+			},
+			true,
+		},
+		{
+			"one already paused code ID in batch",
+			func(ctx sdk.Context, k keeper.Keeper) *types.MsgPauseCodeIDs {
+				sender := sample.AccAddress()
+				params := types.Params{PrivilegedAddresses: []string{sender.String()}}
+				err := k.SetParams(ctx, params)
+				require.NoError(t, err)
+
+				err = k.SetPausedCodeID(ctx, types.PausedCodeID{
+					CodeID:   1,
+					PausedBy: sender.String(),
+				})
+				require.NoError(t, err)
+
+				return &types.MsgPauseCodeIDs{
+					Sender:  sender.String(),
+					CodeIDs: []uint64{1, 2},
+				}
+			},
+			true,
+		},
+		{
+			"valid batch pause",
+			func(ctx sdk.Context, k keeper.Keeper) *types.MsgPauseCodeIDs {
+				sender := sample.AccAddress()
+				params := types.Params{PrivilegedAddresses: []string{sender.String()}}
+				err := k.SetParams(ctx, params)
+				require.NoError(t, err)
+				return &types.MsgPauseCodeIDs{
+					Sender:  sender.String(),
+					CodeIDs: []uint64{1, 2},
+				}
+			},
+			false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.testCase, func(t *testing.T) {
+			k, c := keepertest.PauserKeeper(t)
+			msgSrvr := keeper.NewMsgServerImpl(k)
+
+			msg := tc.prepare(c, k)
+			_, err := msgSrvr.PauseCodeIDs(c, msg)
+
+			if tc.expectError {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				for _, codeID := range msg.CodeIDs {
+					require.True(t, k.IsCodeIDPaused(c, codeID))
+				}
+			}
+		})
+	}
+}
+
+func TestUnpauseCodeIDs(t *testing.T) {
+	testCases := []struct {
+		testCase    string
+		prepare     func(ctx sdk.Context, keeper keeper.Keeper) *types.MsgUnpauseCodeIDs
+		expectError bool
+	}{
+		{
+			"invalid sender address",
+			func(_ sdk.Context, _ keeper.Keeper) *types.MsgUnpauseCodeIDs {
+				return &types.MsgUnpauseCodeIDs{
+					Sender:  "invalid",
+					CodeIDs: []uint64{1},
+				}
+			},
+			true,
+		},
+		{
+			"unauthorized sender",
+			func(_ sdk.Context, _ keeper.Keeper) *types.MsgUnpauseCodeIDs {
+				sender := sample.AccAddress()
+				return &types.MsgUnpauseCodeIDs{
+					Sender:  sender.String(),
+					CodeIDs: []uint64{1},
+				}
+			},
+			true,
+		},
+		{
+			"one not paused code ID in batch",
+			func(ctx sdk.Context, k keeper.Keeper) *types.MsgUnpauseCodeIDs {
+				sender := sample.AccAddress()
+				params := types.Params{PrivilegedAddresses: []string{sender.String()}}
+				err := k.SetParams(ctx, params)
+				require.NoError(t, err)
+
+				err = k.SetPausedCodeID(ctx, types.PausedCodeID{
+					CodeID:   1,
+					PausedBy: sender.String(),
+				})
+				require.NoError(t, err)
+
+				return &types.MsgUnpauseCodeIDs{
+					Sender:  sender.String(),
+					CodeIDs: []uint64{1, 2},
+				}
+			},
+			true,
+		},
+		{
+			"valid batch unpause",
+			func(ctx sdk.Context, k keeper.Keeper) *types.MsgUnpauseCodeIDs {
+				sender := sample.AccAddress()
+				params := types.Params{PrivilegedAddresses: []string{sender.String()}}
+				err := k.SetParams(ctx, params)
+				require.NoError(t, err)
+
+				for _, codeID := range []uint64{1, 2} {
+					err = k.SetPausedCodeID(ctx, types.PausedCodeID{
+						CodeID:   codeID,
+						PausedBy: sender.String(),
+					})
+					require.NoError(t, err)
+				}
+
+				return &types.MsgUnpauseCodeIDs{
+					Sender:  sender.String(),
+					CodeIDs: []uint64{1, 2},
+				}
+			},
+			false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.testCase, func(t *testing.T) {
+			k, c := keepertest.PauserKeeper(t)
+			msgSrvr := keeper.NewMsgServerImpl(k)
+
+			msg := tc.prepare(c, k)
+			_, err := msgSrvr.UnpauseCodeIDs(c, msg)
+
+			if tc.expectError {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				for _, codeID := range msg.CodeIDs {
+					require.False(t, k.IsCodeIDPaused(c, codeID))
+				}
+			}
+		})
+	}
+}
+
 func TestIsExecutionPaused(t *testing.T) {
 	t.Run("direct contract pause", func(t *testing.T) {
 		k, ctx := keepertest.PauserKeeper(t)

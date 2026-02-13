@@ -169,6 +169,163 @@ func (k msgServer) UnpauseCodeID(goCtx context.Context, msg *types.MsgUnpauseCod
 	return &types.MsgUnpauseCodeIDResponse{}, nil
 }
 
+func (k msgServer) PauseContracts(goCtx context.Context, msg *types.MsgPauseContracts) (*types.MsgPauseContractsResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, err := sdk.AccAddressFromBech32(msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+	if !k.IsPrivilegedAddress(ctx, msg.Sender) {
+		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender is not a privileged address")
+	}
+
+	for _, addr := range msg.ContractAddresses {
+		contractAddr, err := sdk.AccAddressFromBech32(addr)
+		if err != nil {
+			return nil, err
+		}
+		if !k.wasmKeeper.HasContractInfo(ctx, contractAddr) {
+			return nil, errorsmod.Wrapf(types.ErrContractNotExist, "contract %s does not exist", addr)
+		}
+		if k.Keeper.IsContractPaused(ctx, contractAddr) {
+			return nil, errorsmod.Wrapf(types.ErrAlreadyPaused, "contract %s is already paused", addr)
+		}
+	}
+
+	for _, addr := range msg.ContractAddresses {
+		pc := types.PausedContract{
+			ContractAddress: addr,
+			PausedBy:        msg.Sender,
+			PausedAt:        ctx.BlockTime(),
+		}
+		if err := k.SetPausedContract(ctx, pc); err != nil {
+			return nil, err
+		}
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeContractPaused,
+				sdk.NewAttribute(types.AttributeKeyContractAddress, addr),
+				sdk.NewAttribute(types.AttributeKeyPausedBy, msg.Sender),
+			),
+		)
+	}
+
+	return &types.MsgPauseContractsResponse{}, nil
+}
+
+func (k msgServer) UnpauseContracts(goCtx context.Context, msg *types.MsgUnpauseContracts) (*types.MsgUnpauseContractsResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, err := sdk.AccAddressFromBech32(msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+	if !k.IsPrivilegedAddress(ctx, msg.Sender) {
+		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender is not a privileged address")
+	}
+
+	for _, addr := range msg.ContractAddresses {
+		contractAddr, err := sdk.AccAddressFromBech32(addr)
+		if err != nil {
+			return nil, err
+		}
+		if !k.Keeper.IsContractPaused(ctx, contractAddr) {
+			return nil, errorsmod.Wrapf(types.ErrNotPaused, "contract %s is not paused", addr)
+		}
+	}
+
+	for _, addr := range msg.ContractAddresses {
+		contractAddr, _ := sdk.AccAddressFromBech32(addr)
+		if err := k.DeletePausedContract(ctx, contractAddr); err != nil {
+			return nil, err
+		}
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeContractUnpaused,
+				sdk.NewAttribute(types.AttributeKeyContractAddress, addr),
+				sdk.NewAttribute(types.AttributeKeyPausedBy, msg.Sender),
+			),
+		)
+	}
+
+	return &types.MsgUnpauseContractsResponse{}, nil
+}
+
+func (k msgServer) PauseCodeIDs(goCtx context.Context, msg *types.MsgPauseCodeIDs) (*types.MsgPauseCodeIDsResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, err := sdk.AccAddressFromBech32(msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+	if !k.IsPrivilegedAddress(ctx, msg.Sender) {
+		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender is not a privileged address")
+	}
+
+	for _, codeID := range msg.CodeIDs {
+		if k.wasmKeeper.GetCodeInfo(ctx, codeID) == nil {
+			return nil, errorsmod.Wrapf(types.ErrCodeIDNotExist, "code ID %d does not exist", codeID)
+		}
+		if k.Keeper.IsCodeIDPaused(ctx, codeID) {
+			return nil, errorsmod.Wrapf(types.ErrAlreadyPaused, "code ID %d is already paused", codeID)
+		}
+	}
+
+	for _, codeID := range msg.CodeIDs {
+		pc := types.PausedCodeID{
+			CodeID:   codeID,
+			PausedBy: msg.Sender,
+			PausedAt: ctx.BlockTime(),
+		}
+		if err := k.SetPausedCodeID(ctx, pc); err != nil {
+			return nil, err
+		}
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeCodeIDPaused,
+				sdk.NewAttribute(types.AttributeKeyCodeID, strconv.FormatUint(codeID, 10)),
+				sdk.NewAttribute(types.AttributeKeyPausedBy, msg.Sender),
+			),
+		)
+	}
+
+	return &types.MsgPauseCodeIDsResponse{}, nil
+}
+
+func (k msgServer) UnpauseCodeIDs(goCtx context.Context, msg *types.MsgUnpauseCodeIDs) (*types.MsgUnpauseCodeIDsResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, err := sdk.AccAddressFromBech32(msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+	if !k.IsPrivilegedAddress(ctx, msg.Sender) {
+		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender is not a privileged address")
+	}
+
+	for _, codeID := range msg.CodeIDs {
+		if !k.Keeper.IsCodeIDPaused(ctx, codeID) {
+			return nil, errorsmod.Wrapf(types.ErrNotPaused, "code ID %d is not paused", codeID)
+		}
+	}
+
+	for _, codeID := range msg.CodeIDs {
+		if err := k.DeletePausedCodeID(ctx, codeID); err != nil {
+			return nil, err
+		}
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeCodeIDUnpaused,
+				sdk.NewAttribute(types.AttributeKeyCodeID, strconv.FormatUint(codeID, 10)),
+				sdk.NewAttribute(types.AttributeKeyPausedBy, msg.Sender),
+			),
+		)
+	}
+
+	return &types.MsgUnpauseCodeIDsResponse{}, nil
+}
+
 func (k msgServer) UpdateParams(goCtx context.Context, msg *types.MsgUpdateParams) (*types.MsgUpdateParamsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
