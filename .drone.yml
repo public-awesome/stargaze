@@ -77,13 +77,13 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 17.0.0-alpha.1
+        - 18.0.0-alpha.1
     when:
       event:
         - push
       branch:
         - main
-        - jhernadnezb/start-v17
+        - pausable-execution
   - name: docker_release
     image: plugins/docker
     settings:
@@ -315,7 +315,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:16.0.0
+    image: publicawesome/stargaze:17.0.0
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
@@ -348,12 +348,12 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer-v1.7.sh
   - name: proposal
-    image: publicawesome/stargaze:16.0.0
+    image: publicawesome/stargaze:17.0.0
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:17.0.0-alpha.1
+    image: publicawesome/stargaze:18.0.0-alpha.1
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -372,7 +372,7 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:17.0.0-alpha.1
+    image: publicawesome/stargaze:18.0.0-alpha.1
     commands:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
@@ -411,7 +411,7 @@ steps:
 trigger:
   branch:
     - main
-    - jhernadnezb/start-v17
+    - pausable-execution
   event:
     - pull_request
     - push
@@ -424,6 +424,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 5ebd27c416e2bcf517d79e1108b66534d11979a650b11404ffe89d07d59e1de9
+hmac: ceed82c69575f0c33263dcb264057ccdd1a51947c0206752b5149be27f8b2449
 
 ...
