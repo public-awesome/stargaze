@@ -180,7 +180,20 @@ func (k msgServer) PauseContracts(goCtx context.Context, msg *types.MsgPauseCont
 		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender is not a privileged address")
 	}
 
+	if len(msg.ContractAddresses) == 0 {
+		return nil, errorsmod.Wrap(types.ErrInvalidRequest, "contract addresses cannot be empty")
+	}
+	if len(msg.ContractAddresses) > types.MaxBatchSize {
+		return nil, errorsmod.Wrapf(types.ErrInvalidRequest, "batch size %d exceeds maximum %d", len(msg.ContractAddresses), types.MaxBatchSize)
+	}
+
+	seen := make(map[string]bool, len(msg.ContractAddresses))
 	for _, addr := range msg.ContractAddresses {
+		if seen[addr] {
+			return nil, errorsmod.Wrapf(types.ErrDuplicate, "duplicate contract address %s", addr)
+		}
+		seen[addr] = true
+
 		contractAddr, err := sdk.AccAddressFromBech32(addr)
 		if err != nil {
 			return nil, err
@@ -225,7 +238,21 @@ func (k msgServer) UnpauseContracts(goCtx context.Context, msg *types.MsgUnpause
 		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender is not a privileged address")
 	}
 
+	if len(msg.ContractAddresses) == 0 {
+		return nil, errorsmod.Wrap(types.ErrInvalidRequest, "contract addresses cannot be empty")
+	}
+	if len(msg.ContractAddresses) > types.MaxBatchSize {
+		return nil, errorsmod.Wrapf(types.ErrInvalidRequest, "batch size %d exceeds maximum %d", len(msg.ContractAddresses), types.MaxBatchSize)
+	}
+
+	seen := make(map[string]bool, len(msg.ContractAddresses))
+	contractAddrs := make([]sdk.AccAddress, 0, len(msg.ContractAddresses))
 	for _, addr := range msg.ContractAddresses {
+		if seen[addr] {
+			return nil, errorsmod.Wrapf(types.ErrDuplicate, "duplicate contract address %s", addr)
+		}
+		seen[addr] = true
+
 		contractAddr, err := sdk.AccAddressFromBech32(addr)
 		if err != nil {
 			return nil, err
@@ -233,17 +260,17 @@ func (k msgServer) UnpauseContracts(goCtx context.Context, msg *types.MsgUnpause
 		if !k.Keeper.IsContractPaused(ctx, contractAddr) {
 			return nil, errorsmod.Wrapf(types.ErrNotPaused, "contract %s is not paused", addr)
 		}
+		contractAddrs = append(contractAddrs, contractAddr)
 	}
 
-	for _, addr := range msg.ContractAddresses {
-		contractAddr, _ := sdk.AccAddressFromBech32(addr)
+	for i, contractAddr := range contractAddrs {
 		if err := k.DeletePausedContract(ctx, contractAddr); err != nil {
 			return nil, err
 		}
 		ctx.EventManager().EmitEvent(
 			sdk.NewEvent(
 				types.EventTypeContractUnpaused,
-				sdk.NewAttribute(types.AttributeKeyContractAddress, addr),
+				sdk.NewAttribute(types.AttributeKeyContractAddress, msg.ContractAddresses[i]),
 				sdk.NewAttribute(types.AttributeKeyPausedBy, msg.Sender),
 			),
 		)
@@ -263,7 +290,20 @@ func (k msgServer) PauseCodeIDs(goCtx context.Context, msg *types.MsgPauseCodeID
 		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender is not a privileged address")
 	}
 
+	if len(msg.CodeIDs) == 0 {
+		return nil, errorsmod.Wrap(types.ErrInvalidRequest, "code IDs cannot be empty")
+	}
+	if len(msg.CodeIDs) > types.MaxBatchSize {
+		return nil, errorsmod.Wrapf(types.ErrInvalidRequest, "batch size %d exceeds maximum %d", len(msg.CodeIDs), types.MaxBatchSize)
+	}
+
+	seen := make(map[uint64]bool, len(msg.CodeIDs))
 	for _, codeID := range msg.CodeIDs {
+		if seen[codeID] {
+			return nil, errorsmod.Wrapf(types.ErrDuplicate, "duplicate code ID %d", codeID)
+		}
+		seen[codeID] = true
+
 		if k.wasmKeeper.GetCodeInfo(ctx, codeID) == nil {
 			return nil, errorsmod.Wrapf(types.ErrCodeIDNotExist, "code ID %d does not exist", codeID)
 		}
@@ -304,7 +344,20 @@ func (k msgServer) UnpauseCodeIDs(goCtx context.Context, msg *types.MsgUnpauseCo
 		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender is not a privileged address")
 	}
 
+	if len(msg.CodeIDs) == 0 {
+		return nil, errorsmod.Wrap(types.ErrInvalidRequest, "code IDs cannot be empty")
+	}
+	if len(msg.CodeIDs) > types.MaxBatchSize {
+		return nil, errorsmod.Wrapf(types.ErrInvalidRequest, "batch size %d exceeds maximum %d", len(msg.CodeIDs), types.MaxBatchSize)
+	}
+
+	seen := make(map[uint64]bool, len(msg.CodeIDs))
 	for _, codeID := range msg.CodeIDs {
+		if seen[codeID] {
+			return nil, errorsmod.Wrapf(types.ErrDuplicate, "duplicate code ID %d", codeID)
+		}
+		seen[codeID] = true
+
 		if !k.Keeper.IsCodeIDPaused(ctx, codeID) {
 			return nil, errorsmod.Wrapf(types.ErrNotPaused, "code ID %d is not paused", codeID)
 		}

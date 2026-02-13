@@ -916,7 +916,7 @@ func NewStargazeApp(
 		wasmtypes.ModuleName,
 		cronmoduletypes.ModuleName,
 		globalfeemoduletypes.ModuleName, // should be after wasm
-		pausermoduletypes.ModuleName,   // should be after wasm
+		pausermoduletypes.ModuleName,    // should be after wasm
 		ibchookstypes.ModuleName,
 		packetforwardtypes.ModuleName,
 		ibcwasmtypes.ModuleName,

@@ -456,6 +456,34 @@ func TestPauseContracts(t *testing.T) {
 			true,
 		},
 		{
+			"empty contract addresses",
+			func(ctx sdk.Context, k keeper.Keeper) *types.MsgPauseContracts {
+				sender := sample.AccAddress()
+				params := types.Params{PrivilegedAddresses: []string{sender.String()}}
+				err := k.SetParams(ctx, params)
+				require.NoError(t, err)
+				return &types.MsgPauseContracts{
+					Sender:            sender.String(),
+					ContractAddresses: []string{},
+				}
+			},
+			true,
+		},
+		{
+			"duplicate contract address in batch",
+			func(ctx sdk.Context, k keeper.Keeper) *types.MsgPauseContracts {
+				sender := sample.AccAddress()
+				params := types.Params{PrivilegedAddresses: []string{sender.String()}}
+				err := k.SetParams(ctx, params)
+				require.NoError(t, err)
+				return &types.MsgPauseContracts{
+					Sender:            sender.String(),
+					ContractAddresses: []string{keepertest.TestContract1, keepertest.TestContract1},
+				}
+			},
+			true,
+		},
+		{
 			"one non-existent contract in batch",
 			func(ctx sdk.Context, k keeper.Keeper) *types.MsgPauseContracts {
 				sender := sample.AccAddress()
@@ -556,6 +584,41 @@ func TestUnpauseContracts(t *testing.T) {
 			true,
 		},
 		{
+			"empty contract addresses",
+			func(ctx sdk.Context, k keeper.Keeper) *types.MsgUnpauseContracts {
+				sender := sample.AccAddress()
+				params := types.Params{PrivilegedAddresses: []string{sender.String()}}
+				err := k.SetParams(ctx, params)
+				require.NoError(t, err)
+				return &types.MsgUnpauseContracts{
+					Sender:            sender.String(),
+					ContractAddresses: []string{},
+				}
+			},
+			true,
+		},
+		{
+			"duplicate contract address in batch",
+			func(ctx sdk.Context, k keeper.Keeper) *types.MsgUnpauseContracts {
+				sender := sample.AccAddress()
+				params := types.Params{PrivilegedAddresses: []string{sender.String()}}
+				err := k.SetParams(ctx, params)
+				require.NoError(t, err)
+
+				err = k.SetPausedContract(ctx, types.PausedContract{
+					ContractAddress: keepertest.TestContract1,
+					PausedBy:        sender.String(),
+				})
+				require.NoError(t, err)
+
+				return &types.MsgUnpauseContracts{
+					Sender:            sender.String(),
+					ContractAddresses: []string{keepertest.TestContract1, keepertest.TestContract1},
+				}
+			},
+			true,
+		},
+		{
 			"one not paused contract in batch",
 			func(ctx sdk.Context, k keeper.Keeper) *types.MsgUnpauseContracts {
 				sender := sample.AccAddress()
@@ -646,6 +709,34 @@ func TestPauseCodeIDs(t *testing.T) {
 				return &types.MsgPauseCodeIDs{
 					Sender:  sender.String(),
 					CodeIDs: []uint64{1},
+				}
+			},
+			true,
+		},
+		{
+			"empty code IDs",
+			func(ctx sdk.Context, k keeper.Keeper) *types.MsgPauseCodeIDs {
+				sender := sample.AccAddress()
+				params := types.Params{PrivilegedAddresses: []string{sender.String()}}
+				err := k.SetParams(ctx, params)
+				require.NoError(t, err)
+				return &types.MsgPauseCodeIDs{
+					Sender:  sender.String(),
+					CodeIDs: []uint64{},
+				}
+			},
+			true,
+		},
+		{
+			"duplicate code ID in batch",
+			func(ctx sdk.Context, k keeper.Keeper) *types.MsgPauseCodeIDs {
+				sender := sample.AccAddress()
+				params := types.Params{PrivilegedAddresses: []string{sender.String()}}
+				err := k.SetParams(ctx, params)
+				require.NoError(t, err)
+				return &types.MsgPauseCodeIDs{
+					Sender:  sender.String(),
+					CodeIDs: []uint64{1, 1},
 				}
 			},
 			true,
@@ -745,6 +836,41 @@ func TestUnpauseCodeIDs(t *testing.T) {
 				return &types.MsgUnpauseCodeIDs{
 					Sender:  sender.String(),
 					CodeIDs: []uint64{1},
+				}
+			},
+			true,
+		},
+		{
+			"empty code IDs",
+			func(ctx sdk.Context, k keeper.Keeper) *types.MsgUnpauseCodeIDs {
+				sender := sample.AccAddress()
+				params := types.Params{PrivilegedAddresses: []string{sender.String()}}
+				err := k.SetParams(ctx, params)
+				require.NoError(t, err)
+				return &types.MsgUnpauseCodeIDs{
+					Sender:  sender.String(),
+					CodeIDs: []uint64{},
+				}
+			},
+			true,
+		},
+		{
+			"duplicate code ID in batch",
+			func(ctx sdk.Context, k keeper.Keeper) *types.MsgUnpauseCodeIDs {
+				sender := sample.AccAddress()
+				params := types.Params{PrivilegedAddresses: []string{sender.String()}}
+				err := k.SetParams(ctx, params)
+				require.NoError(t, err)
+
+				err = k.SetPausedCodeID(ctx, types.PausedCodeID{
+					CodeID:   1,
+					PausedBy: sender.String(),
+				})
+				require.NoError(t, err)
+
+				return &types.MsgUnpauseCodeIDs{
+					Sender:  sender.String(),
+					CodeIDs: []uint64{1, 1},
 				}
 			},
 			true,

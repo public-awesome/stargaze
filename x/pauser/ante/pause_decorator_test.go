@@ -10,13 +10,13 @@ import (
 
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cometbft/cometbft/crypto"
 	"github.com/cometbft/cometbft/crypto/secp256k1"
+	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
@@ -438,7 +438,7 @@ func (s *PauseDecoratorTestSuite) TestAuthzExecNestedTooDeepRejected() {
 // DeployPauserTestContract stores and instantiates the pauser test contract.
 // It returns (contractAddr, codeID).
 func (s *PauseDecoratorTestSuite) DeployPauserTestContract(senderAddr string) (string, uint64) {
-	b, err := getContractBytes("pauser_test_contract.wasm")
+	b, err := getContractBytes("../testdata/pauser_test_contract.wasm")
 	s.Require().NoError(err)
 
 	storeRes, err := s.msgServer.StoreCode(s.ctx, &wasmtypes.MsgStoreCode{

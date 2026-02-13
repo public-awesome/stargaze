@@ -2,6 +2,9 @@ package types
 
 import errorsmod "cosmossdk.io/errors"
 
+// MaxBatchSize is the maximum number of entries allowed in a single batch message.
+const MaxBatchSize = 50
+
 var (
 	DefaultCodespace    = ModuleName
 	ErrContractPaused   = errorsmod.Register(DefaultCodespace, 2, "contract is paused")
@@ -12,4 +15,6 @@ var (
 	ErrAlreadyPaused    = errorsmod.Register(DefaultCodespace, 7, "already paused")
 	ErrNotPaused        = errorsmod.Register(DefaultCodespace, 8, "not paused")
 	ErrNestedMsgTooDeep = errorsmod.Register(DefaultCodespace, 9, "nested message depth exceeds maximum")
+	ErrInvalidRequest   = errorsmod.Register(DefaultCodespace, 10, "invalid request")
+	ErrDuplicate        = errorsmod.Register(DefaultCodespace, 11, "duplicate entry")
 )
