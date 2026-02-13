@@ -382,6 +382,7 @@ steps:
       - starsd q distribution community-pool --node http://stargaze-upgraded:26657
       - starsd q interchain-accounts host params --node http://stargaze-upgraded:26657
       - starsd q consensus params --node http://stargaze-upgraded:26657
+      - starsd q pauser params --node http://stargaze-upgraded:26657
     environment:
       GOPROXY: http://goproxy
   - name: relayer-upgrade-start
@@ -424,6 +425,6 @@ volumes:
 
 ---
 kind: signature
-hmac: f6fe3bd0500dcf674c9e1625a0e451cfb7371b5372d0174702c6f5f37bc55124
+hmac: 78eb982b06fd6589f1f3250ec6a888f1b338c4b39c522d5c3b664806d81881d4
 
 ...
