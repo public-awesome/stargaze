@@ -27,7 +27,7 @@ func (k msgServer) SetCodeAuthorization(goCtx context.Context, msg *types.MsgSet
 	if err != nil {
 		return nil, err
 	}
-	if !k.IsPrivilegedAddress(ctx, msg.Sender) {
+	if !k.isAuthorized(ctx, msg.Sender) {
 		return nil, errorsmod.Wrap(types.ErrUnauthorized, "sender address is not authorized address to set code authorization")
 	}
 	err = k.Keeper.SetCodeAuthorization(ctx, *msg.CodeAuthorization)

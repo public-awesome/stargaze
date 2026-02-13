@@ -106,8 +106,11 @@ func (mfd FeeDecorator) isZeroFeeMsg(ctx sdk.Context, msg *wasmtypes.MsgExecuteC
 	if err == nil {
 		return isAuthorizedMethod(msg.GetMsg(), contractAuth.GetMethods())
 	}
-	codeID := mfd.feeKeeper.GetContractInfo(ctx, contactAddr).CodeID
-	codeAuth, err := mfd.feeKeeper.GetCodeAuthorization(ctx, codeID)
+	contractInfo := mfd.feeKeeper.GetContractInfo(ctx, contactAddr)
+	if contractInfo == nil {
+		return false
+	}
+	codeAuth, err := mfd.feeKeeper.GetCodeAuthorization(ctx, contractInfo.CodeID)
 	if err == nil {
 		return isAuthorizedMethod(msg.GetMsg(), codeAuth.GetMethods())
 	}
