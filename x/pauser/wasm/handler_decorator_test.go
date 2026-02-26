@@ -156,6 +156,69 @@ func TestPauseMessengerNonExecuteWasmMsgAllowed(t *testing.T) {
 	require.True(t, called, "wrapped messenger should have been called")
 }
 
+func TestPauseMessengerPausedContractMigrateRejected(t *testing.T) {
+	k, ctx := keepertest.PauserKeeper(t)
+
+	// Pause target contract.
+	err := k.SetPausedContract(ctx, types.PausedContract{
+		ContractAddress: keepertest.TestContract2,
+		PausedBy:        "someone",
+	})
+	require.NoError(t, err)
+
+	wrapped := &mockMessenger{}
+	decorator := pauserwasm.NewPauseMessageHandlerDecorator(&k)
+	messenger := decorator(wrapped)
+
+	callerAddr := sdk.MustAccAddressFromBech32(keepertest.TestContract1)
+
+	// Migrate submessage to paused contract must be blocked by pause decorator.
+	msg := wasmvmtypes.CosmosMsg{
+		Wasm: &wasmvmtypes.WasmMsg{
+			Migrate: &wasmvmtypes.MigrateMsg{
+				ContractAddr: keepertest.TestContract2,
+				NewCodeID:    2,
+				Msg:          []byte(`{}`),
+			},
+		},
+	}
+
+	_, _, _, err = messenger.DispatchMsg(ctx, callerAddr, "", msg)
+	require.Error(t, err)
+	require.ErrorIs(t, err, types.ErrContractPaused)
+}
+
+func TestPauseMessengerIBCContextPausedContractRejected(t *testing.T) {
+	k, ctx := keepertest.PauserKeeper(t)
+
+	err := k.SetPausedContract(ctx, types.PausedContract{
+		ContractAddress: keepertest.TestContract2,
+		PausedBy:        "someone",
+	})
+	require.NoError(t, err)
+
+	wrapped := &mockMessenger{}
+	decorator := pauserwasm.NewPauseMessageHandlerDecorator(&k)
+	messenger := decorator(wrapped)
+
+	callerAddr := sdk.MustAccAddressFromBech32(keepertest.TestContract1)
+
+	// Simulate IBC-related dispatch context by setting a non-empty IBC port ID.
+	msg := wasmvmtypes.CosmosMsg{
+		Wasm: &wasmvmtypes.WasmMsg{
+			Execute: &wasmvmtypes.ExecuteMsg{
+				ContractAddr: keepertest.TestContract2,
+				Msg:          []byte(`{"increment":{}}`),
+				Funds:        nil,
+			},
+		},
+	}
+
+	_, _, _, err = messenger.DispatchMsg(ctx, callerAddr, "wasm."+keepertest.TestContract1, msg)
+	require.Error(t, err)
+	require.ErrorIs(t, err, types.ErrContractPaused)
+}
+
 func TestPauseMessengerNonWasmMsgAllowed(t *testing.T) {
 	k, ctx := keepertest.PauserKeeper(t)
 
