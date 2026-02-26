@@ -17,7 +17,7 @@ type ContractPauseKeeper interface {
 	IsExecutionPaused(ctx sdk.Context, contractAddr sdk.AccAddress) bool
 }
 
-// PauseDecorator rejects MsgExecuteContract transactions targeting paused contracts.
+// PauseDecorator rejects wasm execution/migration transactions targeting paused contracts.
 type PauseDecorator struct {
 	pauseKeeper ContractPauseKeeper
 }
@@ -27,7 +27,7 @@ func NewPauseDecorator(pauseKeeper ContractPauseKeeper) PauseDecorator {
 	return PauseDecorator{pauseKeeper: pauseKeeper}
 }
 
-// AnteHandle checks if any MsgExecuteContract in the tx targets a paused contract.
+// AnteHandle checks if any supported wasm tx message targets a paused contract.
 // It also recursively inspects messages nested inside authz.MsgExec.
 func (pd PauseDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (sdk.Context, error) {
 	for _, msg := range tx.GetMsgs() {
@@ -38,7 +38,7 @@ func (pd PauseDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, n
 	return next(ctx, tx, simulate)
 }
 
-// checkMsg inspects a single message for paused contract execution,
+// checkMsg inspects a single message for paused contract execution/migration,
 // recursing into authz.MsgExec to prevent bypass. Returns an error if
 // nesting exceeds maxNestedMsgDepth.
 func (pd PauseDecorator) checkMsg(ctx sdk.Context, msg sdk.Msg, depth int) error {
@@ -48,6 +48,30 @@ func (pd PauseDecorator) checkMsg(ctx sdk.Context, msg sdk.Msg, depth int) error
 
 	switch msg := msg.(type) {
 	case *wasmtypes.MsgExecuteContract:
+		contractAddr, err := sdk.AccAddressFromBech32(msg.Contract)
+		if err != nil {
+			return nil
+		}
+		if pd.pauseKeeper.IsExecutionPaused(ctx, contractAddr) {
+			return types.ErrContractPaused
+		}
+	case *wasmtypes.MsgMigrateContract:
+		contractAddr, err := sdk.AccAddressFromBech32(msg.Contract)
+		if err != nil {
+			return nil
+		}
+		if pd.pauseKeeper.IsExecutionPaused(ctx, contractAddr) {
+			return types.ErrContractPaused
+		}
+	case *wasmtypes.MsgSudoContract:
+		contractAddr, err := sdk.AccAddressFromBech32(msg.Contract)
+		if err != nil {
+			return nil
+		}
+		if pd.pauseKeeper.IsExecutionPaused(ctx, contractAddr) {
+			return types.ErrContractPaused
+		}
+	case *wasmtypes.MsgStoreAndMigrateContract:
 		contractAddr, err := sdk.AccAddressFromBech32(msg.Contract)
 		if err != nil {
 			return nil

@@ -206,6 +206,155 @@ func (s *PauseDecoratorTestSuite) TestPausedContractRejected() {
 	s.Require().ErrorIs(err, pausertypes.ErrContractPaused)
 }
 
+func (s *PauseDecoratorTestSuite) TestPausedContractMigrateRejected() {
+	s.SetupTest()
+	s.SetupWasmMsgServer()
+	s.txBuilder = s.clientCtx.TxConfig.NewTxBuilder()
+
+	priv1, _, addr1 := testdata.KeyTestPubAddr()
+
+	contractAddr, codeID := s.DeployContract(addr1.String())
+
+	// Pause the contract
+	err := s.app.Keepers.PauserKeeper.SetPausedContract(s.ctx, pausertypes.PausedContract{
+		ContractAddress: contractAddr,
+		PausedBy:        addr1.String(),
+	})
+	s.Require().NoError(err)
+
+	// Migrate on paused contract must be blocked by ante handler.
+	s.txBuilder.SetMsgs(&wasmtypes.MsgMigrateContract{
+		Sender:   addr1.String(),
+		Contract: contractAddr,
+		CodeID:   codeID,
+		Msg:      []byte(`{}`),
+	})
+	s.txBuilder.SetGasLimit(200_000)
+
+	testTx, err := s.CreateTestTx(s.ctx, []cryptotypes.PrivKey{priv1}, []uint64{0}, []uint64{0}, "", signing.SignMode_SIGN_MODE_DIRECT)
+	s.Require().NoError(err)
+
+	pauseDecorator := pauserante.NewPauseDecorator(s.app.Keepers.PauserKeeper)
+	anteHandler := sdk.ChainAnteDecorators(pauseDecorator)
+
+	_, err = anteHandler(s.ctx, testTx, false)
+	s.Require().Error(err)
+	s.Require().ErrorIs(err, pausertypes.ErrContractPaused)
+}
+
+func (s *PauseDecoratorTestSuite) TestAuthzExecPausedContractMigrateRejected() {
+	s.SetupTest()
+	s.SetupWasmMsgServer()
+	s.txBuilder = s.clientCtx.TxConfig.NewTxBuilder()
+
+	priv1, _, addr1 := testdata.KeyTestPubAddr()
+
+	contractAddr, codeID := s.DeployContract(addr1.String())
+
+	// Pause the contract
+	err := s.app.Keepers.PauserKeeper.SetPausedContract(s.ctx, pausertypes.PausedContract{
+		ContractAddress: contractAddr,
+		PausedBy:        addr1.String(),
+	})
+	s.Require().NoError(err)
+
+	innerMsg := &wasmtypes.MsgMigrateContract{
+		Sender:   addr1.String(),
+		Contract: contractAddr,
+		CodeID:   codeID,
+		Msg:      []byte(`{}`),
+	}
+	innerMsgAny, err := codectypes.NewAnyWithValue(innerMsg)
+	s.Require().NoError(err)
+
+	authzExec := &authz.MsgExec{
+		Grantee: addr1.String(),
+		Msgs:    []*codectypes.Any{innerMsgAny},
+	}
+
+	s.txBuilder.SetMsgs(authzExec)
+	s.txBuilder.SetGasLimit(200_000)
+
+	testTx, err := s.CreateTestTx(s.ctx, []cryptotypes.PrivKey{priv1}, []uint64{0}, []uint64{0}, "", signing.SignMode_SIGN_MODE_DIRECT)
+	s.Require().NoError(err)
+
+	pauseDecorator := pauserante.NewPauseDecorator(s.app.Keepers.PauserKeeper)
+	anteHandler := sdk.ChainAnteDecorators(pauseDecorator)
+
+	_, err = anteHandler(s.ctx, testTx, false)
+	s.Require().Error(err)
+	s.Require().ErrorIs(err, pausertypes.ErrContractPaused)
+}
+
+func (s *PauseDecoratorTestSuite) TestPausedContractSudoRejected() {
+	s.SetupTest()
+	s.SetupWasmMsgServer()
+	s.txBuilder = s.clientCtx.TxConfig.NewTxBuilder()
+
+	priv1, _, addr1 := testdata.KeyTestPubAddr()
+
+	contractAddr, _ := s.DeployContract(addr1.String())
+
+	// Pause the contract
+	err := s.app.Keepers.PauserKeeper.SetPausedContract(s.ctx, pausertypes.PausedContract{
+		ContractAddress: contractAddr,
+		PausedBy:        addr1.String(),
+	})
+	s.Require().NoError(err)
+
+	s.txBuilder.SetMsgs(&wasmtypes.MsgSudoContract{
+		Authority: addr1.String(),
+		Contract:  contractAddr,
+		Msg:       []byte(`{}`),
+	})
+	s.txBuilder.SetGasLimit(200_000)
+
+	testTx, err := s.CreateTestTx(s.ctx, []cryptotypes.PrivKey{priv1}, []uint64{0}, []uint64{0}, "", signing.SignMode_SIGN_MODE_DIRECT)
+	s.Require().NoError(err)
+
+	pauseDecorator := pauserante.NewPauseDecorator(s.app.Keepers.PauserKeeper)
+	anteHandler := sdk.ChainAnteDecorators(pauseDecorator)
+
+	_, err = anteHandler(s.ctx, testTx, false)
+	s.Require().Error(err)
+	s.Require().ErrorIs(err, pausertypes.ErrContractPaused)
+}
+
+func (s *PauseDecoratorTestSuite) TestPausedContractStoreAndMigrateRejected() {
+	s.SetupTest()
+	s.SetupWasmMsgServer()
+	s.txBuilder = s.clientCtx.TxConfig.NewTxBuilder()
+
+	priv1, _, addr1 := testdata.KeyTestPubAddr()
+
+	contractAddr, _ := s.DeployContract(addr1.String())
+
+	// Pause the contract
+	err := s.app.Keepers.PauserKeeper.SetPausedContract(s.ctx, pausertypes.PausedContract{
+		ContractAddress: contractAddr,
+		PausedBy:        addr1.String(),
+	})
+	s.Require().NoError(err)
+
+	s.txBuilder.SetMsgs(&wasmtypes.MsgStoreAndMigrateContract{
+		Authority:    addr1.String(),
+		WASMByteCode: []byte("not-executed-in-ante"),
+		Contract:     contractAddr,
+		Msg:          []byte(`{}`),
+	})
+	s.txBuilder.SetGasLimit(200_000)
+
+	testTx, err := s.CreateTestTx(s.ctx, []cryptotypes.PrivKey{priv1}, []uint64{0}, []uint64{0}, "", signing.SignMode_SIGN_MODE_DIRECT)
+	s.Require().NoError(err)
+
+	pauseDecorator := pauserante.NewPauseDecorator(s.app.Keepers.PauserKeeper)
+	anteHandler := sdk.ChainAnteDecorators(pauseDecorator)
+
+	_, err = anteHandler(s.ctx, testTx, false)
+	s.Require().Error(err)
+	s.Require().ErrorIs(err, pausertypes.ErrContractPaused)
+}
+
 func (s *PauseDecoratorTestSuite) TestUnpausedContractAllowed() {
 	s.SetupTest()
 	s.SetupWasmMsgServer()
