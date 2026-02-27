@@ -4,10 +4,10 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	keepertest "github.com/public-awesome/stargaze/v17/testutil/keeper"
-	"github.com/public-awesome/stargaze/v17/testutil/sample"
-	"github.com/public-awesome/stargaze/v17/x/globalfee/keeper"
-	"github.com/public-awesome/stargaze/v17/x/globalfee/types"
+	keepertest "github.com/public-awesome/stargaze/v18/testutil/keeper"
+	"github.com/public-awesome/stargaze/v18/testutil/sample"
+	"github.com/public-awesome/stargaze/v18/x/globalfee/keeper"
+	"github.com/public-awesome/stargaze/v18/x/globalfee/types"
 	"github.com/stretchr/testify/require"
 )
 

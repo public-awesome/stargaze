@@ -11,9 +11,9 @@ import (
 	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v17/x/cron/contract"
-	"github.com/public-awesome/stargaze/v17/x/cron/keeper"
-	"github.com/public-awesome/stargaze/v17/x/cron/types"
+	"github.com/public-awesome/stargaze/v18/x/cron/contract"
+	"github.com/public-awesome/stargaze/v18/x/cron/keeper"
+	"github.com/public-awesome/stargaze/v18/x/cron/types"
 )
 
 // BeginBlocker sends a BeginBlock SudoMsg to all privileged contracts

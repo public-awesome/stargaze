@@ -5,7 +5,7 @@ import "cosmos/msg/v1/msg.proto";
 import "gogoproto/gogo.proto";
 import "publicawesome/stargaze/pauser/v1/pauser.proto";
 
-option go_package = "github.com/public-awesome/stargaze/v17/x/pauser/types";
+option go_package = "github.com/public-awesome/stargaze/v18/x/pauser/types";
 
 // Msg defines the pauser Msg service.
 service Msg {

@@ -10,10 +10,10 @@ import (
 	moduletestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
 
 	storetypes "cosmossdk.io/store/types"
-	"github.com/public-awesome/stargaze/v17/x/alloc"
-	"github.com/public-awesome/stargaze/v17/x/alloc/exported"
-	v4 "github.com/public-awesome/stargaze/v17/x/alloc/migrations/v4"
-	"github.com/public-awesome/stargaze/v17/x/alloc/types"
+	"github.com/public-awesome/stargaze/v18/x/alloc"
+	"github.com/public-awesome/stargaze/v18/x/alloc/exported"
+	v4 "github.com/public-awesome/stargaze/v18/x/alloc/migrations/v4"
+	"github.com/public-awesome/stargaze/v18/x/alloc/types"
 )
 
 type mockSubspace struct {

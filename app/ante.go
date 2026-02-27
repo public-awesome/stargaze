@@ -16,10 +16,10 @@ import (
 	ibcore "github.com/cosmos/ibc-go/v8/modules/core/keeper"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	globalfeeante "github.com/public-awesome/stargaze/v17/x/globalfee/ante"
-	globalfeekeeper "github.com/public-awesome/stargaze/v17/x/globalfee/keeper"
-	pauserante "github.com/public-awesome/stargaze/v17/x/pauser/ante"
-	pauserkeeper "github.com/public-awesome/stargaze/v17/x/pauser/keeper"
+	globalfeeante "github.com/public-awesome/stargaze/v18/x/globalfee/ante"
+	globalfeekeeper "github.com/public-awesome/stargaze/v18/x/globalfee/keeper"
+	pauserante "github.com/public-awesome/stargaze/v18/x/pauser/ante"
+	pauserkeeper "github.com/public-awesome/stargaze/v18/x/pauser/keeper"
 )
 
 // HandlerOptions extend the SDK's AnteHandler options by requiring the IBC

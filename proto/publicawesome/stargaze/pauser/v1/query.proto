@@ -6,7 +6,7 @@ import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "publicawesome/stargaze/pauser/v1/pauser.proto";
 
-option go_package = "github.com/public-awesome/stargaze/v17/x/pauser/types";
+option go_package = "github.com/public-awesome/stargaze/v18/x/pauser/types";
 
 // Query defines the gRPC querier service.
 service Query {

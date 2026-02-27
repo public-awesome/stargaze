@@ -7,9 +7,9 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
-	keepertest "github.com/public-awesome/stargaze/v17/testutil/keeper"
-	"github.com/public-awesome/stargaze/v17/x/pauser/keeper"
-	"github.com/public-awesome/stargaze/v17/x/pauser/types"
+	keepertest "github.com/public-awesome/stargaze/v18/testutil/keeper"
+	"github.com/public-awesome/stargaze/v18/x/pauser/keeper"
+	"github.com/public-awesome/stargaze/v18/x/pauser/types"
 	"github.com/stretchr/testify/require"
 )
 

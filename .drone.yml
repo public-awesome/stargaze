@@ -83,7 +83,7 @@ steps:
         - push
       branch:
         - main
-        - pausable-execution
+        - prepare-v18
   - name: docker_release
     image: plugins/docker
     settings:
@@ -412,7 +412,7 @@ steps:
 trigger:
   branch:
     - main
-    - pausable-execution
+    - prepare-v18
   event:
     - pull_request
     - push
@@ -425,6 +425,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 78eb982b06fd6589f1f3250ec6a888f1b338c4b39c522d5c3b664806d81881d4
+hmac: 946c7e03cee5824ded5c8cf1775fe3c588ac2f2d3830296b7b0a5bdc95728bca
 
 ...

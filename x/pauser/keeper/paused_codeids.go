@@ -2,7 +2,7 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v17/x/pauser/types"
+	"github.com/public-awesome/stargaze/v18/x/pauser/types"
 )
 
 // SetPausedCodeID stores a paused code ID.

@@ -11,8 +11,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	consensustypes "github.com/cosmos/cosmos-sdk/x/consensus/types"
 	wasmlctypes "github.com/cosmos/ibc-go/modules/light-clients/08-wasm/types"
-	"github.com/public-awesome/stargaze/v17/app/keepers"
-	"github.com/public-awesome/stargaze/v17/app/upgrades"
+	"github.com/public-awesome/stargaze/v18/app/keepers"
+	"github.com/public-awesome/stargaze/v18/app/upgrades"
 )
 
 // next upgrade name

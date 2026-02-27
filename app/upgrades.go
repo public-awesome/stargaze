@@ -5,13 +5,13 @@ import (
 
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	upgrades "github.com/public-awesome/stargaze/v17/app/upgrades"
-	mainnetupgradesv15 "github.com/public-awesome/stargaze/v17/app/upgrades/mainnet/v15"
-	mainnetupgradesv16 "github.com/public-awesome/stargaze/v17/app/upgrades/mainnet/v16"
-	mainnetupgradesv17 "github.com/public-awesome/stargaze/v17/app/upgrades/mainnet/v17"
-	mainnetupgradesv18 "github.com/public-awesome/stargaze/v17/app/upgrades/mainnet/v18"
-	testnetupgradesv15b2 "github.com/public-awesome/stargaze/v17/app/upgrades/testnet/v15b2"
-	testnetupgradesv15b3 "github.com/public-awesome/stargaze/v17/app/upgrades/testnet/v15b3"
+	upgrades "github.com/public-awesome/stargaze/v18/app/upgrades"
+	mainnetupgradesv15 "github.com/public-awesome/stargaze/v18/app/upgrades/mainnet/v15"
+	mainnetupgradesv16 "github.com/public-awesome/stargaze/v18/app/upgrades/mainnet/v16"
+	mainnetupgradesv17 "github.com/public-awesome/stargaze/v18/app/upgrades/mainnet/v17"
+	mainnetupgradesv18 "github.com/public-awesome/stargaze/v18/app/upgrades/mainnet/v18"
+	testnetupgradesv15b2 "github.com/public-awesome/stargaze/v18/app/upgrades/testnet/v15b2"
+	testnetupgradesv15b3 "github.com/public-awesome/stargaze/v18/app/upgrades/testnet/v15b3"
 )
 
 var Upgrades = []upgrades.Upgrade{

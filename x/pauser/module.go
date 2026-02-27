@@ -16,9 +16,9 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 
-	"github.com/public-awesome/stargaze/v17/x/pauser/client/cli"
-	"github.com/public-awesome/stargaze/v17/x/pauser/keeper"
-	"github.com/public-awesome/stargaze/v17/x/pauser/types"
+	"github.com/public-awesome/stargaze/v18/x/pauser/client/cli"
+	"github.com/public-awesome/stargaze/v18/x/pauser/keeper"
+	"github.com/public-awesome/stargaze/v18/x/pauser/types"
 )
 
 var (
