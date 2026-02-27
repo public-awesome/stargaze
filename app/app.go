@@ -685,6 +685,7 @@ func NewStargazeApp(
 		runtime.NewKVStoreService(keys[pausermoduletypes.StoreKey]),
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
+	app.Keepers.Ics20WasmHooks.SetPauseChecker(&app.Keepers.PauserKeeper)
 
 	// initialize wasm overrides default 800kb max size for contract uploads
 	initializeWasm()

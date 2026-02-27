@@ -225,7 +225,7 @@ replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
 
 	// TODO: update afer official release
-	github.com/cosmos/ibc-apps/modules/ibc-hooks/v8 => github.com/public-awesome/ibc-apps/modules/ibc-hooks/v8 v8.0.0-stargaze.1
+	github.com/cosmos/ibc-apps/modules/ibc-hooks/v8 => github.com/public-awesome/ibc-apps/modules/ibc-hooks/v8 v8.0.0-stargaze.1.0.20260227035744-2e15f6556140
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.9.1
 	// TODO: remove after https://github.com/spf13/viper/issues/1706 gets fixed
 	github.com/spf13/viper => github.com/spf13/viper v1.17.0
