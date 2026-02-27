@@ -1,73 +1,85 @@
+version: "2"
 run:
   tests: true
-  # timeout for analysis, e.g. 30s, 5m, default is 1m
-  timeout: 10m
-
 linters:
-  disable-all: true
+  default: none
   enable:
     - bodyclose
     - dogsled
     - errcheck
     - goconst
     - gocritic
-    - gofumpt
     - gosec
-    - gosimple
     - govet
     - ineffassign
     - misspell
     - nakedret
+    - nolintlint
     - prealloc
     - revive
-    # - copyloopvar enable after bumping to go 1.23
     - staticcheck
-    - stylecheck
-    - typecheck
     - thelper
     - unconvert
-    - unused
     - unparam
-    - misspell
-    - nolintlint
-
+    - unused
+  settings:
+    dogsled:
+      max-blank-identifiers: 3
+    nolintlint:
+      require-explanation: false
+      require-specific: false
+      allow-unused: false
+    revive:
+      rules:
+        - name: var-naming
+          disabled: true
+    staticcheck:
+      checks:
+        - all
+        - -QF1007
+        - -QF1008
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - linters:
+          - gosec
+        text: Use of weak random number generator
+      - linters:
+          - golint
+        text: comment on exported var
+      - linters:
+          - golint
+        text: don't use an underscore in package name
+      - linters:
+          - staticcheck
+        text: 'ST1003:'
+      - linters:
+          - staticcheck
+        text: 'ST1016:'
+      - linters:
+          - staticcheck
+        path: legacy
+        text: 'SA1019:'
+    paths:
+      - simapp
+      - third_party$
+      - builtin$
+      - examples$
 issues:
-  exclude-dirs:
-    - simapp
-  exclude-rules:
-    - text: "Use of weak random number generator"
-      linters:
-        - gosec
-    - text: "comment on exported var"
-      linters:
-        - golint
-    - text: "don't use an underscore in package name"
-      linters:
-        - golint
-    - text: "ST1003:"
-      linters:
-        - stylecheck
-    # FIXME: Disabled until golangci-lint updates stylecheck with this fix:
-    # https://github.com/dominikh/go-tools/issues/389
-    - text: "ST1016:"
-      linters:
-        - stylecheck
-    - path: "legacy"
-      text: "SA1019:"
-      linters:
-        - staticcheck
-
   max-issues-per-linter: 10000
   max-same-issues: 10000
-
-linters-settings:
-  dogsled:
-    max-blank-identifiers: 3
-  maligned:
-    # print struct with more effective memory layout or not, false by default
-    suggest-new: true
-  nolintlint:
-    allow-unused: false
-    allow-leading-space: true
-    require-explanation: false
-    require-specific: false
+formatters:
+  enable:
+    - gofumpt
+  exclusions:
+    generated: lax
+    paths:
+      - simapp
+      - third_party$
+      - builtin$
+      - examples$

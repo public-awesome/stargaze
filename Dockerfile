@@ -16,10 +16,10 @@ COPY . /code/
 
 # See https://github.com/CosmWasm/wasmvm/releases
 # Download the correct version of libwasmvm for the given platform and verify checksum
-ADD https://github.com/CosmWasm/wasmvm/releases/download/v2.2.6/libwasmvm_muslc.x86_64.a /lib/libwasmvm_muslc.x86_64.a
-ADD https://github.com/CosmWasm/wasmvm/releases/download/v2.2.6/libwasmvm_muslc.aarch64.a /lib/libwasmvm_muslc.aarch64.a
-RUN echo "afc9a6b907667838057b0d8ef03a1ebb9e7d6eac628194d162185ea844816983 /lib/libwasmvm_muslc.x86_64.a" | sha256sum -c
-RUN echo "490c8522c512276f675b84ed212d51ad8ccbb2beef5f7489e6729f391980310d /lib/libwasmvm_muslc.aarch64.a" | sha256sum -c
+ADD https://github.com/CosmWasm/wasmvm/releases/download/v2.3.2/libwasmvm_muslc.x86_64.a /lib/libwasmvm_muslc.x86_64.a
+ADD https://github.com/CosmWasm/wasmvm/releases/download/v2.3.2/libwasmvm_muslc.aarch64.a /lib/libwasmvm_muslc.aarch64.a
+RUN echo "4d03a4bf508c89a303e8d7d0236feac44a40f6b6e221df4076968abe9d1e49c6 /lib/libwasmvm_muslc.x86_64.a" | sha256sum -c
+RUN echo "4b87af3c8aac1756ee1aa1e06daefe3a7f5a3469a3c8d77ad07513539606f8a6 /lib/libwasmvm_muslc.aarch64.a" | sha256sum -c
 
 # force it to use static lib (from above) not standard libgo_cosmwasm.so file
 RUN  LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true  make build
