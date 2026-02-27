@@ -227,8 +227,8 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/CosmWasm/wasmd v0.54.6 h1:L9YY59R55nHJ50PFp2h3+lcBNQfie7iBg6gi3w9u8fU=
 github.com/CosmWasm/wasmd v0.54.6/go.mod h1:ajCQ+3QTeQAsd7pl4PEMTgSqxwweQJXYbW0snQviFik=
-github.com/CosmWasm/wasmvm/v2 v2.2.6 h1:8pwNPZeP/OS14XpjXD0YAZ1Y3my7g5zkmqKCtUdTN38=
-github.com/CosmWasm/wasmvm/v2 v2.2.6/go.mod h1:Aj/rB2KMRM8nAdbWxkO23rnQYb5KsoPuH9ZizSi0sVg=
+github.com/CosmWasm/wasmvm/v2 v2.3.2 h1:LO6+G9iG3Hg6EezxfMWX5TMx6a5DbuKGwZv6BSdtXfA=
+github.com/CosmWasm/wasmvm/v2 v2.3.2/go.mod h1:RzLlMwFRLaTwPM0DdHFA0m/APT5muKjU6t3ZxCrpXJ0=
 github.com/DataDog/datadog-go v3.2.0+incompatible h1:qSG2N4FghB1He/r2mFrWKCaL7dXCilEuNEeAn20fdD4=
 github.com/DataDog/datadog-go v3.2.0+incompatible/go.mod h1:LButxg5PwREeZtORoXG3tL4fMGNddJ+vMq1mwgfaqoQ=
 github.com/DataDog/zstd v1.5.5 h1:oWf5W7GtOLgp6bciQYDmhHHjdhYkALu6S/5Ni9ZgSvQ=
