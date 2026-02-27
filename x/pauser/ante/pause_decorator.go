@@ -4,7 +4,7 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/authz"
-	"github.com/public-awesome/stargaze/v17/x/pauser/types"
+	"github.com/public-awesome/stargaze/v18/x/pauser/types"
 )
 
 var _ sdk.AnteDecorator = PauseDecorator{}

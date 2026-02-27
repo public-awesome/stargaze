@@ -2,7 +2,7 @@ package app
 
 import (
 	"github.com/cosmos/cosmos-sdk/std"
-	"github.com/public-awesome/stargaze/v17/app/params"
+	"github.com/public-awesome/stargaze/v18/app/params"
 )
 
 // MakeEncodingConfig creates a new EncodingConfig with all modules registered

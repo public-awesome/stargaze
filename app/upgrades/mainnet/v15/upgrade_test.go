@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	upgradetypes "cosmossdk.io/x/upgrade/types"
-	stargazeapp "github.com/public-awesome/stargaze/v17/app"
-	"github.com/public-awesome/stargaze/v17/testutil/simapp"
+	stargazeapp "github.com/public-awesome/stargaze/v18/app"
+	"github.com/public-awesome/stargaze/v18/testutil/simapp"
 	"github.com/stretchr/testify/suite"
 )
 

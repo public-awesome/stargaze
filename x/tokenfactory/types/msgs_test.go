@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v17/x/tokenfactory/types"
+	"github.com/public-awesome/stargaze/v18/x/tokenfactory/types"
 	"github.com/stretchr/testify/require"
 
 	"cosmossdk.io/math"

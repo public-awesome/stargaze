@@ -8,9 +8,9 @@ import (
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/public-awesome/stargaze/v17/app/keepers"
-	"github.com/public-awesome/stargaze/v17/app/upgrades"
-	pausertypes "github.com/public-awesome/stargaze/v17/x/pauser/types"
+	"github.com/public-awesome/stargaze/v18/app/keepers"
+	"github.com/public-awesome/stargaze/v18/app/upgrades"
+	pausertypes "github.com/public-awesome/stargaze/v18/x/pauser/types"
 )
 
 // next upgrade name

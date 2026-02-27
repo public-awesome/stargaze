@@ -7,8 +7,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	corestoretypes "cosmossdk.io/core/store"
-	"github.com/public-awesome/stargaze/v17/internal/collcompat"
-	"github.com/public-awesome/stargaze/v17/x/pauser/types"
+	"github.com/public-awesome/stargaze/v18/internal/collcompat"
+	"github.com/public-awesome/stargaze/v18/x/pauser/types"
 )
 
 // Keeper provides module state operations.

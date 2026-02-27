@@ -6,10 +6,10 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v17/internal/collcompat"
+	"github.com/public-awesome/stargaze/v18/internal/collcompat"
 
 	corestoretypes "cosmossdk.io/core/store"
-	"github.com/public-awesome/stargaze/v17/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v18/x/globalfee/types"
 )
 
 // Keeper provides module state operations.

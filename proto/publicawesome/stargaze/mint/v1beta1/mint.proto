@@ -5,7 +5,7 @@ import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/public-awesome/stargaze/v17/x/mint/types";
+option go_package = "github.com/public-awesome/stargaze/v18/x/mint/types";
 
 // Minter represents the minting state.
 message Minter {

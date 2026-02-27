@@ -5,8 +5,8 @@ import (
 	"os"
 
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
-	"github.com/public-awesome/stargaze/v17/app"
-	"github.com/public-awesome/stargaze/v17/cmd/starsd/cmd"
+	"github.com/public-awesome/stargaze/v18/app"
+	"github.com/public-awesome/stargaze/v18/cmd/starsd/cmd"
 )
 
 func main() {

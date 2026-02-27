@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
-	"github.com/public-awesome/stargaze/v17/x/pauser/types"
+	"github.com/public-awesome/stargaze/v18/x/pauser/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

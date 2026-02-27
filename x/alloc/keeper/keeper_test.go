@@ -11,10 +11,10 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-	"github.com/public-awesome/stargaze/v17/app"
-	"github.com/public-awesome/stargaze/v17/testutil/simapp"
-	"github.com/public-awesome/stargaze/v17/x/alloc/keeper"
-	"github.com/public-awesome/stargaze/v17/x/alloc/types"
+	"github.com/public-awesome/stargaze/v18/app"
+	"github.com/public-awesome/stargaze/v18/testutil/simapp"
+	"github.com/public-awesome/stargaze/v18/x/alloc/keeper"
+	"github.com/public-awesome/stargaze/v18/x/alloc/types"
 	"github.com/stretchr/testify/suite"
 )
 

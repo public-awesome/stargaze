@@ -9,10 +9,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-	stargazeapp "github.com/public-awesome/stargaze/v17/app"
-	"github.com/public-awesome/stargaze/v17/testutil/simapp"
-	"github.com/public-awesome/stargaze/v17/x/tokenfactory/keeper"
-	"github.com/public-awesome/stargaze/v17/x/tokenfactory/types"
+	stargazeapp "github.com/public-awesome/stargaze/v18/app"
+	"github.com/public-awesome/stargaze/v18/testutil/simapp"
+	"github.com/public-awesome/stargaze/v18/x/tokenfactory/keeper"
+	"github.com/public-awesome/stargaze/v18/x/tokenfactory/types"
 	"github.com/stretchr/testify/suite"
 )
 

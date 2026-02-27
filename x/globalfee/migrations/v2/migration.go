@@ -5,8 +5,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/public-awesome/stargaze/v17/x/globalfee/exported"
-	"github.com/public-awesome/stargaze/v17/x/globalfee/types"
+	"github.com/public-awesome/stargaze/v18/x/globalfee/exported"
+	"github.com/public-awesome/stargaze/v18/x/globalfee/types"
 )
 
 // MigrateStore migrates the x/globalfee module state from the consensus version 1 to

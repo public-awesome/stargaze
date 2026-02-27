@@ -6,9 +6,9 @@ import (
 	wasmvmtypes "github.com/CosmWasm/wasmvm/v2/types"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	keepertest "github.com/public-awesome/stargaze/v17/testutil/keeper"
-	"github.com/public-awesome/stargaze/v17/x/pauser/types"
-	pauserwasm "github.com/public-awesome/stargaze/v17/x/pauser/wasm"
+	keepertest "github.com/public-awesome/stargaze/v18/testutil/keeper"
+	"github.com/public-awesome/stargaze/v18/x/pauser/types"
+	pauserwasm "github.com/public-awesome/stargaze/v18/x/pauser/wasm"
 	"github.com/stretchr/testify/require"
 )
 
