@@ -13,6 +13,8 @@ import (
 	"github.com/cometbft/cometbft/crypto"
 	"github.com/cometbft/cometbft/crypto/secp256k1"
 	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	ibchooks "github.com/cosmos/ibc-apps/modules/ibc-hooks/v8"
+	ibchooksmocks "github.com/cosmos/ibc-apps/modules/ibc-hooks/v8/tests/unit/mocks"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -24,6 +26,13 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+	capabilitytypes "github.com/cosmos/ibc-go/modules/capability/types"
+	ibctransfer "github.com/cosmos/ibc-go/v8/modules/apps/transfer"
+	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
+	ibcclienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
+	channeltypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
+	ibcmock "github.com/cosmos/ibc-go/v8/testing/mock"
 	stargazeapp "github.com/public-awesome/stargaze/v17/app"
 	"github.com/public-awesome/stargaze/v17/testutil/simapp"
 	pauserante "github.com/public-awesome/stargaze/v17/x/pauser/ante"
@@ -680,6 +689,167 @@ func (s *PauseDecoratorTestSuite) TestContractToContractUnpausedAllowed() {
 	queryRes, err := s.app.Keepers.WasmKeeper.QuerySmart(s.ctx, sdk.MustAccAddressFromBech32(contractB), []byte(`{"get_count": {}}`))
 	s.Require().NoError(err)
 	s.Require().Contains(string(queryRes), `"count":1`)
+}
+
+func (s *PauseDecoratorTestSuite) TestIBCReceiveCallbackPathPausedContractExecuteRejected() {
+	s.SetupTest()
+	s.SetupWasmMsgServer()
+
+	_, _, addr1 := testdata.KeyTestPubAddr()
+
+	contractAddr, _ := s.DeployContract(addr1.String())
+	baseDenom, err := s.app.Keepers.StakingKeeper.BondDenom(s.ctx)
+	s.Require().NoError(err)
+	fundAmount := sdk.NewInt64Coin(baseDenom, 100)
+	err = s.app.Keepers.BankKeeper.MintCoins(s.ctx, minttypes.ModuleName, sdk.NewCoins(fundAmount))
+	s.Require().NoError(err)
+	err = s.app.Keepers.BankKeeper.SendCoinsFromModuleToAccount(s.ctx, minttypes.ModuleName, addr1, sdk.NewCoins(fundAmount))
+	s.Require().NoError(err)
+
+	// Pause the contract.
+	err = s.app.Keepers.PauserKeeper.SetPausedContract(s.ctx, pausertypes.PausedContract{
+		ContractAddress: contractAddr,
+		PausedBy:        addr1.String(),
+	})
+	s.Require().NoError(err)
+
+	recvPacket := channeltypes.Packet{
+		Data: transfertypes.FungibleTokenPacketData{
+			Denom:    "transfer/channel-0/" + baseDenom,
+			Amount:   "1",
+			Sender:   addr1.String(),
+			Receiver: contractAddr,
+			Memo:     fmt.Sprintf(`{"wasm":{"contract":"%s","msg":{"increment":{}}}}`, contractAddr),
+		}.GetBytes(),
+		SourcePort:    "transfer",
+		SourceChannel: "channel-0",
+	}
+
+	// Fund escrow like upstream ibc-hooks tests do before OnRecvPacket.
+	escrowAddress := transfertypes.GetEscrowAddress(recvPacket.GetDestPort(), recvPacket.GetDestChannel())
+	testEscrowAmount := sdk.NewInt64Coin(baseDenom, 2)
+	err = s.app.Keepers.BankKeeper.SendCoins(s.ctx, addr1, escrowAddress, sdk.NewCoins(testEscrowAmount))
+	s.Require().NoError(err)
+	if transferKeeper, ok := any(&s.app.Keepers.TransferKeeper).(TransferKeeperWithTotalEscrowTracking); ok {
+		transferKeeper.SetTotalEscrowForDenom(s.ctx, testEscrowAmount)
+	}
+
+	wasmHooks := ibchooks.NewWasmHooks(
+		&s.app.Keepers.IBCHooksKeeper,
+		&s.app.Keepers.WasmKeeper,
+		sdk.GetConfig().GetBech32AccountAddrPrefix(),
+	)
+	ics4Middleware := ibchooks.NewICS4Middleware(
+		s.app.Keepers.IBCKeeper.ChannelKeeper,
+		wasmHooks,
+	)
+	transferIBCModule := ibctransfer.NewIBCModule(s.app.Keepers.TransferKeeper)
+	ibcMiddleware := ibchooks.NewIBCMiddleware(transferIBCModule, &ics4Middleware)
+
+	ack := ibcMiddleware.OnRecvPacket(s.ctx, recvPacket, addr1)
+
+	// TDD security invariant: ibc-hooks receive callback execute to paused contract must be blocked.
+	s.Require().False(ack.Success())
+	s.Require().Contains(string(ack.Acknowledgement()), pausertypes.ErrContractPaused.Error())
+}
+
+func (s *PauseDecoratorTestSuite) TestIBCAckTimeoutCallbackPathPausedContractSudoRejected() {
+	s.SetupTest()
+	s.SetupWasmMsgServer()
+
+	_, _, addr1 := testdata.KeyTestPubAddr()
+
+	contractAddr, _ := s.DeployContract(addr1.String())
+	baseDenom, err := s.app.Keepers.StakingKeeper.BondDenom(s.ctx)
+	s.Require().NoError(err)
+	fundAmount := sdk.NewInt64Coin(baseDenom, 100)
+	err = s.app.Keepers.BankKeeper.MintCoins(s.ctx, minttypes.ModuleName, sdk.NewCoins(fundAmount))
+	s.Require().NoError(err)
+	err = s.app.Keepers.BankKeeper.SendCoinsFromModuleToAccount(s.ctx, minttypes.ModuleName, addr1, sdk.NewCoins(fundAmount))
+	s.Require().NoError(err)
+
+	// Pause the contract.
+	err = s.app.Keepers.PauserKeeper.SetPausedContract(s.ctx, pausertypes.PausedContract{
+		ContractAddress: contractAddr,
+		PausedBy:        addr1.String(),
+	})
+	s.Require().NoError(err)
+
+	callbackPacket := channeltypes.Packet{
+		Data: transfertypes.FungibleTokenPacketData{
+			Denom:    "transfer/channel-0/" + baseDenom,
+			Amount:   "1",
+			Sender:   addr1.String(),
+			Receiver: contractAddr,
+			Memo:     fmt.Sprintf(`{"ibc_callback":"%s"}`, contractAddr),
+		}.GetBytes(),
+		Sequence:      1,
+		SourcePort:    "transfer",
+		SourceChannel: "channel-0",
+	}
+
+	// Fund escrow like upstream ibc-hooks tests do before SendPacket/ack callbacks.
+	escrowAddress := transfertypes.GetEscrowAddress(callbackPacket.GetDestPort(), callbackPacket.GetDestChannel())
+	testEscrowAmount := sdk.NewInt64Coin(baseDenom, 2)
+	err = s.app.Keepers.BankKeeper.SendCoins(s.ctx, addr1, escrowAddress, sdk.NewCoins(testEscrowAmount))
+	s.Require().NoError(err)
+	if transferKeeper, ok := any(&s.app.Keepers.TransferKeeper).(TransferKeeperWithTotalEscrowTracking); ok {
+		transferKeeper.SetTotalEscrowForDenom(s.ctx, testEscrowAmount)
+	}
+
+	wasmHooks := ibchooks.NewWasmHooks(
+		&s.app.Keepers.IBCHooksKeeper,
+		&s.app.Keepers.WasmKeeper,
+		sdk.GetConfig().GetBech32AccountAddrPrefix(),
+	)
+	ics4Middleware := ibchooks.NewICS4Middleware(
+		&ibchooksmocks.ICS4WrapperMock{},
+		wasmHooks,
+	)
+	transferIBCModule := ibctransfer.NewIBCModule(s.app.Keepers.TransferKeeper)
+	ibcMiddleware := ibchooks.NewIBCMiddleware(transferIBCModule, &ics4Middleware)
+
+	seq, err := ibcMiddleware.SendPacket(
+		s.ctx,
+		&capabilitytypes.Capability{Index: 1},
+		callbackPacket.SourcePort,
+		callbackPacket.SourceChannel,
+		ibcclienttypes.Height{RevisionNumber: 1, RevisionHeight: 1},
+		1,
+		callbackPacket.Data,
+	)
+	s.Require().NoError(err)
+	s.Require().Equal(uint64(1), seq)
+
+	recvPacket := channeltypes.Packet{
+		Data: transfertypes.FungibleTokenPacketData{
+			Denom:    "transfer/channel-0/" + baseDenom,
+			Amount:   "1",
+			Sender:   addr1.String(),
+			Receiver: contractAddr,
+			Memo:     fmt.Sprintf(`{"wasm":{"contract":"%s","msg":{"increment":{}}}}`, contractAddr),
+		}.GetBytes(),
+		Sequence:      1,
+		SourcePort:    "transfer",
+		SourceChannel: "channel-0",
+	}
+	err = wasmHooks.OnAcknowledgementPacketOverride(
+		ibcMiddleware,
+		s.ctx,
+		recvPacket,
+		ibcmock.MockAcknowledgement.Acknowledgement(),
+		addr1,
+	)
+
+	// TDD security invariant: ibc-hooks ack/timeout callback sudo to paused contract must be blocked.
+	s.Require().Error(err)
+	s.Require().ErrorIs(err, pausertypes.ErrContractPaused)
+}
+
+// TransferKeeperWithTotalEscrowTracking checks for optional escrow accounting methods.
+type TransferKeeperWithTotalEscrowTracking interface {
+	SetTotalEscrowForDenom(ctx sdk.Context, coin sdk.Coin)
+	GetTotalEscrowForDenom(ctx sdk.Context, denom string) sdk.Coin
 }
 
 func getTestAccount() (privateKey secp256k1.PrivKey, publicKey crypto.PubKey, accountAddress sdk.AccAddress) { //nolint:golint,unparam
