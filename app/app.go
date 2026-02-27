@@ -134,6 +134,11 @@ import (
 	globalfeemodulekeeper "github.com/public-awesome/stargaze/v17/x/globalfee/keeper"
 	globalfeemoduletypes "github.com/public-awesome/stargaze/v17/x/globalfee/types"
 
+	pausermodule "github.com/public-awesome/stargaze/v17/x/pauser"
+	pausermodulekeeper "github.com/public-awesome/stargaze/v17/x/pauser/keeper"
+	pausermoduletypes "github.com/public-awesome/stargaze/v17/x/pauser/types"
+	pauserwasm "github.com/public-awesome/stargaze/v17/x/pauser/wasm"
+
 	ibchooks "github.com/cosmos/ibc-apps/modules/ibc-hooks/v8"
 	ibchookskeeper "github.com/cosmos/ibc-apps/modules/ibc-hooks/v8/keeper"
 	ibchookstypes "github.com/cosmos/ibc-apps/modules/ibc-hooks/v8/types"
@@ -344,6 +349,7 @@ func NewStargazeApp(
 		icahosttypes.StoreKey,
 		icacontrollertypes.StoreKey,
 		globalfeemoduletypes.StoreKey,
+		pausermoduletypes.StoreKey,
 		ibchookstypes.StoreKey,
 		packetforwardtypes.StoreKey,
 		crisistypes.StoreKey,
@@ -673,6 +679,14 @@ func NewStargazeApp(
 	registry.RegisterEncoder(sgwasm.DistributionRoute, sgwasm.CustomDistributionEncoder)
 	registry.RegisterEncoder(allocmoduletypes.ModuleName, allocwasm.Encoder)
 
+	// Create PauserKeeper WITHOUT wasmKeeper (circular dep resolved via SetWasmKeeper below)
+	app.Keepers.PauserKeeper = pausermodulekeeper.NewKeeper(
+		appCodec,
+		runtime.NewKVStoreService(keys[pausermoduletypes.StoreKey]),
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+	)
+	app.Keepers.Ics20WasmHooks.SetPauseChecker(&app.Keepers.PauserKeeper)
+
 	// initialize wasm overrides default 800kb max size for contract uploads
 	initializeWasm()
 	wasmOpts = append(
@@ -682,6 +696,9 @@ func NewStargazeApp(
 			Stargate: wasmkeeper.AcceptListStargateQuerier(AcceptedStargateQueries(), app.GRPCQueryRouter(), appCodec),
 		}),
 		wasmkeeper.WithWasmEngine(wasmdVM),
+		wasmkeeper.WithMessageHandlerDecorator(
+			pauserwasm.NewPauseMessageHandlerDecorator(&app.Keepers.PauserKeeper),
+		),
 	)
 	app.Keepers.WasmKeeper = wasmkeeper.NewKeeper(
 		appCodec,
@@ -709,6 +726,9 @@ func NewStargazeApp(
 	app.Keepers.ContractKeeper = wasmkeeper.NewDefaultPermissionKeeper(app.Keepers.WasmKeeper)
 	app.Keepers.Ics20WasmHooks.ContractKeeper = &app.Keepers.WasmKeeper
 
+	// Wire WasmKeeper back into PauserKeeper (resolves circular dependency)
+	app.Keepers.PauserKeeper.SetWasmKeeper(app.Keepers.WasmKeeper)
+
 	app.Keepers.CronKeeper = cronmodulekeeper.NewKeeper(
 		appCodec,
 		runtime.NewKVStoreService(keys[cronmoduletypes.StoreKey]),
@@ -723,6 +743,7 @@ func NewStargazeApp(
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 	globalfeeModule := globalfeemodule.NewAppModule(appCodec, app.Keepers.GlobalFeeKeeper)
+	pauserModule := pausermodule.NewAppModule(appCodec, app.Keepers.PauserKeeper)
 
 	ibcRouter.AddRoute(wasmtypes.ModuleName, wasm.NewIBCHandler(app.Keepers.WasmKeeper, app.Keepers.IBCKeeper.ChannelKeeper, app.Keepers.IBCKeeper.ChannelKeeper))
 	app.Keepers.IBCKeeper.SetRouter(ibcRouter)
@@ -794,6 +815,7 @@ func NewStargazeApp(
 		wasm.NewAppModule(appCodec, &app.Keepers.WasmKeeper, app.Keepers.StakingKeeper, app.Keepers.AccountKeeper, app.Keepers.BankKeeper, app.MsgServiceRouter(), app.GetSubspace(wasmtypes.ModuleName)),
 		cronModule,
 		globalfeeModule,
+		pauserModule,
 		ibchooks.NewAppModule(app.Keepers.AccountKeeper),
 		tokenfactory.NewAppModule(app.Keepers.TokenFactoryKeeper, app.Keepers.AccountKeeper, app.Keepers.BankKeeper),
 		packetforward.NewAppModule(app.Keepers.PacketForwardKeeper, app.GetSubspace(packetforwardtypes.ModuleName)),
@@ -838,6 +860,7 @@ func NewStargazeApp(
 		wasmtypes.ModuleName,
 		cronmoduletypes.ModuleName,
 		globalfeemoduletypes.ModuleName,
+		pausermoduletypes.ModuleName,
 		ibchookstypes.ModuleName,
 		tokenfactorytypes.ModuleName,
 		packetforwardtypes.ModuleName,
@@ -857,6 +880,7 @@ func NewStargazeApp(
 		wasmtypes.ModuleName,
 		cronmoduletypes.ModuleName,
 		globalfeemoduletypes.ModuleName,
+		pausermoduletypes.ModuleName,
 		ibchookstypes.ModuleName,
 		tokenfactorytypes.ModuleName,
 		packetforwardtypes.ModuleName,
@@ -893,6 +917,7 @@ func NewStargazeApp(
 		wasmtypes.ModuleName,
 		cronmoduletypes.ModuleName,
 		globalfeemoduletypes.ModuleName, // should be after wasm
+		pausermoduletypes.ModuleName,    // should be after wasm
 		ibchookstypes.ModuleName,
 		packetforwardtypes.ModuleName,
 		ibcwasmtypes.ModuleName,
@@ -926,6 +951,7 @@ func NewStargazeApp(
 			keeper:                app.Keepers.IBCKeeper,
 			govKeeper:             app.Keepers.GovKeeper,
 			globalfeeKeeper:       app.Keepers.GlobalFeeKeeper,
+			pauserKeeper:          app.Keepers.PauserKeeper,
 			stakingKeeper:         app.Keepers.StakingKeeper,
 			WasmConfig:            &wasmConfig,
 			TXCounterStoreService: runtime.NewKVStoreService(keys[wasmtypes.StoreKey]),

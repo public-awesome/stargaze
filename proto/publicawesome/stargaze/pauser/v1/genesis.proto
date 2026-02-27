@@ -1,0 +1,26 @@
+syntax = "proto3";
+package publicawesome.stargaze.pauser.v1;
+
+import "gogoproto/gogo.proto";
+import "publicawesome/stargaze/pauser/v1/pauser.proto";
+
+option go_package = "github.com/public-awesome/stargaze/v17/x/pauser/types";
+
+// GenesisState defines the pauser module's genesis state.
+message GenesisState {
+  // Module params
+  Params params = 1 [
+    (gogoproto.jsontag) = "params,omitempty",
+    (gogoproto.nullable) = false
+  ];
+  // Paused contracts
+  repeated PausedContract paused_contracts = 2 [
+    (gogoproto.jsontag) = "paused_contracts,omitempty",
+    (gogoproto.nullable) = false
+  ];
+  // Paused code IDs
+  repeated PausedCodeID paused_code_ids = 3 [
+    (gogoproto.jsontag) = "paused_code_ids,omitempty",
+    (gogoproto.nullable) = false
+  ];
+}

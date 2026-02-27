@@ -1,0 +1,44 @@
+syntax = "proto3";
+package publicawesome.stargaze.pauser.v1;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/public-awesome/stargaze/v17/x/pauser/types";
+
+// Params holds parameters for the pauser module.
+message Params {
+  // Addresses which are whitelisted to pause/unpause contracts
+  repeated string privileged_addresses = 1;
+}
+
+// PausedContract represents a paused contract address.
+message PausedContract {
+  // The paused contract address
+  string contract_address = 1 [(gogoproto.moretags) = "yaml:\"contract_address\""];
+  // The address that paused the contract
+  string paused_by = 2 [(gogoproto.moretags) = "yaml:\"paused_by\""];
+  // The time when the contract was paused
+  google.protobuf.Timestamp paused_at = 3 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"paused_at\""
+  ];
+}
+
+// PausedCodeID represents a paused code ID.
+message PausedCodeID {
+  // The paused code ID
+  uint64 code_id = 1 [
+    (gogoproto.customname) = "CodeID",
+    (gogoproto.moretags) = "yaml:\"code_id\""
+  ];
+  // The address that paused the code ID
+  string paused_by = 2 [(gogoproto.moretags) = "yaml:\"paused_by\""];
+  // The time when the code ID was paused
+  google.protobuf.Timestamp paused_at = 3 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"paused_at\""
+  ];
+}

@@ -9,6 +9,7 @@ import (
 	mainnetupgradesv15 "github.com/public-awesome/stargaze/v17/app/upgrades/mainnet/v15"
 	mainnetupgradesv16 "github.com/public-awesome/stargaze/v17/app/upgrades/mainnet/v16"
 	mainnetupgradesv17 "github.com/public-awesome/stargaze/v17/app/upgrades/mainnet/v17"
+	mainnetupgradesv18 "github.com/public-awesome/stargaze/v17/app/upgrades/mainnet/v18"
 	testnetupgradesv15b2 "github.com/public-awesome/stargaze/v17/app/upgrades/testnet/v15b2"
 	testnetupgradesv15b3 "github.com/public-awesome/stargaze/v17/app/upgrades/testnet/v15b3"
 )
@@ -18,6 +19,7 @@ var Upgrades = []upgrades.Upgrade{
 	mainnetupgradesv15.Upgrade,
 	mainnetupgradesv16.Upgrade,
 	mainnetupgradesv17.Upgrade,
+	mainnetupgradesv18.Upgrade,
 	// testnet upgrades
 	testnetupgradesv15b2.Upgrade,
 	testnetupgradesv15b3.Upgrade,

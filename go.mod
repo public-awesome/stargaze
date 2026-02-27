@@ -3,11 +3,11 @@ module github.com/public-awesome/stargaze/v17
 go 1.24.1
 
 require (
-	github.com/CosmWasm/wasmd v0.54.1
-	github.com/CosmWasm/wasmvm/v2 v2.2.4
+	github.com/CosmWasm/wasmd v0.54.6
+	github.com/CosmWasm/wasmvm/v2 v2.2.6
 	github.com/cometbft/cometbft v0.38.21
 	github.com/cosmos/cosmos-proto v1.0.0-beta.5
-	github.com/cosmos/cosmos-sdk v0.50.14
+	github.com/cosmos/cosmos-sdk v0.50.15
 	github.com/cosmos/go-bip39 v1.0.0
 	github.com/cosmos/gogoproto v1.7.0
 	github.com/cosmos/iavl v1.2.6 // indirect
@@ -30,7 +30,7 @@ require (
 	cosmossdk.io/collections v0.4.0
 	cosmossdk.io/core v0.11.1
 	cosmossdk.io/errors v1.0.2
-	cosmossdk.io/log v1.5.1
+	cosmossdk.io/log v1.6.1
 	cosmossdk.io/math v1.5.3
 	cosmossdk.io/store v1.1.1
 	cosmossdk.io/tools/confix v0.1.2
@@ -43,7 +43,7 @@ require (
 	github.com/cosmos/ibc-apps/modules/ibc-hooks/v8 v8.0.0-00010101000000-000000000000
 	github.com/cosmos/ibc-go/modules/capability v1.0.1
 	github.com/cosmos/ibc-go/modules/light-clients/08-wasm v0.4.2-0.20240730185033-ccd4dc278e72 // modules/light-clients/08-wasm/v0.4.1+ibc-go-v8.4-wasmvm-v2.0
-	github.com/cosmos/ibc-go/v8 v8.7.0
+	github.com/cosmos/ibc-go/v8 v8.8.0
 	github.com/gogo/protobuf v1.3.2
 	github.com/prometheus/client_golang v1.22.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20250106144421-5f5ef82da422
@@ -201,13 +201,13 @@ require (
 	go.opentelemetry.io/otel/metric v1.34.0 // indirect
 	go.opentelemetry.io/otel/trace v1.34.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	golang.org/x/arch v0.15.0 // indirect
+	golang.org/x/arch v0.17.0 // indirect
 	golang.org/x/crypto v0.35.0 // indirect
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
 	golang.org/x/net v0.36.0 // indirect
 	golang.org/x/oauth2 v0.27.0 // indirect
 	golang.org/x/sync v0.11.0 // indirect
-	golang.org/x/sys v0.31.0 // indirect
+	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/term v0.29.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
@@ -225,7 +225,7 @@ replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
 
 	// TODO: update afer official release
-	github.com/cosmos/ibc-apps/modules/ibc-hooks/v8 => github.com/public-awesome/ibc-apps/modules/ibc-hooks/v8 v8.0.0-stargaze.1
+	github.com/cosmos/ibc-apps/modules/ibc-hooks/v8 => github.com/public-awesome/ibc-apps/modules/ibc-hooks/v8 v8.0.0-stargaze-pauser.1
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.9.1
 	// TODO: remove after https://github.com/spf13/viper/issues/1706 gets fixed
 	github.com/spf13/viper => github.com/spf13/viper v1.17.0

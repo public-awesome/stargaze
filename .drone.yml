@@ -48,8 +48,8 @@ steps:
         path: /go
     commands:
       - apk add --no-cache ca-certificates build-base git
-      - wget https://github.com/CosmWasm/wasmvm/releases/download/v2.2.4/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.x86_64.a
-      - echo "70c989684d2b48ca17bbd55bb694bbb136d75c393c067ef3bdbca31d2b23b578  /lib/libwasmvm_muslc.x86_64.a" | sha256sum -c
+      - wget https://github.com/CosmWasm/wasmvm/releases/download/v2.2.6/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.x86_64.a
+      - echo "afc9a6b907667838057b0d8ef03a1ebb9e7d6eac628194d162185ea844816983  /lib/libwasmvm_muslc.x86_64.a" | sha256sum -c
       - LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true  make build
       - echo "Ensuring binary is statically linked ..." && (file $PWD/bin/starsd | grep "statically linked")
     environment:
@@ -77,13 +77,13 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - 17.0.0-alpha.1
+        - 18.0.0-alpha.1
     when:
       event:
         - push
       branch:
         - main
-        - jhernadnezb/start-v17
+        - pausable-execution
   - name: docker_release
     image: plugins/docker
     settings:
@@ -315,7 +315,7 @@ steps:
     environment:
       GOPROXY: http://goproxy
   - name: stargaze
-    image: publicawesome/stargaze:16.0.0
+    image: publicawesome/stargaze:17.2.0
     commands:
       - ./scripts/ci/upgrade/setup-preinstalled-stargaze.sh
     environment:
@@ -348,12 +348,12 @@ steps:
     commands:
       - /bin/bash ./scripts/ci/transfer-relayer-v1.7.sh
   - name: proposal
-    image: publicawesome/stargaze:16.0.0
+    image: publicawesome/stargaze:17.2.0
     commands:
       - ./scripts/ci/upgrade/proposal.sh
   - name: stargaze-upgraded
     pull: always
-    image: publicawesome/stargaze:17.0.0-alpha.1
+    image: publicawesome/stargaze:18.0.0-alpha.1
     commands:
       - ./scripts/ci/upgrade/run-upgrade.sh
     environment:
@@ -372,7 +372,7 @@ steps:
         - http://icad:26657
   - name: check-params
     pull: always
-    image: publicawesome/stargaze:17.0.0-alpha.1
+    image: publicawesome/stargaze:18.0.0-alpha.1
     commands:
       - starsd q mint params --node http://stargaze-upgraded:26657
       - starsd q alloc params --node http://stargaze-upgraded:26657
@@ -382,6 +382,7 @@ steps:
       - starsd q distribution community-pool --node http://stargaze-upgraded:26657
       - starsd q interchain-accounts host params --node http://stargaze-upgraded:26657
       - starsd q consensus params --node http://stargaze-upgraded:26657
+      - starsd q pauser params --node http://stargaze-upgraded:26657
     environment:
       GOPROXY: http://goproxy
   - name: relayer-upgrade-start
@@ -411,7 +412,7 @@ steps:
 trigger:
   branch:
     - main
-    - jhernadnezb/start-v17
+    - pausable-execution
   event:
     - pull_request
     - push
@@ -424,6 +425,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 5ebd27c416e2bcf517d79e1108b66534d11979a650b11404ffe89d07d59e1de9
+hmac: 78eb982b06fd6589f1f3250ec6a888f1b338c4b39c522d5c3b664806d81881d4
 
 ...

@@ -1,0 +1,134 @@
+syntax = "proto3";
+package publicawesome.stargaze.pauser.v1;
+
+import "cosmos/msg/v1/msg.proto";
+import "gogoproto/gogo.proto";
+import "publicawesome/stargaze/pauser/v1/pauser.proto";
+
+option go_package = "github.com/public-awesome/stargaze/v17/x/pauser/types";
+
+// Msg defines the pauser Msg service.
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+
+  // PauseContract pauses execution of a specific contract.
+  rpc PauseContract(MsgPauseContract) returns (MsgPauseContractResponse);
+
+  // UnpauseContract unpauses execution of a specific contract.
+  rpc UnpauseContract(MsgUnpauseContract) returns (MsgUnpauseContractResponse);
+
+  // PauseCodeID pauses execution of all contracts with a specific code ID.
+  rpc PauseCodeID(MsgPauseCodeID) returns (MsgPauseCodeIDResponse);
+
+  // UnpauseCodeID unpauses execution of all contracts with a specific code ID.
+  rpc UnpauseCodeID(MsgUnpauseCodeID) returns (MsgUnpauseCodeIDResponse);
+
+  // PauseContracts pauses execution of multiple contracts at once.
+  rpc PauseContracts(MsgPauseContracts) returns (MsgPauseContractsResponse);
+
+  // UnpauseContracts unpauses execution of multiple contracts at once.
+  rpc UnpauseContracts(MsgUnpauseContracts) returns (MsgUnpauseContractsResponse);
+
+  // PauseCodeIDs pauses execution of all contracts with the given code IDs.
+  rpc PauseCodeIDs(MsgPauseCodeIDs) returns (MsgPauseCodeIDsResponse);
+
+  // UnpauseCodeIDs unpauses execution of all contracts with the given code IDs.
+  rpc UnpauseCodeIDs(MsgUnpauseCodeIDs) returns (MsgUnpauseCodeIDsResponse);
+
+  // UpdateParams will update module params, callable by governance only.
+  rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
+}
+
+// MsgPauseContract is the request to pause a contract.
+message MsgPauseContract {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  string contract_address = 2;
+}
+
+// MsgPauseContractResponse is the response for pausing a contract.
+message MsgPauseContractResponse {}
+
+// MsgUnpauseContract is the request to unpause a contract.
+message MsgUnpauseContract {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  string contract_address = 2;
+}
+
+// MsgUnpauseContractResponse is the response for unpausing a contract.
+message MsgUnpauseContractResponse {}
+
+// MsgPauseCodeID is the request to pause a code ID.
+message MsgPauseCodeID {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  uint64 code_id = 2 [(gogoproto.customname) = "CodeID"];
+}
+
+// MsgPauseCodeIDResponse is the response for pausing a code ID.
+message MsgPauseCodeIDResponse {}
+
+// MsgUnpauseCodeID is the request to unpause a code ID.
+message MsgUnpauseCodeID {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  uint64 code_id = 2 [(gogoproto.customname) = "CodeID"];
+}
+
+// MsgUnpauseCodeIDResponse is the response for unpausing a code ID.
+message MsgUnpauseCodeIDResponse {}
+
+// MsgPauseContracts is the request to pause multiple contracts at once.
+message MsgPauseContracts {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  repeated string contract_addresses = 2;
+}
+
+// MsgPauseContractsResponse is the response for pausing multiple contracts.
+message MsgPauseContractsResponse {}
+
+// MsgUnpauseContracts is the request to unpause multiple contracts at once.
+message MsgUnpauseContracts {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  repeated string contract_addresses = 2;
+}
+
+// MsgUnpauseContractsResponse is the response for unpausing multiple contracts.
+message MsgUnpauseContractsResponse {}
+
+// MsgPauseCodeIDs is the request to pause multiple code IDs at once.
+message MsgPauseCodeIDs {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  repeated uint64 code_ids = 2 [(gogoproto.customname) = "CodeIDs"];
+}
+
+// MsgPauseCodeIDsResponse is the response for pausing multiple code IDs.
+message MsgPauseCodeIDsResponse {}
+
+// MsgUnpauseCodeIDs is the request to unpause multiple code IDs at once.
+message MsgUnpauseCodeIDs {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  repeated uint64 code_ids = 2 [(gogoproto.customname) = "CodeIDs"];
+}
+
+// MsgUnpauseCodeIDsResponse is the response for unpausing multiple code IDs.
+message MsgUnpauseCodeIDsResponse {}
+
+// MsgUpdateParams is the request for updating module's params.
+message MsgUpdateParams {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  // NOTE: All parameters must be supplied.
+  Params params = 2 [
+    (gogoproto.jsontag) = "params,omitempty",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// MsgUpdateParamsResponse is the response for executing a module's params update.
+message MsgUpdateParamsResponse {}
