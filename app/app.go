@@ -184,7 +184,7 @@ var (
 )
 
 func getGovProposalHandlers() []govclient.ProposalHandler {
-	govProposalHandlers := make([]govclient.ProposalHandler, 0)
+	govProposalHandlers := make([]govclient.ProposalHandler, 0, 1)
 	// this line is used by starport scaffolding # stargate/app/govProposalHandlers
 
 	govProposalHandlers = append(govProposalHandlers,
@@ -654,8 +654,9 @@ func NewStargazeApp(
 		panic(fmt.Sprintf("error creating wasmvm: %s", err))
 	}
 
-	acceptedStargateQueries := make([]string, 0)
-	for k := range AcceptedStargateQueries() {
+	acceptedQueries := AcceptedStargateQueries()
+	acceptedStargateQueries := make([]string, 0, len(acceptedQueries))
+	for k := range acceptedQueries {
 		acceptedStargateQueries = append(acceptedStargateQueries, k)
 	}
 	ibcWasmClientQueries := ibcwasmtypes.QueryPlugins{

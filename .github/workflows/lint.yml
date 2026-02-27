@@ -8,9 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v2
-      - uses: golangci/golangci-lint-action@v2
+      - uses: actions/checkout@v4
+      - uses: golangci/golangci-lint-action@v8
         with:
-          version: latest
+          version: v2.8.0
           args: --timeout 10m --tests=false
           github-token: ${{ secrets.github_token }}
