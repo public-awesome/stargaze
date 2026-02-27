@@ -48,8 +48,8 @@ steps:
         path: /go
     commands:
       - apk add --no-cache ca-certificates build-base git
-      - wget https://github.com/CosmWasm/wasmvm/releases/download/v2.2.6/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.x86_64.a
-      - echo "afc9a6b907667838057b0d8ef03a1ebb9e7d6eac628194d162185ea844816983  /lib/libwasmvm_muslc.x86_64.a" | sha256sum -c
+      - wget https://github.com/CosmWasm/wasmvm/releases/download/v2.3.2/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.x86_64.a
+      - echo "4d03a4bf508c89a303e8d7d0236feac44a40f6b6e221df4076968abe9d1e49c6  /lib/libwasmvm_muslc.x86_64.a" | sha256sum -c
       - LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true  make build
       - echo "Ensuring binary is statically linked ..." && (file $PWD/bin/starsd | grep "statically linked")
     environment:
@@ -83,7 +83,7 @@ steps:
         - push
       branch:
         - main
-        - prepare-v18
+        - bump-wasm-2.3.2
   - name: docker_release
     image: plugins/docker
     settings:
@@ -412,7 +412,7 @@ steps:
 trigger:
   branch:
     - main
-    - prepare-v18
+    - bump-wasm-2.3.2
   event:
     - pull_request
     - push
@@ -425,6 +425,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 946c7e03cee5824ded5c8cf1775fe3c588ac2f2d3830296b7b0a5bdc95728bca
+hmac: dccf13c677cd5c3af69b6f4490e3d0ea0b021aa4adf593f1833769a65c0ddaa0
 
 ...
