@@ -13,3 +13,8 @@ type WasmKeeper interface {
 	// Sudo allows priviledged access to a contract
 	Sudo(ctx context.Context, contractAddress sdk.AccAddress, msg []byte) ([]byte, error)
 }
+
+// PauserKeeper defines the interface to check if a contract is paused.
+type PauserKeeper interface {
+	IsExecutionPaused(ctx sdk.Context, contractAddr sdk.AccAddress) bool
+}

@@ -21,7 +21,7 @@ func BeginBlocker(goCtx context.Context, k keeper.Keeper, w types.WasmKeeper) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyBeginBlocker)
 	sudoMsg := contract.SudoMsg{BeginBlock: &struct{}{}}
-	k.IteratePrivileged(ctx, abciContractCallback(ctx, w, sudoMsg))
+	k.IteratePrivileged(ctx, abciContractCallback(ctx, k, w, sudoMsg))
 }
 
 // EndBlocker sends a EndBlock SudoMsg to all privileged contracts
@@ -29,13 +29,21 @@ func EndBlocker(goCtx context.Context, k keeper.Keeper, w types.WasmKeeper) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyEndBlocker)
 	sudoMsg := contract.SudoMsg{EndBlock: &struct{}{}}
-	k.IteratePrivileged(ctx, abciContractCallback(ctx, w, sudoMsg))
+	k.IteratePrivileged(ctx, abciContractCallback(ctx, k, w, sudoMsg))
 }
 
 // returns safe method to send the message via sudo to the privileged contract
-func abciContractCallback(parentCtx sdk.Context, w types.WasmKeeper, msg contract.SudoMsg) func(contractAddr sdk.AccAddress) bool {
+func abciContractCallback(parentCtx sdk.Context, k keeper.Keeper, w types.WasmKeeper, msg contract.SudoMsg) func(contractAddr sdk.AccAddress) bool {
 	logger := keeper.ModuleLogger(parentCtx)
 	return func(contractAddr sdk.AccAddress) bool {
+		if k.IsExecutionPaused(parentCtx, contractAddr) {
+			logger.Info(
+				"skipping paused privileged contract",
+				"type", contractCallbackType(msg),
+				"contract-address", contractAddr.String(),
+			)
+			return false
+		}
 		msgBz, err := json.Marshal(msg)
 		if err != nil {
 			panic(err)
