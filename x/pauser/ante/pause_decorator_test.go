@@ -35,6 +35,7 @@ import (
 	ibcmock "github.com/cosmos/ibc-go/v8/testing/mock"
 	stargazeapp "github.com/public-awesome/stargaze/v18/app"
 	"github.com/public-awesome/stargaze/v18/testutil/simapp"
+	cronmodule "github.com/public-awesome/stargaze/v18/x/cron"
 	pauserante "github.com/public-awesome/stargaze/v18/x/pauser/ante"
 	pausertypes "github.com/public-awesome/stargaze/v18/x/pauser/types"
 	"github.com/stretchr/testify/suite"
@@ -896,38 +897,35 @@ func (s *PauseDecoratorTestSuite) TestSudoCallingUnpausedContractAllowed() {
 	s.Require().Contains(string(queryRes), `"count":1`)
 }
 
-// TestSudoOnPausedContractRejected is a TDD-red test for the critical cron bypass bug.
-// A keeper-level Sudo call (like cron BeginBlocker/EndBlocker) to a PAUSED contract
-// MUST be rejected. Currently this test FAILS because neither the ante handler nor
-// the pauseMessenger intercepts direct keeper Sudo calls to paused contracts.
-// The fix: cron must check IsExecutionPaused before calling w.Sudo().
+// TestSudoOnPausedContractRejected verifies the cron bypass fix: a privileged
+// contract that is paused must be skipped by cron's EndBlocker. The cron keeper
+// checks IsExecutionPaused before calling w.Sudo(), so the contract never executes.
 func (s *PauseDecoratorTestSuite) TestSudoOnPausedContractRejected() {
 	s.SetupTest()
 	s.SetupWasmMsgServer()
 
 	_, _, addr1 := testdata.KeyTestPubAddr()
 
-	// Deploy Contract A
+	// Deploy Contract A (the privileged cron contract)
 	contractA, _ := s.DeployPauserTestContract(addr1.String())
+	contractAAddr := sdk.MustAccAddressFromBech32(contractA)
+
+	// Register it as a privileged cron contract
+	err := s.app.Keepers.CronKeeper.SetPrivileged(s.ctx, contractAAddr)
+	s.Require().NoError(err)
 
 	// Pause Contract A
-	err := s.app.Keepers.PauserKeeper.SetPausedContract(s.ctx, pausertypes.PausedContract{
+	err = s.app.Keepers.PauserKeeper.SetPausedContract(s.ctx, pausertypes.PausedContract{
 		ContractAddress: contractA,
 		PausedBy:        addr1.String(),
 	})
 	s.Require().NoError(err)
 
 	// Verify it IS paused
-	contractAAddr := sdk.MustAccAddressFromBech32(contractA)
 	s.Require().True(s.app.Keepers.PauserKeeper.IsExecutionPaused(s.ctx, contractAAddr))
 
-	// Call Sudo directly on the paused contract (simulating cron EndBlocker).
-	// The contract has no target set, so it just increments its own counter.
-	_, err = s.app.Keepers.WasmKeeper.Sudo(s.ctx, contractAAddr, []byte(`{"end_block":{}}`))
-
-	// TDD security invariant: keeper-level Sudo on a paused contract must be blocked.
-	s.Require().Error(err)
-	s.Require().Contains(err.Error(), "contract is paused")
+	// Run cron EndBlocker — it should skip the paused contract
+	cronmodule.EndBlocker(s.ctx, s.app.Keepers.CronKeeper, s.app.Keepers.WasmKeeper)
 
 	// Verify the paused contract's state was NOT modified (count stays at 0)
 	queryRes, err := s.app.Keepers.WasmKeeper.QuerySmart(s.ctx, contractAAddr, []byte(`{"get_count": {}}`))

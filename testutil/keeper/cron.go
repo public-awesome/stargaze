@@ -55,10 +55,17 @@ func CronKeeper(tb testing.TB) (keeper.Keeper, sdk.Context) {
 		},
 	}
 
+	pk := MockPauserKeeper{
+		IsExecutionPausedFn: func(_ sdk.Context, _ sdk.AccAddress) bool {
+			return false
+		},
+	}
+
 	k := keeper.NewKeeper(
 		cdc,
 		runtime.NewKVStoreService(storeKey),
 		wk,
+		pk,
 		"cosmos1a48wdtjn3egw7swhfkeshwdtjvs6hq9nlyrwut", // random addr for gov module
 	)
 
@@ -103,4 +110,15 @@ func (k MockWasmKeeper) GetContractInfo(ctx context.Context, contractAddress sdk
 		panic("not supposed to be called!")
 	}
 	return k.GetContractInfoFn(ctx, contractAddress)
+}
+
+type MockPauserKeeper struct {
+	IsExecutionPausedFn func(ctx sdk.Context, contractAddr sdk.AccAddress) bool
+}
+
+func (k MockPauserKeeper) IsExecutionPaused(ctx sdk.Context, contractAddr sdk.AccAddress) bool {
+	if k.IsExecutionPausedFn == nil {
+		return false
+	}
+	return k.IsExecutionPausedFn(ctx, contractAddr)
 }

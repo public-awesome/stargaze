@@ -17,6 +17,7 @@ type (
 		cdc                 codec.BinaryCodec
 		storeService        corestoretypes.KVStoreService
 		wasmKeeper          types.WasmKeeper
+		pauserKeeper        types.PauserKeeper
 		Schema              collections.Schema
 		Params              collections.Item[types.Params]
 		PrivilegedContracts collections.Map[[]byte, []byte]
@@ -28,6 +29,7 @@ func NewKeeper(
 	cdc codec.BinaryCodec,
 	storeService corestoretypes.KVStoreService,
 	wk types.WasmKeeper,
+	pk types.PauserKeeper,
 	authority string,
 ) Keeper {
 	sb := collections.NewSchemaBuilder(storeService)
@@ -35,6 +37,7 @@ func NewKeeper(
 		cdc:          cdc,
 		storeService: storeService,
 		wasmKeeper:   wk,
+		pauserKeeper: pk,
 		authority:    authority,
 		Params: collections.NewItem(
 			sb,
@@ -69,4 +72,12 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 
 func ModuleLogger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
+}
+
+// IsExecutionPaused delegates to the pauser keeper. Returns false if no pauser keeper is set.
+func (k Keeper) IsExecutionPaused(ctx sdk.Context, addr sdk.AccAddress) bool {
+	if k.pauserKeeper == nil {
+		return false
+	}
+	return k.pauserKeeper.IsExecutionPaused(ctx, addr)
 }
