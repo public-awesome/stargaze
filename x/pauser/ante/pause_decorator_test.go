@@ -837,6 +837,152 @@ func (s *PauseDecoratorTestSuite) TestIBCAckTimeoutCallbackPathPausedContractSud
 	s.Require().Contains(err.Error(), pausertypes.ErrContractPaused.Error())
 }
 
+// TestSudoCallingPausedContractBlocked verifies that when a contract receives a
+// keeper-level Sudo call (like cron BeginBlocker) and its response dispatches a
+// WasmMsg::Execute to a paused contract, the pauseMessenger decorator blocks it.
+// This proves the submessage layer IS protected even during Sudo execution.
+func (s *PauseDecoratorTestSuite) TestSudoCallingPausedContractBlocked() {
+	s.SetupTest()
+	s.SetupWasmMsgServer()
+
+	_, _, addr1 := testdata.KeyTestPubAddr()
+
+	// Deploy Contract A (the privileged contract that will receive Sudo)
+	contractA, codeID := s.DeployPauserTestContract(addr1.String())
+	// Deploy Contract B (the target that will be paused)
+	contractB := s.InstantiatePauserTestContract(addr1.String(), codeID)
+
+	// Pause Contract B
+	err := s.app.Keepers.PauserKeeper.SetPausedContract(s.ctx, pausertypes.PausedContract{
+		ContractAddress: contractB,
+		PausedBy:        addr1.String(),
+	})
+	s.Require().NoError(err)
+
+	// Call Sudo on Contract A with CallIncrement targeting paused Contract B.
+	// This simulates what happens when a privileged (cron) contract tries to
+	// interact with a paused contract during a block callback.
+	sudoMsg := fmt.Sprintf(`{"call_increment":{"contract":"%s"}}`, contractB)
+	contractAAddr := sdk.MustAccAddressFromBech32(contractA)
+	_, err = s.app.Keepers.WasmKeeper.Sudo(s.ctx, contractAAddr, []byte(sudoMsg))
+
+	// The pauseMessenger decorator should intercept the WasmMsg::Execute
+	// submessage from Contract A to paused Contract B.
+	s.Require().Error(err)
+	s.Require().Contains(err.Error(), "contract is paused")
+}
+
+// TestSudoCallingUnpausedContractAllowed verifies that Sudo-dispatched submessages
+// to an unpaused contract succeed and the target contract state is updated.
+func (s *PauseDecoratorTestSuite) TestSudoCallingUnpausedContractAllowed() {
+	s.SetupTest()
+	s.SetupWasmMsgServer()
+
+	_, _, addr1 := testdata.KeyTestPubAddr()
+
+	// Deploy Contract A and Contract B (both unpaused)
+	contractA, codeID := s.DeployPauserTestContract(addr1.String())
+	contractB := s.InstantiatePauserTestContract(addr1.String(), codeID)
+
+	// Sudo Contract A to call increment on unpaused Contract B
+	sudoMsg := fmt.Sprintf(`{"call_increment":{"contract":"%s"}}`, contractB)
+	contractAAddr := sdk.MustAccAddressFromBech32(contractA)
+	_, err := s.app.Keepers.WasmKeeper.Sudo(s.ctx, contractAAddr, []byte(sudoMsg))
+	s.Require().NoError(err)
+
+	// Verify Contract B's count was incremented
+	queryRes, err := s.app.Keepers.WasmKeeper.QuerySmart(s.ctx, sdk.MustAccAddressFromBech32(contractB), []byte(`{"get_count": {}}`))
+	s.Require().NoError(err)
+	s.Require().Contains(string(queryRes), `"count":1`)
+}
+
+// TestSudoOnPausedContractRejected is a TDD-red test for the critical cron bypass bug.
+// A keeper-level Sudo call (like cron BeginBlocker/EndBlocker) to a PAUSED contract
+// MUST be rejected. Currently this test FAILS because neither the ante handler nor
+// the pauseMessenger intercepts direct keeper Sudo calls to paused contracts.
+// The fix: cron must check IsExecutionPaused before calling w.Sudo().
+func (s *PauseDecoratorTestSuite) TestSudoOnPausedContractRejected() {
+	s.SetupTest()
+	s.SetupWasmMsgServer()
+
+	_, _, addr1 := testdata.KeyTestPubAddr()
+
+	// Deploy Contract A
+	contractA, _ := s.DeployPauserTestContract(addr1.String())
+
+	// Pause Contract A
+	err := s.app.Keepers.PauserKeeper.SetPausedContract(s.ctx, pausertypes.PausedContract{
+		ContractAddress: contractA,
+		PausedBy:        addr1.String(),
+	})
+	s.Require().NoError(err)
+
+	// Verify it IS paused
+	contractAAddr := sdk.MustAccAddressFromBech32(contractA)
+	s.Require().True(s.app.Keepers.PauserKeeper.IsExecutionPaused(s.ctx, contractAAddr))
+
+	// Call Sudo directly on the paused contract (simulating cron EndBlocker).
+	// The contract has no target set, so it just increments its own counter.
+	_, err = s.app.Keepers.WasmKeeper.Sudo(s.ctx, contractAAddr, []byte(`{"end_block":{}}`))
+
+	// TDD security invariant: keeper-level Sudo on a paused contract must be blocked.
+	s.Require().Error(err)
+	s.Require().Contains(err.Error(), "contract is paused")
+
+	// Verify the paused contract's state was NOT modified (count stays at 0)
+	queryRes, err := s.app.Keepers.WasmKeeper.QuerySmart(s.ctx, contractAAddr, []byte(`{"get_count": {}}`))
+	s.Require().NoError(err)
+	s.Require().Contains(string(queryRes), `"count":0`)
+}
+
+// TestCronEndBlockSudoPausedContractCallsPausedTarget is the full cron scenario:
+// Contract A is a privileged cron contract (NOT paused), it has a target set to
+// Contract B (which IS paused). When cron sends an EndBlock Sudo to Contract A,
+// Contract A's sudo handler calls Execute on paused Contract B.
+// The pauseMessenger should block the submessage to Contract B.
+func (s *PauseDecoratorTestSuite) TestCronEndBlockSudoPausedContractCallsPausedTarget() {
+	s.SetupTest()
+	s.SetupWasmMsgServer()
+
+	_, _, addr1 := testdata.KeyTestPubAddr()
+
+	// Deploy Contract A and Contract B
+	contractA, codeID := s.DeployPauserTestContract(addr1.String())
+	contractB := s.InstantiatePauserTestContract(addr1.String(), codeID)
+
+	// Set Contract A's target to Contract B via Execute
+	setTargetMsg := fmt.Sprintf(`{"set_target":{"contract":"%s"}}`, contractB)
+	_, err := s.msgServer.ExecuteContract(s.ctx, &wasmtypes.MsgExecuteContract{
+		Sender:   addr1.String(),
+		Contract: contractA,
+		Msg:      []byte(setTargetMsg),
+		Funds:    sdk.NewCoins(),
+	})
+	s.Require().NoError(err)
+
+	// Pause Contract B
+	err = s.app.Keepers.PauserKeeper.SetPausedContract(s.ctx, pausertypes.PausedContract{
+		ContractAddress: contractB,
+		PausedBy:        addr1.String(),
+	})
+	s.Require().NoError(err)
+
+	// Simulate cron EndBlocker sending end_block Sudo to Contract A.
+	// Contract A's sudo handler reads the stored target and sends WasmMsg::Execute
+	// to paused Contract B.
+	contractAAddr := sdk.MustAccAddressFromBech32(contractA)
+	_, err = s.app.Keepers.WasmKeeper.Sudo(s.ctx, contractAAddr, []byte(`{"end_block":{}}`))
+
+	// The pauseMessenger should block the submessage from A to paused B
+	s.Require().Error(err)
+	s.Require().Contains(err.Error(), "contract is paused")
+
+	// Verify Contract B's count was NOT incremented (remained at 0)
+	queryRes, err := s.app.Keepers.WasmKeeper.QuerySmart(s.ctx, sdk.MustAccAddressFromBech32(contractB), []byte(`{"get_count": {}}`))
+	s.Require().NoError(err)
+	s.Require().Contains(string(queryRes), `"count":0`)
+}
+
 // TransferKeeperWithTotalEscrowTracking checks for optional escrow accounting methods.
 type TransferKeeperWithTotalEscrowTracking interface {
 	SetTotalEscrowForDenom(ctx sdk.Context, coin sdk.Coin)
