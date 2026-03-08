@@ -168,6 +168,7 @@ func initRootCmd(
 		snapshot.Cmd(newApp),
 	)
 	server.AddCommands(rootCmd, app.DefaultNodeHome, newApp, appExport, addModuleInitFlags)
+	server.AddTestnetCreatorCommand(rootCmd, newApp, addModuleInitFlags)
 	wasmcli.ExtendUnsafeResetAllCmd(rootCmd)
 
 	// add keybase, auxiliary RPC, query, genesis, and tx child commands
