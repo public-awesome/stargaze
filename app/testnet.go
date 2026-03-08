@@ -10,14 +10,14 @@ import (
 	"github.com/cometbft/cometbft/libs/bytes"
 	tmos "github.com/cometbft/cometbft/libs/os"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	minttypes "github.com/public-awesome/stargaze/v18/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	minttypes "github.com/public-awesome/stargaze/v18/x/mint/types"
 )
 
 // InitStargazeAppForTestnet is broken down into two sections:
@@ -179,7 +179,11 @@ func InitStargazeAppForTestnet(app *App, newValAddr bytes.HexBytes, newValPubKey
 
 	// BANK — fund test accounts
 	defaultCoins := sdk.NewCoins(
-		sdk.NewInt64Coin("ustars", 1000000000000), // 1M STARS
+		sdk.NewInt64Coin("ustars", 1000000000000),                                                            // 1M STARS
+		sdk.NewInt64Coin("ibc/9DF365E2C0EF4EA02FA771F638BB9C0C830EFCD354629BDC017F79B348B4E989", 1000000000), // ATOM
+		sdk.NewInt64Coin("ibc/14D1406D84227FDF4B055EA5CB2298095BBCA3F3BC3EF583AE6DF36F0FB179C8", 1000000000), // TIA
+		sdk.NewInt64Coin("ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518", 1000000000), // OSMO
+		sdk.NewInt64Coin("ibc/4A1C18CA7F50544760CF306189B810CE4C1CB156C7FC870143D401FE7280E591", 1000000000), // USDC
 	)
 
 	testAccounts := []sdk.AccAddress{

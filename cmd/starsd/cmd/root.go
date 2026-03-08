@@ -285,6 +285,7 @@ func newTestnetApp(logger log.Logger, db dbm.DB, traceStore io.Writer, appOpts s
 
 	return app.InitStargazeAppForTestnet(stargazeApp, newValAddr, newValPubKey, newOperatorAddress, upgradeToTrigger)
 }
+
 func appExport(
 	logger log.Logger,
 	db dbm.DB,
