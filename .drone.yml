@@ -83,7 +83,7 @@ steps:
         - push
       branch:
         - main
-        - bump-wasm-2.3.2
+        - pauser-improvements
   - name: docker_release
     image: plugins/docker
     settings:
@@ -412,7 +412,7 @@ steps:
 trigger:
   branch:
     - main
-    - bump-wasm-2.3.2
+    - pauser-improvements
   event:
     - pull_request
     - push
@@ -425,6 +425,6 @@ volumes:
 
 ---
 kind: signature
-hmac: dccf13c677cd5c3af69b6f4490e3d0ea0b021aa4adf593f1833769a65c0ddaa0
+hmac: 698433f8f90cdccb52bb7935d06e60f8731f8b6290f69e624dca211c0352798e
 
 ...

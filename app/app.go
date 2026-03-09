@@ -734,6 +734,7 @@ func NewStargazeApp(
 		appCodec,
 		runtime.NewKVStoreService(keys[cronmoduletypes.StoreKey]),
 		app.Keepers.WasmKeeper,
+		app.Keepers.PauserKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String())
 	cronModule := cronmodule.NewAppModule(appCodec, app.Keepers.CronKeeper, app.Keepers.WasmKeeper)
 

@@ -32,6 +32,8 @@ var Upgrade = upgrades.Upgrade{
 			pauserParams := pausertypes.Params{
 				PrivilegedAddresses: []string{
 					"stars1s8qx0zvz8yd6e4x0mqmqf7fr9vvfn622wtp3g3",
+					"stars1g4762t55kn0hrxyrg0myyt68pll79cfykl7lvp",
+					"stars1kqzatlz85yfwvxexgq7qrhee03pgtmplazlcsc",
 				},
 			}
 			if err := keepers.PauserKeeper.SetParams(wctx, pauserParams); err != nil {
