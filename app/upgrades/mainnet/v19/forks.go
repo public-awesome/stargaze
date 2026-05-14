@@ -1,6 +1,7 @@
 package v19
 
 import (
+	"fmt"
 	"time"
 
 	sdkmath "cosmossdk.io/math"
@@ -68,11 +69,31 @@ func RunForkLogic(ctx sdk.Context, k keepers.StargazeKeepers) error {
 	// does not validate this field as non-empty.
 	params.MinDepositRatio = sdkmath.LegacyMustNewDecFromStr("0.01").String()
 
-	// Mirror the validation that MsgUpdateParams runs; the keeper's
-	// collection setter doesn't validate on its own.
+	// ValidateBasic catches malformed quorum / threshold / period / deposit
+	// values before they hit the store. It does NOT cover MinDepositRatio —
+	// the field this fork repairs — so that field is checked explicitly
+	// after Set below.
 	if err := params.ValidateBasic(); err != nil {
 		return err
 	}
 
-	return k.GovKeeper.Params.Set(ctx, params)
+	if err := k.GovKeeper.Params.Set(ctx, params); err != nil {
+		return err
+	}
+
+	// Post-Set parse check on MinDepositRatio. The runtime failure mode for
+	// an empty / unparseable ratio lives in keeper.AddDeposit
+	// (LegacyNewDecFromStr), well after Params.Set. Reading back and
+	// re-parsing here means a future typo at the assignment line is caught
+	// immediately: returning an error from BeginForkLogic causes the cache
+	// context to drop the bad write and the chain keeps running on the
+	// prior state.
+	stored, err := k.GovKeeper.Params.Get(ctx)
+	if err != nil {
+		return err
+	}
+	if _, err := sdkmath.LegacyNewDecFromStr(stored.MinDepositRatio); err != nil {
+		return fmt.Errorf("post-fork MinDepositRatio %q does not parse: %w", stored.MinDepositRatio, err)
+	}
+	return nil
 }

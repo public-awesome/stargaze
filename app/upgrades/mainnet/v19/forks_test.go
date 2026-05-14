@@ -7,6 +7,8 @@ import (
 
 	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
+	govv1types "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	"github.com/stretchr/testify/suite"
 
 	stargazeapp "github.com/public-awesome/stargaze/v18/app"
@@ -14,6 +16,7 @@ import (
 	"github.com/public-awesome/stargaze/v18/app/upgrades"
 	v19 "github.com/public-awesome/stargaze/v18/app/upgrades/mainnet/v19"
 	"github.com/public-awesome/stargaze/v18/testutil/simapp"
+	minttypes "github.com/public-awesome/stargaze/v18/x/mint/types"
 )
 
 const (
@@ -42,9 +45,11 @@ func (s *V19ForkTestSuite) SetupTest() {
 }
 
 // breakMinDepositRatio reproduces the pre-fork mainnet state where
-// MinDepositRatio was accidentally left empty. ValidateBasic rejects this
-// state, but the keeper's collection setter does not, so the chain ran with
-// it for a long time.
+// MinDepositRatio was accidentally left empty. The SDK's
+// gov v1 Params.ValidateBasic does NOT inspect MinDepositRatio, so the broken
+// state passed every standard check at genesis and stayed live for a long
+// time. The actual failure happens at deposit time in keeper.AddDeposit,
+// which parses the field via sdkmath.LegacyNewDecFromStr.
 func (s *V19ForkTestSuite) breakMinDepositRatio(ctx sdk.Context) {
 	p, err := s.App.Keepers.GovKeeper.Params.Get(ctx)
 	s.Require().NoError(err)
@@ -86,8 +91,10 @@ func (s *V19ForkTestSuite) assertV19Params(ctx sdk.Context) {
 	s.Require().True(p.BurnProposalDepositPrevote)
 	s.Require().True(p.BurnVoteVeto)
 
-	// Same validation MsgUpdateParams runs. Before the fork, this returned an
-	// error because MinDepositRatio was empty.
+	// Same validation MsgUpdateParams runs. NOTE: ValidateBasic does not
+	// touch MinDepositRatio, so this only proves the OTHER params are
+	// well-formed. The MinDepositRatio repair is exercised end-to-end by
+	// TestForkFixesProposalDepositPath via keeper.AddDeposit.
 	s.Require().NoError(p.ValidateBasic())
 }
 
@@ -262,6 +269,77 @@ func (s *V19ForkTestSuite) TestBeginBlockForks_TestnetForkOnlyFiresOnTestnet() {
 	ctx = s.App.BaseApp.NewContext(false).WithChainID("randomchain-3").WithBlockHeight(testForkHeight)
 	stargazeapp.BeginBlockForks(ctx, s.App)
 	s.Require().Equal(1, fired, "testnet fork must not fire on an unrelated chain")
+}
+
+// TestForkFixesProposalDepositPath proves the user-visible bug is actually
+// repaired. Before the fork, submitting a gov proposal with the full
+// MinDeposit fails because keeper.AddDeposit can't parse an empty
+// MinDepositRatio. After the fork rewrites the field, the same submission
+// succeeds and reaches voting period.
+func (s *V19ForkTestSuite) TestForkFixesProposalDepositPath() {
+	ctx := s.App.BaseApp.NewContext(false).WithChainID(v19.ChainID).WithBlockHeight(1)
+
+	// Reproduce the pre-fork mainnet state: ustars-denominated MinDeposit
+	// (so the deposit denom matches what the fork writes) plus the empty
+	// MinDepositRatio that broke deposits.
+	p, err := s.App.Keepers.GovKeeper.Params.Get(ctx)
+	s.Require().NoError(err)
+	p.MinDeposit = sdk.NewCoins(sdk.NewInt64Coin("ustars", 500_000_000_000))
+	p.ExpeditedMinDeposit = sdk.NewCoins(sdk.NewInt64Coin("ustars", 1_000_000_000_000))
+	p.MinDepositRatio = ""
+	s.Require().NoError(s.App.Keepers.GovKeeper.Params.Set(ctx, p))
+
+	// Fund a proposer with the full MinDeposit so the deposit amount is not
+	// itself the reason a submission fails.
+	proposer := sdk.AccAddress([]byte("v19-deposit-test-1__"))
+	deposit := sdk.NewCoins(sdk.NewInt64Coin("ustars", 500_000_000_000))
+	s.Require().NoError(s.App.Keepers.BankKeeper.MintCoins(ctx, minttypes.ModuleName, deposit))
+	s.Require().NoError(s.App.Keepers.BankKeeper.SendCoinsFromModuleToAccount(
+		ctx, minttypes.ModuleName, proposer, deposit,
+	))
+
+	msgServer := govkeeper.NewMsgServerImpl(&s.App.Keepers.GovKeeper)
+	buildMsg := func() *govv1types.MsgSubmitProposal {
+		// gov v1 requires either inner Messages or non-empty Metadata; we
+		// use a non-empty metadata string. The SDK only enforces a
+		// title/summary cross-check when the metadata parses as JSON, so a
+		// plain string is fine.
+		msg, err := govv1types.NewMsgSubmitProposal(
+			nil,
+			deposit,
+			proposer.String(),
+			"v19-deposit-test-metadata",
+			"test title",
+			"test summary",
+			false,
+		)
+		s.Require().NoError(err)
+		return msg
+	}
+
+	// Pre-fork: submission must fail. Run inside a cache context so the
+	// partial proposal record created by Keeper.SubmitProposal (before
+	// AddDeposit returns the parse error) doesn't leak into the next
+	// attempt, matching BaseApp's per-msg rollback semantics.
+	cacheCtx, _ := ctx.CacheContext()
+	_, err = msgServer.SubmitProposal(cacheCtx, buildMsg())
+	s.Require().Error(err,
+		"submitting a proposal with full deposit must fail while MinDepositRatio is empty")
+	// Confirm the failure is the LegacyDec parse on the empty ratio (so the
+	// test isn't passing because of some unrelated validation error like
+	// metadata/denom/amount).
+	s.Require().ErrorContains(err, "decimal string cannot be empty",
+		"pre-fork failure must originate from parsing the empty MinDepositRatio")
+
+	// Apply the fork.
+	s.Require().NoError(v19.RunForkLogic(ctx, s.App.Keepers))
+
+	// Post-fork: the same submission succeeds and the proposal enters
+	// voting period because the deposit meets MinDeposit.
+	resp, err := msgServer.SubmitProposal(ctx, buildMsg())
+	s.Require().NoError(err,
+		"submitting a proposal with full deposit must succeed after the fork rewrites MinDepositRatio")
+	s.Require().NotZero(resp.ProposalId)
 }
 
 // TestBeginBlockForks_ChainIDMatchIsExact verifies the matcher uses exact
