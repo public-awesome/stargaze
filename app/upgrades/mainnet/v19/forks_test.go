@@ -340,6 +340,13 @@ func (s *V19ForkTestSuite) TestForkFixesProposalDepositPath() {
 	s.Require().NoError(err,
 		"submitting a proposal with full deposit must succeed after the fork rewrites MinDepositRatio")
 	s.Require().NotZero(resp.ProposalId)
+
+	// Confirm the proposal actually advanced to voting period (full deposit
+	// >= MinDeposit), not just that the call returned without error.
+	proposal, err := s.App.Keepers.GovKeeper.Proposals.Get(ctx, resp.ProposalId)
+	s.Require().NoError(err)
+	s.Require().Equal(govv1types.StatusVotingPeriod, proposal.Status,
+		"proposal must enter voting period when initial deposit covers MinDeposit")
 }
 
 // TestBeginBlockForks_ChainIDMatchIsExact verifies the matcher uses exact

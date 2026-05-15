@@ -14,9 +14,9 @@ const (
 	ChainID = "stargaze-1"
 
 	// UpgradeHeight is the block height at which the v19 fork logic runs.
-	// TODO: set the real fork height before tagging the release. A height of 0
-	// is a safe sentinel because BeginBlock never executes at height 0.
-	UpgradeHeight = int64(0)
+	// Targets ~14:00 UTC on 2026-05-25 assuming a
+	// recent block time of ~2.43s
+	UpgradeHeight = int64(33_362_003)
 )
 
 var Fork = upgrades.Fork{

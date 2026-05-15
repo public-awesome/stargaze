@@ -81,19 +81,24 @@ func RunForkLogic(ctx sdk.Context, k keepers.StargazeKeepers) error {
 		return err
 	}
 
-	// Post-Set parse check on MinDepositRatio. The runtime failure mode for
-	// an empty / unparseable ratio lives in keeper.AddDeposit
-	// (LegacyNewDecFromStr), well after Params.Set. Reading back and
-	// re-parsing here means a future typo at the assignment line is caught
-	// immediately: returning an error from BeginForkLogic causes the cache
-	// context to drop the bad write and the chain keeps running on the
-	// prior state.
+	// Post-Set semantic check on MinDepositRatio. The runtime failure mode
+	// for an empty / unparseable ratio lives in keeper.AddDeposit
+	// (LegacyNewDecFromStr), well after Params.Set. Read back, parse, and
+	// also confirm the ratio falls in (0, 1] — the fork's intent is to
+	// ENABLE dust-spam protection, so 0 (disables it), negative, or > 1
+	// values all defeat the purpose. Returning an error here causes the
+	// cache context to drop the bad write and the chain keeps running on
+	// the prior state.
 	stored, err := k.GovKeeper.Params.Get(ctx)
 	if err != nil {
 		return err
 	}
-	if _, err := sdkmath.LegacyNewDecFromStr(stored.MinDepositRatio); err != nil {
+	ratio, err := sdkmath.LegacyNewDecFromStr(stored.MinDepositRatio)
+	if err != nil {
 		return fmt.Errorf("post-fork MinDepositRatio %q does not parse: %w", stored.MinDepositRatio, err)
+	}
+	if !ratio.IsPositive() || ratio.GT(sdkmath.LegacyOneDec()) {
+		return fmt.Errorf("post-fork MinDepositRatio %s is out of (0, 1]", ratio)
 	}
 	return nil
 }
