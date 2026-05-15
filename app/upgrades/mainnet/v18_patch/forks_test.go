@@ -1,4 +1,4 @@
-package v19_test
+package v18patch_test
 
 import (
 	"errors"
@@ -14,33 +14,33 @@ import (
 	stargazeapp "github.com/public-awesome/stargaze/v18/app"
 	"github.com/public-awesome/stargaze/v18/app/keepers"
 	"github.com/public-awesome/stargaze/v18/app/upgrades"
-	v19 "github.com/public-awesome/stargaze/v18/app/upgrades/mainnet/v19"
+	v18patch "github.com/public-awesome/stargaze/v18/app/upgrades/mainnet/v18_patch"
 	"github.com/public-awesome/stargaze/v18/testutil/simapp"
 	minttypes "github.com/public-awesome/stargaze/v18/x/mint/types"
 )
 
 const (
 	// testForkHeight is the height we register the test fork at. The
-	// production v19 fork uses a placeholder UpgradeHeight of 0, so the
-	// dispatch tests swap in a non-zero height.
+	// production v18-patch fork's UpgradeHeight points to mainnet; the
+	// dispatch tests swap in a small known height instead.
 	testForkHeight = int64(5)
 
-	// foreignChainID is any chain ID that is not v19.ChainID; used to assert
-	// the ChainID guard skips the fork on the wrong network.
+	// foreignChainID is any chain ID that is not v18patch.ChainID; used to
+	// assert the ChainID guard skips the fork on the wrong network.
 	foreignChainID = "foreign-1"
 )
 
-type V19ForkTestSuite struct {
+type V18PatchForkTestSuite struct {
 	suite.Suite
 
 	App *stargazeapp.App
 }
 
-func TestV19ForkTestSuite(t *testing.T) {
-	suite.Run(t, new(V19ForkTestSuite))
+func TestV18PatchForkTestSuite(t *testing.T) {
+	suite.Run(t, new(V18PatchForkTestSuite))
 }
 
-func (s *V19ForkTestSuite) SetupTest() {
+func (s *V18PatchForkTestSuite) SetupTest() {
 	s.App = simapp.New(s.T())
 }
 
@@ -50,16 +50,16 @@ func (s *V19ForkTestSuite) SetupTest() {
 // state passed every standard check at genesis and stayed live for a long
 // time. The actual failure happens at deposit time in keeper.AddDeposit,
 // which parses the field via sdkmath.LegacyNewDecFromStr.
-func (s *V19ForkTestSuite) breakMinDepositRatio(ctx sdk.Context) {
+func (s *V18PatchForkTestSuite) breakMinDepositRatio(ctx sdk.Context) {
 	p, err := s.App.Keepers.GovKeeper.Params.Get(ctx)
 	s.Require().NoError(err)
 	p.MinDepositRatio = ""
 	s.Require().NoError(s.App.Keepers.GovKeeper.Params.Set(ctx, p))
 }
 
-// assertV19Params reads gov params and asserts every field matches what the
-// v19 fork is supposed to write.
-func (s *V19ForkTestSuite) assertV19Params(ctx sdk.Context) {
+// assertV18PatchParams reads gov params and asserts every field matches what
+// the v18-patch fork is supposed to write.
+func (s *V18PatchForkTestSuite) assertV18PatchParams(ctx sdk.Context) {
 	p, err := s.App.Keepers.GovKeeper.Params.Get(ctx)
 	s.Require().NoError(err)
 
@@ -101,7 +101,7 @@ func (s *V19ForkTestSuite) assertV19Params(ctx sdk.Context) {
 // withTestForks replaces stargazeapp.Forks for the lifetime of the current
 // test and restores it via t.Cleanup, so tests can exercise BeginBlockForks
 // without needing the production placeholder UpgradeHeight to be set.
-func (s *V19ForkTestSuite) withTestForks(forks []upgrades.Fork) {
+func (s *V18PatchForkTestSuite) withTestForks(forks []upgrades.Fork) {
 	orig := stargazeapp.Forks
 	stargazeapp.Forks = forks
 	s.T().Cleanup(func() { stargazeapp.Forks = orig })
@@ -110,37 +110,37 @@ func (s *V19ForkTestSuite) withTestForks(forks []upgrades.Fork) {
 // TestRunForkLogic_UpdatesAllParams exercises the migration directly: it
 // puts the gov params into the broken state observed on mainnet (empty
 // MinDepositRatio), runs RunForkLogic, and verifies every post-fork value.
-func (s *V19ForkTestSuite) TestRunForkLogic_UpdatesAllParams() {
-	ctx := s.App.BaseApp.NewContext(false).WithChainID(v19.ChainID).WithBlockHeight(1)
+func (s *V18PatchForkTestSuite) TestRunForkLogic_UpdatesAllParams() {
+	ctx := s.App.BaseApp.NewContext(false).WithChainID(v18patch.ChainID).WithBlockHeight(1)
 	s.breakMinDepositRatio(ctx)
 
-	s.Require().NoError(v19.RunForkLogic(ctx, s.App.Keepers))
+	s.Require().NoError(v18patch.RunForkLogic(ctx, s.App.Keepers))
 
-	s.assertV19Params(ctx)
+	s.assertV18PatchParams(ctx)
 }
 
-// TestBeginBlockForks_AppliesV19 exercises the full dispatch path: it
-// registers v19.Fork at testForkHeight, advances to that height on the v19
-// target chain, calls BeginBlockForks, and asserts the cache context's writes
-// persisted.
-func (s *V19ForkTestSuite) TestBeginBlockForks_AppliesV19() {
-	f := v19.Fork
+// TestBeginBlockForks_AppliesV18Patch exercises the full dispatch path: it
+// registers v18patch.Fork at testForkHeight, advances to that height on the
+// v18-patch target chain, calls BeginBlockForks, and asserts the cache
+// context's writes persisted.
+func (s *V18PatchForkTestSuite) TestBeginBlockForks_AppliesV18Patch() {
+	f := v18patch.Fork
 	f.UpgradeHeight = testForkHeight
 	s.withTestForks([]upgrades.Fork{f})
 
-	ctx := s.App.BaseApp.NewContext(false).WithChainID(v19.ChainID).WithBlockHeight(testForkHeight)
+	ctx := s.App.BaseApp.NewContext(false).WithChainID(v18patch.ChainID).WithBlockHeight(testForkHeight)
 	s.breakMinDepositRatio(ctx)
 
 	stargazeapp.BeginBlockForks(ctx, s.App)
 
-	s.assertV19Params(ctx)
+	s.assertV18PatchParams(ctx)
 }
 
 // TestBeginBlockForks_SkipsOnWrongChainID verifies the ChainID guard: the
 // fork must not fire if the running chain isn't the one it targets, even at
 // the matching height.
-func (s *V19ForkTestSuite) TestBeginBlockForks_SkipsOnWrongChainID() {
-	f := v19.Fork
+func (s *V18PatchForkTestSuite) TestBeginBlockForks_SkipsOnWrongChainID() {
+	f := v18patch.Fork
 	f.UpgradeHeight = testForkHeight
 	s.withTestForks([]upgrades.Fork{f})
 
@@ -156,12 +156,12 @@ func (s *V19ForkTestSuite) TestBeginBlockForks_SkipsOnWrongChainID() {
 
 // TestBeginBlockForks_SkipsAtWrongHeight verifies the height guard: even on
 // the target chain, the fork only fires at the exact UpgradeHeight.
-func (s *V19ForkTestSuite) TestBeginBlockForks_SkipsAtWrongHeight() {
-	f := v19.Fork
+func (s *V18PatchForkTestSuite) TestBeginBlockForks_SkipsAtWrongHeight() {
+	f := v18patch.Fork
 	f.UpgradeHeight = testForkHeight
 	s.withTestForks([]upgrades.Fork{f})
 
-	ctx := s.App.BaseApp.NewContext(false).WithChainID(v19.ChainID).WithBlockHeight(testForkHeight + 1)
+	ctx := s.App.BaseApp.NewContext(false).WithChainID(v18patch.ChainID).WithBlockHeight(testForkHeight + 1)
 	s.breakMinDepositRatio(ctx)
 
 	stargazeapp.BeginBlockForks(ctx, s.App)
@@ -174,13 +174,13 @@ func (s *V19ForkTestSuite) TestBeginBlockForks_SkipsAtWrongHeight() {
 // TestBeginBlockForks_DiscardsStateOnError verifies the cache-context wrapper:
 // a fork that mutates state and then returns an error must not commit those
 // writes, and the chain must keep running (no panic).
-func (s *V19ForkTestSuite) TestBeginBlockForks_DiscardsStateOnError() {
+func (s *V18PatchForkTestSuite) TestBeginBlockForks_DiscardsStateOnError() {
 	const sentinel = "0.500000000000000000" // distinguishable from the fork's mutation
 	mutated := sdkmath.LegacyMustNewDecFromStr("0.999").String()
 
 	failingFork := upgrades.Fork{
 		UpgradeName:   "test-fail",
-		ChainID:       v19.ChainID,
+		ChainID:       v18patch.ChainID,
 		UpgradeHeight: testForkHeight,
 		BeginForkLogic: func(ctx sdk.Context, k keepers.StargazeKeepers) error {
 			// Mutate state inside the cache context, then return an error.
@@ -198,7 +198,7 @@ func (s *V19ForkTestSuite) TestBeginBlockForks_DiscardsStateOnError() {
 	}
 	s.withTestForks([]upgrades.Fork{failingFork})
 
-	ctx := s.App.BaseApp.NewContext(false).WithChainID(v19.ChainID).WithBlockHeight(testForkHeight)
+	ctx := s.App.BaseApp.NewContext(false).WithChainID(v18patch.ChainID).WithBlockHeight(testForkHeight)
 
 	pre, err := s.App.Keepers.GovKeeper.Params.Get(ctx)
 	s.Require().NoError(err)
@@ -218,7 +218,7 @@ func (s *V19ForkTestSuite) TestBeginBlockForks_DiscardsStateOnError() {
 // TestBeginBlockForks_WildcardChainIDFiresAnywhere verifies that a Fork with
 // ChainID set to the wildcard (upgrades.ChainIDAny) fires on every chain at
 // UpgradeHeight, including ones unrelated to the production target.
-func (s *V19ForkTestSuite) TestBeginBlockForks_WildcardChainIDFiresAnywhere() {
+func (s *V18PatchForkTestSuite) TestBeginBlockForks_WildcardChainIDFiresAnywhere() {
 	fired := 0
 	wildcardFork := upgrades.Fork{
 		UpgradeName:   "test-wildcard",
@@ -231,7 +231,7 @@ func (s *V19ForkTestSuite) TestBeginBlockForks_WildcardChainIDFiresAnywhere() {
 	}
 	s.withTestForks([]upgrades.Fork{wildcardFork})
 
-	for _, chainID := range []string{v19.ChainID, "elgafar-1", "totally-unrelated-3", ""} {
+	for _, chainID := range []string{v18patch.ChainID, "elgafar-1", "totally-unrelated-3", ""} {
 		ctx := s.App.BaseApp.NewContext(false).WithChainID(chainID).WithBlockHeight(testForkHeight)
 		stargazeapp.BeginBlockForks(ctx, s.App)
 	}
@@ -241,7 +241,7 @@ func (s *V19ForkTestSuite) TestBeginBlockForks_WildcardChainIDFiresAnywhere() {
 // TestBeginBlockForks_TestnetForkOnlyFiresOnTestnet verifies the exact-match
 // semantics for a non-mainnet target: a fork pinned to a testnet chain ID
 // fires on testnet and skips on mainnet / unrelated chains.
-func (s *V19ForkTestSuite) TestBeginBlockForks_TestnetForkOnlyFiresOnTestnet() {
+func (s *V18PatchForkTestSuite) TestBeginBlockForks_TestnetForkOnlyFiresOnTestnet() {
 	const testnetChainID = "elgafar-1"
 	fired := 0
 	testnetFork := upgrades.Fork{
@@ -261,7 +261,7 @@ func (s *V19ForkTestSuite) TestBeginBlockForks_TestnetForkOnlyFiresOnTestnet() {
 	s.Require().Equal(1, fired, "testnet fork should fire on the testnet chain ID")
 
 	// Same height on mainnet must not fire
-	ctx = s.App.BaseApp.NewContext(false).WithChainID(v19.ChainID).WithBlockHeight(testForkHeight)
+	ctx = s.App.BaseApp.NewContext(false).WithChainID(v18patch.ChainID).WithBlockHeight(testForkHeight)
 	stargazeapp.BeginBlockForks(ctx, s.App)
 	s.Require().Equal(1, fired, "testnet fork must not fire on mainnet")
 
@@ -276,8 +276,8 @@ func (s *V19ForkTestSuite) TestBeginBlockForks_TestnetForkOnlyFiresOnTestnet() {
 // MinDeposit fails because keeper.AddDeposit can't parse an empty
 // MinDepositRatio. After the fork rewrites the field, the same submission
 // succeeds and reaches voting period.
-func (s *V19ForkTestSuite) TestForkFixesProposalDepositPath() {
-	ctx := s.App.BaseApp.NewContext(false).WithChainID(v19.ChainID).WithBlockHeight(1)
+func (s *V18PatchForkTestSuite) TestForkFixesProposalDepositPath() {
+	ctx := s.App.BaseApp.NewContext(false).WithChainID(v18patch.ChainID).WithBlockHeight(1)
 
 	// Reproduce the pre-fork mainnet state: ustars-denominated MinDeposit
 	// (so the deposit denom matches what the fork writes) plus the empty
@@ -291,7 +291,7 @@ func (s *V19ForkTestSuite) TestForkFixesProposalDepositPath() {
 
 	// Fund a proposer with the full MinDeposit so the deposit amount is not
 	// itself the reason a submission fails.
-	proposer := sdk.AccAddress([]byte("v19-deposit-test-1__"))
+	proposer := sdk.AccAddress([]byte("v18patch-deposit-tst"))
 	deposit := sdk.NewCoins(sdk.NewInt64Coin("ustars", 500_000_000_000))
 	s.Require().NoError(s.App.Keepers.BankKeeper.MintCoins(ctx, minttypes.ModuleName, deposit))
 	s.Require().NoError(s.App.Keepers.BankKeeper.SendCoinsFromModuleToAccount(
@@ -308,7 +308,7 @@ func (s *V19ForkTestSuite) TestForkFixesProposalDepositPath() {
 			nil,
 			deposit,
 			proposer.String(),
-			"v19-deposit-test-metadata",
+			"v18patch-deposit-test-metadata",
 			"test title",
 			"test summary",
 			false,
@@ -332,7 +332,7 @@ func (s *V19ForkTestSuite) TestForkFixesProposalDepositPath() {
 		"pre-fork failure must originate from parsing the empty MinDepositRatio")
 
 	// Apply the fork.
-	s.Require().NoError(v19.RunForkLogic(ctx, s.App.Keepers))
+	s.Require().NoError(v18patch.RunForkLogic(ctx, s.App.Keepers))
 
 	// Post-fork: the same submission succeeds and the proposal enters
 	// voting period because the deposit meets MinDeposit.
@@ -352,11 +352,11 @@ func (s *V19ForkTestSuite) TestForkFixesProposalDepositPath() {
 // TestBeginBlockForks_ChainIDMatchIsExact verifies the matcher uses exact
 // string equality (no prefix, suffix, or case-folding tolerance). Near-misses
 // must not fire the fork.
-func (s *V19ForkTestSuite) TestBeginBlockForks_ChainIDMatchIsExact() {
+func (s *V18PatchForkTestSuite) TestBeginBlockForks_ChainIDMatchIsExact() {
 	fired := 0
 	targetFork := upgrades.Fork{
 		UpgradeName:   "test-exact",
-		ChainID:       v19.ChainID, // "stargaze-1"
+		ChainID:       v18patch.ChainID, // "stargaze-1"
 		UpgradeHeight: testForkHeight,
 		BeginForkLogic: func(_ sdk.Context, _ keepers.StargazeKeepers) error {
 			fired++
@@ -383,7 +383,7 @@ func (s *V19ForkTestSuite) TestBeginBlockForks_ChainIDMatchIsExact() {
 	s.Require().Equal(0, fired, "near-miss chain IDs must not trigger the fork")
 
 	// The exact match fires the fork
-	ctx := s.App.BaseApp.NewContext(false).WithChainID(v19.ChainID).WithBlockHeight(testForkHeight)
+	ctx := s.App.BaseApp.NewContext(false).WithChainID(v18patch.ChainID).WithBlockHeight(testForkHeight)
 	stargazeapp.BeginBlockForks(ctx, s.App)
 	s.Require().Equal(1, fired, "exact chain ID match should fire the fork")
 }

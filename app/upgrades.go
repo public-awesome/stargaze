@@ -10,7 +10,7 @@ import (
 	mainnetupgradesv16 "github.com/public-awesome/stargaze/v18/app/upgrades/mainnet/v16"
 	mainnetupgradesv17 "github.com/public-awesome/stargaze/v18/app/upgrades/mainnet/v17"
 	mainnetupgradesv18 "github.com/public-awesome/stargaze/v18/app/upgrades/mainnet/v18"
-	mainnetupgradesv19 "github.com/public-awesome/stargaze/v18/app/upgrades/mainnet/v19"
+	mainnetupgradesv18patch "github.com/public-awesome/stargaze/v18/app/upgrades/mainnet/v18_patch"
 	testnetupgradesv15b2 "github.com/public-awesome/stargaze/v18/app/upgrades/testnet/v15b2"
 	testnetupgradesv15b3 "github.com/public-awesome/stargaze/v18/app/upgrades/testnet/v15b3"
 )
@@ -29,7 +29,7 @@ var Upgrades = []upgrades.Upgrade{
 // Forks lists hard forks that run at fixed block heights via BeginBlockForks.
 // Use these when governance cannot be relied on to schedule an x/upgrade plan.
 var Forks = []upgrades.Fork{
-	mainnetupgradesv19.Fork,
+	mainnetupgradesv18patch.Fork,
 }
 
 func (app App) RegisterUpgradeHandlers(configurator module.Configurator) {

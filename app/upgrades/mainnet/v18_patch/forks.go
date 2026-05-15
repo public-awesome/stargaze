@@ -1,4 +1,4 @@
-package v19
+package v18patch
 
 import (
 	"fmt"
@@ -10,9 +10,9 @@ import (
 	"github.com/public-awesome/stargaze/v18/app/keepers"
 )
 
-// RunForkLogic executes the v19 hard fork. Governance is broken on the chain,
-// so this fork rewrites the gov module params at a fixed block height instead
-// of relying on a MsgUpdateParams proposal.
+// RunForkLogic executes the v18-patch hard fork. Governance is broken on the
+// chain, so this fork rewrites the gov module params at a fixed block height
+// instead of relying on a MsgUpdateParams proposal.
 //
 // All values mirror what `starsd q gov params --node https://rpc.stargaze-apis.com:443`
 // returned at the time of the fork, so existing behavior is preserved
@@ -25,7 +25,7 @@ import (
 // a cache context: returning an error discards any partial writes and the
 // chain keeps producing blocks instead of halting.
 func RunForkLogic(ctx sdk.Context, k keepers.StargazeKeepers) error {
-	ctx.Logger().Info("applying v19 hard fork: rewriting gov params")
+	ctx.Logger().Info("applying v18-patch hard fork: rewriting gov params")
 
 	params, err := k.GovKeeper.Params.Get(ctx)
 	if err != nil {
