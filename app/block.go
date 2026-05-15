@@ -26,6 +26,7 @@ func (a *App) PrepareCheckStater(ctx sdk.Context) {
 
 // BeginBlocker application updates every begin block
 func (a *App) BeginBlocker(ctx sdk.Context) (sdk.BeginBlock, error) {
+	BeginBlockForks(ctx, a)
 	return a.ModuleManager.BeginBlock(ctx)
 }
 
